@@ -13,6 +13,7 @@ import { Plus, Edit2, Trash2, ArrowRight, Table as TableIcon, Copy, Settings, Ch
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useSettings } from '@/context/SettingsContext';
+import { YarnEstimatorCard } from '@/components/yarn-estimator-card';
 
 type RoundingMode = 'exact' | 'multiple' | 'even' | 'odd';
 
@@ -259,12 +260,15 @@ export default function ProjectWorkspace() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3 md:w-fit bg-card border border-border h-12 p-1 overflow-x-auto">
+        <TabsList className="grid w-full grid-cols-4 md:w-fit bg-card border border-border h-12 p-1 overflow-x-auto">
           <TabsTrigger value="sections" className="font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             Sections
           </TabsTrigger>
           <TabsTrigger value="preview" className="font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             Preview
+          </TabsTrigger>
+          <TabsTrigger value="yarn" className="font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+            Yarn
           </TabsTrigger>
           <TabsTrigger value="notes" className="font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             Notes
@@ -512,6 +516,10 @@ export default function ProjectWorkspace() {
               )}
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="yarn" className="mt-6">
+          <YarnEstimatorCard project={project} />
         </TabsContent>
 
         <TabsContent value="notes" className="mt-6">
