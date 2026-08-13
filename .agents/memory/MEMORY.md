@@ -1,0 +1,2 @@
+- [Stitch & Scale architecture](stitch-and-scale-arch.md) — local-first knitwear grading app; grading-engine.ts is the single source of truth for all data shapes.
+- [Stitch & Scale onboarding additions](stitch-and-scale-onboarding.md) — what Replit C added: onboarding overlay, SettingsContext fields, sample projects, new-project extension.

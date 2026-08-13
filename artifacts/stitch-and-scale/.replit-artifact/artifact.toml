@@ -1,0 +1,27 @@
+kind = "web"
+previewPath = "/"
+title = "Stitch & Scale"
+version = "1.0.0"
+id = "artifacts/stitch-and-scale"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 19544
+
+[services.development]
+run = "pnpm --filter @workspace/stitch-and-scale run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/stitch-and-scale", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/stitch-and-scale/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "19544"
+BASE_PATH = "/"
