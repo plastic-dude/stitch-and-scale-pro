@@ -33,6 +33,26 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - Prioritize money-making: features that enable selling patterns, subscriptions, or premium tiers rank above internal tooling.
 
 ## Progress log (update each run)
+- [CHK-052] 86c72d6 — Inbox sweep + Collab Deal Math
+  (50th feature). Inbox swept at 69b99c4: nothing new actionable
+  (all prior fixes already at HEAD; no new issues/PRs).
+  Research angle: yarn-company collab contract economics (never
+  covered) — session-52 facts: WPK accessory-pattern rates
+  $40-700 (avg $246); sample knitting $0.25/yard; pro photography
+  $150-200/hr; Vogue paid $500 flat; the three rights structures
+  brands use: full buyout / flat-fee exclusivity (6-12mo) /
+  advance + royalty, plus yarn-support-only; 72% of designers
+  earn at most $50 in their best Ravelry month (census lens).
+  Collab Deal Math in a new workspace tab: prices the three rights
+  structures (+yarn-support-only) against the designer's own
+  channel and hourly floor; full-buyout perpetuity lockout math
+  (exclusivity + tail absorbed); DM-01-DM-04 clause flags
+  (perpetuity, sole-recommended-yarn, exclusivity lockout,
+  underpaid yarn-support); best-structure ranking; paste-ready
+  counter-offer letter with copy button. Yarn support treated as
+  cost offset, never revenue. Inputs persist via the projectStorage
+  seam. 19 new lib tests; suite 929 tests; typecheck + vitest +
+  build green. Screenshot: docs/screenshots/collab-deal-math.webp.
 - [CHK-051] 3a10108 — Inbox sweep + Sample & Launch Window Lab
   (49th feature). Inbox swept at 3a9e677: three new issues #36-#38.
   #36 (distribution share span overflow on narrow widths) fixed by
