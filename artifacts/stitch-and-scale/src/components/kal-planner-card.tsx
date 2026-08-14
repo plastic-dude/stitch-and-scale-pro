@@ -71,8 +71,8 @@ export function KalPlannerCard({ project }: { project: PatternProject }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-lg">
-          <CalendarClock className="h-4 w-4" /> KAL Planner
+        <CardTitle className="flex flex-wrap items-center gap-2 text-lg">
+          <CalendarClock className="h-4 w-4 shrink-0" /> KAL Planner
         </CardTitle>
         <CardDescription>
           No tool in the market prices a knit-along — Ravelry gives you a calendar event and a group,
@@ -190,8 +190,8 @@ export function KalPlannerCard({ project }: { project: PatternProject }) {
         {/* Mystery clue timeline */}
         {result.clueTimeline && (
           <div className="space-y-2">
-            <div className="font-semibold text-sm flex items-center gap-2">
-              <CalendarClock className="h-4 w-4" /> Mystery KAL clue calendar
+            <div className="font-semibold text-sm flex flex-wrap items-center gap-2">
+              <CalendarClock className="h-4 w-4 shrink-0" /> Mystery KAL clue calendar
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {result.clueTimeline.map((c) => (
@@ -213,8 +213,8 @@ export function KalPlannerCard({ project }: { project: PatternProject }) {
         {/* Red flags */}
         {result.redFlags.length > 0 && (
           <div className="space-y-2">
-            <div className="font-semibold text-sm flex items-center gap-2">
-              <AlertTriangle className="h-4 w-4 text-amber-600" /> Red flags — K-01 to K-06
+            <div className="font-semibold text-sm flex flex-wrap items-center gap-2">
+              <AlertTriangle className="h-4 w-4 shrink-0 text-amber-600" /> Red flags — K-01 to K-06
             </div>
             {result.redFlags.map((f) => (
               <div key={f.id} className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-3 text-sm">

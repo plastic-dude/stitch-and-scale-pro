@@ -139,15 +139,15 @@ export function MembershipCard({ project }: { project: PatternProject }) {
           </div>
           {stored.tiers.map((tier, index) => (
             <div key={index} className="rounded-lg border bg-muted/30 p-4 space-y-3">
-              <div className="flex items-center gap-3">
-                <div className="flex-1 space-y-1.5">
+              <div className="flex flex-wrap items-end gap-3">
+                <div className="min-w-24 grow space-y-1.5">
                   <Label className="text-xs">Tier name</Label>
                   <Input
                     value={tier.name}
                     onChange={(e) => setTier(index, { name: e.target.value })}
                   />
                 </div>
-                <div className="w-24 space-y-1.5">
+                <div className="w-20 min-w-20 space-y-1.5">
                   <Label className="text-xs">Price ($/mo)</Label>
                   <Input
                     type="number"
@@ -156,7 +156,7 @@ export function MembershipCard({ project }: { project: PatternProject }) {
                     onChange={(e) => setTier(index, { price: Number(e.target.value) })}
                   />
                 </div>
-                <div className="w-24 space-y-1.5">
+                <div className="w-20 min-w-20 space-y-1.5">
                   <Label className="text-xs">Members</Label>
                   <Input
                     type="number"
@@ -165,7 +165,7 @@ export function MembershipCard({ project }: { project: PatternProject }) {
                     onChange={(e) => setTier(index, { members: Number(e.target.value) })}
                   />
                 </div>
-                <div className="w-24 space-y-1.5">
+                <div className="w-20 min-w-20 space-y-1.5">
                   <Label className="text-xs">Churn %/mo</Label>
                   <Input
                     type="number"

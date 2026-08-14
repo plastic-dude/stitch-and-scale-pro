@@ -115,10 +115,10 @@ export function TechEditCard({ project }: { project: PatternProject }) {
       </CardHeader>
       <CardContent className="space-y-5">
         {/* Score + verdict */}
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <div
             className={cn(
-              'flex h-16 w-16 items-center justify-center rounded-full border-2 text-lg font-bold',
+              'flex h-16 w-16 shrink-0 items-center justify-center rounded-full border-2 text-lg font-bold',
               summary.score >= 90
                 ? 'border-emerald-500/40 text-emerald-600'
                 : summary.score >= 70
@@ -194,7 +194,7 @@ export function TechEditCard({ project }: { project: PatternProject }) {
               <p className="text-sm font-medium">Market quote for this sweep</p>
               <span className="text-lg font-bold text-emerald-700">${summary.marketBill.low}–${summary.marketBill.high}</span>
             </div>
-            <div className="flex gap-4 text-xs text-muted-foreground">
+            <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
               <span>≈{summary.marketBill.hours}h of editor time</span>
               <span>~{summary.marketBill.waitDays}-day turnaround</span>
               {summary.marketBill.pending > 0 && <span className="text-amber-600 font-medium">{summary.marketBill.pending} finding(s) — resolve to negotiate the lower end</span>}

@@ -404,20 +404,20 @@ export default function ProjectWorkspace() {
     <div className="space-y-6 animate-in fade-in duration-500">
       
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 bg-card p-6 rounded-xl border border-card-border shadow-sm">
-        <div>
-          <div className="flex items-center gap-3 mb-1">
-            <h1 className="text-3xl font-serif font-bold text-foreground">{project.name}</h1>
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 bg-card p-4 sm:p-6 rounded-xl border border-card-border shadow-sm">
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-3 mb-1">
+            <h1 className="text-2xl sm:text-3xl font-serif font-bold text-foreground">{project.name}</h1>
             <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-accent/20 text-accent uppercase tracking-wider">
               {project.baseSize}
             </span>
           </div>
-          <p className="text-muted-foreground flex items-center gap-2">
+          <p className="text-muted-foreground flex flex-wrap items-center gap-x-2 gap-y-1">
             By {project.author} <span className="text-border">•</span> 
             Gauge: {project.gauge?.stitchesPer4In ?? "—"}sts × {project.gauge?.rowsPer4In ?? "—"}rows / 4{project.gauge?.unit ?? "in"}
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <Button variant="outline" size="sm" asChild>
             <Link href={`/project/${project.id}/grading`}>
               <TableIcon className="w-4 h-4 mr-2" />

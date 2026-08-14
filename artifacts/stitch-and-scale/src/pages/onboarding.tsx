@@ -443,10 +443,25 @@ export default function OnboardingOverlay() {
     setLocation('/project/new');
   };
 
+  // FIX #33 (QA, Aug 2026): skipping setup from a deep link (e.g. /project/:id with a
+  // missing id) used to strand new users on "Project Not Found" with no escape, because
+  // the overlay dismissed without changing location and without creating any project.
+  // Now skip always ends in a live destination: if the workspace is empty, seed the
+  // sample projects and open the sample sweater; otherwise hand the user to Draft a
+  // Pattern (/project/new), which can never show "Project Not Found".
   const skipOnboarding = () => {
     setUnit(localUnit);
     setSizingStandard(localStandard);
     setOnboardingCompleted(true);
+    const now = new Date().toISOString();
+    const hasProject = projects.length > 0;
+    if (!hasProject) {
+      createProject({ ...SAMPLE_CREW_NECK_SWEATER, createdAt: now, updatedAt: now });
+      createProject({ ...SAMPLE_BASIC_BEANIE, createdAt: now, updatedAt: now });
+      setLocation(`/project/${SAMPLE_CREW_NECK_SWEATER.id}`);
+    } else {
+      setLocation('/project/new');
+    }
   };
 
   const goNext = () => {
