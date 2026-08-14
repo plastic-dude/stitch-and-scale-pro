@@ -33,6 +33,24 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - Prioritize money-making: features that enable selling patterns, subscriptions, or premium tiers rank above internal tooling.
 
 ## Progress log (update each run)
+- [CHK-017] c054126 — Kit Economics planner (17th workspace tab,
+  'Kits'):
+  18/18 tests; 279/279 overall green; typecheck + build pass.
+  Session-18 research (Puppet Vendors 60/40 consignment norm,
+  Ravelry in-store pattern-sales 60% designer/40% shop, Craftybase
+  keystone COGS x 2 = wholesale / COGS x 4 = retail capacity test,
+  Faire 15% new-retailer fee, MOQs $150-$200, COGS must include
+  designer labour) finds kit economics is spreadsheet math — no
+  tool models it. Library kit-economics.ts: buildKitCogs (yarn
+  COGS from the shared yardage model + notions/packaging/labour
+  /overhead), analyzeKitChannels (self-sell via shared platformNet
+  seam, LYS consignment with processor fee off the top then the
+  cited 60/40 split, keystone wholesale), keystone-capacity and
+  convenience-premium sanity checks, consignmentClauseChecklist
+  (6 protections incl. copyright of the pattern insert), and
+  generateKitProposal (paste-ready shop outreach).
+  UI: kit-economics-card.tsx, full input panel, 4 KPI cards,
+  verdict badges, copy buttons.
 - [CHK-016] c66bcf2 — Pattern Club & Magazine Lockout Planner (16th workspace
   tab, 'Pattern Club'):
   25/25 tests; 261/261 overall green; typecheck + build pass. Session-17
