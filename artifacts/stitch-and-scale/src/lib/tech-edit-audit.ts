@@ -62,6 +62,16 @@ export interface AuditSummary {
   /** Stable verdict shown to the designer. */
   verdict: 'clean' | 'check' | 'fix';
   findings: AuditFinding[];
+  /** Session-42 market framing: what a human editor would quote for this
+   *  sweep, with real rate bands and the ~10-day turnaround wait. */
+  marketBill: {
+    low: number;
+    high: number;
+    hours: number;
+    pending: number;
+    waitDays: number;
+    note: string;
+  };
 }
 
 export interface AuditConfig {
@@ -70,6 +80,56 @@ export interface AuditConfig {
 }
 
 const DEFAULT_RATE = 35;
+
+/* -------------------------- session-42 market facts -----------------------
+ * Sources:
+ * - ribblr tech-editing thread: US editors $20–30/hr, 15-min billing
+ *   https://meet.ribblr.com/t/tech-editing/210921
+ * - r/AdvancedKnitting 'Tech Editing' thread: going rate $30–40/hr, sweaters
+ *   'up to 4 hours', and a documented shortage of good editors
+ *   https://www.reddit.com/r/AdvancedKnitting/comments/1840wp1/tech_editing/
+ * - Kim, knitting technical editor (knitjulep.com, 250+ patterns edited):
+ *   $35/hr; simple accessories 1–2h, complex accessories/simple garments
+ *   1–3h, complex garments 2–7h; turnaround ≈ 10 days
+ *   https://knitjulep.com/knitting-technical-editing-services/
+ * - bramblesandbindweed.com: £24 (~$32) per 15-min increment
+ *   https://bramblesandbindweed.com/technical-editing/
+ * - Woolly Wormhead 'The True Cost of a Pattern': avg tech edit ≈ £50/
+ *   pattern inside a pattern book (whole book £800–900)
+ *   https://woollywormhead.com/blog/2018/05/10/the-true-cost-of-a-pattern-revisited
+ * - worksofourhands.com fixed pricing: per-pattern rate + $5 per extra size
+ *   https://worksofourhands.com/2023/05/30/pros-cons-and-fixed-pricing-newbie-tech-editor-part-1/
+ */
+export const EDITOR_MARKET = {
+  /** Market hourly range, USD. */
+  rateLow: 20,
+  rateHigh: 40,
+  /** Typical human-editor turnaround in days. */
+  turnaroundDays: 10,
+  /** Hours the market quotes per garment complexity band. */
+  hoursBySizes: [
+    { maxSizes: 1, hours: 1 },   // accessories / one-size
+    { maxSizes: 3, hours: 2 },
+    { maxSizes: 6, hours: 3 },
+    { maxSizes: 9, hours: 4 },
+    { maxSizes: Infinity, hours: 7 }, // complex multi-size garments
+  ],
+} as const;
+
+/** Rough billable-hours estimate for the numbers sweep a human editor would
+ *  perform on this project, based on its graded size count (more sizes =
+ *  more arithmetic to verify; fixed-price editors add ~$5 per extra size). */
+export function editorHoursFor(project: PatternProject): number {
+  const sizes = new Set<SizeKey>();
+  for (const section of project.sections) {
+    for (const measurement of section.measurements) {
+      for (const size of gradedSizesFor(measurement)) sizes.add(size);
+    }
+  }
+  const count = sizes.size;
+  const band = EDITOR_MARKET.hoursBySizes.find(b => count <= b.maxSizes);
+  return band ? band.hours : EDITOR_MARKET.hoursBySizes[EDITOR_MARKET.hoursBySizes.length - 1].hours;
+}
 
 /** Every size the project actually grades (those whose base physical value
  *  is greater than zero — a zero means "not part of this pattern"). */
@@ -448,6 +508,41 @@ function resolveAuditStandards(project: PatternProject): StandardsTable {
 
 const SEVERITY_WEIGHT: Record<AuditSeverity, number> = { error: 25, warning: 10, info: 2, pass: 0 };
 
+/** What the same numbers sweep would cost on the open editor market —
+ *  session-42 market framing with real rate bands and the turnaround wait.
+ *  Takes the raw counts so it works before the AuditSummary is assembled. */
+function estimateMarketBillFor(findings: AuditFinding[], findingCounts: Record<AuditSeverity, number>, project: PatternProject): {
+  low: number;
+  high: number;
+  hours: number;
+  pending: number;
+  waitDays: number;
+  note: string;
+} {
+  const pending = findingCounts.error + findingCounts.warning;
+  const hours = editorHoursFor(project);
+  // Clean patterns negotiate the lower half of the quote; outstanding
+  // findings are exactly what an editor charges full rate to find.
+  const lowFactor = pending > 0 ? 1 : 0.6;
+  const low = Math.max(EDITOR_MARKET.rateLow, Math.round(EDITOR_MARKET.rateLow * hours * lowFactor));
+  const high = Math.round(EDITOR_MARKET.rateHigh * hours);
+  return {
+    low,
+    high,
+    hours,
+    pending,
+    waitDays: EDITOR_MARKET.turnaroundDays,
+    note: pending > 0
+      ? `Editors charge $${EDITOR_MARKET.rateLow}–$${EDITOR_MARKET.rateHigh}/hr for this sweep (~${hours}h for ${findingCounts.error + findingCounts.warning + findingCounts.pass} graded sizes) and document a real shortage — patterns wait ~${EDITOR_MARKET.turnaroundDays} days in queue. Resolve findings first to justify negotiating the lower end.`
+      : `A human editor would quote $${low}–$${high} for the same ${hours}h of arithmetic, at ` + '$' + EDITOR_MARKET.rateLow + '–$' + EDITOR_MARKET.rateHigh + `/hr — and most would add a per-size premium. The numbers sweep is fully automatable; their flaw is charging hourly rates for arithmetic.`,
+  };
+}
+
+/** Public wrapper for callers that already hold a finished AuditSummary. */
+export function estimateMarketBill(summary: AuditSummary, project: PatternProject) {
+  return estimateMarketBillFor(summary.findings, summary.findingCounts, project);
+}
+
 export function runTechEditAudit(project: PatternProject, config: AuditConfig = {}): AuditSummary {
   const checks = [
     checkGauge,
@@ -472,7 +567,8 @@ export function runTechEditAudit(project: PatternProject, config: AuditConfig = 
   const deduction = findings.reduce((acc, f) => acc + SEVERITY_WEIGHT[f.severity], 0);
   const score = Math.max(0, Math.round(100 - deduction));
   const verdict = findingCounts.error > 0 ? 'fix' : findingCounts.warning > 0 ? 'check' : 'clean';
-  return { findingCounts, score, verdict, findings };
+  const marketBill = estimateMarketBillFor(findings, findingCounts, project);
+  return { findingCounts, score, verdict, findings, marketBill };
 }
 
 /** Money framing: what the arithmetic sweep is worth at human-editor rates.

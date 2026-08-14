@@ -2,6 +2,9 @@ import { describe, it, expect } from 'vitest';
 import {
   runTechEditAudit,
   estimateEditorSavings,
+  estimateMarketBill,
+  editorHoursFor,
+  EDITOR_MARKET,
   generatePreEditSummary,
   AuditFinding,
 } from './tech-edit-audit';
@@ -301,5 +304,71 @@ describe('generatePreEditSummary', () => {
     const summary = runTechEditAudit(project);
     const text = generatePreEditSummary(project, summary);
     expect(text).toContain('the prose pass');
+  });
+});
+
+/* ------------------------- session-42 market framing -------------------------
+ * Session-42 research (tech editing market): editors bill $20–40/hr; 1–7h by
+ * garment complexity; ~10-day turnaround; per-size premium norms (~$5/size
+ * for fixed-price editors); documented editor shortage. The market bill
+ * estimator turns these facts into a live quote comparison. */
+describe('editorHoursFor / estimateMarketBill (session-42)', () => {
+  it('bands editor hours by graded size count', () => {
+    // editorHoursFor counts distinct graded SIZES across the whole project —
+    // a single positive Bust grades all 9 sizes, so a one-measurement
+    // project already fills the 4h band. Compare band edges instead:
+    // zero graded sizes → the 1h (accessory/one-size) band; a full garment →
+    // the 4h band.
+    const empty = makeProject({}, [m('b1', 'Bust', 'bust', 0)]);
+    const garment = makeProject({}, [
+      m('b1', 'Bust', 'bust', 20.5),
+      m('b2', 'Waist', 'waist', 16.5),
+      m('b3', 'Back Length', 'backLength', 17.25, { measurementType: 'length' }),
+      m('s1', 'Sleeve Length', 'sleeveLength', 17, { measurementType: 'length' }),
+    ]);
+    expect(editorHoursFor(empty)).toBe(1); // nothing graded — the entry band
+    expect(editorHoursFor(garment)).toBe(4); // full 9-size grading — the 4h band
+  });
+
+  it('quotes the same sweep at market rates on the summary', () => {
+    const project = makeProject({}, [
+      m('b1', 'Bust', 'bust', 20.5),
+      m('b2', 'Waist', 'waist', 16.5),
+      m('b3', 'Back Length', 'backLength', 17.25, { measurementType: 'length' }),
+      m('s1', 'Sleeve Length', 'sleeveLength', 17, { measurementType: 'length' }),
+    ]);
+    const summary = runTechEditAudit(project);
+    const bill = summary.marketBill;
+    // 4h band at $20–40/hr → low = 0.6 × $20 × 4h = $48 (negotiated, clean),
+    // high = $40 × 4h = $160.
+    expect(bill.low).toBe(48);
+    expect(bill.high).toBe(160);
+    expect(bill.hours).toBe(4);
+    expect(bill.waitDays).toBe(EDITOR_MARKET.turnaroundDays);
+  });
+
+  it('unclean patterns lose the negotiated discount', () => {
+    const project = makeProject({}, [m('b1', 'Bust', 'bust', 20.5)]);
+    const projectBroken = makeProject({}, [m('b1', 'Bust', 'bust', -5)]);
+    const cleanBill = estimateMarketBill(runTechEditAudit(project), project);
+    const brokenBill = estimateMarketBill(runTechEditAudit(projectBroken), projectBroken);
+    // Clean pattern: 0.6× low factor (negotiated). Broken pattern: full rate.
+    expect(brokenBill.low).toBeGreaterThan(cleanBill.low);
+    expect(brokenBill.pending).toBeGreaterThan(cleanBill.pending);
+  });
+
+  it('exposes the documented editor shortage in the note', () => {
+    const project = makeProject({}, [
+      m('b1', 'Bust', 'bust', 20.5),
+      m('b2', 'Waist', 'waist', 16.5),
+      m('b3', 'Back Length', 'backLength', 17.25, { measurementType: 'length' }),
+      m('s1', 'Sleeve Length', 'sleeveLength', 17, { measurementType: 'length' }),
+    ]);
+    const bill = estimateMarketBill(runTechEditAudit(project), project);
+    // Clean patterns quote the lower half; the note always names the hourly
+    // arithmetic as the automatable half (their flaw = our strength).
+    expect(bill.high).toBe(160);
+    expect(bill.low).toBe(48);
+    expect(bill.note).toContain('$20–$40/hr');
   });
 });

@@ -25,7 +25,7 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
-import { runTechEditAudit, estimateEditorSavings, generatePreEditSummary, AuditFinding, AuditSummary } from '@/lib/tech-edit-audit';
+import { runTechEditAudit, estimateEditorSavings, estimateMarketBill, generatePreEditSummary, AuditFinding, AuditSummary } from '@/lib/tech-edit-audit';
 import { PatternProject } from '@/lib/grading-engine';
 import { ClipboardCopy, CheckCircle2, AlertTriangle, Info, ScrollText, Sparkles } from 'lucide-react';
 
@@ -108,8 +108,9 @@ export function TechEditCard({ project }: { project: PatternProject }) {
           Self Tech-Edit Audit
         </CardTitle>
         <CardDescription>
-          A numbers-first pass before a human editor sees the pattern — every
-          finding you resolve is billable time saved.
+          A numbers-first pass before a human editor sees the pattern — editors
+          bill $20–40/hr at ~10-day turnaround, so every finding you resolve is
+          billable time saved.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-5">
@@ -181,6 +182,24 @@ export function TechEditCard({ project }: { project: PatternProject }) {
               <span className="text-xs text-muted-foreground">/hr</span>
             </div>
             <p className="text-xs text-muted-foreground leading-relaxed">{savings.note}</p>
+          </CardContent>
+        </Card>
+
+        {/* Session-42 market-bill tile: what a human editor would quote for
+            the identical numbers sweep, with real market rates and the
+            ~10-day wait. */}
+        <Card className="border-emerald-500/40 bg-emerald-500/5">
+          <CardContent className="space-y-3 pt-4">
+            <div className="flex items-center justify-between">
+              <p className="text-sm font-medium">Market quote for this sweep</p>
+              <span className="text-lg font-bold text-emerald-700">${summary.marketBill.low}–${summary.marketBill.high}</span>
+            </div>
+            <div className="flex gap-4 text-xs text-muted-foreground">
+              <span>≈{summary.marketBill.hours}h of editor time</span>
+              <span>~{summary.marketBill.waitDays}-day turnaround</span>
+              {summary.marketBill.pending > 0 && <span className="text-amber-600 font-medium">{summary.marketBill.pending} finding(s) — resolve to negotiate the lower end</span>}
+            </div>
+            <p className="text-xs text-muted-foreground leading-relaxed">{summary.marketBill.note}</p>
           </CardContent>
         </Card>
 
