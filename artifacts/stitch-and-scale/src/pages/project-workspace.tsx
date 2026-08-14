@@ -20,7 +20,7 @@ import { NativeSelect } from '@/components/ui/native-select';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { generateId, PatternSection, SectionMeasurement, MeasurementType, GradingKey, GRADING_KEY_LABELS, ALL_SIZES, gradePattern, resolveProjectStandards } from '@/lib/grading-engine';
-import { Plus, Edit2, Trash2, ArrowRight, Table as TableIcon, Copy, Settings, ChevronDown, ChevronRight, Calculator } from 'lucide-react';
+import { Plus, Edit2, Trash2, ArrowRight, Table as TableIcon, Copy, Settings, ChevronDown, ChevronRight, Calculator, FlaskConical } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useSettings } from '@/context/SettingsContext';
@@ -59,6 +59,7 @@ import { PartnerEconomicsCard } from '@/components/partner-economics-card';
 import { YarnBuyCalculatorCard } from '@/components/yarn-buy-calculator-card';
 import { KalPlannerCard } from '@/components/kal-planner-card';
 import { SubmissionDeskCard } from '@/components/submission-desk-card';
+import { GradingLabCard } from '@/components/grading-lab-card';
 
 type RoundingMode = 'exact' | 'multiple' | 'even' | 'odd';
 
@@ -540,6 +541,9 @@ export default function ProjectWorkspace() {
           <TabsTrigger value="kal" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             KAL Planner
           </TabsTrigger>
+          <TabsTrigger value="gradinglab" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+            <FlaskConical className="h-3.5 w-3.5 mr-1.5" /> Grading Lab
+          </TabsTrigger>
           <TabsTrigger value="submissions" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             Submissions
           </TabsTrigger>
@@ -954,6 +958,9 @@ export default function ProjectWorkspace() {
         </TabsContent>
         <TabsContent value="submissions" className="mt-6">
           <SubmissionDeskCard project={project} />
+        </TabsContent>
+        <TabsContent value="gradinglab" className="mt-6">
+          <GradingLabCard project={project} />
         </TabsContent>
 
         <TabsContent value="notes" className="mt-6">

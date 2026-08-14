@@ -196,7 +196,7 @@ export function TeachEconomicsCard({ project: _project }: { project: PatternProj
               min={0} max={0.5} step={0.01}
               onChange={(n) => patchInput({ refundRate: Math.min(0.5, n) })} suffix="share" />
           </div>
-          {!isCourse && (
+          {isCourse && (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="space-y-1.5">
               <Label htmlFor="teach-eb-pct" className="text-xs">Early-bird discount</Label>
