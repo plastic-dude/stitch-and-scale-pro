@@ -45,6 +45,45 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - [CHK-064] 83f9b55 — Workshop Teaching Lab (62nd tab).
 - [CHK-065] 5f91403 — Consignment Re-Price Lab (63rd tab).
 - [CHK-066] 0175d76 — Pattern Bundle Lab (64th tab).
+- [CHK-067] ec3a219 — Retreat & Cruise Teaching Lab (65th tab).
+  Inbox swept: no new reviewer proposals (11 open
+  issues remain reviewer-directed INFO notes; QA cycles
+  32/33 copy/consistency INFO; no open PRs).
+  Research angle: retreat & cruise teaching economics
+  (distinct from session 35 online teaching and session 64
+  festival/LYS workshops) — session-67 facts: top-of-market
+  guest rate is $125/class-hr plus travel and lodging, and
+  even that still nets only $25-30/hr once the 5-40 hrs of
+  class development per class is priced in; host retreats
+  price to a $100/person/day profit floor against minimum
+  attendance; market tuition runs $235 weekend-with-meals
+  to $1,075 tuition-only 3-day to $2,999 all-inclusive
+  destination formats; shop/class pay norms $25-60/hr; LYS
+  typically reimburse teachers within a ~1.5-hr radius,
+  beyond that travel is on the teacher (Abby's Yarns,
+  Yarn Harlot, wanderlustentrepreneur, Reddit r/knitting
+  shop-pay threads, Knit & Crochet Guild Retreats).
+  Retreat & Cruise Teaching Lab in a new tab: pick guest /
+  cruise-featured / host role, trip length, minimum cancel
+  line vs realistic vs best-case attendance, opportunity
+  rate, travel + prep + extra working hours, per-class
+  contact and development hours; guest side models cash
+  fee vs comp package vs the $125 benchmark with travel
+  reimbursement, cruise-design pattern sales and alumni
+  conversion value priced in; host side models tuition,
+  materials fee vs cost, variable per-student cost and
+  fixed costs with break-even/target attendance and
+  three-scenario net cash + effective $/hr; RT-01..RT-09
+  flags (underpaid dev, below-benchmark fee, exposure
+  comp, travel unreimbursed, break-even above minimum,
+  low daily floor, thin attendance, dev-hour overload,
+  cancellation unpriced), verdict ladder (walk away / not
+  worth it / host-only if they cover travel / take it as
+  marketing / worth it — sign the dates).
+  +32 lib tests; suite 1,294 tests / 67 files;
+  typecheck + vitest + build green. Screenshots:
+  docs/screenshots/retreat-lab-guest-mode.webp +
+  retreat-lab-host-mode.webp.
   Inbox swept: no new reviewer proposals (11 open
   issues remain reviewer-directed INFO notes; QA cycles
   32/33 branches copy/consistency INFO; no open PRs).
