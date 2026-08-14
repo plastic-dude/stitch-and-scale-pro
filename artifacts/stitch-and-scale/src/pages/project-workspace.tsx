@@ -20,7 +20,7 @@ import { NativeSelect } from '@/components/ui/native-select';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { generateId, PatternSection, SectionMeasurement, MeasurementType, GradingKey, GRADING_KEY_LABELS, ALL_SIZES, gradePattern, resolveProjectStandards } from '@/lib/grading-engine';
-import { Plus, Edit2, Trash2, ArrowRight, Table as TableIcon, Copy, Settings, ChevronDown, ChevronRight, Calculator, FlaskConical, PenLine, ClipboardCheck, Camera, Video, FileText, Library, Tag, Target, Sparkles, FileCheck2, Tent, Handshake, Rocket, Boxes, Crown, MapPin, CalendarDays, Presentation, Store, Radio, BookOpen, Package, Scale } from 'lucide-react';
+import { Plus, Edit2, Trash2, ArrowRight, Table as TableIcon, Copy, Settings, ChevronDown, ChevronRight, Calculator, FlaskConical, PenLine, ClipboardCheck, Camera, Video, FileText, Library, Tag, Target, Sparkles, FileCheck2, Tent, Handshake, Rocket, Boxes, Crown, MapPin, CalendarDays, Presentation, Store, Radio, BookOpen, Package, Scale, Gift } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useSettings } from '@/context/SettingsContext';
@@ -91,6 +91,7 @@ import { PodPatternsLabCard } from '@/components/pod-patterns-lab-card';
 import { MarketplaceTakeRateLabCard } from '@/components/marketplace-takerate-lab-card';
 import { BoxInclusionLabCard } from '@/components/box-inclusion-lab-card';
 import { YarnLicensingLabCard } from '@/components/yarn-licensing-lab-card';
+import { GiftCardLabCard } from '@/components/giftcard-lab-card';
 
 type RoundingMode = 'exact' | 'multiple' | 'even' | 'odd';
 
@@ -671,6 +672,9 @@ export default function ProjectWorkspace() {
           <TabsTrigger value="yarn-licensing" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             <Scale className="h-3.5 w-3.5 mr-1.5" /> Yarn Licensing Lab
           </TabsTrigger>
+          <TabsTrigger value="giftcard" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+            <Gift className="h-3.5 w-3.5 mr-1.5" /> Gift & Credit Lab
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="sections" className="mt-6 space-y-6">
@@ -1175,6 +1179,9 @@ export default function ProjectWorkspace() {
         </TabsContent>
         <TabsContent value="yarn-licensing" className="mt-6">
           <YarnLicensingLabCard project={project} />
+        </TabsContent>
+        <TabsContent value="giftcard" className="mt-6">
+          <GiftCardLabCard project={project} />
         </TabsContent>
 
         <TabsContent value="notes" className="mt-6">
