@@ -148,7 +148,7 @@ export function PlatformMixCard({ project }: { project: PatternProject }) {
             <Switch id="pm-offsite" checked={stored.input.subjectToOffsiteAds}
               onCheckedChange={(v) => patchInput({ subjectToOffsiteAds: v })} />
             <Label htmlFor="pm-offsite" className="text-xs cursor-pointer">
-              Etsy offsite-ads eligible (crossed $10k/yr — mandatory 15% on Etsy revenue)
+              Charge Etsy offsite ads (15%) — mandatory once you cross $10k/yr, and Etsy decides when your traffic came from its ads
             </Label>
           </div>
         </div>
