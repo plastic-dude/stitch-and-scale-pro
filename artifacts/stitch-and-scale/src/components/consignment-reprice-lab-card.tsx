@@ -1,0 +1,426 @@
+import { useMemo, useState } from 'react';
+import {
+  Store,
+  Tag,
+  AlertTriangle,
+  AlertCircle,
+  Info,
+  Package,
+  CalendarClock,
+  TrendingDown,
+  Banknote,
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Slider } from '@/components/ui/slider';
+import {
+  analyzeReprice,
+  type RepriceInput,
+} from '@/lib/consignment-reprice-lab';
+import { projectStorage } from '@/lib/storage-lib';
+import { PatternProject } from '@/lib/grading-engine';
+
+const STORAGE_KEY = 'stitch-and-scale-reprice-v1';
+
+type StoredState = RepriceInput & { ts?: number };
+
+const channelOptions: { value: RepriceInput['channel']; label: string }[] = [
+  { value: 'ravelry-instore', label: 'Ravelry In-Store (60/40)' },
+  { value: 'consignment-direct', label: 'Direct consignment (45/55)' },
+  { value: 'own-shop', label: 'Own shop / online (97/3)' },
+];
+
+const seasonOptions: { value: RepriceInput['seasonBand']; label: string }[] = [
+  { value: 'winter', label: 'Winter (peak Oct–Dec)' },
+  { value: 'spring', label: 'Spring (peak Jan–Mar)' },
+  { value: 'summer', label: 'Summer (peak Apr–Jun)' },
+  { value: 'yearround', label: 'Year-round' },
+];
+
+const defaultStored: StoredState = {
+  retailPrice: 8,
+  channel: 'ravelry-instore',
+  printCostPerUnit: 1.5,
+  unitsAtShop: 30,
+  unitsSoldPerMonth: 3,
+  monthsInShop: 2,
+  seasonBand: 'winter',
+  opportunityRate: 25,
+  repriceHours: 2,
+};
+
+const severityIcon = {
+  critical: AlertCircle,
+  warning: AlertTriangle,
+  info: Info,
+};
+
+const severityColor = {
+  critical: 'text-destructive border-destructive/40 bg-destructive/5',
+  warning: 'text-amber-600 border-amber-400/40 bg-amber-500/5',
+  info: 'text-muted-foreground border-border bg-secondary/40',
+};
+
+export function ConsignmentRepriceLabCard({ project }: { project: PatternProject }) {
+  const handle = useMemo(
+    () => projectStorage<StoredState>('reprice', project.id, [STORAGE_KEY]),
+    [project.id],
+  );
+  const [stored, setStored] = useState<StoredState>(() => {
+    const read = handle.read();
+    return read ?? { ...defaultStored, ts: Date.now() };
+  });
+
+  const setState = (patch: Partial<StoredState>) => {
+    setStored(prev => {
+      const next = { ...prev, ...patch, ts: Date.now() };
+      handle.write(next);
+      return next;
+    });
+  };
+
+  const result = useMemo(() => analyzeReprice(stored as RepriceInput), [stored]);
+
+  const num = (
+    v: string,
+    key: keyof RepriceInput,
+    opts: { min?: number; max?: number; allowEmpty?: boolean } = {},
+  ) => {
+    if (v === '' && opts.allowEmpty) {
+      setState({ [key]: undefined } as Partial<StoredState>);
+      return;
+    }
+    const n = parseFloat(v);
+    if (Number.isNaN(n)) return;
+    const clamped = Math.min(Math.max(n, opts.min ?? 0), opts.max ?? Infinity);
+    setState({ [key]: clamped } as Partial<StoredState>);
+  };
+
+  const monthsOfStock =
+    result.monthsOfStock === Infinity
+      ? '— (not moving)'
+      : `${result.monthsOfStock.toFixed(1)} mo`;
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-start gap-3">
+        <Store className="mt-1 h-5 w-5 shrink-0 text-primary" />
+        <div className="space-y-1">
+          <h3 className="text-base font-semibold">Consignment Re-Price Lab</h3>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            Print leaflets and kits age out of season just like garments do.
+            This prices what your stock sitting at yarn shops is actually
+            worth — including the Ravelry In-Store split (designer 60% / LYS
+            40%, with the shop keeping a flat $1.00 at $2.49 or below), direct
+            consignment takes, the 65–70% buyer-acceptance band, and the 50%
+            destash floor — and builds the re-price ladder before the shelf
+            life runs out.
+          </p>
+        </div>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="space-y-3 rounded-lg border p-4">
+          <h4 className="text-sm font-medium">The print run</h4>
+          <div className="space-y-1">
+            <Label htmlFor="crp-retail">Retail price</Label>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">$</span>
+              <Input
+                id="crp-retail"
+                type="number"
+                step="0.01"
+                value={stored.retailPrice}
+                onChange={e => num(e.target.value, 'retailPrice', { min: 0.5 })}
+              />
+            </div>
+          </div>
+          <div className="space-y-1">
+            <Label htmlFor="crp-channel">Channel the stock sits in</Label>
+            <select
+              id="crp-channel"
+              className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm"
+              value={stored.channel}
+              onChange={e =>
+                setState({ channel: e.target.value as RepriceInput['channel'] })
+              }
+            >
+              {channelOptions.map(o => (
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="space-y-1">
+            <Label htmlFor="crp-print">Print cost per copy</Label>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">$</span>
+              <Input
+                id="crp-print"
+                type="number"
+                step="0.01"
+                value={stored.printCostPerUnit}
+                onChange={e => num(e.target.value, 'printCostPerUnit', { min: 0 })}
+              />
+            </div>
+          </div>
+          <div className="space-y-1">
+            <Label>
+              Print cost share: {((stored.printCostPerUnit / stored.retailPrice) * 100).toFixed(0)}%
+              of retail
+            </Label>
+          </div>
+        </div>
+
+        <div className="space-y-3 rounded-lg border p-4">
+          <h4 className="text-sm font-medium">Shelf life &amp; sell-through</h4>
+          <div className="space-y-1">
+            <Label htmlFor="crp-units">Units at shop(s)</Label>
+            <Input
+              id="crp-units"
+              type="number"
+              value={stored.unitsAtShop}
+              onChange={e => num(e.target.value, 'unitsAtShop', { min: 0 })}
+            />
+          </div>
+          <div className="space-y-1">
+            <Label htmlFor="crp-sold">Units sold per month (current price)</Label>
+            <Input
+              id="crp-sold"
+              type="number"
+              step="0.1"
+              value={stored.unitsSoldPerMonth}
+              onChange={e =>
+                num(e.target.value, 'unitsSoldPerMonth', { min: 0, allowEmpty: true })
+              }
+            />
+          </div>
+          <div className="space-y-2">
+            <Label>
+              Months in shop: {stored.monthsInShop}
+            </Label>
+            <Slider
+              value={[stored.monthsInShop]}
+              min={0}
+              max={24}
+              step={1}
+              onValueChange={v => setState({ monthsInShop: v[0] })}
+            />
+          </div>
+          <div className="space-y-1">
+            <Label htmlFor="crp-season">Season band</Label>
+            <select
+              id="crp-season"
+              className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm"
+              value={stored.seasonBand}
+              onChange={e =>
+                setState({ seasonBand: e.target.value as RepriceInput['seasonBand'] })
+              }
+            >
+              {seasonOptions.map(o => (
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div className="space-y-3 rounded-lg border p-4 sm:col-span-2">
+          <h4 className="text-sm font-medium">Re-price cost</h4>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-1">
+              <Label htmlFor="crp-rate">Your hourly rate</Label>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">$</span>
+                <Input
+                  id="crp-rate"
+                  type="number"
+                  value={stored.opportunityRate}
+                  onChange={e => num(e.target.value, 'opportunityRate', { min: 1 })}
+                />
+              </div>
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor="crp-hours">Hours to re-price</Label>
+              <Input
+                id="crp-hours"
+                type="number"
+                step="0.5"
+                value={stored.repriceHours}
+                onChange={e => num(e.target.value, 'repriceHours', { min: 0 })}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-3">
+        <div className="rounded-lg border p-4">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Banknote className="h-4 w-4" />
+            Net per unit now
+          </div>
+          <div className="mt-1 text-2xl font-semibold">
+            ${result.currentNetPerUnit.toFixed(2)}
+          </div>
+          <p className="mt-1 text-xs text-muted-foreground">
+            After split, fees &amp; print cost
+          </p>
+        </div>
+        <div className="rounded-lg border p-4">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Package className="h-4 w-4" />
+            Stock on hand
+          </div>
+          <div className="mt-1 text-2xl font-semibold">{monthsOfStock}</div>
+          <p className="mt-1 text-xs text-muted-foreground">
+            At {stored.unitsAtShop} units &amp; {stored.unitsSoldPerMonth}/mo
+          </p>
+        </div>
+        <div className="rounded-lg border p-4">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <TrendingDown className="h-4 w-4" />
+            Dead-stock risk
+          </div>
+          <div className="mt-1 text-2xl font-semibold">
+            ${result.deadStockRisk.toFixed(2)}
+          </div>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Sunk print cost if it never moves
+          </p>
+        </div>
+      </div>
+
+      <div className="rounded-lg border">
+        <div className="border-b px-4 py-2.5">
+          <h4 className="text-sm font-medium">Net per unit, by channel (at ${stored.retailPrice.toFixed(2)})</h4>
+        </div>
+        <div className="divide-y">
+          {result.channelNets.map(c => (
+            <div
+              key={c.channel}
+              className="flex items-center justify-between px-4 py-2 text-sm"
+            >
+              <span className="text-muted-foreground">
+                {c.channel} · {c.designerSharePct}% to you
+              </span>
+              <span className="font-medium">
+                ${c.netPerUnit.toFixed(2)}
+                <span className="ml-2 text-xs text-muted-foreground">
+                  (fees ${c.platformFeePerUnit.toFixed(2)})
+                </span>
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="rounded-lg border">
+        <div className="border-b px-4 py-2.5">
+          <h4 className="text-sm font-medium">The re-price ladder</h4>
+          <p className="text-xs text-muted-foreground">
+            Each step: price, your net per unit, months to clear current stock,
+            total net on {stored.unitsAtShop} units.
+          </p>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b text-left text-xs text-muted-foreground">
+                <th className="px-4 py-2">Step</th>
+                <th className="px-4 py-2">Price</th>
+                <th className="px-4 py-2">Net/unit</th>
+                <th className="px-4 py-2">Months to clear</th>
+                <th className="px-4 py-2">Total net</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y">
+              {result.ladder.map(step => {
+                const best = step.label === result.bestStep.label;
+                return (
+                  <tr
+                    key={step.label}
+                    className={
+                      best
+                        ? 'bg-primary/5 font-medium'
+                        : 'text-muted-foreground'
+                    }
+                  >
+                    <td className="px-4 py-2">
+                      {step.label}
+                      {best && (
+                        <span className="ml-2 rounded bg-primary px-1.5 py-0.5 text-[10px] font-semibold text-primary-foreground">
+                          BEST
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-4 py-2">
+                      {step.pricePctOfRetail > 0
+                        ? `$${step.price.toFixed(2)}`
+                        : `$${step.price.toFixed(2)} (online)`}
+                    </td>
+                    <td className="px-4 py-2">${step.netPerUnit.toFixed(2)}</td>
+                    <td className="px-4 py-2">{step.monthsToClear} mo</td>
+                    <td className="px-4 py-2">
+                      ${step.totalNetOnCurrentStock.toFixed(2)}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        <div className="border-t px-4 py-3 text-xs text-muted-foreground">
+          {result.bestStep.rationale}
+        </div>
+      </div>
+
+      {result.flags.length > 0 && (
+        <div className="space-y-2">
+          <h4 className="flex items-center gap-2 text-sm font-medium">
+            <Tag className="h-4 w-4" />
+            Watch-outs
+          </h4>
+          {result.flags.map((f, i) => {
+            const Icon = severityIcon[f.severity];
+            return (
+              <div
+                key={`${f.code}-${i}`}
+                className={`rounded-md border px-3 py-2 text-sm ${severityColor[f.severity]}`}
+              >
+                <div className="flex items-center gap-2 font-medium">
+                  <Icon className="h-4 w-4 shrink-0" />
+                  {f.code} · {f.title}
+                </div>
+                <p className="mt-0.5 text-xs opacity-80">{f.detail}</p>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      <div className="rounded-lg border border-primary/30 bg-primary/5 p-4">
+        <div className="flex items-start gap-3">
+          <CalendarClock className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+          <div>
+            <p className="text-sm font-semibold">Verdict</p>
+            <p className="mt-1 text-sm leading-relaxed">{result.verdict}</p>
+          </div>
+        </div>
+      </div>
+
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => {
+          setState({ ...defaultStored, ts: Date.now() });
+        }}
+      >
+        Reset to example
+      </Button>
+    </div>
+  );
+}
