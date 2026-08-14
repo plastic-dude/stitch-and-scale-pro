@@ -33,6 +33,38 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - Prioritize money-making: features that enable selling patterns, subscriptions, or premium tiers rank above internal tooling.
 
 ## Progress log (update each run)
+- [CHK-025] 88fd2f6 — Pattern License Planner (25th workspace tab,
+  'Licence It'):
+  17 tests; 427/427 overall green; typecheck + build pass.
+  Session-26 research (The Pattern Cloud licence tiers — non-exclusive,
+  extended commercial-use, exclusive = permanent worldwide buyout
+  removed from the designer's shop; Stitchcraft Marketing's 3 yarn-
+  company contract models — royalties/no exclusivity, royalties +
+  3-12 month window, non-exclusive licence purchase; designers
+  rejecting outright buyouts; Vogue Knitting \$500 flat + yarn support;
+  \$0.25/yd sample rate; buyout red flags: buyout-vs-exclusivity
+  confusion, royalty-only-no-fee trap, >12mo windows, territory
+  ambiguity, derivative/grading rights transfer, no reversion)
+  finds competitors expect designers to licence on gut feel — nobody
+  tools the decision against the pattern's projected self-sell
+  baseline. We make the rights decision a priced, audited choice.
+  Library pattern-license-planner.ts: analyzeLicenseOffer — five deal
+  structures (non-exclusive, extended, royalty non-exclusive,
+  royalty + window, full buyout); self-sell window value via the
+  shared platformNet seam; royalty leg with 10% reporting-lag
+  haircut; production-cost drag when the licensor doesn't cover
+  sample/photo/tech edit; buyout premium at 4x the window value
+  (surface-design multiple); 8-point rights audit (fee/royalty
+  structure, 12-month window cap, buyout multiple, territory,
+  derivative retention, credit/promo rights, payment lag,
+  production coverage); go/maybe/no verdict vs the labour floor;
+  24-month keep-vs-sell comparison; paste-ready counteroffer or
+  acceptance letter. keepVsLicense helper.
+  UI: pattern-license-card.tsx — baseline inputs (weight, platform,
+  price, sales, rate, hours, horizon), deal-structure selector with
+  conditional royalty/fee fields, rights switches, verdict badge,
+  rights audit cards, reply letter with copy button;
+  localStorage key pslc-v1.
 - [CHK-024] fc3f1bb — Inclusive Sizing & Adaptive Grading Analyzer
   (24th workspace tab, 'Inclusive'):
   13/13 tests; 410/410 overall green; typecheck + build pass.
