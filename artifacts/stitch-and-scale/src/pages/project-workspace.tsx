@@ -23,6 +23,7 @@ import { TestKnitCard } from '@/components/test-knit-card';
 import { TechEditCard } from '@/components/tech-edit-card';
 import { FinishGuideCard } from '@/components/finish-guide-card';
 import { LaunchCampaignCard } from '@/components/launch-campaign-card';
+import { TrunkShowCard } from '@/components/trunk-show-card';
 
 type RoundingMode = 'exact' | 'multiple' | 'even' | 'odd';
 
@@ -269,7 +270,7 @@ export default function ProjectWorkspace() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-13 md:w-fit bg-card border border-border h-12 p-1 overflow-x-auto">
+        <TabsList className="grid w-full grid-cols-14 md:w-fit bg-card border border-border h-12 p-1 overflow-x-auto">
           <TabsTrigger value="sections" className="font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             Sections
           </TabsTrigger>
@@ -308,6 +309,9 @@ export default function ProjectWorkspace() {
           </TabsTrigger>
           <TabsTrigger value="launch" className="font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             Launch
+          </TabsTrigger>
+          <TabsTrigger value="trunkshow" className="font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+            Trunk Show
           </TabsTrigger>
         </TabsList>
 
@@ -586,6 +590,9 @@ export default function ProjectWorkspace() {
         </TabsContent>
         <TabsContent value="launch" className="mt-6">
           <LaunchCampaignCard project={project} />
+        </TabsContent>
+        <TabsContent value="trunkshow" className="mt-6">
+          <TrunkShowCard project={project} />
         </TabsContent>
 
         <TabsContent value="notes" className="mt-6">
