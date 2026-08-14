@@ -33,6 +33,29 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - Prioritize money-making: features that enable selling patterns, subscriptions, or premium tiers rank above internal tooling.
 
 ## Progress log (update each run)
+- [CHK-019] 7984c0f — KAL & Collab ROI planner (19th workspace tab,
+  'KAL & Collab'):
+  23/23 tests; 316/316 overall green; typecheck + build pass.
+  Session-20 research (Ravelry Jan-2019 income distribution — top
+  10% earn >= USD 201/mo and only 3% clear USD 1,000/mo;
+  emmaknitty.com Working with Brands — small-design fee band
+  EUR 80-140, yarn-only pay for sized garments flagged, lump-sum
+  deals often transfer rights or impose resale price floors;
+  Knit Picks 10% affiliate with no posting requirements;
+  GAL free to join with self-set discount) finds designers run
+  KALs, giveaways and collabs on vibes with no revenue math.
+  Library kal-roi-planner.ts: analyzeKal (free/paid/sponsored KAL,
+  giveaway, sale-event formats — event sales + visibility tail +
+  cross-sell + affiliate + lead value vs platform fees, prize
+  costs and real hours, cited USD 12/hr bar); rightsChecklist
+  (rights transfer, self-resell, price floor, exclusivity window,
+  deliverable scope, yarn-only-for-sized-garment red flag);
+  estimateCollabFee (USD 80-140 base, +50% multi-size grading,
+  x2 for rights transfer, +15%/deliverable above 5);
+  generateCollabPitch (paste-ready brand outreach with KPIs).
+  UI: kal-roi-card.tsx, campaign/affiliate/costs inputs, live
+  verdict banner with net profit and effective hourly, rights
+  check and fee estimator behind switches, copy-ready pitch.
 - [CHK-018] d1048b3 — Submission Pipeline manager (18th workspace tab,
   'Pipeline'):
   14/14 tests; 293/293 overall green; typecheck + build pass.
