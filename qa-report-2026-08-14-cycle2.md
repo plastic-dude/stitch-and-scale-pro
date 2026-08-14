@@ -27,4 +27,11 @@ The four new workspace tabs were activated and inspected in full on the sample p
 
 Both are non-blocking. The previously reported critical items (#6 instant measurement delete, #7 no edit path) remain **unresolved** in this build; their code paths are unchanged and were confirmed not to regress.
 
+## QA Screenshots (appendix)
+Visual evidence from the cycle-2 hands-on session covering the four new tabs (Inclusive, Licence It, Members, Promo) and the dashboard regression check.
+
+![Cycle 2 — workspace with the 27-tab strip](qa-shots-cycle2/cycle2-01-new-tabs-27.png)
+![Cycle 2 — Members tab](qa-shots-cycle2/cycle2-02-members-tab.png)
+![Cycle 2 — Promo tab](qa-shots-cycle2/cycle2-03-promo-tab.png)
+
 *No code was modified. Report committed only to a `qa/` branch; `main` untouched. Prepared by Manus AI (QA role).*
