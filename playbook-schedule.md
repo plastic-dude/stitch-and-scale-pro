@@ -33,6 +33,28 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - Prioritize money-making: features that enable selling patterns, subscriptions, or premium tiers rank above internal tooling.
 
 ## Progress log (update each run)
+- [CHK-049] 7e44abc — Inbox sweep + Platform Compare in Teach tab
+  (47th feature). Inbox swept at f08f9cc: two new issues #25-#26
+  (pricing tier label, KAL revenue overflow). Both stale: fixes
+  already at HEAD (CHK-038, 7939fa0); counter-evidence posted,
+  both closed.
+  Research angle: course-platform economics (never covered) —
+  session-49 facts: School of Stitchery $24/mo library, 115+
+  courses; Craftsy quarterly royalties, no teacher dashboard;
+  Udemy teacher share eroded 37% -> 20% -> 15-20% by 2026, coupons
+  never teacher-controlled; Skillshare 30% minutes pool, avg~
+  $200/mo per teacher; Domestika advance+royalty; hosted guild days
+  $300-1,000/day; LYS class ~$85/3h; UK shop rates £175-200/6h.
+  Platform Compare section in Teach tab: five teaching-income
+  models (self-hosted ~95% keep flat tooling, flat-fee day,
+  per-seat class, minutes-royalty pool, coupon-eroded rev share)
+  normalized to effective net $/teacher-hour against the pattern
+  hourly rate, winner highlighted in emerald, per-model verdicts
+  citing documented market data (Udemy erosion band, $300 market
+  floor, UK rates, SOS/Skillshare pool facts). Inputs persist via
+  the projectStorage seam. 15 new lib tests; suite 874 tests;
+  typecheck + vitest + build green. Screenshot:
+  docs/screenshots/platform-compare.webp.
 - [CHK-048] f08f9cc — Inbox sweep + Listing SEO Lab (46th
   feature). Inbox swept at 8bf2a24: three new issues #27-#29
   (yarn-buy swatch switch no-op, buffer label precision,
