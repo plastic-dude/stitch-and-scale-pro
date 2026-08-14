@@ -33,6 +33,32 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - Prioritize money-making: features that enable selling patterns, subscriptions, or premium tiers rank above internal tooling.
 
 ## Progress log (update each run)
+- [CHK-021] 41f25d4 — Club Revenue Model (21st workspace tab,
+  'Club Rev'):
+  23/23 tests; 355/355 overall green; typecheck + build pass.
+  Session-22 research (Patreon-style retention bars: 65% retained
+  at 3 months = good, 78% = great per Bonjoro's creator analysis;
+  small creators commonly churn 25-35% a year per market.us;
+  Double The Stitches Pattern Club — \$7/mo or \$77/yr founding
+  price lock, 10-day cancellation notice, no annual refunds,
+  2-tier ladder with Stitch Society premium; mediaperuana cost
+  model 55 hours / \$155 direct costs per pattern / \$67/mo
+  overhead) finds designers price clubs on copycat numbers with
+  no churn, breakeven or premium-tier math.
+  Library club-revenue-planner.ts: modelClub (12-month churn /
+  signup simulation, churn verdict healthy/typical/bleeding vs
+  the cited bars, breakeven members, member LTV and marketing
+  payback, effective hourly vs the \$12 bar, premium-tier verdict
+  worth/add-more/cut/skip against a self-publishing comparison,
+  policy checks — 10-day notice, no-refund chargeback risk,
+  price-lock anchoring, lifetime access as retention lever — and
+  a day-0/30/60/90 retention calendar); auditPremiumTier (6 core
+  perks, score/6 with per-gap notes); generateFoundingOfferEmail
+  (price-lock founding cohort email).
+  UI: club-revenue-card.tsx, membership/churn inputs with live
+  MRR/projection/LTV/payback readouts, premium audit panel,
+  retention calendar, launch email and 12-month table behind
+  switches; localStorage key kskclubrev-v1.
 - [CHK-020] 3f1855e — Channel & Funnel Planner (20th workspace tab,
   'Channels'):
   16/16 tests; 332/332 overall green; typecheck + build pass.
