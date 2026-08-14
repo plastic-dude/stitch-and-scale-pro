@@ -33,6 +33,32 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - Prioritize money-making: features that enable selling patterns, subscriptions, or premium tiers rank above internal tooling.
 
 ## Progress log (update each run)
+- [CHK-038] 7939fa0 — KAL Planner (37th tab 'KAL Planner')
+  + reviewer fixes #14/#25/#26:
+  New kal-planner.ts models the four KAL formats (launch /
+  mystery / guild / seasonal): P&L incl. designer hours,
+  launch-window uplift (2-4x, decaying), 8-week afterglow,
+  prize+sponsor offset, prize-recovery copies/weeks, 4-week
+  mystery clue calendar, fee income, and red flags K-01..K-06
+  (prizes outrun revenue, <$10 prizes, squeezed mystery
+  schedule, unpaid labour, no sample budget, fee-free
+  guild/seasonal). Storage via projectStorage 'kalplanner'.
+  14 new tests (kal-planner), 665 total (39 files).
+  Research session 38 (KAL economics): Ravelry's best-ever
+  January averaged $203/designer (72% under $50);
+  sweater pattern = 55 hrs + $155 direct costs; typical KAL
+  prizes $10-50 with yarn-company sponsors (Malabrigo,
+  Hobbii); mystery KALs = 4 weekly clues (Westknits MSKAL);
+  Ravelry offers only calendar+group — no P&L tooling.
+  Fixes: #14 promo 'Projected net +$-282' sign bug
+  (signed$ formatter in promotion-planner); #25 Teach tab
+  flat-fee formats (hide EB/installment/ladder/seat-break-even
+  in guild/workshop/day-rate, show day-rate economics);
+  #26 hosted quick-check denominator (used prepHours instead
+  of totalHours; added hostedHoursPerSession/
+  hostedSessions fields).
+  Typecheck + 665 tests + build green; verified in-browser
+  (launch KAL demo: net -$332, K-04 unpaid-labour flag).
 - [CHK-037] 396c1c9 — Storage-seam sweep + fixes + Yarn Buy
   Calculator (36th tab 'Yarn Buy'):
   Storage seam: projectStorage<T> helper in storage-lib.ts
