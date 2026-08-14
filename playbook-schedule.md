@@ -33,6 +33,38 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - Prioritize money-making: features that enable selling patterns, subscriptions, or premium tiers rank above internal tooling.
 
 ## Progress log (update each run)
+- [CHK-033] 8b212e6 — Protect — Copyright Protection
+  Planner (33rd workspace tab, 'Protect'):
+  Session-34 research (see research/competitors-session-34-
+  copyright-protection.md): piracy protection for pattern
+  designers is a service gap — photo-centric enforcement
+  shops take ~50% of fees, brand monitors run $249+/mo, and
+  72.3% of Ravelry designers earn <$50/yr. Etsy removed
+  346,000+ counterfeit listings in one year. Patterns are
+  protectable literary/artistic works (automatic copyright,
+  life+70); stitch types/methods never are — the license and
+  the URL evidence are the fence.
+  Library copyright-protection.ts: analyzeProtection —
+  leak-exposure valuation (5-30% leak-share band: watermark
+  x0.6, unique links x0.7, multi-platform x0.9), lost-net
+  and response-budget-per-incident (designer rate),
+  fight-worth-it call; license-terms strength audit (0-100
+  score, priced gaps, CP-01 on open commercial boundaries);
+  prevention score; watch-word generator (pattern + designer
+  name, Pinterest/filetype queries); 6-item evidence pack;
+  5-step escalation ladder with the 10-business-day
+  counter-notice deadline (CP-05 on lapse); buildDmcaNotice
+  with all 6 required DMCA elements for Etsy/Ravelry/
+  Pinterest/Shopify.
+  UI: copyright-protection-card.tsx — verdict + exposure +
+  license-strength + prevention-score tiles, red-flag rail,
+  leak-pricing inputs, prevention stack, license boundary
+  toggles with gap notes, watch-word copy buttons, evidence
+  checklist, date-tracked escalation ladder, copyable DMCA
+  notice. Storage-seam key stitch-and-scale-protect-{id}.
+  15 tests; gates: 561/561 (35 files) + typecheck + build
+  green; tab visually verified in-browser; issue #17
+  commented + closed; #4 seen/deferred to CHK-034.
 - [CHK-032] 3393aad — Reviewer fix #5 S030 + Book It — PoD Book
   Builder (32nd workspace tab, 'Book It'):
   Fix first (MAJOR S030): the bundle planner UI now collects
