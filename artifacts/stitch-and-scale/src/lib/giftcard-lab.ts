@@ -169,7 +169,13 @@ function simulate(input: GiftCardInput) {
   // breakage — extend the simulation window to at least dormancy + lag so
   // breakage (kept or escheated) is visible at any horizon
   const horizon = Math.max(1, Math.max(Math.round(input.horizonMonths), Math.round(input.dormancyMonths) + lag));
-  const escheat = clamp(input.escheatTakePct, 0, 1);
+  // escheatMode is the governing control; escheatTakePct is the legacy
+  // percent path. Resolve: a mode maps to its standard take (none = 0,
+  // partial60 = 0.6, full = 1); if the stored percent differs from the
+  // mode's standard take it counts as an explicit override and wins.
+  const escheat = resolvedEscheatTake(input);
+  // one resolved take for the whole analysis: breakage kept / surrendered /
+  // ASC 606 recognition and the flags all read this single number
   const cashBack = Math.max(0, input.cashBackThreshold);
 
   // cohorts[m] = face value of cards sold in month m still outstanding
@@ -246,6 +252,16 @@ function simulate(input: GiftCardInput) {
   };
 }
 
+// resolves escheatMode into the effective take — the select controls the
+// math (issue #48: the select was written but never read). "full" and "none"
+// are absolute law-driven bands (100% / 0%); only the 60%-class mode reads
+// the percent field, which is where any custom share lives.
+export function resolvedEscheatTake(input: Pick<GiftCardInput, "escheatMode" | "escheatTakePct">): number {
+  if (input.escheatMode === "full") return 1;
+  if (input.escheatMode === "none") return 0;
+  return clamp(input.escheatTakePct, 0, 1);
+}
+
 export function analyzeGiftCard(input: GiftCardInput): GiftCardResult {
   const flags: FlagDetail[] = [];
   const sales = Math.max(0, input.cardSalesPerMonth);
@@ -253,6 +269,7 @@ export function analyzeGiftCard(input: GiftCardInput): GiftCardResult {
   const redeemPct = clamp(input.redemptionRate, 0, 1);
   const uplift = clamp(input.spendUpliftPct, 0, 1);
   const sim = simulate(input);
+  const escheat = resolvedEscheatTake(input);
 
   const processingFees = sales * input.processingPct * input.horizonMonths;
   const upliftValue = sim.totalRedemptions * uplift;
@@ -272,7 +289,7 @@ export function analyzeGiftCard(input: GiftCardInput): GiftCardResult {
   if (expectedTotalRedeemed + expectedBreakage > 0) {
     const proportion =
       sim.totalRedemptions /
-      (sim.totalRedemptions + expectedBreakage * (1 - input.escheatTakePct));
+      (sim.totalRedemptions + expectedBreakage * (1 - escheat));
     recognizedRevenue =
       sim.totalCash + proportion * Math.min(sim.totalBreakageKept, sales * input.horizonMonths * breakageEstimate);
   }
@@ -316,7 +333,7 @@ export function analyzeGiftCard(input: GiftCardInput): GiftCardResult {
       severity: "mid",
     });
   }
-  if (input.escheatTakePct >= 0.5) {
+  if (escheat >= 0.5) {
     flags.push({
       code: "GC-03",
       title: "Heavy escheat exposure",

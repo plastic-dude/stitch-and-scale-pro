@@ -182,4 +182,32 @@ describe("gift-card lab engine", () => {
     expect(r.stabilizationMonths).toBeLessThanOrEqual(r.horizonMonths ?? 36);
   });
 
+  // issue #48: escheatMode select was dead state — the engine now reads it
+  it("escheatMode governs the take even when the percent field shows 60%", () => {
+    // the exact reported defect: select changed but math stayed at 60% basis
+    const fullDefault = run({ escheatMode: "full" }); // takePct left at default 0.6
+    const partial = run({ escheatMode: "partial60" });
+    const exempt = run({ escheatMode: "none" });
+    expect(fullDefault.keptBreakage).toBe(0); // 100% escheat despite 0.6 field
+    expect(fullDefault.escheatSurrender).toBeGreaterThan(partial.escheatSurrender);
+    expect(exempt.keptBreakage).toBeGreaterThan(partial.keptBreakage);
+    expect(exempt.escheatSurrender).toBe(0);
+  });
+
+  it("in the 60%-class mode the percent field tunes the take", () => {
+    const custom = run({ escheatMode: "partial60", escheatTakePct: 0.8 });
+    const standard = run({ escheatMode: "partial60", escheatTakePct: 0.6 });
+    expect(custom.escheatSurrender).toBeGreaterThan(standard.escheatSurrender);
+    expect(custom.keptBreakage).toBeLessThan(standard.keptBreakage);
+  });
+
+  it("the percent field is ignored when the mode is full or none (absolute bands)", () => {
+    const fullWithPartialField = run({ escheatMode: "full", escheatTakePct: 0.2 });
+    const full = run({ escheatMode: "full" });
+    const noneWithField = run({ escheatMode: "none", escheatTakePct: 0.9 });
+    const none = run({ escheatMode: "none" });
+    expect(fullWithPartialField.keptBreakage).toBeCloseTo(full.keptBreakage, 0);
+    expect(fullWithPartialField.escheatSurrender).toBeCloseTo(full.escheatSurrender, 0);
+    expect(noneWithField.keptBreakage).toBeCloseTo(none.keptBreakage, 0);
+  });
 });

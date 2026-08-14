@@ -116,6 +116,14 @@ function StatBox(props: { label: string; value: string; tone?: "good" | "warn" |
   );
 }
 
+function effectiveEscheatTake(input: GiftCardInput): number {
+  // mirrors the engine's absolute-mode resolution (see issue #48):
+  // full = 100%, none = 0%, the 60%-class reads the percent field
+  if (input.escheatMode === "full") return 1;
+  if (input.escheatMode === "none") return 0;
+  return input.escheatTakePct;
+}
+
 export function GiftCardLabCard({ project }: { project: PatternProject }) {
   const [input, setInput] = useState<GiftCardInput>(() => loadStored(project));
 
@@ -245,7 +253,7 @@ export function GiftCardLabCard({ project }: { project: PatternProject }) {
                 </SelectContent>
               </Select>
               <p className="text-[11px] leading-tight text-muted-foreground">
-                Share of unredeemed balances the state takes: {Math.round(input.escheatTakePct * 100)}%.
+                Share of unredeemed balances the state takes: {Math.round(effectiveEscheatTake(input) * 100)}%.
               </p>
             </div>
             <NumField
