@@ -44,6 +44,42 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - [CHK-063] e9cfc02 — Release Timing Lab (61st tab).
 - [CHK-064] 83f9b55 — Workshop Teaching Lab (62nd tab).
 - [CHK-065] 5f91403 — Consignment Re-Price Lab (63rd tab).
+- [CHK-066] 0175d76 — Pattern Bundle Lab (64th tab).
+  Inbox swept: no new reviewer proposals (11 open
+  issues remain reviewer-directed INFO notes; QA cycles
+  32/33 branches copy/consistency INFO; no open PRs).
+  Research angle: designer-run multi-designer pattern
+  bundle launch economics (distinct from session 27's
+  yarn-company bundles) — session-66 facts: a $25 bundle
+  at 200 sales is $5,000 gross — the fastest revenue spike
+  a long-tail designer gets (top-10% designers clear
+  ~$201/mo per mediaperuana top-10 benchmark); bundle hosts
+  charge 10-25% commissions (median ~20%) with opaque
+  per-designer splits; the deal norm is 40-60% off the sum
+  of standalone prices; weighted-by-price splits are the
+  market norm vs equal splits; bundle launches stack every
+  designer's email list and the first-year value of a new
+  lead is ~$2.50/lead; bundles that discount without adding
+  volume lose every designer money; sources gosadi.com
+  where-to-sell-knitting-patterns, mediaperuana.com/blog1
+  /designerincome, facebook Stranded Knits group
+  7401281806589696, help.ravelry.com bundle search.
+  Pattern Bundle Lab in a new tab: add/remove your patterns
+  (price + realistic solo sales per month each), bundle
+  price, host commission vs the 10-25% norm, weighted vs
+  equal split modes, launch window, worst/realistic/best
+  sales scenarios with your share %, gross, net (promo
+  labor and lead value priced in), solo-window baseline,
+  gain/loss per scenario, effective $/hr, discount depth vs
+  the 40-60% norm, break-even and host-floor sales, email
+  capture value, PB-01..PB-08 flags (shallow discount,
+  deep discount, host commission above band, below-floor
+  launch, underpaid promo labor, heavy promo load,
+  small-audience risk, floor demand miss), verdict ladder
+  (skip/re-negotiate/host-carry/host it/teach it).
+  +24 lib tests; suite 1,268 tests / 66 files;
+  typecheck + vitest + build green. Screenshot:
+  docs/screenshots/pattern-bundle-lab.webp.
   Inbox swept: no new reviewer proposals (11 open
   issues remain reviewer-directed INFO notes; QA cycle
   32 branch copy/consistency INFO; no open PRs).
