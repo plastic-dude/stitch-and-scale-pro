@@ -298,6 +298,9 @@ export function analyzePromotion(input: PromotionInput): PromotionResult {
   const maybes = channelResults.filter((c) => c.verdict === 'maybe');
   const paidChannelsActive = channelResults.filter((c) => c.enabled && c.isPaid && c.spend > 0);
 
+  // Issue #14: consistent signed money display — '+$282' positive, '−$282'
+  // negative; never '+$-282'.
+  const signed$ = (n: number) => (n >= 0 ? '+$' + n.toFixed(0) : '−$' + Math.abs(n).toFixed(0));
   let verdict: PromotionResult['verdict'] = 'go';
   let verdictNote = '';
   if (kills.some((c) => c.id === 'etsyOnsite')) {
@@ -308,10 +311,10 @@ export function analyzePromotion(input: PromotionInput): PromotionResult {
     verdictNote = `Total expected profit −$${Math.abs(totalExpectedProfit).toFixed(0)} — paid spend loses money before it earns it. Pause onsite ads and rebuild the listing.`;
   } else if (maybes.length > 0) {
     verdict = 'maybe';
-    verdictNote = `Projected net ${totalExpectedProfit >= 0 ? '+$' + totalExpectedProfit.toFixed(0) : '−$' + Math.abs(totalExpectedProfit).toFixed(0)} but ${maybes.map((m) => m.label).join(', ')} need monitoring — run the 30-day test below and apply the kill rule.`;
+    verdictNote = `Projected net ${signed$(totalExpectedProfit)} but ${maybes.map((m) => m.label).join(', ')} need monitoring — run the 30-day test below and apply the kill rule.`;
   } else {
     verdict = 'go';
-    verdictNote = `Projected net ${totalExpectedProfit >= 0 ? '+$' + totalExpectedProfit.toFixed(0) : '−$' + Math.abs(totalExpectedProfit).toFixed(0)} over ${horizonMonths} month(s) on top of the $${grossBaseline.toFixed(0)} baseline — the organic ladder carries this campaign.`;
+    verdictNote = `Projected net ${signed$(totalExpectedProfit)} over ${horizonMonths} month(s) on top of the $${grossBaseline.toFixed(0)} baseline — the organic ladder carries this campaign.`;
   }
 
   const testPlan = [

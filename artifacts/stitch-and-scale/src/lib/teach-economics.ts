@@ -85,6 +85,10 @@ export interface TeachInput {
   platformCut: number;
   /** How much the same hours would earn per hour if spent selling PDFs instead, $/hr. */
   patternHourlyRate: number;
+  /** Issue #26: hours per session used by the hosted-offer quick check (defaults 4). */
+  hostedHoursPerSession?: number;
+  /** Issue #26: session count used by the hosted-offer quick check (defaults 1). */
+  hostedSessions?: number;
 }
 
 export const DEFAULT_TEACH: TeachInput = {

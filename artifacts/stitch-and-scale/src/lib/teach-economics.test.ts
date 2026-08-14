@@ -350,3 +350,59 @@ describe('guard rails', () => {
     expect(Number.isNaN(r.breakEvenStudents)).toBe(false);
   });
 });
+
+// Regression tests for reviewer issues #25 and #26 (QA cycle 8).
+describe('flat-fee formats (issue #25)', () => {
+  it('guildFlatFee gross is the fee itself (via pricing ladder), not multiplied by students', () => {
+    const r = analyzeTeachingOffer({
+      format: 'guildFlatFee', ticketPrice: 500, expectedStudents: 30,
+      earlyBirdDiscount: 0, earlyBirdShare: 0, installmentPremium: 0, installmentShare: 0,
+    });
+    // With the pricing ladder neutralized, a flat-fee day gross must equal the
+    // fee itself — the $500 is paid once, no per-student ramp.
+    expect(r.gross).toBe(500);
+    expect(r.netOfRefunds).toBeLessThanOrEqual(500);
+  });
+  it('lysClass gross scales by students and per-student total, not a one-time fee', () => {
+    const r = analyzeTeachingOffer({
+      format: 'lysClass', ticketPrice: 40, expectedStudents: 6,
+      earlyBirdDiscount: 0, earlyBirdShare: 0, installmentPremium: 0, installmentShare: 0,
+    });
+    // per-student class: $40 × 6 students × 1 session, minus 7% default refunds.
+    expect(r.gross).toBe(240);
+    expect(r.netOfRefunds).toBeCloseTo(223.2, 1);
+  });
+  it('flat-fee verdict ladder still works at a realistic day rate', () => {
+    const strong = analyzeTeachingOffer({
+      format: 'guildFlatFee', ticketPrice: 800, prepHours: 12, hourlyRate: 40,
+      patternHourlyRate: 32, materialCost: 50, platformMonthlyCost: 0,
+      refundRate: 0, earlyBirdDiscount: 0, earlyBirdShare: 0,
+      installmentPremium: 0, installmentShare: 0,
+    });
+    // 800 fee − production (12×40=480) − materials 50 = 270 net.
+    expect(strong.profit).toBe(270);
+    const weak = analyzeTeachingOffer({
+      format: 'guildFlatFee', ticketPrice: 150, prepHours: 20, hourlyRate: 60,
+      patternHourlyRate: 32, refundRate: 0,
+    });
+    // 150 fee − production (20×60=1,200) = deep loss.
+    expect(weak.profit).toBeLessThan(0);
+  });
+});
+describe('hosted quick-check headline (issue #26)', () => {
+  it('uses the same hours denominator in the net sentence as the rate divides by', () => {
+    const h = analyzeHostedOffer({
+      model: 'flatFee', flatFee: 500, outOfPocket: 40,
+      hoursPerSession: 6, sessions: 2, hourlyRate: 45, patternHourlyRate: 32,
+    });
+    const totalHours = 6 * 2;
+    // effectiveHourlyRate must be net / totalHours — the headline denominator.
+    expect(h.effectiveHourlyRate).toBe(Math.round(((500 - 40) / totalHours) * 100) / 100);
+  });
+  it('default hosted inputs still use the documented 4h denominator', () => {
+    const h = analyzeHostedOffer({
+      model: 'flatFee', flatFee: 400, hourlyRate: 45, patternHourlyRate: 32,
+    });
+    expect(h.effectiveHourlyRate).toBe(100); // 400 / 4h
+  });
+});

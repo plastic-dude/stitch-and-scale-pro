@@ -103,15 +103,20 @@ export function TeachEconomicsCard({ project: _project }: { project: PatternProj
     flatFee: stored.input.ticketPrice,
     perStudentPrice: stored.input.ticketPrice,
     students: hostedMode ? gradStudents : undefined,
-    hoursPerSession: 4,
-    sessions: 1,
+    hoursPerSession: stored.input.hostedHoursPerSession ?? 4,
+    sessions: Math.max(1, Math.round(stored.input.hostedSessions ?? 1)),
     hourlyRate: stored.input.hourlyRate,
     patternHourlyRate: stored.input.patternHourlyRate,
     outOfPocket: stored.input.materialCost,
   }), [hostedMode, stored.input.ticketPrice, stored.input.hourlyRate,
-    stored.input.patternHourlyRate, stored.input.materialCost, gradStudents]);
+    stored.input.patternHourlyRate, stored.input.materialCost, gradStudents,
+    stored.input.hostedHoursPerSession, stored.input.hostedSessions]);
 
   const ladder = useMemo(() => buildPricingLadder(stored.input.ticketPrice), [stored.input.ticketPrice]);
+
+  // Issue #26: the headline must state the same hours the ≈$/hr rate divides by.
+  const hostedTotalHours = Math.max(1, Math.round(stored.input.hostedHoursPerSession ?? 4)) *
+    Math.max(1, Math.round(stored.input.hostedSessions ?? 1));
 
   const copy = async (text: string) => {
     try {
@@ -176,6 +181,12 @@ export function TeachEconomicsCard({ project: _project }: { project: PatternProj
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <NumField id="teach-materials" label="Materials / travel out-of-pocket" value={stored.input.materialCost}
               min={0} step={5} onChange={(n) => patchInput({ materialCost: n })} suffix="$" />
+            <NumField id="teach-hosted-hours" label="Hours per session"
+              value={stored.input.hostedHoursPerSession ?? 4} min={1} max={12}
+              onChange={(n) => patchInput({ hostedHoursPerSession: Math.min(12, Math.max(1, n)) })} suffix="h" />
+            <NumField id="teach-hosted-sessions" label="Sessions"
+              value={stored.input.hostedSessions ?? 1} min={1} max={10}
+              onChange={(n) => patchInput({ hostedSessions: Math.min(10, Math.max(1, n)) })} />
             <NumField id="teach-students" label="Expected students (0 = project from list)" value={stored.input.expectedStudents}
               min={0} onChange={(n) => patchInput({ expectedStudents: n })} />
             <NumField id="teach-conversion" label="List conversion" value={stored.input.listConversion}
@@ -185,6 +196,7 @@ export function TeachEconomicsCard({ project: _project }: { project: PatternProj
               min={0} max={0.5} step={0.01}
               onChange={(n) => patchInput({ refundRate: Math.min(0.5, n) })} suffix="share" />
           </div>
+          {!isCourse && (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="space-y-1.5">
               <Label htmlFor="teach-eb-pct" className="text-xs">Early-bird discount</Label>
@@ -223,12 +235,15 @@ export function TeachEconomicsCard({ project: _project }: { project: PatternProj
               </div>
             </div>
           </div>
+          )}
+          {isCourse && (
           <p className="text-xs text-muted-foreground">
             Benchmarks baked in: hosted workshops pay teachers $300–1,000/day with break-even at ~8
             students; tickets run $75–150/day in North America; self-paced flagships cluster at
             $500–600 (Pip &amp; Pin charges $548 / $99×6); enrollment from an owned list realistically
             lands at 1–3%.
           </p>
+          )}
         </div>
 
         {/* Verdict */}
@@ -266,6 +281,7 @@ export function TeachEconomicsCard({ project: _project }: { project: PatternProj
 
         {/* Break-even & payback */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {isCourse ? (
           <div className="rounded-lg border bg-muted/30 p-4">
             <div className="text-xs text-muted-foreground">Break-even seats</div>
             <div className="text-xl font-bold">
@@ -275,10 +291,20 @@ export function TeachEconomicsCard({ project: _project }: { project: PatternProj
               of ~{result.students} projected — {result.students >= result.breakEvenStudents ? 'covers costs' : 'falls short'}
             </div>
           </div>
+          ) : (
+          <div className="rounded-lg border bg-muted/30 p-4">
+            <div className="text-xs text-muted-foreground">Day-rate economics</div>
+            <div className="text-xl font-bold">{fmt$(stored.input.ticketPrice)} / day</div>
+            <div className="text-xs text-muted-foreground mt-1">
+              vs market floor $300–1,000/day — {stored.input.ticketPrice >= 300 ? 'within market' : stored.input.ticketPrice > 0 ? 'below market floor' : 'no fee set'}
+            </div>
+          </div>
+          )}
           <div className="rounded-lg border bg-muted/30 p-4">
             <div className="text-xs text-muted-foreground">Payback (weeks to recover production)</div>
             <div className="text-xl font-bold">{result.paybackWeeks !== null ? `${result.paybackWeeks}` : '—'}</div>
           </div>
+          {isCourse ? (
           <div className="rounded-lg border bg-muted/30 p-4">
             <div className="text-xs text-muted-foreground">Blended ticket</div>
             <div className="text-xl font-bold">{fmt$(result.tickets.blended)}</div>
@@ -287,6 +313,19 @@ export function TeachEconomicsCard({ project: _project }: { project: PatternProj
               installment {fmt$(result.tickets.installment)}
             </div>
           </div>
+          ) : (
+          <div className="rounded-lg border bg-muted/30 p-4">
+            <div className="text-xs text-muted-foreground">Payback of production time</div>
+            <div className="text-xl font-bold">
+              {stored.input.prepHours > 0 && stored.input.ticketPrice > 0
+                ? `${Math.round(stored.input.ticketPrice / Math.max(1, Math.round(stored.input.prepHours)))}$ earned per production hour`
+                : '—'}
+            </div>
+            <div className="text-xs text-muted-foreground mt-1">
+              Flat-fee day pays the day's work directly — no per-student ramp needed.
+            </div>
+          </div>
+          )}
         </div>
 
         {/* Hosted format panel */}
@@ -308,9 +347,11 @@ export function TeachEconomicsCard({ project: _project }: { project: PatternProj
             </div>
             <div className="text-sm text-muted-foreground">
               Net: <span className="font-semibold text-foreground">{fmt$(hosted.net)}</span> over{' '}
-              {Math.round(stored.input.prepHours > 0 ? Math.max(1, stored.input.prepHours / 8) * 4 : 4)}h of
-              teaching ≈ <span className="font-semibold text-foreground">{fmt$(hosted.effectiveHourlyRate)}/hr</span>
+              {hostedTotalHours}h of teaching ≈ <span className="font-semibold text-foreground">{fmt$(hosted.effectiveHourlyRate)}/hr</span>
               {' '}({hosted.vsPatternMultiple}× your pattern rate).
+            </div>
+            <div className="text-xs text-muted-foreground">
+              Flat fee {fmt$(stored.input.ticketPrice)} minus out-of-pocket {fmt$(stored.input.materialCost)} over the session hours above.
             </div>
             <div className="rounded-lg border bg-muted/30 px-4 py-2 text-sm">{hosted.advice}</div>
           </div>
@@ -332,6 +373,7 @@ export function TeachEconomicsCard({ project: _project }: { project: PatternProj
         )}
 
         {/* Pricing ladder */}
+        {isCourse && (
         <div className="space-y-2">
           <div className="font-semibold text-sm">Engineered price ladder for your page</div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -353,22 +395,25 @@ export function TeachEconomicsCard({ project: _project }: { project: PatternProj
             </div>
           </div>
         </div>
+        )}
 
         {/* Pitch copy */}
         <div className="space-y-2">
-          <div className="font-semibold text-sm">Copy-paste tier copy for the offer page</div>
-          <div className="rounded-lg border bg-muted/30 p-4 text-xs whitespace-pre-line font-mono">
-            {`Early-bird tier — ${fmt$(ladder.earlyBird)} (limited seats, first ${Math.max(
-              4, Math.round(result.students * 0.25))} enrollees)
-Standard — ${fmt$(ladder.standard)}
-Installments — ${fmt$(ladder.installment)} paid over 3 months (no interest, cancels anytime)
-
-Includes: the full pattern library for this collection, lifetime access, and a 30-day refund window.`}
+          <div className="font-semibold text-sm">
+            {isCourse ? 'Copy-paste tier copy for the offer page' : 'Copy-paste booking copy for the flat-fee day'}
+          </div>
+                    <div className="rounded-lg border bg-muted/30 p-4 text-xs whitespace-pre-line font-mono">
+            {isCourse
+              ? `Early-bird tier — ${fmt$(ladder.earlyBird)} (limited seats, first ${Math.max(
+                  4, Math.round(result.students * 0.25))} enrollees)\nStandard — ${fmt$(ladder.standard)}\nInstallments — ${fmt$(ladder.installment)} paid over 3 months (no interest, cancels anytime)\nIncludes: the full pattern library for this collection, lifetime access, and a 30-day refund window.`
+              : `One day, one fee — ${fmt$(stored.input.ticketPrice)} for the full class.\nIncludes: all techniques taught hands-on, a printed handout for every student, and a 30-day refund window.\nMaterials: bring ${stored.input.materialCost > 0 ? fmt$(stored.input.materialCost) + ' of yarn or materials' : 'your own needles and a willingness to learn'}; everything else is on the house.`}
           </div>
           <Button variant="outline" size="sm"
             onClick={() => copy(
-              `Early-bird tier — ${fmt$(ladder.earlyBird)} (limited seats, first ${Math.max(
-                4, Math.round(result.students * 0.25))} enrollees)\nStandard — ${fmt$(ladder.standard)}\nInstallments — ${fmt$(ladder.installment)} paid over 3 months (no interest, cancels anytime)\n\nIncludes: the full pattern library for this collection, lifetime access, and a 30-day refund window.`)}>
+              isCourse
+                ? `Early-bird tier — ${fmt$(ladder.earlyBird)} (limited seats, first ${Math.max(
+                    4, Math.round(result.students * 0.25))} enrollees)\nStandard — ${fmt$(ladder.standard)}\nInstallments — ${fmt$(ladder.installment)} paid over 3 months (no interest, cancels anytime)\n\nIncludes: the full pattern library for this collection, lifetime access, and a 30-day refund window.`
+                : `One day, one fee — ${fmt$(stored.input.ticketPrice)} for the full class.\nIncludes: all techniques taught hands-on, a printed handout for every student, and a 30-day refund window.`)}>
             <ClipboardCopy className="h-3.5 w-3.5 mr-1.5" /> Copy tier copy
           </Button>
         </div>
