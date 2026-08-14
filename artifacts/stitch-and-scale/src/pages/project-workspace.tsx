@@ -20,7 +20,7 @@ import { NativeSelect } from '@/components/ui/native-select';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { generateId, PatternSection, SectionMeasurement, MeasurementType, GradingKey, GRADING_KEY_LABELS, ALL_SIZES, gradePattern, resolveProjectStandards } from '@/lib/grading-engine';
-import { Plus, Edit2, Trash2, ArrowRight, Table as TableIcon, Copy, Settings, ChevronDown, ChevronRight, Calculator, FlaskConical, PenLine, ClipboardCheck, Camera, FileText, Library, Tag, Target, Sparkles, FileCheck2 } from 'lucide-react';
+import { Plus, Edit2, Trash2, ArrowRight, Table as TableIcon, Copy, Settings, ChevronDown, ChevronRight, Calculator, FlaskConical, PenLine, ClipboardCheck, Camera, Video, FileText, Library, Tag, Target, Sparkles, FileCheck2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useSettings } from '@/context/SettingsContext';
@@ -70,6 +70,7 @@ import { AdBreakEvenCard } from '@/components/ad-break-even-card';
 import { SampleLaunchLabCard } from '@/components/sample-launch-lab-card';
 import { CollabDealMathCard } from '@/components/collab-deal-math-card';
 import { PhotoRoiLabCard } from '@/components/photo-roi-lab-card';
+import { VideoSocialLabCard } from '@/components/video-social-lab-card';
 
 type RoundingMode = 'exact' | 'multiple' | 'even' | 'odd';
 
@@ -587,6 +588,9 @@ export default function ProjectWorkspace() {
           <TabsTrigger value="photolab" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             <Camera className="h-3.5 w-3.5 mr-1.5" /> Photo ROI
           </TabsTrigger>
+          <TabsTrigger value="videosocial" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+            <Video className="h-3.5 w-3.5 mr-1.5" /> Video &amp; Social
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="sections" className="mt-6 space-y-6">
@@ -1031,6 +1035,9 @@ export default function ProjectWorkspace() {
         </TabsContent>
         <TabsContent value="photolab" className="mt-6">
           <PhotoRoiLabCard project={project} />
+        </TabsContent>
+        <TabsContent value="videosocial" className="mt-6">
+          <VideoSocialLabCard project={project} />
         </TabsContent>
 
 
