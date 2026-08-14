@@ -33,6 +33,23 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - Prioritize money-making: features that enable selling patterns, subscriptions, or premium tiers rank above internal tooling.
 
 ## Progress log (update each run)
+- [CHK-046] 6a61b39 — Subscription & Distribution Lab (44th tab)
+  (session-46 pattern-distribution / subscription-library
+  market research). GoSadi syncs listings without economics;
+  LoveCrafts, Ribblr and the libraries are storefronts, not
+  planners. New lab tab prices the whole portfolio on one page:
+  per-channel net math for 6 sale channels (Ravelry, Etsy,
+  Ribblr, Payhip, LoveCrafts 2%+$0.20 +3.5% band, own-store
+  Stripe), additive royalty channels (subscription library
+  $0.01-0.45/dl, own pattern club vs library breakeven),
+  share sliders with re-normalization, concentration risk
+  (HHI dominant-share flags), lifetime net and months to
+  recover build cost, D-01..D-04 flags (cliff, brutal cut,
+  fixed-fee bite, recovery). 27 new lib tests, full suite
+  825 tests; typecheck + vitest + build green. Screenshot:
+  docs/screenshots/subscription-distribution-lab.webp.
+  Inbox sweep: no new proposals (#26 Teach headline remains
+  MEDIUM open).
 - [CHK-045] dea36d8 — Spec Sheet Lab (43rd tab)
   (session-45 spec-sheet / pattern-company production
   documentation market research). Designers hand-drawing factory
