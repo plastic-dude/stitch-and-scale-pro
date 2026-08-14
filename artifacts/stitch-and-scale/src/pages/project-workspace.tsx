@@ -20,7 +20,7 @@ import { NativeSelect } from '@/components/ui/native-select';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { generateId, PatternSection, SectionMeasurement, MeasurementType, GradingKey, GRADING_KEY_LABELS, ALL_SIZES, gradePattern, resolveProjectStandards } from '@/lib/grading-engine';
-import { Plus, Edit2, Trash2, ArrowRight, Table as TableIcon, Copy, Settings, ChevronDown, ChevronRight, Calculator, FlaskConical, PenLine, ClipboardCheck, Camera, FileText, Library, Tag, Target } from 'lucide-react';
+import { Plus, Edit2, Trash2, ArrowRight, Table as TableIcon, Copy, Settings, ChevronDown, ChevronRight, Calculator, FlaskConical, PenLine, ClipboardCheck, Camera, FileText, Library, Tag, Target, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useSettings } from '@/context/SettingsContext';
@@ -67,6 +67,7 @@ import { SpecSheetLabCard } from '@/components/spec-sheet-lab-card';
 import { SubscriptionDistributionLabCard } from '@/components/subscription-distribution-lab-card';
 import { ListingSeoLabCard } from '@/components/listing-seo-lab-card';
 import { AdBreakEvenCard } from '@/components/ad-break-even-card';
+import { SampleLaunchLabCard } from '@/components/sample-launch-lab-card';
 
 type RoundingMode = 'exact' | 'multiple' | 'even' | 'odd';
 
@@ -575,6 +576,9 @@ export default function ProjectWorkspace() {
           <TabsTrigger value="adlab" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             <Target className="h-3.5 w-3.5 mr-1.5" /> Ad Break-Even
           </TabsTrigger>
+          <TabsTrigger value="samplelaunch" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+            <Sparkles className="h-3.5 w-3.5 mr-1.5" /> Sample &amp; Launch
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="sections" className="mt-6 space-y-6">
@@ -1010,6 +1014,9 @@ export default function ProjectWorkspace() {
         </TabsContent>
         <TabsContent value="adlab" className="mt-6">
           <AdBreakEvenCard project={project} />
+        </TabsContent>
+        <TabsContent value="samplelaunch" className="mt-6">
+          <SampleLaunchLabCard project={project} />
         </TabsContent>
 
 

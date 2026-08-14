@@ -238,8 +238,8 @@ export function ListingSeoLabCard({ project }: { project: PatternProject }) {
           </div>
           {stored.listPrice > 0 && (
             <p className="text-xs text-muted-foreground">
-              $6 example (documented): Ravelry ≈ $5.70 → Etsy ≈ $5.10 → LoveCrafts ≈ $4.20.
-              Ravelry keeps the most per sale — worth the discovery effort.
+              $6 example (documented fee model): Ravelry ≈ $5.70 → Etsy ≈ $5.10 → LoveCrafts ≈ $4.20.
+              The live tiles show the same fees applied and rounded at each step — values may differ by a few cents from the unrounded model. Ravelry keeps the most per sale — worth the discovery effort.
             </p>
           )}
         </div>

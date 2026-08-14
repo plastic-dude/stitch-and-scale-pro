@@ -193,7 +193,7 @@ export function SubscriptionDistributionLabCard({ project }: { project: PatternP
                       {on && entry && channelNetBadge(entry)}
                     </div>
                     {on && (
-                      <span className="text-xs text-muted-foreground shrink-0">
+                      <span className="text-xs text-muted-foreground truncate" title={`${((share / (saleSum || 1)) * 100).toFixed(0)}% of sales · ${Math.round(share * stored.monthlyUnits / (saleSum || 1))} units`}>
                         {((share / (saleSum || 1)) * 100).toFixed(0)}% of sales · {Math.round(share * stored.monthlyUnits / (saleSum || 1))} units
                       </span>
                     )}
