@@ -30,6 +30,7 @@ import { KitEconomicsCard } from '@/components/kit-economics-card';
 import { SubmissionPipelineCard } from '@/components/submission-pipeline-card';
 import { KalRoiCard } from '@/components/kal-roi-card';
 import { ChannelFunnelCard } from '@/components/channel-funnel-card';
+import { ClubRevenueCard } from '@/components/club-revenue-card';
 
 type RoundingMode = 'exact' | 'multiple' | 'even' | 'odd';
 
@@ -276,7 +277,7 @@ export default function ProjectWorkspace() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-20 md:w-fit bg-card border border-border h-12 p-1 overflow-x-auto">
+        <TabsList className="grid w-full grid-cols-21 md:w-fit bg-card border border-border h-12 p-1 overflow-x-auto">
           <TabsTrigger value="sections" className="font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             Sections
           </TabsTrigger>
@@ -336,6 +337,9 @@ export default function ProjectWorkspace() {
           </TabsTrigger>
           <TabsTrigger value="channels" className="font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded whitespace-nowrap">
             Channels
+          </TabsTrigger>
+          <TabsTrigger value="clubrev" className="font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded whitespace-nowrap">
+            Club Rev
           </TabsTrigger>
         </TabsList>
 
@@ -637,6 +641,10 @@ export default function ProjectWorkspace() {
 
         <TabsContent value="channels" className="mt-6">
           <ChannelFunnelCard project={project} />
+        </TabsContent>
+
+        <TabsContent value="clubrev" className="mt-6">
+          <ClubRevenueCard project={project} />
         </TabsContent>
 
         <TabsContent value="notes" className="mt-6">
