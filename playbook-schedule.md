@@ -33,6 +33,32 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - Prioritize money-making: features that enable selling patterns, subscriptions, or premium tiers rank above internal tooling.
 
 ## Progress log (update each run)
+- [CHK-039] d314a5f — Submissions (38th tab 'Submissions')
+  + reviewer fixes #27/#28 on Yarn Buy:
+  New submission-desk.ts prices magazine / box / book
+  calls-for-submissions against self-publishing: net outcome
+  (fee + yarn support + rights-return 8-week ramp), effective
+  hourly vs the designer's own rate floor, exclusivity
+  dead-loss (price x weekly sales x months x 4.33 wks),
+  break-even fee (self-publish earnings net of costs/tail),
+  red flags S-01..S-07 (fee under labour floor, exposure-only,
+  exclusivity >5 months, uncompensated sample, book rights,
+  box-channel concentration/KnitCrate, yarn support <$75).
+  Presets: Laine-style $900 sweater / $0 box deal /
+  anthology. Storage via projectStorage 'submissions'.
+  21 new tests (submission-desk), 688 total (40 files).
+  Research session 39 (yarn-box economics): ~25 active boxes
+  $10-90/mo; KnitCrate collapsed Dec 2022 ($2.95M lenders,
+  owed designers Dec pay, $3/item max, 85% discount demands);
+  Laine pays up to $900 for sweaters (50-85 hrs), 5-month
+  exclusivity, designer knits sample + test knit;
+  cost stack $40 tech edit / $40 model / $75 yarn.
+  Fixes: #27 swatch switch now actually lowers the buffer
+  to the 10% floor (bufferFor pct = BASE_BUFFER when
+  swatchConfirmed); #28 buffer displays 12.5% not 13%
+  (fmtPct one-decimal helper on both labels).
+  Typecheck + 688 tests + build green; verified in-browser
+  (default $500 fee -> NO, $422 dead-loss, $1,634 break-even).
 - [CHK-038] 7939fa0 — KAL Planner (37th tab 'KAL Planner')
   + reviewer fixes #14/#25/#26:
   New kal-planner.ts models the four KAL formats (launch /
