@@ -38,6 +38,38 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - [CHK-057] a46a413 — Pre-Order Campaign Lab (55th tab).
 - [CHK-058] 7bff5e7 — Listing Test Lab (56th tab) + issue #4 debt.
 - [CHK-059] 0d5649f — Yarn Pool Lab (57th tab).
+- [CHK-060] f7b7a14 — Membership Site Lab (58th tab).
+  Inbox swept: no new reviewer proposals (7 open
+  issues remain reviewer-directed INFO notes; newest
+  is QA #27 issue #40; issue #4 closed previously).
+  Research angle: membership pattern site / paywall
+  economics (never covered) — session-60 facts: no
+  tool answers pre-launch membership questions;
+  median free-to-paid newsletter conversion is just
+  0.62%, freemium 3-5% is good and 6-8% great,
+  structured paid communities hit 5-12% (8% sweet
+  spot) only with onboarding; avg monthly churn 5.3%
+  (LTV = ARPU/churn; $7/mo at 5% churn = $140/member);
+  real clubs charge $7-17/mo (Double The Stitches
+  $7, Twin Stitches $17CAD with weekly Zooms);
+  fee stacks: Payhip free 5%+PayPal 3.49%+$0.49,
+  Payhip Plus $29/mo 2%+card, Wix/Stripe 2.9%+$0.30,
+  Patreon 8%, Ravelry gift codes 3.5%+PayPal; per-
+  transaction fees hit $7 plans hardest.
+  Membership Site Lab in a new tab: conversion band
+  (worst/realistic/best), blended monthly/annual
+  pricing with annual-share, churn-capped LTV, real
+  fee-stack select, break-even audience, content-
+  treadmill vs opportunity-cost inequality, scenario
+  table (members/gross/fees/net/LTV), MS-01..MS-07
+  flags (audience too small, rosy conversion,
+  churn erodes LTV, fees>10%, treadmill underpays,
+  steep annual discount, missing support hours),
+  verdict ladder (not ready / pays less than hours /
+  borderline / treadmill bites / fund the club).
+  21 new lib tests; suite 1,107 tests; typecheck +
+  vitest + build green. Screenshot:
+  docs/screenshots/membership-site-lab.webp.
   Inbox swept: no new reviewer proposals (all open
   issues remain reviewer-directed INFO notes; issue #4
   already closed with evidence in CHK-058).
