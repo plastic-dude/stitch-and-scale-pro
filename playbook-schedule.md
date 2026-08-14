@@ -33,6 +33,34 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - Prioritize money-making: features that enable selling patterns, subscriptions, or premium tiers rank above internal tooling.
 
 ## Progress log (update each run)
+- [CHK-041] 8ffe941 — Chart Lab (40th tab 'Chart Lab')
+  + reviewer fix #29 residual (Teach flat-fee blending):
+  No tool connects a chart desk to grading and costing.
+  Chart Lab lives inside the project, keyed to the graded
+  table: CYC standard symbol palette (13 symbols with
+  stitch costs), per-row repeat/selvedge editor with live
+  row-total accounting (n x block + before/after), drift vs
+  the graded base stitch count per row, and pattern-prose
+  drafting (Row N: (block) x K + selvedges, copy-to-clipboard).
+  7 lab flags C-01..C-07: empty repeat block, repeat < 1,
+  unknown symbol, negative budget, row-budget mismatch,
+  empty chart, missing graded count; verdict
+  ready/review/blocked. Sources anchored in the card and lib.
+  18 new tests (chart-lab), 723 total (42 files).
+  Research session 41 (chart-writing market): Stitchmastery
+  is a GBP-60 desktop-only app whose chart-to-text emits
+  raw per-row code; Stitch Fiddle flat charts cannot express
+  repeats or multi-size and its free export is too low-res
+  to publish; Chart Minder basic; EnvisioKnit text-to-chart
+  only. CYC symbols are the industry standard; no player
+  binds row budgets to the graded count - that is the moat.
+  Fix (residual, proposed by reviewer on #29): guild flat-fee
+  and LYS class gross used the blended ticket ladder; now
+  the raw contract day fee is the gross input (usesBlendedTicket
+  flag in computeTickets). 3 regression tests added; 31/31
+  teach tests green.
+  Typecheck + 723 tests + build green; verified in-browser
+  (Chart Lab: ready at graded 6 st; C-05 + 178 st drift at 184).
 - [CHK-040] fdb8305 — Grading Lab (39th tab 'Grading Lab')
   + reviewer fix #29 on Teach:
   New grading-lab.ts grades every size in one pass, then runs
