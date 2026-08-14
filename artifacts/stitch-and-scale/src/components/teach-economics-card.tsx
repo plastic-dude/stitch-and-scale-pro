@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Slider } from '@/components/ui/slider';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { GraduationCap, ClipboardCopy, AlertTriangle, Scale } from 'lucide-react';
+import { GraduationCap, ClipboardCopy, AlertTriangle, Scale, BarChart3 } from 'lucide-react';
 import { PatternProject } from '@/lib/grading-engine';
 import {
   analyzeTeachingOffer,
@@ -18,6 +18,7 @@ import {
   TEACH_FORMAT_LABELS,
   type TeachFormat,
   type TeachInput,
+  analyzePlatformModels,
 } from '@/lib/teach-economics';
 
 const STORAGE_KEY = 'stitch-and-scale-teach-v1';
@@ -114,9 +115,35 @@ export function TeachEconomicsCard({ project: _project }: { project: PatternProj
 
   const ladder = useMemo(() => buildPricingLadder(stored.input.ticketPrice), [stored.input.ticketPrice]);
 
+  // CHK-049: platform-compare inputs — five teaching-income models normalized to $/teacher-hour.
+  const [pcBuyers, setPcBuyers] = useState(200);
+  const [pcPlatformCost, setPcPlatformCost] = useState(468);
+  const [pcSeatsPerSlot, setPcSeatsPerSlot] = useState(10);
+  const [pcPoolRevenue, setPcPoolRevenue] = useState(5_000_000);
+  const [pcMinutesShare, setPcMinutesShare] = useState(0.005);
+  const [pcRoyaltyMonths, setPcRoyaltyMonths] = useState(12);
+  const [pcPlatformShare, setPcPlatformShare] = useState(0.15);
   // Issue #26: the headline must state the same hours the ≈$/hr rate divides by.
   const hostedTotalHours = Math.max(1, Math.round(stored.input.hostedHoursPerSession ?? 4)) *
     Math.max(1, Math.round(stored.input.hostedSessions ?? 1));
+
+  const platformCompare = useMemo(() => analyzePlatformModels({
+    listPrice: stored.input.ticketPrice,
+    buyers: pcBuyers,
+    productionHours: stored.input.prepHours,
+    platformCost: pcPlatformCost,
+    seatsPerSlot: pcSeatsPerSlot,
+    poolRevenue: pcPoolRevenue,
+    minutesShare: pcMinutesShare,
+    royaltyMonths: pcRoyaltyMonths,
+    platformShare: pcPlatformShare,
+    deliveryHours: stored.input.format === 'guildFlatFee' || stored.input.format === 'lysClass' ? hostedTotalHours : 0,
+    outOfPocket: stored.input.materialCost,
+    patternHourlyRate: stored.input.patternHourlyRate,
+  }), [stored.input.ticketPrice, stored.input.prepHours, stored.input.format,
+    stored.input.materialCost, stored.input.patternHourlyRate, hostedTotalHours,
+    pcBuyers, pcPlatformCost, pcSeatsPerSlot, pcPoolRevenue, pcMinutesShare,
+    pcRoyaltyMonths, pcPlatformShare]);
 
   const copy = async (text: string) => {
     try {
@@ -396,6 +423,62 @@ export function TeachEconomicsCard({ project: _project }: { project: PatternProj
           </div>
         </div>
         )}
+
+        {/* CHK-049: Platform Compare — session-49 research: no platform publishes per-teacher-hour returns */}
+        <div className="rounded-lg border p-4 space-y-4">
+          <div className="font-semibold text-sm flex items-center gap-2">
+            <BarChart3 className="h-4 w-4" /> Platform Compare — five ways to teach, one $/hour scorecard
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Every platform hides what you actually earn per hour of your own life. This normalizes the five
+            income models an indie designer realistically faces to effective net $/teacher-hour — the winner
+            is highlighted, and flags cite the documented market data (SOS $24/mo library, Skillshare's
+            30% minutes pool averaging ~$200/mo, Udemy's share eroding to 15–20%, hosted days at $300–1,000).
+          </p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <NumField id="pc-buyers" label="Expected students / buyers" value={pcBuyers} min={0} step={10}
+              onChange={setPcBuyers} />
+            <NumField id="pc-tooling" label="Platform / tooling cost (lifetime)" value={pcPlatformCost} min={0} step={12}
+              onChange={setPcPlatformCost} suffix="$" />
+            <NumField id="pc-seats" label="Seats per class slot" value={pcSeatsPerSlot} min={1} max={60}
+              onChange={(n) => setPcSeatsPerSlot(Math.min(60, Math.max(1, n)))} />
+            <NumField id="pc-pool" label="Platform membership revenue / yr" value={pcPoolRevenue} min={0} step={1000000}
+              onChange={setPcPoolRevenue} suffix="$" />
+            <NumField id="pc-minshare" label="Your minutes share" value={pcMinutesShare} min={0} max={1} step={0.001}
+              onChange={setPcMinutesShare} />
+            <NumField id="pc-roys" label="Royalty runway (months)" value={pcRoyaltyMonths} min={1} max={60}
+              onChange={(n) => setPcRoyaltyMonths(Math.max(1, n))} />
+            <NumField id="pc-share" label="Platform share (after coupons)" value={pcPlatformShare} min={0} max={1} step={0.01}
+              onChange={setPcPlatformShare} />
+          </div>
+          <div className={`rounded-lg border p-3 ${verdictColor(platformCompare.verdict)}`}>
+            <div className="text-sm font-semibold">
+              Best model: {platformCompare.rows[platformCompare.rows.length - 1].label} — {fmt$(platformCompare.winnerHourlyNet)}/hr
+            </div>
+            <div className="text-xs mt-1">{platformCompare.verdictReason}</div>
+            {platformCompare.suggestion && <div className="text-xs mt-1 text-muted-foreground">{platformCompare.suggestion}</div>}
+          </div>
+          <div className="space-y-2">
+            {/* ranked worst-first so the best row reads last */}
+            {platformCompare.rows.map((row) => (
+              <div key={row.model} className={`rounded-lg border p-3 text-xs ${row.model === platformCompare.winner ? 'border-emerald-500/50 bg-emerald-500/5' : 'bg-muted/20'}`}>
+                <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <div className="font-semibold">{row.label}</div>
+                  <div className={`font-bold ${row.hourlyNet >= stored.input.patternHourlyRate ? 'text-emerald-600' : 'text-muted-foreground'}`}>
+                    {fmt$(row.hourlyNet)}/hr
+                  </div>
+                </div>
+                <div className="text-muted-foreground mt-1">
+                  net {fmt$(row.net)} · {row.totalHours}h teacher-time · {row.vsPattern}× pattern rate
+                </div>
+                <div className="text-muted-foreground mt-0.5">{row.note}</div>
+                {row.redFlags.map((f) => (
+                  <div key={f.id} className="text-destructive mt-1">• {f.detail}</div>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
 
         {/* Pitch copy */}
         <div className="space-y-2">

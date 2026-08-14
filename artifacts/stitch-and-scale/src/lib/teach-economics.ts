@@ -421,3 +421,283 @@ export function analyzeHostedOffer(input: {
 
   return { net: Math.round(net * 100) / 100, effectiveHourlyRate, vsPatternMultiple, advice };
 }
+
+/**
+ * Session-49: platform-compare engine.
+ *
+ * The single flaw every course platform shares: none of them reports what a
+ * teacher earns per hour of their own life. This engine normalizes the five
+ * models an indie designer realistically faces — self-hosted course, flat-fee
+ * day, per-seat class, minutes-royalty (Skillshare-style) and coupon-eroded
+ * rev share (Udemy-style) — onto the same denominator: effective net $ per
+ * teacher-hour (production hours dominate; delivery is normalized where
+ * relevant). Every constant below is sourced in the session-49 research file
+ * (competitors-session-49-course-platform-market.md).
+ */
+
+export type TeachIncomeModel =
+  | 'selfHosted'      // self-hosted course (Kajabi/Podia/Teachable) — keep 95%+, flat tooling fee
+  | 'flatFeeDay'      // guild/retreat day rate (market $300-1,000/day)
+  | 'perSeatClass'    // per-seat LYS/studio class (market $75-150/day/student)
+  | 'minutesRoyalty'  // Skillshare-style: 30% of platform membership revenue, share by paid minutes
+  | 'erodedRevShare'; // Udemy-style: rev share lands 15-20% after coupons
+
+export const TEACH_MODEL_LABELS: Record<TeachIncomeModel, string> = {
+  selfHosted: 'Self-hosted course',
+  flatFeeDay: 'Flat-fee day',
+  perSeatClass: 'Per-seat class',
+  minutesRoyalty: 'Minutes-royalty pool',
+  erodedRevShare: 'Coupon-eroded rev share',
+};
+
+export interface PlatformCompareInput {
+  /** List price the designer would set for the offer, $. */
+  listPrice: number;
+  /** Expected paid students/buyers for the offer's lifetime. */
+  buyers: number;
+  /** Hours to produce (record, edit, prep materials) the offer. */
+  productionHours: number;
+  /** Fixed platform/tooling cost the offer carries, $ lifetime. */
+  platformCost: number;
+  /** For perSeatClass: number of students per seat slot (capacity). */
+  seatsPerSlot?: number;
+  /** For minutesRoyalty: platform's monthly revenue pool, $ (default 30% share basis). */
+  poolRevenue?: number;
+  /** For minutesRoyalty: the designer's projected share of paid minutes, 0-1. */
+  minutesShare?: number;
+  /** For minutesRoyalty: months of royalty income expected. */
+  royaltyMonths?: number;
+  /** For erodedRevShare: effective platform share after coupons, 0-1 (Udemy now ~0.80-0.85). */
+  platformShare?: number;
+  /** For flatFeeDay: organizer's day fee, $ (defaults to listPrice). */
+  dayFee?: number;
+  /** Hours the designer spends delivering on-site/online beyond production. */
+  deliveryHours?: number;
+  /** Out-of-pocket travel/materials, $. */
+  outOfPocket?: number;
+  /** The designer's effective pattern-selling hourly rate for the comparison banner, $/hr. */
+  patternHourlyRate?: number;
+}
+
+export interface PlatformModelRow {
+  model: TeachIncomeModel;
+  label: string;
+  /** Net profit after every deduction, $. */
+  net: number;
+  /** Total teacher-hours consumed (production + delivery). */
+  totalHours: number;
+  /** Effective net $ per teacher-hour. */
+  hourlyNet: number;
+  /** Ratio vs pattern-selling rate. */
+  vsPattern: number;
+  /** One-line note keyed to the documented market data. */
+  note: string;
+  redFlags: { id: string; detail: string }[];
+}
+
+export interface PlatformCompareResult {
+  rows: PlatformModelRow[];
+  /** The model row with the highest hourly net. */
+  winner: TeachIncomeModel;
+  winnerHourlyNet: number;
+  verdict: 'skip' | 'hold' | 'launch';
+  verdictReason: string;
+  suggestion: string;
+}
+
+/**
+ * Normalize a flat fee or per-seat revenue line against production + delivery
+ * hours, subtracting out-of-pocket costs. Delivery hours are added only for
+ * models where the teacher must physically show up (day fee, per-seat class);
+ * a recorded course monetizes production hours once and sells afterwards.
+ */
+function netPerHour(opts: {
+  revenue: number;
+  productionHours: number;
+  deliveryHours: number;
+  platformCost: number;
+  outOfPocket: number;
+  patternHourlyRate: number;
+}): { net: number; totalHours: number; hourlyNet: number; vsPattern: number } {
+  const net = Math.round((Math.max(0, opts.revenue) - opts.platformCost - opts.outOfPocket) * 100) / 100;
+  const totalHours = Math.max(0.5, opts.productionHours + Math.max(0, opts.deliveryHours));
+  const hourlyNet = Math.round((net / totalHours) * 100) / 100;
+  const patternRate = Math.max(0.01, opts.patternHourlyRate);
+  const vsPattern = Math.round((hourlyNet / patternRate) * 100) / 100;
+  return { net, totalHours, hourlyNet, vsPattern };
+}
+
+/**
+ * Compare the five teaching-income models a designer faces for one offer, all
+ * normalized to effective $/teacher-hour. Returns rows ranked worst-first so
+ * UI tables read bottom (best) to top.
+ */
+export function analyzePlatformModels(raw: Partial<PlatformCompareInput>): PlatformCompareResult {
+  const input: PlatformCompareInput = {
+    listPrice: 0,
+    buyers: 0,
+    productionHours: 0,
+    platformCost: 0,
+    seatsPerSlot: 0,
+    poolRevenue: 0,
+    minutesShare: 0,
+    royaltyMonths: 12,
+    platformShare: 0.15,
+    dayFee: 0,
+    deliveryHours: 0,
+    outOfPocket: 0,
+    patternHourlyRate: 0,
+    ...raw,
+  };
+  const buyers = Math.max(0, input.buyers ?? 0);
+  const prod = Math.max(0, input.productionHours ?? 0);
+  const fixed = Math.max(0, input.platformCost ?? 0);
+  const oop = Math.max(0, input.outOfPocket ?? 0);
+  const patternRate = Math.max(0.01, input.patternHourlyRate ?? 32);
+  const seatsPerSlot = Math.max(0, Math.round(input.seatsPerSlot ?? 10));
+  const poolRevenue = Math.max(0, input.poolRevenue ?? 0);
+  const minutesShare = Math.max(0, Math.min(1, input.minutesShare ?? 0));
+  const royaltyMonths = Math.max(1, Math.round(input.royaltyMonths ?? 12));
+  const platformShare = Math.max(0, Math.min(1, input.platformShare ?? 0.15));
+  const dayFee = input.dayFee && input.dayFee > 0 ? input.dayFee : input.listPrice;
+  const delivery = Math.max(0, input.deliveryHours ?? 0);
+
+  const rows: PlatformModelRow[] = [];
+
+  // 1) Self-hosted course: keep ~95% (payment processing ~5%), fixed tooling cost only.
+  {
+    const revenue = Math.round(buyers * Math.max(0, input.listPrice) * 0.95 * 100) / 100;
+    const m = netPerHour({ revenue, productionHours: prod, deliveryHours: 0, platformCost: fixed, outOfPocket: oop, patternHourlyRate: patternRate });
+    rows.push({
+      model: 'selfHosted',
+      label: TEACH_MODEL_LABELS.selfHosted,
+      net: m.net,
+      totalHours: m.totalHours,
+      hourlyNet: m.hourlyNet,
+      vsPattern: m.vsPattern,
+      note: 'Keep ~95% after payment processing; tooling is a flat $/mo, not a cut — the only model where a bigger list scales the return linearly.',
+      redFlags: [
+        ...(buyers * input.listPrice === 0 ? [{ id: 'P-01', detail: 'No sales priced in — self-hosted needs a list or an audience to fill the tooling cost.' }] : []),
+        ...(fixed > buyers * input.listPrice * 0.3 && buyers > 0 ? [{ id: 'P-02', detail: `Tooling ($${fixed}) eats >30% of gross — cut fixed costs or extend the runway.` }] : []),
+      ],
+    });
+  }
+
+  // 2) Flat-fee day: market $300-1,000/day; production hours are unpaid prep.
+  {
+    const fee = Math.max(0, dayFee);
+    const m = netPerHour({ revenue: fee, productionHours: prod, deliveryHours: delivery, platformCost: 0, outOfPocket: oop, patternHourlyRate: patternRate });
+    const inBand = fee >= 300 && fee <= 1000;
+    rows.push({
+      model: 'flatFeeDay',
+      label: TEACH_MODEL_LABELS.flatFeeDay,
+      net: m.net,
+      totalHours: m.totalHours,
+      hourlyNet: m.hourlyNet,
+      vsPattern: m.vsPattern,
+      note: inBand
+        ? 'Inside the documented $300–1,000 hosted-model band; the day fee is fixed no matter how many prep hours it takes.'
+        : 'Below the $300 floor — every unpaid prep hour drags the hourly rate down.',
+      redFlags: [
+        ...(fee < 300 && fee > 0 ? [{ id: 'P-03', detail: `Fee ($${fee}) is under the $300 market floor — UK shop rates run £175–200/6h (~$30-34/hr gross) before prep.` }] : []),
+        ...(prod > 8 && fee > 0 && fee / Math.max(0.5, prod + delivery) < 20 ? [{ id: 'P-04', detail: 'Heavy prep against a flat fee: unpaid prep collapses the hourly rate — negotiate prep pay or a higher fee.' }] : []),
+      ],
+    });
+  }
+
+  // 3) Per-seat class: $75-150/day/student market; teacher nets the seat price × seats, minus the shop's take if any.
+  {
+    const seatPrice = Math.max(0, input.listPrice);
+    const capacitySeats = seatsPerSlot > 0 ? seatsPerSlot : 10;
+    const revenue = Math.round(buyers * seatPrice * 100) / 100;
+    // A one-slot class sells one seat per registered student; buyers here is total registrations.
+    const m = netPerHour({ revenue, productionHours: prod, deliveryHours: delivery, platformCost: 0, outOfPocket: oop, patternHourlyRate: patternRate });
+    rows.push({
+      model: 'perSeatClass',
+      label: TEACH_MODEL_LABELS.perSeatClass,
+      net: m.net,
+      totalHours: m.totalHours,
+      hourlyNet: m.hourlyNet,
+      vsPattern: m.vsPattern,
+      note: buyers <= capacitySeats
+        ? `Class fills within one ${capacitySeats}-seat slot — shop take (~50% typical when the shop runs signups) halves this if not already deducted.`
+        : `Spans ${Math.ceil(buyers / Math.max(1, capacitySeats))} slots — the shop take stacks per slot; deduct ~50% if the organizer collects.`,
+      redFlags: [
+        ...(seatPrice > 0 && seatPrice < 25 ? [{ id: 'P-05', detail: "Seat price under ~$25 erodes fast once the shop's cut and prep are counted." }] : []),
+        ...(buyers > capacitySeats && capacitySeats > 0 ? [{ id: 'P-06', detail: "Multiple slots mean delivery hours repeat — count every slot's live hours." }] : []),
+      ],
+    });
+  }
+
+  // 4) Minutes-royalty pool (Skillshare-style): 30% of platform membership revenue is shared by paid minutes.
+  {
+    const pool = poolRevenue * 0.3;
+    const monthly = Math.round(pool * minutesShare * 100) / 100;
+    const revenue = Math.round(monthly * royaltyMonths * 100) / 100;
+    const m = netPerHour({ revenue, productionHours: prod, deliveryHours: 0, platformCost: 0, outOfPocket: 0, patternHourlyRate: patternRate });
+    rows.push({
+      model: 'minutesRoyalty',
+      label: TEACH_MODEL_LABELS.minutesRoyalty,
+      net: m.net,
+      totalHours: m.totalHours,
+      hourlyNet: m.hourlyNet,
+      vsPattern: m.vsPattern,
+      note: `Skillshare directs 30% of membership revenue to a minutes-watched royalty pool (avg teacher ~$200/mo); your $${monthly.toFixed(0)}/mo is share-of-minutes, not sales — it decays as other classes grow.`.slice(0, 220),
+      redFlags: [
+        ...(minutesShare <= 0 || poolRevenue <= 0 ? [{ id: 'P-07', detail: 'No minutes share or pool revenue set — royalties are minutes-share-of-pool, not a price you control.' }] : []),
+        ...(m.hourlyNet < 10 && m.totalHours > 1 ? [{ id: 'P-08', detail: 'Platform averages confirm: most teachers earn ~$200/mo — royalty income is a supplement, not a launch plan.' }] : []),
+      ],
+    });
+  }
+
+  // 5) Coupon-eroded rev share (Udemy-style): list price collapses to $9.99-19.99 and the teacher keeps 15-20% (eroding to 15%).
+  {
+    const couponPrice = 14.99; // typical couponed street price
+    const perBuyer = couponPrice * platformShare;
+    const revenue = Math.round(buyers * perBuyer * 100) / 100;
+    const m = netPerHour({ revenue, productionHours: prod, deliveryHours: 0, platformCost: 0, outOfPocket: 0, patternHourlyRate: patternRate });
+    rows.push({
+      model: 'erodedRevShare',
+      label: TEACH_MODEL_LABELS.erodedRevShare,
+      net: m.net,
+      totalHours: m.totalHours,
+      hourlyNet: m.hourlyNet,
+      vsPattern: m.vsPattern,
+      note: `Students pay ~$${couponPrice.toFixed(2)} after coupons; you keep ${Math.round(platformShare * 100)}% — Udemy's share has eroded 37% → 20% → 15% by 2026, and the teacher never controls the street price.`,
+      redFlags: [
+        ...(platformShare < 0.2 ? [{ id: 'P-09', detail: 'Share at or below the current 15-20% erosion band — list-price promises are not what the coupon street pays.' }] : []),
+        ...(buyers * couponPrice * platformShare > 0 && (buyers * couponPrice * platformShare) / Math.max(0.5, prod) < 10 ? [{ id: 'P-10', detail: 'Volume must be massive to clear $10/hr at this share — the platform wins the coupon war, not the teacher.' }] : []),
+      ],
+    });
+  }
+
+  const ranked = [...rows].sort((a, b) => a.hourlyNet - b.hourlyNet);
+  const winner = ranked[ranked.length - 1];
+
+  let verdict: PlatformCompareResult['verdict'] = 'launch';
+  let verdictReason = '';
+  let suggestion = '';
+  if (winner.hourlyNet < 0) {
+    verdict = 'skip';
+    verdictReason = 'Every modeled route loses money at these inputs — the offer itself is underpriced or underbuilt.';
+    suggestion = 'Raise the list price or cut production hours; a $0-or-worse winner means the content plan is too heavy for the audience.';
+  } else if (winner.hourlyNet < patternRate * 0.8) {
+    verdict = 'hold';
+    verdictReason = `The best model nets $${winner.hourlyNet.toFixed(0)}/hr — below 80% of your $${patternRate.toFixed(0)}/hr pattern rate. The same hours sell PDFs better right now.`;
+    suggestion = winner.model === 'flatFeeDay' || winner.model === 'perSeatClass'
+      ? 'Negotiate prep pay on top of the fee, or attach a royalty clause — hosted formats win only when prep is priced in.'
+      : winner.model === 'minutesRoyalty'
+        ? 'Use royalties as the tail, not the head: launch self-hosted or per-seat first, then license to the pool for residual income.'
+        : 'Build the audience first (the email list is the multiplier for self-hosted and eroded-share models), then record.';
+  } else if (ranked.some(r => r.redFlags.length > 0) && winner.redFlags.length > 0) {
+    verdict = 'hold';
+    verdictReason = `Best hourly net is $${winner.hourlyNet.toFixed(0)}/hr (${winner.label}), but the winner carries flagged economics.`;
+    suggestion = winner.redFlags[0].detail;
+  } else {
+    verdict = 'launch';
+    verdictReason = `Best hourly net is $${winner.hourlyNet.toFixed(0)}/hr on ${winner.label} — above your $${patternRate.toFixed(0)}/hr pattern rate.`;
+    suggestion = ranked.slice(0, 2).map(r => `${r.label}: $${r.hourlyNet.toFixed(0)}/hr`).join(' · ');
+  }
+
+  return { rows: ranked, winner: winner.model, winnerHourlyNet: winner.hourlyNet, verdict, verdictReason, suggestion };
+}
