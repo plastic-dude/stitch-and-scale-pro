@@ -37,6 +37,34 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - [CHK-056] 55ce053 — Wholesale Program Lab (54th tab).
 - [CHK-057] a46a413 — Pre-Order Campaign Lab (55th tab).
 - [CHK-058] 7bff5e7 — Listing Test Lab (56th tab) + issue #4 debt.
+- [CHK-059] 0d5649f — Yarn Pool Lab (57th tab).
+  Inbox swept: no new reviewer proposals (all open
+  issues remain reviewer-directed INFO notes; issue #4
+  already closed with evidence in CHK-058).
+  Research angle: yarn collective buying economics
+  (never covered) — session-59 facts: every tool says
+  'buy wholesale' but none answers what to order or
+  whether locked cash is worth it; mills want 10-50
+  kg/colorway vs an indie's 2-5 kg; dealer wholesale
+  floors run ~$250 order value; bulk programs need ~1
+  kg minimum; buying 2.5 kg at mill-direct $24/kg is
+  impossible without pooling — MOQ amortization is the
+  whole game; cash locked in yarn can't pay
+  test-knitters next month; dye lots mean one order per
+  colorway, never split.
+  Yarn Pool Lab in a new tab: demand pooling across
+  patterns and pool members (up to 8), retail-to-mill
+  price ladder per colorway (retail/retail-bulk/
+  wholesale dealer/mill-direct), per-colorway MOQ
+  amortization (20 kg/colorway mill MOQ default,
+  $250 dealer minimum), cash-locked months vs
+  production runway, YP-01..YP-07 flags (near-MOQ,
+  cash lock-up vs runway, retail-only, dye-lot order,
+  stash offset, members over-ask), verdict ladder
+  (nothing/pool-too-small/pool-it/mill-it). 21 new
+  lib tests; suite 1,086 tests; typecheck + vitest +
+  build green. Screenshot:
+  docs/screenshots/yarn-pool-lab.webp.
   Inbox swept: no new reviewer proposals; the standing
   reviewer proposal in issue #4 was actioned as the debt
   fix (see below).
