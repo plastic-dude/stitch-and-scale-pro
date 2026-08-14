@@ -20,6 +20,7 @@ import { PricingAdvisorCard } from '@/components/pricing-advisor-card';
 import { PublishToolkitCard } from '@/components/publish-toolkit-card';
 import { DealsTabCard } from '@/components/deals-tab-card';
 import { TestKnitCard } from '@/components/test-knit-card';
+import { TechEditCard } from '@/components/tech-edit-card';
 
 type RoundingMode = 'exact' | 'multiple' | 'even' | 'odd';
 
@@ -266,7 +267,7 @@ export default function ProjectWorkspace() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-10 md:w-fit bg-card border border-border h-12 p-1 overflow-x-auto">
+        <TabsList className="grid w-full grid-cols-11 md:w-fit bg-card border border-border h-12 p-1 overflow-x-auto">
           <TabsTrigger value="sections" className="font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             Sections
           </TabsTrigger>
@@ -293,6 +294,9 @@ export default function ProjectWorkspace() {
           </TabsTrigger>
           <TabsTrigger value="testknit" className="font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             Test Knit
+          </TabsTrigger>
+          <TabsTrigger value="techedit" className="font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+            Tech Edit
           </TabsTrigger>
           <TabsTrigger value="deals" className="font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             Deals
@@ -562,6 +566,9 @@ export default function ProjectWorkspace() {
         </TabsContent>
         <TabsContent value="testknit" className="mt-6">
           <TestKnitCard project={project} />
+        </TabsContent>
+        <TabsContent value="techedit" className="mt-6">
+          <TechEditCard project={project} />
         </TabsContent>
         <TabsContent value="deals" className="mt-6">
           <DealsTabCard project={project} />
