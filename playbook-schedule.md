@@ -33,6 +33,34 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - Prioritize money-making: features that enable selling patterns, subscriptions, or premium tiers rank above internal tooling.
 
 ## Progress log (update each run)
+- [CHK-051] 3a10108 — Inbox sweep + Sample & Launch Window Lab
+  (49th feature). Inbox swept at 3a9e677: three new issues #36-#38.
+  #36 (distribution share span overflow on narrow widths) fixed by
+  dropping shrink-0 so the span truncates gracefully. #38 (Listing
+  SEO footnote wording vs rounded live tiles) fixed by aligning the
+  disclosure to the rounded numbers actually shown. #37 (declining
+  tab-strip change) is a standing design decision, not a defect —
+  triage comment posted, closed. All three closed.
+  Research angle: sample & launch-window economics (never covered)
+  — session-51 facts: a sweater sample is the largest single cost
+  block of a pattern (~30 knit hours + $75 yarn = ~$525 at $15/hr);
+  boutique consignment takes ~40% (30-50% band); craft-fair booth
+  $60-350/day amortized; Westknits-style flash drops ~10% cut with
+  demand concentrated in the drop window; a well-timed launch
+  caught Ravelry Hot Right Now and sold 76 copies in under 5 days
+  vs 109 in a whole month for the previous best; a fall design
+  timed for knitters dreaming of fall pulled ~60-70% of month-1
+  sales into the first week.
+  Sample & Launch Window Lab in a new workspace tab: prices the
+  sample across four sale channels (Etsy, flash online drop,
+  boutique consignment 40%, craft fair w/ booth amortization) vs
+  the yarn+knit-hours cost basis with a keep-vs-sell note; prices
+  the launch-week burst (68% of month-1 sales in week one at season
+  peak vs 25% off-season; deep 45%+ discounts also trigger the
+  burst multiple) with a per-month season factor. Inputs persist
+  via the projectStorage seam. 14 new lib tests; suite 910 tests;
+  typecheck + vitest + build green. Screenshot:
+  docs/screenshots/sample-launch-lab.webp.
 - [CHK-049] 7e44abc — Inbox sweep + Platform Compare in Teach tab
   (47th feature). Inbox swept at f08f9cc: two new issues #25-#26
   (pricing tier label, KAL revenue overflow). Both stale: fixes
