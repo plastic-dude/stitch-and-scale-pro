@@ -33,6 +33,17 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - Prioritize money-making: features that enable selling patterns, subscriptions, or premium tiers rank above internal tooling.
 
 ## Progress log (update each run)
+- [CHK-011] 461bc0a — Pattern Finish & Care Guide: 12th project-workspace tab built
+  from session-12 research (YarnSub, TKGA, Estako, Purl Soho, Provenance
+  Craft; YarnSub is knitter-facing and never appears inside a designer's
+  pattern — the substitution/blocking/wash/dry/store 'last page' is
+  hand-written boilerplate, often fibre-wrong). Library
+  pattern-finish-guide.ts: classifyFibreBehavior for 11 fibre classes
+  (blend follows most delicate fibre), recommendBlocking (wet/steam/
+  spritz, superwash pin-to-final warning), generateSubstituteLine with
+  YarnSub ply table (metres/100g bands per CYC weight + swatch
+  instruction), generateFinishGuide assembles the copy-ready pattern
+  section; 18/18 tests; 162/162 overall green; typecheck + build pass.
 - [CHK-010] 8021de8 — Self Tech-Edit Audit: 11th project-workspace tab built
   from session-11 research (Tech Editor Hub, Marina Skua, Stitch Reader;
   human tech editors bill $20–40/hr, ~4hrs/sweater; Size.ly/Fit Analytics are
