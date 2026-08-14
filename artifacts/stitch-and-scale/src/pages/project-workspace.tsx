@@ -33,6 +33,7 @@ import { ChannelFunnelCard } from '@/components/channel-funnel-card';
 import { ClubRevenueCard } from '@/components/club-revenue-card';
 import { WholesaleBookCard } from '@/components/wholesale-book-card';
 import { HireVsSelfCard } from '@/components/hire-vs-self-card';
+import { InclusiveSizingCard } from '@/components/inclusive-sizing-card';
 
 type RoundingMode = 'exact' | 'multiple' | 'even' | 'odd';
 
@@ -349,6 +350,9 @@ export default function ProjectWorkspace() {
           <TabsTrigger value="hireself" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             Hire vs Self
           </TabsTrigger>
+          <TabsTrigger value="inclusive" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+            Inclusive
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="sections" className="mt-6 space-y-6">
@@ -661,6 +665,9 @@ export default function ProjectWorkspace() {
 
         <TabsContent value="hireself" className="mt-6">
           <HireVsSelfCard project={project} />
+        </TabsContent>
+        <TabsContent value="inclusive" className="mt-6">
+          <InclusiveSizingCard project={project} />
         </TabsContent>
 
         <TabsContent value="notes" className="mt-6">
