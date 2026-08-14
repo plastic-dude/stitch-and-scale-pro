@@ -88,6 +88,7 @@ import { PodcastAffiliateLabCard } from '@/components/podcast-affiliate-lab-card
 import { MagazineSubmissionLabCard } from '@/components/magazine-submission-lab-card';
 import { PricingPsychologyLabCard } from '@/components/pricing-psychology-lab-card';
 import { PodPatternsLabCard } from '@/components/pod-patterns-lab-card';
+import { MarketplaceTakeRateLabCard } from '@/components/marketplace-takerate-lab-card';
 
 type RoundingMode = 'exact' | 'multiple' | 'even' | 'odd';
 
@@ -659,6 +660,9 @@ export default function ProjectWorkspace() {
           <TabsTrigger value="pod-patterns" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             <BookOpen className="h-3.5 w-3.5 mr-1.5" /> POD Patterns Lab
           </TabsTrigger>
+          <TabsTrigger value="marketplace-takerate" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+            <Store className="h-3.5 w-3.5 mr-1.5" /> Take-Rate Lab
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="sections" className="mt-6 space-y-6">
@@ -1155,7 +1159,9 @@ export default function ProjectWorkspace() {
         <TabsContent value="pod-patterns" className="mt-6">
           <PodPatternsLabCard project={project} />
         </TabsContent>
-
+        <TabsContent value="marketplace-takerate" className="mt-6">
+          <MarketplaceTakeRateLabCard project={project} />
+        </TabsContent>
 
         <TabsContent value="notes" className="mt-6">
           <Card>
