@@ -35,4 +35,6 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 ## Progress log (update each run)
 - [CHK-001] a9cd394 — Yarn Requirement Estimator (CYC 7-weight model, tests 6/6)
 - [CHK-002] 4c50cc7 — Pattern Income Planner (Ravelry/Etsy/Ribblr/Payhip fee model, breakeven, tests 9/9); repo set PRIVATE at user request
+- [CHK-003] 23ad668 — Standing playbook committed (`playbook-schedule.md`)
+- [CHK-004] 046c700 — Pattern Pricing Advisor (cited market bands $5–10/$12–18, underpricing flag, volume scenarios, 18/18 tests)
 - Sessions research files: /home/ubuntu/research/competitors-session-1.md (grading tools + yarn ecosystem), competitors-session-2-marketplace-monetization.md (marketplace fees + income benchmarks)
