@@ -50,6 +50,39 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - [CHK-069] 4776b81 — Magazine Submission Lab (67th tab).
 - [CHK-070] 72f8512 — Price Psychology Lab (68th tab).
 - [CHK-071] b0c67a0 — POD Patterns Lab (69th tab): print-on-demand
+- [CHK-072] a2a0faf — Take-Rate War Lab (70th tab): marketplace
+  fee-take war economics for pattern designers (never
+  covered in sessions 1-71). Cleanup commit 1fde947 removed a
+  debug scratch file; both pushed (HEAD 1fde947).
+  Inbox swept: no new reviewer proposals (all open issues
+  remain reviewer-directed QA notes; no open PRs; no
+  non-plastic-dude comments).
+  Session-72 facts (verified Aug 2026): Etsy $0.20 listing +
+  6.5% transaction + 0.21% regulatory + 3% + $0.25 processing
+  + Offsite Ads 12-15%; Ravelry 3.5% commission ONLY between
+  $30 and $1,500/mo with PayPal-only payouts (2.9% + $0.30);
+  LoveCrafts 2% + $0.20 base plus extra 5% between
+  $40-$1,500/mo, paid a month in arrears (45-day lag) and has
+  culled libraries; Ribblr 4% with a $0.25 floor per sale +
+  Stripe 2.9% + $0.30; Payhip free tier 5% + Stripe;
+  own-site Stripe-only (2.9% + $0.30) but no discovery.
+  Fee history: Etsy 5%->6.5% (2022), Gumroad 3.5%->10%
+  (2023).
+  Competitor flaw: no tool computes the honest per-sale take
+  incl. fixed tolls (a $3.84 pattern on Ribblr pays 6.5%, a
+  $1.99 one 12.6%), threshold cliffs (Ravelry commission
+  disappears above $1,500/mo), Offsite Ads trap, payout lag
+  and delisting exposure — designers choose channels on
+  sticker % and get squeezed.
+  Take-Rate Lab tab: 6 channels incl. Offsite Ads rate, PayPal
+  settings and Ravelry high-tier; per-channel keeps/cent-per
+  $, fee-leak leaderboard, threshold alerts, TR-01..TR-11
+  watch-outs, concentration verdict (move revenue / too
+  dependent / balanced / trim the middle).
+  +22 lib tests; suite 1,431 tests / 72 files;
+  typecheck + vitest + build green. Screenshots:
+  docs/screenshots/takerate-lab-default-mode.webp +
+  takerate-lab-median-price-mode.webp.
   physical pattern economics for knitwear designers (never
   covered in sessions 1-70). Cleanup commit 6f71704 removed a
   scratch file; both pushed (HEAD 6f71704).
