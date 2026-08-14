@@ -1,6 +1,6 @@
 import * as React from "react"
 import { Link, useLocation } from "wouter"
-import { Settings, Plus, BookOpen, ShieldCheck, X } from "lucide-react"
+import { Settings, Plus, BookOpen, ShieldCheck, X, Package } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useProjects } from "@/context/ProjectsContext"
 import { AutosaveIndicator } from "@/components/autosave-indicator"
@@ -70,6 +70,10 @@ export function Shell({ children }: { children: React.ReactNode }) {
             <Link href="/" aria-label="Projects" className={`p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors flex items-center gap-2 ${location === '/' ? 'bg-secondary/50' : ''}`}>
               <BookOpen className="w-5 h-5" />
               <span className="hidden md:inline text-sm font-medium">Projects</span>
+            </Link>
+            <Link href="/portfolio" aria-label="Portfolio" className={`p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors flex items-center gap-2 ${location === '/portfolio' ? 'bg-secondary/50' : ''}`}>
+              <Package className="w-5 h-5" />
+              <span className="hidden md:inline text-sm font-medium">Portfolio</span>
             </Link>
             <Link href="/settings" aria-label="Settings" className={`p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors flex items-center gap-2 ${location === '/settings' ? 'bg-secondary/50' : ''}`}>
               <Settings className="w-5 h-5" />

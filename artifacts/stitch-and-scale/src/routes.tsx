@@ -20,6 +20,7 @@ import NotFound from '@/pages/not-found';
 // ── Feature pages ────────────────────────────────────────────────
 import ProjectPdf from '@/pages/project-pdf';
 import ImportCSV from '@/pages/import-csv';
+import Portfolio from '@/pages/portfolio';
 
 // ── Core routes (always present) ─────────────────────────────────
 export const ROUTES = [
@@ -31,6 +32,8 @@ export const ROUTES = [
   { path: '/settings',                component: SettingsPage     },
 
   // ── Feature routes — added here by each session / PR ─────────
+  // Session 7 — Release Portfolio dashboard (catalogue-level launch planning)
+  { path: '/portfolio',                component: Portfolio          },
   // Replit B — PDF Template Rendering Engine
   { path: '/project/:id/pdf',         component: ProjectPdf       },
   // ─────────────────────────────────────────────────────────────
