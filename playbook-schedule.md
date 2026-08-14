@@ -53,6 +53,46 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - [CHK-072] a2a0faf — Take-Rate War Lab (70th tab): marketplace
 - [CHK-073] 86f8d67 — Box Inclusion Lab (71st tab):
 - [CHK-074] 60842d5 — Yarn Licensing Lab (72nd tab):
+- [CHK-075] 0fceb2f — Gift & Credit Lab (73rd tab):
+  gift-card / store-credit program economics — the honest
+  accounting: cash-in float vs the liability behind it,
+  ASC 606 proportionate breakage recognition (10-19%
+  measured breakage), state escheat takes (100% or 60% of
+  face value; many states exempt merchandise-only retail
+  credits), federal <$10 and California <$15 (Apr 2026)
+  small-balance cash-back laws, the refund-credit loop
+  that silently eats the float (issue store credit for
+  returns = liability with no cash ever arriving), and
+  the measured 20-30% spend uplift when redeeming — a real
+  revenue line most sellers never count. H&M paid NY $36M
+  for holding onto unused card funds it miscounted as
+  breakage.
+  Competitor flaw: every gift-card vendor markets the
+  'free money' float and never prices the cash-back
+  liability, escheat surrender, or refund-credit drag —
+  sellers see a bright cash dashboard while a liability
+  stacks up behind it. Gift & Credit Lab nets the whole
+  program on a recognized basis and prints the 'what you
+  owe if you closed tomorrow' number.
+  Gift & Credit Lab tab: monthly card sales, refund-credit
+  issuance, redemption rate / lag / dormancy, escheat mode
+  (exempt / 60% / 100%), cash-back threshold, processing
+  and admin costs, fee income gating (only where expiry/
+  dormancy fees are legal), breakage assumption, view
+  horizon; stat boxes (cash collected, expected redemptions
+  + uplift, kept breakage vs escheat surrender, ending and
+  peak liability, recognized profit + margin, refund-credit
+  liability, cash-back payouts, stabilization months),
+  GC-01..GC-11 flags (refund loop >30% of float, escheat
+  exposure, cash-back law, fee illegality, liability
+  stacking, program-loss on recognized basis, expiry-law
+  trap, admin burden...), verdict ladder from 'Strong
+  program — uplift alone justifies it' to 'Don't launch —
+  the refund-credit loop dominates'.
+  +22 lib tests; suite 1,527 tests / 76 files;
+  typecheck + vitest + build green. Screenshots:
+  docs/screenshots/giftcard-lab-default-mode.webp +
+  giftcard-lab-refundcredit-mode.webp.
   licensing patterns to yarn companies — flat fee vs royalty
   vs hybrid, priced against the designer's own-shop baseline.
   Session-74 facts (verified Aug 2026): Farm & Fiber Knits
