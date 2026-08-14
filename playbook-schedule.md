@@ -33,6 +33,32 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - Prioritize money-making: features that enable selling patterns, subscriptions, or premium tiers rank above internal tooling.
 
 ## Progress log (update each run)
+- [CHK-022] d8eb5f9 — Wholesale & Book-deal Analyzer (22nd workspace
+  tab, 'Wholesale & Book'):
+  21/21 tests; 376/376 overall green; typecheck + build pass.
+  Session-23 research (keystone wholesale = half retail per
+  Craftybase; Woolly Wormhead's ~\$130 direct cost and 34.5 hours
+  per professionally produced pattern; trad book deals 10% hardcover
+  / 8% paperback / 25% ebook royalties of cover per Writers Block
+  Party, advances in 2-4 installments, first statement ~6 months
+  post-release, 15% agent + ~35% tax; GoSadi Nov 2025 platform
+  fees: Ravelry 0% (~\$5.70 net on \$6), Etsy ~\$5.10, LoveCrafts
+  25% until \u00a31,500/mo) finds designers price wholesale and book
+  deals on instinct, never against same-volume self-selling.
+  Library wholesale-book-analyzer.ts: analyzeWholesaleDeal (wholesale
+  net vs direct equivalent, volume breakeven copies, repeat-order
+  uplift, effective hourly vs the \$12 floor, keystone anchoring
+  notes, go/maybe/no verdicts); analyzeBookDeal (earn-out copies,
+  installment timeline, 15% agent + 35% tax netting, royalty-band
+  counter flags, ~2-yr cash lag, self-publish baseline); build
+  WholesalePack (6-item red-flag checklist + paste-ready counter
+  reply with deposit terms and reorder-rate lock).
+  UI: wholesale-book-card.tsx, wholesale inputs and readouts, bulk
+  checklist, counteroffer copy button, book-deal section behind a
+  switch; localStorage key kskwsb-v1.
+  Self-audit fix: the choked 21-tab single-row strip (labels
+  overlapping) is now a flex-wrap scrollable tab row with nowrap
+  labels — every tab readable at normal screen widths.
 - [CHK-021] 41f25d4 — Club Revenue Model (21st workspace tab,
   'Club Rev'):
   23/23 tests; 355/355 overall green; typecheck + build pass.
