@@ -38,3 +38,5 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - [CHK-003] 23ad668 — Standing playbook committed (`playbook-schedule.md`)
 - [CHK-004] 046c700 — Pattern Pricing Advisor (cited market bands $5–10/$12–18, underpricing flag, volume scenarios, 18/18 tests)
 - Sessions research files: /home/ubuntu/research/competitors-session-1.md (grading tools + yarn ecosystem), competitors-session-2-marketplace-monetization.md (marketplace fees + income benchmarks)
+
+- 2026-08-14 ~01:35 UTC — CHK-005 (0ef52e4): Pre-Publish Toolkit — 12-check readiness report + marketplace listing generator; 74/74 tests.
