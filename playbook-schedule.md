@@ -33,6 +33,22 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - Prioritize money-making: features that enable selling patterns, subscriptions, or premium tiers rank above internal tooling.
 
 ## Progress log (update each run)
+- [CHK-045] dea36d8 — Spec Sheet Lab (43rd tab)
+  (session-45 spec-sheet / pattern-company production
+  documentation market research). Designers hand-drawing factory
+  spec sheets hit tech-pack tools that charge $35-95/user/mo
+  (Techpacker) for fashion-generic packs with no knit logic,
+  freelancers at $100-300/pack, and AI generators that are only
+  50-70% complete ($3-5/pack). New lab tab turns the project's
+  own grading table into a quote-ready sheet: POM points with
+  graded values across all 9 sizes, tolerance bands (norm +/-
+  0.25in), yarn bill (fibre + derived yardage), machine-gauge
+  block (7-14 gauge flat-bed, CottonWorks), colourway depth, and
+  an S-01..S-06 quote-readiness score (0-6) with
+  ready/review/blocked verdict. 31 new lib tests, full suite 798
+  tests; typecheck + vitest + build green. Screenshot:
+  docs/screenshots/spec-sheet-lab.webp. Inbox sweep: no new
+  proposals (#26 Teach headline remains MEDIUM open).
 - [CHK-044] 1883ec9 — Lookbook Desk (42nd tab)
   (session-44 pattern-photography market research). Designers
   self-shoot with a phone or hire at mate's rates to pro half-day
