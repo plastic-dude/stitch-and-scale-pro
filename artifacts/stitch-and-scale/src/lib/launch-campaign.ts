@@ -340,3 +340,265 @@ export function buildCampaign(project: PatternProject, cfg: CampaignConfig, slot
 export function milestoneDate(launchDate: string, dayOffset: number): string {
   return formatDay(addDays(launchDate, dayOffset));
 }
+// ─────────────────────────────────────────────────────────────────────────────
+// Session-47 layer: Launch Readiness Lab — quantified funnel math nobody else
+// ships. Sister Mountain's 15%/1-week coupon cap, Ravelry queue/fave momentum
+// into Hot Right Now, MediaPeruana email benchmarks (1–3% list conversion,
+// scaling to ~0.5% above 5k subscribers), and Ravelry Group Banner PPC at
+// $1.50/1,000 impressions all encode here, fed by the pattern's real data.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export interface LaunchReadinessInput {
+  emailListSize?: number;
+  photoCount?: number;
+  avgPrice?: number;
+  salesTarget?: number;
+  couponPercent?: number;
+  couponDurationDays?: number;
+  teaserSent?: boolean;
+  channelLinksCount?: number;
+  testersFinishedCount?: number;
+  publishErrors?: number;
+  techEditScore?: number;
+}
+
+export interface ReadinessItem {
+  id: string;
+  label: string;
+  weight: number;
+  earned: number;
+  hint: string;
+}
+
+export interface ReadinessScoreResult {
+  score: number;
+  max: number;
+  band: 'not-ready' | 'warm-up' | 'cleared-for-announcement';
+  items: ReadinessItem[];
+  note: string;
+}
+
+/**
+ * 0–100 readiness score. Weights encode the market playbook: the email list is
+ * the single biggest sales lever (59% of buyers say marketing email influences
+ * purchases; 17% delete craft emails unread), finished testers are the
+ * social-proof asset, and the coupon is capped at 15%/7 days.
+ */
+export function scoreLaunchReadiness(input: LaunchReadinessInput): ReadinessScoreResult {
+  const list = Math.max(0, input.emailListSize ?? 0);
+  const listScore =
+    list >= 1000 ? 25 :
+    list >= 250 ? 18 :
+    list >= 50 ? 10 :
+    list > 0 ? 4 : 0;
+  const couponPercent = input.couponPercent ?? 0;
+  const couponDays = input.couponDurationDays ?? 0;
+  const couponOk = couponPercent <= 15 && couponPercent > 0 && couponDays > 0 && couponDays <= 7;
+  const items: ReadinessItem[] = [
+    {
+      id: 'lr-email-list',
+      label: 'Email list',
+      weight: 25,
+      earned: listScore,
+      hint: list >= 1000 ? `${list} subscribers — a list-first launch is your main revenue engine.`
+        : list >= 250 ? `${list} subscribers — strong foundation.`
+        : list >= 50 ? `${list} subscribers — enough to move launch-week sales.`
+        : list > 0 ? `${list} subscribers — aim for 50+ before announcing.`
+        : 'No list size set — email is the top sales lever; nurture the list before launch.',
+    },
+    {
+      id: 'lr-testers',
+      label: 'Finished testers',
+      weight: 15,
+      earned: Math.min(15, (input.testersFinishedCount ?? 0) >= 3 ? 15 : (input.testersFinishedCount ?? 0) >= 1 ? 8 : 0),
+      hint: (input.testersFinishedCount ?? 0) >= 3
+        ? 'Tester FOs across many bodies are your best sales asset.'
+        : (input.testersFinishedCount ?? 0) >= 1
+          ? 'Some finished FOs — finish at least 3 to cover the size range.'
+          : 'No finished testers yet — FO photos are launch-week social proof.',
+    },
+    {
+      id: 'lr-photos',
+      label: 'Pattern photos',
+      weight: 10,
+      earned: Math.min(10, (input.photoCount ?? 0) >= 8 ? 10 : (input.photoCount ?? 0) >= 6 ? 8 : (input.photoCount ?? 0) >= 4 ? 5 : (input.photoCount ?? 0) >= 1 ? 2 : 0),
+      hint: (input.photoCount ?? 0) >= 6
+        ? 'Enough photos for Ravelry + Etsy + Pinterest.'
+        : (input.photoCount ?? 0) >= 1
+          ? 'Add photos — include a WIP shot, the schematic, and detail close-ups.'
+          : 'No photos set — multi-photo listings outperform single-photo ones.',
+    },
+    {
+      id: 'lr-checklist',
+      label: 'Publish checklist',
+      weight: 10,
+      earned: (input.publishErrors ?? 0) === 0 ? 10 : (input.publishErrors ?? 0) > 0 ? 0 : 5,
+      hint: (input.publishErrors ?? 0) === 0
+        ? 'Publish checklist clean.'
+        : (input.publishErrors ?? 0) > 0
+          ? `${input.publishErrors} blocking error(s) — clear the Publish tab checks.`
+          : 'Run the Publish tab checklist (publishErrors unset).',
+    },
+    {
+      id: 'lr-tech-edit',
+      label: 'Tech-edit audit',
+      weight: 10,
+      earned: (input.techEditScore ?? 0) >= 90 ? 10 : (input.techEditScore ?? 0) >= 80 ? 7 : (input.techEditScore ?? 0) > 0 ? 3 : 5,
+      hint: (input.techEditScore ?? 0) >= 90
+        ? 'Tech-edit score is excellent.'
+        : (input.techEditScore ?? 0) >= 80
+          ? 'Tech-edit score is launch-worthy; 90+ is the sweet spot.'
+          : (input.techEditScore ?? 0) > 0
+            ? `Audit score ${input.techEditScore}/100 — a low score invites buyer corrections.`
+            : 'Run the Tech Edit tab audit (techEditScore unset).',
+    },
+    {
+      id: 'lr-coupon',
+      label: 'Launch coupon',
+      weight: 10,
+      earned: couponOk ? 10 : 0,
+      hint: couponOk ? 'Coupon stays inside the 15%-off, 7-day guardrail.'
+        : couponPercent > 15
+          ? `${couponPercent}% off trains buyers to wait for sales — cap at 15%.`
+          : couponDays > 7
+            ? `A ${couponDays}-day coupon blunts urgency — keep it to one week.`
+            : couponPercent <= 0 || couponDays <= 0
+              ? 'Set a launch coupon (≤15% off, ≤7 days) — launch-week discounts are the best sales driver.'
+              : '',
+    },
+    {
+      id: 'lr-teaser',
+      label: 'Teaser sent',
+      weight: 8,
+      earned: input.teaserSent ? 8 : 0,
+      hint: input.teaserSent ? 'Teaser email out — the list knows a launch is coming.' : 'Send a teaser 2 days before launch so the list is warmed up.',
+    },
+    {
+      id: 'lr-channels',
+      label: 'Channel links',
+      weight: 7,
+      earned: Math.min(7, (input.channelLinksCount ?? 0) >= 2 ? 7 : (input.channelLinksCount ?? 0) >= 1 ? 4 : 0),
+      hint: (input.channelLinksCount ?? 0) >= 2
+        ? 'Pattern linked on multiple channels — momentum compounds.'
+        : (input.channelLinksCount ?? 0) >= 1
+          ? 'One channel set — add at least one more (Ravelry + Etsy + site).'
+          : 'No channel links — queues and favourites need a destination page.',
+    },
+    {
+      id: 'lr-price',
+      label: 'Market price',
+      weight: 5,
+      earned: (input.avgPrice ?? 0) >= 4 ? 5 : (input.avgPrice ?? 0) >= 1 ? 3 : 0,
+      hint: (input.avgPrice ?? 0) >= 4
+        ? 'Priced at or above the indie-market floor.'
+        : (input.avgPrice ?? 0) >= 1
+          ? 'Priced below the indie-market floor — buyers underprice markets, so don\u2019t race them.'
+          : 'Set a launch price.',
+    },
+  ];
+  const score = items.reduce((sum, i) => sum + i.earned, 0);
+  const max = items.reduce((sum, i) => sum + i.weight, 0);
+  const band = score >= 75 ? 'cleared-for-announcement' : score >= 45 ? 'warm-up' : 'not-ready';
+  const note =
+    band === 'cleared-for-announcement'
+      ? 'All major launch engines are in place — announce with confidence.'
+      : band === 'warm-up'
+        ? 'Mostly ready — close the flagged items before going public.'
+        : 'The funnel is thin. Build the list, finish testers, and clear the checklist first.';
+  return { score, max, band, items, note };
+}
+
+/**
+ * Email-driven launch revenue projection. Benchmarks from MediaPeruana's
+ * Ravelry designer-income dataset and sistermountain.com newsletter guides:
+ * 1–3% of an engaged list converts on a well-executed launch, scaling down to
+ * ~0.5% once the list passes 5k (list quality thins at scale).
+ */
+export function projectedLaunchRevenue(input: { emailListSize?: number; avgPrice?: number }): {
+  emailRevenueLow: number;
+  emailRevenueHigh: number;
+  copiesLow: number;
+  copiesHigh: number;
+  conversionLowPct: number;
+  conversionHighPct: number;
+} {
+  const list = Math.max(0, input.emailListSize ?? 0);
+  const price = Math.max(0, input.avgPrice ?? 0);
+  if (list === 0 || price === 0) {
+    return { emailRevenueLow: 0, emailRevenueHigh: 0, copiesLow: 0, copiesHigh: 0, conversionLowPct: 0, conversionHighPct: 0 };
+  }
+  const scaledDown = list >= 5000;
+  const convLow = scaledDown ? 0.005 : 0.01;
+  const convHigh = scaledDown ? 0.01 : 0.03;
+  return {
+    conversionLowPct: convLow * 100,
+    conversionHighPct: convHigh * 100,
+    copiesLow: Math.round(list * convLow),
+    copiesHigh: Math.round(list * convHigh),
+    emailRevenueLow: Math.round(list * convLow * price),
+    emailRevenueHigh: Math.round(list * convHigh * price),
+  };
+}
+
+/**
+ * Discount guardrail verdict against the market consensus cap of 15% off for
+ * one week — with the Ravelry-specific nuance that the window should include
+ * a weekend.
+ */
+export function discountGuardrail(percent: number, days: number): { ok: boolean; reason: string } {
+  if (percent <= 0 || days <= 0) {
+    return { ok: true, reason: 'No coupon set — add a launch coupon of ≤15% off for ≤7 days.' };
+  }
+  if (percent > 15) {
+    return { ok: false, reason: `${percent}% off trains buyers to wait for sales. Cap launch coupons at 15% — the market consensus across designer launch guides.` };
+  }
+  if (days > 7) {
+    return { ok: false, reason: `A ${days}-day window blunts urgency. Keep the coupon live for one week and end it on a Sunday.` };
+  }
+  return { ok: true, reason: 'Inside the guardrail: ≤15% off for ≤7 days — enough to move the list, not enough to devalue the pattern.' };
+}
+
+/**
+ * Paid-banner break-even math for Ravelry Group Forum Banner PPC
+ * (2016 rate brochure: $1.50 per 1,000 impressions + $10/mo). Assumes a
+ * 0.5% click-through and a 15% click-to-purchase baseline.
+ */
+export function bannerBreakEven(budget: number, avgPrice: number): {
+  impressions: number;
+  clicks: number;
+  expectedCopies: number;
+  expectedRevenue: number;
+  net: number;
+  costPerCopy: number;
+} {
+  const safeBudget = Math.max(0, budget);
+  const impressions = Math.floor((safeBudget / 1.5) * 1000);
+  const clicks = Math.round(impressions * 0.005);
+  const copies = Math.round(clicks * 0.15);
+  const revenue = copies * avgPrice;
+  return {
+    impressions,
+    clicks,
+    expectedCopies: copies,
+    expectedRevenue: Math.round(revenue),
+    net: Math.round(revenue - safeBudget),
+    costPerCopy: copies > 0 ? Math.round((safeBudget / copies) * 100) / 100 : 0,
+  };
+}
+
+/**
+ * Ravelry Hot-Right-Now momentum targets. Favourites and queue counts feed the
+ * sort that powers "recently popular" — the free placement nobody can buy.
+ */
+export function momentumTargets(salesTarget: number): {
+  queueTarget: number;
+  faveTarget: number;
+  reason: string;
+} {
+  const target = Math.max(1, salesTarget);
+  return {
+    queueTarget: target,
+    faveTarget: target * 3,
+    reason: `Hot Right Now rewards concentrated momentum: aim for at least ${target} queue${target === 1 ? '' : 's'} and ${target * 3} favourites in week one — queues are a stronger buying signal than favourites.`,
+  };
+}
