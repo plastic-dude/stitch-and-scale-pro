@@ -27,6 +27,7 @@ import { TrunkShowCard } from '@/components/trunk-show-card';
 import { TranslationBundleCard } from '@/components/translation-bundle-card';
 import { PatternClubCard } from '@/components/pattern-club-card';
 import { KitEconomicsCard } from '@/components/kit-economics-card';
+import { SubmissionPipelineCard } from '@/components/submission-pipeline-card';
 
 type RoundingMode = 'exact' | 'multiple' | 'even' | 'odd';
 
@@ -273,7 +274,7 @@ export default function ProjectWorkspace() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-17 md:w-fit bg-card border border-border h-12 p-1 overflow-x-auto">
+        <TabsList className="grid w-full grid-cols-18 md:w-fit bg-card border border-border h-12 p-1 overflow-x-auto">
           <TabsTrigger value="sections" className="font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             Sections
           </TabsTrigger>
@@ -324,6 +325,9 @@ export default function ProjectWorkspace() {
           </TabsTrigger>
           <TabsTrigger value="kits" className="font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded whitespace-nowrap">
             Kits
+          </TabsTrigger>
+          <TabsTrigger value="pipeline" className="font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded whitespace-nowrap">
+            Pipeline
           </TabsTrigger>
         </TabsList>
 
@@ -614,6 +618,9 @@ export default function ProjectWorkspace() {
         </TabsContent>
         <TabsContent value="kits" className="mt-6">
           <KitEconomicsCard project={project} />
+        </TabsContent>
+        <TabsContent value="pipeline" className="mt-6">
+          <SubmissionPipelineCard project={project} />
         </TabsContent>
 
         <TabsContent value="notes" className="mt-6">
