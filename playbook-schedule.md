@@ -33,6 +33,40 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - Prioritize money-making: features that enable selling patterns, subscriptions, or premium tiers rank above internal tooling.
 
 ## Progress log (update each run)
+- [CHK-048] f08f9cc — Inbox sweep + Listing SEO Lab (46th
+  feature). Inbox swept at 8bf2a24: three new issues #27-#29
+  (yarn-buy swatch switch no-op, buffer label precision,
+  teach ticket ladder in flat-fee modes). All three turned out
+  stale: the fixes already landed at HEAD (CHK-039 cycle, d314a5f);
+  live counter-evidence posted on each issue and all three closed.
+  Also re-verified tech debts (a)(b)(c) from staff prompt — all
+  fixed at HEAD (royalty double-count fixed marker, standards
+  guard, partner collection).
+  Research angle: pattern listing SEO / discoverability market
+  (never covered) — session-48 facts: Ravelry search ranks by
+  title keywords + tags, 13 tag slots per listing; listings with
+  6-8 photos (front, worn, detail, schematic, WIP, personal)
+  outperform; 9+ size ranges advertised as 'size-inclusive' are
+  the strongest documented callout; written+charted is a filter
+  keyword; HRN ('recently popular') responds to queues, favourites,
+  new-release announcements and KALs (Stitchcraft HRN analysis);
+  Ravelry sweet spot $5-6 paid; Etsy $0.20 listing/4mo + 6.5%
+  transaction + 3% + $0.25 payment; LoveCrafts 25% seller fee in
+  the $40-1,900/mo band.
+  Listing SEO Lab tab: pre-publish 0-100 scorecard across 7 items
+  (title keywords 15, tags 15, photos 15, price-vs-band 15,
+  size-range callout 15, written+charted 10, announcement
+  channels 10) with per-item hints; planned-listing form;
+  net-per-sale tiles for Ravelry/Etsy/LoveCrafts using platformNet
+  seams and documented fees; paste-ready listing kit (title,
+  tags, description with romance placeholder) with copy button;
+  first-week momentum targets (queues/favourites/projects) and the
+  sweet-spot price band. All settings persist via the
+  projectStorage seam. 14 new lib tests; suite 859 tests;
+  typecheck + vitest + build green. Found and fixed a React 18
+  batching race in the tag-draft onChange (double patch lost the
+  draft). Screenshot:
+  docs/screenshots/listing-seo-lab.webp.
 - [CHK-047] 4600ffd — QA sweep + Launch Readiness Lab (Launch tab
   upgrade, 45th feature). Inbox swept first: 4 new reviewer
   issues (#32-#35). Fixed in severity order: #33 MAJOR skip-setup
