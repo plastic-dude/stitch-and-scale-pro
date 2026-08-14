@@ -43,6 +43,39 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - [CHK-062] bc6f820 — Channel Migration Lab (60th tab).
 - [CHK-063] e9cfc02 — Release Timing Lab (61st tab).
 - [CHK-064] 83f9b55 — Workshop Teaching Lab (62nd tab).
+- [CHK-065] 5f91403 — Consignment Re-Price Lab (63rd tab).
+  Inbox swept: no new reviewer proposals (11 open
+  issues remain reviewer-directed INFO notes; QA cycle
+  32 branch copy/consistency INFO; no open PRs).
+  Research angle: LYS consignment re-pricing & shelf-life
+  economics for print leaflets/patterns (session 18 covered
+  consignment kits, not re-pricing) — session-65 facts:
+  Ravelry In-Store covers 2,300+ yarn shops, 60/40
+  designer/shop split with the shop keeping a flat $1.00 at
+  retail $2.49 or below, monthly PayPal invoicing;
+  TNNA keystone puts retail at 2x designer wholesale cost;
+  hand-dyer wholesale is ~50% of retail and consignment
+  shops take 40-60% of the retail; destash buyers expect
+  ~50% off but accept 65-70% for current stock; buyers
+  read deep markdowns (<50% retail) as 'clearing out' and
+  will wait; sources ravelry.com/wiki/pages/InStoreSales,
+  blog.ravelry.com, smallbusiness.chron.com, reddit
+  r/dyeing 6f9b72, r/Yarn 1som5oq, woollywormhead.com/
+  wholesale.
+  Consignment Re-Price Lab in a new tab: channel net table
+  (Ravelry In-Store 60/40, direct consignment 45/55,
+  own shop/online 97/3) at the current retail, net per
+  unit now, months-of-stock and dead-stock sunk print
+  cost, a 6-step re-price ladder (hold, 15/30/45% off,
+  50% destash floor, pull-back-to-online discount) each
+  with net/unit, months-to-clear and total net on current
+  stock, best-step highlight, season-band drag, CR-01..
+  CR-08 flags (low-margin split, negative net, dead stock,
+  deep-stock over 6 months, destash-read markdown, below
+  floor, heavy re-price labor, seasonal miss), verdict.
+  +27 lib tests; suite 1,244 tests / 65 files;
+  typecheck + vitest + build green. Screenshot:
+  docs/screenshots/consignment-reprice-lab.webp.
   Inbox swept: no new reviewer proposals (10 open
   issues remain reviewer-directed INFO notes; QA cycle
   30/31 branches are copy/consistency INFO; no open PRs).
