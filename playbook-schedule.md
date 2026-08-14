@@ -33,6 +33,18 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - Prioritize money-making: features that enable selling patterns, subscriptions, or premium tiers rank above internal tooling.
 
 ## Progress log (update each run)
+- [CHK-014] 45504af — Trunk Show & License Planner (14th workspace tab):
+  20/20 tests; 217/217 overall green; typecheck + build pass. Session-15
+  research (Ravelry in-store channel, cottage-license market norms,
+  trunk-show LYS guides) finds the in-person channel has zero tooling —
+  economics live in owner FAQs and handshake deals. Library
+  trunk-show-planner.ts: analyzeTrunkShow (traffic x trunk days x
+  try-on x conversion, shop split + channel fee, yarn attach income,
+  time-costed samples at 30 yd/hr, go/review/skip verdict), dated
+  task list, proposal letter + kick-off pitch; priceLicenses on the
+  published 6-tier cottage-license market norms ($20–$750) with
+  annualization, bulk rates, renewals; license terms + offer letter.
+  UI: trunk-show-card.tsx as 'Trunk Show' tab after Launch.
 - [CHK-013] aafa9c3 — Design Offer Evaluator (Deals tab extension): 18/18 tests;
   197/197 overall green; typecheck + build pass. Session-14 research
   (Who Pays Knitters, Making Stories royalties, Quince fairness norms,
