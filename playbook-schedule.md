@@ -34,6 +34,30 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 
 ## Progress log (update each run)
 - [CHK-055] 14b789f — Show ROI Lab (53rd feature).
+- [CHK-056] 55ce053 — Wholesale Program Lab (54th tab).
+  Inbox swept: QA cycles 21-24 PASS with no delegation;
+  issues #23/#24 closed with counter-evidence — both were
+  already fixed at HEAD by CHK-038 (7939fa0).
+  Research angle: wholesale line-sheet & minimum-order
+  economics (never covered) — session-56 facts: keystone
+  wholesale = 2x COGS (COGS = (materials + labor) x 1.1-1.15
+  overhead); processing/order (packing, invoicing, insurance)
+  must stay under 10% of order value; the $200 first-order
+  minimum is the market's standard test case; Faire charges
+  15% on introduced orders; for makers with under ~200
+  stockists the line sheet is the entire sales pitch; the
+  common mistakes: no minimum order, no repeat minimum,
+  discounting below keystone, net terms without deposits.
+  Wholesale Program Lab in a new workspace tab: editable
+  3-SKU line with COGS, keystone, under-keystone badges and
+  margin-per-hour; order economics (net/order, processing
+  share, suggested minimum, net/stockist/yr); annual net
+  after COGS capped by reorder-driven demand inside the
+  knit-hour budget; a per-wholesale-hour ladder against the
+  $30/hr floor with a direct-retail reference; WL-01..WL-08
+  flags. 27 new lib tests; suite 1014 tests; typecheck +
+  vitest + build green. Screenshot:
+  docs/screenshots/wholesale-lab.webp.
   Inbox swept: QA cycles 21-24 all PASS with no reviewer
   delegation; issues #23/#24 open but untouched by the
   reviewer — unactionable per the reviewer-first rule.
