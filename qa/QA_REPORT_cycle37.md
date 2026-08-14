@@ -1,8 +1,8 @@
-# QA Report — Cycle 37: CHK-068 Podcast & Affiliate Lab + CHK-069 Magazine Submission Lab
+# QA Report — Cycle 37: CHK-068 Podcast Lab + CHK-069 Magazine Submission Lab + CHK-070 Price Psychology Lab
 
-**Date:** 2026-08-14 · **Reviewed commits:** `ec3a219` → `49c74e4` (CHK-067 log) → `deabea4` (CHK-068) → `4776b81` (CHK-069)
-**Branch reviewed:** `origin/main` at `4776b81` · **QA branch:** `qa/manus-2026-08-14-cycle37`
-**Tools under test (66th & 67th tabs):** Podcast & Affiliate Lab (`podcast-affiliate`), Magazine Submission Lab (`magazine-submission`)
+**Date:** 2026-08-14 · **Reviewed commits:** `ec3a219` → `49c74e4` (CHK-067 log) → `deabea4` (CHK-068) → `4776b81` (CHK-069) → `72f8512` (CHK-070) → `1f9f2e3` (CHK-070 log)
+**Branch reviewed:** `origin/main` at `1f9f2e3` · **QA branch:** `qa/manus-2026-08-14-cycle37`
+**Tools under test (66th–68th tabs):** Podcast & Affiliate Lab (`podcast-affiliate`), Magazine Submission Lab (`magazine-submission`), Price Psychology Lab (`pricing-psychology`)
 
 > This report is addressed to the Reviewer. The Coder should not act on this report.
 
@@ -13,8 +13,8 @@
 | Check | Result |
 | --- | --- |
 | `tsc --noEmit` | Clean, zero errors |
-| Vitest | **1,350 / 1,350** across 68 test files (+29 for CHK-068, +27 for CHK-069) |
-| Production build (`pnpm build`) | OK (~8s) |
+| Vitest | **1,380 / 1,380** across 70 test files (+29 CHK-068, +27 CHK-069, +30 CHK-070) |
+| Production build (`pnpm build`) | OK — stitch-and-scale built in 7.79s; only the unrelated `mockup-sandbox` workspace fails without `PORT` env (repo infra, not CHK-related) |
 | Dev server | Fresh restart on `:5173` after pull (per restart rule) |
 
 ## 2. Defect Found — Issue #47: "Podcast Lab" tab is a dead tab (66th tab unreachable)
@@ -69,13 +69,32 @@ The Magazine Submission Lab repeats the exact defect pattern already filed in is
 
 The fix established in prior cycles applies: multiply by 100 on display (and divide on input), or store/display percent integers. Default `killFeePct: 50` at line 130 of the engine vs `mag-kill` default 0.5 in the component is worth a second look by the Reviewer (the engine default appears to be `50` i.e. already-percent while the component clamps `killFeePct` to 0–1 — internally consistent but fragile).
 
-## 5. Regression notes
+## 5. Price Psychology Lab (68th tab, CHK-070) — engine math: browser EXACT vs independent verification
+
+The Price Psychology Lab mounts correctly (unlike the Podcast Lab — `TabTrigger` at line 655 and `TabContent` at line 1148 are both present). Engine math was recomputed independently in Python and cross-verified with `tsx` against the live engine; all values below matched **exactly** in browser dumps:
+
+| Scenario | Current net | Candidate net | Change | Implied units | Flags | Verdict |
+| --- | --- | --- | --- | --- | --- | --- |
+| Default ($10 → $9.99, mainstream) | $225.00 | $249.50 | +$24.50/mo | 25.0 → 27.8 | PP-01, PP-07 | Cross the barrier — the .99 earns its keep |
+| Premium, rounded candidate $12.00 | $225.00 | $259.20 | +$34.20/mo | 25.0 → 24.0 | — | Raise the volume hypothesis, not the ending |
+| Premium heirloom, $70 → $64.99 | $252.00 | $238.64 | −$13.36/mo | 4.0 → 4.1 | PP-02, PP-03 | Keep the price — the change earns nothing extra |
+
+Bundle math also verified on defaults: singles $540.00 vs bundle $324.18, both ending-configuration chips correctly show "Yes — best-selling config" (odd total + even components). Barrier labels, highest-shop-anchor, and recommended-ending recommendations all correct; − glyph typography on negatives renders correctly. The 375px phone render (`c37-11`) passes with the full card and verdict visible.
+
+### Two new defects on this card
+
+**5a. `pp-take` raw-fraction-with-%-suffix (same recurring family as #43/#44/#46/#47).** The "Marketplace take rate" field stores 0–1 (default 0.1 = 10%) but displays with a bare `%` suffix, so users read `0.1 %` — a tenth of a percent — instead of 10%.
+
+**5b. "Left digit moves" StatBox bound to the wrong field.** The stat reads `result.current.leftDigitChange` (hard-coded 0) instead of `result.candidate.leftDigitChange`, so even with the default $10 → $9.99 drop of one left digit the card says **"No digit change"** — directly contradicting the verdict "Cross the barrier — the .99 earns its keep". In `pricing-psychology-lab-card.tsx`, both StatBoxes ("Left digit moves" and "Current implied units") read from `result.current` rather than the candidate outcome. (A third stat, "Candidate implied units", reads correctly from `result.candidate`.)
+
+## 7. Regression notes
 
 - Podcast tab defect is **new** in CHK-068 (`deabea4`) — the tab trigger was added without its content mount.
 - Magazine lab engine math, conditional group rendering, verdict ladder, and phone layout are all correct.
+- Price Psychology Lab engine math is correct; defects 5a/5b are UI-level (suffix binding + wrong StatBox field).
 - No `src/` code was modified by QA.
 
-## 6. Screenshots (embedded)
+## 8. Screenshots (embedded)
 
 ![Podcast Lab tab active but panel empty — dead tab defect](qa-shots-cycle37/c37-01-podcast-DEFAULT-before.png)
 
@@ -86,3 +105,13 @@ The fix established in prior cycles applies: multiply by 100 on display (and div
 ![Magazine Lab outright sale AFTER](qa-shots-cycle37/c37-05-magazine-OUTRIGHTSALE-edits.png)
 
 ![375px phone full-page render](qa-shots-cycle37/c37-07-magazine-375px-phone.png)
+
+![Price Psychology Lab defaults BEFORE](qa-shots-cycle37/c37-08-pricepsych-DEFAULT-before.png)
+
+![Price Psych Lab premium candidate AFTER](qa-shots-cycle37/c37-09-pricepsych-PREMIUM-edits.png)
+
+![Price Psych Lab premium $64.99 AFTER — PP-02/PP-03 flags](qa-shots-cycle37/c37-10-pricepsych-PREMIUM6499-edits.png)
+
+![375px phone full-page render of Price Psych Lab](qa-shots-cycle37/c37-11-pricepsych-375px-phone.png)
+
+Screenshot inventory on the qa branch (`qa/qa-shots-cycle37/`): c37-01 podcast dead-tab evidence, c37-03 magazine defaults BEFORE, c37-04 magazine royalty AFTER, c37-05 magazine outright-sale AFTER, c37-07 magazine 375px phone, c37-08 price-psych defaults BEFORE, c37-09 price-psych premium AFTER, c37-10 price-psych premium-64.99 AFTER, c37-11 price-psych 375px phone.
