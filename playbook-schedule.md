@@ -33,6 +33,32 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - Prioritize money-making: features that enable selling patterns, subscriptions, or premium tiers rank above internal tooling.
 
 ## Progress log (update each run)
+- [CHK-028] 814443a — Price Window & Discount Optimizer (28th workspace
+  tab, 'PriceWin'):
+  14 tests; 469/469 overall green; typecheck + build pass.
+  Session-29 research (knitting patterns historically underpriced as
+  yarn-company loss leaders vs sewing patterns as standalone
+  products; a Jan 2019 Ravelry snapshot found fewer than 100
+  designers clearing $3k/month in pattern sales; launch discounts
+  buy Ravelry promo-thread placement and give the fave queue a
+  buy-now reason; 15-20% is the standard launch band; deep or
+  open-ended sales train buyers to wait for the next deal and
+  decay full-price baseline volume; price by complexity, not by
+  insecurity) finds designers plan launch sales on gut feel,
+  never against their own fave queue, season, and fee stack.
+  Library price-window-optimizer.ts: analyzePriceWindow — three
+  modeled paths net of the shared platformNet fee seam (full price
+  with queue dribbling ~2%/wk; launch-window sale with queue
+  conversion at discount uplift and blended price; forever-sale
+  trap with trained-to-wait baseline decay); season demand map
+  (Nov-Dec 1.75x peak to Jul 0.60x trough); discount-train trap
+  audit (depth >25% or >4 weeks flagged); paste-ready launch
+  listing copy.
+  UI: price-window-card.tsx — price/platform/baseline/fave-queue
+  inputs, discount and duration sliders, launch-month season chip
+  selector, advanced conversion settings, verdict-badged path rows,
+  trap warnings, season map, copyable launch copy; localStorage
+  key prcw-v1.
 - [CHK-027] 838b2fc — Promotion Budget Planner (27th workspace tab, 'Promo'):
   13 tests; 455/455 overall green; typecheck + build pass.
   Session-28 research (Etsy onsite PPC needs ~3x revenue ROAS to
