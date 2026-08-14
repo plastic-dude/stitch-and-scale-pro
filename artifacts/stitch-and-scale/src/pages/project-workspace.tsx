@@ -31,6 +31,7 @@ import { SubmissionPipelineCard } from '@/components/submission-pipeline-card';
 import { KalRoiCard } from '@/components/kal-roi-card';
 import { ChannelFunnelCard } from '@/components/channel-funnel-card';
 import { ClubRevenueCard } from '@/components/club-revenue-card';
+import { WholesaleBookCard } from '@/components/wholesale-book-card';
 
 type RoundingMode = 'exact' | 'multiple' | 'even' | 'odd';
 
@@ -277,69 +278,72 @@ export default function ProjectWorkspace() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-21 md:w-fit bg-card border border-border h-12 p-1 overflow-x-auto">
-          <TabsTrigger value="sections" className="font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+        <TabsList className="flex flex-wrap md:flex-nowrap w-full gap-1 bg-card border border-border p-1 h-auto overflow-x-auto">
+          <TabsTrigger value="sections" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             Sections
           </TabsTrigger>
-          <TabsTrigger value="preview" className="font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+          <TabsTrigger value="preview" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             Preview
           </TabsTrigger>
-          <TabsTrigger value="yarn" className="font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+          <TabsTrigger value="yarn" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             Yarn
           </TabsTrigger>
-          <TabsTrigger value="notes" className="font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+          <TabsTrigger value="notes" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             Notes
           </TabsTrigger>
-          <TabsTrigger value="income" className="font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+          <TabsTrigger value="income" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             Income
           </TabsTrigger>
-          <TabsTrigger value="draft" className="font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+          <TabsTrigger value="draft" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             Draft
           </TabsTrigger>
-          <TabsTrigger value="pricing" className="font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+          <TabsTrigger value="pricing" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             Pricing
           </TabsTrigger>
-          <TabsTrigger value="publish" className="font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+          <TabsTrigger value="publish" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             Publish
           </TabsTrigger>
-          <TabsTrigger value="testknit" className="font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+          <TabsTrigger value="testknit" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             Test Knit
           </TabsTrigger>
-          <TabsTrigger value="techedit" className="font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+          <TabsTrigger value="techedit" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             Tech Edit
           </TabsTrigger>
-          <TabsTrigger value="finish" className="font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+          <TabsTrigger value="finish" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             Finish
           </TabsTrigger>
-          <TabsTrigger value="deals" className="font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+          <TabsTrigger value="deals" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             Deals
           </TabsTrigger>
-          <TabsTrigger value="launch" className="font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+          <TabsTrigger value="launch" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             Launch
           </TabsTrigger>
-          <TabsTrigger value="trunkshow" className="font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+          <TabsTrigger value="trunkshow" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             Trunk Show
           </TabsTrigger>
-          <TabsTrigger value="transbundle" className="font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded whitespace-nowrap">
+          <TabsTrigger value="transbundle" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             Trans & Bundle
           </TabsTrigger>
-          <TabsTrigger value="patternclub" className="font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded whitespace-nowrap">
+          <TabsTrigger value="patternclub" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             Pattern Club
           </TabsTrigger>
-          <TabsTrigger value="kits" className="font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded whitespace-nowrap">
+          <TabsTrigger value="kits" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             Kits
           </TabsTrigger>
-          <TabsTrigger value="pipeline" className="font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded whitespace-nowrap">
+          <TabsTrigger value="pipeline" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             Pipeline
           </TabsTrigger>
-          <TabsTrigger value="kalroi" className="font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded whitespace-nowrap">
+          <TabsTrigger value="kalroi" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             KAL &amp; Collab
           </TabsTrigger>
-          <TabsTrigger value="channels" className="font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded whitespace-nowrap">
+          <TabsTrigger value="channels" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             Channels
           </TabsTrigger>
-          <TabsTrigger value="clubrev" className="font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded whitespace-nowrap">
+          <TabsTrigger value="clubrev" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             Club Rev
+          </TabsTrigger>
+          <TabsTrigger value="wsbook" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+            Wholesale &amp; Book
           </TabsTrigger>
         </TabsList>
 
@@ -645,6 +649,10 @@ export default function ProjectWorkspace() {
 
         <TabsContent value="clubrev" className="mt-6">
           <ClubRevenueCard project={project} />
+        </TabsContent>
+
+        <TabsContent value="wsbook" className="mt-6">
+          <WholesaleBookCard project={project} />
         </TabsContent>
 
         <TabsContent value="notes" className="mt-6">
