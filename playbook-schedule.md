@@ -33,6 +33,27 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - Prioritize money-making: features that enable selling patterns, subscriptions, or premium tiers rank above internal tooling.
 
 ## Progress log (update each run)
+- [CHK-044] 1883ec9 — Lookbook Desk (42nd tab)
+  (session-44 pattern-photography market research). Designers
+  self-shoot with a phone or hire at mate's rates to pro half-day
+  rates; photo sessions are 8-10h of a sweater's 55h build
+  (MediaPeruana) and the dominant selling tool per
+  Sister Mountain/Laine. New desk tab prices the shoot before it
+  happens against the project's own data: construction-derived
+  hours budget (base 9h + sizes/texture/yardage), three cost tiers
+  (DIY / friend / pro), trait-driven shot list from the graded
+  sections, platform gallery minimums, budget-vs-revenue guard,
+  and L-01..L-06 flags with go/revise/blocked verdict; 21 new lib
+  tests, full suite 765 tests / 44 files; typecheck + vitest +
+  build green. Screenshot: docs/screenshots/lookbook-desk.webp.
+  64bc1ee — same run: fix #30 (Test Knit Desk registered with
+  duplicate tab value "testknit" — Desk now "testdesk", label
+  "Test Knit Desk", verified live) and fix #31 (Tech Edit
+  market-bill note used the audit-findings count instead of the
+  project's graded-size count; new exported gradedSizeCount() and
+  correct singular/plural; 2 regression tests). Closing comments
+  posted on GitHub #30 and #31. Inbox sweep: no other new
+  proposals (#26 Teach headline remains MEDIUM open).
 - [CHK-043] 0f09016 — Test Knit Desk (41st tab)
   (session-43 test-knit market research). Test knits run on a
   Google-sheets/Instagram patchwork; Yarnpond (2018) is the only
