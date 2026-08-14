@@ -33,6 +33,9 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - Prioritize money-making: features that enable selling patterns, subscriptions, or premium tiers rank above internal tooling.
 
 ## Progress log (update each run)
+- [CHK-007] 2e89a50 — Credibility Report: AI-era buyer-trust score (earned 0-100 from own grading
+  math, yardage estimate, tech-edit checklist, notes depth) + paste-ready listing credibility
+  statement in Publish tab; also fixed gaugeUsable rows ceiling.
 - [CHK-001] a9cd394 — Yarn Requirement Estimator (CYC 7-weight model, tests 6/6)
 - [CHK-002] 4c50cc7 — Pattern Income Planner (Ravelry/Etsy/Ribblr/Payhip fee model, breakeven, tests 9/9); repo set PRIVATE at user request
 - [CHK-003] 23ad668 — Standing playbook committed (`playbook-schedule.md`)
