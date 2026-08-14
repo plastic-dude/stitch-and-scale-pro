@@ -33,9 +33,18 @@ import {
   DealInput,
   DealOffer,
 } from '@/lib/yarn-company-deal';
+import {
+  evaluateDesignOffer,
+  generateOfferResponse,
+  DESIGN_OFFER_TYPES,
+  DESIGN_OFFER_TYPE_LABELS,
+  DesignOfferInput,
+  DesignOfferType,
+  DesignOfferVerdict,
+} from '@/lib/design-offer-evaluator';
 import { PLATFORMS, PLATFORM_LABELS, PlatformId } from '@/lib/pattern-income-calculator';
 import { PatternProject } from '@/lib/grading-engine';
-import { Handshake, Scale, Copy, TrendingUp, Lock, BadgeDollarSign } from 'lucide-react';
+import { Handshake, Scale, Copy, TrendingUp, Lock, BadgeDollarSign, AlertTriangle, CheckCircle2 } from 'lucide-react';
 
 function DefaultBadge({ text }: { text: string }) {
   return (
@@ -315,7 +324,208 @@ export function DealsTabCard({
           (Making Stories); exclusivity windows typically 3–12 months (Stitchcraft Marketing). Adjust every number —
           the verdicts respond live to your inputs.
         </p>
+
+        <DesignOfferSection input={input} baseNet={baseNet} fmt={fmt} />
       </CardContent>
     </Card>
+  );
+}
+
+/**
+ * Designer-side evaluator — when a yarn company / magazine makes you an offer,
+ * model it term by term against your own channel baseline.
+ */
+function DesignOfferSection({
+  input,
+  baseNet,
+  fmt,
+}: {
+  input: DealInput;
+  baseNet: number;
+  fmt: (n: number) => string;
+}) {
+  const { toast } = useToast();
+
+  const [offerType, setOfferType] = React.useState<DesignOfferType>('flat_fee');
+  const [designFee, setDesignFee] = React.useState(350);
+  const [designRoyalty, setDesignRoyalty] = React.useState(0.30);
+  const [designExclusivity, setDesignExclusivity] = React.useState(6);
+  const [designSales, setDesignSales] = React.useState(30);
+  const [designPrice, setDesignPrice] = React.useState(input.price || 8);
+  const [techEditCovered, setTechEditCovered] = React.useState(true);
+  const [photoCovered, setPhotoCovered] = React.useState(true);
+  const [keepsOwnSite, setKeepsOwnSite] = React.useState(true);
+  const [yarnValue, setYarnValue] = React.useState(80);
+
+  const designInput: DesignOfferInput = {
+    salesVolume: designSales,
+    patternPrice: designPrice,
+    platform: input.platform,
+    exclusivityMonths: offerType === 'royalty_with_exclusivity' || offerType === 'non_exclusive_license' ? designExclusivity : 0,
+    fee: offerType === 'flat_fee' || offerType === 'non_exclusive_license' || offerType === 'royalty_with_exclusivity' ? designFee : 0,
+    royaltyPct: offerType === 'royalty_no_exclusivity' || offerType === 'royalty_with_exclusivity' ? designRoyalty : undefined,
+    techEditCovered,
+    photographyCovered: photoCovered,
+    layoutCovered: offerType === 'flat_fee',
+    keepsOwnSiteRights: keepsOwnSite,
+    keepsWholesaleRights: offerType === 'yarn_support_only' ? false : keepsOwnSite,
+    yarnSupportValue: yarnValue,
+    designHours: input.designHours,
+    hourlyRate: input.hourlyRate,
+    uncoveredCosts: input.fixedCosts,
+  };
+
+  const designVerdict = evaluateDesignOffer(designInput);
+
+  const copyOfferResponse = async () => {
+    try {
+      await navigator.clipboard.writeText(generateOfferResponse(designInput, designVerdict));
+      toast({ title: 'Offer response copied', description: 'Paste it into your reply about the design offer.' });
+    } catch {
+      toast({ title: 'Copy failed', description: 'Select the text manually from the response box.' });
+    }
+  };
+
+  const inputField2 = (value: number, setter: (v: number) => void, step: string, ariaLabel: string) => (
+    <Input
+      type="number"
+      value={value}
+      step={step}
+      onChange={(e) => setter(Number(e.target.value) || 0)}
+      className="h-9 bg-background"
+      aria-label={ariaLabel}
+    />
+  );
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-2 border-t border-border/60 pt-4">
+        <Handshake className="w-4 h-4 text-primary" />
+        <span className="text-sm font-medium font-serif">Design offers — evaluate an offer made to you</span>
+      </div>
+      <p className="text-xs leading-relaxed text-muted-foreground">
+        When a yarn company or magazine makes you an offer, model it term by term. Cited touchstones: WPK accessory
+        flat fees avg $246 (tech edit/photo/layout excluded), Making Stories royalties 30%/20% of net, Quince-style
+        fairness = company keeps its site + Ravelry, you keep your own-site sales, exclusivity 3–12 months.
+      </p>
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="space-y-1.5">
+          <Label className="text-xs">Offer type</Label>
+          <NativeSelect value={offerType} onChange={(e) => setOfferType(e.target.value as DesignOfferType)} aria-label="offer type">
+            {DESIGN_OFFER_TYPES.map((t) => (
+              <option key={t} value={t}>{DESIGN_OFFER_TYPE_LABELS[t]}</option>
+            ))}
+          </NativeSelect>
+        </div>
+        {(offerType === 'flat_fee' || offerType === 'non_exclusive_license' || offerType === 'royalty_with_exclusivity') && (
+          <div className="space-y-1.5">
+            <Label className="text-xs">Fee offered ($)</Label>
+            {inputField2(designFee, setDesignFee, '25', 'design fee')}
+          </div>
+        )}
+        {(offerType === 'royalty_no_exclusivity' || offerType === 'royalty_with_exclusivity') && (
+          <div className="space-y-1.5">
+            <Label className="text-xs">Royalty of net (%)</Label>
+            {inputField2(designRoyalty * 100, (v) => setDesignRoyalty(Math.min(Math.max(v, 0) / 100, 1)), '5', 'design royalty')}
+          </div>
+        )}
+        {(offerType === 'royalty_with_exclusivity' || offerType === 'non_exclusive_license') && (
+          <div className="space-y-1.5">
+            <Label className="text-xs">Exclusivity (mo)</Label>
+            {inputField2(designExclusivity, setDesignExclusivity, '1', 'design exclusivity')}
+          </div>
+        )}
+        <div className="space-y-1.5">
+          <Label className="text-xs">Yarn support value ($)</Label>
+          {inputField2(yarnValue, setYarnValue, '25', 'yarn value')}
+        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="space-y-1.5">
+          <Label className="text-xs">Your own-channel sales<DefaultBadge text="the baseline" /></Label>
+          {inputField2(designSales, setDesignSales, '10', 'own sales')}
+        </div>
+        <div className="space-y-1.5">
+          <Label className="text-xs">Pattern price ($)</Label>
+          {inputField2(designPrice, setDesignPrice, '1', 'pattern price')}
+        </div>
+        <div className="space-y-1.5">
+          <Label className="text-xs">Company covers tech edit?</Label>
+          <NativeSelect value={techEditCovered ? 'yes' : 'no'} onChange={(e) => setTechEditCovered(e.target.value === 'yes')} aria-label="tech edit covered">
+            <option value="yes">Yes</option>
+            <option value="no">No — you pay</option>
+          </NativeSelect>
+        </div>
+        <div className="space-y-1.5">
+          <Label className="text-xs">Company covers photography?</Label>
+          <NativeSelect value={photoCovered ? 'yes' : 'no'} onChange={(e) => setPhotoCovered(e.target.value === 'yes')} aria-label="photography covered">
+            <option value="yes">Yes</option>
+            <option value="no">No — you pay</option>
+          </NativeSelect>
+        </div>
+      </div>
+      <div className="space-y-1.5 sm:w-1/2">
+        <Label className="text-xs">You keep selling on your own site/Payhip?</Label>
+        <NativeSelect value={keepsOwnSite ? 'yes' : 'no'} onChange={(e) => setKeepsOwnSite(e.target.value === 'yes')} aria-label="keep own-site rights">
+          <option value="yes">Yes — own channel stays yours</option>
+          <option value="no">No — exclusive to them</option>
+        </NativeSelect>
+      </div>
+
+      <div className="rounded-md border border-border/60 bg-muted/40 p-3 text-xs leading-relaxed">
+        <div className="mb-2 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <VerdictBadge2 verdict={designVerdict.verdict} />
+          </div>
+          <span className="text-muted-foreground">Effective rate: <span className="font-semibold">${designVerdict.effectiveHourlyRate.toFixed(2)}/hr</span></span>
+        </div>
+        <div className="flex items-center justify-between">
+          <span>Offer value over the window</span>
+          <span className="font-semibold">{fmt(designVerdict.estimatedOfferValue)}</span>
+        </div>
+        <div className="flex items-center justify-between text-muted-foreground">
+          <span>Your own-channel baseline (this window)</span>
+          <span>{fmt(baseNet >= 0 ? baseNet : 0)}</span>
+        </div>
+      </div>
+
+      {designVerdict.flags.length > 0 && (
+        <div className="space-y-2">
+          {designVerdict.flags.map((f) => (
+            <div key={f.code} className="flex gap-2 rounded-md border border-border/60 bg-background p-2.5 text-xs leading-relaxed">
+              {f.severity === 'error' ? (
+                <AlertTriangle className="mt-0.5 w-3.5 h-3.5 shrink-0 text-destructive" />
+              ) : (
+                <CheckCircle2 className="mt-0.5 w-3.5 h-3.5 shrink-0 text-muted-foreground" />
+              )}
+              <div>
+                <span className="mr-2 font-mono text-[10px] font-semibold text-muted-foreground">{f.code}</span>
+                <span className={cn('font-medium', f.severity === 'error' && 'text-destructive')}>{f.detail}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <p className="text-xs leading-relaxed text-muted-foreground">{designVerdict.summary}</p>
+      <Button variant="outline" size="sm" className="w-full gap-2" data-testid="copy-design-response" onClick={copyOfferResponse}>
+        <Copy className="w-3.5 h-3.5" />
+        Copy offer response
+      </Button>
+    </div>
+  );
+}
+
+function VerdictBadge2({ verdict }: { verdict: DesignOfferVerdict['verdict'] }) {
+  const config = {
+    take: 'bg-emerald-500/15 text-emerald-600 border-emerald-500/40',
+    counter: 'bg-amber-500/15 text-amber-600 border-amber-500/40',
+    walk_away: 'bg-destructive/15 text-destructive border-destructive/40',
+  }[verdict];
+  return (
+    <Badge variant="outline" className={cn('gap-1 font-semibold uppercase tracking-wide', config)}>
+      <Scale className="w-3 h-3" />
+      {verdict === 'walk_away' ? 'Walk away' : verdict}
+    </Badge>
   );
 }
