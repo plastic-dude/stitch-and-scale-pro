@@ -33,6 +33,32 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - Prioritize money-making: features that enable selling patterns, subscriptions, or premium tiers rank above internal tooling.
 
 ## Progress log (update each run)
+- [CHK-040] fdb8305 — Grading Lab (39th tab 'Grading Lab')
+  + reviewer fix #29 on Teach:
+  New grading-lab.ts grades every size in one pass, then runs
+  tech-editor sanity checks the market charges $15-25/size
+  ($125-250 min jobs) for: ease drift between neighbouring
+  sizes (G-01), repeat misalignment (G-02), missing bust /
+  arm keys (G-03), decreasing stitch counts (G-04), inelastic
+  oversized drape (G-05), unreal gauge (G-06), <5 sizes
+  (G-07), cm/inch confusion (G-08). Ease conformance against
+  the industry ease guide (very fitted <= -5cm ... oversized
+  >= +15cm at bust); freelance-cost-saved KPI ($135-225 for
+  a 9-size set); per-size walk table (bust cm, stitches, step);
+  verdict ready/review/blocked with unit-safe cm math on
+  both cm and in projects.
+  14 new tests (grading-lab), 702 total (41 files).
+  Research session 40 (grading & sizing market): grading is
+  the #1 publishing blocker; alternatives are manual sheets,
+  freelance jobs $125-250 (fashion-incubator) / $35/hr (Midnight
+  Purl), and single-fit AI generators that produce no graded
+  sets; ease-guide workshop by sistermountain; 2in bust grade
+  rule; XS-5XL inclusive practice widens buyer pool.
+  Fix: #29 ticket-ladder sliders hidden in guild flat-fee and
+  LYS class modes (now gated on isCourse; ladder, early-bird /
+  installment sliders, and tier copy only render for courses).
+  Typecheck + 702 tests + build green; verified in-browser
+  (Demo Crewneck: ready, 9 sizes, +18 sts/step, 12.7cm ease).
 - [CHK-039] d314a5f — Submissions (38th tab 'Submissions')
   + reviewer fixes #27/#28 on Yarn Buy:
   New submission-desk.ts prices magazine / box / book
