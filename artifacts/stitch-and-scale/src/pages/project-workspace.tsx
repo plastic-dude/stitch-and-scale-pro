@@ -39,6 +39,7 @@ import { MembershipCard } from '@/components/membership-card';
 import { PromotionCard } from '@/components/promotion-card';
 import { PriceWindowCard } from '@/components/price-window-card';
 import { RetentionCard } from '@/components/retention-card';
+import { PlatformMixCard } from '@/components/platform-mix-card';
 
 type RoundingMode = 'exact' | 'multiple' | 'even' | 'odd';
 
@@ -373,6 +374,9 @@ export default function ProjectWorkspace() {
           <TabsTrigger value="repeat" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             Repeat
           </TabsTrigger>
+          <TabsTrigger value="mix" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+            Mix
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="sections" className="mt-6 space-y-6">
@@ -703,6 +707,9 @@ export default function ProjectWorkspace() {
         </TabsContent>
         <TabsContent value="repeat" className="mt-6">
           <RetentionCard project={project} />
+        </TabsContent>
+        <TabsContent value="mix" className="mt-6">
+          <PlatformMixCard project={project} />
         </TabsContent>
 
         <TabsContent value="notes" className="mt-6">
