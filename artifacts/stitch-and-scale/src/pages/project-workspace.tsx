@@ -20,7 +20,7 @@ import { NativeSelect } from '@/components/ui/native-select';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { generateId, PatternSection, SectionMeasurement, MeasurementType, GradingKey, GRADING_KEY_LABELS, ALL_SIZES, gradePattern, resolveProjectStandards } from '@/lib/grading-engine';
-import { Plus, Edit2, Trash2, ArrowRight, Table as TableIcon, Copy, Settings, ChevronDown, ChevronRight, Calculator, FlaskConical, PenLine, ClipboardCheck, Camera, Video, FileText, Library, Tag, Target, Sparkles, FileCheck2, Tent, Handshake, Rocket, Boxes, Crown, MapPin, CalendarDays, Presentation, Store, Radio } from 'lucide-react';
+import { Plus, Edit2, Trash2, ArrowRight, Table as TableIcon, Copy, Settings, ChevronDown, ChevronRight, Calculator, FlaskConical, PenLine, ClipboardCheck, Camera, Video, FileText, Library, Tag, Target, Sparkles, FileCheck2, Tent, Handshake, Rocket, Boxes, Crown, MapPin, CalendarDays, Presentation, Store, Radio, BookOpen } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useSettings } from '@/context/SettingsContext';
@@ -87,6 +87,7 @@ import { RetreatTeachingLabCard } from '@/components/retreat-teaching-lab-card';
 import { PodcastAffiliateLabCard } from '@/components/podcast-affiliate-lab-card';
 import { MagazineSubmissionLabCard } from '@/components/magazine-submission-lab-card';
 import { PricingPsychologyLabCard } from '@/components/pricing-psychology-lab-card';
+import { PodPatternsLabCard } from '@/components/pod-patterns-lab-card';
 
 type RoundingMode = 'exact' | 'multiple' | 'even' | 'odd';
 
@@ -655,6 +656,9 @@ export default function ProjectWorkspace() {
           <TabsTrigger value="pricing-psychology" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             <Tag className="h-3.5 w-3.5 mr-1.5" /> Price Psych Lab
           </TabsTrigger>
+          <TabsTrigger value="pod-patterns" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+            <BookOpen className="h-3.5 w-3.5 mr-1.5" /> POD Patterns Lab
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="sections" className="mt-6 space-y-6">
@@ -1147,6 +1151,9 @@ export default function ProjectWorkspace() {
         </TabsContent>
         <TabsContent value="pricing-psychology" className="mt-6">
           <PricingPsychologyLabCard project={project} />
+        </TabsContent>
+        <TabsContent value="pod-patterns" className="mt-6">
+          <PodPatternsLabCard project={project} />
         </TabsContent>
 
 
