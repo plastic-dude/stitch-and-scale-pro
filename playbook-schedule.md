@@ -33,6 +33,44 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - Prioritize money-making: features that enable selling patterns, subscriptions, or premium tiers rank above internal tooling.
 
 ## Progress log (update each run)
+- [CHK-034] 4548a0c — Teach It — Teaching Economics
+  (34th workspace tab, 'Teach'):
+  Session-35 research (see research/competitors-session-35-
+  teaching-monetization.md): teaching is the growth lever
+  for designers — fewer than 100 Ravelry designers clear
+  $3k/mo from patterns alone. Flagship self-paced courses
+  cluster at $500-600 (Pip & Pin $548 / $99x6; Kneedles &
+  Life $99-125); hosted workshops pay teachers $300-1,000/day
+  flat, tickets $75-150/day, break-even ~8 students; the
+  graduated per-hour model ($50/75/100 by 1-8/9-16/17+ seats)
+  is the standard guild ask; list enrollment realistically
+  runs 1-3%.
+  Library teach-economics.ts: analyzeTeachingOffer — 5 offer
+  formats (self-paced course, cohort, Zoom series, guild
+  flat-fee day, LYS class), blended tier ladder with
+  early-bird/installment share clamping, break-even seats,
+  production payback (weeks), effective $/hr vs the
+  pattern-selling alternative (verdict skip/hold/launch),
+  fill ratio against full-house capacity, T-01..T-05 red
+  flags (seats miss break-even, platform costs dominate,
+  below market floor, big build small audience, flat fee
+  under floor); analyzeHostedOffer — flat/graduated/
+  per-student gig pricing; buildPricingLadder — anchor
+  ~60% of price, early bird -15%, installments +12%.
+  UI: teach-economics-card.tsx — format selector, 16 inputs
+  (4 sliders for the tier ladder), verdict rail, money
+  tiles (students, gross, net, $/hr multiple), break-even +
+  payback + blended ticket, hosted-offer quick-check panel
+  with grassroots toggle, red-flag rail, engineered price
+  ladder grid, copy-paste tier copy.
+  Storage-seam key stitch-and-scale-teach-v1.
+  23 new tests; gates: 585/585 (36 files) + typecheck +
+  build green; tab visually verified in-browser.
+  Reviewer: issue #8 fixed and closed (commit 5fc0355) —
+  gauge-plausibility band was computed in sts/cm against a
+  sts-per-4in project gauge; CYC refs converted to sts/4in
+  (x10.16), warning dual-labeled, realistic 20x28 fixture.
+  Also noted #4/#14/#10/#9 as seen/queued on GitHub.
 - [CHK-033] 8b212e6 — Protect — Copyright Protection
   Planner (33rd workspace tab, 'Protect'):
   Session-34 research (see research/competitors-session-34-
