@@ -33,6 +33,35 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - Prioritize money-making: features that enable selling patterns, subscriptions, or premium tiers rank above internal tooling.
 
 ## Progress log (update each run)
+- [CHK-055] 14b789f — Show ROI Lab (53rd feature).
+  Inbox swept: QA cycles 21-24 all PASS with no reviewer
+  delegation; issues #23/#24 open but untouched by the
+  reviewer — unactionable per the reviewer-first rule.
+  Research angle: in-person show & market-event economics
+  (never covered) — session-55 facts: booth fees cluster in
+  four tiers (pop-ups $25-75 under 500 people, standard
+  $75-300 with 500-2,000, featured/juried $300-700 with
+  2,000-5,000, premium expos $700-2,000+ with 5,000-25,000);
+  the craft-circles 7x rule ($200 fee -> $1,400 target);
+  conversion 1-3% browse, 3-8% high-intent; hidden costs
+  (application, $1M liability insurance, canopy, permits,
+  power) add 20-30% over the headline fee; hand-knit
+  commodity hats cap at ~2-3x the $15-20 retail equivalent,
+  pro knitting prices per yard ($0.10-0.20), not per hour;
+  card processing 2.75% (Square) is a real margin leak.
+  Show ROI Lab in a new workspace tab: four booth tiers with
+  documented defaults, attendance x conversion x avg-ticket
+  funnel capped at units brought, full cost stack, net per
+  show-hour, follow-up list value, and the killer comparison
+  — knit the same hours at home vs the booth fee and the
+  commute. SH-01..SH-08 flags (hidden-cost burn, low-ticket
+  without list capture, below-floor conversion, premium tier
+  caution, hand-knit pricing ceiling, zero list capture,
+  inventory-vs-hours mismatch, premium-fee/low-traffic
+  mismatch), five verdict branches, per-product breakdown.
+  Inputs persist via the projectStorage seam. 22 new lib
+  tests; suite 987 tests; typecheck + vitest + build green.
+  Screenshot: docs/screenshots/show-roi-lab.webp.
 - [CHK-054] d2e8062 — Video & Social ROI Lab (52nd feature).
   Inbox swept: reviewer issues #36, #37, #38 closed with
   counter-evidence (all already fixed at HEAD or standing
