@@ -36,6 +36,7 @@ import { HireVsSelfCard } from '@/components/hire-vs-self-card';
 import { InclusiveSizingCard } from '@/components/inclusive-sizing-card';
 import { PatternLicensePlannerCard } from '@/components/pattern-license-card';
 import { MembershipCard } from '@/components/membership-card';
+import { PromotionCard } from '@/components/promotion-card';
 
 type RoundingMode = 'exact' | 'multiple' | 'even' | 'odd';
 
@@ -361,6 +362,9 @@ export default function ProjectWorkspace() {
           <TabsTrigger value="members" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             Members
           </TabsTrigger>
+          <TabsTrigger value="promo" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+            Promo
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="sections" className="mt-6 space-y-6">
@@ -682,6 +686,9 @@ export default function ProjectWorkspace() {
         </TabsContent>
         <TabsContent value="members" className="mt-6">
           <MembershipCard project={project} />
+        </TabsContent>
+        <TabsContent value="promo" className="mt-6">
+          <PromotionCard project={project} />
         </TabsContent>
 
         <TabsContent value="notes" className="mt-6">
