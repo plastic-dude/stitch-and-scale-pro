@@ -31,6 +31,7 @@ import {
   SIZE_STANDARDS,
   gradePattern,
   resolveProjectStandards,
+  isCustomStandardMissing,
 } from './grading-engine';
 import {
   YarnWeight,
@@ -110,6 +111,18 @@ export function checkReadiness(
   customStandard: StandardsTable | null = null,
 ): ReadinessResult {
   const checks: ReadinessCheck[] = [];
+
+  // ---------- Sizing standards (S003 family: the "standards built on
+  // nothing" case must be loud, never silently zeroed) ----------
+  checks.push({
+    id: 'sizing-standards',
+    label: 'Sizing standard chart is available',
+    severity: isCustomStandardMissing(project) ? 'error' : 'pass',
+    detail: isCustomStandardMissing(project)
+      ? 'This project was created under a Custom standard but its chart snapshot is missing, so every sizing number below is graded against a CYC fallback the designer never asked for. Add the custom chart in Settings (or recreate the project under a standard) before publishing.'
+      : '',
+    category: 'engineering',
+  });
 
   // ---------- Metadata (the listing can't exist without these) ----------
   checks.push({
@@ -197,7 +210,7 @@ export function checkReadiness(
   });
 
   // Base-size sanity vs the project's standard chart.
-  const standards = resolveProjectStandards(project, customStandard ?? ({} as never));
+  const standards = resolveProjectStandards(project, customStandard ?? undefined);
   const baseChart = standards[project.baseSize];
   const outOfRangeLabels: string[] = [];
   for (const s of project.sections) {
@@ -313,7 +326,7 @@ export interface ListingOutput {
 }
 
 function sizeRange(project: PatternProject): string {
-  const graded = gradePattern(project, resolveProjectStandards(project, {} as never));
+  const graded = gradePattern(project, resolveProjectStandards(project));
   const bustCirc = graded
     .flatMap(s => s.measurements)
     .find(m => m.gradingKey === 'bust');

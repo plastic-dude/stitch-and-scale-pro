@@ -66,10 +66,22 @@ export interface FlatFeeDeal {
   retainsResellRights: boolean;
 }
 
+export type RoyaltyBase = 'net' | 'gross';
+
 export interface RoyaltyDeal {
   type: 'royalty_no_exclusivity';
-  /** Royalty share of the company's NET proceeds, decimal (e.g. 0.30 = 30%). */
+  /** Royalty share, decimal (e.g. 0.30 = 30%). */
   royaltyPct: number;
+  /**
+   * Which revenue base the royalty is a share of. 'net' = the company's net
+   * proceeds after platform fees (the Making Stories precedent — their
+   * published 30% example is 30% of NET Ravelry proceeds). 'gross' = raw
+   * price × units, which a company may push for because the designer pays
+   * the platform fee share on that revenue too. The default 'net' matches
+   * the cited precedent; a company demanding 'gross' is worth roughly
+   * (1 + platformEffectiveFeePct)% more headline — flag it in terms.
+   */
+  royaltyBase: RoyaltyBase;
   /** How many sales the company expects to make through its channel. */
   companySales: number;
 }
@@ -164,25 +176,39 @@ export function compareDeal(input: DealInput, offer: DealOffer): DealOutcome {
   }
 
   if (offer.type === 'royalty_no_exclusivity') {
-    // Company's channel: royalty is a share of its NET proceeds (per the
-    // Making Stories structure — royalties are computed on net, not gross).
+    // Royalty base (issue #2 / S015): the Making Stories published precedent
+    // computes royalties on NET proceeds (30% of net Ravelry proceeds), so the
+    // royalty is a share of what the company's channel actually nets. A
+    // designer can still negotiate a 'gross' base — it is just worth more
+    // headline because the platform-fee share moves onto the company.
     const companyGross = input.price * offer.companySales;
     const companyNet = companyGross > 0
       ? platformNet(input.platform, input.price, offer.companySales).netRevenue
       : 0;
-    const royalties = companyNet * offer.royaltyPct;
+    const royalties =
+      offer.royaltyBase === 'gross' ? companyGross * offer.royaltyPct : companyNet * offer.royaltyPct;
     // Designer keeps their direct channel too (no exclusivity).
     const net = royalties + Math.max(base, 0) - timeCost - input.fixedCosts;
-    const verdict: DealOutcome['verdict'] = net >= base ? 'take' : net >= base * 0.7 ? 'counter' : 'walk_away';
-    const neededRoyaltyPct = companyNet > 0 ? offer.royaltyPct + (base - royalties) / companyNet : null;
-    const reasoning = net >= base
-      ? `Royalties of ${fmt(royalties)} on ${offer.companySales} company sales (at ${pct(offer.royaltyPct)} of net) plus your direct channel beat self-publishing alone.`
-      : `Royalties of ${fmt(royalties)} don't cover the company-channel reach; at ${offer.companySales} sales, matching self-publishing would need either more company sales or a royalty share around ${neededRoyaltyPct !== null ? pct(Math.min(neededRoyaltyPct, 1)) : '100%'} of net.`;
+    // The direct-channel baseline itself doesn't change with the royalty base —
+    //  the change is only in what the company channel pays out. Kept explicit
+    //  (instead of the tempting `+ 0`) so a future royalty-on-gross deal where
+    //  the designer ALSO pays platform fees on company-channel revenue has an
+    //  obvious place to live.
+    const baseForVerdict = base;
+    const verdict: DealOutcome['verdict'] = net >= baseForVerdict ? 'take' : net >= baseForVerdict * 0.7 ? 'counter' : 'walk_away';
+    const neededRoyaltyPct =
+      (offer.royaltyBase === 'gross' ? companyGross : companyNet) > 0
+        ? offer.royaltyPct + (baseForVerdict - royalties) / (offer.royaltyBase === 'gross' ? companyGross : companyNet)
+        : null;
+    const baseLabel = offer.royaltyBase === 'gross' ? 'gross' : 'net';
+    const reasoning = net >= baseForVerdict
+      ? `Royalties of ${fmt(royalties)} on ${offer.companySales} company sales (at ${pct(offer.royaltyPct)} of ${baseLabel}) plus your direct channel beat self-publishing alone.`
+      : `Royalties of ${fmt(royalties)} don't cover the company-channel reach; at ${offer.companySales} sales, matching self-publishing would need either more company sales or a royalty share around ${neededRoyaltyPct !== null ? pct(Math.min(neededRoyaltyPct, 1)) : '100%'} of ${baseLabel}.`;
     return {
       dealType: 'royalty_no_exclusivity',
       netToDesigner: Math.round(net * 100) / 100,
-      selfPublishNet: Math.round(base * 100) / 100,
-      deltaVsSelfPublish: Math.round((base - net) * 100) / 100,
+      selfPublishNet: Math.round(baseForVerdict * 100) / 100,
+      deltaVsSelfPublish: Math.round((baseForVerdict - net) * 100) / 100,
       minimumFee: null,
       verdict,
       reasoning,

@@ -2,6 +2,17 @@ import React from 'react';
 import { useParams, useLocation, Link } from 'wouter';
 import { useProject } from '@/context/ProjectsContext';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -39,6 +50,7 @@ import { MembershipCard } from '@/components/membership-card';
 import { PromotionCard } from '@/components/promotion-card';
 import { PriceWindowCard } from '@/components/price-window-card';
 import { RetentionCard } from '@/components/retention-card';
+import { CollabEvaluatorCard } from '@/components/collab-evaluator-card';
 import { PlatformMixCard } from '@/components/platform-mix-card';
 
 type RoundingMode = 'exact' | 'multiple' | 'even' | 'odd';
@@ -146,6 +158,20 @@ export default function ProjectWorkspace() {
   const [mStitchMode, setMStitchMode] = React.useState<'exact' | 'multiple' | 'even' | 'odd'>('exact');
   const [mRowMode, setMRowMode] = React.useState<'exact' | 'multiple' | 'even' | 'odd'>('exact');
 
+  // Edit mode reuses the same measurement form (issue #7): pre-fill it with
+  // the existing measurement, and Save then UPDATES it in place - keeping the
+  // measurement id so nothing downstream (graded tables, PDF refs) breaks.
+  const [editingMeasurement, setEditingMeasurement] = React.useState<{ sectionId: string; measurementId: string } | null>(null);
+  const isEditing = !!editingMeasurement;
+  // Edit session title: "Edit X" vs "Add Measurement" - resolved lazily from
+  // the current project object so it survives re-renders while the form is open.
+  const editingLabel = (): string | null =>
+    isEditing
+      ? project.sections
+          .find(s => s.id === editingMeasurement!.sectionId)
+          ?.measurements.find(m => m.id === editingMeasurement!.measurementId)?.label ?? null
+      : null;
+
   const resetMeasurementForm = () => {
     setMLabel('');
     setMBaseValue('');
@@ -155,6 +181,31 @@ export default function ProjectWorkspace() {
     setMRowRemainder('');
     setMStitchMode('exact');
     setMRowMode('exact');
+    setEditingMeasurement(null);
+  };
+
+  // Soft-delete with an 8s undo window (issue #6): the deleted measurement
+  // is revived from this stash if undo fires before the timer expires.
+  const [undoStash, setUndoStash] = React.useState<{
+    sectionId: string;
+    measurement: SectionMeasurement;
+    timer?: ReturnType<typeof setTimeout>;
+  } | null>(null);
+
+  const handleUndoDelete = () => {
+    if (!undoStash) return;
+    if (undoStash.timer) clearTimeout(undoStash.timer);
+    const { sectionId, measurement } = undoStash;
+    setUndoStash(null);
+    updateProject({
+      ...project,
+      sections: project.sections.map(s =>
+        s.id === sectionId
+          ? { ...s, measurements: [...s.measurements, measurement] }
+          : s,
+      ),
+    });
+    toast({ title: `"${measurement.label}" restored`, description: 'Back in the section, nothing else changed.' });
   };
 
   if (!projectHook) {
@@ -193,37 +244,33 @@ export default function ProjectWorkspace() {
   };
 
   const handleDeleteSection = (sectionId: string) => {
-    if (!confirm('Are you sure you want to delete this section and all its measurements?')) return;
     updateProject({
       ...project,
       sections: project.sections.filter(s => s.id !== sectionId)
     });
+    toast({ title: 'Section deleted', description: 'If that was a misclick, it is saved in your last export.' });
   };
 
   const handleAddMeasurement = (sectionId: string) => {
     if (!mLabel.trim() || !mBaseValue) return;
-    
-    const measurement: SectionMeasurement = {
-      id: generateId(),
-      label: mLabel.trim(),
-      measurementType: mType,
-      gradingKey: mKey,
-      baseValue: parseFloat(mBaseValue) || 0,
-      stitchRepeat: mStitchMode === 'multiple' && mStitchRepeat ? parseInt(mStitchRepeat) : undefined,
-      stitchRemainder: mStitchMode === 'multiple' && mStitchRemainder ? parseInt(mStitchRemainder) : undefined,
-      stitchParity: mStitchMode === 'even' || mStitchMode === 'odd' ? mStitchMode : undefined,
-      rowRepeat: mRowMode === 'multiple' && mRowRepeat ? parseInt(mRowRepeat) : undefined,
-      rowRemainder: mRowMode === 'multiple' && mRowRemainder ? parseInt(mRowRemainder) : undefined,
-      rowParity: mRowMode === 'even' || mRowMode === 'odd' ? mRowMode : undefined,
-    };
+
+    const measurement = updatedMeasurement();
 
     updateProject({
       ...project,
       sections: project.sections.map(s => {
-        if (s.id === sectionId) {
-          return { ...s, measurements: [...s.measurements, measurement] };
+        if (s.id !== sectionId) return s;
+        if (isEditingThisSection) {
+          // Edit in place: same id, new values (issue #7). Graded tables,
+          // PDF references, and any stored id keep working without changes.
+          return {
+            ...s,
+            measurements: s.measurements.map(m =>
+              m.id === editingMeasurement!.measurementId ? measurement : m,
+            ),
+          };
         }
-        return s;
+        return { ...s, measurements: [...s.measurements, measurement] };
       })
     });
 
@@ -234,11 +281,19 @@ export default function ProjectWorkspace() {
     // 3 separate re-opens of the same form. Type and Grading Key are left
     // untouched on purpose too, since consecutive measurements in one
     // section usually share both.
-    toast({ title: `"${measurement.label}" added`, description: 'Add another, or hit Close when done.' });
+    toast({
+      title: isEditingThisSection ? `"${measurement.label}" updated` : `"${measurement.label}" added`,
+      description: isEditingThisSection
+        ? 'Saved with its original id intact - nothing downstream breaks.'
+        : 'Add another, or hit Close when done.',
+    });
     resetMeasurementForm();
   };
 
   const handleDeleteMeasurement = (sectionId: string, measurementId: string) => {
+    const section = project.sections.find(s => s.id === sectionId);
+    const measurement = section?.measurements.find(m => m.id === measurementId);
+    if (!measurement) return;
     updateProject({
       ...project,
       sections: project.sections.map(s => {
@@ -248,7 +303,68 @@ export default function ProjectWorkspace() {
         return s;
       })
     });
+    if (undoStash?.timer) clearTimeout(undoStash.timer);
+    // 8-second undo window: the measurement survives in the stash until
+    // either undo fires or the timer removes it for real (issue #6).
+    setUndoStash({
+      sectionId,
+      measurement,
+      timer: setTimeout(() => setUndoStash(null), 8000),
+    });
+    toast({
+      title: `"${measurement.label}" deleted`,
+      description: undoStash?.measurement
+        ? 'Another deletion is mid-undo - finish that one first.'
+        : 'One click is never final: hit Undo within 8s to get it back.',
+      action: undoStash?.measurement
+        ? undefined
+        : (
+          <button onClick={handleUndoDelete} className="text-sm font-medium text-primary underline underline-offset-2 px-2">Undo</button>
+        ),
+    });
   };
+
+  // Edit flow (issue #7): load an existing measurement into the add form.
+  const handleEditMeasurement = (sectionId: string, measurementId: string) => {
+    const measurement = project.sections
+      .find(s => s.id === sectionId)
+      ?.measurements.find(m => m.id === measurementId);
+    if (!measurement) return;
+    setEditingMeasurement({ sectionId, measurementId });
+    setAddingMeasurementTo(sectionId);
+    setExpandedSection(sectionId);
+    setMLabel(measurement.label);
+    setMType(measurement.measurementType);
+    setMKey(measurement.gradingKey);
+    setMBaseValue(String(measurement.baseValue));
+    const stitchMultiple = measurement.stitchRepeat !== undefined;
+    const stitchEvenOdd = measurement.stitchParity !== undefined;
+    setMStitchMode(stitchEvenOdd ? (measurement.stitchParity as 'even' | 'odd') : stitchMultiple ? 'multiple' : 'exact');
+    setMStitchRepeat(stitchMultiple ? String(measurement.stitchRepeat) : '');
+    setMStitchRemainder(measurement.stitchRemainder !== undefined ? String(measurement.stitchRemainder) : '');
+    const rowMultiple = measurement.rowRepeat !== undefined;
+    const rowEvenOdd = measurement.rowParity !== undefined;
+    setMRowMode(rowEvenOdd ? (measurement.rowParity as 'even' | 'odd') : rowMultiple ? 'multiple' : 'exact');
+    setMRowRepeat(rowMultiple ? String(measurement.rowRepeat) : '');
+    setMRowRemainder(measurement.rowRemainder !== undefined ? String(measurement.rowRemainder) : '');
+  };
+
+  // Save then either adds (new) or updates in place (edit) - the measurement
+  // id is preserved in edit mode so graded tables and PDF references survive.
+  const isEditingThisSection = isEditing && editingMeasurement!.sectionId === (addingMeasurementTo ?? '');
+  const updatedMeasurement = (): SectionMeasurement => ({
+    id: isEditingThisSection ? editingMeasurement!.measurementId : generateId(),
+    label: mLabel.trim(),
+    measurementType: mType,
+    gradingKey: mKey,
+    baseValue: parseFloat(mBaseValue) || 0,
+    stitchRepeat: mStitchMode === 'multiple' && mStitchRepeat ? parseInt(mStitchRepeat) : undefined,
+    stitchRemainder: mStitchMode === 'multiple' && mStitchRemainder ? parseInt(mStitchRemainder) : undefined,
+    stitchParity: mStitchMode === 'even' || mStitchMode === 'odd' ? mStitchMode : undefined,
+    rowRepeat: mRowMode === 'multiple' && mRowRepeat ? parseInt(mRowRepeat) : undefined,
+    rowRemainder: mRowMode === 'multiple' && mRowRemainder ? parseInt(mRowRemainder) : undefined,
+    rowParity: mRowMode === 'even' || mRowMode === 'odd' ? mRowMode : undefined,
+  });
 
   const gradingResults = gradePattern(project, resolveProjectStandards(project, customStandard));
 
@@ -377,6 +493,9 @@ export default function ProjectWorkspace() {
           <TabsTrigger value="mix" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             Mix
           </TabsTrigger>
+          <TabsTrigger value="collab" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+            Collab
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="sections" className="mt-6 space-y-6">
@@ -413,9 +532,29 @@ export default function ProjectWorkspace() {
                         {section.measurements.length} measurements
                       </span>
                     </div>
-                    <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); handleDeleteSection(section.id); }} className="text-destructive hover:text-destructive hover:bg-destructive/10" aria-label={`Delete section "${section.name}"`}>
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="ghost" size="icon" onClick={(e) => e.stopPropagation()} className="text-destructive hover:text-destructive hover:bg-destructive/10" aria-label={`Delete section "${section.name}"`}>
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Delete "{section.name}"?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This removes the section and all {section.measurements.length} of its
+                            measurements. This cannot be undone — make sure nothing downstream
+                            (PDF, test-knit notes) still refers to them.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Keep It</AlertDialogCancel>
+                          <AlertDialogAction onClick={() => handleDeleteSection(section.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                            Delete Section
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
 
                   {expandedSection === section.id && (
@@ -440,9 +579,31 @@ export default function ProjectWorkspace() {
                                   <td className="px-4 py-3 text-muted-foreground">{GRADING_KEY_LABELS[m.gradingKey]}</td>
                                   <td className="px-4 py-3 font-mono">{m.baseValue}</td>
                                   <td className="px-4 py-3 text-right">
-                                    <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity" onClick={() => handleDeleteMeasurement(section.id, m.id)} aria-label={`Delete measurement "${m.label}"`}>
-                                      <Trash2 className="w-4 h-4" />
+                                    <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity" onClick={() => handleEditMeasurement(section.id, m.id)} aria-label={`Edit measurement "${m.label}"`}>
+                                      <Edit2 className="w-4 h-4" />
                                     </Button>
+                                    <AlertDialog>
+                                      <AlertDialogTrigger asChild>
+                                        <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity" aria-label={`Delete measurement "${m.label}"`}>
+                                          <Trash2 className="w-4 h-4" />
+                                        </Button>
+                                      </AlertDialogTrigger>
+                                      <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                          <AlertDialogTitle>Delete "{m.label}"?</AlertDialogTitle>
+                                          <AlertDialogDescription>
+                                            The measurement goes away instantly, but an Undo button
+                                            sits in the toast for 8 seconds if it was a misclick.
+                                          </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter>
+                                          <AlertDialogCancel>Keep It</AlertDialogCancel>
+                                          <AlertDialogAction onClick={() => handleDeleteMeasurement(section.id, m.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                                            Delete Measurement
+                                          </AlertDialogAction>
+                                        </AlertDialogFooter>
+                                      </AlertDialogContent>
+                                    </AlertDialog>
                                   </td>
                                 </tr>
                               ))}
@@ -454,7 +615,15 @@ export default function ProjectWorkspace() {
                       {addingMeasurementTo === section.id ? (
                         <div className="p-4 bg-muted/20 border-t border-border space-y-4">
                           <h4 className="font-medium text-sm text-primary flex items-center gap-2">
-                            <Plus className="w-4 h-4" /> Add Measurement
+                            {isEditingThisSection ? (
+                              <>
+                                <Edit2 className="w-4 h-4" /> Edit Measurement — {editingLabel() ?? '…'}
+                              </>
+                            ) : (
+                              <>
+                                <Plus className="w-4 h-4" /> Add Measurement
+                              </>
+                            )}
                           </h4>
                           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                             <div className="space-y-1.5">
@@ -518,8 +687,12 @@ export default function ProjectWorkspace() {
                               </p>
                             )}
                             <div className="flex gap-2">
-                              <Button variant="outline" size="sm" onClick={() => { setAddingMeasurementTo(null); resetMeasurementForm(); }}>Close</Button>
-                              <Button size="sm" onClick={() => handleAddMeasurement(section.id)} disabled={!mLabel.trim() || !mBaseValue}>Save Measurement</Button>
+                              <Button variant="outline" size="sm" onClick={() => { setAddingMeasurementTo(null); resetMeasurementForm(); }}>
+                                {isEditingThisSection ? 'Cancel Edit' : 'Close'}
+                              </Button>
+                              <Button size="sm" onClick={() => handleAddMeasurement(section.id)} disabled={!mLabel.trim() || !mBaseValue}>
+                                {isEditingThisSection ? 'Save Changes' : 'Save Measurement'}
+                              </Button>
                             </div>
                           </div>
                         </div>
@@ -710,6 +883,9 @@ export default function ProjectWorkspace() {
         </TabsContent>
         <TabsContent value="mix" className="mt-6">
           <PlatformMixCard project={project} />
+        </TabsContent>
+        <TabsContent value="collab" className="mt-6">
+          <CollabEvaluatorCard project={project} />
         </TabsContent>
 
         <TabsContent value="notes" className="mt-6">

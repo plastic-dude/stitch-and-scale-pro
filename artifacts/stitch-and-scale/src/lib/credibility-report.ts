@@ -91,7 +91,7 @@ function credibilityFromReadiness(
 
 /** Number of sizes the pattern grades across (bust measurement present). */
 function sizeCount(project: PatternProject): number {
-  const standards = resolveProjectStandards(project, {} as never);
+  const standards = resolveProjectStandards(project);
   const graded = gradePattern(project, standards);
   const bust = graded
     .flatMap(s => s.measurements)
@@ -99,20 +99,31 @@ function sizeCount(project: PatternProject): number {
   return bust ? bust.gradedValues.length : 0;
 }
 
+interface YardageInfo {
+  ok: boolean;
+  yards: number | null;
+  missingStandards: boolean;
+}
+
 /** Whether the project carries a mathematically estimable yardage. */
-function yardageAvailable(project: PatternProject): { ok: boolean; yards: number | null } {
+function yardageAvailable(project: PatternProject): YardageInfo {
   if (!project.yarnWeight || !project.gauge ||
     project.gauge.stitchesPer4In <= 0 || project.gauge.rowsPer4In <= 0) {
-    return { ok: false, yards: null };
+    return { ok: false, yards: null, missingStandards: false };
   }
   const yarn = estimateYarn(project, project.yarnWeight);
   const yards = Math.round(yarn.totalYards);
-  return { ok: yards > 50, yards };
+  const missingStandards = yarn.missingStandards;
+  return {
+    ok: yards > 50 && !missingStandards,
+    yards,
+    missingStandards,
+  };
 }
 
 /** The graded table itself — AI patterns can't produce one. */
 function gradedTable(project: PatternProject): string {
-  const standards = resolveProjectStandards(project, {} as never);
+  const standards = resolveProjectStandards(project);
   const graded = gradePattern(project, standards);
   const rows: string[] = [];
   for (const section of graded) {
@@ -129,7 +140,7 @@ function buildChecks(
   project: PatternProject,
   readiness: { errorCount: number; warningCount: number },
 ): CredibilityCheck[] {
-  const { ok: yardageOk, yards } = yardageAvailable(project);
+  const { ok: yardageOk, yards, missingStandards } = yardageAvailable(project);
   const sizes = sizeCount(project);
   const description = (project.description ?? '').trim();
   // `notes` lives on individual measurements in the schema — the listing-body
@@ -139,9 +150,18 @@ function buildChecks(
 
   const checks: CredibilityCheck[] = [
     {
+      id: 'sizing-standard',
+      label: 'Pattern graded against a declared sizing standard',
+      passed: !missingStandards,
+      proof: !missingStandards
+        ? 'Sized from a real standards chart (Custom, CYC, or other) — sizing numbers are derived, not improvised.'
+        : 'This project was created under a Custom standard whose chart snapshot is missing; sizing numbers below are graded against an unintended CYC fallback and should not be quoted to buyers.',
+      redFlagClosed: 'numbers that look authoritative but come from nowhere',
+    },
+    {
       id: 'graded-sizes',
       label: `Graded across ${sizes} size${sizes === 1 ? '' : 's'} with real fit measurements`,
-      passed: sizes >= 2,
+      passed: sizes >= 2 && !missingStandards,
       proof: sizes >= 2
         ? `The pattern grades across ${sizes} sizes — a real fit chart, not a flat single size.`
         : 'No graded size table yet — only flat sizing would show, and AI PDFs always stop here.',

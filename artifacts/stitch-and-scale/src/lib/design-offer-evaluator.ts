@@ -52,8 +52,14 @@ export type DesignOfferType =
 export interface DesignOfferInput {
   /** Flat fee offered, in $. Used by flat-fee offers. */
   fee?: number;
-  /** Royalty share of company/net proceeds, decimal. Used by royalty offers. */
+  /** Royalty share, decimal. Used by royalty offers. */
   royaltyPct?: number;
+  /**
+   * Royalty base (issue #2 / S015): 'net' = the company's net proceeds after
+   * platform fees (Making Stories precedent); 'gross' = raw price × units.
+   * Default 'net' matches the cited precedent and keeps prior behavior.
+   */
+  royaltyBase?: 'net' | 'gross';
   /** Expected company-channel sales (used by royalty offers) OR the designer's own monthly sales volume when self-publishing. */
   salesVolume: number;
   /** The pattern's recommended price, in $. */
@@ -135,9 +141,13 @@ export function evaluateDesignOffer(input: DesignOfferInput): DesignOfferVerdict
   offerValue += Math.max(input.yarnSupportValue || 0, 0);
 
   if (input.royaltyPct !== undefined && input.royaltyPct > 0) {
-    // Royalties run on the COMPANY's net proceeds (Making Stories structure).
+    // Royalties run on the company's proceeds — by default NET (the Making
+    // Stories published precedent); a designer who negotiates a GROSS base
+    // gets paid on raw sales instead (issue #2 / S015 makes this explicit).
     const companyNet = platformNetFor(input, input.salesVolume);
-    offerValue += companyNet * Math.min(Math.max(input.royaltyPct, 0), 1);
+    const royaltyBase = input.royaltyBase ?? 'net';
+    const baseUnits = royaltyBase === 'gross' ? input.patternPrice * input.salesVolume : companyNet;
+    offerValue += baseUnits * Math.min(Math.max(input.royaltyPct, 0), 1);
   }
 
   // --- Self-publish baseline ------------------------------------------------

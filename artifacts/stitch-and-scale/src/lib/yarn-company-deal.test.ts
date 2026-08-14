@@ -94,10 +94,33 @@ describe('compareDeal', () => {
     const outcome = compareDeal(realistic, {
       type: 'royalty_no_exclusivity',
       royaltyPct: 0.30,
+      royaltyBase: 'net',
       companySales: 1000,
     });
     expect(outcome.verdict).toBe('take');
     expect(outcome.minimumFee).toBeNull();
+  });
+
+  it('S015: a royalty on GROSS pays more than the same headline on NET (issue #2)', () => {
+    const grossOutcome = compareDeal(realistic, {
+      type: 'royalty_no_exclusivity',
+      royaltyPct: 0.30,
+      royaltyBase: 'gross',
+      companySales: 1000,
+    });
+    const netOutcome = compareDeal(realistic, {
+      type: 'royalty_no_exclusivity',
+      royaltyPct: 0.30,
+      royaltyBase: 'net',
+      companySales: 1000,
+    });
+    // Same headline 30% on gross beats the same 30% on net because the
+    // company channel eats platform fees between gross and net proceeds.
+    // (Whether either beats self-publishing depends on company reach — the
+    // realistic fixture's 1,000 company sales at 30% net doesn't by itself
+    // out-net 60h of design time, so no positivity claim here.)
+    expect(grossOutcome.netToDesigner).toBeGreaterThan(netOutcome.netToDesigner);
+    expect(grossOutcome.netToDesigner - netOutcome.netToDesigner).toBeGreaterThan(0);
   });
 
   it('rates an exclusive fee that ignores locked-out sales as "counter" or worse', () => {

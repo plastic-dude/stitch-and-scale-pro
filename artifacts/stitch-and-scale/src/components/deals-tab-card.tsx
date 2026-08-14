@@ -94,6 +94,11 @@ export function DealsTabCard({
   const [supportValue, setSupportValue] = React.useState(150);
   const [retainsRights, setRetainsRights] = React.useState(true);
   const [royaltyPct, setRoyaltyPct] = React.useState(0.30);
+  // Royalty base (issue #2 / S015): default 'net' per the Making Stories
+  // precedent (their published 30% is 30% of NET proceeds). A company pushing
+  // for a 'gross' base is negotiable — worth more headline, so we let the
+  // designer toggle it and compare.
+  const [royaltyBase, setRoyaltyBase] = React.useState<'net' | 'gross'>('net');
   const [companySales, setCompanySales] = React.useState(500);
   const [exclusiveFee, setExclusiveFee] = React.useState(800);
   const [exclusiveMonths, setExclusiveMonths] = React.useState(6);
@@ -109,7 +114,7 @@ export function DealsTabCard({
   };
 
   const flatOutcome = compareDeal(input, { type: 'flat_fee', fee: flatFee, supportValue, retainsResellRights: retainsRights });
-  const royaltyOutcome = compareDeal(input, { type: 'royalty_no_exclusivity', royaltyPct, companySales });
+  const royaltyOutcome = compareDeal(input, { type: 'royalty_no_exclusivity', royaltyPct, royaltyBase, companySales });
   const exclusiveOutcome = compareDeal(input, { type: 'exclusive_flat_fee', fee: exclusiveFee, supportValue, exclusivityMonths: exclusiveMonths, lockedOutFraction: lockedFraction });
 
   const baseNet = selfPublishNet(input);
@@ -187,12 +192,24 @@ export function DealsTabCard({
         {offer.type === 'royalty_no_exclusivity' && (
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <Label className="text-xs">Royalty of net (%)<DefaultBadge text="30% cited" /></Label>
+              <Label className="text-xs">Royalty of {royaltyBase === 'net' ? 'net' : 'gross'} (%)<DefaultBadge text="30% cited" /></Label>
               {inputField(royaltyPct * 100, (v) => setRoyaltyPct(Math.min(Math.max(v, 0) / 100, 1)), '5', 'royalty percent')}
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs">Company channel sales<DefaultBadge text="their reach" /></Label>
               {inputField(companySales, setCompanySales, '50', 'company sales')}
+            </div>
+            <div className="col-span-2 space-y-1.5">
+              <Label className="text-xs">Royalty is a share of<DefaultBadge text="issue #2 base" /></Label>
+              <NativeSelect value={royaltyBase} onChange={(e) => setRoyaltyBase(e.target.value as 'net' | 'gross')} aria-label="royalty base">
+                <option value="net">Net channel proceeds (Making Stories precedent)</option>
+                <option value="gross">Gross sales (negotiate this — it pays more)</option>
+              </NativeSelect>
+              <p className="text-[11px] text-muted-foreground">
+                {royaltyBase === 'net'
+                  ? '30% of what the company actually nets after platform fees — the published precedent. If a company offers "30% of gross", that same headline pays more.'
+                  : 'Royalties on raw sales before fees — a stronger headline than net. Companies sometimes demand gross; check your contract wording before agreeing.'}
+              </p>
             </div>
           </div>
         )}
@@ -304,10 +321,10 @@ export function DealsTabCard({
           <DealCard
             icon={TrendingUp}
             title="Royalty, no exclusivity"
-            subtitle="Designer sells anywhere; royalty is a share of the company's net channel proceeds."
-            offer={{ type: 'royalty_no_exclusivity', royaltyPct, companySales }}
+            subtitle={`Designer sells anywhere; royalty is a share of the company's ${royaltyBase} channel ${royaltyBase === 'net' ? 'net proceeds' : 'gross sales'}.`}
+            offer={{ type: 'royalty_no_exclusivity', royaltyPct, royaltyBase, companySales }}
             outcome={royaltyOutcome}
-            onCopy={() => copyTerms({ type: 'royalty_no_exclusivity', royaltyPct, companySales }, royaltyOutcome)}
+            onCopy={() => copyTerms({ type: 'royalty_no_exclusivity', royaltyPct, royaltyBase, companySales }, royaltyOutcome)}
           />
           <DealCard
             icon={Lock}

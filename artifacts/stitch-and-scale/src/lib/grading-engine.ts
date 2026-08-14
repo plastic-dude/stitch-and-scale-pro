@@ -148,14 +148,35 @@ export const SIZE_STANDARDS: StandardsTable = {
  *  rather than crashing). */
 export function resolveProjectStandards(
   project: PatternProject,
-  liveCustomStandard: StandardsTable
+  liveCustomStandard?: StandardsTable
 ): StandardsTable {
   if (project.sizingStandard === 'Custom') {
-    return project.customStandardSnapshot ?? liveCustomStandard;
+    // A Custom-standard project MUST have a frozen snapshot. If it's missing
+    // and no live standard is available, silently zeroing the chart was the
+    // bug (S003 family): zero yardage, zero sample cost, verdicts flipped to
+    // "go" on nothing. Fall back to CYC explicitly instead - a real table is
+    // never the answer for a project with no standards at all (a missing
+    // snapshot means nothing about the body is known), so the caller is
+    // expected to check the flag and render a "add your measurements"
+    // state. CYC is only ever returned when there genuinely are measurements
+    // to grade against the size chart.
+    return project.customStandardSnapshot ?? liveCustomStandard ?? SIZE_STANDARDS;
   }
   // CYC, legacy projects with no sizingStandard recorded, and standards not
   // yet implemented (UK/EU/etc. aren't selectable today) all resolve to CYC.
   return SIZE_STANDARDS;
+}
+
+/** True when a Custom-standard project has neither a frozen snapshot nor a
+ *  supplied live standard - the exact "standards built on nothing" case the
+ *  S003 family describes. Callers should render the standards-missing state
+ *  rather than any graded number, because there is no chart to grade with.
+ *  Legacy (pre-snapshot) projects resolve to CYC and are NOT flagged. */
+export function isCustomStandardMissing(project: PatternProject): boolean {
+  return (
+    project.sizingStandard === 'Custom' &&
+    project.customStandardSnapshot === undefined
+  );
 }
 
 export function gradePattern(

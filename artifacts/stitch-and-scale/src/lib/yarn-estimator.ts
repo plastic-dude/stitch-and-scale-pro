@@ -27,7 +27,7 @@
  * (ribbing, waste yarn) are added, which is the intended safety margin
  * of a first-pass planning figure.
  */
-import { PatternProject, gradePattern, resolveProjectStandards } from './grading-engine';
+import { PatternProject, gradePattern, resolveProjectStandards, isCustomStandardMissing } from './grading-engine';
 
 export type YarnWeight = 'lace' | 'fingering' | 'sport' | 'DK' | 'worsted' | 'bulky' | 'super-bulky';
 
@@ -93,6 +93,10 @@ export interface YarnEstimate {
   fabricAreaSqIn: number;
   /** Which weight the estimate was computed for. */
   weight: YarnWeight;
+  /** True when computed for a Custom-standard project with no frozen chart
+   *  snapshot and no live standard - the number is graded against an
+   *  unintended CYC fallback and should be shown alongside a warning. */
+  missingStandards: boolean;
 }
 
 /**
@@ -119,7 +123,13 @@ function yardsPerSqIn(weight: YarnWeight): number {
  * (dim × dim), which slightly overestimates — safe for yarn buying.
  */
 export function estimateYarn(project: PatternProject, weight: YarnWeight): YarnEstimate {
-  const standards = resolveProjectStandards(project, {} as never);
+  // S003 family: a Custom-standard project with no frozen snapshot would
+  // previously have received an empty standards table via `{} as never`,
+  // producing zero yardage and silently flipped "feasible" verdicts. Now the
+  // missing-chart case is explicit - flagged on the estimate rather than
+  // graded against an invented table.
+  const standards = resolveProjectStandards(project);
+  const missingStandards = isCustomStandardMissing(project);
   const grade = gradePattern(project, standards);
 
   const allMeasurements = grade.flatMap(s => s.measurements);
@@ -158,5 +168,10 @@ export function estimateYarn(project: PatternProject, weight: YarnWeight): YarnE
     skeins100g: Math.ceil(totalYards / YARN_WEIGHT_DATA[weight].yardagePer100g),
     fabricAreaSqIn: Math.round(fabricAreaSqIn),
     weight,
+    /** True when this estimate was computed for a Custom-standard project
+     *  with no frozen chart snapshot and no live standard available - the
+     *  number should be displayed alongside a "standards missing" warning,
+     *  never alone. */
+    missingStandards,
   };
 }
