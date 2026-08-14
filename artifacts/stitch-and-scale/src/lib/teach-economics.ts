@@ -188,7 +188,14 @@ export function analyzeTeachingOffer(raw: Partial<TeachInput>): TeachResult {
   const sessions = Math.max(1, Math.round(input.sessionCount ?? FORMAT_SESSION_COUNT[input.format]));
   const pricesOnce = input.format === 'selfPacedCourse' || input.format === 'cohortCourse' ||
     input.format === 'guildFlatFee';
-  const perStudentTotal = tickets.blended * (pricesOnce ? 1 : sessions);
+  // Issue #29 residual fix: flat-fee hosted formats (guild day rate, LYS class rate) have no
+  // per-student cohort pricing, so early-bird/installment blending is meaningless there —
+  // blending silently shaded the contract fee to ~94% with default shares. Use the raw
+  // ticketPrice (the contract day fee) as the gross input for those formats; blending stays
+  // for per-student cohort formats where the ladder is genuinely a marketing mix.
+  const usesBlendedTicket = input.format !== 'guildFlatFee' && input.format !== 'lysClass';
+  const baseTicket = usesBlendedTicket ? tickets.blended : tickets.standard;
+  const perStudentTotal = baseTicket * (pricesOnce ? 1 : sessions);
   const studentMultiplier = input.format === 'guildFlatFee' ? 1 : students;
   const gross = Math.round(perStudentTotal * studentMultiplier * 100) / 100;
 

@@ -188,9 +188,9 @@ describe('analyzeTeachingOffer', () => {
       platformMonths: 1,
       patternHourlyRate: 30,
     });
-    // default pricing ladder (40% early-bird at -15%, 25% installment at +12%)
-    // brings the $900 fee to a ~$873 blended value
-    expect(r.gross).toBe(873);
+    // Issue #29 residual fix: flat-fee formats no longer blend the pricing ladder into the
+    // contract day fee — gross is the raw $900, untouched by early-bird/installment shares.
+    expect(r.gross).toBe(900);
     expect(r.students).toBe(16); // list projection still runs (audience figure)
     expect(r.verdict).toBe('launch');
     expect(r.redFlags.length).toBe(0);
@@ -387,6 +387,25 @@ describe('flat-fee formats (issue #25)', () => {
     });
     // 150 fee − production (20×60=1,200) = deep loss.
     expect(weak.profit).toBeLessThan(0);
+  });
+});
+// Regression test for the #29 residual: with default shading inputs, flat-fee gross must
+// equal the raw ticketPrice exactly — no blended-ticket semantics in flat-fee formats.
+describe('flat-fee gross never blends the ladder (issue #29 residual)', () => {
+  it('guildFlatFee gross equals ticketPrice exactly with default shading inputs', () => {
+    const r = analyzeTeachingOffer({ format: 'guildFlatFee', ticketPrice: 900, refundRate: 0 });
+    // default ladder: 40% early-bird -15%, 25% installment +12% — if blended, gross would be
+    // ~$873; the contract day fee is paid once and must not be shaded.
+    expect(r.gross).toBe(900);
+  });
+  it('lysClass gross equals ticketPrice x students with default shading inputs', () => {
+    const r = analyzeTeachingOffer({ format: 'lysClass', ticketPrice: 40, expectedStudents: 6, refundRate: 0 });
+    expect(r.gross).toBe(240);
+  });
+  it('course formats still blend the ladder as a real marketing mix', () => {
+    const r = analyzeTeachingOffer({ format: 'selfPacedCourse', ticketPrice: 125, expectedStudents: 10, refundRate: 0 });
+    // 125 with default ladder (40% EB -15%, 25% install +12%) blends to ~121.25 × 10
+    expect(r.gross).toBeCloseTo(1212.5, 0);
   });
 });
 describe('hosted quick-check headline (issue #26)', () => {
