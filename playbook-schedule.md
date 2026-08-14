@@ -48,6 +48,52 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - [CHK-067] ec3a219 — Retreat & Cruise Teaching Lab (65th tab).
 - [CHK-068] deabea4 — Podcast & Affiliate Lab (66th tab).
 - [CHK-069] 4776b81 — Magazine Submission Lab (67th tab).
+- [CHK-070] 72f8512 — Price Psychology Lab (68th tab).
+  Inbox swept: no new reviewer proposals (13 open issues
+  remain reviewer-directed INFO notes; no open PRs; no
+  non-plastic-dude comments).
+  Research angle: pattern pricing psychology for knitwear
+  designers (never covered in sessions 1-69) —
+  session-70 facts: Sori & Widjaja (2013) field experiment
+  — identical garments re-priced with nine-endings ($34/$39)
+  outsold rounded prices by ~8% at ZERO discount; Schindler
+  & Kibarian — nine-ending apparel prices lifted demand
+  10-30% vs rounded equivalents in catalog trials; Buynomics
+  evidence — the effect FLIPS at higher price points where
+  .99 endings damage perceived quality ($59.95 > $59.99);
+  Wilkie/Manning/Sprott (2015) — even prices read premium,
+  odd prices read bargain, buyer motivation decides;
+  Lynn/Flynn/Helion (2013) — 0/5 endings process easier
+  and signal quality; Baumgartner & Hahnchen (2016) —
+  bundles sell best with even component prices and an odd
+  bundle total; anchoring — the highest first price sets
+  the reference for everything below it.
+  Competitor flaw: PriceWin and pricing tools optimize the
+  price LEVEL, but no tool models the price PSYCHOLOGY for
+  the pattern market — the left-digit effect, the
+  charm-vs-premium flip, decoy placement inside a designer's
+  own shop, and the bundle-endings rule.
+  Price Psychology Lab in a new tab: current vs candidate
+  price with left-digit barrier crossing (+3%/digit lift),
+  ending-effect modifiers (8-12% charm lift low price,
+  3% mainstream mid, -4% premium drag), tier positioning
+  (bargain/mainstream/premium), shop-tier anchor/decoy
+  analysis, bundle singles-vs-bundle net with the
+  even-components/odd-total rule, recommended ending, and
+  barriers above/below.
+  PP-01..PP-09 flags (price on a left-digit barrier,
+  premium design with bargain ending, price below
+  floor-tier anchor, inconsistent endings across tiers,
+  bundle total not ending odd, components not ending even,
+  charm drag above the flip price, candidate inside 20% of
+  another tier, no volume entered).
+  Verdict ladder: cross-the-barrier / raise the volume /
+  costs-you-money (candidate < 0.97x no-lift baseline) /
+  marginal / keep-the-price.
+  +30 lib tests; suite 1,380 tests / 70 files;
+  typecheck + vitest + build green. Screenshots:
+  docs/screenshots/price-psych-lab-default-mode.webp +
+  price-psych-lab-premium-mode.webp.
   Inbox swept: no new reviewer proposals (13 open issues
   remain reviewer-directed INFO notes; no open PRs; no
   non-plastic-dude comments).
