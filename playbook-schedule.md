@@ -33,6 +33,33 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - Prioritize money-making: features that enable selling patterns, subscriptions, or premium tiers rank above internal tooling.
 
 ## Progress log (update each run)
+- [CHK-023] d9191b2 — Hire-vs-Self Analyzer (23rd workspace tab,
+  'Hire vs Self'):
+  21/21 tests; 397/397 overall green; typecheck + build pass.
+  Session-24 research (Tendyke \$0.12/yd knit / \$0.10 crochet sample
+  pay; Sloan & Ford 12p/metre with designer-paid return shipping;
+  craftsnark ~\$80/sweater flat fee; tech editing \$30-40/hr with
+  sweaters at ~4 hours; fixed-rate editors \$30 hats / \$50 garments
+  +\$5 per extra size; Storta \$36 base; test knits usually
+  unpaid-with-credit) finds designers outsource on gut feel without
+  pricing their own opportunity cost — the sample-knit hours they
+  donate are design/marketing hours their releases actually sell on.
+  Library hire-vs-self-analyzer.ts: analyzeHireDecision (sample leg
+  from shared yardage seam +10% swatch allowance at 30yd/hr, per-yard
+  vs flat-fee pay model, opportunity cost at default \$25/hr design
+  rate; edit leg with auto scope from section measurement counts at
+  the \$30 market low; blind-spot rules — any 4h+ edit hires, designer
+  self-editing her own maths always flagged; go/maybe/no on
+  outsourcing both legs vs hours-freed income potential); buildHiringPack
+  (8-item checklist with red flags + paste-ready sample-knitter
+  listing in the Sloan contract style: blocking standards, timescale
+  in writing, pre-release discretion).
+  UI: hire-vs-self-card.tsx, rate inputs, verdicts with per-leg
+  badges, reasoning notes, checklist, listing toggle; localStorage
+  key kskhirevsself-v1.
+  Self-audit fix: removed a non-existent garmentType field usage
+  caught by typecheck; edit scope now derives from real measurement
+  counts.
 - [CHK-022] d8eb5f9 — Wholesale & Book-deal Analyzer (22nd workspace
   tab, 'Wholesale & Book'):
   21/21 tests; 376/376 overall green; typecheck + build pass.
