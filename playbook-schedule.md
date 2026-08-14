@@ -40,6 +40,34 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - [CHK-059] 0d5649f — Yarn Pool Lab (57th tab).
 - [CHK-060] f7b7a14 — Membership Site Lab (58th tab).
 - [CHK-061] 0b15fd7 — Convention Booth Lab (59th tab).
+- [CHK-062] bc6f820 — Channel Migration Lab (60th tab).
+  Inbox swept: no new reviewer proposals (8 open
+  issues remain reviewer-directed INFO notes; no
+  open PRs).
+  Research angle: multi-channel listing & migration
+  economics (never covered) — session-62 facts: Etsy
+  fee stack 6.5% transaction + 3% + $0.25 processing +
+  $0.20 listing every 4 months + ~1.5% regulatory fee;
+  Ravelry 3.5% + $0.30 + 2.9%; LoveCrafts 2% + $0.20;
+  own site (Payhip/Stripe) ~2.9% + $0.30, highest net
+  at scale and the only channel owning the customer
+  email list; Pattern by Etsy 6.5% + processing; Etsy
+  renewals drain $0.60/yr per unsold listing; audiences
+  on Etsy vs Ravelry barely overlap, so copying beats
+  migrating in most cases.
+  Channel Lab in a new tab: per-sale net and fee share
+  across 5 channels, listing-renewal drag, relisting
+  hours priced at opportunity rate, added-sales payback
+  (monthly delta, payback months, year-one delta),
+  CM-01..CM-08 flags (pure migration, Etsy renewal drag,
+  >1yr payback, zero-review target, >$1 price spread,
+  high ads share, own-site opportunity, bloated hours),
+  verdict ladder (stay put / migrate-if-audience-follows /
+  batch later / marginal / copy it). Target is picked as
+  the best alternative channel by net per sale.
+  32 new lib tests; suite 1,163 tests / 62 files;
+  typecheck + vitest + build green. Screenshot:
+  docs/screenshots/channel-migration-lab.webp.
   Inbox swept: no new reviewer proposals (7 open
   issues remain reviewer-directed INFO notes;
   remote also carried QA cycle 28 fixes #41 by the
