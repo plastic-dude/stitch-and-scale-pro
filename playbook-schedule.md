@@ -33,6 +33,37 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - Prioritize money-making: features that enable selling patterns, subscriptions, or premium tiers rank above internal tooling.
 
 ## Progress log (update each run)
+- [CHK-031] 143e430 — Reviewer-issue fixes + Collab & Exposure
+  Evaluator (31st workspace tab, 'Collab'):
+  Reviewer triage swept first (staff working prompt rule):
+  #6 CRITICAL fixed — section & measurement deletes now confirm
+  via AlertDialog + 8s undo stash in a toast; #7 MAJOR fixed —
+  measurements gain an in-place edit (form pre-fills, id
+  preserved); #3 MAJOR S003 fixed — empty-standards fallback
+  now loud: customStandardMissing flag surfaced across the 6
+  module families (readiness/yarn/credibility/sections/kits/
+  listings) with 8 new tests; #2 S015 resolved with counter-
+  evidence — Making Stories publishes 30% of NET, so royalty
+  base is now an explicit adjustable field (net|gross, default
+  net) in both deal evaluators instead of silently flipped.
+  Feature: session-32 research (Ravelry Jan-2019 census 72.3%
+  under $50; WhoPaysKnitters rate database; Making Stories 30%
+  net royalties; 2026 unpaid-collab backlash articles; UK IPO
+  patterns-as-literary-works) on the collab/exposure angle
+  nobody prices honestly. Library collab-evaluator.ts:
+  analyzeCollab — fair-fee floor at the designer's own rate
+  (hours + sample + ~1.5h per demanded post), cash-only
+  verdict ladder (take >= 0.8x floor, counter >= 0.5x, walk
+  below — exposure can NEVER promote a deal), honest exposure
+  cap (followers x 0.5% conversion, floored at $50),
+  locked-out value during exclusivity, CE-01..05 red flags
+  (unpaid work w/ requirements, copyright grab < 2x floor,
+  reputation play, license below locked-out, repeated unpaid
+  posts), and paste-ready walk/counter/accept letters.
+  UI: collab-evaluator-card.tsx; project-scoped storage key
+  stitch-and-scale-collab-{projectId}; 16 tests; gates: 529/529
+  + typecheck + build green; 4 issues commented & closed with
+  commit hash and evidence.
 - [CHK-030] 28910b3 (rebased to 8322ab8) — Platform Mix Planner (30th
   workspace tab, 'Mix'):
   16 tests; 504/504 overall green; typecheck + build pass.
