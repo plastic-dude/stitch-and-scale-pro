@@ -42,6 +42,38 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - [CHK-061] 0b15fd7 — Convention Booth Lab (59th tab).
 - [CHK-062] bc6f820 — Channel Migration Lab (60th tab).
 - [CHK-063] e9cfc02 — Release Timing Lab (61st tab).
+- [CHK-064] 83f9b55 — Workshop Teaching Lab (62nd tab).
+  Inbox swept: no new reviewer proposals (10 open
+  issues remain reviewer-directed INFO notes; QA cycle
+  30/31 branches are copy/consistency INFO; no open PRs).
+  Research angle: live in-person workshop & teaching pay
+  economics at fiber festivals and LYS events (never
+  covered — prior teaching work was online courses only)
+  — session-64 facts: KY Sheep & Fiber pays teachers
+  $45/student half-day and $90/student full-day; the
+  pre-2017 Interweave standard was a per-hour guarantee
+  ($50/75/100) plus a $250/day stipend; post-#FairFiber-
+  Wage the norm is per-student pay with NO floor and the
+  teacher funding own travel; hotel rooms at venues run
+  $170+/night; LYS classes run $25-60 with teachers
+  keeping 50-80% of tickets; worst cases at minimum
+  enrollment can literally lose money; prep runs 2-4x the
+  class hours; attendee pattern attach is typically 10-30%.
+  Workshop Teaching Lab in a new tab: deal inputs (fee
+  per student, venue cut, guarantee floor, travel,
+  materials), min/realistic/max enrollment scenarios
+  (gross tickets, deal net, pattern attach, total value,
+  effective $/hr), break-even students and students-to-
+  clear-your-rate thresholds, travel-burden share,
+  opportunity-gap vs hours at your rate, WT-01..WT-08
+  flags (below-min enrollment, underpaid hourly, travel
+  >40%, no attach modeled, overlarge class, cut above
+  market, no floor, worst-case negative), verdict ladder
+  (decline as written / hold travel money / teach for
+  audience / borderline / worth teaching / great deal).
+  +25 lib tests; suite 1,217 tests / 64 files;
+  typecheck + vitest + build green. Screenshot:
+  docs/screenshots/workshop-teaching-lab.webp.
   Inbox swept: no new reviewer proposals (9 open
   issues remain reviewer-directed INFO notes; QA cycle
   29 items are copy/consistency INFO; no open PRs).
