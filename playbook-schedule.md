@@ -36,6 +36,39 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - [CHK-055] 14b789f — Show ROI Lab (53rd feature).
 - [CHK-056] 55ce053 — Wholesale Program Lab (54th tab).
 - [CHK-057] a46a413 — Pre-Order Campaign Lab (55th tab).
+- [CHK-058] 7bff5e7 — Listing Test Lab (56th tab) + issue #4 debt.
+  Inbox swept: no new reviewer proposals; the standing
+  reviewer proposal in issue #4 was actioned as the debt
+  fix (see below).
+  Debt (issue #4): trunk-show and translation-bundle cards
+  migrated off bare flat keys onto the projectStorage seam;
+  pattern-club planner (S036) now persists via the seam;
+  storage-lib gained a partitioned-legacy migration variant
+  (projectId-map blobs folded per-project into scoped keys)
+  with its own tests. All six legacy islands now migrated.
+  Research angle: listing A/B testing & conversion economics
+  (never covered) — session-58 facts: competitor tools
+  (Alura etc.) assume ~30k visitors/variant, impossible for
+  a single pattern listing; none answers whether the
+  rewrite pays. Evan Miller's normal-approximation formula
+  gives required sample (2%->3% needs ~3,825/variant at
+  alpha 0.05/power 0.8); only ~6x conversion improvements
+  are detectable at low traffic; Etsy conversion avg 1-3%
+  with +23% organic ranking within 60 days for systematic
+  converters; platform fees differ (Ravelry 0% commission,
+  Etsy ~$5.10/$6, LoveCrafts 25%, Payhip 5%); one variable
+  per test, run >=1 full month; Ravelry 13 tags + attributes
+  drive discovery. Listing Test Lab in a new tab: listing
+  queue ranked by EV/re-list-hour, test designer (platform,
+  views, conversion, price, variable, lift hypothesis,
+  effort hours, rate, duration, uplift horizon, multi-var
+  toggle, tags completeness), results grid (required sample,
+  months to power, smallest provable lift, net per sale,
+  baseline/uplift net, break-even, peeking-penalized EV),
+  LT-01..LT-06 flags, verdict ladder (rewire / fix the
+  test / test it). 25 new lib tests; suite 1065 tests;
+  typecheck + vitest + build green. Screenshot:
+  docs/screenshots/listing-test-lab.webp.
   Inbox swept: QA cycles 21-24 PASS with no delegation;
   no new reviewer proposals in open issues (#11-#16 remain
   reviewer-directed INFO notes; #25/#26 already fixed at
