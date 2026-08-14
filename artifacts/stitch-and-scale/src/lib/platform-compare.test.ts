@@ -143,9 +143,11 @@ describe('analyzePlatformModels', () => {
     const monthly = 5_000_000 * 0.3 * 0.005; // pool = 30% of platform revenue
     expect(row.net).toBeCloseTo(monthly * 12, 0);
     // Skillshare benchmark: avg teacher ~$200/mo. With an explicit 0.5% minutes share the pool row
-    // earns meaningful income (~$7,500/yr) and carries no warning — warnings fire only when the pool
-    // inputs are unset or the resulting hourly net falls below ~$10/hr.
-    expect(row.redFlags.length).toBe(0);
+    // earns ~$7,500/mo — 37.5× the platform average — so the P-11 upside-case flag now fires:
+    // anything over 2× the ~$200/mo average is an upside case, not a plan.
+    expect(row.redFlags.some((f) => f.id === 'P-11')).toBe(true);
+    // The math itself stays exact; only the realism framing is flagged.
+    expect(row.redFlags.length).toBe(1);
   });
 
   it('minutes-royalty warns when pool inputs are unset', () => {

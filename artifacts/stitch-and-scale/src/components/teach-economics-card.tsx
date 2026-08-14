@@ -119,8 +119,11 @@ export function TeachEconomicsCard({ project: _project }: { project: PatternProj
   const [pcBuyers, setPcBuyers] = useState(200);
   const [pcPlatformCost, setPcPlatformCost] = useState(468);
   const [pcSeatsPerSlot, setPcSeatsPerSlot] = useState(10);
-  const [pcPoolRevenue, setPcPoolRevenue] = useState(5_000_000);
-  const [pcMinutesShare, setPcMinutesShare] = useState(0.005);
+  // Issue #39: defaults pinned to the documented ~$200/mo market average (30% of a
+  // conservative $8M membership-revenue pool × 0.00013 minutes share ≈ $260/mo),
+  // so the minutes-royalty row never wins at 37.5× the average out of the box.
+  const [pcPoolRevenue, setPcPoolRevenue] = useState(8_000_000);
+  const [pcMinutesShare, setPcMinutesShare] = useState(0.00013);
   const [pcRoyaltyMonths, setPcRoyaltyMonths] = useState(12);
   const [pcPlatformShare, setPcPlatformShare] = useState(0.15);
   // Issue #26: the headline must state the same hours the ≈$/hr rate divides by.
@@ -444,7 +447,7 @@ export function TeachEconomicsCard({ project: _project }: { project: PatternProj
               onChange={(n) => setPcSeatsPerSlot(Math.min(60, Math.max(1, n)))} />
             <NumField id="pc-pool" label="Platform membership revenue / yr" value={pcPoolRevenue} min={0} step={1000000}
               onChange={setPcPoolRevenue} suffix="$" />
-            <NumField id="pc-minshare" label="Your minutes share" value={pcMinutesShare} min={0} max={1} step={0.001}
+            <NumField id="pc-minshare" label="Your minutes share (0.00013 ≈ $260/mo at an $8M pool)" value={pcMinutesShare} min={0} max={1} step={0.0001}
               onChange={setPcMinutesShare} />
             <NumField id="pc-roys" label="Royalty runway (months)" value={pcRoyaltyMonths} min={1} max={60}
               onChange={(n) => setPcRoyaltyMonths(Math.max(1, n))} />

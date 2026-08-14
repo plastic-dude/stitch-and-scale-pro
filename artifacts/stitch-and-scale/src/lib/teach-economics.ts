@@ -646,6 +646,7 @@ export function analyzePlatformModels(raw: Partial<PlatformCompareInput>): Platf
       redFlags: [
         ...(minutesShare <= 0 || poolRevenue <= 0 ? [{ id: 'P-07', detail: 'No minutes share or pool revenue set — royalties are minutes-share-of-pool, not a price you control.' }] : []),
         ...(m.hourlyNet < 10 && m.totalHours > 1 ? [{ id: 'P-08', detail: 'Platform averages confirm: most teachers earn ~$200/mo — royalty income is a supplement, not a launch plan.' }] : []),
+        ...(monthly > 400 ? [{ id: 'P-11', detail: `Projected $${monthly.toFixed(0)}/mo is 2×+ the ~$200/mo platform average — only realistic with an established library and heavy watch time; treat this row as an upside case, not a plan.` }] : []),
       ],
     });
   }
