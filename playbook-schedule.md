@@ -33,6 +33,43 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - Prioritize money-making: features that enable selling patterns, subscriptions, or premium tiers rank above internal tooling.
 
 ## Progress log (update each run)
+- [CHK-036] 0c0aff0 — Partners — Yarn Partners & Deal Evaluator
+  (35th workspace tab, 'Partners'):
+  Session-36 research (see research/competitors-session-36-
+  yarn-partnerships.md): yarn companies pay for design work
+  in many currencies — Knit Picks IDP keeps a flat 15%
+  (designer sets price, keeps 85%, yarn support on approval);
+  Who Pays Knitters records accessory design rates of
+  $40-$700 averaging $246 (garments higher); rights models
+  run keep-all / 6-12 mo exclusivity / shared-royalty /
+  full-transfer; indie dyer collabs hinge on concept brief,
+  yarn spec, timeline, and a marketing plan in the first
+  email; LYS Day (late April) is the biggest coordinated
+  traffic day in indie yarn retail.
+  Library partner-economics.ts: analyzePartnerDeal — 6 deal
+  types (yarn support, IDP-style listing, lump sum,
+  exclusivity window, LYS Day exclusive, KAL host) priced
+  against the self-publish runway (15% marketplace net)
+  with rights-surrender math (window/unlocked/royalty/
+  3-yr full-transfer); $30/hr pattern-design benchmark
+  verdict ladder (great/good/hold/rethink/skip); red flags
+  YP-01..06 ($246 accessory floor, 15% IDP norm, 12-mo
+  exclusivity cap, yarn-only underpay, <$10/hr, sub-floor
+  lump sums); scorePitch + computePitchGaps (brief,
+  sketches, yarn spec, timeline, marketing plan, portfolio,
+  audience stats); summarizePipeline — statuses, cash in
+  flight, avg deadline; 6-item signed-agreement checklist
+  with nullification clause.
+  UI: partner-economics-card.tsx — deal type + rights
+  selects, conditional deal-type fields (IDP fee %, window
+  months, LYS Day days, KAL followers), verdict banner,
+  money tiles (cash value, self-publish runway, rights
+  surrendered, net /hr), red-flag rail, copyable agreement
+  draft, pitch-readiness score + named gaps, pitch pipeline
+  table (add/update status/amount/notes, delete).
+  Storage-seam key stitch-and-scale-partners-{projectId}.
+  34 new tests; gates: 623/623 (37 files) + typecheck +
+  build green; tab visually verified in-browser.
 - [CHK-034] 4548a0c — Teach It — Teaching Economics
   (34th workspace tab, 'Teach'):
   Session-35 research (see research/competitors-session-35-
