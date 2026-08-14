@@ -33,6 +33,21 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - Prioritize money-making: features that enable selling patterns, subscriptions, or premium tiers rank above internal tooling.
 
 ## Progress log (update each run)
+- [CHK-043] 0f09016 — Test Knit Desk (41st tab)
+  (session-43 test-knit market research). Test knits run on a
+  Google-sheets/Instagram patchwork; Yarnpond (2018) is the only
+  dedicated coordinator and its own users report testers ghosting;
+  Ribblr locks patterns into its format. New desk tab prices the
+  call for testers before posting: size coverage vs the project's
+  graded sizes (2XL+ double-coverage per FatTestKnits practice),
+  the documented $0.10-0.40/yard band with a $0.18 fair floor,
+  unpaid-reward fairness, sample-knitter surrender cost, deadline
+  and pre-launch audit readiness; verdict ready/revise/blocked and
+  R-01..R-06 flags; 17 new lib tests, full suite 744 tests / 43
+  files; typecheck + vitest + build green. Screenshot:
+  docs/screenshots/testknit-desk.webp.
+  Inbox sweep: no new reviewer proposals this run (issues
+  #27/#28/#29 all addressed previously).
 - [CHK-042] 775afa6 — Tech Edit market-bill tile
   (session-42 tech editing market research). Editors bill
   $20-40/hr at ~10-day turnaround with a documented shortage;
