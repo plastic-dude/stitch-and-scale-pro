@@ -46,6 +46,46 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - [CHK-065] 5f91403 — Consignment Re-Price Lab (63rd tab).
 - [CHK-066] 0175d76 — Pattern Bundle Lab (64th tab).
 - [CHK-067] ec3a219 — Retreat & Cruise Teaching Lab (65th tab).
+- [CHK-068] deabea4 — Podcast & Affiliate Lab (66th tab).
+  Inbox swept: no new reviewer proposals (13 open issues
+  remain reviewer-directed INFO notes; no open PRs; no
+  non-plastic-dude comments).
+  Research angle: podcast sponsorship & affiliate
+  marketing economics for knitwear designers (never covered
+  in sessions 1-67) — session-68 facts: industry CPM
+  standards $18 for 30-sec pre-roll / $25 for 60-sec
+  mid-roll (Buzzsprout), host-read mid-rolls at niche
+  fiber-arts shows trade $25-50 (craft audience is a
+  targeting premium); LoveCrafts affiliate 15-30%, Knit
+  Picks and Crochet.com 10%; network cuts ~30%, marketplaces
+  10-20% (Podcorn 10%, Gumball 20%); CPM pitches not worth
+  it below ~200 downloads/episode and CPM deals only work
+  from ~5,000 downloads/episode; keep ad reads 30-60s and
+  under ~10% of episode length (Buzzsprout sponsor guides,
+  Knitgrammer affiliate roundup, Podcorn/Gumball listings).
+  Competitor flaw: no tool models the CPM/CPA math for a
+  fiber-arts podcast sponsorship or the affiliate
+  commission economics of yarn/pattern links.
+  Podcast & Affiliate Lab in a new tab: downloads per
+  episode, episode cadence, production hours vs opportunity
+  rate, setup + recurring costs; three lanes modeled side
+  by side — CPM sponsorship (quoted CPM, slots, network
+  cut, fill rate), flat-fee reads, and multiple affiliate
+  programs (commission, clicks, conversion, AOV, platform
+  cut) — each with gross/net monthly, hours, effective
+  $/hr; CPM benchmark band $18-50, fair flat-fee equivalent
+  re-quote, CPM break-even audience (scales with hourly
+  rate and production hours); PA-01..PA-09 flags (tiny
+  audience, below-band CPM, underpriced flat fee, low
+  conversion, low commission vs top programs, excessive
+  network cut, underpaid show hours, nothing monetized,
+  ad-load above 10% norm), verdict ladder (audience is an
+  asset / growing / small-audience affiliate-only / monetize
+  at all / show costs you money).
+  +29 lib tests; suite 1,323 tests / 68 files;
+  typecheck + vitest + build green. Screenshots:
+  docs/screenshots/podcast-lab-default-mode.webp +
+  podcast-lab-large-audience-mode.webp.
   Inbox swept: no new reviewer proposals (11 open
   issues remain reviewer-directed INFO notes; QA cycles
   32/33 copy/consistency INFO; no open PRs).
