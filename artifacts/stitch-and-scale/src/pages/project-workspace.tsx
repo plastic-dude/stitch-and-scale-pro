@@ -20,7 +20,7 @@ import { NativeSelect } from '@/components/ui/native-select';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { generateId, PatternSection, SectionMeasurement, MeasurementType, GradingKey, GRADING_KEY_LABELS, ALL_SIZES, gradePattern, resolveProjectStandards } from '@/lib/grading-engine';
-import { Plus, Edit2, Trash2, ArrowRight, Table as TableIcon, Copy, Settings, ChevronDown, ChevronRight, Calculator, FlaskConical, PenLine, ClipboardCheck, Camera, Video, FileText, Library, Tag, Target, Sparkles, FileCheck2, Tent, Handshake, Rocket, Boxes, Crown, MapPin, CalendarDays } from 'lucide-react';
+import { Plus, Edit2, Trash2, ArrowRight, Table as TableIcon, Copy, Settings, ChevronDown, ChevronRight, Calculator, FlaskConical, PenLine, ClipboardCheck, Camera, Video, FileText, Library, Tag, Target, Sparkles, FileCheck2, Tent, Handshake, Rocket, Boxes, Crown, MapPin, CalendarDays, Presentation } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useSettings } from '@/context/SettingsContext';
@@ -80,6 +80,7 @@ import { MembershipSiteLabCard } from '@/components/membership-site-lab-card';
 import { ConventionBoothLabCard } from '@/components/convention-booth-lab-card';
 import { ChannelMigrationLabCard } from '@/components/channel-migration-lab-card';
 import { ReleaseTimingLabCard } from '@/components/release-timing-lab-card';
+import { WorkshopTeachingLabCard } from '@/components/workshop-teaching-lab-card';
 
 type RoundingMode = 'exact' | 'multiple' | 'even' | 'odd';
 
@@ -627,6 +628,9 @@ export default function ProjectWorkspace() {
           <TabsTrigger value="channel-migration" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             <MapPin className="h-3.5 w-3.5 mr-1.5" /> Channel Lab
           </TabsTrigger>
+          <TabsTrigger value="workshop-teach" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+            <Presentation className="h-3.5 w-3.5 mr-1.5" /> Workshop Lab
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="sections" className="mt-6 space-y-6">
@@ -1101,6 +1105,9 @@ export default function ProjectWorkspace() {
         </TabsContent>
         <TabsContent value="channel-migration" className="mt-6">
           <ChannelMigrationLabCard project={project} />
+        </TabsContent>
+        <TabsContent value="workshop-teach" className="mt-6">
+          <WorkshopTeachingLabCard project={project} />
         </TabsContent>
 
 
