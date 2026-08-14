@@ -33,6 +33,20 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - Prioritize money-making: features that enable selling patterns, subscriptions, or premium tiers rank above internal tooling.
 
 ## Progress log (update each run)
+- [CHK-013] aafa9c3 — Design Offer Evaluator (Deals tab extension): 18/18 tests;
+  197/197 overall green; typecheck + build pass. Session-14 research
+  (Who Pays Knitters, Making Stories royalties, Quince fairness norms,
+  WPK flat-fee survey data, Stitchcraft Marketing exclusivity windows)
+  finds designers evaluate yarn-company offers with no tools at all —
+  deal-comparators are company-side, nobody models the offer from the
+  designer's side. Library design-offer-evaluator.ts: evaluateOffer
+  (5 offer types: flat fee / royalty / royalty+exclusivity /
+  non-exclusive license / yarn support), 20 cited checks (DO-01..20)
+  covering WPK accessory flat-fee avg, tech-edit/photo coverage,
+  effective-rate vs designer's hourly rate, own-channel baseline,
+  exclusivity window norms, rights retention; verdicts
+  take/review/walk-away; generateOfferResponse (copy-ready counter).
+  UI: DesignOfferSection in deals-tab-card.tsx, same conventions.
 - [CHK-012] 7a58b82 — Launch Campaign Manager: 13th project-workspace tab built
   from session-13 research (Sister Mountain 3-phase release playbook,
   Ravelry Hot Right Now weekend-momentum mechanics, Stitchcraft
