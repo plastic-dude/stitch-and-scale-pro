@@ -33,6 +33,21 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - Prioritize money-making: features that enable selling patterns, subscriptions, or premium tiers rank above internal tooling.
 
 ## Progress log (update each run)
+- [CHK-015] 40f7225 — Translation & Bundle Revenue Planner (15th workspace tab):
+  19/19 tests; 236/236 overall green; typecheck + build pass. Session-16
+  research (Knit for Me 2020 coalition bundle: 56 patterns $27,
+  Knitlingo $0.01/word, Finnished Knits repeat-section discount,
+  Ravelry translations-as-derivative-works rule) finds both channels
+  have zero tooling — economics live on blog posts and handshake
+  emails. Library translation-bundle-planner.ts: planTranslations
+  (per-language translator cost with repeat-section discount, added
+  copies from uplift x demand share, payback months, 24-month worthIt
+  flag, fastest-payback priority ranking) and planBundle (discount
+  depth vs sum-of-parts, equal/perPattern splits, host fees, verdict
+  against the designer's own solo window baseline — bundling only
+  recommended when it beats going solo), plus generateBundlePitch.
+  UI: translation-bundle-card.tsx as 'Trans & Bundle' tab after Trunk
+  Show.
 - [CHK-014] 45504af — Trunk Show & License Planner (14th workspace tab):
   20/20 tests; 217/217 overall green; typecheck + build pass. Session-15
   research (Ravelry in-store channel, cottage-license market norms,
