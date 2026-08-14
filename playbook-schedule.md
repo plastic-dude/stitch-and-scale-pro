@@ -33,6 +33,25 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - Prioritize money-making: features that enable selling patterns, subscriptions, or premium tiers rank above internal tooling.
 
 ## Progress log (update each run)
+- [CHK-016] c66bcf2 — Pattern Club & Magazine Lockout Planner (16th workspace
+  tab, 'Pattern Club'):
+  25/25 tests; 261/261 overall green; typecheck + build pass. Session-17
+  research (Double The Stitches $7/$77 club pricing, Crochet Spot $10,
+  Nicki's trials, Knitty $200-300 honorarium with ~3-month exclusive
+  window, Farm & Fiber 12-month exclusivity, Laine 5 months,
+  Sandi Rosner commissioned-vs-independent economics) finds club and
+  magazine-lockout economics are handshake math — no tool models
+  either. Library pattern-club-planner.ts: planClub (12-month member
+  cohort model with churn, paid-equivalent annual members, gift-code
+  fulfilment, production cost, channel fees, solo-baseline opportunity
+  cost via the shared platformNet seam, steady-state break-even member
+  count, go/review/skip verdict) and compareMagazine (fee minus
+  designer-borne production vs income lost in the exclusive window,
+  minimum worthwhile fee, effective hourly rate bar, cited window
+  norms), plus generateClubFaq and generateMagazineResponse
+  (copyright/AI-policy/payment protection questions).
+  UI: pattern-club-card.tsx with Pattern Club / Magazine Offer inner
+  tabs, paste-ready copy with Copy buttons.
 - [CHK-015] 40f7225 — Translation & Bundle Revenue Planner (15th workspace tab):
   19/19 tests; 236/236 overall green; typecheck + build pass. Session-16
   research (Knit for Me 2020 coalition bundle: 56 patterns $27,
