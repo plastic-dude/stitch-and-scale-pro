@@ -183,15 +183,23 @@ export interface ProjectStorageHandle<T> {
   readonly scopedKey: string;
   read(): T | null;
   write(value: T): void;
-  /** Fold a legacy flat key into the scoped key (reads-once migration). */
-  migrateFrom(legacyKey: string): void;
+  /** Fold a legacy flat key into the scoped key (reads-once migration).
+   *  `opts.partition` folds only this project's partition from a
+   *  `{ [projectId]: state }` legacy blob. */
+  migrateFrom(legacyKey: string, opts?: { partition?: boolean }): void;
 }
 
 export function projectStorage<T>(
   prefix: string,
   projectId: string,
   legacyKeys: string[] = [],
+  opts?: { partition?: boolean },
 ): ProjectStorageHandle<T> {
+  // `partition`: the legacy keys are projectId-partitioned blobs ({ [projectId]:
+  // state }), not flat single-project values. Only this project's partition is
+  // folded into the scoped key; the rest of the blob is discarded. (The pre-seam
+  // layout used by the trunk-show and translation-bundle tabs.)
+  const partition = opts?.partition ?? false;
   // Defensive: if a hostile or already-composed id carries the full scoped
   // shape (e.g. projectId === 'stitch-and-scale-kalroi-evil'), never
   // double-embed it — strip the prefix so the final key stays canonical.
@@ -212,7 +220,7 @@ export function projectStorage<T>(
   const write = (value: T): void => {
     localStorage.setItem(scopedKey, JSON.stringify(value));
   };
-  const migrateFrom = (legacyKey: string): void => {
+  const migrateFrom = (legacyKey: string, opts?: { partition?: boolean }): void => {
     if (legacyKey === scopedKey) return; // never migrate into self
     try {
       const raw = localStorage.getItem(legacyKey);
@@ -223,7 +231,17 @@ export function projectStorage<T>(
         return;
       }
       // Scoped key is empty: fold the legacy value over, then remove it.
-      const parsed = JSON.parse(raw) as T;
+      let parsed = JSON.parse(raw) as T;
+      // Partitioned legacy blob ({ [projectId]: state }) — the pre-seam layout
+      // the trunk-show and translation-bundle tabs used: one flat key whose
+      // value was an object keyed by projectId. Fold ONLY this project's
+      // partition in; the rest of the blob is other projects' state and is
+      // discarded rather than polluting every project with everyone's data.
+      if (opts?.partition && parsed && typeof parsed === 'object') {
+        const part = (parsed as unknown as Record<string, unknown>)[safeId];
+        if (part && typeof part === 'object') parsed = part as T;
+        else parsed = {} as T;
+      }
       if (parsed && typeof parsed === 'object') {
         write(parsed);
         localStorage.removeItem(legacyKey);
@@ -235,7 +253,7 @@ export function projectStorage<T>(
   const handle: ProjectStorageHandle<T> = { scopedKey, read, write, migrateFrom };
   // Reads-once migration: every legacy key gets one attempt the first time
   // this handle is created for a projectId that hasn't written yet.
-  for (const legacy of legacyKeys) handle.migrateFrom(legacy);
+  for (const legacy of legacyKeys) handle.migrateFrom(legacy, { partition });
   return handle;
 }
 

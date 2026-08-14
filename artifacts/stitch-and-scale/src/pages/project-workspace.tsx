@@ -74,6 +74,7 @@ import { VideoSocialLabCard } from '@/components/video-social-lab-card';
 import { ShowRoiLabCard } from '@/components/show-roi-lab-card';
 import { WholesaleLabCard } from '@/components/wholesale-lab-card';
 import { PreorderCampaignLabCard } from '@/components/preorder-campaign-lab-card';
+import { ListingTestLabCard } from '@/components/listing-test-lab-card';
 
 type RoundingMode = 'exact' | 'multiple' | 'even' | 'odd';
 
@@ -603,6 +604,9 @@ export default function ProjectWorkspace() {
           <TabsTrigger value="preorder" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             <Rocket className="h-3.5 w-3.5 mr-1.5" /> Pre-Order Lab
           </TabsTrigger>
+          <TabsTrigger value="listing-test" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+            <Rocket className="h-3.5 w-3.5 mr-1.5" /> Listing Test Lab
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="sections" className="mt-6 space-y-6">
@@ -1059,6 +1063,9 @@ export default function ProjectWorkspace() {
         </TabsContent>
         <TabsContent value="preorder" className="mt-6">
           <PreorderCampaignLabCard project={project} />
+        </TabsContent>
+        <TabsContent value="listing-test" className="mt-6">
+          <ListingTestLabCard project={project} />
         </TabsContent>
 
 

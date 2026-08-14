@@ -216,6 +216,40 @@ describe('projectStorage project-scoped seam (issue #4, S018/S042/S045/S049)', (
     expect(h.read()).toEqual({ n: 1 });
   });
 
+  it('migrates only this project\'s partition from a partitioned legacy blob', () => {
+    window.localStorage.setItem(
+      'stitch-and-scale-trunk-show',
+      JSON.stringify({
+        'proj-A': { trunk: { visitorsPerDay: 20 }, licensePrices: { '1': 45 } },
+        'proj-B': { trunk: { visitorsPerDay: 99 } }, // other project's state — must NOT leak
+      }),
+    );
+    const h = projectStorage<Record<string, unknown>>('trunkshow', 'proj-A', ['stitch-and-scale-trunk-show'], { partition: true });
+    expect(h.read()).toEqual({ trunk: { visitorsPerDay: 20 }, licensePrices: { '1': 45 } });
+    expect(window.localStorage.getItem('stitch-and-scale-trunk-show')).toBeNull(); // flat blob consumed
+    // proj-B's data is discarded, never folded into proj-A's scoped key.
+    const scoped = window.localStorage.getItem(h.scopedKey);
+    expect(scoped).not.toContain('proj-B');
+    expect(JSON.parse(scoped as string).trunk.visitorsPerDay).toBe(20);
+  });
+
+  it('starts empty when the partitioned legacy blob has no entry for this project', () => {
+    window.localStorage.setItem(
+      'stitch-and-scale-trunk-show',
+      JSON.stringify({ 'proj-B': { trunk: { visitorsPerDay: 99 } } }),
+    );
+    const h = projectStorage<Record<string, unknown>>('trunkshow', 'proj-A', ['stitch-and-scale-trunk-show'], { partition: true });
+    expect(h.read()).toEqual({});
+    expect(window.localStorage.getItem('stitch-and-scale-trunk-show')).toBeNull(); // consumed anyway
+  });
+
+  it('tolerates a corrupt partitioned legacy blob without throwing', () => {
+    window.localStorage.setItem('stitch-and-scale-trunk-show', 'not-json{');
+    const h = projectStorage<Record<string, unknown>>('trunkshow', 'proj-A', ['stitch-and-scale-trunk-show'], { partition: true });
+    expect(h.read()).toBeNull();
+    expect(window.localStorage.getItem('stitch-and-scale-trunk-show')).toBe('not-json{');
+  });
+
   it('covers every legacy flat key listed by the review ledger', () => {
     // Guard: when any of these keys is passed to projectStorage for a real
     // projectId, its name must differ from the produced scoped key — and the

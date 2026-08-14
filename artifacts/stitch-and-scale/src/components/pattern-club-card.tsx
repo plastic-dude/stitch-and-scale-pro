@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
+import { projectStorage, type ProjectStorageHandle } from '@/lib/storage-lib';
 import {
   Card,
   CardContent,
@@ -87,6 +88,23 @@ const defaultMagazine: MagazineDraftState = {
   mediaCost: '0',
 };
 
+interface StoredClub {
+  draft: ClubDraftState;
+  magazine: MagazineDraftState;
+}
+
+function loadStored(handle: ProjectStorageHandle<StoredClub>): StoredClub {
+  try {
+    const parsed = handle.read();
+    if (parsed && typeof parsed === 'object' && parsed.draft && parsed.magazine) {
+      return { draft: { ...defaultDraft, ...parsed.draft }, magazine: { ...defaultMagazine, ...parsed.magazine } };
+    }
+  } catch {
+    /* storage unreadable — start fresh */
+  }
+  return { draft: { ...defaultDraft }, magazine: { ...defaultMagazine } };
+}
+
 function num(v: string, fallback = 0): number {
   const n = parseFloat(v);
   return Number.isFinite(n) ? n : fallback;
@@ -146,9 +164,17 @@ function verdictBadge(v: string) {
 }
 
 export function PatternClubCard({ project }: { project: PatternProject }) {
-  const [draft, setDraft] = useState<ClubDraftState>(defaultDraft);
-  const [mag, setMag] = useState<MagazineDraftState>(defaultMagazine);
+  // issue #4 project seam (S036): the plan was fully ephemeral — a refresh
+  // wiped the designer's numbers. Now persisted per project; the legacy
+  // comment 'fully-ephemeral pattern-club-card' is history, not behavior.
+  const handle = useMemo(() => projectStorage<StoredClub>('patternclub', project.id), [project.id]);
+  const [draft, setDraft] = useState<ClubDraftState>(() => loadStored(handle).draft);
+  const [mag, setMag] = useState<MagazineDraftState>(() => loadStored(handle).magazine);
   const { toast } = useToast();
+
+  useEffect(() => {
+    handle.write({ draft, magazine: mag });
+  }, [draft, mag]);
 
   const result = useMemo(() => {
     const base: ClubSoloBaseline = {

@@ -36,8 +36,6 @@ import {
 import { PatternProject } from '@/lib/grading-engine';
 import { Languages, Package, ClipboardCopy, Globe, Trash2 } from 'lucide-react';
 
-const STORAGE_KEY = 'stitch-and-scale-translation-bundle';
-
 interface StoredState {
   translation?: {
     wordCount: number;
@@ -61,27 +59,14 @@ interface StoredState {
   };
 }
 
-function loadStored(projectId: string): StoredState {
+function loadStored(handle: ProjectStorageHandle<StoredState>): StoredState {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return {};
-    const parsed = JSON.parse(raw);
-    return (parsed && typeof parsed === 'object' && parsed[projectId]) ?? {};
+    const parsed = handle.read();
+    if (parsed && typeof parsed === 'object') return parsed as StoredState;
   } catch {
-    return {};
+    /* storage unreadable — start fresh */
   }
-}
-
-function saveStored(projectId: string, patch: Partial<StoredState>) {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    const all = raw ? JSON.parse(raw) : {};
-    const existing = (all[projectId] ?? {}) as StoredState;
-    all[projectId] = { ...existing, ...patch };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(all));
-  } catch {
-    // local storage is best-effort; the planner still works in-session.
-  }
+  return {};
 }
 
 function CopyLine({ text }: { text: string }) {
@@ -119,11 +104,13 @@ const DEFAULT_MARKETS: LanguageMarket[] = [
 ];
 
 export function TranslationBundleCard({ project }: { project: PatternProject }) {
-  // issue #4 project seam: one scoped store per project; the legacy flat key 'stitch-and-scale-translation-bundle' is folded in on first read, then removed.
-  const handle = useMemo(() => projectStorage<StoredState>('translate', project.id, ['stitch-and-scale-translation-bundle']), [project.id]);
-
+  // issue #4 project seam (S018/S042): one scoped store per project; the
+  // legacy flat key 'stitch-and-scale-translation-bundle' was projectId-partitioned
+  // (projects shared one blob, silently colliding). Read-once migration folds
+  // this project's partition into the scoped key, then removes the flat key.
+  const handle = useMemo(() => projectStorage<StoredState>('translate', project.id, ['stitch-and-scale-translation-bundle'], { partition: true }), [project.id]);
   const { toast } = useToast();
-  const stored = React.useMemo(() => loadStored(project.id), [project.id]);
+  const stored = React.useMemo(() => loadStored(handle), [handle]);
 
   const [wordCount, setWordCount] = React.useState(stored.translation?.wordCount ?? 2000);
   const [repeatedWords, setRepeatedWords] = React.useState(stored.translation?.repeatedWords ?? 400);
@@ -157,7 +144,7 @@ export function TranslationBundleCard({ project }: { project: PatternProject }) 
   const [patternSoloCopies, setPatternSoloCopies] = React.useState(5);
 
   React.useEffect(() => {
-    saveStored(project.id, {
+    handle.write({
       translation: { wordCount, repeatedWords, perWordRate, repeatDiscount, fixedFees, homeMonthlyCopies, pricePerCopy, channelFeeRate },
       markets,
       bundle: { bundlePrice, expectedUnits, channelFeeRate: bundleChannelFeeRate, hostFeeRate, splitMode, designerCount, partners },

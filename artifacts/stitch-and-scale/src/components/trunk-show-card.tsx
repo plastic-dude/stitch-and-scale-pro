@@ -37,34 +37,20 @@ import {
 import { PatternProject } from '@/lib/grading-engine';
 import { Truck, DollarSign, Copy, CheckCircle2, ClipboardCopy, ListChecks, ScrollText, CalendarDays } from 'lucide-react';
 
-const STORAGE_KEY = 'stitch-and-scale-trunk-show';
-
 interface StoredState {
   trunk?: Partial<TrunkShowInput>;
   licensePrices?: Partial<Record<LicenseTierId, number>>;
   licenseConfig?: Partial<LicenseConfig>;
 }
 
-function loadStored(projectId: string): StoredState {
+function loadStored(handle: ProjectStorageHandle<StoredState>): StoredState {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return {};
-    const parsed = JSON.parse(raw);
-    return (parsed && typeof parsed === 'object' && parsed[projectId]) ?? {};
+    const parsed = handle.read();
+    if (parsed && typeof parsed === 'object') return parsed as StoredState;
   } catch {
-    return {};
+    /* storage unreadable — start fresh */
   }
-}
-
-function persist(projectId: string, next: StoredState) {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    const all = raw ? JSON.parse(raw) : {};
-    all[projectId] = { ...(all[projectId] ?? {}), ...next };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(all));
-  } catch {
-    // Offline or full storage — in-memory state still works.
-  }
+  return {};
 }
 
 function numField(value: string): number {
@@ -98,11 +84,14 @@ function CopyLine({ text, label }: { text: string; label: string }) {
 }
 
 export function TrunkShowCard({ project }: { project: PatternProject }) {
-  // issue #4 project seam: one scoped store per project; the legacy flat key 'stitch-and-scale-trunk-show' is folded in on first read, then removed.
-  const handle = useMemo(() => projectStorage<StoredState>('trunkshow', project.id, ['stitch-and-scale-trunk-show']), [project.id]);
+  // issue #4 project seam (S018/S042): one scoped store per project; the
+  // legacy flat key 'stitch-and-scale-trunk-show' was projectId-partitioned
+  // (projects shared one blob, silently colliding). Read-once migration folds
+  // this project's partition into the scoped key, then removes the flat key.
+  const handle = useMemo(() => projectStorage<StoredState>('trunkshow', project.id, ['stitch-and-scale-trunk-show'], { partition: true }), [project.id]);
 
-  const stored = React.useRef<StoredState>(loadStored(project.id));
-  const saved = stored.current;
+  const [stored, setStored] = React.useState<StoredState>(() => loadStored(handle));
+  const saved: StoredState = stored;
 
   // ---- Trunk show inputs ----
   const [eventDate, setEventDate] = React.useState(saved.trunk?.eventDate ?? '');
@@ -125,7 +114,7 @@ export function TrunkShowCard({ project }: { project: PatternProject }) {
   const [trunkDays, setTrunkDays] = React.useState(saved.trunk?.trunkDays?.toString() ?? '14');
 
   const saveTrunk = (next: Partial<TrunkShowInput>) => {
-    persist(project.id, { trunk: next });
+    setStored(s => ({ trunk: next, licensePrices: s.licensePrices, licenseConfig: s.licenseConfig }));
   };
 
   const trunkInput: TrunkShowInput = React.useMemo(
@@ -167,7 +156,7 @@ export function TrunkShowCard({ project }: { project: PatternProject }) {
   const [resaleAllowed, setResaleAllowed] = React.useState(saved.licenseConfig?.resaleAllowed ?? true);
 
   const saveLicense = (next: StoredState) => {
-    persist(project.id, next);
+    setStored(s => ({ ...s, ...next }));
   };
 
   const licensePricing = React.useMemo(
@@ -195,6 +184,10 @@ export function TrunkShowCard({ project }: { project: PatternProject }) {
     () => generateLicenseOffer(licenseConfig, licensePricing, project.name),
     [licenseConfig, licensePricing, project.name],
   );
+
+  React.useEffect(() => {
+    handle.write(stored);
+  }, [stored]);
 
   return (
     <Card>
