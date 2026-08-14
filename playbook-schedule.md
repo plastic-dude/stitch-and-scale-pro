@@ -33,6 +33,12 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - Prioritize money-making: features that enable selling patterns, subscriptions, or premium tiers rank above internal tooling.
 
 ## Progress log (update each run)
+- [CHK-009] a6bdfd7 — Test-Knit Programme Manager: 10th project-workspace tab built
+  from session-10 research (A Bee in the Bonnet, Nest Creative Works, The Fairythorn;
+  ~2 testers/size, 10-week lead, Google-Sheets-spreadsheet pain = our strength).
+  Roster from graded sizes (2/slot default), yardage validation vs estimator
+  (±15% bust-share), paste-ready tester call, pool-health dropout checks,
+  timeline guidance; 18 lib tests; 121/121 overall green; typecheck + build pass.
 - [CHK-008] a7f70b5 — Deal Comparator tab: yarn-company collaboration deal modelling
   (flat fee / royalty / exclusive) with take/counter/walk_away verdicts vs self-publish
   baseline + paste-ready terms response; session-9 research: Stitchcraft Marketing,
