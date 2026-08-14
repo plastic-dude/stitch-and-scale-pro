@@ -402,7 +402,7 @@ export function analyzeWholesale(input: {
     suggestion = 'A typical stockist needs 2–3 reorders a year at $400+ to make the program hum; pitch the seasonal refresh (fall capsule, holiday bestsellers) as the reorder hook, and take only accounts that commit to the repeat minimum.';
   } else if (netPerWholesaleHour >= 8) {
     verdict = `Wholesale pays $${netPerWholesaleHour.toFixed(0)}/hour ($${annualWholesaleNet.toFixed(0)}/year) — underpaid for knitting labor; keep it selective unless every account reorders $${Math.max(t.repeatMinimum, suggestedMinimum).toFixed(0)}+ twice a year.`;
-    suggestion = 'Take only accounts that commit to the repeat minimum, skip one-off 6-unit test orders, and push prices toward keystone ($${avgKeystoneWholesale.toFixed(0)}) — the sheet itself filters for serious buyers.';
+    suggestion = `Take only accounts that commit to the repeat minimum, skip one-off 6-unit test orders, and push prices toward keystone ($${avgKeystoneWholesale.toFixed(0)}) — the sheet itself filters for serious buyers.`;
   } else {
     verdict = `Wholesale pays $${netPerWholesaleHour.toFixed(0)}/hour ($${annualWholesaleNet.toFixed(0)}/year) — below piece-rate wages; the program loses to a test-knit commission before it earns a single reorder.`;
     suggestion = 'Reprice the line toward keystone (COGS x 2) or cut the slow SKUs; a boutique will pay keystone for a sell-through design, and selling direct at full retail pays far better for the same knit hours.';
