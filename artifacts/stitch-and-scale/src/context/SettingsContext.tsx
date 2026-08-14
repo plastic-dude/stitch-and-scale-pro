@@ -3,6 +3,12 @@ import {
   MeasurementUnit, SizeKey, GradingKey, SIZE_STANDARDS, ALL_SIZES,
   SizingStandard, StandardsTable,
 } from '@/lib/grading-engine';
+// S001 fix (review agent, verified Aug 14 2026): importData used to write
+// 'stitch-and-scale-v1' directly, racing the seam's writeProjects. One writer:
+// both the reducer (ProjectsContext) and import land through the seam helper,
+// which persists to IndexedDB AND localStorage atomically.
+import { writeProjects } from '@/lib/storage-lib';
+import type { PatternProject } from '@/lib/grading-engine';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -158,7 +164,9 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     try {
       const parsed = JSON.parse(jsonData);
       if (parsed.projects && Array.isArray(parsed.projects)) {
-        localStorage.setItem('stitch-and-scale-v1', JSON.stringify(parsed.projects));
+        writeProjects(parsed.projects as PatternProject[]).catch(err =>
+          console.error('[SettingsContext] import persistence failed', err)
+        );
       }
       if (parsed.settings) {
         setSettings(s => {

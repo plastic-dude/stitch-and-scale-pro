@@ -1,6 +1,11 @@
 import React, { createContext, useContext, useEffect, useReducer, useRef, useState } from 'react';
 import { get, set } from 'idb-keyval';
 import { PatternProject, generateId } from '@/lib/grading-engine';
+// S001 fix (fix applied by review agent, verified Aug 14 2026): the reducer used
+// to write localStorage directly ('stitch-and-scale-v1'), making the seam's
+// writeProjects (IndexedDB + localStorage, audit-aware) a second, unsynchronized
+// writer. A single writer now: both paths persist through the seam helper.
+import { writeProjects } from '@/lib/storage-lib';
 
 type ProjectsAction = 
   | { type: 'INIT'; payload: PatternProject[] }
@@ -70,8 +75,8 @@ function projectsReducer(state: PatternProject[], action: ProjectsAction): Patte
     default:
       return state;
   }
-  
-  localStorage.setItem('stitch-and-scale-v1', JSON.stringify(newState));
+
+  writeProjects(newState).catch(err => console.error('[ProjectsContext] persistence failed', err));
   return newState;
 }
 
