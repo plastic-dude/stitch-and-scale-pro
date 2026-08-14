@@ -128,6 +128,8 @@ export function bufferFor(inputs: YarnBuyInputs, sizeCount: number): { pct: numb
     reasons.push('4+ graded sizes — multi-size yardage uncertainty');
   }
   if (inputs.swatchConfirmed) {
+    // A confirmed swatch is gauge proof — the buffer returns to the documented floor.
+    pct = BASE_BUFFER;
     reasons.push('swatch confirmed — buffer held at the documented floor');
   }
   return { pct: Math.min(pct, MAX_BUFFER), reasons };

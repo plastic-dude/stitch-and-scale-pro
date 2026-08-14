@@ -58,6 +58,7 @@ import { TeachEconomicsCard } from '@/components/teach-economics-card';
 import { PartnerEconomicsCard } from '@/components/partner-economics-card';
 import { YarnBuyCalculatorCard } from '@/components/yarn-buy-calculator-card';
 import { KalPlannerCard } from '@/components/kal-planner-card';
+import { SubmissionDeskCard } from '@/components/submission-desk-card';
 
 type RoundingMode = 'exact' | 'multiple' | 'even' | 'odd';
 
@@ -539,6 +540,9 @@ export default function ProjectWorkspace() {
           <TabsTrigger value="kal" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             KAL Planner
           </TabsTrigger>
+          <TabsTrigger value="submissions" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+            Submissions
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="sections" className="mt-6 space-y-6">
@@ -947,6 +951,9 @@ export default function ProjectWorkspace() {
         </TabsContent>
         <TabsContent value="kal" className="mt-6">
           <KalPlannerCard project={project} />
+        </TabsContent>
+        <TabsContent value="submissions" className="mt-6">
+          <SubmissionDeskCard project={project} />
         </TabsContent>
 
         <TabsContent value="notes" className="mt-6">

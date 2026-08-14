@@ -34,6 +34,28 @@ describe('bufferFor', () => {
     const buf = bufferFor(sampleInputs({ swatchConfirmed: true }), 1);
     expect(buf.reasons.some(r => r.includes('swatch'))).toBe(true);
   });
+
+  // Issue #27 regression: the swatch switch must actually lower the buffer to the documented
+  // 10% floor, not just add a cosmetic reason line while the math keeps the risk premiums.
+  it('swatch-confirmed lowers the buffer to the documented 10% floor (issue #27)', () => {
+    // fine yarn (+2.5%) and 4+ sizes (+2.5%) would give 15% without a swatch
+    const withSwatch = bufferFor(sampleInputs({ weight: 'fingering', swatchConfirmed: true }), 5);
+    expect(withSwatch.pct).toBe(0.10);
+    expect(withSwatch.reasons.some(r => r.includes('swatch'))).toBe(true);
+  });
+
+  // Issue #28 regression: 12.5% must render as "12.5%", not round to "13%".
+  it('displays a half-percent buffer with one decimal instead of rounding up (issue #28)', () => {
+    const buf = bufferFor(sampleInputs({ weight: 'worsted', swatchConfirmed: false }), 5);
+    expect(buf.pct).toBe(0.125);
+    const oneDecimal = (p: number) => {
+      const withOne = (p * 100).toFixed(1);
+      return withOne.endsWith('.0') ? withOne.slice(0, -2) : withOne;
+    };
+    expect(oneDecimal(buf.pct)).toBe('12.5');
+    expect(oneDecimal(0.1)).toBe('10');
+    expect(oneDecimal(0.15)).toBe('15');
+  });
 });
 
 describe('buyPlan', () => {

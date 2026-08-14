@@ -9,6 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useToast } from '@/hooks/use-toast';
 import { ShoppingBasket, AlertTriangle, ShieldCheck, Package, CircleDollarSign } from 'lucide-react';
 import { PatternProject } from '@/lib/grading-engine';
+
+
 import {
   YarnWeight,
   YARN_WEIGHTS,
@@ -17,6 +19,12 @@ import {
   estimateYarn,
 } from '@/lib/yarn-estimator';
 import { buyPlan } from '@/lib/yarn-buy-calculator';
+
+/** Display a buffer percentage to one decimal without a trailing .0 — label must agree with the itemized reasons. */
+function fmtPct(pct: number): string {
+  const withOne = (pct * 100).toFixed(1);
+  return withOne.endsWith('.0') ? withOne.slice(0, -2) : withOne;
+}
 
 interface StoredBuyCalc {
   weight: YarnWeight;
@@ -192,7 +200,7 @@ export function YarnBuyCalculatorCard({ project }: { project: PatternProject }) 
               </div>
               <div className="rounded-lg border bg-muted/30 p-4">
                 <div className="text-xs text-muted-foreground flex items-center gap-1">
-                  <ShieldCheck className="h-3 w-3" /> Target with risk buffer ({Math.round(plan.bufferPct * 100)}%)
+                  <ShieldCheck className="h-3 w-3" /> Target with risk buffer ({fmtPct(plan.bufferPct)})
                 </div>
                 <div className="text-2xl font-bold">{Math.round(plan.targetYards).toLocaleString()} yd</div>
               </div>
@@ -221,7 +229,7 @@ export function YarnBuyCalculatorCard({ project }: { project: PatternProject }) 
             {/* Buffer transparency */}
             <div className="rounded-lg border p-4 space-y-2">
               <div className="font-semibold text-sm flex items-center gap-2">
-                <ShieldCheck className="h-4 w-4 text-sky-600" /> Risk buffer — why {Math.round(plan.bufferPct * 100)}%
+                <ShieldCheck className="h-4 w-4 text-sky-600" /> Risk buffer — why {fmtPct(plan.bufferPct)}%
               </div>
               <ul className="text-sm space-y-1">
                 {plan.bufferReasons.map((r) => (
