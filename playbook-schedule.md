@@ -47,6 +47,46 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - [CHK-066] 0175d76 — Pattern Bundle Lab (64th tab).
 - [CHK-067] ec3a219 — Retreat & Cruise Teaching Lab (65th tab).
 - [CHK-068] deabea4 — Podcast & Affiliate Lab (66th tab).
+- [CHK-069] 4776b81 — Magazine Submission Lab (67th tab).
+  Inbox swept: no new reviewer proposals (13 open issues
+  remain reviewer-directed INFO notes; no open PRs; no
+  non-plastic-dude comments).
+  Research angle: magazine submission fee/rate economics for
+  knitwear designers (never covered in sessions 1-68) —
+  session-69 facts: Knitty pays $250-350 with ~3-month
+  exclusivity (Knitty submission guidelines, Sandi Rosner
+  commissioned-vs-independent piece); Making Stories
+  EUR100-550 with 4-month exclusivity; Laine pays on
+  completion with a 5-month window; Who Pays Knitters
+  survey average $246 flat fee (range $40-700); designers
+  have been paid as little as $30 to lease a design;
+  exclusivity windows run 3-12 months; kill-fee protection
+  sits at ~50% of the contracted fee; 3-10% royalties on
+  print revenue are common where magazines offer royalty
+  deals at all.
+  Competitor flaw: no tool compares a magazine deal
+  structure (flat / royalty / fee+royalty / lease /
+  outright sale) against the designer's own self-publish
+  baseline including the lock-up opportunity cost, coverage
+  value (tech edit, photography, test knit, yarn), payment
+  lag, and the post-window prestige uplift.
+  Magazine Submission Lab in a new tab: five deal models
+  including royalty stream (copies printed, sell-through,
+  royalty rate, revenue per copy, digital/archive royalty),
+  publisher coverage absorbed, lock-up opportunity cost
+  (foregone self-sales during window + payment-lag erosion),
+  post-window prestige uplift, deal net vs self-publishing,
+  effective $/hr, royalty break-even copies; MS-01..MS-09
+  flags (below-band fee, royalty below flat-fee equivalent,
+  no copy floor, kill fee below 50% norm, window above
+  12 months, underpriced outright sale, payment lag above
+  6 months, uncovered tech edit/photography, zero prestige
+  on short windows), verdict ladder (decline / weak deal /
+  fair deal / strong deal).
+  +27 lib tests; suite 1,350 tests / 69 files;
+  typecheck + vitest + build green. Screenshots:
+  docs/screenshots/magazine-lab-flat-mode.webp +
+  magazine-lab-royalty-mode.webp.
   Inbox swept: no new reviewer proposals (13 open issues
   remain reviewer-directed INFO notes; no open PRs; no
   non-plastic-dude comments).
