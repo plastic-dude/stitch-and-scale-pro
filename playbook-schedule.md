@@ -33,6 +33,30 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - Prioritize money-making: features that enable selling patterns, subscriptions, or premium tiers rank above internal tooling.
 
 ## Progress log (update each run)
+- [CHK-024] fc3f1bb — Inclusive Sizing & Adaptive Grading Analyzer
+  (24th workspace tab, 'Inclusive'):
+  13/13 tests; 410/410 overall green; typecheck + build pass.
+  Session-25 research (Jill Wolcott 'Hard Magic of Inclusive Sizing' —
+  grading costs exceed market price, effort steepens past ~6 sizes;
+  craftsnark poor-grading thread — buyers litmus-test 'size
+  inclusive' claims before buying, a 2XL sweater ~\$147 of yarn/time;
+  Ysolda 2026 chart XXS-7XL with 2\" grade rule, cup options, broad
+  shoulders; Iowa State adaptive-apparel OER — seated-fit grading,
+  magnetic closures, sensory-flat seams, thigh pockets, donning
+  loops) finds competitors treat inclusive sizing as charity or a
+  checkbox — we price the consulting effort it really is.
+  Library inclusive-sizing-analyzer.ts: analyzeInclusiveSizing (6-point
+  audit with genuinely-inclusive/partial/naive-scaling/not-inclusive
+  verdict; grading-hours = measurements x (1.5 + extra sizes x 0.45);
+  yardage re-estimate 0.5h/extra size; test-knit 1.5h/size + 2.5h per
+  plus-size band; \$5/extra-size tech edit; Wolcott 'hard magic' flag;
+  per-size yardage from the shared yardage seam with plus-size growth
+  warnings; shortfall vs launch-week platform net); buildInclusivePack
+  (pricing strategy + paste-ready launch copy); 8 adaptive-mod
+  consulting quotes at the design rate.
+  UI: inclusive-sizing-card.tsx — size-range editor with cup/broad-
+  shoulder flags, adaptive-mod switches with live \$ quotes, audit
+  checklist, per-size yardage chips; localStorage key snsp-v1.
 - [CHK-023] d9191b2 — Hire-vs-Self Analyzer (23rd workspace tab,
   'Hire vs Self'):
   21/21 tests; 397/397 overall green; typecheck + build pass.
