@@ -33,6 +33,32 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - Prioritize money-making: features that enable selling patterns, subscriptions, or premium tiers rank above internal tooling.
 
 ## Progress log (update each run)
+- [CHK-026] 93f220c — Membership Planner (26th workspace tab, 'Members'):
+  15 tests; 442/442 overall green; typecheck + build pass.
+  Session-27 research (Patreon 10% standard fee + ~5% processing —
+  a \$5 tier nets ~\$4.15; avg patron support \$5.40→\$6.10 Q1'25→2026;
+  bottom \$3 tier ≈ 90% of members; members join-for-one-pattern-then-
+  cancel churn; MediaPeruana pattern cost base \$155 — tech edit
+  \$40, model \$40, yarn \$75; New Wave Knitting \$47k gross/\$43k
+  spend/\$3k kept; avg Patreon creator \$315–1,575/mo) finds
+  designers launch memberships on vibes while the fee stack and the
+  monthly pattern production cost silently eat the profit. We model
+  the whole business net before launch.
+  Library membership-planner.ts: analyzeMembership — 1-5 tiers with
+  price/members/churn/perks; per-tier net after platform +
+  processing fees; production cost per exclusive pattern (materials
+  + hours × design rate labour floor); profit/mo; breakeven member
+  count from weighted net per member; churn volume flags; four
+  watch-outs (bottom-tier churn trap >80%, under-\$2 net member,
+  platform rate >12%, deliverables outrun the base); cannibalization
+  check via the shared platformNet seam — parked pattern's lost
+  standalone sales vs membership profit (worth it / thin / net
+  loss); go/maybe/no verdict; paste-ready tier page copy.
+  UI: membership-card.tsx — tier editor (add/remove 1-5), perks
+  textarea, economics grid (platform, ramp, rates, exclusive
+  pattern cost/hours, parked-pattern fields), verdict badge with
+  fee/production/profit rows, watch-out cards, tier-copy copy
+  button; localStorage key mspl-v1.
 - [CHK-025] 88fd2f6 — Pattern License Planner (25th workspace tab,
   'Licence It'):
   17 tests; 427/427 overall green; typecheck + build pass.
