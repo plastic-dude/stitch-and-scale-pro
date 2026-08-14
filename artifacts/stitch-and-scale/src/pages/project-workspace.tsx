@@ -20,7 +20,7 @@ import { NativeSelect } from '@/components/ui/native-select';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { generateId, PatternSection, SectionMeasurement, MeasurementType, GradingKey, GRADING_KEY_LABELS, ALL_SIZES, gradePattern, resolveProjectStandards } from '@/lib/grading-engine';
-import { Plus, Edit2, Trash2, ArrowRight, Table as TableIcon, Copy, Settings, ChevronDown, ChevronRight, Calculator, FlaskConical, PenLine, ClipboardCheck, Camera, Video, FileText, Library, Tag, Target, Sparkles, FileCheck2, Tent, Handshake } from 'lucide-react';
+import { Plus, Edit2, Trash2, ArrowRight, Table as TableIcon, Copy, Settings, ChevronDown, ChevronRight, Calculator, FlaskConical, PenLine, ClipboardCheck, Camera, Video, FileText, Library, Tag, Target, Sparkles, FileCheck2, Tent, Handshake, Rocket } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useSettings } from '@/context/SettingsContext';
@@ -73,6 +73,7 @@ import { PhotoRoiLabCard } from '@/components/photo-roi-lab-card';
 import { VideoSocialLabCard } from '@/components/video-social-lab-card';
 import { ShowRoiLabCard } from '@/components/show-roi-lab-card';
 import { WholesaleLabCard } from '@/components/wholesale-lab-card';
+import { PreorderCampaignLabCard } from '@/components/preorder-campaign-lab-card';
 
 type RoundingMode = 'exact' | 'multiple' | 'even' | 'odd';
 
@@ -599,6 +600,9 @@ export default function ProjectWorkspace() {
           <TabsTrigger value="wholesale" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             <Handshake className="h-3.5 w-3.5 mr-1.5" /> Wholesale Lab
           </TabsTrigger>
+          <TabsTrigger value="preorder" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+            <Rocket className="h-3.5 w-3.5 mr-1.5" /> Pre-Order Lab
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="sections" className="mt-6 space-y-6">
@@ -1052,6 +1056,9 @@ export default function ProjectWorkspace() {
         </TabsContent>
         <TabsContent value="wholesale" className="mt-6">
           <WholesaleLabCard project={project} />
+        </TabsContent>
+        <TabsContent value="preorder" className="mt-6">
+          <PreorderCampaignLabCard project={project} />
         </TabsContent>
 
 
