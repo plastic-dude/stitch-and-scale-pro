@@ -72,20 +72,29 @@ const BASE_TOLERANCE = 0.45;
  * 2×–3× the standard fabric is not, but it's plausible), and the band is
  * ±90% around it. Below the band the gauge belongs to a coarser weight or a
  * unit slip; far above it is almost always cm-typed-as-stitches (e.g. 45–50
- * when the swatch reads 4.5 sts/cm). Rows per 4in run higher than stitches
- * (row gauge is typically 1.25–1.5× stitch gauge on stocking stitch), so the
- * row band is anchored on the project's own stitch gauge instead of a flat
- * ceiling. */
+ * when the swatch reads 4.5 sts/cm).
+ *
+ * CHK-034 / issue #8: YARN_WEIGHT_DATA.referenceGaugeStitches is stored in
+ * sts/cm (CYC worsted = 18 sts per 4in = 4.5 sts/cm), while the project's
+ * gauge is sts per 4in — the range was computed in cm against a 4in input,
+ * so a perfectly normal 20 sts/4in worsted gauge flagged "outside ~0.4–8.5
+ * sts". Convert the reference to sts/4in (×2.54) before building the band,
+ * and label the band in sts/4in with the per-10cm equivalent beside it.
+ * Rows per 4in run higher than stitches (row gauge is typically 1.25–1.5×
+ * stitch gauge on stocking stitch), so the row band is anchored on the
+ * project's own stitch gauge instead of a flat ceiling. */
 const GAUGE_TOLERANCE = 0.9;
 const ROW_GAUGE_MULTIPLIER = 2.5;
+const CM_PER_4IN = 10.16; // 4 inches in centimetres — unit-conversion factor
 const MIN_STITCH_GAUGE = 2; // coarser than any CYC weight reference
 
 function stitchGaugeRange(project: PatternProject): { min: number; max: number } {
-  const ref = project.yarnWeight
+  const refPerCm = project.yarnWeight
     ? YARN_WEIGHT_DATA[project.yarnWeight].referenceGaugeStitches
-    : 4.5; // worsted default — the most common garment weight
-  const min = Math.min(MIN_STITCH_GAUGE, ref * (1 - GAUGE_TOLERANCE));
-  return { min, max: ref * (1 + GAUGE_TOLERANCE) };
+    : 4.5; // worsted default — the most common garment weight (sts/cm)
+  const refPer4In = refPerCm * CM_PER_4IN; // sts per 4in, same units as the project's gauge
+  const min = Math.max(MIN_STITCH_GAUGE, refPer4In * (1 - GAUGE_TOLERANCE));
+  return { min, max: refPer4In * (1 + GAUGE_TOLERANCE) };
 }
 
 const ESSENTIAL_MEASUREMENT_KEYS: GradingKey[] = [
@@ -171,7 +180,9 @@ export function checkReadiness(
         : 'warning',
     detail: !gaugeUsable
       ? 'No gauge — nothing can grade, the yarn estimate is unusable, and knitters can\u2019t check fit.'
-      : `Gauge ${project.gauge.stitchesPer4In} sts / ${project.gauge.rowsPer4In} rows over 4in sits outside the expected range for ${project.yarnWeight ? YARN_WEIGHT_LABELS[project.yarnWeight] : 'worsted'} (~${Math.round(range.min * 10) / 10}–${Math.round(range.max * 10) / 10} sts). Almost always a units slip (cm entered as stitches) — worth a second look.`,
+      : stitchInBand && rowReasonable
+        ? ''
+        : `Gauge ${project.gauge.stitchesPer4In} sts / ${project.gauge.rowsPer4In} rows over 4in sits outside the expected range for ${project.yarnWeight ? YARN_WEIGHT_LABELS[project.yarnWeight] : 'worsted'} (~${Math.round(range.min)}–${Math.round(range.max)} sts per 4in, i.e. ~${Math.round(range.min / 4 * 10) / 10}–${Math.round(range.max / 4 * 10) / 10} sts per cm). Almost always a units slip (cm entered as stitches) — worth a second look.`,
     category: 'engineering',
   });
 

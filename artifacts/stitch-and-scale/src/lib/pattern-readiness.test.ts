@@ -12,7 +12,7 @@ function makeProject(overrides: Partial<PatternProject> = {}): PatternProject {
     name: 'Demo Crewneck Sweater',
     author: 'Stitch & Scale Demo',
     baseSize: 'M',
-    gauge: { stitchesPer4In: 5, rowsPer4In: 7, unit: 'in' },
+    gauge: { stitchesPer4In: 20, rowsPer4In: 28, unit: 'in' },
     sections: [
       {
         id: 's1',
@@ -106,19 +106,43 @@ describe('checkReadiness', () => {
     // A stitch gauge 3× above the yarn-weight band makes the grading math
     // itself break, so this is an error, not a warning.
     const result = checkReadiness(makeProject({
-      gauge: { stitchesPer4In: 50, rowsPer4In: 50, unit: 'in' } as never,
+      // 300 sts/4in is far above 3× the worsted band ceiling (~87) — the
+      // grading math itself breaks at that scale, so this is an error.
+      gauge: { stitchesPer4In: 300, rowsPer4In: 300, unit: 'in' } as never,
     }));
     expect(result.checks.find(c => c.id === 'gauge')!.severity).toBe('error');
     expect(result.ready).toBe(false);
   });
 
   it('passes normal row-heavy gauges (rib/stocking row gauge > stitch gauge)', () => {
-    // Stocking-stitch row gauge of 2.5× stitch gauge is common in ribbed
+    // Stocking-stitch row gauge of 1.4× stitch gauge is common in ribbed
     // fabrics — still within the band and multiplier.
     const result = checkReadiness(makeProject({
-      gauge: { stitchesPer4In: 5, rowsPer4In: 12, unit: 'in' } as never,
+      gauge: { stitchesPer4In: 18, rowsPer4In: 25, unit: 'in' } as never,
     }));
     expect(result.checks.find(c => c.id === 'gauge')!.severity).toBe('pass');
+  });
+
+  it('issue #8: a normal 20 sts/4in worsted gauge passes the band check cleanly', () => {
+    // CYC worsted = 16–20 sts per 4in; the band was previously computed from
+    // a sts/cm reference against a sts/4in gauge ("~0.4–8.5 sts"), so a
+    // perfectly normal gauge falsely flagged "outside the range".
+    const result = checkReadiness(makeProject({
+      yarnWeight: 'worsted',
+      gauge: { stitchesPer4In: 20, rowsPer4In: 28, unit: 'in' },
+    }));
+    const gauge = result.checks.find(c => c.id === 'gauge')!;
+    expect(gauge.severity).toBe('pass');
+    expect(gauge.detail).toBe('');
+    // The printed band must be in sts/4in with a sts/cm equivalent.
+    const result2 = checkReadiness(makeProject({
+      yarnWeight: 'worsted',
+      gauge: { stitchesPer4In: 100, rowsPer4In: 120, unit: 'in' } as never,
+    }));
+    const gauge2 = result2.checks.find(c => c.id === 'gauge')!;
+    expect(gauge2.detail).toContain('sts per 4in');
+    expect(gauge2.detail).toContain('sts per cm');
+    expect(gauge2.severity).toBe('warning');
   });
 
   it('warns when a base value is far from the CYC standard (unit mixup)', () => {
@@ -190,7 +214,7 @@ describe('generateListing', () => {
     });
     expect(listing.title).toBe('Demo Crewneck Sweater');
     expect(listing.description).toContain('Sizes:');
-    expect(listing.description).toContain('Gauge: 5 sts');
+    expect(listing.description).toContain('Gauge: 20 sts');
     // Yardage must be a realistic adult-garment order of magnitude (benchmark
     // 1000–1400 yd worsted per Ravelry/LoveCrafts yardage summaries); the
     // estimate deliberately errs high (ease + square approximations for the

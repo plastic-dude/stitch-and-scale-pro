@@ -35,8 +35,11 @@ export type YarnWeight = 'lace' | 'fingering' | 'sport' | 'DK' | 'worsted' | 'bu
  * CYC yarn-weight reference data.
  * Source: Craft Yarn Council yarn weight standard table
  * (https://craftyarncouncil.com/standards/yarn-weight) — verified current.
- * referenceGaugeStitches: CYC standard stocking-stitch gauge midpoint over
- *   4 inches for the weight, on the recommended needle size.
+ * referenceGaugeStitches: CYC standard stocking-stitch gauge midpoint in
+ *   sts/cm for the weight (worsted = 18 sts per 4in = 4.5 sts/cm), on the
+ *   recommended needle size. Used only as a ratio against
+ *   WORSTED_REFERENCE_GAUGE, so the unit cancels out — do not compare these
+ *   values directly against a sts-per-4in project gauge (issue #8).
  * yardagePer100g: midpoint of CYC's published yards-per-100-gram range.
  */
 export const YARN_WEIGHT_DATA: Record<YarnWeight, { referenceGaugeStitches: number; yardagePer100g: number }> = {
