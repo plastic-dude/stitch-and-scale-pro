@@ -24,6 +24,7 @@ import { TechEditCard } from '@/components/tech-edit-card';
 import { FinishGuideCard } from '@/components/finish-guide-card';
 import { LaunchCampaignCard } from '@/components/launch-campaign-card';
 import { TrunkShowCard } from '@/components/trunk-show-card';
+import { TranslationBundleCard } from '@/components/translation-bundle-card';
 
 type RoundingMode = 'exact' | 'multiple' | 'even' | 'odd';
 
@@ -270,7 +271,7 @@ export default function ProjectWorkspace() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-14 md:w-fit bg-card border border-border h-12 p-1 overflow-x-auto">
+        <TabsList className="grid w-full grid-cols-15 md:w-fit bg-card border border-border h-12 p-1 overflow-x-auto">
           <TabsTrigger value="sections" className="font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             Sections
           </TabsTrigger>
@@ -312,6 +313,9 @@ export default function ProjectWorkspace() {
           </TabsTrigger>
           <TabsTrigger value="trunkshow" className="font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             Trunk Show
+          </TabsTrigger>
+          <TabsTrigger value="transbundle" className="font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded whitespace-nowrap">
+            Trans & Bundle
           </TabsTrigger>
         </TabsList>
 
@@ -593,6 +597,9 @@ export default function ProjectWorkspace() {
         </TabsContent>
         <TabsContent value="trunkshow" className="mt-6">
           <TrunkShowCard project={project} />
+        </TabsContent>
+        <TabsContent value="transbundle" className="mt-6">
+          <TranslationBundleCard project={project} />
         </TabsContent>
 
         <TabsContent value="notes" className="mt-6">
