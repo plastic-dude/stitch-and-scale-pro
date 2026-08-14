@@ -15,6 +15,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useSettings } from '@/context/SettingsContext';
 import { YarnEstimatorCard } from '@/components/yarn-estimator-card';
 import { IncomeCalculatorCard } from '@/components/income-calculator-card';
+import { PatternDraftCard } from '@/components/pattern-draft-card';
 
 type RoundingMode = 'exact' | 'multiple' | 'even' | 'odd';
 
@@ -261,7 +262,7 @@ export default function ProjectWorkspace() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-5 md:w-fit bg-card border border-border h-12 p-1 overflow-x-auto">
+        <TabsList className="grid w-full grid-cols-6 md:w-fit bg-card border border-border h-12 p-1 overflow-x-auto">
           <TabsTrigger value="sections" className="font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             Sections
           </TabsTrigger>
@@ -276,6 +277,9 @@ export default function ProjectWorkspace() {
           </TabsTrigger>
           <TabsTrigger value="income" className="font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             Income
+          </TabsTrigger>
+          <TabsTrigger value="draft" className="font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+            Draft
           </TabsTrigger>
         </TabsList>
 
@@ -528,6 +532,10 @@ export default function ProjectWorkspace() {
 
         <TabsContent value="income" className="mt-6">
           <IncomeCalculatorCard project={project} />
+        </TabsContent>
+
+        <TabsContent value="draft" className="mt-6">
+          <PatternDraftCard project={project} />
         </TabsContent>
 
         <TabsContent value="notes" className="mt-6">
