@@ -56,6 +56,31 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - [CHK-075] 0fceb2f — Gift & Credit Lab (73rd tab):
 - [CHK-076] f24bcc6 — Intl Pricing Lab (74th tab):
 - [CHK-077] ac9d64f — Test Knit Lab (75th tab):
+- [CHK-078] 798fed5 — Wholesale Price List Lab (76th tab):
+  builds & stress-tests the indie wholesale line sheet for
+  LYS/boutique sales — the side of the business nobody
+  prices honestly. Keystone discipline (retail ÷ keystone
+  floor, COGS×4 ≤ retail gate), order-value discount rungs
+  with margin after marketplace fees, per-order admin
+  (packaging/freight/invoicing), Net 30 working-capital
+  drag, Faire-style 15% + $10 first-customer channel
+  economics, minimum-order gate (must net positive after
+  admin, not just product), break-even order volume vs
+  reality, WL-01..WL-08 watch-out flags, 5-rung verdict
+  ladder (wholesale-ready / pricing-fails / min-order /
+  terms / thin margins) with quoted playbooks for each.
+  Research lens: Faire's commission walls + Etsy Wholesale
+  shutdown (2017) → the own line sheet is the durable
+  asset; quote marketplaces for discovery, route reorders
+  direct at 0% channel.
+  +24 lib tests; suite 1,580 tests / 78 files;
+  typecheck + vitest + build green. Screenshots:
+  docs/screenshots/wholesale-pricelist-lab-{tab,card}.webp.
+  Research: research/competitors-session-78-wholesale-
+  pricelist.md.
+  Note: deferred issue #49 (QA cycle 43, MINOR) — Intl
+  Pricing Lab fmtMoney dead currencies (CHF/SEK/NOK/DKK/
+  BRL/INR show bare numbers) — display-only fix, parked.
   prices test-knit programs against the free pool's
   hidden costs. Unpaid testing is never free — documented
   ghost rate 15-25% (Yarnpond: testers grab the pattern
