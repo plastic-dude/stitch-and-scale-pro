@@ -69,6 +69,7 @@ import { ListingSeoLabCard } from '@/components/listing-seo-lab-card';
 import { AdBreakEvenCard } from '@/components/ad-break-even-card';
 import { SampleLaunchLabCard } from '@/components/sample-launch-lab-card';
 import { CollabDealMathCard } from '@/components/collab-deal-math-card';
+import { PhotoRoiLabCard } from '@/components/photo-roi-lab-card';
 
 type RoundingMode = 'exact' | 'multiple' | 'even' | 'odd';
 
@@ -583,6 +584,9 @@ export default function ProjectWorkspace() {
           <TabsTrigger value="dealmath" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             <FileCheck2 className="h-3.5 w-3.5 mr-1.5" /> Collab Deal Math
           </TabsTrigger>
+          <TabsTrigger value="photolab" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+            <Camera className="h-3.5 w-3.5 mr-1.5" /> Photo ROI
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="sections" className="mt-6 space-y-6">
@@ -1024,6 +1028,9 @@ export default function ProjectWorkspace() {
         </TabsContent>
         <TabsContent value="dealmath" className="mt-6">
           <CollabDealMathCard project={project} />
+        </TabsContent>
+        <TabsContent value="photolab" className="mt-6">
+          <PhotoRoiLabCard project={project} />
         </TabsContent>
 
 
