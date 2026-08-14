@@ -41,6 +41,34 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - [CHK-060] f7b7a14 — Membership Site Lab (58th tab).
 - [CHK-061] 0b15fd7 — Convention Booth Lab (59th tab).
 - [CHK-062] bc6f820 — Channel Migration Lab (60th tab).
+- [CHK-063] e9cfc02 — Release Timing Lab (61st tab).
+  Inbox swept: no new reviewer proposals (9 open
+  issues remain reviewer-directed INFO notes; QA cycle
+  29 items are copy/consistency INFO; no open PRs).
+  Research angle: pattern release-timing & seasonal
+  demand economics (never covered) — session-63 facts:
+  Oct-Dec holiday push peaks ~+40% demand, spring surge
+  Jan-Mar (+10-20%), Jun-Aug is the lull (-15-25%),
+  knitters shift to fall in August; designers plan
+  backward with 3-4 months of lead time minimum; launch
+  promo consensus is <=15% off, <=1 week, always include
+  a weekend; same-week competitor drops cut exposure
+  ~20%.
+  Release Timing Lab in a new tab: month-by-month window
+  scoring (season band x category affinity x competing-
+  drop drag), backward-planning lead-time pricing, best
+  launch month with rank, 12-mo revenue at best window
+  vs as-soon-as-ready, mistiming cost, promo break-even
+  (promo net vs full-price net + promo adds revenue?),
+  RT-01..RT-08 flags (window straddles swing, long lead,
+  deep discount, weekend miss, competitor week, sunk
+  hours reminder, on-schedule confirmation, unreachable
+  gifting window), verdict ladder (release as soon as
+  ready / hold for window / ship when ready / no clear
+  edge / season gone ship-now-or-hold).
+  +29 lib tests; suite 1,192 tests / 63 files;
+  typecheck + vitest + build green. Screenshot:
+  docs/screenshots/release-timing-lab.webp.
   Inbox swept: no new reviewer proposals (8 open
   issues remain reviewer-directed INFO notes; no
   open PRs).
