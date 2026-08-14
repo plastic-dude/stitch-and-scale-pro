@@ -308,7 +308,7 @@ export function rankListingQueue(listings: ListingInput[]): {
 }
 
 function fmtPct(p: number): string {
-  return `${(p * 100).toFixed(1)}pt`;
+  return `${(p * 100).toFixed(1)}%`;
 }
 
 function fmtN(n: number): string {

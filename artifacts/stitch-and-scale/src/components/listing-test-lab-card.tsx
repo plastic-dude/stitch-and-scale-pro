@@ -155,7 +155,7 @@ export function ListingTestLabCard({ project }: { project: PatternProject }) {
         </CardTitle>
         <CardDescription>
           Competitors assume ~30,000 visitors per variant — impossible for one pattern listing.
-          This lab answers the question Alura never does: <em>is this rewrite worth my hours?</em>
+          This lab answers the question Alura never does: <em>is this rewrite worth my hours?</em>{' '}
           Enter one listing's real numbers and get Miller's required sample, the smallest lift
           your traffic can prove, break-even against re-list effort, and an honest verdict.
         </CardDescription>
@@ -425,6 +425,7 @@ export function ListingTestLabCard({ project }: { project: PatternProject }) {
             analysis.verdict === 'Test it' && 'border-emerald-200 bg-emerald-50',
           )}
         >
+          <p className="mb-2 text-sm font-semibold">Verdict</p>
           <div className="flex items-center gap-2">
             <Lightbulb className="size-4" />
             <Badge
