@@ -33,6 +33,30 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - Prioritize money-making: features that enable selling patterns, subscriptions, or premium tiers rank above internal tooling.
 
 ## Progress log (update each run)
+- [CHK-027] 838b2fc — Promotion Budget Planner (27th workspace tab, 'Promo'):
+  13 tests; 455/455 overall green; typecheck + build pass.
+  Session-28 research (Etsy onsite PPC needs ~3x revenue ROAS to
+  breakeven at \$6-9 pattern price points once the full fee stack —
+  6.5% transaction, ~3% + \$0.25 processing, offsite commission
+  12-15% — is subtracted; offsite ads are pay-only-on-sale so they
+  are the only paid channel with positive math at low conversion;
+  newsletter launch email = highest conversion of any channel;
+  free-pattern funnel = cheapest fan acquisition; the '\$182
+  seller' pattern of spending on clicks before listing conversion
+  supports it) finds designers promo-budget on gut feel, never
+  against net margin per sale.
+  Library promotion-planner.ts: analyzePromotion — 5 channels
+  (Etsy onsite/offsite, Pinterest, newsletter, free-pattern
+  funnel); per-channel clicks/sales/expected profit; break-even
+  CPC and required conversion rate; revenue ROAS; kill rule
+  (spend threshold with 0 orders -> pause); budget split ranked
+  by profit-per-dollar/hour; 30-day test protocol; go/maybe/kill/no
+  verdicts. Reuses the shared platformNet fee seam so promo math is
+  always net of platform fees.
+  UI: promotion-card.tsx — per-channel rows with toggle switches,
+  inputs (daily budget/CPC/conv %, commission rate, hours/rate/
+  clicks-per-hour/conv %), verdict badges, suggested order, fee-
+  stack reminder, copyable test plan; localStorage key promo-v1.
 - [CHK-026] 93f220c — Membership Planner (26th workspace tab, 'Members'):
   15 tests; 442/442 overall green; typecheck + build pass.
   Session-27 research (Patreon 10% standard fee + ~5% processing —
