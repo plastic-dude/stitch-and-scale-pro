@@ -33,6 +33,27 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - Prioritize money-making: features that enable selling patterns, subscriptions, or premium tiers rank above internal tooling.
 
 ## Progress log (update each run)
+- [CHK-030] 28910b3 (rebased to 8322ab8) — Platform Mix Planner (30th
+  workspace tab, 'Mix'):
+  16 tests; 504/504 overall green; typecheck + build pass.
+  Session-31 research (Ravelry's Jan-2019 census showing ~70% of
+  designers sell from 1-2 platforms and Ravelry dwarfs all others;
+  LoveCrafts/Interweave shutdown proving platform risk; KnitPicks
+  IDP at 85%; Etsy 15% offsite ads mandatory above $10k/yr;
+  Makerist.fr for FR-only patterns; Ribblr auto-translate + VAT
+  handling; Payhip free tier + VAT handling) finds every platform
+  is a maintenance bill and designers can't see which mix actually
+  earns. Library platform-mix-planner.ts: analyzePlatformMix —
+  per-platform net after that platform's full fee stack shared
+  through platformNet, Etsy 15% offsite-ads haircut, monthly
+  maintenance-hours cost at the designer's own rate, VAT-handling
+  value, single-platform concentration risk, dormant-platform
+  recommendation, and watch-outs.
+  UI: platform-mix-card.tsx — monthly sales, price, design rate,
+  marketing hours, international %, offsite-ads toggle, per-platform
+  enable + share sliders; gross/fees/maintenance/net summary;
+  per-platform cards with net, maintenance, offsite-ads line items;
+  watch-outs and copyable recommendation; localStorage key pmpx-v1.
 - [CHK-029] 2792399 — Repeat Buyer & Retention Planner (29th
   workspace tab, 'Repeat'):
   19 tests; 488/488 overall green; typecheck + build pass.
