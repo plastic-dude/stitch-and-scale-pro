@@ -51,6 +51,37 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - [CHK-070] 72f8512 — Price Psychology Lab (68th tab).
 - [CHK-071] b0c67a0 — POD Patterns Lab (69th tab): print-on-demand
 - [CHK-072] a2a0faf — Take-Rate War Lab (70th tab): marketplace
+- [CHK-073] 86f8d67 — Box Inclusion Lab (71st tab):
+  subscription-box designer-inclusion economics for knitwear
+  pattern designers. No tool on the market models the
+  designer-side expected value of a box feature.
+  Session-73 facts (verified Aug 2026): KnitCrate — the
+  biggest US knit box — paid contributing makers a MAX of
+  $3/item, demanded ~85% wholesale discounts, and closed
+  Nov 2022 owing $1.45M senior + $1.5M junior debt; Hooks &
+  Needles ($34.97/box) hires anonymous designers with no
+  byline; boxes run $10-$225/mo (avg US box ~$43); churn
+  10-12%/mo (well-run <5%); CAC $70-135/subscriber
+  (sustainable ≤25-35% of CLTV); gross margin must stay
+  ≥40-50% per box (3PL $1.50-4/box); KnitCrate's own value
+  sheet priced patterns at $3-5 each.
+  Competitor flaw: boxes sell featured-designer slots as
+  'exposure' while paying nothing and eating exclusivity
+  windows — designers have no way to price the mortality
+  risk or the opportunity cost of the lock.
+  Box Inclusion Lab tab: box spec + fee + royalty per box +
+  exclusivity lock vs designer time cost, self-publish
+  baseline, exposure funnel (2-8% signup, 3-10% list-to-sale),
+  box-health mortality weighting (subscriber lifetime 5-20
+  mo), break-even fee, fair floor fee (6% of retail),
+  BI-01..BI-09 flags (exposure-only trap, KnitCrate-floor
+  fee, rights assignment, margin death spiral, anonymous
+  hire), verdict ladder from 'Skip — exposure-only trap' to
+  'Negotiate — fee + royalties'.
+  +29 lib tests; suite 1,460 tests / 73 files;
+  typecheck + vitest + build green. Screenshots:
+  docs/screenshots/boxincl-lab-default-mode.webp +
+  boxincl-lab-frail-box-mode.webp.
   fee-take war economics for pattern designers (never
   covered in sessions 1-71). Cleanup commit 1fde947 removed a
   debug scratch file; both pushed (HEAD 1fde947).
