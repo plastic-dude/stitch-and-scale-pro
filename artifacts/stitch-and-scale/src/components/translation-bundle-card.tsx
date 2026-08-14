@@ -56,6 +56,7 @@ interface StoredState {
     hostFeeRate: number;
     splitMode: 'equal' | 'perPattern';
     designerCount: number;
+    partners?: { name: string; retailPrice: number; soloWindowCopies: number }[];
   };
 }
 
@@ -136,6 +137,16 @@ export function TranslationBundleCard({ project }: { project: PatternProject }) 
   const [hostFeeRate, setHostFeeRate] = React.useState(stored.bundle?.hostFeeRate ?? 0);
   const [splitMode, setSplitMode] = React.useState<'equal' | 'perPattern'>(stored.bundle?.splitMode ?? 'perPattern');
   const [designerCount, setDesignerCount] = React.useState(stored.bundle?.designerCount ?? 2);
+  const [partners, setPartners] = React.useState<{ name: string; retailPrice: number; soloWindowCopies: number }[]>(
+    Array.isArray(stored.bundle?.partners)
+      ? stored.bundle!.partners!.slice(0, 3).map(p => ({ name: p.name || '', retailPrice: p.retailPrice ?? 8, soloWindowCopies: p.soloWindowCopies ?? 5 }))
+      : []
+  );
+  const updatePartner = (i: number, patch: Partial<{ name: string; retailPrice: number; soloWindowCopies: number }>) =>
+    setPartners(prev => prev.map((p, idx) => (idx === i ? { ...p, ...patch } : p)));
+  const addPartner = () =>
+    setPartners(prev => (prev.length >= 3 ? prev : [...prev, { name: '', retailPrice: 8, soloWindowCopies: 5 }]));
+  const removePartner = (i: number) => setPartners(prev => prev.filter((_, idx) => idx !== i));
 
   const [patternName, setPatternName] = React.useState(project.name || '');
   const [patternRetail, setPatternRetail] = React.useState(8);
@@ -145,10 +156,10 @@ export function TranslationBundleCard({ project }: { project: PatternProject }) 
     saveStored(project.id, {
       translation: { wordCount, repeatedWords, perWordRate, repeatDiscount, fixedFees, homeMonthlyCopies, pricePerCopy, channelFeeRate },
       markets,
-      bundle: { bundlePrice, expectedUnits, channelFeeRate: bundleChannelFeeRate, hostFeeRate, splitMode, designerCount },
+      bundle: { bundlePrice, expectedUnits, channelFeeRate: bundleChannelFeeRate, hostFeeRate, splitMode, designerCount, partners },
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [wordCount, repeatedWords, perWordRate, repeatDiscount, fixedFees, homeMonthlyCopies, pricePerCopy, channelFeeRate, markets, bundlePrice, expectedUnits, bundleChannelFeeRate, hostFeeRate, splitMode, designerCount]);
+  }, [wordCount, repeatedWords, perWordRate, repeatDiscount, fixedFees, homeMonthlyCopies, pricePerCopy, channelFeeRate, markets, bundlePrice, expectedUnits, bundleChannelFeeRate, hostFeeRate, splitMode, designerCount, partners]);
 
   const translationInput: TranslationInput = {
     wordCount,
@@ -171,6 +182,9 @@ export function TranslationBundleCard({ project }: { project: PatternProject }) 
 
   const bundlePatterns: BundlePattern[] = [
     { name: patternName || 'My pattern', mine: true, retailPrice: patternRetail, soloWindowCopies: patternSoloCopies },
+    ...partners
+      .filter(p => (p.name || '').trim())
+      .map(p => ({ name: p.name.trim(), mine: false, retailPrice: p.retailPrice, soloWindowCopies: p.soloWindowCopies })),
   ];
   const bundleOutcome = planBundle({
     patterns: bundlePatterns,
@@ -423,6 +437,59 @@ export function TranslationBundleCard({ project }: { project: PatternProject }) 
                 {num(designerCount, setDesignerCount, 'designer count', 1, 100, 1)}
               </div>
             )}
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-medium text-muted-foreground">Partner patterns (the coalition's other picks)</p>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={partners.length >= 3}
+                onClick={addPartner}
+                aria-label="Add partner pattern"
+              >
+                + Partner pattern{partners.length >= 3 ? ' (max 3)' : ''}
+              </Button>
+            </div>
+            {partners.length === 0 && (
+              <p className="text-[11px] text-muted-foreground">
+                No partners added yet — the bundle is modeled with your pattern alone. Add the patterns your coalition
+                organiser or fellow designers bring, and the split math becomes the coalition math instead of a guess.
+              </p>
+            )}
+            {partners.map((p, i) => (
+              <div key={i} className="grid grid-cols-12 items-end gap-2 rounded-md border border-border/60 p-2">
+                <div className="col-span-5 space-y-1">
+                  <Label className="text-[10px] text-muted-foreground">Pattern name *</Label>
+                  <Input
+                    value={p.name}
+                    onChange={e => updatePartner(i, { name: e.target.value })}
+                    placeholder="e.g. Luna Wrap"
+                    aria-label={`Partner pattern ${i + 1} name`}
+                  />
+                </div>
+                <div className="col-span-3 space-y-1">
+                  <Label className="text-[10px] text-muted-foreground">Their retail ($)</Label>
+                  {num(p.retailPrice, v => updatePartner(i, { retailPrice: v }), 'partner retail', 0, 1000, 0.01)}
+                </div>
+                <div className="col-span-3 space-y-1">
+                  <Label className="text-[10px] text-muted-foreground">Solo copies</Label>
+                  {num(p.soloWindowCopies, v => updatePartner(i, { soloWindowCopies: v }), 'partner solo copies', 0, 100000, 1)}
+                </div>
+                <div className="col-span-1 flex justify-end pb-1">
+                  <button
+                    type="button"
+                    onClick={() => removePartner(i)}
+                    className="p-1 rounded text-muted-foreground hover:text-destructive transition-colors"
+                    aria-label={`Remove partner pattern ${i + 1}`}
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-3">

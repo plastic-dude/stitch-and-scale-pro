@@ -52,6 +52,7 @@ import { PriceWindowCard } from '@/components/price-window-card';
 import { RetentionCard } from '@/components/retention-card';
 import { CollabEvaluatorCard } from '@/components/collab-evaluator-card';
 import { PlatformMixCard } from '@/components/platform-mix-card';
+import { PodBookCard } from '@/components/pod-book-card';
 
 type RoundingMode = 'exact' | 'multiple' | 'even' | 'odd';
 
@@ -496,6 +497,9 @@ export default function ProjectWorkspace() {
           <TabsTrigger value="collab" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             Collab
           </TabsTrigger>
+          <TabsTrigger value="bookit" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+            Book It
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="sections" className="mt-6 space-y-6">
@@ -886,6 +890,9 @@ export default function ProjectWorkspace() {
         </TabsContent>
         <TabsContent value="collab" className="mt-6">
           <CollabEvaluatorCard project={project} />
+        </TabsContent>
+        <TabsContent value="bookit" className="mt-6">
+          <PodBookCard project={project} />
         </TabsContent>
 
         <TabsContent value="notes" className="mt-6">

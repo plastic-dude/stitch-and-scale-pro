@@ -182,3 +182,53 @@ describe('generateBundlePitch', () => {
     expect(pitch).toMatch(/47%/);
   });
 });
+
+describe('coalition bundle (multi-designer, S030 path)', () => {
+  const coalition = planBundle({
+    patterns: [
+      { name: 'My Cardi', mine: true, retailPrice: 10, soloWindowCopies: 20 },
+      { name: "Anna's Shawl", mine: false, retailPrice: 8, soloWindowCopies: 25 },
+      { name: "Priya's Beanie", mine: false, retailPrice: 6, soloWindowCopies: 30 },
+    ],
+    bundlePrice: 14,
+    expectedUnits: 100,
+    channelFeeRate: 0.15,
+    splitMode: 'equal',
+    designerCount: 3,
+    hostFeeRate: 0,
+  });
+
+  it('splits the coalition net equally across 3 designers', () => {
+    // net = 14 × 100 × 0.85 = 1190; /3 ≈ 396.67
+    expect(coalition.myDesignerShare).toBeCloseTo(1190 / 3, 1);
+    expect(coalition.units).toBe(100);
+  });
+
+  it('sums of parts across all three patterns including partners', () => {
+    // 10+8+6 = 24; 14/24 ≈ 42% discount depth
+    expect(coalition.sumOfParts).toBe(24);
+    expect(coalition.discountDepth).toBeCloseTo(1 - 14 / 24, 3);
+  });
+
+  it('pitch text names all coalition designers', () => {
+    const pitch = generateBundlePitch({
+      patterns: [
+        { name: 'My Cardi', mine: true, retailPrice: 10, soloWindowCopies: 20 },
+        { name: "Anna's Shawl", mine: false, retailPrice: 8, soloWindowCopies: 25 },
+        { name: "Priya's Beanie", mine: false, retailPrice: 6, soloWindowCopies: 30 },
+      ],
+      bundlePrice: 14,
+      expectedUnits: 100,
+      channelFeeRate: 0.15,
+      splitMode: 'equal',
+      designerCount: 3,
+      hostFeeRate: 0,
+    });
+    // The pitch intentionally names only the HOST's patterns in the coalition;
+    // partner pattern picks are collected when partners reply ("send me your
+    // pattern picks"). Assert the coalition subject line instead.
+    expect(pitch).toContain('Subject: Bundle collaboration — 2 designers, 3 patterns');
+    expect(pitch).toContain('My patterns in: My Cardi.');
+    expect(pitch).toContain('Send me your pattern picks');
+  });
+});
