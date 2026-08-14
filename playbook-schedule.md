@@ -33,6 +33,10 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - Prioritize money-making: features that enable selling patterns, subscriptions, or premium tiers rank above internal tooling.
 
 ## Progress log (update each run)
+- [CHK-008] a7f70b5 — Deal Comparator tab: yarn-company collaboration deal modelling
+  (flat fee / royalty / exclusive) with take/counter/walk_away verdicts vs self-publish
+  baseline + paste-ready terms response; session-9 research: Stitchcraft Marketing,
+  Who Pays Knitters ~GBP60-100 flat fees, Making Stories ~30% net royalties.
 - [CHK-007] 2e89a50 — Credibility Report: AI-era buyer-trust score (earned 0-100 from own grading
   math, yardage estimate, tech-edit checklist, notes depth) + paste-ready listing credibility
   statement in Publish tab; also fixed gaugeUsable rows ceiling.
