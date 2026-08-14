@@ -86,6 +86,7 @@ import { PatternBundleLabCard } from '@/components/pattern-bundle-lab-card';
 import { RetreatTeachingLabCard } from '@/components/retreat-teaching-lab-card';
 import { PodcastAffiliateLabCard } from '@/components/podcast-affiliate-lab-card';
 import { MagazineSubmissionLabCard } from '@/components/magazine-submission-lab-card';
+import { PricingPsychologyLabCard } from '@/components/pricing-psychology-lab-card';
 
 type RoundingMode = 'exact' | 'multiple' | 'even' | 'odd';
 
@@ -651,6 +652,9 @@ export default function ProjectWorkspace() {
           <TabsTrigger value="magazine-submission" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             <FileText className="h-3.5 w-3.5 mr-1.5" /> Magazine Lab
           </TabsTrigger>
+          <TabsTrigger value="pricing-psychology" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+            <Tag className="h-3.5 w-3.5 mr-1.5" /> Price Psych Lab
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="sections" className="mt-6 space-y-6">
@@ -1140,6 +1144,9 @@ export default function ProjectWorkspace() {
         </TabsContent>
         <TabsContent value="magazine-submission" className="mt-6">
           <MagazineSubmissionLabCard project={project} />
+        </TabsContent>
+        <TabsContent value="pricing-psychology" className="mt-6">
+          <PricingPsychologyLabCard project={project} />
         </TabsContent>
 
 
