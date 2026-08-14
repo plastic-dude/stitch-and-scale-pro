@@ -77,6 +77,7 @@ import { PreorderCampaignLabCard } from '@/components/preorder-campaign-lab-card
 import { ListingTestLabCard } from '@/components/listing-test-lab-card';
 import { YarnPoolLabCard } from '@/components/yarn-pool-lab-card';
 import { MembershipSiteLabCard } from '@/components/membership-site-lab-card';
+import { ConventionBoothLabCard } from '@/components/convention-booth-lab-card';
 
 type RoundingMode = 'exact' | 'multiple' | 'even' | 'odd';
 
@@ -615,6 +616,9 @@ export default function ProjectWorkspace() {
           <TabsTrigger value="membership-site" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             <Crown className="h-3.5 w-3.5 mr-1.5" /> Membership Lab
           </TabsTrigger>
+          <TabsTrigger value="convention-booth" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+            <Tent className="h-3.5 w-3.5 mr-1.5" /> Booth Lab
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="sections" className="mt-6 space-y-6">
@@ -1080,6 +1084,9 @@ export default function ProjectWorkspace() {
         </TabsContent>
         <TabsContent value="membership-site" className="mt-6">
           <MembershipSiteLabCard project={project} />
+        </TabsContent>
+        <TabsContent value="convention-booth" className="mt-6">
+          <ConventionBoothLabCard project={project} />
         </TabsContent>
 
 
