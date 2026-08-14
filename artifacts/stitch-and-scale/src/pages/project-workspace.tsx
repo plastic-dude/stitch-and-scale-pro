@@ -20,7 +20,7 @@ import { NativeSelect } from '@/components/ui/native-select';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { generateId, PatternSection, SectionMeasurement, MeasurementType, GradingKey, GRADING_KEY_LABELS, ALL_SIZES, gradePattern, resolveProjectStandards } from '@/lib/grading-engine';
-import { Plus, Edit2, Trash2, ArrowRight, Table as TableIcon, Copy, Settings, ChevronDown, ChevronRight, Calculator, FlaskConical, PenLine, ClipboardCheck, Camera, Video, FileText, Library, Tag, Target, Sparkles, FileCheck2, Tent, Handshake, Rocket, Boxes, Crown, MapPin, CalendarDays, Presentation, Store, Radio, BookOpen } from 'lucide-react';
+import { Plus, Edit2, Trash2, ArrowRight, Table as TableIcon, Copy, Settings, ChevronDown, ChevronRight, Calculator, FlaskConical, PenLine, ClipboardCheck, Camera, Video, FileText, Library, Tag, Target, Sparkles, FileCheck2, Tent, Handshake, Rocket, Boxes, Crown, MapPin, CalendarDays, Presentation, Store, Radio, BookOpen, Package } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useSettings } from '@/context/SettingsContext';
@@ -89,6 +89,7 @@ import { MagazineSubmissionLabCard } from '@/components/magazine-submission-lab-
 import { PricingPsychologyLabCard } from '@/components/pricing-psychology-lab-card';
 import { PodPatternsLabCard } from '@/components/pod-patterns-lab-card';
 import { MarketplaceTakeRateLabCard } from '@/components/marketplace-takerate-lab-card';
+import { BoxInclusionLabCard } from '@/components/box-inclusion-lab-card';
 
 type RoundingMode = 'exact' | 'multiple' | 'even' | 'odd';
 
@@ -663,6 +664,9 @@ export default function ProjectWorkspace() {
           <TabsTrigger value="marketplace-takerate" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             <Store className="h-3.5 w-3.5 mr-1.5" /> Take-Rate Lab
           </TabsTrigger>
+          <TabsTrigger value="box-inclusion" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+            <Package className="h-3.5 w-3.5 mr-1.5" /> Box Inclusion Lab
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="sections" className="mt-6 space-y-6">
@@ -1161,6 +1165,9 @@ export default function ProjectWorkspace() {
         </TabsContent>
         <TabsContent value="marketplace-takerate" className="mt-6">
           <MarketplaceTakeRateLabCard project={project} />
+        </TabsContent>
+        <TabsContent value="box-inclusion" className="mt-6">
+          <BoxInclusionLabCard project={project} />
         </TabsContent>
 
         <TabsContent value="notes" className="mt-6">
