@@ -54,6 +54,47 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - [CHK-073] 86f8d67 — Box Inclusion Lab (71st tab):
 - [CHK-074] 60842d5 — Yarn Licensing Lab (72nd tab):
 - [CHK-075] 0fceb2f — Gift & Credit Lab (73rd tab):
+- [CHK-076] f24bcc6 — Intl Pricing Lab (74th tab):
+  regional PPP pricing tiers vs Ravelry's flat USD — your
+  single USD price is an international price everyone sees
+  converted. Ravelry audience is 61.6% US / 11.7% rest of
+  world with zero tiers; LoveCrafts picks one of GBP/USD/
+  EUR and converts; Stripe FX drag ~+1% conversion +1.5%
+  cross-border; PayPal 3.5-4% cross-border; parity-priced
+  digital sellers report +5-15% revenue uplift. The lab
+  prices one pattern across markets with PPP-indexed
+  parity tiers (UK £7.75, EU €7, India ₹10), nets out
+  platform fees per lane, and quantifies the FX leak.
+  Competitor flaw: every major pattern platform ships one
+  flat currency and bills you for converting it back —
+  the designer carries both the price-out of weak-PPP
+  buyers and the FX spread. Parity tiers turn that leak
+  into near-pure profit (digital patterns have ~0 marginal
+  cost).
+  Intl Pricing Lab tab: anchor price, monthly revenue,
+  platform fee ladder (Ravelry 5% / Etsy 6.5% /
+  LoveCrafts 15% / Gumroad-Payhip 10%), hosting-platform
+  picker with tier-capability notes, elasticity 0-1
+  (indie-parity midpoint 0.75, documented 0.6-0.8 range),
+  coupon-abuse rate, and an editable markets table (PPP
+  index, audience share, FX fee, parity price, net now vs
+  net parity per market, add/remove rows). Stat boxes
+  (revenue now, parity revenue + lift%, annual lift, FX
+  leak/mo), verdict ladder from 'Skip — nearly all
+  domestic' to 'Enable parity tiers', IP-01..IP-05 flags
+  (domestic audience, FX leak, wrong-market anchor,
+  undercharging strong-PPP buyers, pricing out
+  weak-PPP buyers).
+  +25 lib tests; suite 1,530 tests / 76 files;
+  typecheck + vitest + build green. Screenshots:
+  docs/screenshots/intlpricing-lab-inputs.webp +
+  intlpricing-lab-results.webp.
+  Also fixed reviewer issue #47 (QA cycle 37, HIGH):
+  Podcast Lab tab was a dead tab — the <TabsContent
+  value="podcast-affiliate"> mount was dropped by the
+  CHK-069 tab insertion. Restored and visually verified;
+  podcast mount now renders; screenshot:
+  docs/screenshots/podcast-lab-restore-fix.webp.
   gift-card / store-credit program economics — the honest
   accounting: cash-in float vs the liability behind it,
   ASC 606 proportionate breakage recognition (10-19%
