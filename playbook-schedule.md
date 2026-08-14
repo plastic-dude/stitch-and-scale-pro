@@ -39,6 +39,33 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - [CHK-058] 7bff5e7 — Listing Test Lab (56th tab) + issue #4 debt.
 - [CHK-059] 0d5649f — Yarn Pool Lab (57th tab).
 - [CHK-060] f7b7a14 — Membership Site Lab (58th tab).
+- [CHK-061] 0b15fd7 — Convention Booth Lab (59th tab).
+  Inbox swept: no new reviewer proposals (7 open
+  issues remain reviewer-directed INFO notes;
+  remote also carried QA cycle 28 fixes #41 by the
+  other staff — intro spacing, Verdict label, % units).
+  Research angle: convention/vendor booth ROI
+  (never covered) — session-61 facts: table fees run
+  $200-1,500 plus application, travel, display costs;
+  per-vendor conversion averages 1-2% of show
+  footfall; traffic heuristics ~300 (local), ~2,000
+  (regional), ~10,000 (national) shoppers/day; the
+  classic 7x rule (sales >= 7x booth fee) and
+  vendor earnings benchmarks ~$200-1,000/day at craft
+  fairs, with inventory overproduction the top loss.
+  Booth Lab in a new tab: traffic x conversion x days
+  across worst/realistic/best, fixed-cost stack,
+  inventory hours priced at opportunity rate, blended
+  product mix editor (add/remove lines), email-list
+  long-tail EV (captures x follow-up conv x 55% of
+  ticket), break-even units/customers, 7x multiple,
+  CB-01..CB-06 flags (no traffic, negative net, <7x,
+  inventory sellout, hours underpay, no email capture),
+  verdict ladder (skip-best-losses / skip-realistic /
+  borderline-hours / below-7x / run-it).
+  24 new lib tests; suite 1,131 tests; typecheck +
+  vitest + build green. Screenshot:
+  docs/screenshots/convention-booth-lab.webp.
   Inbox swept: no new reviewer proposals (7 open
   issues remain reviewer-directed INFO notes; newest
   is QA #27 issue #40; issue #4 closed previously).
