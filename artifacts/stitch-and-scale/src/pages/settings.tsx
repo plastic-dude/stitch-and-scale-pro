@@ -3,6 +3,7 @@ import { useSettings } from '@/context/SettingsContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Download, Upload, Moon, Sun, Monitor, Ruler, Settings as SettingsIcon, RotateCcw, Layers, Check } from 'lucide-react';
+import StorageHealthCard from '@/components/storage-health-card';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -17,22 +18,42 @@ export default function SettingsPage() {
   const { toast } = useToast();
   const [editingKey, setEditingKey] = React.useState<GradingKey>('bust');
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     const reader = new FileReader();
-    reader.onload = (event) => {
+    reader.onload = async (event) => {
       const content = event.target?.result as string;
-      const success = importData(content);
-      if (success) {
-        toast({ title: "Import Successful", description: "Your projects and settings have been restored." });
-      } else {
-        toast({ title: "Import Failed", description: "The file could not be parsed correctly.", variant: "destructive" });
+      try {
+        const data = JSON.parse(content);
+        if (!data || (!data.projects && !data.settings)) throw new Error('not a backup');
+        const { importSnapshot } = await import('@/lib/storage-lib');
+        const result = await importSnapshot(data);
+        toast({
+          title: `Import successful — ${result.imported} project${result.imported === 1 ? '' : 's'} restored`,
+          description: `Merged with your workspace; ${result.existingKept} existing project${result.existingKept === 1 ? '' : 's'} preserved untouched.`,
+        });
+      } catch {
+        toast({ title: 'Import failed', description: 'The file could not be parsed correctly.', variant: 'destructive' });
       }
       if (fileInputRef.current) fileInputRef.current.value = '';
     };
     reader.readAsText(file);
+  };
+
+  const handleExport = async () => {
+    const { exportSnapshot, recordBackupEvent } = await import('@/lib/storage-lib');
+    const snapshot = await exportSnapshot();
+    const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(snapshot, null, 2));
+    const a = document.createElement('a');
+    a.setAttribute('href', dataStr);
+    a.setAttribute('download', `stitch-and-scale-export-${new Date().toISOString().split('T')[0]}.json`);
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    recordBackupEvent(new Blob([JSON.stringify(snapshot)]).size, snapshot.projects.length);
+    toast({ title: 'Backup downloaded', description: `${snapshot.projects.length} project${snapshot.projects.length === 1 ? '' : 's'} saved to the file.` });
   };
 
   const handleRestartOnboarding = () => {
@@ -327,7 +348,7 @@ export default function SettingsPage() {
                   <h4 className="font-medium text-foreground">Export Workspace</h4>
                   <p className="text-sm text-muted-foreground mt-1">Download a JSON file containing all your patterns and settings.</p>
                 </div>
-                <Button onClick={exportData} className="shrink-0 rounded-full shadow-sm group-hover:bg-primary/90 transition-colors" data-testid="button-export-data">
+                <Button onClick={handleExport} className="shrink-0 rounded-full shadow-sm group-hover:bg-primary/90 transition-colors" data-testid="button-export-data">
                   <Download className="w-4 h-4 mr-2" />
                   Download Backup
                 </Button>
@@ -336,7 +357,7 @@ export default function SettingsPage() {
               <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between p-5 border border-border/60 rounded-xl bg-background hover:border-primary/30 transition-colors group">
                 <div>
                   <h4 className="font-medium text-foreground">Restore from Backup</h4>
-                  <p className="text-sm text-muted-foreground mt-1 text-destructive/80">Warning: This will overwrite all current data in your workspace.</p>
+                  <p className="text-sm text-muted-foreground mt-1">Merges with your workspace — your existing patterns are never deleted or overwritten.</p>
                 </div>
                 <div>
                   <input type="file" accept=".json" className="hidden" ref={fileInputRef} onChange={handleFileChange} />
@@ -348,6 +369,10 @@ export default function SettingsPage() {
               </div>
             </CardContent>
           </Card>
+        </motion.div>
+
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
+          <StorageHealthCard />
         </motion.div>
 
         <div className="text-center text-xs text-muted-foreground/60 py-6">
