@@ -38,6 +38,7 @@ import { PatternLicensePlannerCard } from '@/components/pattern-license-card';
 import { MembershipCard } from '@/components/membership-card';
 import { PromotionCard } from '@/components/promotion-card';
 import { PriceWindowCard } from '@/components/price-window-card';
+import { RetentionCard } from '@/components/retention-card';
 
 type RoundingMode = 'exact' | 'multiple' | 'even' | 'odd';
 
@@ -369,6 +370,9 @@ export default function ProjectWorkspace() {
           <TabsTrigger value="pricewin" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             PriceWin
           </TabsTrigger>
+          <TabsTrigger value="repeat" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+            Repeat
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="sections" className="mt-6 space-y-6">
@@ -696,6 +700,9 @@ export default function ProjectWorkspace() {
         </TabsContent>
         <TabsContent value="pricewin" className="mt-6">
           <PriceWindowCard project={project} />
+        </TabsContent>
+        <TabsContent value="repeat" className="mt-6">
+          <RetentionCard project={project} />
         </TabsContent>
 
         <TabsContent value="notes" className="mt-6">
