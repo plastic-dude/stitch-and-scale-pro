@@ -20,7 +20,7 @@ import { NativeSelect } from '@/components/ui/native-select';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { generateId, PatternSection, SectionMeasurement, MeasurementType, GradingKey, GRADING_KEY_LABELS, ALL_SIZES, gradePattern, resolveProjectStandards } from '@/lib/grading-engine';
-import { Plus, Edit2, Trash2, ArrowRight, Table as TableIcon, Copy, Settings, ChevronDown, ChevronRight, Calculator, FlaskConical, PenLine } from 'lucide-react';
+import { Plus, Edit2, Trash2, ArrowRight, Table as TableIcon, Copy, Settings, ChevronDown, ChevronRight, Calculator, FlaskConical, PenLine, ClipboardCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useSettings } from '@/context/SettingsContext';
@@ -61,6 +61,7 @@ import { KalPlannerCard } from '@/components/kal-planner-card';
 import { SubmissionDeskCard } from '@/components/submission-desk-card';
 import { GradingLabCard } from '@/components/grading-lab-card';
 import { ChartLabCard } from '@/components/chart-lab-card';
+import { TestKnitDeskCard } from '@/components/testknit-desk-card';
 
 type RoundingMode = 'exact' | 'multiple' | 'even' | 'odd';
 
@@ -548,6 +549,9 @@ export default function ProjectWorkspace() {
           <TabsTrigger value="chartlab" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             <PenLine className="h-3.5 w-3.5 mr-1.5" /> Chart Lab
           </TabsTrigger>
+          <TabsTrigger value="testknit" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+            <ClipboardCheck className="h-3.5 w-3.5 mr-1.5" /> Test Knit
+          </TabsTrigger>
           <TabsTrigger value="submissions" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             Submissions
           </TabsTrigger>
@@ -968,6 +972,9 @@ export default function ProjectWorkspace() {
         </TabsContent>
         <TabsContent value="chartlab" className="mt-6">
           <ChartLabCard project={project} />
+        </TabsContent>
+        <TabsContent value="testknit" className="mt-6">
+          <TestKnitDeskCard project={project} />
         </TabsContent>
 
         <TabsContent value="notes" className="mt-6">
