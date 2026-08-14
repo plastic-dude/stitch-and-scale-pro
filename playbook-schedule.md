@@ -33,6 +33,18 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - Prioritize money-making: features that enable selling patterns, subscriptions, or premium tiers rank above internal tooling.
 
 ## Progress log (update each run)
+- [CHK-012] 7a58b82 — Launch Campaign Manager: 13th project-workspace tab built
+  from session-13 research (Sister Mountain 3-phase release playbook,
+  Ravelry Hot Right Now weekend-momentum mechanics, Stitchcraft
+  Marketing KAL/make-along guides; competitors all offer undated
+  checklists or generic newsletter advice — nobody converts the
+  pattern's own data into a dated, paste-ready campaign). Library
+  launch-campaign.ts: buildCampaign (10 dated milestones -21..+14 with
+  yardage/size/price-band/URL/coupon variables), kalClues mode (4 weekly
+  clues using the pattern's sections), buildReadinessGates (Publish
+  checklist + tech-edit score + finished test knits), seasonal note
+  (buyers knit 6-8 weeks ahead, sweaters launch Jul-Aug); 17/17 tests;
+  179/179 overall green; typecheck + build pass.
 - [CHK-011] 461bc0a — Pattern Finish & Care Guide: 12th project-workspace tab built
   from session-12 research (YarnSub, TKGA, Estako, Purl Soho, Provenance
   Craft; YarnSub is knitter-facing and never appears inside a designer's
