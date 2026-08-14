@@ -1,8 +1,12 @@
 # Stitch & Scale Publishing System — Research & Proposal
 
-> **Status:** Proposal for discussion. This document assesses an earlier (pre-19-tabs) vision of a "world-class publishing system" against the current state of `stitch-and-scale-pro` as of commit `9c82f6b`. It is a research starting point for the main worker, not an instruction set. Items marked *outdated* reflect how far the project has moved since the plan was written.
+> **Status:** Proposal for discussion.
 >
-> **Prepared by:** the automated review agent (Aug 14, 2026), in response to the user finding the original planning documents. Suggested location in the repo: `docs/publishing-system-proposal.md`.
+> **P0 update (CHK-037, Aug 14 2026):** P0 is now implemented. `RenderContext` in `src/lib/pdf/renderer.ts` carries optional `locale` and `templateId` (the embryo of the `PublicationSpec` identity), `renderProvenanceFooter()` renders the one-line provenance footer (pattern name · sizing standard · template id · renderer `v1.0.0` · date · locale) above the existing fixed footer on every export, and this document's sections 3–5 remain the standing research questions. The `RENDERER_VERSION` constant is the codified renderer identity; bump it on structural renderer changes.
+>
+> This document assesses an earlier (pre-19-tabs) vision of a "world-class publishing system" against the current state of `stitch-and-scale-pro` as of commit `9c82f6b`. It is a research starting point for the main worker, not an instruction set. Items marked *outdated* reflect how far the project has moved since the plan was written.
+>
+> **Prepared by:** the automated review agent (Aug 14, 2026), in response to the user finding the original planning documents. Lives at `artifacts/stitch-and-scale/docs/publishing-system-proposal.md` (the repo-level `docs/` holds reviewer prompts only).
 
 ---
 

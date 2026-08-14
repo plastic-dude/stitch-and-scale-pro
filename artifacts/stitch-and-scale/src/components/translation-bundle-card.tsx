@@ -17,7 +17,8 @@
  *
  * Persists inputs in localStorage under a project-scoped key.
  */
-import React from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
+import { projectStorage, type ProjectStorageHandle } from '@/lib/storage-lib';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -118,6 +119,9 @@ const DEFAULT_MARKETS: LanguageMarket[] = [
 ];
 
 export function TranslationBundleCard({ project }: { project: PatternProject }) {
+  // issue #4 project seam: one scoped store per project; the legacy flat key 'stitch-and-scale-translation-bundle' is folded in on first read, then removed.
+  const handle = useMemo(() => projectStorage<StoredState>('translate', project.id, ['stitch-and-scale-translation-bundle']), [project.id]);
+
   const { toast } = useToast();
   const stored = React.useMemo(() => loadStored(project.id), [project.id]);
 

@@ -19,6 +19,10 @@ export interface RenderContext {
   includeCover?: boolean;
   includeGaugeSummary?: boolean;
   includeNotes?: boolean;
+  /** Optional document locale tag shown in the provenance footer (e.g. "en"). */
+  locale?: string;
+  /** Optional publication template id shown in the provenance footer. */
+  templateId?: string;
   /** A designer's own logo, as a data: URI - replaces the Stitch & Scale
    *  mark on the cover when present. Compressed/resized client-side before
    *  it ever reaches here (see compressImageToDataUrl in the upload UI). */
@@ -64,6 +68,7 @@ ${tocHtml ? `<div class="page">${tocHtml}</div>` : ''}
 ${materialsHtml ? `<div class="page">${materialsHtml}</div>` : ''}
 ${sectionsHtml}
 ${renderFixedFooter(theme, pattern)}
+${renderProvenanceFooter(theme, pattern, gradingResult)}
 </body>
 </html>`;
 }
@@ -396,6 +401,48 @@ function renderFixedFooter(t: ResolvedTheme, p: PatternProject): string {
     background:${t.backgroundColor};
   ">
     <span style="max-width:40%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(p.name)}</span>
+    <span>Stitch &amp; Scale</span>
+  </div>`;
+}
+
+// ─── Provenance Footer (P0 of the Publishing System proposal) ─────────────────
+// The publishing-system-proposal.md P0 phase: a one-line provenance footer
+// carrying identity, grading standard, template id, renderer version, render
+// date, and locale. The renderer NEVER derives authoritative numbers — it
+// only reports metadata supplied by the single authoritative source
+// (the grading engine / PublicationSpec). Matches doc sections 22 and the
+// mathematical-integrity-boundary rule (see docs/publishing-system-proposal.md).
+
+/** Renderer identity string baked into every provenance footer. */
+export const RENDERER_VERSION = 'v1.0.0';
+
+export function renderProvenanceFooter(
+  t: ResolvedTheme,
+  p: PatternProject,
+  gradingResult: GradingResult,
+  locale = 'en',
+  templateId = 'stitch-and-scale-default',
+): string {
+  const standard = (p as { sizingStandard?: string }).sizingStandard ?? '';
+  const standardLabel = standard
+    ? (standard === 'Custom' ? 'Custom' : standard)
+    : '';
+  const identity = [
+    p.name,
+    ...(standardLabel ? [standardLabel] : []),
+    `template:${templateId}`,
+    `renderer:${RENDERER_VERSION}`,
+    new Date().toISOString().slice(0, 10),
+    `locale:${locale}`,
+  ].join(' · ');
+  return `<div style="
+    position:fixed;bottom:2.4em;left:0.75in;right:0.75in;
+    padding:3px 0;border-top:1px dashed ${t.dividerColor};
+    font-family:monospace;font-size:6.5px;letter-spacing:0.04em;
+    color:${t.mutedTextColor};
+    display:flex;justify-content:space-between;align-items:center;
+  ">
+    <span style="overflow:hidden;white-space:nowrap;text-overflow:ellipsis;max-width:82%;">${esc(identity)}</span>
     <span>Stitch &amp; Scale</span>
   </div>`;
 }

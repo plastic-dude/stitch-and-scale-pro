@@ -16,6 +16,7 @@ vi.mock('idb-keyval', () => ({
 import {
   readProjects, writeProjects, exportSnapshot, importSnapshot,
   auditStores, reconcileStores, recordBackupEvent, readBackupLedger,
+  projectStorage,
   PROJECTS_KEY, SETTINGS_KEY, BACKUPS_KEY,
 } from './storage-lib';
 import { PatternProject } from './grading-engine';
@@ -151,5 +152,87 @@ describe('reconcileStores', () => {
     expect(report.inSync).toBe(true);
     const projects = await readProjects();
     expect(projects.map(p => p.name)).toEqual(['IDB Wins']);
+  });
+});
+
+describe('projectStorage project-scoped seam (issue #4, S018/S042/S045/S049)', () => {
+  beforeEach(() => {
+    window.localStorage.clear();
+  });
+
+  it('enforces the scoped key shape stitch-and-scale-{prefix}-{projectId}', () => {
+    const h = projectStorage('submitpipe', 'proj-A');
+    expect(h.scopedKey).toBe('stitch-and-scale-submitpipe-proj-A');
+    h.write({ seats: 3 });
+    expect(JSON.parse(window.localStorage.getItem('stitch-and-scale-submitpipe-proj-A')!)).toEqual({ seats: 3 });
+  });
+
+  it('scopes state by project: two projects never share a value', () => {
+    const a = projectStorage('submitpipe', 'proj-A');
+    const b = projectStorage('submitpipe', 'proj-B');
+    a.write({ seats: 3 });
+    expect(a.read()).toEqual({ seats: 3 });
+    expect(b.read()).toBeNull();
+    b.write({ seats: 7 });
+    expect(a.read()).toEqual({ seats: 3 });
+    expect(b.read()).toEqual({ seats: 7 });
+  });
+
+  it('migrates a legacy flat key into the scoped key (reads-once)', () => {
+    window.localStorage.setItem('snsp-v1', JSON.stringify({ queue: ['old'] }));
+    const h = projectStorage('submitpipe', 'proj-A', ['snsp-v1']);
+    expect(h.read()).toEqual({ queue: ['old'] });
+    // Legacy key is consumed: gone from storage, data now under the scoped key.
+    expect(window.localStorage.getItem('snsp-v1')).toBeNull();
+    expect(h.scopedKey).not.toBe('snsp-v1');
+  });
+
+  it('prefers the scoped key when both legacy and scoped hold data', () => {
+    window.localStorage.setItem('snsp-v1', JSON.stringify({ queue: ['legacy-stale'] }));
+    const scopedKey = 'stitch-and-scale-submitpipe-proj-A';
+    window.localStorage.setItem(scopedKey, JSON.stringify({ queue: ['scoped-newer'] }));
+    const h = projectStorage('submitpipe', 'proj-A', ['snsp-v1']);
+    expect(h.read()).toEqual({ queue: ['scoped-newer'] });
+    expect(window.localStorage.getItem('snsp-v1')).toBeNull(); // stale legacy dropped
+  });
+
+  it('skips migration gracefully when no legacy data exists', () => {
+    const h = projectStorage('kalroi', 'proj-A', ['kskroi-v1']);
+    expect(h.read()).toBeNull();
+    expect(window.localStorage.getItem('kskroi-v1')).toBeNull();
+  });
+
+  it('tolerates a corrupt legacy key without throwing', () => {
+    window.localStorage.setItem('kskroi-v1', 'not-json{');
+    const h = projectStorage('kalroi', 'proj-A', ['kskroi-v1']);
+    expect(h.read()).toBeNull(); // unreadable legacy is ignored
+    expect(window.localStorage.getItem('kskroi-v1')).toBe('not-json{'); // left alone
+  });
+
+  it('never migrates a legacy key into itself', () => {
+    const h = projectStorage('kalroi', 'stitch-and-scale-kalroi-evil');
+    window.localStorage.setItem('stitch-and-scale-kalroi-evil', JSON.stringify({ n: 1 }));
+    // No legacyKeys given, so migration never runs; read still works via scoped key.
+    expect(h.read()).toEqual({ n: 1 });
+  });
+
+  it('covers every legacy flat key listed by the review ledger', () => {
+    // Guard: when any of these keys is passed to projectStorage for a real
+    // projectId, its name must differ from the produced scoped key — and the
+    // migration must fold its value over. This documents the invariant the
+    // sweep enforces (issue #4): no tab may keep a bare global key.
+    const legacyKeys = [
+      'snsp-v1', 'kskroi-v1', 'kskchannels-v1', 'rtpl-v1', 'promo-v1',
+      'mspl-v1', 'prcw-v1', 'pslc-v1', 'kskhirevsself-v1', 'kskwsb-v1',
+      'kskclubrev-v1', 'sncis-v1', 'pmix-v1', 'stitch-and-scale-testknit',
+    ];
+    for (const legacy of legacyKeys) {
+      window.localStorage.clear();
+      window.localStorage.setItem(legacy, JSON.stringify({ migrated: legacy }));
+      const h = projectStorage(legacy.replace(/-v1|-.+$/, ''), 'proj-99', [legacy]);
+      expect(h.scopedKey).not.toBe(legacy);
+      expect(h.read()).toEqual({ migrated: legacy });
+      expect(window.localStorage.getItem(legacy)).toBeNull();
+    }
   });
 });

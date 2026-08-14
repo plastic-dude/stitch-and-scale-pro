@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
+import { projectStorage, type ProjectStorageHandle } from '@/lib/storage-lib';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -61,11 +62,10 @@ function defaultRates(): StoredRates {
   };
 }
 
-function loadStored(): { event: KalEvent; rates: StoredRates } {
+function loadStored(handle: ProjectStorageHandle<{ event: KalEvent; rates: StoredRates }>): { event: KalEvent; rates: StoredRates } {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw);
+    const parsed = handle.read();
+    if (parsed) {
       if (parsed && parsed.event) {
         return { event: { ...defaultKalEvent(), ...parsed.event }, rates: { ...defaultRates(), ...parsed.rates } };
       }
@@ -80,11 +80,13 @@ const fmt$ = (n: number) =>
   n.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
 
 export function KalRoiCard({ project }: { project: PatternProject }) {
+  // issue #4 project seam: one scoped store per project; the legacy flat key 'kskroi-v1' is folded in on first read, then removed.
+  const handle = useMemo(() => projectStorage<{ event: KalEvent; rates: StoredRates }>('kalroi', project.id, ['kskroi-v1']), [project.id]);
   const { toast } = useToast();
-  const [stored, setStored] = useState(() => loadStored());
+  const [stored, setStored] = useState(() => loadStored(handle));
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(stored));
+    handle.write(stored);
   }, [stored]);
 
   const result = useMemo(() => analyzeKal(stored.event), [stored.event]);

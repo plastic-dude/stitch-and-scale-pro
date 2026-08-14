@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { platformNet } from './pattern-income-calculator';
 import {
   selfPublishNet,
   minimumFlatFee,
@@ -121,6 +122,25 @@ describe('compareDeal', () => {
     // out-net 60h of design time, so no positivity claim here.)
     expect(grossOutcome.netToDesigner).toBeGreaterThan(netOutcome.netToDesigner);
     expect(grossOutcome.netToDesigner - netOutcome.netToDesigner).toBeGreaterThan(0);
+  });
+
+  it('never subtracts the designer costs twice in a royalty deal (reviewer debt a)', () => {
+    const offer: DealOffer = {
+      type: 'royalty_no_exclusivity',
+      royaltyPct: 0.30,
+      royaltyBase: 'net',
+      companySales: 150,
+    };
+    const outcome = compareDeal(realistic, offer);
+    // The deal net must equal royalties (30% of the company channel's net
+    // revenue) plus the direct-channel net (selfPublishNet, floored at 0).
+    // The old code subtracted time + production costs a SECOND time because
+    // selfPublishNet already nets them out — this regression test locks the
+    // fix in: royalty income must not be eroded by the designer's own costs.
+    const royalties = platformNet('ravelry', 9, 150).netRevenue * 0.30;
+    const directNet = Math.max(selfPublishNet(realistic), 0);
+    expect(outcome.netToDesigner).toBeCloseTo(royalties + directNet, 0);
+    expect(outcome.netToDesigner).toBeGreaterThan(directNet);
   });
 
   it('rates an exclusive fee that ignores locked-out sales as "counter" or worse', () => {

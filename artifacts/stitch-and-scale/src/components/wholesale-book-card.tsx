@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { projectStorage, type ProjectStorageHandle } from '@/lib/storage-lib';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -55,11 +56,10 @@ function defaults(): StoredState {
   };
 }
 
-function loadStored(): StoredState {
+function loadStored(handle: ProjectStorageHandle<StoredState>): StoredState {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw);
+    const parsed = handle.read();
+    if (parsed) {
       if (parsed && parsed.wholesale) {
         return {
           ...defaults(),
@@ -79,11 +79,13 @@ const fmt$ = (n: number) =>
   n.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
 
 export function WholesaleBookCard({ project }: { project: PatternProject }) {
+  // issue #4 project seam: one scoped store per project; the legacy flat key 'kskwsb-v1' is folded in on first read, then removed.
+  const handle = useMemo(() => projectStorage<StoredState>('wholesalebook', project.id, ['kskwsb-v1']), [project.id]);
   const { toast } = useToast();
-  const [stored, setStored] = useState(() => loadStored());
+  const [stored, setStored] = useState(() => loadStored(handle));
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(stored));
+    handle.write(stored);
   }, [stored]);
 
   const wholesale = useMemo(() => analyzeWholesaleDeal(stored.wholesale), [stored.wholesale]);

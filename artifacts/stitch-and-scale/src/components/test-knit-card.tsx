@@ -15,7 +15,8 @@
  * All numbers persist in localStorage under a project-scoped key so the
  * roster survives reloads until cloud storage arrives.
  */
-import React from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
+import { projectStorage, type ProjectStorageHandle } from '@/lib/storage-lib';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -60,6 +61,9 @@ function StatusBadge({ status }: StatusBadgeProps) {
 }
 
 export function TestKnitCard({ project }: { project: PatternProject }) {
+  // issue #4 project seam: one scoped store per project; the legacy flat key 'stitch-and-scale-testknit' is folded in on first read, then removed.
+  const handle = useMemo(() => projectStorage<TesterSlot[]>('testknit', project.id, ['stitch-and-scale-testknit']), [project.id]);
+
   const { toast } = useToast();
   const sizes = gradedSizes(project);
 
@@ -91,7 +95,7 @@ export function TestKnitCard({ project }: { project: PatternProject }) {
   const persist = (next: TesterSlot[]) => {
     setSlots(next);
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ [project.id]: next }));
+      handle.write(next);
     } catch {
       // Offline or full storage — the in-memory roster still works.
     }

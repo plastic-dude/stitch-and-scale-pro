@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
+import { projectStorage, type ProjectStorageHandle } from '@/lib/storage-lib';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -35,11 +36,10 @@ interface StoredRates extends ProductionRates {
   yarnWeight: string;
 }
 
-function loadStored(): { calls: StoredCall[]; rates: StoredRates } {
+function loadStored(handle: ProjectStorageHandle<{ calls: StoredCall[]; rates: StoredRates }>): { calls: StoredCall[]; rates: StoredRates } {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw);
+    const parsed = handle.read();
+    if (parsed) {
       if (Array.isArray(parsed.calls) && parsed.rates) {
         return { calls: parsed.calls, rates: { ...defaultRates(), ...parsed.rates } };
       }
@@ -85,13 +85,15 @@ function dateInput(value: string | undefined, onChange: (v: string) => void) {
 }
 
 export function SubmissionPipelineCard({ project }: { project: PatternProject }) {
+  // issue #4 project seam: one scoped store per project; the legacy flat key 'snsp-v1' is folded in on first read, then removed.
+  const handle = useMemo(() => projectStorage<{ calls: StoredCall[]; rates: StoredRates }>('submitpipe', project.id, ['snsp-v1']), [project.id]);
   const { toast } = useToast();
-  const [stored, setStored] = useState(() => loadStored());
+  const [stored, setStored] = useState(() => loadStored(handle));
   const [editingId, setEditingId] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(stored));
+    handle.write(stored);
   }, [stored]);
 
   const editing = stored.calls.find((c) => c.id === editingId);

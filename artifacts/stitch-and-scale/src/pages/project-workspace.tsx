@@ -56,6 +56,7 @@ import { PodBookCard } from '@/components/pod-book-card';
 import { CopyrightProtectionCard } from '@/components/copyright-protection-card';
 import { TeachEconomicsCard } from '@/components/teach-economics-card';
 import { PartnerEconomicsCard } from '@/components/partner-economics-card';
+import { YarnBuyCalculatorCard } from '@/components/yarn-buy-calculator-card';
 
 type RoundingMode = 'exact' | 'multiple' | 'even' | 'odd';
 
@@ -531,6 +532,9 @@ export default function ProjectWorkspace() {
           <TabsTrigger value="partners" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             Partners
           </TabsTrigger>
+          <TabsTrigger value="yarnbuy" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+            Yarn Buy
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="sections" className="mt-6 space-y-6">
@@ -933,6 +937,9 @@ export default function ProjectWorkspace() {
         </TabsContent>
         <TabsContent value="partners" className="mt-6">
           <PartnerEconomicsCard project={project} />
+        </TabsContent>
+        <TabsContent value="yarnbuy" className="mt-6">
+          <YarnBuyCalculatorCard project={project} />
         </TabsContent>
 
         <TabsContent value="notes" className="mt-6">

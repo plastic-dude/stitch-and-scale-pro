@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
+import { projectStorage, type ProjectStorageHandle } from '@/lib/storage-lib';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -29,11 +30,11 @@ function defaultStored(): StoredTeach {
   return { input: { ...DEFAULT_TEACH } };
 }
 
-function loadStored(): StoredTeach {
+function loadStored(handle: ProjectStorageHandle<StoredTeach>): StoredTeach {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = handle.read();
     if (raw) {
-      const parsed = JSON.parse(raw);
+      const parsed = raw as StoredTeach;
       if (parsed && parsed.input && typeof parsed.input.ticketPrice === 'number') {
         return {
           ...defaultStored(),
@@ -81,13 +82,16 @@ function NumField({ id, label, value, onChange, min = 0, max, step = 1, suffix }
 const HOST_FORMATS: TeachFormat[] = ['guildFlatFee', 'lysClass'];
 
 export function TeachEconomicsCard({ project: _project }: { project: PatternProject }) {
+  // issue #4 project seam: one scoped store per project; the legacy flat key 'stitch-and-scale-teach-v1' is folded in on first read, then removed.
+  const handle = useMemo(() => projectStorage<StoredTeach>('teach', _project.id, ['stitch-and-scale-teach-v1']), [_project.id]);
+
   const { toast } = useToast();
-  const [stored, setStored] = useState<StoredTeach>(() => loadStored());
+  const [stored, setStored] = useState<StoredTeach>(() => loadStored(handle));
   const [hostedMode, setHostedMode] = useState(false);
   const [gradStudents, setGradStudents] = useState(10);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(stored));
+    handle.write(stored);
   }, [stored]);
 
   const patchInput = (patch: Partial<TeachInput>) =>

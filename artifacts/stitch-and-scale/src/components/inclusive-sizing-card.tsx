@@ -42,10 +42,12 @@ const DEFAULT_SIZES: SizeRow[] = [
   { label: '2XL', bust: 50, cup: '', broad: false },
 ];
 
-function loadStored(): Stored {
+import { projectStorage, type ProjectStorageHandle } from '@/lib/storage-lib';
+
+function loadStored(handle: ProjectStorageHandle<Stored>): Stored {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw) as Stored;
+    const parsed = handle.read();
+    if (parsed && typeof parsed === 'object' && typeof parsed.price === 'number') return parsed;
   } catch {
     // fall through
   }
@@ -84,10 +86,12 @@ function Field(props: { label: string; value: number; onChange: (v: number) => v
 
 export function InclusiveSizingCard({ project }: Props) {
   const { toast } = useToast();
-  const [stored, setStored] = useState<Stored>(() => loadStored());
+  // issue #4 project seam: one scoped store per project; the legacy flat key 'sncis-v1' is folded in on first read, then removed.
+  const handle = useMemo(() => projectStorage<Stored>('incsizing', project.id, ['sncis-v1']), [project.id]);
+  const [stored, setStored] = useState<Stored>(() => loadStored(handle));
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(stored));
+    handle.write(stored);
   }, [stored]);
 
   const sizeRows = stored.sizes.length > 0 ? stored.sizes : DEFAULT_SIZES;

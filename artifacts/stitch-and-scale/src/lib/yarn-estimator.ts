@@ -36,20 +36,23 @@ export type YarnWeight = 'lace' | 'fingering' | 'sport' | 'DK' | 'worsted' | 'bu
  * Source: Craft Yarn Council yarn weight standard table
  * (https://craftyarncouncil.com/standards/yarn-weight) — verified current.
  * referenceGaugeStitches: CYC standard stocking-stitch gauge midpoint in
- *   sts/cm for the weight (worsted = 18 sts per 4in = 4.5 sts/cm), on the
- *   recommended needle size. Used only as a ratio against
+ *   sts per INCH for the weight (worsted = 16–20 sts per 4in = 4–5 sts/in; midpoint 4.5), on
+ *   the recommended needle size. Used only as a ratio against
  *   WORSTED_REFERENCE_GAUGE, so the unit cancels out — do not compare these
  *   values directly against a sts-per-4in project gauge (issue #8).
  * yardagePer100g: midpoint of CYC's published yards-per-100-gram range.
+ *   Fixed per issue #11: the old table held every weight at the floor of
+ *   its CYC range (lace 450 of 400–800+, worsted 185 of 185–240, ...),
+ *   silently underestimating yarn needs.
  */
 export const YARN_WEIGHT_DATA: Record<YarnWeight, { referenceGaugeStitches: number; yardagePer100g: number }> = {
-  lace:          { referenceGaugeStitches: 7.5,  yardagePer100g: 450 },
-  fingering:     { referenceGaugeStitches: 6.5,  yardagePer100g: 400 },
-  sport:         { referenceGaugeStitches: 6,    yardagePer100g: 300 },
-  DK:            { referenceGaugeStitches: 5.5,  yardagePer100g: 250 },
-  worsted:       { referenceGaugeStitches: 4.5,  yardagePer100g: 185 },
-  bulky:         { referenceGaugeStitches: 3.5,  yardagePer100g: 120 },
-  'super-bulky': { referenceGaugeStitches: 3,    yardagePer100g: 72 },
+  lace:          { referenceGaugeStitches: 9.25,  yardagePer100g: 600 },
+  fingering:     { referenceGaugeStitches: 7.4,  yardagePer100g: 400 },
+  sport:         { referenceGaugeStitches: 6.1,    yardagePer100g: 338 },
+  DK:            { referenceGaugeStitches: 5.6,  yardagePer100g: 275 },
+  worsted:       { referenceGaugeStitches: 4.5,  yardagePer100g: 212 },
+  bulky:         { referenceGaugeStitches: 3.4,  yardagePer100g: 140 },
+  'super-bulky': { referenceGaugeStitches: 2.1,    yardagePer100g: 91 },
 };
 
 /** Recommended needle size label per CYC weight standard, for display. */

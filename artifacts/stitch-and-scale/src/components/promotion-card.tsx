@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { projectStorage, type ProjectStorageHandle } from '@/lib/storage-lib';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -52,11 +53,10 @@ function defaultStored(): StoredPromotion {
   };
 }
 
-function loadStored(): StoredPromotion {
+function loadStored(handle: ProjectStorageHandle<StoredPromotion>): StoredPromotion {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw);
+    const parsed = handle.read();
+    if (parsed) {
       if (parsed && parsed.platform && Array.isArray(parsed.channels) && parsed.channels.length > 0) {
         const defs = defaultStored();
         // Merge per-channel so stale stored records (pre-enabled-flag) pick up
@@ -204,11 +204,13 @@ function ChannelRow({ result, params, onToggle, onPatch }: {
 }
 
 export function PromotionCard({ project }: { project: PatternProject }) {
+  // issue #4 project seam: one scoped store per project; the legacy flat key 'promo-v1' is folded in on first read, then removed.
+  const handle = useMemo(() => projectStorage<StoredPromotion>('promo', project.id, ['promo-v1']), [project.id]);
   const { toast } = useToast();
-  const [stored, setStored] = useState(() => loadStored());
+  const [stored, setStored] = useState(() => loadStored(handle));
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(stored));
+    handle.write(stored);
   }, [stored]);
 
   const input = useMemo<PromotionInput>(() => {

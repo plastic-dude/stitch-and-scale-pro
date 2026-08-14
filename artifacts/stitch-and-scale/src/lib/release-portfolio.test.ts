@@ -67,6 +67,12 @@ describe('buildPortfolioLine', () => {
     const bare = makeProject({ yarnWeight: undefined as never, gauge: { stitchesPer4In: 0, rowsPer4In: 0, unit: "in" } });
     expect(buildPortfolioLine(bare, defaultInputs).yarnWeightClass).toBe('unknown');
   });
+  it('maps a typical worsted gauge (20 sts/4in) to worsted, never lace (issue #12)', () => {
+    const worstedGauge = makeProject({ yarnWeight: undefined as never, gauge: { stitchesPer4In: 20, rowsPer4In: 28, unit: 'in' } });
+    expect(buildPortfolioLine(worstedGauge, defaultInputs).yarnWeightClass).toBe('worsted');
+    const fineGauge = makeProject({ yarnWeight: undefined as never, gauge: { stitchesPer4In: 27, rowsPer4In: 36, unit: 'in' } });
+    expect(buildPortfolioLine(fineGauge, defaultInputs).yarnWeightClass).toBe('fingering');
+  });
 
   it('flags listing readiness by errors and note length', () => {
     const thickNotes = makeProject({ description: 'A relaxed crewneck worked flat with drop shoulders.' });

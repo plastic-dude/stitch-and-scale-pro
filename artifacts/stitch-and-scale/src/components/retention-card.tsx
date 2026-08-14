@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
+import { projectStorage, type ProjectStorageHandle } from '@/lib/storage-lib';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -27,11 +28,10 @@ function defaultStored(): StoredRetention {
   return { input: { ...DEFAULT_RETENTION } };
 }
 
-function loadStored(): StoredRetention {
+function loadStored(handle: ProjectStorageHandle<StoredRetention>): StoredRetention {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw);
+    const parsed = handle.read();
+    if (parsed) {
       if (parsed && parsed.input && typeof parsed.input.listSize === 'number') {
         return {
           ...defaultStored(),
@@ -77,11 +77,13 @@ function NumField({ id, label, value, onChange, min = 0, max, step = 1, suffix }
 }
 
 export function RetentionCard({ project: _project }: { project: PatternProject }) {
+  // issue #4 project seam: scoped store per project; flat key folded in on first read, then removed.
+  const handle = useMemo(() => projectStorage<StoredRetention>('retain', _project.id, [STORAGE_KEY]), [_project.id]);
   const { toast } = useToast();
-  const [stored, setStored] = useState<StoredRetention>(() => loadStored());
+  const [stored, setStored] = useState(() => loadStored(handle));
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(stored));
+    handle.write(stored);
   }, [stored]);
 
   const patchInput = (patch: Partial<RetentionInput>) =>

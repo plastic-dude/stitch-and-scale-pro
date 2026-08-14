@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { projectStorage, type ProjectStorageHandle } from '@/lib/storage-lib';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -57,11 +58,10 @@ function defaultStored(): StoredLicence {
   };
 }
 
-function loadStored(): StoredLicence {
+function loadStored(handle: ProjectStorageHandle<StoredLicence>): StoredLicence {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw);
+    const parsed = handle.read();
+    if (parsed) {
       if (parsed && parsed.offer) {
         return { ...defaultStored(), ...parsed, offer: { ...defaultStored().offer, ...parsed.offer } };
       }
@@ -76,11 +76,13 @@ const fmt$ = (n: number) =>
   n.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
 
 export function PatternLicensePlannerCard({ project }: { project: PatternProject }) {
+  // issue #4 project seam: one scoped store per project; the legacy flat key 'pslc-v1' is folded in on first read, then removed.
+  const handle = useMemo(() => projectStorage<StoredLicence>('pslicense', project.id, ['pslc-v1']), [project.id]);
   const { toast } = useToast();
-  const [stored, setStored] = useState(() => loadStored());
+  const [stored, setStored] = useState(() => loadStored(handle));
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(stored));
+    handle.write(stored);
   }, [stored]);
 
   const result = useMemo(

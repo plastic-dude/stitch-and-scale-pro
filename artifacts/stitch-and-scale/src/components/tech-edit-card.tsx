@@ -16,7 +16,8 @@
  * All state persists in localStorage under a project-scoped key so the
  * last audit and rate setting survive reloads until cloud storage arrives.
  */
-import React from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
+import { projectStorage, type ProjectStorageHandle } from '@/lib/storage-lib';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -60,6 +61,9 @@ const SEVERITY_META: Record<AuditFinding['severity'], { label: string; className
 };
 
 export function TechEditCard({ project }: { project: PatternProject }) {
+  // issue #4 project seam: one scoped store per project; the legacy flat key 'stitch-and-scale-techedit' is folded in on first read, then removed.
+  const handle = useMemo(() => projectStorage<PersistedState>('techedit', project.id, ['stitch-and-scale-techedit']), [project.id]);
+
   const { toast } = useToast();
 
   const [ratePerHour, setRatePerHour] = React.useState(() => {

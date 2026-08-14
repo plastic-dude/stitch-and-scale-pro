@@ -104,13 +104,19 @@ export function buildPortfolioLine(
   } else if (project.gauge) {
     const sts = project.gauge.stitchesPer4In;
     if (sts > 0) {
+      // NOTE: the old code compared sts-per-4in (e.g. 20) against CYC
+      // midpoints (7.5 … 3) — every gauge won as 'lace', silently distorting
+      // portfolio KPIs (issue #12). CYC midpoints are stitches per INCH,
+      // so divide the 4in gauge by 4 first.
+      const stsPerIn = sts / 4;
       const refStitches: Record<string, number> = {
-        lace: 7, fingering: 6.5, sport: 5.5, dk: 5, worsted: 4.5, bulky: 3.5, superBulky: 3,
+        lace: 9.25, fingering: 7.4, sport: 6.1, dk: 5.6, worsted: 4.5, bulky: 3.4, superBulky: 2.1,
       };
+
       let best = 'worsted';
       let bestDist = Infinity;
       for (const [w, ref] of Object.entries(refStitches)) {
-        const dist = Math.abs(sts - ref);
+        const dist = Math.abs(stsPerIn - ref);
         if (dist < bestDist) { bestDist = dist; best = w; }
       }
       yarnWeightClass = best;

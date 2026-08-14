@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { projectStorage, type ProjectStorageHandle } from '@/lib/storage-lib';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -34,11 +35,10 @@ function defaultStored(): StoredPriceWindow {
   };
 }
 
-function loadStored(): StoredPriceWindow {
+function loadStored(handle: ProjectStorageHandle<StoredPriceWindow>): StoredPriceWindow {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw);
+    const parsed = handle.read();
+    if (parsed) {
       if (parsed && parsed.input && typeof parsed.input.listPrice === 'number') {
         return {
           ...defaultStored(),
@@ -79,11 +79,13 @@ function PathRow({ name, netRevenue, sales, verdict, note }: {
 }
 
 export function PriceWindowCard({ project }: { project: PatternProject }) {
+  // issue #4 project seam: scoped store per project; flat key folded in on first read, then removed.
+  const handle = useMemo(() => projectStorage<StoredPriceWindow>('pricewin', project.id, [STORAGE_KEY]), [project.id]);
   const { toast } = useToast();
-  const [stored, setStored] = useState<StoredPriceWindow>(() => loadStored());
+  const [stored, setStored] = useState(() => loadStored(handle));
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(stored));
+    handle.write(stored);
   }, [stored]);
 
   const patchInput = (patch: Partial<PriceWindowInput>) =>

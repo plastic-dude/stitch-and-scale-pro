@@ -15,7 +15,8 @@
  * task list, a paste-ready shop proposal letter, an event pitch, and a
  * full cottage-license price sheet with copy-ready buyer offer.
  */
-import React from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
+import { projectStorage, type ProjectStorageHandle } from '@/lib/storage-lib';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -97,6 +98,9 @@ function CopyLine({ text, label }: { text: string; label: string }) {
 }
 
 export function TrunkShowCard({ project }: { project: PatternProject }) {
+  // issue #4 project seam: one scoped store per project; the legacy flat key 'stitch-and-scale-trunk-show' is folded in on first read, then removed.
+  const handle = useMemo(() => projectStorage<StoredState>('trunkshow', project.id, ['stitch-and-scale-trunk-show']), [project.id]);
+
   const stored = React.useRef<StoredState>(loadStored(project.id));
   const saved = stored.current;
 

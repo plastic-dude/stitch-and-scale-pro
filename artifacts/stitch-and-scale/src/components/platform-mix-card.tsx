@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { projectStorage, type ProjectStorageHandle } from '@/lib/storage-lib';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -25,11 +26,10 @@ function defaultStored(): StoredMix {
   return { input: { ...DEFAULT_MIX, platforms: DEFAULT_MIX.platforms.map((p) => ({ ...p })) } };
 }
 
-function loadStored(): StoredMix {
+function loadStored(handle: ProjectStorageHandle<StoredMix>): StoredMix {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw);
+    const parsed = handle.read();
+    if (parsed) {
       if (parsed && parsed.input && Array.isArray(parsed.input.platforms)) {
         return {
           input: {
@@ -56,11 +56,13 @@ const fmtDec = (n: number) =>
   n.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 });
 
 export function PlatformMixCard({ project }: { project: PatternProject }) {
+  // issue #4 project seam: scoped store per project; flat key folded in on first read, then removed.
+  const handle = useMemo(() => projectStorage<StoredMix>('pmix', project.id, [STORAGE_KEY]), [project.id]);
   const { toast } = useToast();
-  const [stored, setStored] = useState<StoredMix>(() => loadStored());
+  const [stored, setStored] = useState(() => loadStored(handle));
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(stored));
+    handle.write(stored);
   }, [stored]);
 
   const patchInput = (patch: Partial<PlatformMixInput>) =>

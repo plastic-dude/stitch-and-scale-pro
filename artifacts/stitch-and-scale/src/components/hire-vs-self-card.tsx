@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { projectStorage, type ProjectStorageHandle } from '@/lib/storage-lib';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -40,11 +41,10 @@ function defaults(): StoredHire {
   };
 }
 
-function loadStored(): StoredHire {
+function loadStored(handle: ProjectStorageHandle<StoredHire>): StoredHire {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw);
+    const parsed = handle.read();
+    if (parsed) {
       if (parsed && typeof parsed.opportunityRate === 'number') {
         return { ...defaults(), ...parsed };
       }
@@ -61,11 +61,13 @@ const fmtDec = (n: number, digits = 1) =>
   n.toLocaleString('en-US', { maximumFractionDigits: digits });
 
 export function HireVsSelfCard({ project }: { project: PatternProject }) {
+  // issue #4 project seam: one scoped store per project; the legacy flat key 'kskhirevsself-v1' is folded in on first read, then removed.
+  const handle = useMemo(() => projectStorage<StoredHire>('hirevsself', project.id, ['kskhirevsself-v1']), [project.id]);
   const { toast } = useToast();
-  const [stored, setStored] = useState(() => loadStored());
+  const [stored, setStored] = useState(() => loadStored(handle));
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(stored));
+    handle.write(stored);
   }, [stored]);
 
   const result = useMemo(

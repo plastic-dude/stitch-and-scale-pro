@@ -16,7 +16,8 @@
  * - Designer choices (blend, put-up, fabric notes) persist in
  *   localStorage under a project-scoped key until cloud storage arrives.
  */
-import React, { useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';;
+import { projectStorage, type ProjectStorageHandle } from '@/lib/storage-lib';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -77,6 +78,9 @@ function saveSettings(projectId: string, settings: FinishGuideSettings) {
 }
 
 export function FinishGuideCard({ project }: { project: PatternProject }) {
+  // issue #4 project seam: one scoped store per project; the legacy flat key 'stitch-and-scale-finishguide' is folded in on first read, then removed.
+  const handle = useMemo(() => projectStorage<FinishGuideSettings>('finishguide', project.id, ['stitch-and-scale-finishguide']), [project.id]);
+
   const { toast } = useToast();
   const [settings, setSettings] = useState<FinishGuideSettings>(() => loadSettings(project.id));
   const [copied, setCopied] = useState(false);

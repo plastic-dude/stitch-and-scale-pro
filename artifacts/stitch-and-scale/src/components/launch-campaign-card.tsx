@@ -20,7 +20,8 @@
  * under a project-scoped key so reloads survive until cloud storage
  * arrives.
  */
-import React from 'react';
+import React, { useMemo } from 'react';
+import { projectStorage, type ProjectStorageHandle } from '@/lib/storage-lib';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -51,23 +52,20 @@ interface StoredState {
   review?: string;
 }
 
-function loadStored(projectId: string): StoredState {
+function loadStored(handle: ProjectStorageHandle<StoredState>): StoredState {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return {};
-    const parsed = JSON.parse(raw);
-    return (parsed && typeof parsed === 'object' && parsed[projectId]) ?? {};
+    const raw = handle.read();
+    if (raw && typeof raw === 'object') return raw as StoredState;
+    return {};
   } catch {
     return {};
   }
 }
 
-function persist(projectId: string, next: StoredState) {
+function persist(handle: ProjectStorageHandle<unknown>, next: StoredState) {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    const all = raw ? JSON.parse(raw) : {};
-    all[projectId] = { ...(all[projectId] ?? {}), ...next };
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(all));
+    const prev = (handle.read() ?? {}) as StoredState;
+    handle.write({ ...prev, ...next });
   } catch {
     // Offline or full storage — in-memory state still works.
   }
@@ -112,8 +110,11 @@ function CopyLine({ text }: { text: string }) {
 }
 
 export function LaunchCampaignCard({ project }: { project: PatternProject }) {
+  // issue #4 project seam: one scoped store per project; the legacy flat key 'stitch-and-scale-launch-campaign' is folded in on first read, then removed.
+  const handle = useMemo(() => projectStorage<StoredState>('launch', project.id, ['stitch-and-scale-launch-campaign']), [project.id]);
+
   const { toast } = useToast();
-  const stored = React.useRef<StoredState>(loadStored(project.id));
+  const stored = React.useRef<StoredState>(loadStored(handle));
   const [config, setConfig] = React.useState<Partial<CampaignConfig>>(stored.current.config ?? {});
   const [kalMode, setKalMode] = React.useState(stored.current.kalMode ?? false);
   const [review, setReview] = React.useState(stored.current.review ?? '');
@@ -135,30 +136,30 @@ export function LaunchCampaignCard({ project }: { project: PatternProject }) {
 
   const saveConfig = (next: Partial<CampaignConfig>) => {
     setConfig(next);
-    persist(project.id, { config: { ...(config ?? {}), ...next }, kalMode });
+    persist(handle, { config: { ...(config ?? {}), ...next }, kalMode });
   };
   const saveKal = (next: boolean) => {
     setKalMode(next);
-    persist(project.id, { kalMode: next, config });
+    persist(handle, { kalMode: next, config });
   };
   const toggleMilestone = (m: CampaignMilestone) => {
     const key = `${m.dayOffset}-${m.title}`;
     setDoneMilestones(prev => {
       const next = { ...prev, [key]: !prev[key] };
-      persist(project.id, { doneMilestones: next });
+      persist(handle, { doneMilestones: next });
       return next;
     });
   };
   const saveReview = (next: string) => {
     setReview(next);
-    persist(project.id, { review: next });
+    persist(handle, { review: next });
   };
   const resetAll = () => {
     setConfig({});
     setKalMode(false);
     setDoneMilestones({});
     setReview('');
-    persist(project.id, { config: {}, kalMode: false, doneMilestones: {}, review: '' });
+    persist(handle, { config: {}, kalMode: false, doneMilestones: {}, review: '' });
     toast({ title: 'Campaign reset', description: 'All settings and checkboxes cleared.' });
   };
 

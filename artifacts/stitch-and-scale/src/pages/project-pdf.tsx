@@ -228,6 +228,8 @@ export default function ProjectPdf() {
       includeGaugeSummary: includeGauge,
       includeNotes,
       customLogo,
+      locale: 'en',
+      templateId: selectedTheme,
     });
   }, [selectedTheme, accentColor, includeCover, includeGauge, includeNotes, customLogo, projectHook?.project, gradingResult]);
 

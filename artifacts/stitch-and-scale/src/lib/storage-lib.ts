@@ -162,6 +162,83 @@ export function readBackupLedger(): BackupLedgerEntry[] {
   }
 }
 
+/**
+ * THE PROJECT-SCOPED SEAM (reviewer finding S018/S042/S045/S049 + issue #4).
+ *
+ * WHY: 18 tabs had 18 hand-rolled localStorage keys — and several of them
+ * were FLAT global keys (snsp-v1, kskroi-v1, kskchannels-v1, rtpl-v1,
+ * promo-v1, mspl-v1, prcw-v1, pslc-v1, kskhirevsself-v1, kskwsb-v1,
+ * kskclubrev-v1, sncis-v1, pmix-v1, stitch-and-scale-testknit), so a
+ * setting saved for project A silently became the default for project B.
+ *
+ * THE RULE: every tab that stores per-project UI state MUST go through
+ * projectStorage<T>(prefix, projectId) — it enforces the key shape
+ * stitch-and-scale-{prefix}-{projectId}, and folds any legacy flat key
+ * into the scoped one on first read (reads-once migration) before
+ * removing the legacy key. New tabs get a clean scoped key and skip the
+ * migration path entirely. Cloud storage lands here too when it arrives.
+ */
+export interface ProjectStorageHandle<T> {
+  /** Scoped key actually used — always stitch-and-scale-{prefix}-{projectId}. */
+  readonly scopedKey: string;
+  read(): T | null;
+  write(value: T): void;
+  /** Fold a legacy flat key into the scoped key (reads-once migration). */
+  migrateFrom(legacyKey: string): void;
+}
+
+export function projectStorage<T>(
+  prefix: string,
+  projectId: string,
+  legacyKeys: string[] = [],
+): ProjectStorageHandle<T> {
+  // Defensive: if a hostile or already-composed id carries the full scoped
+  // shape (e.g. projectId === 'stitch-and-scale-kalroi-evil'), never
+  // double-embed it — strip the prefix so the final key stays canonical.
+  const prefixPrefix = `stitch-and-scale-${prefix}-`;
+  const safeId = projectId.startsWith(prefixPrefix) && projectId.length > prefixPrefix.length
+    ? projectId.slice(prefixPrefix.length)
+    : projectId;
+  const scopedKey = `stitch-and-scale-${prefix}-${safeId}`;
+  const read = (): T | null => {
+    try {
+      const raw = localStorage.getItem(scopedKey);
+      if (!raw) return null;
+      return JSON.parse(raw) as T;
+    } catch {
+      return null;
+    }
+  };
+  const write = (value: T): void => {
+    localStorage.setItem(scopedKey, JSON.stringify(value));
+  };
+  const migrateFrom = (legacyKey: string): void => {
+    if (legacyKey === scopedKey) return; // never migrate into self
+    try {
+      const raw = localStorage.getItem(legacyKey);
+      if (!raw) return; // no legacy data — clean path, nothing to fold
+      // Scoped key already holds newer data: legacy is stale, drop it.
+      if (read() !== null) {
+        localStorage.removeItem(legacyKey);
+        return;
+      }
+      // Scoped key is empty: fold the legacy value over, then remove it.
+      const parsed = JSON.parse(raw) as T;
+      if (parsed && typeof parsed === 'object') {
+        write(parsed);
+        localStorage.removeItem(legacyKey);
+      }
+    } catch {
+      // Corrupt legacy key: leave it alone, drop from migration.
+    }
+  };
+  const handle: ProjectStorageHandle<T> = { scopedKey, read, write, migrateFrom };
+  // Reads-once migration: every legacy key gets one attempt the first time
+  // this handle is created for a projectId that hasn't written yet.
+  for (const legacy of legacyKeys) handle.migrateFrom(legacy);
+  return handle;
+}
+
 export function recordBackupEvent(sizeBytes = 0, projectCount = 0): void {
   const ledger = readBackupLedger();
   ledger.push({

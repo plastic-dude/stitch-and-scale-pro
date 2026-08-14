@@ -188,7 +188,13 @@ export function compareDeal(input: DealInput, offer: DealOffer): DealOutcome {
     const royalties =
       offer.royaltyBase === 'gross' ? companyGross * offer.royaltyPct : companyNet * offer.royaltyPct;
     // Designer keeps their direct channel too (no exclusivity).
-    const net = royalties + Math.max(base, 0) - timeCost - input.fixedCosts;
+    // FIX (reviewer debt a): the old line subtracted timeCost + fixedCosts
+    // AGAIN even though `base` (selfPublishNet) already nets those out — the
+    // royalty branch double-counted the designer's costs. The correct deal
+    // net is the royalty income plus the direct-channel net: royalties + base
+    // (direct channel floored to zero when the self-publish baseline is
+    // negative — a designer with no viable direct channel doesn't add it).
+    const net = royalties + Math.max(base, 0);
     // The direct-channel baseline itself doesn't change with the royalty base —
     //  the change is only in what the company channel pays out. Kept explicit
     //  (instead of the tempting `+ 0`) so a future royalty-on-gross deal where
