@@ -22,4 +22,10 @@ The two new tabs were opened and exercised in full on the sample project: every 
 
 No functional defects were found in the new tabs. The previously reported critical items (**#6** instant measurement delete, **#7** no edit path) remain **unresolved** in this build; their code paths are unchanged and did not regress.
 
+## QA Screenshots (appendix)
+Visual evidence from the cycle-3 hands-on session covering PriceWin and Repeat tabs.
+
+![Cycle 3 — PriceWin tab](qa-shots-cycle3/cycle3-01-pricewin-tab.png)
+![Cycle 3 — Repeat tab](qa-shots-cycle3/cycle3-02-repeat-tab.png)
+
 *No code was modified. Report committed only to a `qa/` branch; `main` untouched. Prepared by Manus AI (QA role).*
