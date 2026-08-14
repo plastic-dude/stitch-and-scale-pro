@@ -550,8 +550,8 @@ export default function ProjectWorkspace() {
           <TabsTrigger value="chartlab" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             <PenLine className="h-3.5 w-3.5 mr-1.5" /> Chart Lab
           </TabsTrigger>
-          <TabsTrigger value="testknit" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
-            <ClipboardCheck className="h-3.5 w-3.5 mr-1.5" /> Test Knit
+          <TabsTrigger value="testdesk" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+            <ClipboardCheck className="h-3.5 w-3.5 mr-1.5" /> Test Knit Desk
           </TabsTrigger>
           <TabsTrigger value="submissions" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             Submissions
@@ -977,7 +977,7 @@ export default function ProjectWorkspace() {
         <TabsContent value="chartlab" className="mt-6">
           <ChartLabCard project={project} />
         </TabsContent>
-        <TabsContent value="testknit" className="mt-6">
+        <TabsContent value="testdesk" className="mt-6">
           <TestKnitDeskCard project={project} />
         </TabsContent>
         <TabsContent value="lookbook" className="mt-6">

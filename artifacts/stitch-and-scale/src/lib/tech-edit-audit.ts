@@ -137,6 +137,19 @@ function gradedSizesFor(m: SectionMeasurement): SizeKey[] {
   return ALL_SIZES.filter(size => Math.abs(m.baseValue) > 0);
 }
 
+/** Every distinct size the project actually grades — exported for the
+ *  market-bill note (issue #31): the note must name the graded-size count,
+ *  never the findings count. */
+export function gradedSizeCount(project: PatternProject): number {
+  const sizes = new Set<SizeKey>();
+  for (const section of project.sections) {
+    for (const measurement of section.measurements) {
+      for (const size of gradedSizesFor(measurement)) sizes.add(size);
+    }
+  }
+  return sizes.size;
+}
+
 function location(sectionName: string, label: string): string {
   return `${sectionName} › ${label}`;
 }
@@ -521,6 +534,11 @@ function estimateMarketBillFor(findings: AuditFinding[], findingCounts: Record<A
 } {
   const pending = findingCounts.error + findingCounts.warning;
   const hours = editorHoursFor(project);
+  // Issue #31: the note must name the project's graded-size count, never
+  // the findings count (a 9-size sweater with 2 findings must say
+  // "9 graded sizes", and singular/plural must be correct).
+  const sizeCount = gradedSizeCount(project);
+  const sizesWord = sizeCount === 1 ? 'graded size' : 'graded sizes';
   // Clean patterns negotiate the lower half of the quote; outstanding
   // findings are exactly what an editor charges full rate to find.
   const lowFactor = pending > 0 ? 1 : 0.6;
@@ -533,7 +551,7 @@ function estimateMarketBillFor(findings: AuditFinding[], findingCounts: Record<A
     pending,
     waitDays: EDITOR_MARKET.turnaroundDays,
     note: pending > 0
-      ? `Editors charge $${EDITOR_MARKET.rateLow}–$${EDITOR_MARKET.rateHigh}/hr for this sweep (~${hours}h for ${findingCounts.error + findingCounts.warning + findingCounts.pass} graded sizes) and document a real shortage — patterns wait ~${EDITOR_MARKET.turnaroundDays} days in queue. Resolve findings first to justify negotiating the lower end.`
+      ? `Editors charge $${EDITOR_MARKET.rateLow}–$${EDITOR_MARKET.rateHigh}/hr for this sweep (~${hours}h for ${sizeCount} ${sizesWord}) and document a real shortage — patterns wait ~${EDITOR_MARKET.turnaroundDays} days in queue. Resolve findings first to justify negotiating the lower end.`
       : `A human editor would quote $${low}–$${high} for the same ${hours}h of arithmetic, at ` + '$' + EDITOR_MARKET.rateLow + '–$' + EDITOR_MARKET.rateHigh + `/hr — and most would add a per-size premium. The numbers sweep is fully automatable; their flaw is charging hourly rates for arithmetic.`,
   };
 }

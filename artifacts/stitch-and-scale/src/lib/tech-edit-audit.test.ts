@@ -371,4 +371,32 @@ describe('editorHoursFor / estimateMarketBill (session-42)', () => {
     expect(bill.low).toBe(48);
     expect(bill.note).toContain('$20–$40/hr');
   });
+  it('names the graded-size count in the note, not the findings count (#31)', () => {
+    // 9-size sweater with 2 audit findings must say "~4h for 9 graded
+    // sizes", not "~4h for 2 graded sizes" — the old bug let the findings
+    // count leak into the human-readable note.
+    const garment = makeProject({}, [
+      m('b1', 'Bust', 'bust', 20.5),
+      m('b2', 'Waist', 'waist', 16.5),
+      m('b3', 'Back Length', 'backLength', 17.25, { measurementType: 'length' }),
+      m('s1', 'Sleeve Length', 'sleeveLength', 17, { measurementType: 'length' }),
+    ]);
+    const broken = makeProject({}, [m('b1', 'Bust', 'bust', -5)]);
+    const pendingBill = estimateMarketBill(runTechEditAudit(broken), broken);
+    const cleanBill = estimateMarketBill(runTechEditAudit(garment), garment);
+    expect(pendingBill.note).toContain('~4h for 9 graded sizes');
+    expect(pendingBill.note).not.toContain('for 2 graded sizes');
+    expect(cleanBill.note).toContain('same 4h of arithmetic');
+    expect(cleanBill.note).toContain('$20–$40/hr');
+  });
+  it('uses correct grammar for a project with no graded sizes (#31 grammar)', () => {
+    // With the current engine a positive baseValue always grades all nine
+    // sizes — "1 graded size" is therefore unreachable in practice, so the
+    // grammar contract is exercised at the other edge: zero graded sizes
+    // must read "0 graded sizes", never the old findings-count wording.
+    const empty = makeProject({}, [m('b1', 'Bust', 'bust', 0)]);
+    const bill = estimateMarketBill(runTechEditAudit(empty), empty);
+    expect(bill.note).toContain('0 graded sizes');
+    expect(bill.note).not.toMatch(/for 1 graded size(s)?/);
+  });
 });
