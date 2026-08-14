@@ -35,6 +35,42 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 ## Progress log (update each run)
 - [CHK-055] 14b789f — Show ROI Lab (53rd feature).
 - [CHK-056] 55ce053 — Wholesale Program Lab (54th tab).
+- [CHK-057] a46a413 — Pre-Order Campaign Lab (55th tab).
+  Inbox swept: QA cycles 21-24 PASS with no delegation;
+  no new reviewer proposals in open issues (#11-#16 remain
+  reviewer-directed INFO notes; #25/#26 already fixed at
+  HEAD by CHK-038).
+  Research angle: pre-order campaign economics (never
+  covered) — session-57 facts: pre-orders convert demand
+  into production capital (sell then make) and remove the
+  dead-stock risk that kills small clothing brands; the
+  all-or-nothing threshold formula (fixed costs + predicted
+  units x safe cost basis, then / net price) makes the
+  campaign a legally clean conditional sale; first-campaign
+  discipline sets the bar at 60-70% of predicted sales;
+  early-bird gap of 15-25% minimum (+30-50% conversion);
+  21-35 day sweet spot (under 14 no word-of-mouth runway,
+  past 45 conversion drops ~40%); charge-later/deposit
+  models carry 43.8% of listings (5.4% average
+  cancellation); fulfillment-hour overwhelm is the top
+  documented drop failure; small-run knitwear $35-85/unit
+  at 50-100 MOQ — the pre-order funds the $8-10k run;
+  10-15% buffer units for press and the in-stock bridge.
+  Pre-Order Campaign Lab in a new workspace tab: campaign
+  setup (prices, early-bird share, platform fee, campaign
+  days, lead time, charge model), cost basis (materials,
+  knit hours, labor rate, fixed series costs, fulfillment
+  hours, shipping, safety margin, buffer), demand basis
+  (email list, waitlist, social), threshold with coverage
+  badge; results grid with predicted orders by source,
+  net revenue, safe cost/unit, profit, margin, hours, and
+  $/production-hour; PC-01..PC-07 flags; demand-first
+  verdict ladder (skip -> borderline -> don't fund ->
+  fund -> underpays); storage seam
+  projectStorage<PreorderCampaignInput>('preorder',
+  ...). 23 new lib tests; suite 1037 tests; typecheck +
+  vitest + build green. Screenshot:
+  docs/screenshots/preorder-campaign-lab.webp.
   Inbox swept: QA cycles 21-24 PASS with no delegation;
   issues #23/#24 closed with counter-evidence — both were
   already fixed at HEAD by CHK-038 (7939fa0).
