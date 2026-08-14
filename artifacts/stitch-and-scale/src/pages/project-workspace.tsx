@@ -82,6 +82,7 @@ import { ChannelMigrationLabCard } from '@/components/channel-migration-lab-card
 import { ReleaseTimingLabCard } from '@/components/release-timing-lab-card';
 import { WorkshopTeachingLabCard } from '@/components/workshop-teaching-lab-card';
 import { ConsignmentRepriceLabCard } from '@/components/consignment-reprice-lab-card';
+import { PatternBundleLabCard } from '@/components/pattern-bundle-lab-card';
 
 type RoundingMode = 'exact' | 'multiple' | 'even' | 'odd';
 
@@ -635,6 +636,9 @@ export default function ProjectWorkspace() {
           <TabsTrigger value="consignment-reprice" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             <Store className="h-3.5 w-3.5 mr-1.5" /> Re-Price Lab
           </TabsTrigger>
+          <TabsTrigger value="pattern-bundle" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+            <Presentation className="h-3.5 w-3.5 mr-1.5" /> Bundle Lab
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="sections" className="mt-6 space-y-6">
@@ -1115,6 +1119,9 @@ export default function ProjectWorkspace() {
         </TabsContent>
         <TabsContent value="consignment-reprice" className="mt-6">
           <ConsignmentRepriceLabCard project={project} />
+        </TabsContent>
+        <TabsContent value="pattern-bundle" className="mt-6">
+          <PatternBundleLabCard project={project} />
         </TabsContent>
 
 
