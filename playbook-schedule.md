@@ -33,6 +33,35 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - Prioritize money-making: features that enable selling patterns, subscriptions, or premium tiers rank above internal tooling.
 
 ## Progress log (update each run)
+- [CHK-032] 3393aad — Reviewer fix #5 S030 + Book It — PoD Book
+  Builder (32nd workspace tab, 'Book It'):
+  Fix first (MAJOR S030): the bundle planner UI now collects
+  partner patterns — up to 3 rows, each with pattern name /
+  partner retail / solo-window copies — persisted under the
+  project-scoped storage seam; named rows flow into planBundle
+  and generateBundlePitch (verified in-browser: pitch went
+  '0 designers, 1 pattern' -> '1 designer, 2 patterns',
+  discount depth & my share recomputed). 3 new coalition
+  tests (equal split, retail-weight split, pitch wording).
+  Feature: session-33 research (2026 KDP vs Lulu vs
+  IngramSpark PoD economics, KDP 60% royalty with $3.40/200pp
+  B&W print and ~60d payout, Lulu direct 80% w/ ~$10/200pp,
+  IngramSpark 70%, color pages 6-8x B&W marginal cost, UK
+  precedent 10-pattern collections, KnitPicks IDP 15% fee)
+  — indie designers price books on headline royalties and get
+  burned by print cost + color pages + discovery.
+  Library pod-book-planner.ts: analyzePodBook — 6-channel
+  table (KDP/Lulu direct/Lulu retail/IngramSpark/direct
+  storefront/self-fulfilled) each with real net/copy,
+  break-even copies, payout delay; production budget +
+  marketing spend; PDF-baseline comparison (is the book even
+  better than selling the patterns solo as PDFs?); color-page
+  watch-outs; 6-item production pre-flight checklist
+  (tech edit ~$100/pattern, photos locked pre-layout, proof
+  copy at home gauge, launch list); copyable launch summary.
+  UI: pod-book-card.tsx; storage-seam key; 14 tests; gates:
+  546/546 + typecheck + build green; both tabs visually
+  verified in-browser; issue #5 commented + closed.
 - [CHK-031] 143e430 — Reviewer-issue fixes + Collab & Exposure
   Evaluator (31st workspace tab, 'Collab'):
   Reviewer triage swept first (staff working prompt rule):
