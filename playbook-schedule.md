@@ -33,6 +33,29 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - Prioritize money-making: features that enable selling patterns, subscriptions, or premium tiers rank above internal tooling.
 
 ## Progress log (update each run)
+- [CHK-020] 3f1855e — Channel & Funnel Planner (20th workspace tab,
+  'Channels'):
+  16/16 tests; 332/332 overall green; typecheck + build pass.
+  Session-21 research (Craft Industry Alliance subscription-box
+  economics — \$35-65/box, 200-400 monthly subscribers typical,
+  ~13% of tracked boxes defunct, designers featured at most once
+  a year, boxes assemble a month ahead with hard delivery dates,
+  only ~10% of suppliers include a marketing card; Ravelry data
+  \$203 average best month / 72% under \$50; sweater 50-85 hours;
+  indie-mag ceiling ~\$900) finds designers accept box and collab
+  deals without pricing the audience effect or deadline risk.
+  Library channel-funnel-planner.ts: analyzeChannel (subscription
+  box / brand collab / magazine / other — fee + audience funnel
+  income + \$0.35/mo exposure lead value vs lost exclusivity
+  self-sell and labour at the \$12/hr bar, deadline-risk bands,
+  stability haircut, go/maybe/no verdict with cited notes);
+  analyzeFunnel (list size, freebie lead-in, launch-week share,
+  evergreen and post-launch conversions, fees, maintenance
+  hours, net and hourly); generateBoxPitch (paste-ready pitch
+  with fee ask, exclusivity term and insert-card promise).
+  UI: channel-funnel-card.tsx, channel offer inputs with live
+  verdict badge, newsletter funnel with net readout, pitch and
+  income-breakdown panels behind switches.
 - [CHK-019] 7984c0f — KAL & Collab ROI planner (19th workspace tab,
   'KAL & Collab'):
   23/23 tests; 316/316 overall green; typecheck + build pass.
