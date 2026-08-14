@@ -20,7 +20,7 @@ import { NativeSelect } from '@/components/ui/native-select';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { generateId, PatternSection, SectionMeasurement, MeasurementType, GradingKey, GRADING_KEY_LABELS, ALL_SIZES, gradePattern, resolveProjectStandards } from '@/lib/grading-engine';
-import { Plus, Edit2, Trash2, ArrowRight, Table as TableIcon, Copy, Settings, ChevronDown, ChevronRight, Calculator, FlaskConical, PenLine, ClipboardCheck, Camera, Video, FileText, Library, Tag, Target, Sparkles, FileCheck2, Tent, Handshake, Rocket, Boxes, Crown, MapPin, CalendarDays, Presentation, Store, Radio, BookOpen, Package, Scale, Gift, Globe, Users } from 'lucide-react';
+import { Plus, Edit2, Trash2, ArrowRight, Table as TableIcon, Copy, Settings, ChevronDown, ChevronRight, Calculator, FlaskConical, PenLine, ClipboardCheck, ClipboardList, Camera, Video, FileText, Library, Tag, Target, Sparkles, FileCheck2, Tent, Handshake, Rocket, Boxes, Crown, MapPin, CalendarDays, Presentation, Store, Radio, BookOpen, Package, Scale, Gift, Globe, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useSettings } from '@/context/SettingsContext';
@@ -92,6 +92,7 @@ import { MarketplaceTakeRateLabCard } from '@/components/marketplace-takerate-la
 import { BoxInclusionLabCard } from '@/components/box-inclusion-lab-card';
 import { YarnLicensingLabCard } from '@/components/yarn-licensing-lab-card';
 import { GiftCardLabCard } from '@/components/giftcard-lab-card';
+import { WholesalePricelistLabCard } from '@/components/wholesale-pricelist-lab-card';
 import { IntlPricingLabCard } from '@/components/intl-pricing-lab-card';
 import { TestKnitSlotLabCard } from '@/components/testknit-slot-lab-card';
 
@@ -677,6 +678,9 @@ export default function ProjectWorkspace() {
           <TabsTrigger value="giftcard" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             <Gift className="h-3.5 w-3.5 mr-1.5" /> Gift & Credit Lab
           </TabsTrigger>
+          <TabsTrigger value="wholesale-pricelist" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+            <ClipboardList className="h-3.5 w-3.5 mr-1.5" /> Wholesale List Lab
+          </TabsTrigger>
           <TabsTrigger value="intl-pricing" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             <Globe className="h-3.5 w-3.5 mr-1.5" /> Intl Pricing Lab
           </TabsTrigger>
@@ -1193,6 +1197,9 @@ export default function ProjectWorkspace() {
         </TabsContent>
         <TabsContent value="giftcard" className="mt-6">
           <GiftCardLabCard project={project} />
+        </TabsContent>
+        <TabsContent value="wholesale-pricelist" className="mt-6">
+          <WholesalePricelistLabCard project={project} />
         </TabsContent>
         <TabsContent value="intl-pricing" className="mt-6">
           <IntlPricingLabCard project={project} />
