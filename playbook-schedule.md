@@ -33,6 +33,38 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - Prioritize money-making: features that enable selling patterns, subscriptions, or premium tiers rank above internal tooling.
 
 ## Progress log (update each run)
+- [CHK-047] 4600ffd — QA sweep + Launch Readiness Lab (Launch tab
+  upgrade, 45th feature). Inbox swept first: 4 new reviewer
+  issues (#32-#35). Fixed in severity order: #33 MAJOR skip-setup
+  deep-link dead-end (seeds samples, routes to /project/new), #32
+  MAJOR Members tier table overflow at <=340px (flex-wrap fluid
+  columns), #34 root 330px overflow at 320px (wrap hero/badges/
+  buttons), #35 KAL Planner + Tech Edit rows overflow at 375px
+  (flex-wrap). All commented + closed on GitHub, commit ed0311d.
+  Research angle: pattern-launch marketing market (never covered)
+  - session-47 facts: 400k+ patterns on Ravelry (discovery
+  'black hole'), 72% of designers earn <=$50/mo, top-10% at
+  $201/mo (MediaPeruana Ravelry census); 59% of buyers respond
+  to marketing email vs 17% delete unread (SaleCycle); launch
+  coupon max 15% off for max 1 week incl. a weekend (Sister
+  Mountain); favourites+queues feed Hot Right Now; Ravelry
+  Group Forum Banner ads ~$1.50/1k impressions (cheapest PPC
+  in the niche).
+  Launch Readiness Lab inside the existing Launch tab: 0-100
+  readiness scorecard across 9 weighted items (email list 25,
+  finished testers 15, photos 10, publish checklist 10,
+  tech-edit 10, coupon guardrail 10, teaser 8, channel links
+  7, market price 5) with per-item progress bars and hints;
+  email revenue projection at 1-3% launch-week conversion
+  scaled by the pattern's real advisePrice band; discount
+  guardrail banner (warns >15% or >7 days); Ravelry banner
+  break-even calculator ($1.50/1k CPM, 0.5% CTR); Hot Right
+  Now momentum targets (queue/favourite benchmarks vs sales
+  target); new funnel settings (list size, photo count,
+  coupon window, teaser flag, banner budget) persisting via
+  the projectStorage seam. 20 new lib tests; suite 845 tests;
+  typecheck + vitest + build green. Screenshot:
+  docs/screenshots/launch-readiness-lab.webp.
 - [CHK-046] 6a61b39 — Subscription & Distribution Lab (44th tab)
   (session-46 pattern-distribution / subscription-library
   market research). GoSadi syncs listings without economics;
