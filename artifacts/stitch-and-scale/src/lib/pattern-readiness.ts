@@ -147,7 +147,7 @@ export function checkReadiness(
     project.gauge.stitchesPer4In > 0 &&
     project.gauge.stitchesPer4In <= range.max * 3 &&
     project.gauge.rowsPer4In > 0 &&
-    project.gauge.rowsPer4In <= range.max * 3;
+    project.gauge.rowsPer4In <= project.gauge.stitchesPer4In * ROW_GAUGE_MULTIPLIER * 1.5;
   checks.push({
     id: 'gauge',
     label: 'Gauge is set and plausible',

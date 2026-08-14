@@ -19,10 +19,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { checkReadiness, generateListing, PLATFORM_LIST } from '@/lib/pattern-readiness';
+import { computeCredibility, generateCredibilityStatement } from '@/lib/credibility-report';
 import { PatternProject } from '@/lib/grading-engine';
 import { YARN_WEIGHTS, YARN_WEIGHT_LABELS } from '@/lib/yarn-estimator';
 import { PLATFORM_LABELS } from '@/lib/pattern-income-calculator';
-import { FileCheck2, AlertTriangle, AlertCircle, CircleCheck, Copy, ClipboardCheck, Sparkles, Save } from 'lucide-react';
+import { FileCheck2, AlertTriangle, AlertCircle, CircleCheck, Copy, ClipboardCheck, Sparkles, Save, ShieldCheck, ShieldAlert } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 function SeverityBadge({ severity }: { severity: 'error' | 'warning' | 'pass' }) {
@@ -67,6 +68,34 @@ export function PublishToolkitCard({
   const [copied, setCopied] = React.useState(false);
   const [notesDraft, setNotesDraft] = React.useState(project.description ?? '');
   const notesDirty = notesDraft !== (project.description ?? '');
+
+  // ---------- Credibility Report (anti-AI-PDF trust signal) ----------
+  const credibility = computeCredibility(project);
+  const [statementCopied, setStatementCopied] = React.useState(false);
+
+  const copyStatement = async () => {
+    const statement = generateCredibilityStatement(project);
+    try {
+      await navigator.clipboard.writeText(statement);
+    } catch {
+      const area = document.createElement('textarea');
+      area.value = statement;
+      document.body.appendChild(area);
+      area.select();
+      document.execCommand('copy');
+      document.body.removeChild(area);
+    }
+    setStatementCopied(true);
+    toast({ title: 'Credibility statement copied', description: 'Paste it into any marketplace listing.' });
+    setTimeout(() => setStatementCopied(false), 2000);
+  };
+
+  const verdictConfig = {
+    credible: { label: 'Credible', className: 'bg-emerald-500/15 text-emerald-700 border-emerald-500/40', icon: ShieldCheck },
+    developing: { label: 'Developing', className: 'bg-amber-500/15 text-amber-700 border-amber-500/40', icon: ShieldAlert },
+    thin: { label: 'Thin — trust is not earned yet', className: 'bg-destructive/15 text-destructive border-destructive/40', icon: ShieldAlert },
+  }[credibility.verdict];
+  const VerdictIcon = verdictConfig.icon;
 
   // The designer changes weight in the Yarn tab; pick it up when the card mounts.
   React.useEffect(() => {
@@ -163,6 +192,94 @@ export function PublishToolkitCard({
               </Card>
             </div>
           ))}
+        </CardContent>
+      </Card>
+
+      {/* ---------- Credibility Report (the AI-era trust signal) ---------- */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="font-serif flex items-center gap-2">
+            <ShieldCheck className="w-5 h-5 text-accent" />
+            Credibility report
+          </CardTitle>
+          <CardDescription>
+            AI pattern generators flood the marketplaces with plausible-looking PDFs that have no grading
+            math and no testable yardage. This score is earned strictly from your pattern's own data — the
+            one thing those PDFs cannot fake cheaply — and produces a paste-ready statement for any listing.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-wrap items-center gap-3 mb-5">
+            <div className="flex items-center gap-2">
+              <div
+                className={cn(
+                  'flex items-center justify-center w-14 h-14 rounded-full border-2 font-serif text-lg font-semibold tabular-nums',
+                  credibility.score >= 60
+                    ? 'border-emerald-500/60 text-emerald-700'
+                    : credibility.score >= 35
+                      ? 'border-amber-500/60 text-amber-700'
+                      : 'border-destructive/60 text-destructive',
+                )}
+                data-testid="credibility-score"
+              >
+                {credibility.score}
+              </div>
+              <span className="text-xs text-muted-foreground">/ 100</span>
+            </div>
+            <Badge className={cn('gap-1.5 px-3 py-1.5', verdictConfig.className)} data-testid="credibility-verdict">
+              <VerdictIcon className="w-4 h-4" />
+              {verdictConfig.label}
+            </Badge>
+            <span className="text-xs text-muted-foreground">
+              {credibility.sizeCount} size{credibility.sizeCount === 1 ? '' : 's'} graded ·{' '}
+              {credibility.totalYards ? `${credibility.totalYards} yd estimated` : 'no yardage math yet'}
+            </span>
+          </div>
+
+          <div className="mb-4">
+            <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1">
+              Trust checks
+            </h3>
+            <Card className="border-border/70 bg-card/50">
+              <CardContent className="p-3">
+                {credibility.checks.map(c => (
+                  <div key={c.id} className="flex items-start gap-3 py-2 border-b border-border/50 last:border-0">
+                    {c.passed ? (
+                      <CircleCheck className="w-4 h-4 text-emerald-600 mt-0.5 shrink-0" />
+                    ) : (
+                      <AlertTriangle className="w-4 h-4 text-amber-600 mt-0.5 shrink-0" />
+                    )}
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium leading-snug">{c.label}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{c.proof}</p>
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <Label className="text-xs">Buyer-facing credibility statement</Label>
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-1.5 h-8"
+                onClick={copyStatement}
+                data-testid="credibility-copy-statement"
+              >
+                {statementCopied ? <ClipboardCheck className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                {statementCopied ? 'Copied' : 'Copy'}
+              </Button>
+            </div>
+            <Textarea
+              value={generateCredibilityStatement(project)}
+              readOnly
+              className="min-h-24 text-sm"
+              data-testid="credibility-statement"
+            />
+          </div>
         </CardContent>
       </Card>
 
