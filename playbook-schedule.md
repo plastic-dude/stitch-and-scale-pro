@@ -49,6 +49,41 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - [CHK-068] deabea4 — Podcast & Affiliate Lab (66th tab).
 - [CHK-069] 4776b81 — Magazine Submission Lab (67th tab).
 - [CHK-070] 72f8512 — Price Psychology Lab (68th tab).
+- [CHK-071] b0c67a0 — POD Patterns Lab (69th tab): print-on-demand
+  physical pattern economics for knitwear designers (never
+  covered in sessions 1-70). Cleanup commit 6f71704 removed a
+  scratch file; both pushed (HEAD 6f71704).
+  Inbox swept: no new reviewer proposals (13 open issues
+  remain reviewer-directed INFO notes; no open PRs; no
+  non-plastic-dude comments).
+  Session-71 facts: KDP B&W print cost is a flat $2.30/copy
+  for 24-110 pages (+$0.012/page above); hardcover base
+  $5.65; color ink $0.065/page; 60% royalty band at $9.99+
+  list (50% below); paperback minimum 24 pages across KDP,
+  IngramSpark, Lulu; IngramSpark ~55% wholesale discount
+  leaves ~list × 5% for direct sales vs Lulu direct ~20% cut;
+  Etsy ≈ 11% blended fees plus self-ship labor (15-25
+  min/copy); documented case of a designer's KDP account
+  closed for pattern books misread as knitted items.
+  Competitor flaw: no tool prices a POD booklet spec against
+  a designer's digital PDF baseline — page-count math, the
+  60% band floor, the channel commission trap (IngramSpark
+  direct vs Lulu direct), and the cannibalization drag.
+  POD Patterns Lab tab: print cost, net/copy, cannibal drag,
+  monthly net, break-even units, physical-vs-digital ratio,
+  5 channels (KDP amazon/expanded, IngramSpark, Lulu, Etsy
+  self-ship), color/hardcover, min-list (60% band), and the
+  hybrid-color fix (color cover + B&W charts).
+  PD-01..PD-09 flags (below 24-page minimum, color blowout,
+  physical earns less than PDF, IngramSpark trap, below
+  break-even, ratio too low/high, metadata-ban risk, self-
+  ship labor). Verdict ladder: do not print → below
+  break-even → switch channels → hybrid color → worth
+  printing → marginal.
+  +29 lib tests; suite 1,409 tests / 71 files;
+  typecheck + vitest + build green. Screenshots:
+  docs/screenshots/pod-lab-default-mode.webp +
+  pod-lab-color-mode.webp.
   Inbox swept: no new reviewer proposals (13 open issues
   remain reviewer-directed INFO notes; no open PRs; no
   non-plastic-dude comments).
