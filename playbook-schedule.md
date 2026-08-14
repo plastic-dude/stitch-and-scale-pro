@@ -55,6 +55,48 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - [CHK-074] 60842d5 — Yarn Licensing Lab (72nd tab):
 - [CHK-075] 0fceb2f — Gift & Credit Lab (73rd tab):
 - [CHK-076] f24bcc6 — Intl Pricing Lab (74th tab):
+- [CHK-077] ac9d64f — Test Knit Lab (75th tab):
+  prices test-knit programs against the free pool's
+  hidden costs. Unpaid testing is never free — documented
+  ghost rate 15-25% (Yarnpond: testers grab the pattern
+  and disappear), size coverage gaps ship unverified
+  sizes, and tester-side red flags (mini-deadlines,
+  mandatory yarn purchases, fines) repel the best
+  knitters. Compensation norms researched: flat cash
+  £35-70/pattern (Woolly Wormhead ~£35 with 2 testers),
+  per-yard sample rates $0.15-0.30/yd (TenDyke $0.12
+  knit / $0.10 crochet), yarn support as the emerging
+  norm (free pattern + credit, or whole/partial skeins
+  at wholesale discount), tester FO photos add 5-15%
+  launch-revenue social-proof lift.
+  Test Knit Lab tab: pattern yardage, graded sizes, slots
+  per size, test duration (~1wk per 200yd), share of slots
+  to pay, flat fee, per-yard rate, yarn cost/skeins,
+  wholesale discount, ghost rate, paid retention, your
+  management hours + hourly rate, launch baseline +
+  social-proof lift, tech-edit score, per-error catch
+  value, sample-knitter toggle. Compares 7 models on net
+  outcome = proof value + error-catch − cash − yarn −
+  your time: free pool, full yarn, wholesale yarn, extra
+  pattern copy, flat cash, per-yard sample (+ optional
+  sample-knitter row). Stat boxes (free net, best paid
+  net, size coverage, errors caught, time cost, paid
+  slots), model comparison table with ghost-churned
+  slots, verdict ladder, TK-01..TK-08 flags (ghosting,
+  underpriced support, paid-tier money-losers, thin
+  coverage, time domination).
+  Also fixed reviewer issue #48 (QA cycle 42, HIGH): the
+  Gift & Credit Lab's State escheat-treatment select was
+  dead — math stayed frozen at the 60% default. Wired the
+  mode into the engine (full=100%, none=0%, partial uses
+  the percent field, mode governs absolutely) and added 3
+  escheat-mode tests.
+  +23 lib tests; suite 1,556 tests / 77 files;
+  typecheck + vitest + build green. Screenshots:
+  docs/screenshots/testknit-lab-header.webp +
+  testknit-lab-results.webp.
+  Research: research/competitors-session-77-testknit-
+  economics.md.
   regional PPP pricing tiers vs Ravelry's flat USD — your
   single USD price is an international price everyone sees
   converted. Ravelry audience is 61.6% US / 11.7% rest of
