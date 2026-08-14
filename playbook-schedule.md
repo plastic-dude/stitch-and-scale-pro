@@ -33,6 +33,30 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - Prioritize money-making: features that enable selling patterns, subscriptions, or premium tiers rank above internal tooling.
 
 ## Progress log (update each run)
+- [CHK-029] 2792399 — Repeat Buyer & Retention Planner (29th
+  workspace tab, 'Repeat'):
+  19 tests; 488/488 overall green; typecheck + build pass.
+  Session-30 research (new customers cost 5-10x more than keeping
+  existing ones; craft email open rates vs 17% deleted unread;
+  ~5% of an engaged list buys each release; warm lists repeat at
+  20%+; Sister Mountain/Flora & Henriette retention playbooks;
+  tooling tiers from free to $150/mo) finds designers grow
+  audiences blindly while ignoring what the list is worth net.
+  Library retention-planner.ts: analyzeRetention — monthly buyers,
+  list revenue and profit net of the shared platformNet fee seam
+  and tooling cost; retained-vs-acquired per-sale cost gap; repeat
+  ladder (first purchase through loyal 4+); 12-month projection
+  with churn and signup growth vs cold-acquisition cost of the
+  same buyers; five watch-outs (optimistic purchase rate, weak
+  repeat, over-release vs knit capacity, tooling overhead,
+  underwater acquisition cost); paste-ready welcome and
+  next-release emails.
+  UI: retention-card.tsx — list size, active %, purchase %, repeat
+  %, releases/mo, price, signup growth, consumption base, platform,
+  tooling-tier and fan-acquisition-cost inputs; verdict banner;
+  monthly summary, retention-advantage block, ladder, 12-month
+  projection, watch-outs, copyable email templates; localStorage
+  key rtpl-v1.
 - [CHK-028] 814443a — Price Window & Discount Optimizer (28th workspace
   tab, 'PriceWin'):
   14 tests; 469/469 overall green; typecheck + build pass.
