@@ -33,6 +33,22 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - Prioritize money-making: features that enable selling patterns, subscriptions, or premium tiers rank above internal tooling.
 
 ## Progress log (update each run)
+- [CHK-042] 775afa6 — Tech Edit market-bill tile
+  (session-42 tech editing market research). Editors bill
+  $20-40/hr at ~10-day turnaround with a documented shortage;
+  no automated self-editing tool exists. Extend the self
+  tech-edit audit: EDITOR_MARKET constants (cited rates,
+  hours-by-size bands, wait), editorHoursFor() bands billable
+  hours by graded size count, estimateMarketBill() quotes the
+  same sweep at market rates ($48-160 for a clean 4h garment)
+  and names the automatable arithmetic. Card shows a green
+  'Market quote for this sweep' tile with editor hours, wait
+  time and per-finding negotiation guidance; description now
+  cites the rate/wait. 4 new tests (27/27 tech-edit-audit),
+  full suite 727 tests / 42 files; typecheck + build green.
+  Screenshot: docs/screenshots/tech-edit-audit-v2.webp.
+  Inbox sweep: no new reviewer proposals this run (issues
+  #27/#28/#29 all addressed previously).
 - [CHK-041] 8ffe941 — Chart Lab (40th tab 'Chart Lab')
   + reviewer fix #29 residual (Teach flat-fee blending):
   No tool connects a chart desk to grading and costing.
