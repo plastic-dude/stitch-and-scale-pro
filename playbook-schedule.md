@@ -33,6 +33,25 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - Prioritize money-making: features that enable selling patterns, subscriptions, or premium tiers rank above internal tooling.
 
 ## Progress log (update each run)
+- [CHK-018] d1048b3 — Submission Pipeline manager (18th workspace tab,
+  'Pipeline'):
+  14/14 tests; 293/293 overall green; typecheck + build pass.
+  Session-19 research (Making Stories EUR 100-550 paid
+  submissions with 4-month exclusivity, Laine 5-month window,
+  Knitty USD 250-350 with no exclusivity, Who Pays Knitters avg
+  USD 246, Paper Moon Knits 6-part submission pack) finds no tool
+  tracks magazine/anthology calls against real production hours.
+  Library submission-pipeline.ts: buildPipeline (deadline/decision/
+  pattern/sample/launch dates with days-from-now deadline states
+  and production-feasibility math from the shared yardage model at
+  30yd/hr sample knitting), scoreOffer (accepted-fee vs solo
+  baseline in the exclusivity window with the cited USD 12/hr bar),
+  submissionPackChecklist (6-part pack incl. schematic, schematics
+  PDF, tech-edited draft, sample photos, yarn support note),
+  generateSubmissionLetter (copy-ready cover letter).
+  UI: submission-pipeline-card.tsx, calls list with
+  add/edit/delete, call details form, production rates inputs,
+  milestones timeline, offer verdict, checklist, letter tabs.
 - [CHK-017] c054126 — Kit Economics planner (17th workspace tab,
   'Kits'):
   18/18 tests; 279/279 overall green; typecheck + build pass.
