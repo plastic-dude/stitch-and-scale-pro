@@ -20,7 +20,7 @@ import { NativeSelect } from '@/components/ui/native-select';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { generateId, PatternSection, SectionMeasurement, MeasurementType, GradingKey, GRADING_KEY_LABELS, ALL_SIZES, gradePattern, resolveProjectStandards } from '@/lib/grading-engine';
-import { Plus, Edit2, Trash2, ArrowRight, Table as TableIcon, Copy, Settings, ChevronDown, ChevronRight, Calculator, FlaskConical, PenLine, ClipboardCheck } from 'lucide-react';
+import { Plus, Edit2, Trash2, ArrowRight, Table as TableIcon, Copy, Settings, ChevronDown, ChevronRight, Calculator, FlaskConical, PenLine, ClipboardCheck, Camera } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useSettings } from '@/context/SettingsContext';
@@ -62,6 +62,7 @@ import { SubmissionDeskCard } from '@/components/submission-desk-card';
 import { GradingLabCard } from '@/components/grading-lab-card';
 import { ChartLabCard } from '@/components/chart-lab-card';
 import { TestKnitDeskCard } from '@/components/testknit-desk-card';
+import { LookbookDeskCard } from '@/components/lookbook-desk-card';
 
 type RoundingMode = 'exact' | 'multiple' | 'even' | 'odd';
 
@@ -555,6 +556,9 @@ export default function ProjectWorkspace() {
           <TabsTrigger value="submissions" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             Submissions
           </TabsTrigger>
+          <TabsTrigger value="lookbook" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+            <Camera className="h-3.5 w-3.5 mr-1.5" /> Lookbook
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="sections" className="mt-6 space-y-6">
@@ -975,6 +979,9 @@ export default function ProjectWorkspace() {
         </TabsContent>
         <TabsContent value="testknit" className="mt-6">
           <TestKnitDeskCard project={project} />
+        </TabsContent>
+        <TabsContent value="lookbook" className="mt-6">
+          <LookbookDeskCard project={project} />
         </TabsContent>
 
         <TabsContent value="notes" className="mt-6">
