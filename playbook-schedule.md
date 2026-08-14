@@ -33,6 +33,33 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - Prioritize money-making: features that enable selling patterns, subscriptions, or premium tiers rank above internal tooling.
 
 ## Progress log (update each run)
+- [CHK-053] 746a93f — Issue #39 fix + Pattern Photo ROI Lab
+  (51st feature). Inbox swept at 2d42899: new reviewer issue
+  #39 forwarded by the reviewer — Platform Compare minutes-royalty
+  defaults made the pool row 37.5x unrealistic ($5M pool x
+  0.005 = $7,500/mo vs ~$200/mo Skillshare average). Fixed:
+  defaults pinned to the documented average ($8M pool x 0.00013
+  ≈ $312/mo) and engine now raises P-11 when the monthly
+  projection exceeds 2x the ~$200/mo average. Test updated.
+  Research angle: pattern photography economics (never covered) —
+  session-53 facts: WKW true cost ~£130/pattern with 49 full-price
+  copies to break even; DIY ~2.5h/pattern (shoot + editing); gear
+  stack £1,500+ never stops depreciating; pro rates $25-100/hr
+  amateur, $200-500/hr experienced, $5-10k/day top tier; per-image
+  tiered pricing most common; half-day lifestyle batches beat
+  day rates; hands/props/retouch add ~2x per image; Ravelry first
+  photo is the search thumbnail; Etsy's top earners name
+  photography their #1 driver.
+  Photo ROI Lab in a new workspace tab: three shoot options (DIY
+  time+gear+model, per-image catalog, half-day lifestyle) with
+  break-even copies at the designer's net price, cash/time split,
+  PR-01-PR-08 clause flags (oversized DIY blocks, gear amortization,
+  suspicious low quotes, image-count bloat, batching), and
+  thumbnail-CTR-lift revenue over a configurable runway. Engine
+  bug-fix: half-day rate divides across the actual batch size,
+  not shoot capacity. Inputs persist via the projectStorage seam.
+  13 new lib tests; suite 942 tests; typecheck + vitest + build
+  green. Screenshot: docs/screenshots/photo-roi-lab.webp.
 - [CHK-052] 86c72d6 — Inbox sweep + Collab Deal Math
   (50th feature). Inbox swept at 69b99c4: nothing new actionable
   (all prior fixes already at HEAD; no new issues/PRs).
