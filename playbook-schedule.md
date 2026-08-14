@@ -52,6 +52,41 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - [CHK-071] b0c67a0 — POD Patterns Lab (69th tab): print-on-demand
 - [CHK-072] a2a0faf — Take-Rate War Lab (70th tab): marketplace
 - [CHK-073] 86f8d67 — Box Inclusion Lab (71st tab):
+- [CHK-074] 60842d5 — Yarn Licensing Lab (72nd tab):
+  licensing patterns to yarn companies — flat fee vs royalty
+  vs hybrid, priced against the designer's own-shop baseline.
+  Session-74 facts (verified Aug 2026): Farm & Fiber Knits
+  pays $200-400 for accessories and $400-750 for garments
+  with a 1-year exclusive; Knit Picks IDP takes 15% of the
+  designer's sale price; Interweave flats $200-600 plus
+  20-40% royalties after exclusivity, rights reverting at
+  10-12 months; kit royalties run 5-15% of kit price;
+  full-category exclusivity ≈ 2× the non-exclusive fee;
+  Malabrigo still issues unpaid 'exposure' pattern calls;
+  full buyouts are the trend designers now refuse; real
+  publisher missed royalty payments (F+W, late 2018) are why
+  a brand-size risk haircut belongs in the royalty stream;
+  Ravelry's 2019 data: most pattern sellers earn under
+  $50/month — the long tail given away for a low flat is
+  rarely worth it.
+  Competitor flaw: brands anchor to a low flat or a
+  headline royalty while hiding the exclusivity drag,
+  perpetual terms, no-attribution zero brand lift, and
+  copyright buyout grabs — designers have no calculator that
+  nets the deal against their own shop's same-window revenue.
+  Yarn Licensing Lab tab: brand reach tier (1-5) driving the
+  royalty risk haircut, flat + royalty + yarn-goods +
+  brand-paid services EV vs time cost + exclusivity drag,
+  min flat / min royalty to say yes, baseline years-of-
+  earnings, YL-01..YL-09 flags (exposure-only, weak royalty
+  stream, perpetual term, full-catalog scoop, buyout grab,
+  below-time flat, small-brand royalty bet), verdict ladder
+  from 'Skip — below your baseline' to 'Flat + royalty
+  hybrid — worth it'.
+  +23 lib tests; suite 1,483 tests / 74 files;
+  typecheck + vitest + build green. Screenshots:
+  docs/screenshots/yarnlicensing-lab-default-mode.webp +
+  yarnlicensing-lab-hybrid-mode.webp.
   subscription-box designer-inclusion economics for knitwear
   pattern designers. No tool on the market models the
   designer-side expected value of a box feature.
