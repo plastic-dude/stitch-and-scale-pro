@@ -22,6 +22,7 @@ import { DealsTabCard } from '@/components/deals-tab-card';
 import { TestKnitCard } from '@/components/test-knit-card';
 import { TechEditCard } from '@/components/tech-edit-card';
 import { FinishGuideCard } from '@/components/finish-guide-card';
+import { LaunchCampaignCard } from '@/components/launch-campaign-card';
 
 type RoundingMode = 'exact' | 'multiple' | 'even' | 'odd';
 
@@ -268,7 +269,7 @@ export default function ProjectWorkspace() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-12 md:w-fit bg-card border border-border h-12 p-1 overflow-x-auto">
+        <TabsList className="grid w-full grid-cols-13 md:w-fit bg-card border border-border h-12 p-1 overflow-x-auto">
           <TabsTrigger value="sections" className="font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             Sections
           </TabsTrigger>
@@ -304,6 +305,9 @@ export default function ProjectWorkspace() {
           </TabsTrigger>
           <TabsTrigger value="deals" className="font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             Deals
+          </TabsTrigger>
+          <TabsTrigger value="launch" className="font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+            Launch
           </TabsTrigger>
         </TabsList>
 
@@ -579,6 +583,9 @@ export default function ProjectWorkspace() {
         </TabsContent>
         <TabsContent value="deals" className="mt-6">
           <DealsTabCard project={project} />
+        </TabsContent>
+        <TabsContent value="launch" className="mt-6">
+          <LaunchCampaignCard project={project} />
         </TabsContent>
 
         <TabsContent value="notes" className="mt-6">
