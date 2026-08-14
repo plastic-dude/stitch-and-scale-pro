@@ -32,6 +32,7 @@ import { KalRoiCard } from '@/components/kal-roi-card';
 import { ChannelFunnelCard } from '@/components/channel-funnel-card';
 import { ClubRevenueCard } from '@/components/club-revenue-card';
 import { WholesaleBookCard } from '@/components/wholesale-book-card';
+import { HireVsSelfCard } from '@/components/hire-vs-self-card';
 
 type RoundingMode = 'exact' | 'multiple' | 'even' | 'odd';
 
@@ -345,6 +346,9 @@ export default function ProjectWorkspace() {
           <TabsTrigger value="wsbook" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             Wholesale &amp; Book
           </TabsTrigger>
+          <TabsTrigger value="hireself" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+            Hire vs Self
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="sections" className="mt-6 space-y-6">
@@ -653,6 +657,10 @@ export default function ProjectWorkspace() {
 
         <TabsContent value="wsbook" className="mt-6">
           <WholesaleBookCard project={project} />
+        </TabsContent>
+
+        <TabsContent value="hireself" className="mt-6">
+          <HireVsSelfCard project={project} />
         </TabsContent>
 
         <TabsContent value="notes" className="mt-6">
