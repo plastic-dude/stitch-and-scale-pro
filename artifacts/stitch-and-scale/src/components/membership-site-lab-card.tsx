@@ -1,0 +1,190 @@
+import { useMemo, useState, useEffect } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { AlertTriangle, Crown, Flag, Lightbulb, TrendingUp, Users } from 'lucide-react';
+import { PatternProject } from '@/lib/grading-engine';
+import { projectStorage } from '@/lib/storage-lib';
+import {
+  analyzeMembershipSite,
+  DEFAULT_CLUB,
+  FEE_STACKS,
+  fmt$,
+  type MembershipSiteInput,
+} from '@/lib/membership-site-lab';
+
+const STORAGE_KEY = 'stitch-and-scale-membership-v1';
+
+type StoredState = MembershipSiteInput & { ts?: number };
+
+function defaultStored(): StoredState {
+  return { ...DEFAULT_CLUB };
+}
+
+function loadStored(handle: ReturnType<typeof projectStorage<StoredState>>): StoredState {
+  const parsed = handle.read();
+  if (parsed) {
+    return { ...defaultStored(), ...parsed, ts: undefined };
+  }
+  return defaultStored();
+}
+
+function NumField({ id, label, value, onChange, min = 0, max, step = 1, suffix }: {
+  id: string; label: string; value: number;
+  onChange: (n: number) => void; min?: number; max?: number; step?: number; suffix?: string;
+}) {
+  return (
+    <div className="space-y-1.5">
+      <Label htmlFor={id} className="text-xs">{label}</Label>
+      <div className="relative">
+        <Input id={id} type="number" min={min} {...(max !== undefined ? { max } : {})} step={step}
+          value={value}
+          onChange={e => {
+            const n = parseFloat(e.target.value);
+            if (Number.isFinite(n)) onChange(n);
+          }}
+          className="text-sm pr-8" />
+        {suffix ? <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">{suffix}</span> : null}
+      </div>
+    </div>
+  );
+}
+
+function StatBox({ label, value, tone = 'default' }: { label: string; value: string; tone?: 'default' | 'good' | 'warn' | 'bad' }) {
+  const toneCls =
+    tone === 'good' ? 'text-emerald-700 bg-emerald-500/10 border-emerald-500/30' :
+    tone === 'warn' ? 'text-amber-700 bg-amber-500/10 border-amber-500/30' :
+    tone === 'bad' ? 'text-destructive bg-destructive/10 border-destructive/30' :
+    'text-foreground bg-accent/50 border-border';
+  return (
+    <div className={`rounded-md border p-3 ${toneCls}`}>
+      <div className="text-xs text-muted-foreground">{label}</div>
+      <div className="text-lg font-semibold">{value}</div>
+    </div>
+  );
+}
+
+const verdictColor = (v: string) =>
+  v.startsWith('Fund') ? 'bg-emerald-500/15 text-emerald-700 border-emerald-500/30' :
+  v.startsWith('Not ready') ? 'bg-destructive/15 text-destructive border-destructive/30' :
+  v.startsWith('Borderline') ? 'bg-amber-500/15 text-amber-700 border-amber-500/30' :
+  'bg-sky-500/15 text-sky-700 border-sky-500/30';
+
+export function MembershipSiteLabCard({ project }: { project: PatternProject }) {
+  const handle = useMemo(() => projectStorage<StoredState>('membership', project.id, [STORAGE_KEY]), [project.id]);
+  const [input, setInput] = useState<MembershipSiteInput>(() => loadStored(handle));
+
+  useEffect(() => {
+    setInput(loadStored(handle));
+  }, [handle]);
+
+  const persist = (next: MembershipSiteInput) => {
+    setInput(next);
+    handle.write({ ...next, ts: Date.now() });
+  };
+
+  const result = useMemo(() => analyzeMembershipSite(input), [input]);
+  const realistic = result.scenarios[1];
+
+  const set = <K extends keyof MembershipSiteInput>(k: K, v: MembershipSiteInput[K]) => persist({ ...input, [k]: v });
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2 text-base"><Crown className="size-4" />Membership Site Lab</CardTitle>
+        <CardDescription>Should you launch a paid pattern membership — and does the math support it? Models a realistic conversion band (median free-to-paid is under 1% for newsletters, 3-5% good for freemium), the real fee stack, churn-capped member lifetime, and whether the monthly pattern treadmill pays your hours.</CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        <section className="space-y-3">
+          <h3 className="text-sm font-semibold flex items-center gap-1.5"><Users className="size-4" />Audience & conversion</h3>
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+            <NumField id="ms-audience" label="Engaged followers" value={input.audienceSize} onChange={n => set('audienceSize', n)} suffix="people" />
+            <NumField id="ms-conv-w" label="Conservative conversion" value={input.conversionWorst * 100} onChange={n => set('conversionWorst', n / 100)} min={0} max={10} step={0.5} suffix="%" />
+            <NumField id="ms-conv-r" label="Realistic conversion" value={input.conversionRealistic * 100} onChange={n => set('conversionRealistic', n / 100)} min={0} max={10} step={0.5} suffix="%" />
+            <NumField id="ms-conv-b" label="Best conversion" value={input.conversionBest * 100} onChange={n => set('conversionBest', n / 100)} min={0} max={10} step={0.5} suffix="%" />
+          </div>
+          <p className="text-xs text-muted-foreground italic">Conversion entered as a percent in inputs; 3% is a healthy realistic band — the median newsletter converts just 0.62% of readers to paid.</p>
+        </section>
+
+        <section className="space-y-3">
+          <h3 className="text-sm font-semibold">Pricing & retention</h3>
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+            <NumField id="ms-monthly" label="Monthly price" value={input.monthlyPrice} onChange={n => set('monthlyPrice', n)} step={0.5} suffix="$" />
+            <NumField id="ms-annual" label="Annual price (0 = none)" value={input.annualPrice} onChange={n => set('annualPrice', n)} step={1} suffix="$" />
+            <NumField id="ms-annual-share" label="Members on annual" value={input.annualShare * 100} onChange={n => set('annualShare', n / 100)} min={0} max={100} step={5} suffix="%" />
+            <NumField id="ms-churn" label="Monthly churn" value={input.monthlyChurn * 100} onChange={n => set('monthlyChurn', n / 100)} min={0} max={20} step={0.5} suffix="%" />
+          </div>
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+            <NumField id="ms-content-h" label="Content hours / month" value={input.contentHours} onChange={n => set('contentHours', n)} suffix="hrs" />
+            <NumField id="ms-support-h" label="Support / moderation hrs" value={input.supportHours} onChange={n => set('supportHours', n)} suffix="hrs" />
+            <NumField id="ms-rate" label="Opportunity rate" value={input.hourlyRate} onChange={n => set('hourlyRate', n)} suffix="$/hr" />
+            <div className="space-y-1.5">
+              <Label htmlFor="ms-stack" className="text-xs">Fee stack</Label>
+              <select id="ms-stack" value={input.feeStackKey}
+                onChange={e => set('feeStackKey', e.target.value)}
+                className="flex h-9 w-full rounded-md border border-input bg-background px-2 text-sm shadow-sm">
+                {Object.entries(FEE_STACKS).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+              </select>
+            </div>
+          </div>
+        </section>
+
+        <section className="space-y-3">
+          <h3 className="text-sm font-semibold flex items-center gap-1.5"><TrendingUp className="size-4" />What the numbers say</h3>
+          <div className="overflow-x-auto rounded-md border">
+            <table className="w-full text-xs">
+              <thead className="bg-accent/60 text-muted-foreground">
+                <tr>
+                  <th className="p-2 text-left">Scenario</th>
+                  <th className="p-2 text-right">Members</th>
+                  <th className="p-2 text-right">Gross / mo</th>
+                  <th className="p-2 text-right">Fees / mo</th>
+                  <th className="p-2 text-right">Net / mo</th>
+                  <th className="p-2 text-right">LTV / member</th>
+                </tr>
+              </thead>
+              <tbody>
+                {result.scenarios.map(s => (
+                  <tr key={s.label} className="border-t">
+                    <td className="p-2 capitalize">{s.label}</td>
+                    <td className="p-2 text-right">{s.members.toFixed(1)}</td>
+                    <td className="p-2 text-right">{fmt$(s.grossRevenue)}</td>
+                    <td className="p-2 text-right">{fmt$(s.fees)}</td>
+                    <td className="p-2 text-right font-medium">{fmt$(s.netRevenue)}</td>
+                    <td className="p-2 text-right">{fmt$(s.ltvPerMember)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+            <StatBox label="Break-even audience" value={result.breakEvenAudience === Infinity ? '∞' : result.breakEvenAudience.toLocaleString('en-US')} />
+            <StatBox label="Treadmill gap / mo" value={`${result.treadmillGap >= 0 ? '+' : ''}${fmt$(result.treadmillGap)}`} tone={result.treadmillGap >= 0 ? 'good' : 'bad'} />
+            <StatBox label="Net ÷ hours cost" value={`${result.treadmillRatio === Infinity ? '∞' : result.treadmillRatio.toFixed(2)}×`} tone={result.treadmillRatio >= 1.5 ? 'good' : 'warn'} />
+            <StatBox label="Member lifetime" value={`≈${(1 / input.monthlyChurn).toFixed(0)} mo`} />
+          </div>
+        </section>
+
+        {result.flags.length > 0 && (
+          <section className="space-y-2">
+            <h3 className="text-sm font-semibold flex items-center gap-1.5"><Flag className="size-4" />Watch-outs</h3>
+            <div className="flex flex-wrap gap-2">
+              {result.flags.map(f => (
+                <Badge key={f.code} variant="outline" className="border-amber-500/40 bg-amber-500/10 text-amber-700 gap-1.5 py-1.5">
+                  <AlertTriangle className="size-3" />
+                  <span className="font-medium">{f.code}</span> — {f.title}
+                </Badge>
+              ))}
+            </div>
+          </section>
+        )}
+
+        <section className={`rounded-md border p-4 ${verdictColor(result.verdict)}`}>
+          <div className="flex items-center gap-2 font-semibold"><Lightbulb className="size-4" />{result.verdict}</div>
+          <p className="mt-1.5 text-sm">{result.verdictNote}</p>
+        </section>
+      </CardContent>
+    </Card>
+  );
+}
