@@ -305,13 +305,13 @@ export function analyzePromotion(input: PromotionInput): PromotionResult {
     verdictNote = `Onsite ads fail the break-even test — ${kills[0].verdictNote} Skip paid clicks; keep offsite (pay-on-sale) and the organic ladder.`;
   } else if (totalExpectedProfit < 0 && paidChannelsActive.length > 0) {
     verdict = 'no';
-    verdictNote = `Total expected profit ${totalExpectedProfit.toFixed(0)}$ — paid spend loses money before it earns it. Pause onsite ads and rebuild the listing.`;
+    verdictNote = `Total expected profit −$${Math.abs(totalExpectedProfit).toFixed(0)} — paid spend loses money before it earns it. Pause onsite ads and rebuild the listing.`;
   } else if (maybes.length > 0) {
     verdict = 'maybe';
-    verdictNote = `Projected net +$${totalExpectedProfit.toFixed(0)} but ${maybes.map((m) => m.label).join(', ')} need monitoring — run the 30-day test below and apply the kill rule.`;
+    verdictNote = `Projected net ${totalExpectedProfit >= 0 ? '+$' + totalExpectedProfit.toFixed(0) : '−$' + Math.abs(totalExpectedProfit).toFixed(0)} but ${maybes.map((m) => m.label).join(', ')} need monitoring — run the 30-day test below and apply the kill rule.`;
   } else {
     verdict = 'go';
-    verdictNote = `Projected net +$${totalExpectedProfit.toFixed(0)} over ${horizonMonths} month(s) on top of the $${grossBaseline.toFixed(0)} baseline — the organic ladder carries this campaign.`;
+    verdictNote = `Projected net ${totalExpectedProfit >= 0 ? '+$' + totalExpectedProfit.toFixed(0) : '−$' + Math.abs(totalExpectedProfit).toFixed(0)} over ${horizonMonths} month(s) on top of the $${grossBaseline.toFixed(0)} baseline — the organic ladder carries this campaign.`;
   }
 
   const testPlan = [

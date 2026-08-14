@@ -146,8 +146,12 @@ function fairFeeFloor(input: CollabInput): number {
 export function analyzeCollab(input: CollabInput): CollabResult {
   const floor = Math.round(fairFeeFloor(input) * 100) / 100;
 
+  // #18 fix: royaltyValue only counts when the ask type actually pays royalties
+  // or a flat fee — stale royalty state left over from a previous ask type
+  // must not leak into exclusive-license (or unpaid) modes.
   let royaltyValue = 0;
-  if (input.royaltyPct > 0 && input.companySales > 0) {
+  if ((input.collabType === 'royalty' || input.collabType === 'flat_fee') &&
+      input.royaltyPct > 0 && input.companySales > 0) {
     const gross = input.patternPrice * input.companySales;
     const net = gross > 0
       ? platformNet(input.platform, input.patternPrice, input.companySales).netRevenue
@@ -155,14 +159,8 @@ export function analyzeCollab(input: CollabInput): CollabResult {
     royaltyValue = (input.royaltyBase === 'gross' ? gross : net) * input.royaltyPct;
   }
 
-  // offerTotal = what the offer actually adds over the fair floor. The
-  // floor already counts time + sample + posting duties, so the net value of
-  // the deal is simply cash in minus the floor's cost coverage. This keeps
-  // the verdict ladder anchored to one number (floor) instead of two
-  // parallel arithmetic branches drifting apart.
-  const offerTotal = input.offeredValue + royaltyValue - floor;
-
   // Exclusivity: what the designer's own channel would have made during it.
+  // (Computed here so the #19 lockout deduction below can use it.)
   const lockedOutValue = Math.round(
     input.exclusivityMonths > 0 && input.ownMonthlySales > 0
       ? input.ownMonthlySales *
@@ -170,6 +168,14 @@ export function analyzeCollab(input: CollabInput): CollabResult {
           input.exclusivityMonths
       : 0,
   ) / 1;
+
+  // offerTotal = what the offer actually adds over the fair floor. The floor
+  // already counts time + sample + posting duties, so the net value of the
+  // deal is cash in minus the floor's cost coverage. #19 fix: an exclusive
+  // license must also recover the sales locked out during the exclusivity
+  // window, or the screen shows a positive net while the designer loses money.
+  const offerTotal = input.offeredValue + royaltyValue - floor -
+    (input.collabType === 'exclusive_license' ? lockedOutValue : 0);
 
   // Exposure honesty: followers × 0.5% conversion × the designer's net per sale.
   // This is the ceiling of what "reach" is actually worth — the Media Peruana
@@ -200,7 +206,11 @@ export function analyzeCollab(input: CollabInput): CollabResult {
   // CE-02: full copyright transfer for a small or zero fee. UK IPO: pattern
   // rights last life+70 years. A full transfer is a permanent asset sale —
   // price it like one, or refuse it.
-  if (input.fullCopyrightTransfer && input.offeredValue + royaltyValue < floor * 2) {
+  // Full-copyright transfer checks compare against actual cash paid, which
+  // in exclusive-license mode must already account for the lockout.
+  const cashPaid = input.offeredValue + royaltyValue -
+    (input.collabType === 'exclusive_license' ? lockedOutValue : 0);
+  if (input.fullCopyrightTransfer && cashPaid < floor * 2) {
     redFlags.push({
       code: 'CE-02',
       severity: 'critical',
@@ -240,7 +250,11 @@ export function analyzeCollab(input: CollabInput): CollabResult {
   // Verdict ladder — take / counter / walk, from the designer's own numbers.
   let verdict: CollabResult['verdict'];
   let verdictReason: string;
-  const cashOffer = input.offeredValue + royaltyValue;
+  // #19 fix: cashOffer counts what the deal is honestly worth; in
+  // exclusive-license mode the lockout is real foregone income, so it
+  // reduces the offer exactly like a negative royalty.
+  const cashOffer = input.offeredValue + royaltyValue -
+    (input.collabType === 'exclusive_license' ? lockedOutValue : 0);
   const offerPlusExposure = offerTotal + realisticReach;
 
   // The ladder is driven by what the offer actually covers against the fair

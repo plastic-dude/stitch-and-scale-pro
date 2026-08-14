@@ -123,8 +123,12 @@ export function PodBookCard({ project }: { project: PatternProject }) {
     [listPrice, pageCount, colorPageCount, copiesExpected, productionBudget, marketingBudget, pdfBaselineNet, primaryChannel]
   );
 
-  const fmt$ = (n: number) =>
-    n.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  const fmt$ = (n: number, digits: number = 0) =>
+    n.toLocaleString('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: digits, maximumFractionDigits: digits });
+
+  // Issue #21 fix: the Net / copy column shows one decimal so a designer
+  // skimming the channel table sees the true $9.08 / $5.32, not $9 / $5.
+  const fmt$1 = (n: number) => fmt$(n, 1);
 
   const pitch = React.useMemo(() => {
     const r = result;
@@ -208,7 +212,7 @@ export function PodBookCard({ project }: { project: PatternProject }) {
               {result.allChannels.map(r => (
                 <tr key={r.channel} className={'border-b border-border/50 ' + (r.channel === primaryChannel ? 'bg-accent/40' : '')}>
                   <td className="p-2 font-medium">{POD_CHANNEL_LABELS[r.channel]}</td>
-                  <td className={'p-2 text-right ' + (r.netPerBook <= 0 ? 'text-destructive' : 'text-accent')}>{fmt$(r.netPerBook)}</td>
+                  <td className={'p-2 text-right ' + (r.netPerBook <= 0 ? 'text-destructive' : 'text-accent')}>{fmt$1(r.netPerBook)}</td>
                   <td className="p-2 text-right">{r.breakEvenCopies.toLocaleString()}</td>
                   <td className="p-2 text-right">
                     {r.channel === 'direct_self' ? 'on delivery' : `~${POD_CHANNELS[r.channel].payoutDays}d`}
@@ -298,8 +302,10 @@ export function PodBookCard({ project }: { project: PatternProject }) {
 
         <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
           <CheckCircle2 className="w-3 h-3" />
-          Modeled on cited 2026 PoD economics: KDP 60% − print ($3.40 for 200pp B&W, ~60d payout), Lulu direct 80%
-          (200pp B&W ≈ $10.00 print), IngramSpark 70%, direct storefronts ~100% minus print with zero discovery.
+          Modeled on cited 2026 PoD economics: KDP 60% minus a per-page print model ($2.30 base per 100pp + $0.011 per
+          B&W page + $0.07 per color page — a 200pp B&W book prints at ≈ $4.50, not the flat $3.40 the footnote once
+          cited), Lulu direct 80% minus print (200pp B&W ≈ $10.00), IngramSpark 70% minus print, direct storefronts
+          ~100% minus print with zero discovery.
         </div>
       </CardContent>
     </Card>

@@ -98,6 +98,65 @@ describe('analyzeCollab — red flags', () => {
     const result = analyzeCollab({ ...base, unpaidReputation: true });
     expect(result.redFlags.some(f => f.code === 'CE-03')).toBe(true);
   });
+
+  // Issue #18 regression: stale royalty state must NOT leak into
+  // exclusive-license mode — royaltyValue only counts in royalty/flat_fee asks.
+  it('#18: stale royalties do not inflate an exclusive-license offer', () => {
+    const result = analyzeCollab({
+      ...base,
+      collabType: 'exclusive_license' as const,
+      companySales: 1000,
+      royaltyPct: 0.30,
+      offeredValue: 400,
+      exclusivityMonths: 3,
+      ownMonthlySales: 25,
+    });
+    // Total offer value must be the fee minus floor minus lockout — no royalty.
+    expect(result.totalOfferValue).toBeLessThan(0);
+    // And stale royalties must not flip the verdict to 'take'.
+    expect(result.verdict).not.toBe('take');
+  });
+
+  it('royalties still count in royalty-mode asks', () => {
+    const result = analyzeCollab({
+      ...base,
+      collabType: 'royalty' as const,
+      companySales: 1000,
+      royaltyPct: 0.30,
+      offeredValue: 0,
+    });
+    // Royalty mode: 1000 sales at ravelry net × 30% is substantial value.
+    expect(result.totalOfferValue).toBeGreaterThan(0);
+  });
+
+  // Issue #19 regression: exclusive-license net must deduct the lockout.
+  it('#19: exclusive-license net deducts locked-out sales', () => {
+    const locked = analyzeCollab({
+      ...base,
+      collabType: 'exclusive_license' as const,
+      offeredValue: 400,
+      exclusivityMonths: 3,
+      ownMonthlySales: 25,
+    });
+    // fee (400) − floor − lockedOutValue: 25 sales × 3 months × ~$7.3 net ≈ $549.
+    // 400 − 570 − 549 = −719. The honest net must be negative.
+    expect(locked.lockedOutValue).toBeGreaterThan(0);
+    expect(locked.totalOfferValue).toBeCloseTo(400 - locked.fairFeeFloor - locked.lockedOutValue, 0);
+    expect(locked.totalOfferValue).toBeLessThan(0);
+  });
+
+  it('non-exclusive license is NOT penalized by the lockout', () => {
+    const result = analyzeCollab({
+      ...base,
+      collabType: 'flat_fee' as const,
+      offeredValue: 570,
+      exclusivityMonths: 3,
+      ownMonthlySales: 25,
+    });
+    // Floor alone is 12h×35 + 45 + 2×1.5h×35 = 570; at the floor, net ≈ 0 and
+    // the lockout must not be deducted outside exclusive-license mode.
+    expect(result.totalOfferValue).toBeGreaterThanOrEqual(-1);
+  });
 });
 
 describe('analyzeCollab — exposure honesty', () => {

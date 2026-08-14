@@ -187,19 +187,26 @@ export default function ProjectWorkspace() {
     setEditingMeasurement(null);
   };
 
-  // Soft-delete with an 8s undo window (issue #6): the deleted measurement
-  // is revived from this stash if undo fires before the timer expires.
+  // Soft-delete with an 8s undo window (issue #6): deleted measurements are
+  // revived from this stack if their undo fires before their own timer
+  // expires. Issue #20 fix: this is now a stack, not a single slot — a
+  // second deletion no longer overwrites and permanently loses the first.
   const [undoStash, setUndoStash] = React.useState<{
     sectionId: string;
     measurement: SectionMeasurement;
     timer?: ReturnType<typeof setTimeout>;
-  } | null>(null);
+  }[]>([]);
 
-  const handleUndoDelete = () => {
-    if (!undoStash) return;
-    if (undoStash.timer) clearTimeout(undoStash.timer);
-    const { sectionId, measurement } = undoStash;
-    setUndoStash(null);
+  const handleUndoDelete = (target: { sectionId: string; measurement: SectionMeasurement }) => {
+    setUndoStash(prev => {
+      const item = prev.find(
+        s => s.sectionId === target.sectionId && s.measurement.id === target.measurement.id,
+      );
+      if (!item) return prev;
+      if (item.timer) clearTimeout(item.timer);
+      return prev.filter(s => s !== item);
+    });
+    const { sectionId, measurement } = target;
     updateProject({
       ...project,
       sections: project.sections.map(s =>
@@ -306,24 +313,36 @@ export default function ProjectWorkspace() {
         return s;
       })
     });
-    if (undoStash?.timer) clearTimeout(undoStash.timer);
     // 8-second undo window: the measurement survives in the stash until
-    // either undo fires or the timer removes it for real (issue #6).
-    setUndoStash({
-      sectionId,
-      measurement,
-      timer: setTimeout(() => setUndoStash(null), 8000),
+    // either undo fires or its own timer removes it for real (issue #6).
+    const stashKey = { sectionId, measurement };
+    setUndoStash(prev => {
+      if (prev.some(s => s.sectionId === sectionId && s.measurement.id === measurement.id)) {
+        return prev;
+      }
+      return [
+        ...prev,
+        {
+          sectionId,
+          measurement,
+          timer: setTimeout(
+            () =>
+              setUndoStash(curr =>
+                curr.filter(
+                  s => !(s.sectionId === sectionId && s.measurement.id === measurement.id),
+                ),
+              ),
+            8000,
+          ),
+        },
+      ];
     });
     toast({
       title: `"${measurement.label}" deleted`,
-      description: undoStash?.measurement
-        ? 'Another deletion is mid-undo - finish that one first.'
-        : 'One click is never final: hit Undo within 8s to get it back.',
-      action: undoStash?.measurement
-        ? undefined
-        : (
-          <button onClick={handleUndoDelete} className="text-sm font-medium text-primary underline underline-offset-2 px-2">Undo</button>
-        ),
+      description: 'One click is never final: hit Undo within 8s to get it back.',
+      action: (
+        <button onClick={() => handleUndoDelete(stashKey)} className="text-sm font-medium text-primary underline underline-offset-2 px-2">Undo</button>
+      ),
     });
   };
 

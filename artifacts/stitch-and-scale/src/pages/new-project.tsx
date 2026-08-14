@@ -256,7 +256,7 @@ export default function NewProjectWizard() {
                           data-testid="input-stitches"
                         />
                       </div>
-                      <div className="absolute right-4 bottom-5 text-xs text-muted-foreground font-medium">per 4{gauge.unit}</div>
+                      <div className="absolute right-4 bottom-5 text-xs text-muted-foreground font-medium">{gauge.unit === 'in' ? 'per 4 inches' : 'per 10 cm'}</div>
                     </div>
                     
                     <div className="space-y-3 bg-secondary/10 p-5 rounded-xl border border-border/40 relative overflow-hidden group focus-within:border-primary/50 transition-colors">
@@ -273,7 +273,7 @@ export default function NewProjectWizard() {
                           data-testid="input-rows"
                         />
                       </div>
-                      <div className="absolute right-4 bottom-5 text-xs text-muted-foreground font-medium">per 4{gauge.unit}</div>
+                      <div className="absolute right-4 bottom-5 text-xs text-muted-foreground font-medium">{gauge.unit === 'in' ? 'per 4 inches' : 'per 10 cm'}</div>
                     </div>
                   </div>
                 </div>
