@@ -16,6 +16,7 @@ import { useSettings } from '@/context/SettingsContext';
 import { YarnEstimatorCard } from '@/components/yarn-estimator-card';
 import { IncomeCalculatorCard } from '@/components/income-calculator-card';
 import { PatternDraftCard } from '@/components/pattern-draft-card';
+import { PricingAdvisorCard } from '@/components/pricing-advisor-card';
 
 type RoundingMode = 'exact' | 'multiple' | 'even' | 'odd';
 
@@ -262,7 +263,7 @@ export default function ProjectWorkspace() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-6 md:w-fit bg-card border border-border h-12 p-1 overflow-x-auto">
+        <TabsList className="grid w-full grid-cols-7 md:w-fit bg-card border border-border h-12 p-1 overflow-x-auto">
           <TabsTrigger value="sections" className="font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             Sections
           </TabsTrigger>
@@ -280,6 +281,9 @@ export default function ProjectWorkspace() {
           </TabsTrigger>
           <TabsTrigger value="draft" className="font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             Draft
+          </TabsTrigger>
+          <TabsTrigger value="pricing" className="font-medium text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+            Pricing
           </TabsTrigger>
         </TabsList>
 
@@ -536,6 +540,10 @@ export default function ProjectWorkspace() {
 
         <TabsContent value="draft" className="mt-6">
           <PatternDraftCard project={project} />
+        </TabsContent>
+
+        <TabsContent value="pricing" className="mt-6">
+          <PricingAdvisorCard project={project} />
         </TabsContent>
 
         <TabsContent value="notes" className="mt-6">
