@@ -33,6 +33,37 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - Prioritize money-making: features that enable selling patterns, subscriptions, or premium tiers rank above internal tooling.
 
 ## Progress log (update each run)
+- [CHK-037] 396c1c9 — Storage-seam sweep + fixes + Yarn Buy
+  Calculator (36th tab 'Yarn Buy'):
+  Storage seam: projectStorage<T> helper in storage-lib.ts
+  (scoped keys stitch-and-scale-{tab}-{projectId},
+  legacy-key migration) + 20 bare-key cards converted
+  (submission pipeline, KAL ROI, channels, retention, promo,
+  membership, price window, license, hire-vs-self,
+  wholesale book, club rev, inclusive sizing, platform mix,
+  test knit, tech edit, translation, trunk show, finish
+  guide, launch campaign, teach economics).
+  Fixes: #11 CYC yardage/gauge table to true midpoints
+  (lace 450->600 yd, gauge refs per-inch); #12 portfolio
+  'lace' inference (STS/4in now divided by 4, correct
+  per-inch CYC refs); reviewer royalty double-count in
+  yarn-company-deal (base already nets time/fixed costs);
+  publishing-system proposal P0: PDF provenance footer
+  (pattern name, sizing std, template id, renderer ver,
+  date, locale).
+  Yarn Buy Calculator: dye-lot buy list w/ documented
+  10-15% risk buffer (+2.5% fine yarn, +2.5% 4+ sizes,
+  floor held when swatch confirmed), whole-skein ceiling,
+  stash offset (whole skeins), insurance-skein rec,
+  per-size-grade cost spread, market-standard yarn
+  quick-loads (Cascade 220, Shibui Silk Cloud, etc.).
+  Research: dye lots are non-reorderable (Lion Brand);
+  buy 10-15% extra (Mary Maxim 2026); stash apps exist
+  but none pattern-aware (Yarnventory/YarnBuddy); YarnSub
+  not pattern-aware.
+  646 tests (38 files), typecheck + build green; verified
+  in-browser (1,903 yd base, 13% buffer, 10 skeins @ $14.99
+  = $150, $90-$150 across grades).
 - [CHK-036] 0c0aff0 — Partners — Yarn Partners & Deal Evaluator
   (35th workspace tab, 'Partners'):
   Session-36 research (see research/competitors-session-36-
