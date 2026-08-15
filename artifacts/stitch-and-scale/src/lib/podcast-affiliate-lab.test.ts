@@ -151,6 +151,32 @@ describe('analyzePodcastAffiliate', () => {
     expect(b.cpmBreakEvenDownloads).toBeCloseTo(a.cpmBreakEvenDownloads / 2);
   });
 
+  it('S182: platform cut prices converted sales only — a cut on all clicks double-charges', () => {
+    // Known-value check (defaults: episodesPerMonth = 4): 40 clicks/episode ×
+    // 4 episodes × 0.05 conversion × $40 AOV × 0.10 commission = $32 converted
+    // commission gross per month. The program's platform takes 30% of the
+    // *commission on converted sales* — $9.60 — so net must be 32 × 0.7 =
+    // 22.40 minus the fixed show costs. If the cut priced all clicks instead,
+    // net would be lower (the defect class).
+    const res = analyzePodcastAffiliate(
+      base({
+        adSlotsPerEpisode: 0,
+        readsPerMonth: 0,
+        monthlyCosts: 10,
+        setupCosts: 120,
+        programs: [
+          { name: 'X', commission: 0.1, clicksPerEpisode: 40, conversionRate: 0.05, aov: 40, platformCut: 0.3 },
+        ],
+      }),
+    );
+    const aff = res.lanes.find((l) => l.label === 'Affiliate programs')!;
+    expect(aff.grossMonthly).toBeCloseTo(32, 6);
+    // S182-correct: cut applies to converted value only
+    expect(aff.netMonthly).toBeCloseTo(32 * 0.7 - 10 - 120 / 12, 6);
+    // The old defect (cut on all clicks, weighted by clicks alone) would yield:
+    // cut = 40×4×40×0.1×0.3 = 19.2 → net 12.8 − costs — strictly worse.
+    expect(aff.netMonthly).toBeGreaterThan(12.8 - 10 - 120 / 12 + 0.0001);
+  });
   it('platform cuts reduce the affiliate lane', () => {
     const a = analyzePodcastAffiliate(
       base({

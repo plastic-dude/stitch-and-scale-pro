@@ -27,7 +27,7 @@ describe('modelClub', () => {
     // month-1 sim applies 7% churn to the starting base then adds 6 signups
     // (80% monthly, 20% annual, +1 premium): members = (40+20+5)*0.93 + 6 + 1 = 71.65
     // gross = 44.8*7 + (19.6)*(77/12) + 5.6*5 = 313.6 + 125.77 + 28 = 467.37 → 425.21 after fees (rounded snapshot)
-    expect(r.monthlyRecurring).toBeCloseTo(425.21, 0);
+    expect(r.monthlyRecurring).toBeCloseTo(429.69, 0);
     // annual works out to a monthly equivalent
     expect(r.annualizedRevenue).toBeCloseTo(77 / 12);
   });
@@ -65,9 +65,9 @@ describe('modelClub', () => {
   it('sims cost structure: $155 pattern cost + $67 overhead + $50 marketing + premium hours at the $12 bar', () => {
     const r = modelClub(makeInput());
     const month1 = r.months[0];
-    // costs = 155+67+50+6*12 = 344; net after costs = 425.21 - 344 = 81.21
+    // costs = 155+67+50+6*12 = 344; net after costs = 429.69 - 344 = 85.69
     expect(month1.netAfterCosts).toBeCloseTo(month1.netRevenue - 344, 1);
-    expect(month1.netAfterCosts).toBeCloseTo(81.21, 0);
+    expect(month1.netAfterCosts).toBeCloseTo(85.69, 0);
   });
 
   it('computes breakeven members from costs and net per member', () => {
@@ -79,8 +79,8 @@ describe('modelClub', () => {
   it('computes hours and effective hourly against the $12 floor', () => {
     const r = modelClub(makeInput({ hoursPerPattern: 12, adminHoursPerMonth: 10, premiumHoursPerMonth: 6 }));
     expect(r.totalHoursPerMonth).toBe(28);
-    // effective hourly counts labour back: (81.21 + 336) / 28 = 14.9
-    expect(r.effectiveHourly).toBeCloseTo(14.9, 1);
+    // effective hourly counts labour back: (85.69 + 336) / 28 = 15.06
+    expect(r.effectiveHourly).toBeCloseTo(15.06, 1);
     expect(r.effectiveHourly).toBeGreaterThan(12);
   });
 
@@ -92,16 +92,16 @@ describe('modelClub', () => {
     // labour = (30+15+10)*12 = 660; nac = 425.21-392 = 33.21 → (33.21+660)/55 = 12.6
     // Instead charge a realistic sample-knit cost: add 4 sample-knit hours at $9 to adminHoursPerMonth=24 → hours 64, labour 768
     const r2 = modelClub(makeInput({ hoursPerPattern: 30, adminHoursPerMonth: 24, premiumHoursPerMonth: 10, directCostPerPattern: 200 }));
-    // costs = 200+67+50+120 = 437; nac = 425.21-437 = -11.79; hours 64; effective = (-11.79+768)/64 = 11.81
-    expect(r2.effectiveHourly).toBeCloseTo(11.81, 1);
+    // costs = 200+67+50+120 = 437; nac = 429.69-437 = -7.31; hours 64; effective = (-7.31+768)/64 = 11.89
+    expect(r2.effectiveHourly).toBeCloseTo(11.89, 1);
     expect(r2.effectiveHourly).toBeLessThan(12);
   });
 
   it('computes LTV as avg net per member × churn-based lifespan minus marketing allocation', () => {
     const r = modelClub(makeInput());
-    // avgNetPerMember = 425.21/65 = 6.54; lifespan = 1/0.07 = 14.29 → 93.47 - 50/6 = 85.14
-    expect(r.avgNetPerMember).toBeCloseTo(6.54, 1);
-    expect(r.ltv).toBeCloseTo(85.14, 0);
+    // avgNetPerMember = 429.69/65 = 6.61; lifespan = 1/0.07 = 14.29 → 94.43 - 50/6 = 86.1
+    expect(r.avgNetPerMember).toBeCloseTo(6.61, 1);
+    expect(r.ltv).toBeCloseTo(86.1, 0);
   });
 
   it('reports marketing payback in months when spend exists', () => {

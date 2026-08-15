@@ -11,7 +11,9 @@
  *     no annual refunds, 2-tier ladder (club + Stitch Society premium
  *     tier with priority support, library, community).
  *   - Mediaperuana cost model: sweater = 55 hours; $155 direct costs
- *     ($40 tech edit + $40 model + $75 yarn); Ravelry nets ~95%.
+ *     ($40 tech edit + $40 model + $75 yarn); Ravelry nets ~96% after the
+ *     3.5% commission and PayPal processing (audited in the Take-Rate War
+ *     Lab — see fee-registry.ts; the old "~95%" figure is retired by CHK-088).
  *
  * The flaw we are converting into a strength: designers announce "$7 a
  * month" with no idea how many members churn makes the club die, what the
@@ -20,7 +22,9 @@
  */
 
 export const HOURS_FLOOR = 12; // cited professional floor ($12/hr)
-export const PLATFORM_NET_PCT = 0.95; // Ravelry-style processing
+// Ravelry at club scale ($30–$1,500/mo band): 1 − 3.5% commission − 2.9% −
+// $0.30 PayPal ≈ 96% on a $7 member price. Audited source: fee-registry.ts.
+export const PLATFORM_NET_PCT = 0.96;
 export const CHURN_MO_GOOD = 0.045; // 78% retained at month 3 → ~4.5%/mo
 export const CHURN_MO_TYPICAL = 0.07; // 65% retained at month 3 → ~7%/mo
 export const CHURN_MO_POOR = 0.1; // ~25–35%/yr+ typical small-creator drift

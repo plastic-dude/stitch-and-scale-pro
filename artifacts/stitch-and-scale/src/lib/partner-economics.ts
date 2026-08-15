@@ -127,8 +127,11 @@ export const WPK_ACCESSORY_RATE_MAX = 700;
 export const MARKER_GARMENT_RATE_MIN = 400;
 export const MARKER_GARMENT_RATE_MAX = 1400;
 
-/* Marketplace net: typical fees are 15% (Ravelry/Etsy after listing) — used as the
-   "self-publish baseline" for comparing partnership value against selling it yourself. */
+/* Marketplace self-publish baseline: the audited take rates live in
+   fee-registry.ts (Take-Rate War Lab). Etsy ≈21% at $4 → ≈15% at $8;
+   Ravelry 3.5% only inside $30–$1,500/mo (else $0); LoveCrafts 2% + $0.20.
+   15% remains the conservative midpoint for a typical $8 pattern; do not
+   re-read it as a universal flat rate (S250 doc drift, retired by CHK-088). */
 export const MARKETPLACE_FEE_PCT = 15;
 
 /* LYS Day is annual, late April. */

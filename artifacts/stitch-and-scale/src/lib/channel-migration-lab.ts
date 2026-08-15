@@ -75,6 +75,8 @@ export interface ChannelMigrationInput {
   salesPerMonth: number;
   /** Expected sales per month the pattern would ADD on the target channel (0 = pure migration). */
   addedSalesPerMonth: number;
+  /** Sales per month that FOLLOW the move from the current channel (0 = copy scenario; > 0 = true migration). */
+  migratedSalesPerMonth: number;
   /** Hours to re-list the pattern on the target channel: new photos, SEO rewrite, description, setup. */
   migrationHours: number;
   /** Your opportunity rate $/hour (what those hours earn doing grading/selling work instead). */
@@ -94,6 +96,7 @@ export const DEFAULT_MIGRATION: ChannelMigrationInput = {
   fromChannel: DEFAULT_CHANNEL_KEY,
   salesPerMonth: 8,
   addedSalesPerMonth: 3,
+  migratedSalesPerMonth: 0,
   migrationHours: 4,
   hourlyRate: 25,
   newChannelMonthlyFee: 0,
@@ -167,9 +170,22 @@ export function analyzeChannelMigration(input: ChannelMigrationInput): ChannelMi
   // Migration cost: one-time hours × rate.
   const migrationCost = input.migrationHours * input.hourlyRate;
 
-  // Delta: added sales on target net their channel rate; existing sales unaffected in a
-  // copy scenario. Subtract new monthly fixed fee.
-  const deltaNetPerMonth = input.addedSalesPerMonth * targetNet - input.newChannelMonthlyFee;
+  // S160 fix — two distinct scenarios share one model:
+  //   (copy)    the pattern is added to the target; existing sales stay put.
+  //             Delta = added volume × target net − new monthly fixed fee.
+  //   (migrate) a share of the current volume FOLLOWS the move; the old channel
+  //             loses those sales. The delta must also carry the per-sale spread
+  //             on the migrated volume: each migrated unit earns (targetNet −
+  //             fromNet) more OR less — the old math ignored this entirely and
+  //             could report a win on a channel that is worse per sale.
+  const migratedFromCurrent = Math.min(
+    input.migratedSalesPerMonth,
+    Math.max(0, input.salesPerMonth),
+  );
+  const deltaNetPerMonth =
+    input.addedSalesPerMonth * targetNet +
+    migratedFromCurrent * perSaleSpread -
+    input.newChannelMonthlyFee;
   const paybackMonths = deltaNetPerMonth > 0 ? migrationCost / deltaNetPerMonth : Infinity;
   const yearOneDelta = deltaNetPerMonth * 12 - migrationCost;
 
@@ -180,7 +196,7 @@ export function analyzeChannelMigration(input: ChannelMigrationInput): ChannelMi
     flags.push({
       code: 'CM-01',
       title: 'Moving without adding sales',
-      detail: `At 0 expected new sales on the target, this is a pure migration — no revenue gain, just ${input.migrationHours} hours ($${migrationCost.toFixed(0)}) moved between storefronts. Migration only pays off if the target's per-sale net is higher AND your buyers actually follow you. If the audience isn't on the target channel, the move costs money without earning any.`,
+      detail: `At 0 expected new sales on the target, this is a pure migration — the only ongoing revenue effect is the per-sale spread on the ${migratedFromCurrent.toFixed(0)} units a month that follow you: $${(migratedFromCurrent * perSaleSpread).toFixed(0)}/mo. If the target nets less per sale than where you are, a migration that loses volume is a compounding loss, not a break-even. Migration only pays off if the target's per-sale net is higher AND your buyers actually follow you.`,
     });
   }
 

@@ -222,6 +222,36 @@ describe('fmt$', () => {
   });
 });
 
+describe('S160 — migrated volume carries the per-sale spread', () => {
+  it('delta carries the spread on migrated units, not just added sales', () => {
+    // Etsy → the best alternative (target is picked by the model; at $7 from
+    // Etsy that is LoveCrafts). Migrating 5 units/mo with 0 added sales must
+    // produce delta = 5 × (target net − Etsy net) − 0, not 0.
+    const r = analyzeChannelMigration(base({ addedSalesPerMonth: 0, migratedSalesPerMonth: 5, newChannelMonthlyFee: 0 }));
+    const fromNet = r.nets.find(n => n.channel.key === 'etsy')!.netPerSale;
+    const target = r.nets.filter(n => n.channel.key !== 'etsy').sort((a, b) => b.netPerSale - a.netPerSale)[0].netPerSale;
+    expect(r.deltaNetPerMonth).toBeCloseTo(5 * (target - fromNet), 6);
+    expect(r.yearOneDelta).toBeCloseTo(5 * (target - fromNet) * 12 - r.migrationCost, 6);
+  });
+  it('a copy (added sales, no migration) is unaffected by the migrated field', () => {
+    const a = analyzeChannelMigration(base({ addedSalesPerMonth: 3, migratedSalesPerMonth: 0, newChannelMonthlyFee: 0 }));
+    const b = analyzeChannelMigration(base({ addedSalesPerMonth: 3, migratedSalesPerMonth: 0, newChannelMonthlyFee: 5 }));
+    expect(b.deltaNetPerMonth).toBeCloseTo(a.deltaNetPerMonth - 5, 6);
+  });
+  it('migrated volume is clamped to current sales (cannot lose more than you have)', () => {
+    const a = analyzeChannelMigration(base({ addedSalesPerMonth: 0, migratedSalesPerMonth: 99, newChannelMonthlyFee: 0 }));
+    const b = analyzeChannelMigration(base({ addedSalesPerMonth: 0, migratedSalesPerMonth: 8, newChannelMonthlyFee: 0 }));
+    // salesPerMonth default is 8 — migrating 99 clamps to 8
+    expect(a.deltaNetPerMonth).toBeCloseTo(b.deltaNetPerMonth, 6);
+  });
+  it('CM-01 still fires on pure migration and prices the migrated spread', () => {
+    const r = analyzeChannelMigration(base({ addedSalesPerMonth: 0, migratedSalesPerMonth: 2 }));
+    expect(r.flags.map(f => f.code)).toContain('CM-01');
+    const cm01 = r.flags.find(f => f.code === 'CM-01')!;
+    expect(cm01.detail.includes('2 units')).toBe(true);
+  });
+});
+
 describe('channel table completeness', () => {
   it('covers 5 channels: Etsy, Ravelry, LoveCrafts, own site, Pattern by Etsy', () => {
     expect(Object.keys(CHANNELS)).toHaveLength(5);

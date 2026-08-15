@@ -185,17 +185,20 @@ export function analyzeDealMath(input: DealMathInput): DealMathResult {
     let lockout = 0;
     switch (s) {
       case 'full_buyout':
-        cash = input.fixedFee + input.yarnSupportValue;
+        // S251 fix: yarn support is a cost offset, never revenue — counted
+        // only once, via costAfterYarn below. Adding it here AND reducing
+        // cost below it would double-count the same yarn (S123 regression).
+        cash = input.fixedFee;
         royal = royaltyRev;
         // buyout is perpetual: every future self-published sale is gone.
         lockout = locked + ownNet;
         break;
       case 'exclusive_flat':
-        cash = input.fixedFee + input.yarnSupportValue;
+        cash = input.fixedFee;
         lockout = locked;
         break;
       case 'advance_royalty':
-        cash = input.fixedFee + input.yarnSupportValue;
+        cash = input.fixedFee;
         royal = royaltyRev;
         // concurrent selling: no lockout — the designer keeps their own channel
         // and the company's sales are the company's revenue, not the designer's.

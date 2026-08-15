@@ -172,9 +172,24 @@ export function analyzePodcastAffiliate(input: PodcastInput): PodcastResult {
     (s, p) => s + p.clicksPerEpisode * input.episodesPerMonth * Math.max(0, Math.min(1, p.conversionRate)) * p.aov * p.commission,
     0,
   );
+  // S182 fix: the platform cut prices the SALES a program produces (converted
+  // clicks), not raw clicks — so the cut numerator must carry the same
+  // conversionRate weighting as affGross. Clicks never converted sell nothing,
+  // so no platform takes anything on them.
   const affCut =
     affGross > 0
-      ? input.programs.reduce((s, p) => s + p.clicksPerEpisode * p.aov * p.commission * p.platformCut, 0) / Math.max(1, affClicks) * affClicks / affGross
+      ? input.programs.reduce(
+          (s, p) =>
+            s +
+            p.clicksPerEpisode *
+              input.episodesPerMonth *
+              Math.max(0, Math.min(1, p.conversionRate)) *
+              p.aov *
+              p.commission *
+              p.platformCut,
+          0,
+        ) /
+        affGross
       : 0;
   const affNet = affGross * (1 - (input.programs.length > 0 ? affCut : 0)) - input.monthlyCosts - input.setupCosts / 12;
 

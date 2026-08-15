@@ -102,6 +102,7 @@ export function ChannelMigrationLabCard({ project }: { project: PatternProject }
             <NumField id="cm-price" label="Pattern price" value={input.price} onChange={n => set('price', n)} step={0.5} suffix="$" />
             <NumField id="cm-sales" label="Sales / mo now" value={input.salesPerMonth} onChange={n => set('salesPerMonth', n)} suffix="sales" />
             <NumField id="cm-added" label="Expected added sales / mo on target" value={input.addedSalesPerMonth} onChange={n => set('addedSalesPerMonth', n)} suffix="sales" />
+            <NumField id="cm-migrated" label="Sales / mo that follow the move" value={input.migratedSalesPerMonth} onChange={n => set('migratedSalesPerMonth', n)} suffix="sales" />
             <div className="space-y-1.5">
               <Label htmlFor="cm-from" className="text-xs">Lives on</Label>
               <select id="cm-from" value={input.fromChannel}
@@ -111,7 +112,7 @@ export function ChannelMigrationLabCard({ project }: { project: PatternProject }
               </select>
             </div>
           </div>
-          <p className="text-xs text-muted-foreground italic">Added sales = 0 means a pure migration (your buyers move with you); any positive number means a copy onto a second storefront, which is what Etsy↔Ravelry sellers actually do.</p>
+          <p className="text-xs text-muted-foreground italic">Added sales = new storefront revenue; migrated sales = buyers that follow the move (they leave the old channel, so the delta carries the per-sale spread on every unit that moves). Both at 0 means a pure migration paying only in fee spread.</p>
         </section>
 
         <section className="space-y-3">

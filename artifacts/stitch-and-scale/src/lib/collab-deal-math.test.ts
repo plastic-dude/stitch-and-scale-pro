@@ -149,6 +149,31 @@ describe('analyzeDealMath — channel comparison and counter letter', () => {
     expect(r.counterLetter.length).toBeGreaterThan(120);
   });
 
+  it('S123/S251: yarn support is counted exactly once — as a cost offset, never added to cash', () => {
+    // The historical defect: flat/royalty/buyout branches added yarnSupportValue
+    // to cash AND reduced costs by it — the same $150 of yarn counted twice.
+    // With the fix, inflow must be identical whether yarnSupportValue is $0 or $150;
+    // the yarn only improves brandNet by shrinking costAfterYarn (once).
+    const withYarn = analyzeDealMath(base({ yarnSupportValue: 150 }));
+    const without = analyzeDealMath(base({ yarnSupportValue: 0 }));
+    expect(withYarn.deal.cash).toBe(without.deal.cash);
+    expect(withYarn.deal.grossInflow).toBeCloseTo(without.deal.grossInflow, 6);
+    expect(withYarn.deal.royaltyRevenue).toBeCloseTo(without.deal.royaltyRevenue, 6);
+    // and the one allowed improvement: costAfterYarn is $150 lower → net $150 better
+    expect(withYarn.deal.brandNet).toBeCloseTo(without.deal.brandNet + 150, 6);
+  });
+  it('S123 regression across all four structures at non-zero yarn value', () => {
+    for (const structure of ['full_buyout', 'exclusive_flat', 'advance_royalty', 'yarn_support'] as const) {
+      const withY = analyzeDealMath(base({ structure, yarnSupportValue: 200 }));
+      const without = analyzeDealMath(base({ structure, yarnSupportValue: 0 }));
+      // cash must never absorb the yarn — it is a cost offset only
+      expect(withY.deal.cash).toBe(without.deal.cash);
+      // exactly-once accounting: brandNet improves by at most the yarn value
+      const gap = withY.deal.brandNet - without.deal.brandNet;
+      expect(gap).toBeGreaterThanOrEqual(0);
+      expect(gap).toBeLessThanOrEqual(200 + 0.005);
+    }
+  });
   it('STRUCTURE_LABELS covers all four structures', () => {
     expect(Object.keys(STRUCTURE_LABELS).sort()).toEqual(
       ['advance_royalty', 'exclusive_flat', 'full_buyout', 'yarn_support'],
