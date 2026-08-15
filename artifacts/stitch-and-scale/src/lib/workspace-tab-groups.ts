@@ -110,6 +110,8 @@ export const TAB_GROUPS: Record<string, TabGroup> = {
   showroi: "business",
   "pod-patterns": "channels",
   "podcast-affiliate": "launch",
+  // Record room — the ledger that every future record tab plugs into.
+  designledger: "business",
 };
 
 export function groupFor(tabValue: string): TabGroup {
