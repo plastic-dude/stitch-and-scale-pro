@@ -183,6 +183,18 @@ function symbolOf(currency: string): { prefix: string; suffix: string } {
   if (currency === "NOK" || currency === "SEK" || currency === "DKK" || currency === "ISK") {
     return { prefix: "", suffix: " kr" };
   }
+  if (currency === "MXN") {
+    return { prefix: "$", suffix: "" };
+  }
+  if (currency === "NGN") {
+    return { prefix: "₦", suffix: "" };
+  }
+  if (currency === "KES") {
+    return { prefix: "KSh ", suffix: "" };
+  }
+  if (currency === "ZAR") {
+    return { prefix: "R ", suffix: "" };
+  }
   return { prefix: "", suffix: "" };
 }
 
