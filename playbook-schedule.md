@@ -64,6 +64,18 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - [CHK-083] 0ee1514 — Chat-first Receipt Lab (78th tab).
 - [CHK-084] e71b85a — QA batch from the reviewer's manual run
 - [CHK-085] 887a3ee — Deep pain-point research cycle on
+- [CHK-087] 1d414d5 — Count-drift fix. Measured the actual
+  workspace tab count: 77 unique TabsTrigger/TabsContent pairs
+  in project-workspace.tsx and 77 TAB_GROUPS entries — the
+  inherited "79 tabs" assumption was itself off by two (landing
+  said 78, context claimed 79). Landing STATS now 77 labs /
+  1,640+ tests; brand-voice-brief.md + archive-digest.md synced
+  (record-keeping-gap-map.md left as historical audit note).
+  New regression guard count-drift.test.ts pins the landing
+  claim to the TAB_GROUPS registry count so the build fails
+  before marketing copy ever diverges again. Gates: typecheck
+  clean, vitest 1,643 tests / 82 files, build green.
+
 - [CHK-086] 70b1b4d — Design Ledger, the record room
   (79th tab, Business & Community ·23 now).
   Engine design-ledger.ts + card + 17 tests: (1) design
