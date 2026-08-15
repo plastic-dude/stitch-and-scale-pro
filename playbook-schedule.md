@@ -57,6 +57,44 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - [CHK-076] f24bcc6 — Intl Pricing Lab (74th tab):
 - [CHK-077] ac9d64f — Test Knit Lab (75th tab):
 - [CHK-078] 798fed5 — Wholesale Price List Lab (76th tab):
+- [CHK-079] 9d0011c — QA #49 / S224 closed — Intl Pricing Lab
+  fmtMoney dead-currency display fix: the select already offered
+  CHF/BRL/INR/NOK/SEK/DKK/ISK (added in CHK-077) but every number
+  on screen still hard-coded '$'. Now: fmtMoney exported and
+  covers all 13 select currencies (CHF prefix, R\$, ₹, kr suffix
+  NOK/SEK/DKK/ISK, ¥ for JPY/CNY/KRW); the four stat boxes use
+  engine-computed formatted fields; the markets table's
+  net-now/net-parity columns render each market's own currency
+  (+7 fmt fields on IntlPricingResult).
+  +19 tests (suite 1,599 / 78 files); typecheck + vitest +
+  build green; verified in browser (Nordics row shows
+  '9.00 kr', BRL 'R\$ 4.50', INR '₹10.00').
+  Screenshot: docs/screenshots/intl-pricing-fmtmoney-fix.webp.
+- [CHK-078] 798fed5 — Wholesale Price List Lab (76th tab):
+  builds & stress-tests the indie wholesale line sheet for
+  LYS/boutique sales — the side of the business nobody
+  prices honestly. Keystone discipline (retail ÷ keystone
+  floor, COGS×4 ≤ retail gate), order-value discount rungs
+  with margin after marketplace fees, per-order admin
+  (packaging/freight/invoicing), Net 30 working-capital
+  drag, Faire-style 15% + $10 first-customer channel
+  economics, minimum-order gate (must net positive after
+  admin, not just product), break-even order volume vs
+  reality, WL-01..WL-08 watch-out flags, 5-rung verdict
+  ladder (wholesale-ready / pricing-fails / min-order /
+  terms / thin margins) with quoted playbooks for each.
+  Research lens: Faire's commission walls + Etsy Wholesale
+  shutdown (2017) → the own line sheet is the durable
+  asset; quote marketplaces for discovery, route reorders
+  direct at 0% channel.
+  +24 lib tests; suite 1,580 tests / 78 files;
+  typecheck + vitest + build green. Screenshots:
+  docs/screenshots/wholesale-pricelist-lab-{tab,card}.webp.
+  Research: research/competitors-session-78-wholesale-
+  pricelist.md.
+  Note: deferred issue #49 (QA cycle 43, MINOR) — Intl
+  Pricing Lab fmtMoney dead currencies (CHF/SEK/NOK/DKK/
+  BRL/INR show bare numbers) — display-only fix, parked.
   builds & stress-tests the indie wholesale line sheet for
   LYS/boutique sales — the side of the business nobody
   prices honestly. Keystone discipline (retail ÷ keystone
