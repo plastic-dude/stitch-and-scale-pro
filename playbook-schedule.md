@@ -63,6 +63,44 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - [CHK-082] 2e18d3c — Honest-founder landing rewrite +
 - [CHK-083] 0ee1514 — Chat-first Receipt Lab (78th tab).
 - [CHK-084] e71b85a — QA batch from the reviewer's manual run
+- [CHK-085] 887a3ee — Deep pain-point research cycle on
+- [CHK-086] 70b1b4d — Design Ledger, the record room
+  (79th tab, Business & Community ·23 now).
+  Engine design-ledger.ts + card + 17 tests: (1) design
+  pipeline tracker Concept→In Progress→Sampled→Published→
+  Archived with per-design revenue/sales/cost/profit
+  rollup, including automatic attribution of Receipt Lab
+  sales by pattern-name match and break-even copies math;
+  (2) cost log with 10 expense categories, optional
+  per-design link, monthly P&L; (3) studio settings
+  (name, 13 currencies); (4) accountant-ready CSV export
+  (designs + costs + sales); (5) auth-bridge field
+  placeholder 'not signed in yet' — the Neon/Supabase
+  seam: when sign-in arrives, testers' account ids link
+  local-first data to the cloud copy with no
+  re-creation. Bugged out twice and fixed: rollup
+  monthly-P&L missing attributed revenue (all sales now
+  contribute to monthly rows, refunds subtract, quotes
+  excluded), and a draft rehydration double-count in
+  receipt analysis (effective-sale guard). Quality:
+  typecheck clean, 1,641 tests / 81 files, build green;
+  verified live — design added, cost recorded, Receipt
+  Lab sale auto-attributed, monthly P&L correct.
+  record-keeping (docs/record-keeping-gap-map.md).
+  19 sources; found five money-leaking failures: (1) margin
+  blindness — a designer made $47k gross / $43k expenses and
+  kept $3k; (2) the spreadsheet graveyard — trackers built
+  and abandoned everywhere; (3) tax paralysis incl. US
+  hobby-loss rule — accountant-ready export needed; (4) the
+  wholesale AR nightmare (40 net-30 retailers, $150/mo app
+  alternative); (5) sample shrinkage on trunk shows. Bonus:
+  2020 Ravelry exodus + dead platforms prove local-first is
+  a marketing headline ('your records live on your
+  machine'); Craftybase trust objection validates our
+  local-first wedge + the costs-vs-market split
+  architecture; avg Ravelry designer earns $203 (72% under
+  $50) — free tier for the hobby majority, paid for the
+  top slice. Verdict: build the Design Ledger.
   report. Issue #51 (S247) fmtMoney EUR/CHF compound key:
   the Intl Pricing Lab's 'Nordics & Switzerland' row was
   rendering bare numbers — now shows e.g. 'EUR9.40 / CHF
