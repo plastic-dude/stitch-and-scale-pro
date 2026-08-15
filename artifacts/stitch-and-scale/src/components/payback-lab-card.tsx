@@ -453,8 +453,8 @@ export function PaybackLabCard(props: { project: PatternProject }) {
             <Stat label="Total net earned" value={fmtMoney(result.totalNet, currency)} />
             <Stat
               label="Patterns paid back"
-              value={result.paidBackCount + " / " + result.publishedCount}
-              muted={result.publishedCount === 0}
+              value={result.paidBackCount + " / " + result.paidBackCountOfRelevant}
+              muted={result.paidBackCountOfRelevant === 0}
             />
           </div>
         </div>

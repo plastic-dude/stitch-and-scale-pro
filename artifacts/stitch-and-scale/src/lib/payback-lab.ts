@@ -116,6 +116,8 @@ export interface PaybackResult {
   totalNet: number;
   /** how many designs have paid back their full investment */
   paidBackCount: number;
+  /** patterns that have real skin in the game: investment > 0 or at least one sale */
+  paidBackCountOfRelevant: number;
   publishedCount: number;
 }
 
@@ -169,6 +171,7 @@ export function computePayback(input: PaybackInput, nowDate: string = new Date()
   let totalInvestment = 0;
   let totalNet = 0;
   let paidBackCount = 0;
+  let paidBackOfRelevant = 0;
 
   for (const d of input.designs) {
     const overheadShare = d.status === "published" ? overheadPerDesign : 0;
@@ -191,11 +194,16 @@ export function computePayback(input: PaybackInput, nowDate: string = new Date()
     }
 
     // Defensive: reachable when copies finite (mirrors design-ledger.breakEven style).
-    const paidBack = acc.copies >= recoupCopies && recoupCopies !== Infinity;
+    // A cost-free design with zero sales is not "paid back" — it just has
+    // no investment yet. It only graduates once it has sold something or
+    // has recouped real money invested.
+    const paidBack =
+      acc.copies >= recoupCopies && recoupCopies !== Infinity && (acc.copies > 0 || investment > 0);
     const paidBackTime = paidBack;
     const deficit = twoDec(investment - acc.net);
     const surplus = twoDec(Math.max(0, acc.net - investment));
     if (paidBack) paidBackCount += 1;
+    if (acc.copies > 0 || investment > 0) paidBackOfRelevant += 1;
 
     let monthsSince = 0;
     if (acc.lastDate && acc.lastDate < nowDate) {
@@ -235,6 +243,7 @@ export function computePayback(input: PaybackInput, nowDate: string = new Date()
     totalInvestment: twoDec(totalInvestment),
     totalNet: twoDec(totalNet),
     paidBackCount,
+    paidBackCountOfRelevant: paidBackOfRelevant,
     publishedCount: published.length,
   };
 }
