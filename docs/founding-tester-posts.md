@@ -6,7 +6,7 @@ The strategy behind these drafts is one funnel, two asks. The demo link is the i
 
 ## Ravelry design forum / group
 
-I knit. I also write code. For a while I kept a spreadsheet for the part of pattern design nobody talks about — what a design actually costs before it's published. That spreadsheet turned into a tool.
+I don't knit — my late mother did — but I write code. For a while I kept a spreadsheet for the part of pattern design nobody talks about — what a design actually costs before it's published. That spreadsheet turned into a tool.
 
 It grades your sizes, works out your yarn yield and true unit cost, prices across marketplaces with their actual take rates, builds wholesale line sheets that hold up against keystone math, and translates each test knitter's gauge across your whole size range. Seventy-five labs, 1,600+ tests, everything runs in your browser — your patterns never leave your machine.
 

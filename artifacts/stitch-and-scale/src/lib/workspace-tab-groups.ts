@@ -73,7 +73,7 @@ export const TAB_GROUPS: Record<string, TabGroup> = {
   "release-timing": "launch",
   preorder: "launch",
   transbundle: "launch",
-  "box-inclusion": "launch",
+  "box-inclusion": "fit",
   "magazine-submission": "launch",
   // Selling Channels
   publish: "channels",
@@ -107,8 +107,8 @@ export const TAB_GROUPS: Record<string, TabGroup> = {
   "workshop-teach": "business",
   teach: "business",
   showroi: "business",
-  "pod-patterns": "business",
-  "podcast-affiliate": "business",
+  "pod-patterns": "channels",
+  "podcast-affiliate": "launch",
 };
 
 export function groupFor(tabValue: string): TabGroup {

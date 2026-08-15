@@ -221,8 +221,9 @@ export default function Landing() {
           <h2 className="mt-3 text-2xl font-bold">Founding testers</h2>
           <p className="mt-2 text-sm text-muted-foreground">
             This tool is before launch, which means the first small group of designers
-            gets to shape it — and its pricing. Join as a founding tester: try the demo,
+              gets to shape it — and its pricing. Join as a founding tester: try the demo,
             tell me what you'd pay and what you'd change, and hear about launch first.
+            Testers who help find the real bugs get a significant discount when paid tiers ship.
             No fee, no spam — just honest answers.
           </p>
           {submitted ? (
@@ -249,6 +250,17 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* Who built this — honest-founder disclosure (pitch playbook core rule) */}
+      <section className="mx-auto max-w-3xl px-4 py-16">
+        <h2 className="text-center text-2xl font-bold">Who built this?</h2>
+        <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+          I should tell you the unusual part up front: <strong className="text-foreground">I don't know how to knit.</strong> I'm a developer, not a designer. My late mother knitted and crocheted, and what she taught me was that making things for people with your hands is a form of care. When I looked into the independent pattern-design world, I saw that care being buried under hundreds of unpaid hours of spreadsheet math — grading, yield, pricing, wholesale — the business side nobody builds tools for.
+        </p>
+        <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+          So I did the thing I can actually do: I wrote the math so designers don't have to fight Excel at 11&nbsp;PM. What I can't do is pretend I understand your yarn, your fit, your eye. That's what this founding-tester group is for — the designers in the room checking that what I built is actually right. If you find something wrong in it, tell me. I built this to be torn apart and rebuilt better, not to be worshipped.
+        </p>
+      </section>
+
       <Separator />
 
       {/* Footer */}
@@ -262,7 +274,7 @@ export default function Landing() {
             Local-first: your projects live in your browser until accounts ship.
           </div>
           <div>
-            Built by a knitwear designer who also writes code — David Mokwunye.
+            Built by a developer whose late mother knitted — David Mokwunye (Emlux).
           </div>
         </div>
       </footer>
