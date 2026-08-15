@@ -459,8 +459,7 @@ export function analyzeReceipt(input: ReceiptLabInput): ReceiptLabResult {
     monthMap.set(month, entry);
   }
 
-  const led = Array.from(monthMap.values()).sort((a, b) => (a.month < b.month ? -1 : 1));
-
+  const led = Array.from(monthMap.values()).sort((a, b) => (a.month < b.month ? -1 : a.month > b.month ? 1 : 0));
   const title = DOC_KIND_LABELS[draft.kind] + " · " + (draft.patternName || draft.items[0]?.name || "Sale") + " #" + draft.docNumber;
   const total = fees.grossTotal;
   const balanceDue = draft.kind === "quote" ? total - clamp(draft.depositReceived, 0, total) : 0;
@@ -498,6 +497,36 @@ export function nextDocNumber(ledger: SavedSale[], kind: ReceiptDocKind, current
     if (isFinite(num) && num > max) max = num;
   }
   return prefix + "-" + String(max + 1).padStart(3, "0");
+}
+
+/**
+ * Canonical monthly ledger rows from raw saved sales — the exact math the
+ * Receipt Lab shows (quotes excluded; refunds subtract; month = date.slice(0,7)).
+ * Reused by the Brag Card engine (CHK-091) so cards always match the lab.
+ */
+export function computeMonthlyLedgerRows(ledger: SavedSale[]): MonthlyLedgerRow[] {
+  const monthMap = new Map<string, MonthlyLedgerRow>();
+  const rows = (ledger ?? []).filter((r) => r && r.kind);
+  for (const row of rows) {
+    const month = (row.date || "").slice(0, 7);
+    if (!month) continue;
+    if (row.kind !== "receipt" && row.kind !== "refund") continue;
+    const existing = analyzeReceiptFees(row);
+    const entry = monthMap.get(month) ?? { month, salesCount: 0, revenue: 0, refunds: 0, grossRevenue: 0, feesPaid: 0, profit: 0 };
+    entry.grossRevenue = twoDec(entry.grossRevenue + existing.grossTotal);
+    entry.feesPaid = twoDec(entry.feesPaid + existing.platformFee + existing.processingFee);
+    if (row.kind === "receipt") {
+      entry.salesCount += 1;
+      entry.revenue = twoDec(entry.revenue + existing.grossTotal);
+      entry.profit = twoDec(entry.profit + existing.netAfterFees);
+    } else if (row.kind === "refund") {
+      entry.refunds = twoDec(entry.refunds + existing.grossTotal);
+      entry.revenue = twoDec(entry.revenue - existing.grossTotal);
+      entry.profit = twoDec(entry.profit - existing.netAfterFees);
+    }
+    monthMap.set(month, entry);
+  }
+  return Array.from(monthMap.values()).sort((a, b) => (a.month < b.month ? -1 : a.month > b.month ? 1 : 0));
 }
 
 export const DEFAULT_SALE: SavedSale = {

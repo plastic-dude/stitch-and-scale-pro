@@ -112,6 +112,8 @@ export const TAB_GROUPS: Record<string, TabGroup> = {
   "podcast-affiliate": "launch",
   // Record room — the ledger that every future record tab plugs into.
   designledger: "business",
+  // CHK-091 — Brag Cards: shareable stat cards, launch group.
+  bragcard: "launch",
 };
 
 export function groupFor(tabValue: string): TabGroup {

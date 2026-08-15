@@ -11,10 +11,10 @@ describe("tab registry integrity", () => {
     expect(() => assertTabRegistryIntegrity()).not.toThrow();
   });
 
-  it("contains exactly 77 entries matching TAB_GROUPS one-to-one", () => {
+  it("contains exactly 78 entries matching TAB_GROUPS one-to-one", () => {
     const values = TAB_REGISTRY.map((t) => t.value);
     const keys = Object.keys(TAB_GROUPS);
-    expect(values.length).toBe(77);
+    expect(values.length).toBe(78);
     expect(values.length).toBe(keys.length);
     const dupes = values.filter((v, i) => values.indexOf(v) !== i);
     expect(dupes).toEqual([]);

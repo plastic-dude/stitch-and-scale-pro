@@ -8,7 +8,7 @@
 // array drives both the strip and the content rendering.
 //
 // Invariants enforced by count-drift.test.ts (CHK-087): TAB_REGISTRY must
-// contain exactly 77 entries, every value must be a real TAB_GROUPS key,
+// contain exactly 78 entries (77 at CHK-087, +1 for Brag Cards at CHK-091), every value must be a real TAB_GROUPS key,
 // and every entry must render a real content panel. A dev-time assertion
 // below fails loudly at render if registry and classification ever drift.
 //
@@ -113,6 +113,10 @@ export const TAB_REGISTRY: TabRegistryEntry[] = [
   { value: "gaugefit", label: "Gauge & Fit", group: "fit", icon: "Ruler" },
   { value: "receiptlab", label: "Receipt Lab", group: "pricing", icon: "ReceiptText" },
   { value: "designledger", label: "Design Ledger", group: "business", icon: "BookMarked" },
+  // CHK-091 — Brag Cards: shareable stat cards from the designer's own
+  // ledger (growth-engine feature, founder wishlist). Placed last so
+  // existing strip ordering stays untouched.
+  { value: "bragcard", label: "Brag Cards", group: "launch", icon: "Send" },
 ];
 
 // Dev-time invariants — these fail loudly before a misregistered tab can
