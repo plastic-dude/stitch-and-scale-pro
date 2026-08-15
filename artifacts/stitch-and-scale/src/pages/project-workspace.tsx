@@ -27,81 +27,98 @@ import { Plus, Edit2, Trash2, ArrowRight, Table as TableIcon, Copy, Settings, Ch
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useSettings } from '@/context/SettingsContext';
-import { YarnEstimatorCard } from '@/components/yarn-estimator-card';
-import { IncomeCalculatorCard } from '@/components/income-calculator-card';
-import { PatternDraftCard } from '@/components/pattern-draft-card';
-import { PricingAdvisorCard } from '@/components/pricing-advisor-card';
-import { PublishToolkitCard } from '@/components/publish-toolkit-card';
-import { DealsTabCard } from '@/components/deals-tab-card';
-import { TestKnitCard } from '@/components/test-knit-card';
-import { TechEditCard } from '@/components/tech-edit-card';
-import { FinishGuideCard } from '@/components/finish-guide-card';
-import { LaunchCampaignCard } from '@/components/launch-campaign-card';
-import { TrunkShowCard } from '@/components/trunk-show-card';
-import { TranslationBundleCard } from '@/components/translation-bundle-card';
-import { PatternClubCard } from '@/components/pattern-club-card';
-import { KitEconomicsCard } from '@/components/kit-economics-card';
-import { SubmissionPipelineCard } from '@/components/submission-pipeline-card';
-import { KalRoiCard } from '@/components/kal-roi-card';
-import { ChannelFunnelCard } from '@/components/channel-funnel-card';
-import { ClubRevenueCard } from '@/components/club-revenue-card';
-import { WholesaleBookCard } from '@/components/wholesale-book-card';
-import { HireVsSelfCard } from '@/components/hire-vs-self-card';
-import { InclusiveSizingCard } from '@/components/inclusive-sizing-card';
-import { PatternLicensePlannerCard } from '@/components/pattern-license-card';
-import { MembershipCard } from '@/components/membership-card';
-import { PromotionCard } from '@/components/promotion-card';
-import { PriceWindowCard } from '@/components/price-window-card';
-import { RetentionCard } from '@/components/retention-card';
-import { CollabEvaluatorCard } from '@/components/collab-evaluator-card';
-import { PlatformMixCard } from '@/components/platform-mix-card';
-import { PodBookCard } from '@/components/pod-book-card';
-import { CopyrightProtectionCard } from '@/components/copyright-protection-card';
-import { TeachEconomicsCard } from '@/components/teach-economics-card';
-import { PartnerEconomicsCard } from '@/components/partner-economics-card';
-import { YarnBuyCalculatorCard } from '@/components/yarn-buy-calculator-card';
-import { KalPlannerCard } from '@/components/kal-planner-card';
-import { SubmissionDeskCard } from '@/components/submission-desk-card';
-import { GradingLabCard } from '@/components/grading-lab-card';
-import { ChartLabCard } from '@/components/chart-lab-card';
-import { TestKnitDeskCard } from '@/components/testknit-desk-card';
-import { LookbookDeskCard } from '@/components/lookbook-desk-card';
-import { SpecSheetLabCard } from '@/components/spec-sheet-lab-card';
-import { SubscriptionDistributionLabCard } from '@/components/subscription-distribution-lab-card';
-import { ListingSeoLabCard } from '@/components/listing-seo-lab-card';
-import { AdBreakEvenCard } from '@/components/ad-break-even-card';
-import { SampleLaunchLabCard } from '@/components/sample-launch-lab-card';
-import { CollabDealMathCard } from '@/components/collab-deal-math-card';
-import { PhotoRoiLabCard } from '@/components/photo-roi-lab-card';
-import { VideoSocialLabCard } from '@/components/video-social-lab-card';
-import { ShowRoiLabCard } from '@/components/show-roi-lab-card';
-import { WholesaleLabCard } from '@/components/wholesale-lab-card';
-import { PreorderCampaignLabCard } from '@/components/preorder-campaign-lab-card';
-import { ListingTestLabCard } from '@/components/listing-test-lab-card';
-import { YarnPoolLabCard } from '@/components/yarn-pool-lab-card';
-import { MembershipSiteLabCard } from '@/components/membership-site-lab-card';
-import { ConventionBoothLabCard } from '@/components/convention-booth-lab-card';
-import { ChannelMigrationLabCard } from '@/components/channel-migration-lab-card';
-import { ReleaseTimingLabCard } from '@/components/release-timing-lab-card';
-import { WorkshopTeachingLabCard } from '@/components/workshop-teaching-lab-card';
-import { ConsignmentRepriceLabCard } from '@/components/consignment-reprice-lab-card';
-import { PatternBundleLabCard } from '@/components/pattern-bundle-lab-card';
-import { RetreatTeachingLabCard } from '@/components/retreat-teaching-lab-card';
-import { PodcastAffiliateLabCard } from '@/components/podcast-affiliate-lab-card';
-import { MagazineSubmissionLabCard } from '@/components/magazine-submission-lab-card';
-import { PricingPsychologyLabCard } from '@/components/pricing-psychology-lab-card';
-import { PodPatternsLabCard } from '@/components/pod-patterns-lab-card';
-import { MarketplaceTakeRateLabCard } from '@/components/marketplace-takerate-lab-card';
-import { BoxInclusionLabCard } from '@/components/box-inclusion-lab-card';
-import { YarnLicensingLabCard } from '@/components/yarn-licensing-lab-card';
-import { GiftCardLabCard } from '@/components/giftcard-lab-card';
-import { WholesalePricelistLabCard } from '@/components/wholesale-pricelist-lab-card';
-import { IntlPricingLabCard } from '@/components/intl-pricing-lab-card';
-import { TestKnitSlotLabCard } from '@/components/testknit-slot-lab-card';
-import { ReceiptLabCard } from '@/components/receipt-lab-card';
-import { DesignLedgerCard } from '@/components/design-ledger-card';
-import { BragCardCard } from '@/components/brag-card-card';
-import { PaybackLabCard } from '@/components/payback-lab-card';
+// CHK-094 bundle fix: lab cards are lazy-loaded on first tab activation.
+// LAB maps each tab value to a dynamic import (each card is a named export,
+// so the import is remapped to { default } for React.lazy). LazyPanel wraps
+// each in Suspense so the main JS chunk no longer carries all 78 labs (was 2.1 MB unbundled).
+function cardLazy(loader: () => Promise<{ default?: React.ComponentType<any> } & Record<string, any>>): () => Promise<{ default: React.ComponentType<any> }> {
+  return () => loader().then((m) => ({ default: m.default ?? Object.values(m)[0] as React.ComponentType<any> }));
+}
+const LAB = {
+  yarn: React.lazy(cardLazy(() => import('@/components/yarn-estimator-card'))),
+  income: React.lazy(cardLazy(() => import('@/components/income-calculator-card'))),
+  draft: React.lazy(cardLazy(() => import('@/components/pattern-draft-card'))),
+  pricing: React.lazy(cardLazy(() => import('@/components/pricing-advisor-card'))),
+  publish: React.lazy(cardLazy(() => import('@/components/publish-toolkit-card'))),
+  testknit: React.lazy(cardLazy(() => import('@/components/test-knit-card'))),
+  techedit: React.lazy(cardLazy(() => import('@/components/tech-edit-card'))),
+  finish: React.lazy(cardLazy(() => import('@/components/finish-guide-card'))),
+  deals: React.lazy(cardLazy(() => import('@/components/deals-tab-card'))),
+  launch: React.lazy(cardLazy(() => import('@/components/launch-campaign-card'))),
+  trunkshow: React.lazy(cardLazy(() => import('@/components/trunk-show-card'))),
+  transbundle: React.lazy(cardLazy(() => import('@/components/translation-bundle-card'))),
+  patternclub: React.lazy(cardLazy(() => import('@/components/pattern-club-card'))),
+  kits: React.lazy(cardLazy(() => import('@/components/kit-economics-card'))),
+  pipeline: React.lazy(cardLazy(() => import('@/components/submission-pipeline-card'))),
+  kalroi: React.lazy(cardLazy(() => import('@/components/kal-roi-card'))),
+  channels: React.lazy(cardLazy(() => import('@/components/channel-funnel-card'))),
+  clubrev: React.lazy(cardLazy(() => import('@/components/club-revenue-card'))),
+  wsbook: React.lazy(cardLazy(() => import('@/components/wholesale-book-card'))),
+  hireself: React.lazy(cardLazy(() => import('@/components/hire-vs-self-card'))),
+  inclusive: React.lazy(cardLazy(() => import('@/components/inclusive-sizing-card'))),
+  licenceit: React.lazy(cardLazy(() => import('@/components/pattern-license-card'))),
+  members: React.lazy(cardLazy(() => import('@/components/membership-card'))),
+  promo: React.lazy(cardLazy(() => import('@/components/promotion-card'))),
+  pricewin: React.lazy(cardLazy(() => import('@/components/price-window-card'))),
+  repeat: React.lazy(cardLazy(() => import('@/components/retention-card'))),
+  mix: React.lazy(cardLazy(() => import('@/components/platform-mix-card'))),
+  collab: React.lazy(cardLazy(() => import('@/components/collab-evaluator-card'))),
+  bookit: React.lazy(cardLazy(() => import('@/components/pod-book-card'))),
+  protect: React.lazy(cardLazy(() => import('@/components/copyright-protection-card'))),
+  teach: React.lazy(cardLazy(() => import('@/components/teach-economics-card'))),
+  partners: React.lazy(cardLazy(() => import('@/components/partner-economics-card'))),
+  yarnbuy: React.lazy(cardLazy(() => import('@/components/yarn-buy-calculator-card'))),
+  kal: React.lazy(cardLazy(() => import('@/components/kal-planner-card'))),
+  submissions: React.lazy(cardLazy(() => import('@/components/submission-desk-card'))),
+  gradinglab: React.lazy(cardLazy(() => import('@/components/grading-lab-card'))),
+  chartlab: React.lazy(cardLazy(() => import('@/components/chart-lab-card'))),
+  testdesk: React.lazy(cardLazy(() => import('@/components/testknit-desk-card'))),
+  lookbook: React.lazy(cardLazy(() => import('@/components/lookbook-desk-card'))),
+  specsheet: React.lazy(cardLazy(() => import('@/components/spec-sheet-lab-card'))),
+  subdist: React.lazy(cardLazy(() => import('@/components/subscription-distribution-lab-card'))),
+  listingseo: React.lazy(cardLazy(() => import('@/components/listing-seo-lab-card'))),
+  adlab: React.lazy(cardLazy(() => import('@/components/ad-break-even-card'))),
+  samplelaunch: React.lazy(cardLazy(() => import('@/components/sample-launch-lab-card'))),
+  dealmath: React.lazy(cardLazy(() => import('@/components/collab-deal-math-card'))),
+  photolab: React.lazy(cardLazy(() => import('@/components/photo-roi-lab-card'))),
+  videosocial: React.lazy(cardLazy(() => import('@/components/video-social-lab-card'))),
+  showroi: React.lazy(cardLazy(() => import('@/components/show-roi-lab-card'))),
+  wholesale: React.lazy(cardLazy(() => import('@/components/wholesale-lab-card'))),
+  preorder: React.lazy(cardLazy(() => import('@/components/preorder-campaign-lab-card'))),
+  listingtest: React.lazy(cardLazy(() => import('@/components/listing-test-lab-card'))),
+  yarnpool: React.lazy(cardLazy(() => import('@/components/yarn-pool-lab-card'))),
+  membershipsite: React.lazy(cardLazy(() => import('@/components/membership-site-lab-card'))),
+  releasetiming: React.lazy(cardLazy(() => import('@/components/release-timing-lab-card'))),
+  conventionbooth: React.lazy(cardLazy(() => import('@/components/convention-booth-lab-card'))),
+  channelmigration: React.lazy(cardLazy(() => import('@/components/channel-migration-lab-card'))),
+  workshopteach: React.lazy(cardLazy(() => import('@/components/workshop-teaching-lab-card'))),
+  consignmentreprice: React.lazy(cardLazy(() => import('@/components/consignment-reprice-lab-card'))),
+  patternbundle: React.lazy(cardLazy(() => import('@/components/pattern-bundle-lab-card'))),
+  retreatteach: React.lazy(cardLazy(() => import('@/components/retreat-teaching-lab-card'))),
+  podcastaffiliate: React.lazy(cardLazy(() => import('@/components/podcast-affiliate-lab-card'))),
+  magazinesubmission: React.lazy(cardLazy(() => import('@/components/magazine-submission-lab-card'))),
+  pricingpsychology: React.lazy(cardLazy(() => import('@/components/pricing-psychology-lab-card'))),
+  podpatterns: React.lazy(cardLazy(() => import('@/components/pod-patterns-lab-card'))),
+  marketplacetakerate: React.lazy(cardLazy(() => import('@/components/marketplace-takerate-lab-card'))),
+  boxinclusion: React.lazy(cardLazy(() => import('@/components/box-inclusion-lab-card'))),
+  yarnlicensing: React.lazy(cardLazy(() => import('@/components/yarn-licensing-lab-card'))),
+  giftcard: React.lazy(cardLazy(() => import('@/components/giftcard-lab-card'))),
+  wholesalepricelist: React.lazy(cardLazy(() => import('@/components/wholesale-pricelist-lab-card'))),
+  intlpricing: React.lazy(cardLazy(() => import('@/components/intl-pricing-lab-card'))),
+  testknitlab: React.lazy(cardLazy(() => import('@/components/testknit-slot-lab-card'))),
+  gaugefit: React.lazy(cardLazy(() => import('@/components/gauge-fit-translator-card'))),
+  receiptlab: React.lazy(cardLazy(() => import('@/components/receipt-lab-card'))),
+  designledger: React.lazy(cardLazy(() => import('@/components/design-ledger-card'))),
+  bragcard: React.lazy(cardLazy(() => import('@/components/brag-card-card'))),
+  payback: React.lazy(cardLazy(() => import('@/components/payback-lab-card'))),
+};
+
+// React 19's LazyExoticComponent carries no component typing, so the props
+// object is cast to satisfy TypeScript when rendering the lazy lab.
+function LazyPanel({ loader, project }: { loader: React.LazyExoticComponent<any>; project: any }): React.ReactElement {
+  const Lab = loader as React.ComponentType<{ project: any }>;
+  return <React.Suspense fallback={<div className="py-10 text-center text-sm text-muted-foreground">Loading lab…</div>}><Lab project={project} /></React.Suspense>;
+}
 
 function TriggerChildren({ value }: { value: string }): React.ReactElement {
   switch (value) {
@@ -843,82 +860,85 @@ export default function ProjectWorkspace() {
               </div>
             </CardContent>
           </Card></>;
-      case 'yarn': return <YarnEstimatorCard project={project} />;
-      case 'income': return <IncomeCalculatorCard project={project} />;
-      case 'draft': return <PatternDraftCard project={project} />;
-      case 'pricing': return <PricingAdvisorCard project={project} />;
-      case 'publish': return <PublishToolkitCard project={project} onUpdateProject={updateProject} />;
-      case 'testknit': return <TestKnitCard project={project} />;
-      case 'techedit': return <TechEditCard project={project} />;
-      case 'finish': return <FinishGuideCard project={project} />;
-      case 'deals': return <DealsTabCard project={project} />;
-      case 'launch': return <LaunchCampaignCard project={project} />;
-      case 'trunkshow': return <TrunkShowCard project={project} />;
-      case 'transbundle': return <TranslationBundleCard project={project} />;
-      case 'patternclub': return <PatternClubCard project={project} />;
-      case 'kits': return <KitEconomicsCard project={project} />;
-      case 'pipeline': return <SubmissionPipelineCard project={project} />;
-      case 'kalroi': return <KalRoiCard project={project} />;
-      case 'channels': return <ChannelFunnelCard project={project} />;
-      case 'clubrev': return <ClubRevenueCard project={project} />;
-      case 'wsbook': return <WholesaleBookCard project={project} />;
-      case 'hireself': return <HireVsSelfCard project={project} />;
-      case 'inclusive': return <InclusiveSizingCard project={project} />;
-      case 'licenceit': return <PatternLicensePlannerCard project={project} />;
-      case 'members': return <MembershipCard project={project} />;
-      case 'promo': return <PromotionCard project={project} />;
-      case 'pricewin': return <PriceWindowCard project={project} />;
-      case 'repeat': return <RetentionCard project={project} />;
-      case 'mix': return <PlatformMixCard project={project} />;
-      case 'collab': return <CollabEvaluatorCard project={project} />;
-      case 'bookit': return <PodBookCard project={project} />;
-      case 'protect': return <CopyrightProtectionCard project={project} />;
-      case 'teach': return <TeachEconomicsCard project={project} />;
-      case 'partners': return <PartnerEconomicsCard project={project} />;
-      case 'yarnbuy': return <YarnBuyCalculatorCard project={project} />;
-      case 'kal': return <KalPlannerCard project={project} />;
-      case 'submissions': return <SubmissionDeskCard project={project} />;
-      case 'gradinglab': return <GradingLabCard project={project} />;
-      case 'chartlab': return <ChartLabCard project={project} />;
-      case 'testdesk': return <TestKnitDeskCard project={project} />;
-      case 'lookbook': return <LookbookDeskCard project={project} />;
-      case 'specsheet': return <SpecSheetLabCard project={project} />;
-      case 'subdist': return <SubscriptionDistributionLabCard project={project} />;
-      case 'listingseo': return <ListingSeoLabCard project={project} />;
-      case 'adlab': return <AdBreakEvenCard project={project} />;
-      case 'samplelaunch': return <SampleLaunchLabCard project={project} />;
-      case 'dealmath': return <CollabDealMathCard project={project} />;
-      case 'photolab': return <PhotoRoiLabCard project={project} />;
-      case 'videosocial': return <VideoSocialLabCard project={project} />;
-      case 'showroi': return <ShowRoiLabCard project={project} />;
-      case 'wholesale': return <WholesaleLabCard project={project} />;
-      case 'preorder': return <PreorderCampaignLabCard project={project} />;
-      case 'listing-test': return <ListingTestLabCard project={project} />;
-      case 'yarn-pool': return <YarnPoolLabCard project={project} />;
-      case 'membership-site': return <MembershipSiteLabCard project={project} />;
-      case 'release-timing': return <ReleaseTimingLabCard project={project} />;
-      case 'convention-booth': return <ConventionBoothLabCard project={project} />;
-      case 'channel-migration': return <ChannelMigrationLabCard project={project} />;
-      case 'workshop-teach': return <WorkshopTeachingLabCard project={project} />;
-      case 'consignment-reprice': return <ConsignmentRepriceLabCard project={project} />;
-      case 'pattern-bundle': return <PatternBundleLabCard project={project} />;
-      case 'retreat-teach': return <RetreatTeachingLabCard project={project} />;
-      case 'podcast-affiliate': return <PodcastAffiliateLabCard project={project} />;
-      case 'magazine-submission': return <MagazineSubmissionLabCard project={project} />;
-      case 'pricing-psychology': return <PricingPsychologyLabCard project={project} />;
-      case 'pod-patterns': return <PodPatternsLabCard project={project} />;
-      case 'marketplace-takerate': return <MarketplaceTakeRateLabCard project={project} />;
-      case 'box-inclusion': return <BoxInclusionLabCard project={project} />;
-      case 'yarn-licensing': return <YarnLicensingLabCard project={project} />;
-      case 'giftcard': return <GiftCardLabCard project={project} />;
-      case 'wholesale-pricelist': return <WholesalePricelistLabCard project={project} />;
-      case 'intl-pricing': return <IntlPricingLabCard project={project} />;
-      case 'testknitlab': return <TestKnitSlotLabCard project={project} />;
-      case 'gaugefit': return <GaugeFitTranslatorCard project={project} />;
-      case 'receiptlab': return <ReceiptLabCard project={project} />;
-      case 'designledger': return <DesignLedgerCard project={project} />;
-      case 'bragcard': return <BragCardCard project={project} />;
-      case 'payback': return <PaybackLabCard project={project} />;
+      // CHK-094 bundle fix: every heavy lab card loads on demand via React.lazy.
+      // TabsContent mounts content lazily, so the initial page stays light
+      // (the static + dynamic import warnings Vite emitted are retired too).
+      case 'yarn': return <LazyPanel loader={LAB.yarn} project={project} />;
+      case 'income': return <LazyPanel loader={LAB.income} project={project} />;
+      case 'draft': return <LazyPanel loader={LAB.draft} project={project} />;
+      case 'pricing': return <LazyPanel loader={LAB.pricing} project={project} />;
+      case 'publish': return <LazyPanel loader={LAB.publish} project={project} />;
+      case 'testknit': return <LazyPanel loader={LAB.testknit} project={project} />;
+      case 'techedit': return <LazyPanel loader={LAB.techedit} project={project} />;
+      case 'finish': return <LazyPanel loader={LAB.finish} project={project} />;
+      case 'deals': return <LazyPanel loader={LAB.deals} project={project} />;
+      case 'launch': return <LazyPanel loader={LAB.launch} project={project} />;
+      case 'trunkshow': return <LazyPanel loader={LAB.trunkshow} project={project} />;
+      case 'transbundle': return <LazyPanel loader={LAB.transbundle} project={project} />;
+      case 'patternclub': return <LazyPanel loader={LAB.patternclub} project={project} />;
+      case 'kits': return <LazyPanel loader={LAB.kits} project={project} />;
+      case 'pipeline': return <LazyPanel loader={LAB.pipeline} project={project} />;
+      case 'kalroi': return <LazyPanel loader={LAB.kalroi} project={project} />;
+      case 'channels': return <LazyPanel loader={LAB.channels} project={project} />;
+      case 'clubrev': return <LazyPanel loader={LAB.clubrev} project={project} />;
+      case 'wsbook': return <LazyPanel loader={LAB.wsbook} project={project} />;
+      case 'hireself': return <LazyPanel loader={LAB.hireself} project={project} />;
+      case 'inclusive': return <LazyPanel loader={LAB.inclusive} project={project} />;
+      case 'licenceit': return <LazyPanel loader={LAB.licenceit} project={project} />;
+      case 'members': return <LazyPanel loader={LAB.members} project={project} />;
+      case 'promo': return <LazyPanel loader={LAB.promo} project={project} />;
+      case 'pricewin': return <LazyPanel loader={LAB.pricewin} project={project} />;
+      case 'repeat': return <LazyPanel loader={LAB.repeat} project={project} />;
+      case 'mix': return <LazyPanel loader={LAB.mix} project={project} />;
+      case 'collab': return <LazyPanel loader={LAB.collab} project={project} />;
+      case 'bookit': return <LazyPanel loader={LAB.bookit} project={project} />;
+      case 'protect': return <LazyPanel loader={LAB.protect} project={project} />;
+      case 'teach': return <LazyPanel loader={LAB.teach} project={project} />;
+      case 'partners': return <LazyPanel loader={LAB.partners} project={project} />;
+      case 'yarnbuy': return <LazyPanel loader={LAB.yarnbuy} project={project} />;
+      case 'kal': return <LazyPanel loader={LAB.kal} project={project} />;
+      case 'submissions': return <LazyPanel loader={LAB.submissions} project={project} />;
+      case 'gradinglab': return <LazyPanel loader={LAB.gradinglab} project={project} />;
+      case 'chartlab': return <LazyPanel loader={LAB.chartlab} project={project} />;
+      case 'testdesk': return <LazyPanel loader={LAB.testdesk} project={project} />;
+      case 'lookbook': return <LazyPanel loader={LAB.lookbook} project={project} />;
+      case 'specsheet': return <LazyPanel loader={LAB.specsheet} project={project} />;
+      case 'subdist': return <LazyPanel loader={LAB.subdist} project={project} />;
+      case 'listingseo': return <LazyPanel loader={LAB.listingseo} project={project} />;
+      case 'adlab': return <LazyPanel loader={LAB.adlab} project={project} />;
+      case 'samplelaunch': return <LazyPanel loader={LAB.samplelaunch} project={project} />;
+      case 'dealmath': return <LazyPanel loader={LAB.dealmath} project={project} />;
+      case 'photolab': return <LazyPanel loader={LAB.photolab} project={project} />;
+      case 'videosocial': return <LazyPanel loader={LAB.videosocial} project={project} />;
+      case 'showroi': return <LazyPanel loader={LAB.showroi} project={project} />;
+      case 'wholesale': return <LazyPanel loader={LAB.wholesale} project={project} />;
+      case 'preorder': return <LazyPanel loader={LAB.preorder} project={project} />;
+      case 'listing-test': return <LazyPanel loader={LAB.listingtest} project={project} />;
+      case 'yarn-pool': return <LazyPanel loader={LAB.yarnpool} project={project} />;
+      case 'membership-site': return <LazyPanel loader={LAB.membershipsite} project={project} />;
+      case 'release-timing': return <LazyPanel loader={LAB.releasetiming} project={project} />;
+      case 'convention-booth': return <LazyPanel loader={LAB.conventionbooth} project={project} />;
+      case 'channel-migration': return <LazyPanel loader={LAB.channelmigration} project={project} />;
+      case 'workshop-teach': return <LazyPanel loader={LAB.workshopteach} project={project} />;
+      case 'consignment-reprice': return <LazyPanel loader={LAB.consignmentreprice} project={project} />;
+      case 'pattern-bundle': return <LazyPanel loader={LAB.patternbundle} project={project} />;
+      case 'retreat-teach': return <LazyPanel loader={LAB.retreatteach} project={project} />;
+      case 'podcast-affiliate': return <LazyPanel loader={LAB.podcastaffiliate} project={project} />;
+      case 'magazine-submission': return <LazyPanel loader={LAB.magazinesubmission} project={project} />;
+      case 'pricing-psychology': return <LazyPanel loader={LAB.pricingpsychology} project={project} />;
+      case 'pod-patterns': return <LazyPanel loader={LAB.podpatterns} project={project} />;
+      case 'marketplace-takerate': return <LazyPanel loader={LAB.marketplacetakerate} project={project} />;
+      case 'box-inclusion': return <LazyPanel loader={LAB.boxinclusion} project={project} />;
+      case 'yarn-licensing': return <LazyPanel loader={LAB.yarnlicensing} project={project} />;
+      case 'giftcard': return <LazyPanel loader={LAB.giftcard} project={project} />;
+      case 'wholesale-pricelist': return <LazyPanel loader={LAB.wholesalepricelist} project={project} />;
+      case 'intl-pricing': return <LazyPanel loader={LAB.intlpricing} project={project} />;
+      case 'testknitlab': return <LazyPanel loader={LAB.testknitlab} project={project} />;
+      case 'gaugefit': return <LazyPanel loader={LAB.gaugefit} project={project} />;
+      case 'receiptlab': return <LazyPanel loader={LAB.receiptlab} project={project} />;
+      case 'designledger': return <LazyPanel loader={LAB.designledger} project={project} />;
+      case 'bragcard': return <LazyPanel loader={LAB.bragcard} project={project} />;
+      case 'payback': return <LazyPanel loader={LAB.payback} project={project} />;
       default: return <>{value}</>;
     }
   }

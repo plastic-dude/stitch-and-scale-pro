@@ -71,7 +71,7 @@ const CAPABILITIES = [
 
 const STATS = [
   { value: "79", label: "business labs in one workspace" },
-  { value: "1,600+", label: "verified tests behind the math" },
+  { value: "1,694+", label: "verified tests behind the math" },
   { value: "13", label: "currencies in parity pricing" },
   { value: "100%", label: "local-first — your data stays yours" },
 ];

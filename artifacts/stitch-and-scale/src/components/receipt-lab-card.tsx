@@ -118,6 +118,17 @@ export function ReceiptLabCard(props: { project: PatternProject }) {
   const [copied, setCopied] = useState(false);
 
   const cardRef = useRef<HTMLDivElement>(null);
+  /** Receipt card visual styles (CHK-094): "chat" is the default
+   *  chat-native look; "studio" is a craft-paper till-receipt with serif
+   *  header and letterspaced small-caps labels; "selvedge" is dark paper
+   *  with a woven accent band. All styles stay dependency-free CSS. */
+  type ReceiptStyle = "chat" | "studio" | "selvedge";
+  const [receiptStyle, setReceiptStyle] = useState<ReceiptStyle>("chat");
+  const receiptTheme = {
+    chat: { frame: "rounded-xl border bg-gradient-to-br from-card to-secondary/40 shadow-sm", title: "font-serif text-lg font-semibold", label: "text-muted-foreground", pill: "text-[10px] uppercase tracking-widest text-muted-foreground bg-secondary/60 px-2 py-1 rounded-full", footer: "text-[10px] uppercase tracking-widest text-muted-foreground" },
+    studio: { frame: "rounded-none border-2 border-t-8 bg-[#f6f1e4] shadow-sm", title: "font-serif text-xl font-bold tracking-tight", label: "text-[#7a7161] text-[11px] uppercase tracking-[0.16em]", pill: "text-[10px] uppercase tracking-[0.22em] text-[#7a7161] border border-[#cbbfad] px-2 py-0.5", footer: "text-[10px] uppercase tracking-[0.22em] text-[#7a7161]" },
+    selvedge: { frame: "rounded-lg border bg-[#23201c] shadow-sm", title: "font-mono text-base font-semibold text-[#efe7d8]", label: "text-[#b3ab9b] text-[10px] uppercase tracking-[0.18em]", pill: "text-[10px] uppercase tracking-[0.2em] text-[#b3ab9b] bg-[#3a3530] px-2 py-1 rounded", footer: "text-[10px] uppercase tracking-[0.22em] text-[#b3ab9b]" },
+  }[receiptStyle];
   const handle = useMemo(
     () => projectStorage<StoredState>("receipt", project.id, [STORAGE_KEY]),
     [project.id],
@@ -477,13 +488,19 @@ export function ReceiptLabCard(props: { project: PatternProject }) {
         {/* The shareable receipt card */}
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
           <div className="lg:col-span-2 space-y-2">
-            <div ref={cardRef} className="rounded-xl border bg-gradient-to-br from-card to-secondary/40 p-6 shadow-sm max-w-sm mx-auto w-full">
+            <div className="flex flex-wrap gap-1.5">
+              {(["chat", "studio", "selvedge"] as ReceiptStyle[]).map((s) => (
+                <Button key={s} variant={receiptStyle === s ? "default" : "outline"} size="sm" onClick={() => setReceiptStyle(s)}>{s === "chat" ? "Chat" : s === "studio" ? "Craft Paper" : "Selvedge"}</Button>
+              ))}
+            </div>
+            <div ref={cardRef} className={`p-6 max-w-sm mx-auto w-full relative ${receiptTheme.frame}`} style={receiptStyle === "selvedge" ? { boxShadow: "inset 4px 0 0 0 #d87093" } : undefined}>
+              {receiptStyle === "studio" ? <div className="absolute top-0 left-1/2 -translate-x-1/2 w-16 h-5 bg-[#d87093]/25" /> : null}
               <div className="flex items-start justify-between">
                 <div>
-                  <div className="font-serif text-lg font-semibold">{brand.businessName || "Your Studio"}</div>
-                  {brand.contact && <div className="text-xs text-muted-foreground">{brand.contact}</div>}
+                  <div className={receiptTheme.title}>{brand.businessName || "Your Studio"}</div>
+                  {brand.contact && <div className="text-xs opacity-70">{brand.contact}</div>}
                 </div>
-                <div className="text-[10px] uppercase tracking-widest text-muted-foreground bg-secondary/60 px-2 py-1 rounded-full">
+                <div className={receiptTheme.pill}>
                   {DOC_KIND_LABELS[kind]}
                 </div>
               </div>
@@ -493,7 +510,7 @@ export function ReceiptLabCard(props: { project: PatternProject }) {
                 {customerName && <div className="flex justify-between"><span className="text-muted-foreground">Customer</span><span className="font-medium">{customerName}</span></div>}
                 <div className="flex justify-between"><span className="text-muted-foreground">Channel</span><span>{SALE_CHANNEL_LABELS[channel]}</span></div>
                 {patternName && <div className="flex justify-between"><span className="text-muted-foreground">Pattern</span><span className="font-medium">{patternName}</span></div>}
-                {items.some((it) => it.name || it.unitPrice > 0) && <div className="my-2 border-t border-dashed" />}
+                {items.some((it) => it.name || it.unitPrice > 0) && <div className={`my-2 border-t border-dashed ${receiptStyle === "selvedge" ? "border-[#4a443c]" : ""}`} />}
                 {items.map((it, idx) => {
                   if (!it.name && it.unitPrice <= 0) return null;
                   return (
@@ -516,16 +533,17 @@ export function ReceiptLabCard(props: { project: PatternProject }) {
                 {kind === "quote" && (
                   <div className="flex justify-between font-semibold text-accent"><span>Deposit due ({depositPct}%)</span><span>{fmtMoney(result.fees.grossTotal * (depositPct / 100), brand.currency)}</span></div>
                 )}
-                {note && <div className="text-xs text-muted-foreground italic pt-1">{note}</div>}
+                {note && <div className={`text-xs italic pt-1 ${receiptStyle === "chat" ? "text-muted-foreground" : receiptStyle === "studio" ? "text-[#7a7161]" : "text-[#b3ab9b]"}`}>{note}</div>}
               </div>
-              <div className="mt-4 border-t border-dashed pt-3 flex items-center justify-between text-[10px] uppercase tracking-widest text-muted-foreground">
+              <div className={`mt-4 border-t border-dashed pt-3 flex items-center justify-between ${receiptTheme.footer}`}>
                 <span>made with stitchandscale.app</span>
                 <span className="font-serif">{brand.businessName ? brand.businessName.slice(0, 12) : "Stitch & Scale"}</span>
               </div>
             </div>
             <p className="text-xs text-muted-foreground text-center">
-              The card above is sized for chat. Screenshot it on your device and it lands in WhatsApp, Signal or
-              iMessage looking native — or use the text copy below for a plain-text receipt.
+              The card above is sized for chat — pick a style above (Chat / Craft Paper / Selvedge) and screenshot
+              it on your device; it lands in WhatsApp, Signal or iMessage looking native, or use the text copy below
+              for a plain-text receipt.
             </p>
           </div>
 

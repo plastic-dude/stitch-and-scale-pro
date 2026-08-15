@@ -22,7 +22,7 @@ Concretely: copy may **never** claim the founder knits or designs patterns. The 
 | Rhythm | Short declarative lines; craft truth before tech truth | Marketing-speak, exclamation points as crutch |
 | Metaphors | Terminals, code, systems — sparingly, as flavor | Jargon (ROI, synergy, leverage, empower) |
 | Emotion | Quiet confidence + outsider wit + genuine love of the craft (via mother's legacy) | Hype, urgency gimmicks, countdown pressure |
-| Credibility | Numbers and real product ("78 labs, 1,679+ tests") + named limits ("I don't know yarn; you tell me") | Vague superlatives ("revolutionary", "game-changing") |
+| Credibility | Numbers and real product ("79 labs, 1,679+ tests") + named limits ("I don't know yarn; you tell me") | Vague superlatives ("revolutionary", "game-changing") |
 
 The brand tension that makes the copy work: **a hacker's hands building the business math for people with yarn on their hands.** The copy should always feel like a builder asking craftspersons to check his work — never a craftsperson lecturing.
 

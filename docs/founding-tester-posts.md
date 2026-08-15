@@ -30,7 +30,7 @@ It's pre-launch, which means the first group of designers gets to shape it — i
 
 The pattern is only half the job. The math is the rest.
 
-I built the business side of knitwear design: grading, yarn cost, pricing, wholesale, 13-currency parity. 78 labs, runs in your browser, no signup.
+I built the business side of knitwear design: grading, yarn cost, pricing, wholesale, 13-currency parity. 79 labs, runs in your browser, no signup.
 
 Founding testers shaping it now → [LINK]/landing
 Demo → [LINK]

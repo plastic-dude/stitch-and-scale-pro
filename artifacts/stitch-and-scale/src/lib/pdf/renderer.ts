@@ -76,16 +76,17 @@ ${renderProvenanceFooter(theme, pattern, gradingResult)}
 // ─── Watermark ────────────────────────────────────────────────────────────────
 
 function renderWatermark(theme: ResolvedTheme): string {
-  const text = 'STITCH&nbsp;&amp;&nbsp;SCALE';
-  const row  = Array(10).fill(`${text}&ensp;&ensp;&ensp;`).join('');
-  const rows = Array(28).fill(`<div>${row}</div>`).join('');
+  // CHK-094 design upgrade: the old text-wall was a classic failure pattern
+  // (wallpaper watermark fights the content — research rule D-7: zero
+  // watermarks). Attribution already lives in the provenance footer, so the
+  // page background now carries only a single faint selvedge rule band —
+  // like the woven edge of fabric — that never competes with the pattern.
   return `<div aria-hidden="true" style="
     position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;
     overflow:hidden;pointer-events:none;user-select:none;
-    font-family:monospace;font-size:7px;letter-spacing:0.12em;line-height:1.7;
-    color:${theme.textColor};opacity:${theme.watermarkOpacity};
-    transform:rotate(-22deg) scale(1.6) translateX(-15%) translateY(-15%);
-  ">${rows}</div>`;
+    background:linear-gradient(to right,transparent 0,transparent 6%,${theme.accent} 6%,${theme.accent} 6.15%,transparent 6.15%,transparent 100%);
+    opacity:${Math.min(theme.watermarkOpacity, 0.14)};
+  "></div>`;
 }
 
 // ─── Blueprint grid (Technical theme) ────────────────────────────────────────
