@@ -70,7 +70,7 @@ const CAPABILITIES = [
 ];
 
 const STATS = [
-  { value: "75", label: "business labs in one workspace" },
+  { value: "78", label: "business labs in one workspace" },
   { value: "1,600+", label: "verified tests behind the math" },
   { value: "13", label: "currencies in parity pricing" },
   { value: "100%", label: "local-first — your data stays yours" },
@@ -207,7 +207,7 @@ export default function Landing() {
         <div className="mt-8 text-center">
           <Link href={`/project/${DEMO_PROJECT_ID}`}>
             <Button variant="outline" size="lg">
-              Explore all 75 labs in the demo
+              Explore all 78 labs in the demo
               <ArrowRight className="ml-1 h-4 w-4" />
             </Button>
           </Link>

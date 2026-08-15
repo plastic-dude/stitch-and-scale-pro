@@ -142,7 +142,7 @@ export function PricingPsychologyLabCard({ project }: { project: PatternProject 
             <NumField id="pp-current" label="Current price" value={input.currentPrice} onChange={n => set('currentPrice', Math.max(0.5, n))} min={0.5} step={0.01} suffix="$" />
             <NumField id="pp-candidate" label="Candidate price" value={input.candidatePrice} onChange={n => set('candidatePrice', Math.max(0.5, n))} min={0.5} step={0.01} suffix="$" />
             <NumField id="pp-units" label="Units sold / month" value={input.unitsPerMonth} onChange={n => set('unitsPerMonth', Math.max(0, n))} min={0} suffix="units/mo" />
-            <NumField id="pp-take" label="Marketplace take rate" value={input.platformTakeRate} onChange={n => set('platformTakeRate', Math.max(0, Math.min(1, n)))} step={0.01} suffix="%" />
+            <NumField id="pp-take" label="Marketplace take rate" value={input.platformTakeRate * 100} onChange={n => set('platformTakeRate', Math.max(0, Math.min(1, n / 100)))} min={0} max={100} step={1} suffix="%" />
             <div className="space-y-1.5">
               <Label htmlFor="pp-position" className="text-xs">Design positioning</Label>
               <select

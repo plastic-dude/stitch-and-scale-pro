@@ -122,7 +122,7 @@ export function MagazineSubmissionLabCard({ project }: { project: PatternProject
               </select>
             </div>
             <NumField id="mag-fee" label="Flat fee" value={input.flatFee} onChange={n => set('flatFee', Math.max(0, n))} suffix="$" />
-            <NumField id="mag-kill" label="Kill fee protection" value={input.killFeePct} onChange={n => set('killFeePct', Math.max(0, Math.min(1, n)))} step={0.05} suffix="%" />
+            <NumField id="mag-kill" label="Kill fee protection" value={input.killFeePct * 100} onChange={n => set('killFeePct', Math.max(0, Math.min(1, n / 100)))} min={0} max={100} step={5} suffix="%" />
             <NumField id="mag-lag" label="Payment lag" value={input.paymentLagMonths} onChange={n => set('paymentLagMonths', Math.max(0, Math.min(24, n)))} min={0} max={24} suffix="mo" />
             <NumField id="mag-window" label="Exclusivity window" value={input.exclusivityMonths} onChange={n => set('exclusivityMonths', Math.max(1, Math.min(36, n)))} min={1} max={36} suffix="mo" />
             <NumField id="mag-sale" label="Outright-sale term (0 = lease)" value={input.outrightSaleMonths} onChange={n => set('outrightSaleMonths', Math.max(0, Math.min(60, n)))} min={0} max={60} suffix="mo" />
@@ -134,8 +134,8 @@ export function MagazineSubmissionLabCard({ project }: { project: PatternProject
             <h3 className="text-sm font-semibold flex items-center gap-1.5"><FileText className="size-4" />Royalty stream</h3>
             <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
               <NumField id="mag-copies" label="Copies printed (0 = unaudited)" value={input.copiesPrinted} onChange={n => set('copiesPrinted', Math.max(0, n))} min={0} step={1000} />
-              <NumField id="mag-through" label="Sell-through" value={input.sellThrough} onChange={n => set('sellThrough', Math.max(0, Math.min(1, n)))} step={0.05} suffix="%" />
-              <NumField id="mag-royalty" label="Royalty rate" value={input.royaltyPct} onChange={n => set('royaltyPct', Math.max(0, Math.min(1, n)))} step={0.01} suffix="%" />
+              <NumField id="mag-through" label="Sell-through" value={input.sellThrough * 100} onChange={n => set('sellThrough', Math.max(0, Math.min(1, n / 100)))} min={0} max={100} step={5} suffix="%" />
+              <NumField id="mag-royalty" label="Royalty rate" value={input.royaltyPct * 100} onChange={n => set('royaltyPct', Math.max(0, Math.min(1, n / 100)))} min={0} max={100} step={1} suffix="%" />
               <NumField id="mag-revpc" label="Revenue per copy" value={input.revenuePerCopy} onChange={n => set('revenuePerCopy', Math.max(0, n))} step={0.5} suffix="$" />
               <NumField id="mag-digital" label="Digital / archive royalty" value={input.digitalRoyalty} onChange={n => set('digitalRoyalty', Math.max(0, n))} suffix="$" />
             </div>

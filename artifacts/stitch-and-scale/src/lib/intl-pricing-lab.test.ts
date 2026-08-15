@@ -277,6 +277,22 @@ describe("fmtMoney — QA #49 currency coverage", () => {
   });
 });
 
+describe("fmtMoney — QA #51 (S247) compound currency keys", () => {
+  it("renders the EUR/CHF compound key with both symbols (Nordics & Switzerland row)", () => {
+    expect(fmtMoney(9.4, "EUR/CHF")).toBe("€9.40 / CHF 9.40");
+  });
+  it("renders a small compound amount with two decimals", () => {
+    expect(fmtMoney(1.23, "USD/GBP")).toBe("$1.23 / £1.23");
+  });
+  it("renders large compound amounts without decimals", () => {
+    expect(fmtMoney(1500, "NOK/SEK")).toBe("1,500 kr / 1,500 kr");
+  });
+  it("preserves normal (non-compound) currencies", () => {
+    expect(fmtMoney(42.75, "CHF")).toBe("CHF 42.75");
+    expect(fmtMoney(42.75, "NOK")).toBe("42.75 kr");
+  });
+});
+
 describe("analyzeIntlPricing — formatted display fields (QA #49)", () => {
   it("exposes fmtTotal* fields that render with the USD symbol", () => {
     const r = analyzeIntlPricing(withMarkets());

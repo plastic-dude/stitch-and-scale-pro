@@ -146,7 +146,7 @@ export function PatternBundleLabCard({ project }: { project: PatternProject }) {
           </div>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
             <NumField id="pb-bundle" label="Bundle price" value={input.bundlePrice} onChange={n => set('bundlePrice', n)} min={1} step={0.5} suffix="$" />
-            <NumField id="pb-host" label="Host commission" value={input.hostCommission} onChange={n => set('hostCommission', Math.min(0.5, Math.max(0, n)))} step={0.01} suffix="%" />
+            <NumField id="pb-host" label="Host commission" value={input.hostCommission * 100} onChange={n => set('hostCommission', Math.min(0.5, Math.max(0, n / 100)))} min={0} max={50} step={1} suffix="%" />
             <SelectField id="pb-split" label="Split mode" value={input.splitMode}
               options={[{ value: 'weighted', label: 'Weighted by price (norm)' }, { value: 'equal', label: 'Equal split' }]}
               onChange={v => set('splitMode', v as SplitMode)} />

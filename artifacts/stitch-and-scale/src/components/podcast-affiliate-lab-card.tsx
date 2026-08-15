@@ -139,8 +139,8 @@ export function PodcastAffiliateLabCard({ project }: { project: PatternProject }
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
             <NumField id="pa-cpm" label="Your quoted CPM" value={input.cpmRate} onChange={n => set('cpmRate', Math.max(0, n))} suffix="$/1,000 listens" />
             <NumField id="pa-slots" label="Ad slots per episode" value={input.adSlotsPerEpisode} onChange={n => set('adSlotsPerEpisode', Math.max(0, Math.min(4, n)))} min={0} max={4} />
-            <NumField id="pa-network" label="Network / marketplace cut" value={input.networkCut} onChange={n => set('networkCut', Math.max(0, Math.min(1, n)))} step={0.05} suffix="%" />
-            <NumField id="pa-fill" label="Fill rate (share of episodes sold)" value={input.fillRate} onChange={n => set('fillRate', Math.max(0, Math.min(1, n)))} step={0.05} suffix="%" />
+            <NumField id="pa-network" label="Network / marketplace cut" value={input.networkCut * 100} onChange={n => set('networkCut', Math.max(0, Math.min(1, n / 100)))} min={0} max={100} step={5} suffix="%" />
+            <NumField id="pa-fill" label="Fill rate (share of episodes sold)" value={input.fillRate * 100} onChange={n => set('fillRate', Math.max(0, Math.min(1, n / 100)))} min={0} max={100} step={5} suffix="%" />
           </div>
         </section>
 
@@ -163,11 +163,11 @@ export function PodcastAffiliateLabCard({ project }: { project: PatternProject }
                     onChange={e => setProgram(i, { name: e.target.value })}
                     className="text-sm" placeholder="e.g. LoveCrafts (15%)" />
                 </div>
-                <NumField id={`pa-com-${i}`} label="Commission" value={p.commission} onChange={n => setProgram(i, { commission: Math.max(0, Math.min(1, n)) })} step={0.01} suffix="%" />
+                <NumField id={`pa-com-${i}`} label="Commission" value={p.commission * 100} onChange={n => setProgram(i, { commission: Math.max(0, Math.min(1, n / 100)) })} min={0} max={100} step={1} suffix="%" />
                 <NumField id={`pa-clicks-${i}`} label="Clicks per episode" value={p.clicksPerEpisode} onChange={n => setProgram(i, { clicksPerEpisode: Math.max(0, n) })} min={0} />
-                <NumField id={`pa-conv-${i}`} label="Conversion" value={p.conversionRate} onChange={n => setProgram(i, { conversionRate: Math.max(0, Math.min(1, n)) })} step={0.005} suffix="%" />
+                <NumField id={`pa-conv-${i}`} label="Conversion" value={p.conversionRate * 100} onChange={n => setProgram(i, { conversionRate: Math.max(0, Math.min(1, n / 100)) })} min={0} max={100} step={0.5} suffix="%" />
                 <NumField id={`pa-aov-${i}`} label="Avg order value" value={p.aov} onChange={n => setProgram(i, { aov: Math.max(0, n) })} suffix="$" />
-                <NumField id={`pa-cut-${i}`} label="Platform cut" value={p.platformCut} onChange={n => setProgram(i, { platformCut: Math.max(0, Math.min(1, n)) })} step={0.05} suffix="%" />
+                <NumField id={`pa-cut-${i}`} label="Platform cut" value={p.platformCut * 100} onChange={n => setProgram(i, { platformCut: Math.max(0, Math.min(1, n / 100)) })} min={0} max={100} step={5} suffix="%" />
                 {input.programs.length > 1 ? (
                   <Button type="button" variant="ghost" size="icon" className="mb-0.5 h-9 w-9" onClick={() => removeProgram(i)} aria-label={`Remove program ${i + 1}`}>
                     <Minus className="size-4" />

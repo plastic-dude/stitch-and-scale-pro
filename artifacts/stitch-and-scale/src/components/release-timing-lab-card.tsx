@@ -140,9 +140,9 @@ export function ReleaseTimingLabCard({ project }: { project: PatternProject }) {
         <section className="space-y-3">
           <h3 className="text-sm font-semibold flex items-center gap-1.5"><CalendarDays className="size-4" />Launch promo mechanics</h3>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
-            <NumField id="rt-disc" label="Launch discount" value={input.promo.discountShare} onChange={n => setPromo('discountShare', Math.min(1, Math.max(0, n)))} step={0.01} suffix="%" />
+            <NumField id="rt-disc" label="Launch discount" value={input.promo.discountShare * 100} onChange={n => setPromo('discountShare', Math.min(1, Math.max(0, n / 100)))} min={0} max={100} step={1} suffix="%" />
             <NumField id="rt-days" label="Discount duration" value={input.promo.discountDays} onChange={n => setPromo('discountDays', Math.max(1, n))} suffix="days" />
-            <NumField id="rt-wkend" label="Weekend coverage" value={input.promo.weekendShare} onChange={n => setPromo('weekendShare', Math.min(1, Math.max(0, n)))} step={0.05} suffix="%" />
+            <NumField id="rt-wkend" label="Weekend coverage" value={input.promo.weekendShare * 100} onChange={n => setPromo('weekendShare', Math.min(1, Math.max(0, n / 100)))} min={0} max={100} step={5} suffix="%" />
             <NumField id="rt-lift" label="Expected volume lift" value={input.promo.volumeLift} onChange={n => setPromo('volumeLift', Math.max(0.5, n))} step={0.05} suffix="×" />
             <div className="flex items-end">
               <p className="text-xs text-muted-foreground leading-4">Consensus: ≤15% off, ≤1 week, and always include a weekend — discounts farm queue momentum, not launch-week profit.</p>

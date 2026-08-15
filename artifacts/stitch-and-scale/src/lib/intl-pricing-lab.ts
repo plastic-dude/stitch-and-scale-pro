@@ -158,33 +158,54 @@ function roundLocal(raw: number, currency: string): number {
 // QA #49 (S224): currency-aware formatter — every supported currency renders
 // with its own symbol/placement; CHF/SEK/NOK/DKK/BRL/INR/ISK were previously
 // display-only dead zones that fell back to a bare number.
-export function fmtMoney(n: number, currency: string): string {
-  // QA #49: every currency the market select offers must render with its own
-  // symbol — the previous version returned a bare number for CHF, BRL, NOK,
-  // SEK, DKK and ISK.
-  let prefix = "";
-  let suffix = "";
+function symbolOf(currency: string): { prefix: string; suffix: string } {
   if (currency === "USD" || currency === "CAD" || currency === "AUD" || currency === "NZD") {
-    prefix = "$";
-  } else if (currency === "GBP") {
-    prefix = "£";
-  } else if (currency === "EUR") {
-    prefix = "€";
-  } else if (currency === "CHF") {
-    prefix = "CHF ";
-  } else if (currency === "BRL") {
-    prefix = "R$ ";
-  } else if (currency === "INR") {
-    prefix = "₹";
-  } else if (currency === "JPY" || currency === "CNY" || currency === "KRW") {
-    prefix = "¥";
-  } else if (currency === "NOK" || currency === "SEK" || currency === "DKK") {
-    suffix = " kr";
-  } else if (currency === "ISK") {
-    suffix = " kr";
+    return { prefix: "$", suffix: "" };
   }
+  if (currency === "GBP") {
+    return { prefix: "£", suffix: "" };
+  }
+  if (currency === "EUR") {
+    return { prefix: "€", suffix: "" };
+  }
+  if (currency === "CHF") {
+    return { prefix: "CHF ", suffix: "" };
+  }
+  if (currency === "BRL") {
+    return { prefix: "R$ ", suffix: "" };
+  }
+  if (currency === "INR") {
+    return { prefix: "₹", suffix: "" };
+  }
+  if (currency === "JPY" || currency === "CNY" || currency === "KRW") {
+    return { prefix: "¥", suffix: "" };
+  }
+  if (currency === "NOK" || currency === "SEK" || currency === "DKK" || currency === "ISK") {
+    return { prefix: "", suffix: " kr" };
+  }
+  return { prefix: "", suffix: "" };
+}
+
+export function fmtMoney(n: number, currency: string): string {
+  // QA #51 (S247): compound market keys like "EUR/CHF" (Nordics & Switzerland)
+  // previously fell through the symbol chain and rendered bare numbers. A
+  // compound key renders both currencies' symbols before one number
+  // ("€ / CHF 9.40") — the market mixes eurozone and Swiss buyers.
+  if (currency.includes("/")) {
+    const parts = currency.split("/");
+    const joined = parts
+      .map((c) => {
+        const s = symbolOf(c);
+        return (s.prefix + "{num}" + s.suffix).trim();
+      })
+      .join(" / ");
+    const rounded = n >= 1000 ? Math.round(n) : Math.round(n * 100) / 100;
+    const num = rounded.toFixed(rounded >= 100 ? 0 : 2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return joined.replace(/{num}/g, num);
+  }
+  const s = symbolOf(currency);
   const rounded = n >= 1000 ? Math.round(n) : Math.round(n * 100) / 100;
-  return `${prefix}${rounded.toFixed(rounded >= 100 ? 0 : 2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}${suffix}`;
+  return `${s.prefix}${rounded.toFixed(rounded >= 100 ? 0 : 2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}${s.suffix}`;
 }
 
 function clamp(v: number, lo: number, hi: number): number {

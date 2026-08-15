@@ -104,7 +104,7 @@ export function WorkshopTeachingLabCard({ project }: { project: PatternProject }
           <h3 className="text-sm font-semibold flex items-center gap-1.5"><Scale className="size-4" />The deal on the table</h3>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
             <NumField id="wt-fee" label="Fee per student" value={input.deal.feePerStudent} onChange={n => setDeal('feePerStudent', n)} min={0} suffix="$" />
-            <NumField id="wt-cut" label="Venue / organizer cut" value={input.deal.venueCut} onChange={n => setDeal('venueCut', Math.min(1, Math.max(0, n)))} step={0.01} suffix="%" />
+            <NumField id="wt-cut" label="Venue / organizer cut" value={input.deal.venueCut * 100} onChange={n => setDeal('venueCut', Math.min(1, Math.max(0, n / 100)))} min={0} max={100} step={1} suffix="%" />
             <NumField id="wt-guarantee" label="Guaranteed minimum payout" value={input.deal.guarantee} onChange={n => setDeal('guarantee', Math.max(0, n))} min={0} suffix="$" />
             <NumField id="wt-travel" label="Travel + lodging total" value={input.deal.travelCost} onChange={n => setDeal('travelCost', Math.max(0, n))} suffix="$" />
             <NumField id="wt-mats" label="Materials you cover / student" value={input.deal.materialsPerStudent} onChange={n => setDeal('materialsPerStudent', Math.max(0, n))} suffix="$" />
@@ -123,7 +123,7 @@ export function WorkshopTeachingLabCard({ project }: { project: PatternProject }
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
             <NumField id="wt-prep" label="Prep hours (new content)" value={input.prepHours} onChange={n => set('prepHours', Math.max(0, n))} />
             <NumField id="wt-rate" label="Opportunity rate" value={input.hourlyRate} onChange={n => set('hourlyRate', n)} suffix="$/hr" />
-            <NumField id="wt-attach" label="Follow-up pattern attach" value={input.followUpAttach} onChange={n => set('followUpAttach', Math.min(1, Math.max(0, n)))} step={0.01} suffix="%" />
+            <NumField id="wt-attach" label="Follow-up pattern attach" value={input.followUpAttach * 100} onChange={n => set('followUpAttach', Math.min(1, Math.max(0, n / 100)))} min={0} max={100} step={1} suffix="%" />
             <NumField id="wt-attachp" label="Follow-up pattern price" value={input.followUpPrice} onChange={n => set('followUpPrice', Math.max(0, n))} suffix="$" />
           </div>
           <p className="text-xs text-muted-foreground italic">Prep for new content typically runs 2–4× the class hours; repeats run 1–2×. Attendees are warm buyers — 10–30% attach to the class pattern at full price is a normal follow-up, and LYS classes add immediate project-yarn sales on top.</p>
