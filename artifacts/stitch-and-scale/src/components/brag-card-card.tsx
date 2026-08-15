@@ -17,7 +17,7 @@ import {
   type BragCardTemplate,
 } from "@/lib/brag-card";
 import { projectStorage } from "@/lib/storage-lib";
-import { computeMonthlyLedgerRows, type MonthlyLedgerRow, type SavedSale } from "@/lib/receipt-lab";
+import { computeMonthlyLedgerRows, fmtMoney, type MonthlyLedgerRow, type SavedSale } from "@/lib/receipt-lab";
 import type { PatternProject } from "@/lib/grading-engine";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -302,7 +302,6 @@ function BragCardPreview(props: { stats: ReturnType<typeof computeBragStats>; cu
   let sub = "";
   const { stats, currency, template, studioName } = props;
   const c = buildBragCaption(stats, currency, template, studioName);
-  const { fmtMoney } = require("@/lib/receipt-lab") as typeof import("@/lib/receipt-lab");
   if (template === "income") { big = fmtMoney(stats.totalRevenue, currency); }
   else if (template === "sales") { big = String(stats.totalSales); unit = "sales"; }
   else if (template === "published") { big = String(stats.publishedCount); unit = "published"; }
