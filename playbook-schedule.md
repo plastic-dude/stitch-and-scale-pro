@@ -58,6 +58,38 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - [CHK-077] ac9d64f — Test Knit Lab (75th tab):
 - [CHK-078] 798fed5 — Wholesale Price List Lab (76th tab):
 - [CHK-079] 9d0011c — QA #49 / S224 closed — Intl Pricing Lab
+- [CHK-080] bf1fb7d — Gauge & Fit Translator tab + tab
+  classification + landing page (the first revenue-facing
+  surface).
+  Gauge & Fit Translator: weakness-conversion from
+  stitchscale.app (their single gauge-matching page owns
+  the name and has 0 persistence, 0 designer economics).
+  Our version ties to the project's real grading table:
+  per-test-knitter swatch gauges translate every graded
+  size in both directions (stitch ratio for
+  circumferences, row ratio for lengths), per-tester
+  recommended size, GF-01 severe (>=10%) / GF-02 drift
+  (5-10%) flags, optional target-circumference fit check.
+  Works even pre-grading with placeholder XS-XL.
+  STORAGE_KEY stitch-and-scale-gaugefit-v1, projectStorage
+  prefix 'gaugefit'. +15 lib tests.
+  QA #50 fixed: the duplicate trigger had killed the Test
+  Knit Lab tab; renamed to testknitlab.
+  76 workspace tabs now classified into 6 groups
+  (design/fit/pricing/launch/channels/business) via
+  workspace-tab-groups.ts + clickable legend chips with
+  counts; strip order preserved (muscle memory).
+  /landing page: hero, capability grid (6 labs), stats
+  row, live demo CTA to the real demo project
+  (mss5osqd88j6fdyvtdu, no signup), early-access email
+  queue (localStorage queue until Supabase wires in),
+  onboarding overlay gated off /landing and /project/*
+  so cold visitors see marketing, not app onboarding.
+  Domain research: stitchandscale.app AVAILABLE (also
+  .net/.io, stitchnscale.app, stitchscale.tools); plain
+  stitchscale.com is parked/gambling squatter — avoid.
+  Quality: typecheck + vitest (1,614 tests / 79 files)
+  + build green; 3 screenshots in docs/screenshots.
   fmtMoney dead-currency display fix: the select already offered
   CHF/BRL/INR/NOK/SEK/DKK/ISK (added in CHK-077) but every number
   on screen still hard-coded '$'. Now: fmtMoney exported and
