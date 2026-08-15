@@ -87,7 +87,7 @@ describe("buildBragCaption", () => {
     );
     expect(c.headline).toBe("$250 in pattern sales");
     expect(c.subline).toContain("25 sales");
-    expect(c.subline).toContain("Best month: $80");
+    expect(c.subline).toContain("best month: $80.00");
     expect(c.caption).toContain("$250");
     expect(c.caption).toContain("Woolworks");
     expect(c.caption).toContain("$10");
@@ -100,7 +100,7 @@ describe("buildBragCaption", () => {
       "streak",
       "",
     );
-    expect(c.headline).toContain("4 profitable months");
+    expect(c.headline).toContain("4 months, all profitable");
     expect(c.caption).toContain("4 months in a row finishing above zero");
     expect(c.caption).not.toMatch(/:{2}/);
   });
@@ -130,7 +130,17 @@ describe("buildBragCardSvg", () => {
     expect(svg).toContain("250");
     expect(svg).toContain("$250 in pattern sales");
     expect(svg).toContain("Wool &amp; Yarn &lt;Studio&gt;");
-    expect(svg).toContain("Stitch &amp; Scale");
+    expect(svg).toContain("STITCH &amp; SCALE");
+  });
+
+  it("renders all six designer styles with the accent applied", () => {
+    const s = { totalRevenue: 250, totalSales: 25, totalProfit: 130, publishedCount: 3, revenuePerSale: 10, bestMonth: undefined, bestMonthProfit: 0, profitMonths: 3, profitRatio: 100 };
+    for (const st of ["navy", "editorial", "swatch", "selvedge", "swiss", "cameo"] as const) {
+      const svg = buildBragCardSvg(s, "USD", "income", "Studio", "#d87093", st);
+      expect(svg).toContain('width="1080" height="1080"');
+      expect(svg).toContain("#d87093");
+    }
+    expect(() => buildBragCardSvg(s, "USD", "income", "Studio", "#d87093")).not.toThrow();
   });
 
   it("streak template shows the month count as the big number", () => {
@@ -141,6 +151,6 @@ describe("buildBragCardSvg", () => {
       "X",
       "#d87093",
     );
-    expect(svg).toContain(">4 months<");
+    expect(svg).toContain(">4 profitable months<");
   });
 });

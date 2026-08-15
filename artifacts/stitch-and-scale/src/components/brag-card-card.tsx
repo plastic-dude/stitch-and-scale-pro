@@ -14,6 +14,7 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import {
   buildBragCaption,
   computeBragStats,
+  type BragCardStyle,
   type BragCardTemplate,
 } from "@/lib/brag-card";
 import { projectStorage } from "@/lib/storage-lib";
@@ -45,6 +46,14 @@ const TEMPLATES: { id: BragCardTemplate; label: string; blurb: string }[] = [
   { id: "sales", label: "Sales", blurb: "Lead with the sale count" },
   { id: "streak", label: "Streak", blurb: "Celebrate profitable months" },
   { id: "published", label: "Published", blurb: "Lead with the portfolio" },
+];
+const STYLES: { id: BragCardStyle; label: string }[] = [
+  { id: "navy", label: "Navy" },
+  { id: "editorial", label: "Editorial" },
+  { id: "swatch", label: "Gauge Swatch" },
+  { id: "selvedge", label: "Selvedge" },
+  { id: "swiss", label: "Swiss Poster" },
+  { id: "cameo", label: "Stitch Cameo" },
 ];
 
 export function BragCardCard(props: { project: PatternProject }) {
@@ -92,6 +101,7 @@ export function BragCardCard(props: { project: PatternProject }) {
 
   const [template, setTemplate] = useState<BragCardTemplate>("income");
   const [accent, setAccent] = useState(ACCENTS[0].id);
+  const [style, setStyle] = useState<BragCardStyle>("navy");
   const [nameOverride, setNameOverride] = useState("");
 
   const stats = useMemo(
@@ -126,7 +136,7 @@ export function BragCardCard(props: { project: PatternProject }) {
   const downloadPng = useCallback(async () => {
     try {
       const { buildBragCardSvg } = await import("@/lib/brag-card");
-      const svg = buildBragCardSvg(stats, currency, template, displayStudio, accent);
+      const svg = buildBragCardSvg(stats, currency, template, displayStudio, accent, style);
       const blob = new Blob([svg], { type: "image/svg+xml" });
       const url = URL.createObjectURL(blob);
       const img = new Image();
@@ -156,7 +166,7 @@ export function BragCardCard(props: { project: PatternProject }) {
     } catch {
       toast({ title: "Card export failed", description: "Something went wrong building the PNG.", variant: "destructive" });
     }
-  }, [stats, currency, template, displayStudio, accent, toast]);
+  }, [stats, currency, template, displayStudio, accent, style, toast]);
 
   const copyCaption = useCallback(async () => {
     try {
@@ -170,7 +180,7 @@ export function BragCardCard(props: { project: PatternProject }) {
   const shareNative = useCallback(async () => {
     try {
       const { buildBragCardSvg } = await import("@/lib/brag-card");
-      const svg = buildBragCardSvg(stats, currency, template, displayStudio, accent);
+      const svg = buildBragCardSvg(stats, currency, template, displayStudio, accent, style);
       const blob = new Blob([svg], { type: "image/svg+xml" });
       const file = new File([blob], "brag-card.svg", { type: "image/svg+xml" });
       if (navigator.share) {
@@ -182,7 +192,7 @@ export function BragCardCard(props: { project: PatternProject }) {
         downloadPng();
       }
     }
-  }, [stats, currency, template, displayStudio, accent, caption, toast, downloadPng]);
+  }, [stats, currency, template, displayStudio, accent, style, caption, toast, downloadPng]);
 
   const hasData = ledger.length > 0 || publishedCount > 0;
 
@@ -232,6 +242,21 @@ export function BragCardCard(props: { project: PatternProject }) {
               </div>
             </div>
             <div>
+              <Label className="text-xs font-medium">Card style</Label>
+              <div className="flex flex-wrap gap-1.5 mt-1.5">
+                {STYLES.map((s) => (
+                  <Button
+                    key={s.id}
+                    variant={style === s.id ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setStyle(s.id)}
+                  >
+                    {s.label}
+                  </Button>
+                ))}
+              </div>
+            </div>
+            <div>
               <Label className="text-xs font-medium">Card accent</Label>
               <div className="flex gap-2 mt-1.5">
                 {ACCENTS.map((a) => (
@@ -254,7 +279,7 @@ export function BragCardCard(props: { project: PatternProject }) {
 
           <div className="space-y-2">
             <Label className="text-xs font-medium">Card preview (1080 × 1080)</Label>
-            <BragCardPreview stats={stats} currency={currency} template={template} studioName={displayStudio} accent={accent} />
+            <BragCardPreview stats={stats} currency={currency} template={template} studioName={displayStudio} accent={accent} style={style} />
           </div>
         </div>
 
@@ -281,7 +306,7 @@ export function BragCardCard(props: { project: PatternProject }) {
   );
 }
 
-function BragCardPreview(props: { stats: ReturnType<typeof computeBragStats>; currency: string; template: BragCardTemplate; studioName: string; accent: string }) {
+function BragCardPreview(props: { stats: ReturnType<typeof computeBragStats>; currency: string; template: BragCardTemplate; studioName: string; accent: string; style: BragCardStyle }) {
   const ref = useRef<HTMLDivElement | null>(null);
   const markup = useMemo(() => {
     try {
@@ -300,12 +325,12 @@ function BragCardPreview(props: { stats: ReturnType<typeof computeBragStats>; cu
   let big = "";
   let unit = "";
   let sub = "";
-  const { stats, currency, template, studioName } = props;
+  const { stats, currency, template, studioName, accent, style } = props;
   const c = buildBragCaption(stats, currency, template, studioName);
   if (template === "income") { big = fmtMoney(stats.totalRevenue, currency); }
   else if (template === "sales") { big = String(stats.totalSales); unit = "sales"; }
   else if (template === "published") { big = String(stats.publishedCount); unit = "published"; }
-  else { big = String(stats.profitMonths); unit = "months"; }
+  else { big = String(stats.profitMonths); unit = "profitable months"; }
 
   const monthNote = stats.bestMonth ? `best month ${fmtMoney(stats.bestMonthProfit, currency)}` : "";
   const footer = [
@@ -318,26 +343,74 @@ function BragCardPreview(props: { stats: ReturnType<typeof computeBragStats>; cu
   const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   const line = unit ? `${big} ${unit}` : `${big}`;
 
+  // The preview mirrors the six designer-grade styles from the engine
+  // (CHK-094): palette per style, knit texture where it matters, and the
+  // same footer rules — the PNG download always matches this preview.
+  const pal = {
+    navy: { bg: "linear-gradient(135deg, #171b2b, #1d2236)", ink: "#f1e9dd", soft: "#b9b4c6", rule: "#3a3f57" },
+    editorial: { bg: "#f4efe4", ink: "#26221c", soft: "#6f6a5f", rule: "#cbbfad" },
+    swatch: { bg: "#faf8f3", ink: "#2b2b26", soft: "#7a786f", rule: "#d8d4c8" },
+    selvedge: { bg: "#24201c", ink: "#efe7d8", soft: "#b3ab9b", rule: "#554f44" },
+    swiss: { bg: "#f2f0ea", ink: "#14130f", soft: "#6b6860", rule: "#cfcac0" },
+    cameo: { bg: "#eef0ec", ink: "#1c2420", soft: "#6a7570", rule: "#c9d2cb" },
+  }[style];
+
+  const gridOverlay = style === "swatch" ? (
+    <div className="absolute right-2 top-2" style={{ width: "28%", height: "28%", borderLeft: "2.5px solid " + pal.rule, borderTop: "2.5px solid " + pal.rule, borderRight: "2.5px solid " + pal.rule, backgroundImage: "linear-gradient(" + pal.rule + " 1px, transparent 1px), linear-gradient(90deg, " + pal.rule + " 1px, transparent 1px)", backgroundSize: "7% 7%" }}>
+      <div className="absolute left-[10%] top-[10%] w-[15%] h-[15%]" style={{ background: accent, opacity: 0.55 }} />
+      <div className="absolute left-[35%] top-[25%] w-[15%] h-[15%]" style={{ background: accent, opacity: 0.40 }} />
+    </div>
+  ) : null;
+
+  const cameoOverlay = style === "cameo" ? (
+    <div className="absolute right-4 top-6" style={{ border: "2px solid " + pal.rule, width: "24%", height: "30%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <p className="font-mono text-center leading-relaxed" style={{ color: accent, fontSize: "clamp(7px, 1.4vw, 11px)", letterSpacing: "0.3em" }}>{"O O X O"}<br />{"O | O O"}<br />{"X O | O"}<br />{"O O X |"}</p>
+    </div>
+  ) : null;
+
+  const bandOverlay = style === "selvedge" ? (
+    <div className="absolute left-1 top-1 bottom-1" style={{ width: "3%", background: accent, opacity: 0.85 }} />
+  ) : null;
+
   return (
     <div
       ref={ref}
       className="aspect-square w-full rounded-lg overflow-hidden"
-      style={{ background: "linear-gradient(135deg, #1a1a2e, #16213e)", position: "relative" }}
+      style={{ background: pal.bg, position: "relative" }}
       aria-label={`Brag card preview: ${c.headline}`}
     >
-      <div className="absolute rounded-full" style={{ width: "22%", height: "22%", right: "-4%", top: "-4%", background: props.accent, opacity: 0.12 }} />
-      <div className="absolute rounded-full" style={{ width: "18%", height: "18%", left: "-3%", bottom: "-3%", background: "#e8b4b8", opacity: 0.10 }} />
-      <div className="absolute inset-0 p-5 flex flex-col gap-3">
-        <p className="text-lg font-serif" style={{ color: "#e8b4b8" }}>{esc(studioName || "My Studio")}</p>
-        <p className="font-serif font-bold leading-tight" style={{ fontSize: "clamp(28px, 7vw, 56px)", color: props.accent }}>{esc(line)}</p>
-        <p className="font-serif" style={{ fontSize: "clamp(13px, 3vw, 18px)", color: "#e8b4b8" }}>{esc(c.headline)}</p>
-        <p className="font-serif" style={{ fontSize: "clamp(11px, 2.4vw, 15px)", color: "#b0b0c8" }}>{esc(c.subline)}</p>
-        <p className="font-serif" style={{ fontSize: "clamp(10px, 2vw, 13px)", color: "#8888a8" }}>{esc(monthNote)}</p>
-        <div className="mt-auto">
-          <div className="h-px mb-3" style={{ background: "#3a3a5e" }} />
-          <p className="font-serif" style={{ fontSize: "clamp(10px, 2.2vw, 14px)", color: "#c8c8e0" }}>{esc(footer)}</p>
-          <p className="font-serif mt-1" style={{ fontSize: "clamp(9px, 1.8vw, 12px)", color: "#6a6a8e" }}>Made with Stitch &amp; Scale</p>
-        </div>
+      {style === "navy" ? <div className="absolute rounded-full" style={{ width: "22%", height: "22%", right: "-4%", top: "-4%", background: accent, opacity: 0.10 }} /> : null}
+      {style === "navy" ? <div className="absolute rounded-full" style={{ width: "18%", height: "18%", left: "-3%", bottom: "-3%", background: "#e8b4b8", opacity: 0.08 }} /> : null}
+      {style === "editorial" ? <div className="absolute inset-3 rounded-none" style={{ border: "2px solid " + pal.rule }} /> : null}
+      {gridOverlay}
+      {cameoOverlay}
+      {bandOverlay}
+      <div className={style === "editorial" ? "absolute inset-0 p-8 flex flex-col gap-3" : style === "selvedge" ? "absolute inset-0 pl-14 pr-5 py-5 flex flex-col gap-3" : "absolute inset-0 p-5 flex flex-col gap-3"}>
+        {style === "swiss" ? (
+          <div className="flex flex-col gap-4">
+            <div className="text-center -mx-5 -mt-5 py-4" style={{ background: pal.ink }}>
+              <p className="font-sans font-semibold" style={{ color: pal.bg, fontSize: "clamp(8px, 1.6vw, 12px)", letterSpacing: "0.2em" }}>{esc((studioName || "My Studio").toUpperCase())}</p>
+            </div>
+            <p className="font-mono font-bold leading-none" style={{ fontSize: "clamp(34px, 14vw, 72px)", color: pal.ink }}>{esc(big)}</p>
+            <div style={{ width: "32%", height: "6px", background: accent }} />
+            <p className="font-sans font-bold" style={{ fontSize: "clamp(10px, 2.6vw, 17px)", color: pal.ink, letterSpacing: "0.06em" }}>{esc((unit || "earned").toUpperCase())}</p>
+            <p className="font-serif italic" style={{ fontSize: "clamp(10px, 2.4vw, 15px)", color: pal.soft }}>{esc(c.headline)}</p>
+            <p className="font-sans" style={{ fontSize: "clamp(8px, 1.8vw, 12px)", color: pal.soft }}>{esc(c.subline)}</p>
+          </div>
+        ) : (
+          <>
+            <p className={style === "editorial" ? "font-serif font-semibold" : "font-serif"} style={{ color: pal.ink, fontSize: "clamp(12px, 2.6vw, 17px)" }}>{esc(studioName || "My Studio")}</p>
+            <p className={style === "swatch" || style === "cameo" ? "font-mono font-bold leading-tight" : "font-serif font-bold leading-tight"} style={{ fontSize: "clamp(26px, 6.5vw, 54px)", color: style === "navy" ? accent : pal.ink }}>{esc(line)}</p>
+            {style === "editorial" ? <div style={{ width: "36%", height: "5px", background: accent, marginBottom: "4px" }} /> : null}
+            <p className="font-serif italic" style={{ fontSize: "clamp(12px, 2.8vw, 17px)", color: pal.soft }}>{esc(c.headline)}</p>
+            <p className="font-sans" style={{ fontSize: "clamp(10px, 2.2vw, 14px)", color: pal.soft }}>{esc(c.subline)}</p>
+            <div className="mt-auto">
+              <div className="h-px mb-2" style={{ background: pal.rule }} />
+              <p className="font-sans" style={{ fontSize: "clamp(8px, 1.8vw, 12px)", color: pal.soft, letterSpacing: "0.08em" }}>{esc(footer)}</p>
+              <p className="font-sans mt-0.5 text-right" style={{ fontSize: "clamp(7px, 1.5vw, 10px)", color: pal.soft, letterSpacing: "0.18em" }}>STITCH &amp; SCALE</p>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
