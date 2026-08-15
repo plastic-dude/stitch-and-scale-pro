@@ -64,6 +64,7 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - [CHK-083] 0ee1514 — Chat-first Receipt Lab (78th tab).
 - [CHK-084] e71b85a — QA batch from the reviewer's manual run
 - [CHK-085] 887a3ee — Deep pain-point research cycle on
+- [CHK-088] Reviewer MAJOR sweep. S251/S123 (collab deal math) — yarn-support value removed from cash in full-buyout / exclusive-flat / advance-royalty branches; yarn is a cost offset only. 2 regression tests. S182 (podcast affiliate lab) — affiliate cut now weights by conversion rate x episodes per month on the same converted base as affiliate gross. 1 regression test. S160 (channel migration) — added migratedSalesPerMonth input (default 0); delta net = added sales x target net + migrated x per-sale spread − new monthly fee; card gained the new field. 3 regression tests. Fee registry (src/lib/fee-registry.ts) created as single source of truth for marketplace take rates (Etsy, Ravelry, LoveCrafts, Ribblr, Payhip, own site) — killed the Infinity-ceiling trap (commissionActiveFor helper) and ended doc drift S250 (partner-economics comment cites fee registry; club planner PLATFORM_NET_PCT 0.95→0.96 with tests resynced). Gates: typecheck clean, vitest 1,659 / 83, build green.
 - [CHK-087] 1d414d5 — Count-drift fix. Measured the actual
   workspace tab count: 77 unique TabsTrigger/TabsContent pairs
   in project-workspace.tsx and 77 TAB_GROUPS entries — the
