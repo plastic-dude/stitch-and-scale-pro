@@ -117,6 +117,7 @@ export const TAB_REGISTRY: TabRegistryEntry[] = [
   // ledger (growth-engine feature, founder wishlist). Placed last so
   // existing strip ordering stays untouched.
   { value: "bragcard", label: "Brag Cards", group: "launch", icon: "Send" },
+  { value: "payback", label: "Payback Lab", group: "pricing", icon: "TrendingUp" },
 ];
 
 // Dev-time invariants — these fail loudly before a misregistered tab can

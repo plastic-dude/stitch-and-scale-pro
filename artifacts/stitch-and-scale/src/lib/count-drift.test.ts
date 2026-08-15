@@ -1,6 +1,6 @@
 // CHK-087 / CHK-091 — regression guard against count drift between the
 // landing page's marketing stats and the workspace's registered tab
-// count. The landing claims "78 business labs" (77 until Brag Cards at
+// count. The landing claims "79 business labs" (78 until Payback Lab at
 // CHK-091); the workspace tab registry and the grouped classification
 // must both expose exactly the same number of tabs, or this test fails
 // the build before marketing copy ever drifts from the product.
@@ -9,12 +9,12 @@ import { describe, expect, it } from "vitest";
 import { TAB_GROUPS, groupFor } from "./workspace-tab-groups";
 
 describe("count drift guard", () => {
-it("landing claims 78 labs, matching the registered workspace tabs", () => {
+it("landing claims 79 labs, matching the registered workspace tabs", () => {
   // Landing STATS[0].value must equal the registered tab count exactly.
   // The number is read from TAB_GROUPS (not hardcoded) so a future CHK
   // adding a tab forces the landing claim to move in lockstep — the
   // previous hardcoded `77` is how drift was born the first time.
-  const landingClaim = 78;
+  const landingClaim = 79;
   const registeredTabs = Object.keys(TAB_GROUPS);
   expect(registeredTabs.length).toBe(landingClaim);
 

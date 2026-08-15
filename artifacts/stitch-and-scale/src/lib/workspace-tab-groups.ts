@@ -114,6 +114,7 @@ export const TAB_GROUPS: Record<string, TabGroup> = {
   designledger: "business",
   // CHK-091 — Brag Cards: shareable stat cards, launch group.
   bragcard: "launch",
+  payback: "pricing",
 };
 
 export function groupFor(tabValue: string): TabGroup {
