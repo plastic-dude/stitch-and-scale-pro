@@ -60,6 +60,7 @@ export const TAB_GROUPS: Record<string, TabGroup> = {
   adlab: "pricing",
   dealmath: "pricing",
   "giftcard": "pricing",
+  receiptlab: "pricing",
   "consignment-reprice": "pricing",
   "pattern-bundle": "pricing",
   // Launch & Marketing
