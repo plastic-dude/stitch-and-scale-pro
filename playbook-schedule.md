@@ -60,6 +60,26 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - [CHK-079] 9d0011c — QA #49 / S224 closed — Intl Pricing Lab
 - [CHK-080] bf1fb7d — Gauge & Fit Translator tab + tab
 - [CHK-081] af973b7 — Tester-first funnel rework (founder
+- [CHK-082] 2e18d3c — Honest-founder landing rewrite +
+  complete tab classification (from the 39-file founder
+  archive digest). The pitch playbook's golden rule:
+  never sound like you're selling; and its proven weapon
+  'I don't know how to knit — my late mother did.' The
+  landing page's footer falsely claimed 'built by a
+  knitwear designer' — removed; hero now discloses the
+  founder is a developer whose late mother knitted,
+  matching the playbook's tested disclosure.
+  TAB_GROUPS finalized: 0 unmapped, 0 phantom; fixed 3
+  stale values (box-inclusion->fit, pod-patterns->
+  channels, podcast-affiliate->launch). founding-tester
+  posts corrected (Ravelry draft said 'I knit').
+  docs/archive-digest.md: the 39-file archive's full
+  distillation (Emlux strategy, research dossier facts,
+  audit consensus, pricing tension DEC-0011 $45/$80 vs
+  audit-found $15-25/mo expectation — parked; first
+  cohort decides). docs/brand-voice-brief.md rewritten
+  with Rule 1 (honesty rule) + banned claims.
+  Quality: typecheck + vitest (1,614 / 79) + build green.
   decision: no paid spend until demand proven via the
   early-access list). Landing page rewritten around the
   FOUNDING TESTER ask: hero 'You can knit anything.
