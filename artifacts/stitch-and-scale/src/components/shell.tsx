@@ -112,7 +112,24 @@ export function Shell({ children }: { children: React.ReactNode }) {
       </main>
       
       <footer className="border-t py-6 md:py-0 md:h-16 flex items-center justify-center text-sm text-muted-foreground">
-        <p>A premium tool for independent knitwear designers</p>
+        <p className="flex items-center gap-2">
+          <span>A premium tool for independent knitwear designers —{' '}</span>
+          <span className="font-semibold text-foreground">by Emlux</span>
+          <span aria-hidden="true">·</span>
+          <button
+            type="button"
+            onClick={() => {
+              const url = window.location.origin;
+              navigator.clipboard
+                .writeText(url)
+                .then(() => window.dispatchEvent(new Event('stitch-and-scale:link-copied')))
+                .catch(() => {})
+            }}
+            className="underline underline-offset-2 hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded"
+          >
+            Copy this tool's link
+          </button>
+        </p>
       </footer>
     </div>
   )
