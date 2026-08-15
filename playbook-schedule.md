@@ -62,6 +62,19 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - [CHK-081] af973b7 — Tester-first funnel rework (founder
 - [CHK-082] 2e18d3c — Honest-founder landing rewrite +
 - [CHK-083] 0ee1514 — Chat-first Receipt Lab (78th tab).
+- [CHK-084] e71b85a — QA batch from the reviewer's manual run
+  report. Issue #51 (S247) fmtMoney EUR/CHF compound key:
+  the Intl Pricing Lab's 'Nordics & Switzerland' row was
+  rendering bare numbers — now shows e.g. 'EUR9.40 / CHF
+  9.40' with both symbols; engine refactored to a shared
+  symbolOf() map; 4 new tests. S248 raw-fraction % fix:
+  6 labs (Release Timing, Workshop, Bundle, Podcast,
+  Magazine, Price Psych) showed fraction values like
+  '0.1 %' in percent fields — now '10 %' with min/max
+  bounds; engine state unchanged, display converted at the
+  field. S249 count drift: landing + docs now say 78 labs.
+  Quality: typecheck clean, 1,627 tests / 80 files, build
+  green; EUR/CHF row + percent fields verified live.
   Research (session 83): Etsy never issues buyer
   invoices; craft-fair sellers still handwrite receipts
   or keep yellow-highlighted spreadsheets; custom-knit
