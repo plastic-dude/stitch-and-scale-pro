@@ -27,6 +27,6 @@
 ## What the archive changes for the repo (applied in CHK-082)
 
 1. **The honest-founder rule** (`docs/brand-voice-brief.md`, Rule 1): copy never claims the founder knits; the mother-story disclosure is the trust weapon per the pitch playbook. Landing page footer + hero rewritten; post drafts corrected.
-2. **Tab classification completed**: all 78 workspace tabs explicitly mapped to 6 groups (was 20 unmapped/defaulting).
+2. **Tab classification completed**: all 77 workspace tabs explicitly mapped to 6 groups (was 20 unmapped/defaulting).
 3. **Pricing tension parked for a decision**: DEC-0011 ($45/$80 one-time) vs audit-found expectation ($15–25/mo). Resolution method per playbook: ask the founding testers directly — the first cohort decides pricing.
 4. **Local-first trust stays the #1 thing to solve after landing traction** (Supabase sync → account trust), confirming the earlier architecture plan.

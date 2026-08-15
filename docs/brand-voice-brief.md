@@ -22,7 +22,7 @@ Concretely: copy may **never** claim the founder knits or designs patterns. The 
 | Rhythm | Short declarative lines; craft truth before tech truth | Marketing-speak, exclamation points as crutch |
 | Metaphors | Terminals, code, systems — sparingly, as flavor | Jargon (ROI, synergy, leverage, empower) |
 | Emotion | Quiet confidence + outsider wit + genuine love of the craft (via mother's legacy) | Hype, urgency gimmicks, countdown pressure |
-| Credibility | Numbers and real product ("78 labs, 1,600 tests") + named limits ("I don't know yarn; you tell me") | Vague superlatives ("revolutionary", "game-changing") |
+| Credibility | Numbers and real product ("77 labs, 1,640+ tests") + named limits ("I don't know yarn; you tell me") | Vague superlatives ("revolutionary", "game-changing") |
 
 The brand tension that makes the copy work: **a hacker's hands building the business math for people with yarn on their hands.** The copy should always feel like a builder asking craftspersons to check his work — never a craftsperson lecturing.
 
@@ -36,7 +36,7 @@ The competitive wedge is **honest multi-size grading** — the market's own docu
 
 ## Copy seeds (approved direction)
 
-Hero direction: craft truth first — e.g. "You can knit anything. But can you price it?" / "The pattern is only half the job. The math is the rest." Founder disclosure: "I don't know how to knit. My late mother did. I wrote the math so you don't have to fight Excel at 11 PM." Demo proof: "78 business labs. 1,600 tests. Free, no signup, your patterns stay on your machine." Founding-tester CTA: "Founding testers — the first cohort shapes what this becomes. Bug-hunters get a discount at launch. No spam, no fee, just honest answers."
+Hero direction: craft truth first — e.g. "You can knit anything. But can you price it?" / "The pattern is only half the job. The math is the rest." Founder disclosure: "I don't know how to knit. My late mother did. I wrote the math so you don't have to fight Excel at 11 PM." Demo proof: "77 business labs. 1,640+ tests. Free, no signup, your patterns stay on your machine." Founding-tester CTA: "Founding testers — the first cohort shapes what this becomes. Bug-hunters get a discount at launch. No spam, no fee, just honest answers."
 
 ## Banned terms
 
