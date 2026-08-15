@@ -61,25 +61,34 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - [CHK-080] bf1fb7d — Gauge & Fit Translator tab + tab
 - [CHK-081] af973b7 — Tester-first funnel rework (founder
 - [CHK-082] 2e18d3c — Honest-founder landing rewrite +
-  complete tab classification (from the 39-file founder
-  archive digest). The pitch playbook's golden rule:
-  never sound like you're selling; and its proven weapon
-  'I don't know how to knit — my late mother did.' The
-  landing page's footer falsely claimed 'built by a
-  knitwear designer' — removed; hero now discloses the
-  founder is a developer whose late mother knitted,
-  matching the playbook's tested disclosure.
-  TAB_GROUPS finalized: 0 unmapped, 0 phantom; fixed 3
-  stale values (box-inclusion->fit, pod-patterns->
-  channels, podcast-affiliate->launch). founding-tester
-  posts corrected (Ravelry draft said 'I knit').
-  docs/archive-digest.md: the 39-file archive's full
-  distillation (Emlux strategy, research dossier facts,
-  audit consensus, pricing tension DEC-0011 $45/$80 vs
-  audit-found $15-25/mo expectation — parked; first
-  cohort decides). docs/brand-voice-brief.md rewritten
-  with Rule 1 (honesty rule) + banned claims.
-  Quality: typecheck + vitest (1,614 / 79) + build green.
+- [CHK-083] 0ee1514 — Chat-first Receipt Lab (78th tab).
+  Research (session 83): Etsy never issues buyer
+  invoices; craft-fair sellers still handwrite receipts
+  or keep yellow-highlighted spreadsheets; custom-knit
+  sellers run their funnel through Instagram DMs into
+  WhatsApp — chat receipts hit ~98% open rate vs ~20%
+  email. Competitors (QuickBooks/Wave invoice-scariness,
+  Square payments-gating, one-off generators with no
+  memory) all miss the knitting niche entirely. Build:
+  Receipt Lab: receipt / order-quote / refund-note
+  kinds with auto doc numbering (REC-/QUO-/REF-),
+  per-item pricing, tax/platform/processing fees,
+  shipping and materials cost → per-sale profit math
+  (the niche differentiator no generic tool has), a
+  chat-sized branded receipt card with Copy/Share,
+  Save-as-image and Print/PDF paths, plus a text copy
+  for plain-text messengers, a monthly P&L ledger (with
+  an effective-sale guard so a rehydrated empty draft
+  never double-counts totals), and per-project brand
+  settings. STORAGE_KEY stitch-and-scale-receipt-v1,
+  projectStorage prefix 'receipt'. +9 engine tests;
+  QA issue #52 re-audited while registering the tab
+  (76 triggers, 0 unmapped/phantom). Screenshots
+  docs/screenshots/receipt-lab-*.webp; research
+  research/competitors-session-83-chat-receipt.md.
+  Quality: typecheck + vitest (1,623 tests) + build
+  green; verified live (REC-001 saved, ledger and
+  monthly P&L correct).
   decision: no paid spend until demand proven via the
   early-access list). Landing page rewritten around the
   FOUNDING TESTER ask: hero 'You can knit anything.
