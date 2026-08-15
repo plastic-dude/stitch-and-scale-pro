@@ -3,6 +3,7 @@ import { AlertTriangle, Info, Lightbulb, RefreshCw, Globe } from "lucide-react";
 import {
   analyzeIntlPricing,
   DEFAULT_INTL_PRICING,
+  fmtMoney,
   type IntlPricingInput,
   type IntlPricingResult,
 } from "@/lib/intl-pricing-lab";
@@ -337,7 +338,7 @@ export function IntlPricingLabCard({ project }: { project: PatternProject }) {
                         </td>
                         <td className="p-2 tabular-nums">{m.parityPriceString}</td>
                         <td className="p-2 tabular-nums text-muted-foreground">
-                          ${m.currentNetPerSale.toFixed(2)}
+                          {fmtMoney(m.currentNetPerSale, m.currency)}
                         </td>
                         <td
                           className={`p-2 tabular-nums ${
@@ -346,7 +347,7 @@ export function IntlPricingLabCard({ project }: { project: PatternProject }) {
                               : "text-muted-foreground"
                           }`}
                         >
-                          ${m.parityNetPerSale.toFixed(2)}
+                          {fmtMoney(m.parityNetPerSale, m.currency)}
                         </td>
                         <td className="p-2">
                           <Button
@@ -387,27 +388,27 @@ export function IntlPricingLabCard({ project }: { project: PatternProject }) {
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <StatBox
           label="Revenue now / month"
-          value={`$${result.totalCurrentMonthly.toFixed(0)}`}
+          value={result.fmtTotalCurrentMonthly}
           tone="good"
           hint="Flat-USD baseline across all markets"
         />
         <StatBox
           label="Parity revenue / month"
-          value={`$${result.totalParityMonthly.toFixed(0)}`}
+          value={result.fmtTotalParityMonthly}
           tone={result.liftPct >= 5 ? "good" : result.liftPct > 0 ? "warn" : "bad"}
-          hint={`${result.liftPct >= 0 ? "+" : ""}${result.liftPct.toFixed(1)}% lift`}
+          hint={`${result.liftPct >= 0 ? "+" : ""}${result.fmtLiftPct}% lift`}
         />
         <StatBox
           label="Annual revenue lift"
-          value={`${result.annualRevenueLift >= 0 ? "+" : ""}$${result.annualRevenueLift.toFixed(0)}`}
+          value={`${result.annualRevenueLift >= 0 ? "+" : ""}${result.fmtAnnualRevenueLift}`}
           tone={result.liftPct >= 5 ? "good" : "warn"}
           hint="If you run tiers across every market"
         />
         <StatBox
           label="FX leak / month"
-          value={`$${result.totalFxLeakMonthly.toFixed(0)}`}
+          value={result.fmtTotalFxLeakMonthly}
           tone={result.totalFxLeakMonthly / Math.max(result.totalCurrentMonthly, 1) > 0.04 ? "bad" : "warn"}
-          hint={`≈ $${result.totalFxLeakAnnual.toFixed(0)}/yr to conversion spreads`}
+          hint={`≈ ${result.fmtTotalFxLeakAnnual}/yr (${result.fmtFxLeakPct}% of revenue) to conversion spreads`}
         />
       </div>
 

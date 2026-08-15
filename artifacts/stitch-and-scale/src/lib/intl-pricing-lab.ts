@@ -81,6 +81,15 @@ export interface IntlPricingResult {
   liftPct: number;
   totalFxLeakMonthly: number;
   totalFxLeakAnnual: number;
+  /** Currency-formatted display strings (QA #49): all currencies supported —
+   *  no hardcoded "$" anywhere in the stat boxes. */
+  fmtTotalCurrentMonthly: string;
+  fmtTotalParityMonthly: string;
+  fmtAnnualRevenueLift: string;
+  fmtTotalFxLeakMonthly: string;
+  fmtTotalFxLeakAnnual: string;
+  fmtFxLeakPct: string;
+  fmtLiftPct: string;
   anchorNote: string; // guidance on the flat-USD anchor price
   flags: FlagDetail[];
   verdict:
@@ -146,10 +155,34 @@ function roundLocal(raw: number, currency: string): number {
   return Math.max(best, steps[0]);
 }
 
-function fmtMoney(n: number, currency: string): string {
-  const prefix =
-    currency === "USD" ? "$" : currency === "GBP" ? "£" : currency === "EUR" ? "€" : currency === "CAD" || currency === "AUD" || currency === "NZD" ? "$" : "";
-  const suffix = currency === "INR" ? "" : "";
+// QA #49 (S224): currency-aware formatter — every supported currency renders
+// with its own symbol/placement; CHF/SEK/NOK/DKK/BRL/INR/ISK were previously
+// display-only dead zones that fell back to a bare number.
+export function fmtMoney(n: number, currency: string): string {
+  // QA #49: every currency the market select offers must render with its own
+  // symbol — the previous version returned a bare number for CHF, BRL, NOK,
+  // SEK, DKK and ISK.
+  let prefix = "";
+  let suffix = "";
+  if (currency === "USD" || currency === "CAD" || currency === "AUD" || currency === "NZD") {
+    prefix = "$";
+  } else if (currency === "GBP") {
+    prefix = "£";
+  } else if (currency === "EUR") {
+    prefix = "€";
+  } else if (currency === "CHF") {
+    prefix = "CHF ";
+  } else if (currency === "BRL") {
+    prefix = "R$ ";
+  } else if (currency === "INR") {
+    prefix = "₹";
+  } else if (currency === "JPY" || currency === "CNY" || currency === "KRW") {
+    prefix = "¥";
+  } else if (currency === "NOK" || currency === "SEK" || currency === "DKK") {
+    suffix = " kr";
+  } else if (currency === "ISK") {
+    suffix = " kr";
+  }
   const rounded = n >= 1000 ? Math.round(n) : Math.round(n * 100) / 100;
   return `${prefix}${rounded.toFixed(rounded >= 100 ? 0 : 2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}${suffix}`;
 }
@@ -256,6 +289,8 @@ export function analyzeIntlPricing(input: IntlPricingInput): IntlPricingResult {
   const totalCurrentMonthly = results.reduce((s, r) => s + r.monthlyRevenueNow, 0);
   const totalParityMonthly = results.reduce((s, r) => s + r.monthlyRevenueParity, 0);
   const totalFxLeakMonthly = results.reduce((s, r) => s + r.fxLeakMonthly, 0);
+  const totalFxLeakAnnual = totalFxLeakMonthly * 12;
+  const annualRevenueLift = (totalParityMonthly - totalCurrentMonthly) * 12;
 
   const anchorNote = (() => {
     // Ravelry has no tiers: the USD anchor IS the international price.
@@ -387,10 +422,17 @@ export function analyzeIntlPricing(input: IntlPricingInput): IntlPricingResult {
     markets: results,
     totalCurrentMonthly,
     totalParityMonthly,
-    annualRevenueLift: (totalParityMonthly - totalCurrentMonthly) * 12,
+    annualRevenueLift,
     liftPct,
     totalFxLeakMonthly,
-    totalFxLeakAnnual: totalFxLeakMonthly * 12,
+    totalFxLeakAnnual,
+    fmtTotalCurrentMonthly: fmtMoney(totalCurrentMonthly, "USD"),
+    fmtTotalParityMonthly: fmtMoney(totalParityMonthly, "USD"),
+    fmtAnnualRevenueLift: fmtMoney(annualRevenueLift, "USD"),
+    fmtTotalFxLeakMonthly: fmtMoney(totalFxLeakMonthly, "USD"),
+    fmtTotalFxLeakAnnual: fmtMoney(totalFxLeakAnnual, "USD"),
+    fmtFxLeakPct: ((totalFxLeakMonthly / Math.max(totalCurrentMonthly, 1)) * 100).toFixed(1),
+    fmtLiftPct: liftPct.toFixed(1),
     anchorNote,
     flags,
     verdict,

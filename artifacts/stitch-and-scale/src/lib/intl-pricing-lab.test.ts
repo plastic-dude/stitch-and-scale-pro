@@ -3,11 +3,32 @@ import { describe, expect, it } from "vitest";
 import {
   DEFAULT_INTL_PRICING,
   analyzeIntlPricing,
+  fmtMoney,
 } from "@/lib/intl-pricing-lab";
 
 function withMarkets(overrides: Partial<typeof DEFAULT_INTL_PRICING> = {}) {
   return { ...DEFAULT_INTL_PRICING, ...overrides };
 }
+
+// QA #49 (S224): every currency the Intl Pricing Lab's market select offers
+// must render with its own symbol — none may fall back to a bare number.
+const FMT_CURRENCY_CASES: [string, number, string][] = [
+  ["USD", 1234.5, "$1,235"],
+  ["USD", 9, "$9.00"],
+  ["GBP", 7.99, "£7.99"],
+  ["EUR", 8.5, "€8.50"],
+  ["CAD", 12, "$12.00"],
+  ["AUD", 12, "$12.00"],
+  ["NZD", 12, "$12.00"],
+  ["CHF", 8.9, "CHF 8.90"],
+  ["BRL", 45.3, "R$ 45.30"],
+  ["INR", 315, "₹315"],
+  ["NOK", 99, "99.00 kr"],
+  ["SEK", 89, "89.00 kr"],
+  ["DKK", 62, "62.00 kr"],
+  ["NOK", 150, "150 kr"],
+  ["ISK", 1195, "1,195 kr"],
+];
 
 describe("analyzeIntlPricing — defaults", () => {
   const r = analyzeIntlPricing(withMarkets());
@@ -234,5 +255,50 @@ describe("analyzeIntlPricing — clamping and edge cases", () => {
     expect(analyzeIntlPricing(withMarkets({ platform: "lovecrafts" })).anchorNote).toMatch(/LoveCrafts/);
     expect(analyzeIntlPricing(withMarkets({ platform: "etsy" })).anchorNote).toMatch(/Etsy/);
     expect(analyzeIntlPricing(withMarkets({ platform: "gumroad-payhip" })).anchorNote).toMatch(/parity/);
+  });
+});
+
+describe("fmtMoney — QA #49 currency coverage", () => {
+  for (const [currency, n, want] of FMT_CURRENCY_CASES) {
+    it(`formats ${currency} as "${want}"`, () => {
+      expect(fmtMoney(n, currency)).toBe(want);
+    });
+  }
+  it("never returns a bare number for the supported select currencies", () => {
+    const selectCurrencies = ["USD", "GBP", "EUR", "CAD", "AUD", "NZD", "CHF", "BRL", "INR", "NOK", "SEK", "DKK", "ISK"];
+    for (const c of selectCurrencies) {
+      const out = fmtMoney(42.75, c);
+      expect(out).toMatch(/[A-Za-z$£€₹₺₽¢¥]|kr/);
+      expect(out).not.toBe("42.75");
+    }
+  });
+  it("unknown currency still renders a rounded number (no crash)", () => {
+    expect(fmtMoney(42.75, "XYZ")).toBe("42.75");
+  });
+});
+
+describe("analyzeIntlPricing — formatted display fields (QA #49)", () => {
+  it("exposes fmtTotal* fields that render with the USD symbol", () => {
+    const r = analyzeIntlPricing(withMarkets());
+    expect(r.fmtTotalCurrentMonthly).toMatch(/^\$\d+(?:,\d+)?(?:\.\d+)?$/);
+    expect(r.fmtTotalParityMonthly).toMatch(/^\$\d+(?:,\d+)?(?:\.\d+)?$/);
+    expect(r.fmtTotalFxLeakMonthly).toMatch(/^\$?\d/);
+    expect(parseFloat(r.fmtTotalCurrentMonthly.replace(/[^0-9.]/g, ""))).toBeGreaterThan(0);
+    expect(r.totalCurrentMonthly).toBeGreaterThan(0);
+  });
+  it("fmt fields follow the raw numbers under currency-mixed markets", () => {
+    const r = analyzeIntlPricing(
+      withMarkets({
+        markets: [
+          { country: "Switzerland", currency: "CHF", pppIndex: 1.25, share: 0.5, buyersPerMonth: 10, fxFee: 0.04 },
+          { country: "India", currency: "INR", pppIndex: 0.3, share: 0.5, buyersPerMonth: 20, fxFee: 0.07 },
+        ],
+      }),
+    );
+    // parity price string uses the market's own currency formatter
+    const chf = r.markets.find((m) => m.currency === "CHF")!;
+    expect(chf.parityPriceString).toMatch(/^CHF \d/);
+    const inr = r.markets.find((m) => m.currency === "INR")!;
+    expect(inr.parityPriceString).toMatch(/^₹\d/);
   });
 });
