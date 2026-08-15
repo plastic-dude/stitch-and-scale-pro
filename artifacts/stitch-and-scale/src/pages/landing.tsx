@@ -1,16 +1,19 @@
-// CHK-080 — Public landing page for Stitch & Scale.
+// CHK-080/081 — Public landing page for Stitch & Scale, reworked into a
+// tester-first funnel (voice brief: docs/brand-voice-brief.md).
 //
-// The first revenue-facing surface. The app proper lives inside <Shell>;
-// this page is a full-width marketing view with a live demo link (the
-// existing demo project) and an early-access email capture. No backend
-// yet: submissions queue to localStorage until Supabase is wired in
-// (standing architecture: the capture form posts to an endpoint the
-// Supabase run will replace).
+// The page's single job: recruit FOUNDING TESTERS — knitwear designers
+// who try the live demo and say what they'd pay. No paid spend until the
+// list proves demand (founder decision, 15 Aug).
 //
-// Why this structure wins against the status quo (e.g. stitchscale.app's
-// single gauge page): one page that proves the whole business toolkit,
-// zero onboarding to the live demo, and a direct path to the inbox of
-// someone who will pay.
+// Voice rules: first person, craft truth before tech truth, short
+// declarative lines, terminal/hacker flavor sparingly, zero corporate
+// SaaS-speak. See banned-terms list in the voice brief.
+//
+// The app proper lives inside <Shell>; this page is a full-width view
+// with a live demo link (the existing demo project) and the founding-
+// tester capture. No backend yet: submissions queue to localStorage
+// until Supabase/Brevo are wired in (standing architecture: the capture
+// form posts to an endpoint the Supabase run will replace).
 import { useState } from "react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
@@ -37,32 +40,32 @@ const CAPABILITIES = [
   {
     icon: Layers,
     title: "Grading Lab",
-    body: "Multi-size grading tables from a single set of measurements. Enter one size, get the whole range — checked against your chosen grading rules.",
+    body: "Multi-size grading tables from one set of measurements. Enter a size, get the range — checked against your grading rules, every row.",
   },
   {
     icon: Scissors,
     title: "Yield & Cost",
-    body: "Yarn estimates, wastage, and true unit cost per pattern size. Know your margin before you write the first line of instructions.",
+    body: "Yarn estimates, wastage, and true unit cost per size. Know your margin before you write the first line of instructions.",
   },
   {
     icon: Calculator,
     title: "Pricing & Income",
-    body: "Market-band pricing, price psychology, and income scenarios across platforms — including real marketplace take rates.",
+    body: "Market-band pricing, price psychology, and income scenarios across platforms — including what marketplaces actually take.",
   },
   {
     icon: Store,
     title: "Wholesale Line Sheets",
-    body: "Keystone-compliant wholesale pricing with tier discounts, per-order costs, Net 30 drag, and marketplace commission comparisons.",
+    body: "Keystone-compliant wholesale pricing: tier discounts, per-order costs, Net 30 drag, and the honest comparison with marketplace commissions.",
   },
   {
     icon: Globe2,
     title: "International Pricing",
-    body: "Parity pricing across 13 currencies with FX-leak tracking — price each market like a business, not a guess.",
+    body: "Parity pricing across 13 currencies with FX-leak tracking. Price each market like a business, not a guess.",
   },
   {
     icon: Ruler,
     title: "Gauge & Fit Translator",
-    body: "Enter each test knitter's swatch tension and see how it translates your graded sizes — which size each tester should knit, at a glance.",
+    body: "Each test knitter's swatch tension, translated across your graded sizes. Which size they should knit — at a glance.",
   },
 ];
 
@@ -130,12 +133,13 @@ export default function Landing() {
             For indie knitwear pattern designers
           </p>
           <h1 className="mx-auto max-w-3xl text-4xl font-bold tracking-tight sm:text-5xl">
-            Know what your pattern <em className="text-primary not-italic">actually</em> costs
-            before you publish it.
+            You can knit anything. Can you <em className="text-primary not-italic">price</em> it?
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-base text-muted-foreground sm:text-lg">
-            Grading, yield, pricing, wholesale, international parity — the business math
-            nobody builds tools for. Run your pattern business on numbers, not hope.
+            The pattern is only half the job — the math is the rest. Grading, yield,
+            pricing, wholesale, international parity: the business side of knitting that
+            nobody built tools for. So I built them. Run your pattern business on
+            numbers, not hope.
           </p>
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
             <Link href={`/project/${DEMO_PROJECT_ID}`}>
@@ -148,10 +152,10 @@ export default function Landing() {
               variant="outline"
               className="h-11 px-6 text-sm"
               onClick={() =>
-                document.getElementById("early-access")?.scrollIntoView({ behavior: "smooth" })
+                document.getElementById("founding-testers")?.scrollIntoView({ behavior: "smooth" })
               }
             >
-              Get early access
+              Join as a founding tester
             </Button>
           </div>
           <p className="mt-4 text-xs text-muted-foreground">
@@ -210,19 +214,21 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Early access */}
-      <section id="early-access" className="border-t bg-muted/40">
+      {/* Founding testers */}
+      <section id="founding-testers" className="border-t bg-muted/40">
         <div className="mx-auto max-w-xl px-4 py-16 text-center">
           <Mail className="mx-auto h-6 w-6 text-primary" />
-          <h2 className="mt-3 text-2xl font-bold">Early access</h2>
+          <h2 className="mt-3 text-2xl font-bold">Founding testers</h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            Paid plans are coming. The early-access list hears about pricing first and gets
-            founding-member rates. We only email when there's something real to share.
+            This tool is before launch, which means the first small group of designers
+            gets to shape it — and its pricing. Join as a founding tester: try the demo,
+            tell me what you'd pay and what you'd change, and hear about launch first.
+            No fee, no spam — just honest answers.
           </p>
           {submitted ? (
             <div className="mt-6 inline-flex items-center gap-2 rounded-md border bg-background px-4 py-2.5 text-sm text-foreground">
               <CheckCircle2 className="h-4 w-4 text-green-600" />
-              You're on the list. We'll be in touch before launch.
+              You're on the founding list. Talk soon.
             </div>
           ) : (
             <form onSubmit={submit} className="mx-auto mt-6 flex max-w-md gap-2">
@@ -230,12 +236,13 @@ export default function Landing() {
                 type="email"
                 required
                 placeholder="you@yourknitbrand.com"
+                aria-label="Email for founding tester list"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="h-11 bg-background"
               />
               <Button type="submit" size="lg" className="h-11 shrink-0">
-                Join
+                Join the testers
               </Button>
             </form>
           )}
@@ -253,6 +260,9 @@ export default function Landing() {
           </div>
           <div>
             Local-first: your projects live in your browser until accounts ship.
+          </div>
+          <div>
+            Built by a knitwear designer who also writes code — David Mokwunye.
           </div>
         </div>
       </footer>
