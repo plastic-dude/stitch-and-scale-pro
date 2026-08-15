@@ -37,3 +37,22 @@ it("every registered tab value is a real workspace tab (no phantom entries)", ()
   }
 });
 });
+
+describe("tab registry lock (CHK-089 structural guard)", () => {
+  it("the workspace page contains no hand-written TabsTrigger/TabsContent value blocks — only the registry loop", () => {
+    // Read the workspace page source at test time and forbid any static
+    // <TabsTrigger value="..."> or <TabsContent value="..."> blocks. After
+    // CHK-089 the strip and content panels are rendered exclusively by
+    // TAB_REGISTRY.map; a hand-written block is how the dead-tab defect
+    // class was born twice, and this test retires it at the gate level.
+    const fs = require("fs");
+    const path = require("path");
+    const pagePath = path.resolve(__dirname, "../pages/project-workspace.tsx");
+    const raw = fs.readFileSync(pagePath, "utf-8");
+    const staticTriggers = (raw.match(/<TabsTrigger value="([a-z-]+)"/g) || []).length;
+    const staticContents = (raw.match(/<TabsContent value="([a-z-]+)"/g) || []).length;
+    expect(staticTriggers).toBe(0);
+    expect(staticContents).toBe(0);
+    expect(raw).toContain("TAB_REGISTRY.map");
+  });
+});
