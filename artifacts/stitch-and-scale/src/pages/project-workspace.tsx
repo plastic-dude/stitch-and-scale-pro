@@ -2,6 +2,8 @@ import React from 'react';
 import { useParams, useLocation, Link } from 'wouter';
 import { useProject } from '@/context/ProjectsContext';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { TAB_GROUPS } from '@/lib/workspace-tab-groups';
+import { GaugeFitTranslatorCard } from '@/components/gauge-fit-translator-card';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,7 +22,7 @@ import { NativeSelect } from '@/components/ui/native-select';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { generateId, PatternSection, SectionMeasurement, MeasurementType, GradingKey, GRADING_KEY_LABELS, ALL_SIZES, gradePattern, resolveProjectStandards } from '@/lib/grading-engine';
-import { Plus, Edit2, Trash2, ArrowRight, Table as TableIcon, Copy, Settings, ChevronDown, ChevronRight, Calculator, FlaskConical, PenLine, ClipboardCheck, ClipboardList, Camera, Video, FileText, Library, Tag, Target, Sparkles, FileCheck2, Tent, Handshake, Rocket, Boxes, Crown, MapPin, CalendarDays, Presentation, Store, Radio, BookOpen, Package, Scale, Gift, Globe, Users } from 'lucide-react';
+import { Plus, Edit2, Trash2, ArrowRight, Table as TableIcon, Copy, Settings, ChevronDown, ChevronRight, Calculator, FlaskConical, PenLine, ClipboardCheck, ClipboardList, Camera, Video, FileText, Library, Tag, Target, Sparkles, FileCheck2, Tent, Handshake, Rocket, Boxes, Crown, MapPin, CalendarDays, Presentation, Store, Radio, BookOpen, Package, Scale, Gift, Globe, Users, Ruler } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useSettings } from '@/context/SettingsContext';
@@ -464,6 +466,29 @@ export default function ProjectWorkspace() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <div className="flex flex-wrap gap-1 mb-1.5 px-0.5">
+          {[
+            { g: 'design', label: 'Design & Pattern' },
+            { g: 'fit', label: 'Sizing & Fit' },
+            { g: 'pricing', label: 'Pricing & Income' },
+            { g: 'launch', label: 'Launch & Marketing' },
+            { g: 'channels', label: 'Selling Channels' },
+            { g: 'business', label: 'Business & Community' },
+          ].map(({ g, label }) => {
+            const first = Object.keys(TAB_GROUPS).find((v) => TAB_GROUPS[v] === g);
+            const count = Object.values(TAB_GROUPS).filter((x) => x === g).length;
+            return (
+              <button
+                key={g}
+                type="button"
+                onClick={() => first && setActiveTab(first)}
+                className="rounded border border-border/60 bg-muted/40 px-2 py-0.5 text-[10px] font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+              >
+                {label} · {count}
+              </button>
+            );
+          })}
+        </div>
         <TabsList className="flex flex-wrap md:flex-nowrap w-full gap-1 bg-card border border-border p-1 h-auto overflow-x-auto">
           <TabsTrigger value="sections" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             Sections
@@ -684,8 +709,11 @@ export default function ProjectWorkspace() {
           <TabsTrigger value="intl-pricing" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             <Globe className="h-3.5 w-3.5 mr-1.5" /> Intl Pricing Lab
           </TabsTrigger>
-          <TabsTrigger value="testknit" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+          <TabsTrigger value="testknitlab" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
             <Users className="h-3.5 w-3.5 mr-1.5" /> Test Knit Lab
+          </TabsTrigger>
+          <TabsTrigger value="gaugefit" className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+            <Ruler className="h-3.5 w-3.5 mr-1.5" /> Gauge &amp; Fit
           </TabsTrigger>
         </TabsList>
 
@@ -1204,8 +1232,11 @@ export default function ProjectWorkspace() {
         <TabsContent value="intl-pricing" className="mt-6">
           <IntlPricingLabCard project={project} />
         </TabsContent>
-        <TabsContent value="testknit" className="mt-6">
+        <TabsContent value="testknitlab" className="mt-6">
           <TestKnitSlotLabCard project={project} />
+        </TabsContent>
+        <TabsContent value="gaugefit" className="mt-6">
+          <GaugeFitTranslatorCard project={project} />
         </TabsContent>
 
         <TabsContent value="notes" className="mt-6">
