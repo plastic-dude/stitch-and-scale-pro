@@ -59,6 +59,58 @@ You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitc
 - [CHK-078] 798fed5 — Wholesale Price List Lab (76th tab):
 - [CHK-079] 9d0011c — QA #49 / S224 closed — Intl Pricing Lab
 - [CHK-080] bf1fb7d — Gauge & Fit Translator tab + tab
+- [CHK-081] af973b7 — Tester-first funnel rework (founder
+  decision: no paid spend until demand proven via the
+  early-access list). Landing page rewritten around the
+  FOUNDING TESTER ask: hero 'You can knit anything.
+  Can you price it?', first-person founder voice per
+  docs/brand-voice-brief.md (distilled from David's public
+  profile — terminal-poster ambition + outsider wit),
+  'Join as a founding tester' cohort CTA (shape the tool
+  and its pricing; no fee, no spam), founder attribution
+  in footer. docs/founding-tester-posts.md: platform
+  drafts (Ravelry, FB groups, IG/X, warm-list/DM) in
+  founder voice, demo link + tester link, and the
+  'the testers decide the pricing' reply for 'how much?'
+  TAB_GROUPS fix: removed 6 phantom entries, explicitly
+  classified 20 previously-unmapped tabs (defaulted
+  silently to 'business' — wrong for giftcard,
+  consignment-reprice, pattern-bundle, etc.). All 75
+  triggers now mapped.
+  Quality: typecheck + vitest (1,614 tests / 79 files)
+  + build green; /landing verified live, 2 screenshots.
+- [CHK-080] bf1fb7d — Gauge & Fit Translator tab + tab
+  classification + landing page (the first revenue-facing
+  surface).
+  Gauge & Fit Translator: weakness-conversion from
+  stitchscale.app (their single gauge-matching page owns
+  the name and has 0 persistence, 0 designer economics).
+  Our version ties to the project's real grading table:
+  per-test-knitter swatch gauges translate every graded
+  size in both directions (stitch ratio for
+  circumferences, row ratio for lengths), per-tester
+  recommended size, GF-01 severe (>=10%) / GF-02 drift
+  (5-10%) flags, optional target-circumference fit check.
+  Works even pre-grading with placeholder XS-XL.
+  STORAGE_KEY stitch-and-scale-gaugefit-v1, projectStorage
+  prefix 'gaugefit'. +15 lib tests.
+  QA #50 fixed: the duplicate trigger had killed the Test
+  Knit Lab tab; renamed to testknitlab.
+  76 workspace tabs now classified into 6 groups
+  (design/fit/pricing/launch/channels/business) via
+  workspace-tab-groups.ts + clickable legend chips with
+  counts; strip order preserved (muscle memory).
+  /landing page: hero, capability grid (6 labs), stats
+  row, live demo CTA to the real demo project
+  (mss5osqd88j6fdyvtdu, no signup), early-access email
+  queue (localStorage queue until Supabase wires in),
+  onboarding overlay gated off /landing and /project/*
+  so cold visitors see marketing, not app onboarding.
+  Domain research: stitchandscale.app AVAILABLE (also
+  .net/.io, stitchnscale.app, stitchscale.tools); plain
+  stitchscale.com is parked/gambling squatter — avoid.
+  Quality: typecheck + vitest (1,614 tests / 79 files)
+  + build green; 3 screenshots in docs/screenshots.
   classification + landing page (the first revenue-facing
   surface).
   Gauge & Fit Translator: weakness-conversion from
