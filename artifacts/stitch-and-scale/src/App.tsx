@@ -30,17 +30,21 @@ function Router() {
           public marketing surface — visitors arrive here cold. */}
       <LandingGate onboardingCompleted={onboardingCompleted} />
 
-      {/* CHK-080 — public marketing surface, rendered outside the app Shell */}
-      <Route path="/landing" component={Landing} />
-
-      <Shell>
-        <Switch>
-          {ROUTES.map(({ path, component: Component }) => (
-            <Route key={path} path={path} component={Component} />
-          ))}
-          <Route component={NotFound} />
-        </Switch>
-      </Shell>
+      {/* CHK-080 — public marketing surface. Keep it mutually exclusive
+          with the app shell so its 404 fallback cannot render underneath. */}
+      <Switch>
+        <Route path="/landing" component={Landing} />
+        <Route>
+          <Shell>
+            <Switch>
+              {ROUTES.map(({ path, component: Component }) => (
+                <Route key={path} path={path} component={Component} />
+              ))}
+              <Route component={NotFound} />
+            </Switch>
+          </Shell>
+        </Route>
+      </Switch>
     </>
   );
 }
