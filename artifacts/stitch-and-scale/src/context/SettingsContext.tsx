@@ -9,6 +9,7 @@ import {
 // which persists to IndexedDB AND localStorage atomically.
 import { writeProjects } from '@/lib/storage-lib';
 import type { PatternProject } from '@/lib/grading-engine';
+import { getInitialLanguage, type LanguageCode } from '@/lib/i18n';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -51,6 +52,8 @@ interface SettingsState {
    *  editing anything yet. */
   customStandard: CustomStandardValues;
   onboardingCompleted: boolean;
+  /** Interface language. Auto-detected once, then persisted after explicit choice. */
+  language: LanguageCode;
 }
 
 interface SettingsContextType extends SettingsState {
@@ -63,6 +66,7 @@ interface SettingsContextType extends SettingsState {
   exportData:             () => void;
   importData:             (jsonData: string) => boolean;
   setOnboardingCompleted: (completed: boolean) => void;
+  setLanguage:           (language: LanguageCode) => void;
 }
 
 // ─── Defaults ─────────────────────────────────────────────────────────────────
@@ -85,6 +89,7 @@ const defaultSettings: SettingsState = {
   sizingStandard: 'CYC',
   customStandard: JSON.parse(JSON.stringify(SIZE_STANDARDS)),
   onboardingCompleted: false,
+  language: getInitialLanguage(),
 };
 
 // ─── Context ──────────────────────────────────────────────────────────────────
@@ -143,6 +148,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const resetCustomStandard = () =>
     setSettings(s => ({ ...s, customStandard: JSON.parse(JSON.stringify(SIZE_STANDARDS)) }));
   const setOnboardingCompleted = (onboardingCompleted: boolean)  => setSettings(s => ({ ...s, onboardingCompleted }));
+  const setLanguage = (language: LanguageCode) => setSettings(s => ({ ...s, language }));
 
   const exportData = () => {
     try {
@@ -203,6 +209,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       setCustomStandardValue,
       resetCustomStandard,
       setOnboardingCompleted,
+      setLanguage,
       exportData,
       importData,
     }}>

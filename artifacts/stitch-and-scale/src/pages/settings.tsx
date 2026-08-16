@@ -8,15 +8,18 @@ import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GradingKey, GRADING_KEY_LABELS, ALL_SIZES, SIZE_STANDARDS } from '@/lib/grading-engine';
+import { getInitialLanguage, LANGUAGE_OPTIONS, languageLabel, translate, type LanguageCode } from '@/lib/i18n';
 
 export default function SettingsPage() {
   const {
     unit, theme, setUnit, setTheme, exportData, importData, setOnboardingCompleted,
     sizingStandard, setSizingStandard, customStandard, setCustomStandardValue, resetCustomStandard,
+    language, setLanguage,
   } = useSettings();
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const [editingKey, setEditingKey] = React.useState<GradingKey>('bust');
+  const t = (key: Parameters<typeof translate>[1]) => translate(language, key);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -68,12 +71,43 @@ export default function SettingsPage() {
           <SettingsIcon className="w-6 h-6" />
         </div>
         <div>
-          <h1 className="text-3xl sm:text-4xl font-serif font-semibold tracking-tight text-foreground">Preferences</h1>
-          <p className="text-muted-foreground mt-1">Manage your workspace environment and data.</p>
+          <h1 className="text-3xl sm:text-4xl font-serif font-semibold tracking-tight text-foreground">{t('settings.title')}</h1>
+          <p className="text-muted-foreground mt-1">{t('settings.description')}</p>
         </div>
       </div>
 
       <div className="grid gap-8">
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
+          <Card className="border-border/60 shadow-sm overflow-hidden rounded-2xl">
+            <CardHeader className="bg-secondary/10 border-b border-border/40 pb-5">
+              <CardTitle className="font-serif text-xl flex items-center gap-2">🌐 {t('settings.language.title')}</CardTitle>
+              <CardDescription className="text-[13px]">{t('settings.language.description')}</CardDescription>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+                {LANGUAGE_OPTIONS.map((option) => (
+                  <button
+                    key={option.code}
+                    type="button"
+                    onClick={() => setLanguage(option.code as LanguageCode)}
+                    className={cn(
+                      'rounded-xl border-2 px-3 py-3 text-left transition-all',
+                      language === option.code ? 'border-primary bg-primary/5 shadow-sm' : 'border-border/60 hover:border-primary/30'
+                    )}
+                    data-testid={`button-language-${option.code}`}
+                  >
+                    <span className="block text-sm font-medium text-foreground">{option.nativeLabel}</span>
+                    <span className="mt-1 block text-[11px] text-muted-foreground">{option.label}</span>
+                  </button>
+                ))}
+              </div>
+              <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
+                {language === getInitialLanguage() ? t('settings.language.detected') : `${t('settings.language.manual')}: ${languageLabel(language)}`}
+              </p>
+            </CardContent>
+          </Card>
+        </motion.div>
+
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
           <Card className="border-border/60 shadow-sm overflow-hidden rounded-2xl">
             <CardHeader className="bg-secondary/10 border-b border-border/40 pb-5">
@@ -260,9 +294,9 @@ export default function SettingsPage() {
             <CardHeader className="bg-secondary/10 border-b border-border/40 pb-5">
               <CardTitle className="font-serif text-xl flex items-center gap-2">
                 <Monitor className="w-5 h-5 text-accent" />
-                Appearance
+                {t('settings.appearance.title')}
               </CardTitle>
-              <CardDescription className="text-[13px]">How Stitch & Scale looks on this device.</CardDescription>
+              <CardDescription className="text-[13px]">{t('settings.appearance.description')}</CardDescription>
             </CardHeader>
             <CardContent className="p-6">
               <div className="grid grid-cols-3 gap-3">

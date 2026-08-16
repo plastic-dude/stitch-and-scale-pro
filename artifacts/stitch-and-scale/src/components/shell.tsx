@@ -6,6 +6,8 @@ import { useProjects } from "@/context/ProjectsContext"
 import { AutosaveIndicator } from "@/components/autosave-indicator"
 import { StorageBadge } from "@/components/storage-badge"
 import { InstallBanner } from "@/components/install-banner"
+import { useSettings } from "@/context/SettingsContext"
+import { translate } from "@/lib/i18n"
 
 function RecoveryBanner() {
   const { recovered, dismissRecovery } = useProjects()
@@ -38,6 +40,9 @@ function RecoveryBanner() {
 export function Shell({ children }: { children: React.ReactNode }) {
   const [location] = useLocation()
   const { saveStatus } = useProjects()
+  const { language } = useSettings()
+  const projectsLabel = translate(language, 'nav.projects')
+  const settingsLabel = translate(language, 'nav.settings')
   const [justExported, setJustExported] = React.useState(false)
 
   React.useEffect(() => {
@@ -67,17 +72,17 @@ export function Shell({ children }: { children: React.ReactNode }) {
           </div>
           
           <nav className="flex items-center gap-1 sm:gap-4">
-            <Link href="/" aria-label="Projects" className={`p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors flex items-center gap-2 ${location === '/' ? 'bg-secondary/50' : ''}`}>
+            <Link href="/" aria-label={projectsLabel} className={`p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors flex items-center gap-2 ${location === '/' ? 'bg-secondary/50' : ''}`}>
               <BookOpen className="w-5 h-5" />
-              <span className="hidden md:inline text-sm font-medium">Projects</span>
+              <span className="hidden md:inline text-sm font-medium">{projectsLabel}</span>
             </Link>
             <Link href="/portfolio" aria-label="Portfolio" className={`p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors flex items-center gap-2 ${location === '/portfolio' ? 'bg-secondary/50' : ''}`}>
               <Package className="w-5 h-5" />
               <span className="hidden md:inline text-sm font-medium">Portfolio</span>
             </Link>
-            <Link href="/settings" aria-label="Settings" className={`p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors flex items-center gap-2 ${location === '/settings' ? 'bg-secondary/50' : ''}`}>
+            <Link href="/settings" aria-label={settingsLabel} className={`p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors flex items-center gap-2 ${location === '/settings' ? 'bg-secondary/50' : ''}`}>
               <Settings className="w-5 h-5" />
-              <span className="hidden md:inline text-sm font-medium">Settings</span>
+              <span className="hidden md:inline text-sm font-medium">{settingsLabel}</span>
             </Link>
             
             <div className="w-px h-6 bg-border mx-2"></div>
