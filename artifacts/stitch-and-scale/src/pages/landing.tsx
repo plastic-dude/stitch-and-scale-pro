@@ -100,11 +100,13 @@ export default function Landing() {
       {/* Header */}
       <header className="sticky top-0 z-10 border-b bg-background/90 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-          <div className="flex items-center gap-2">
-            <span className="inline-flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
-              <Scissors className="h-4 w-4" />
-            </span>
-            <span className="font-semibold">Stitch &amp; Scale</span>
+          <div className="flex items-center gap-2.5">
+            <img
+              src="/favicon.png"
+              alt="Stitch & Scale"
+              className="h-8 w-8 rounded-md object-cover shadow-sm"
+            />
+            <span className="font-semibold tracking-tight">Stitch &amp; Scale</span>
           </div>
           <div className="flex items-center gap-2">
             <Link href={`/project/${DEMO_PROJECT_ID}`}>
@@ -128,6 +130,11 @@ export default function Landing() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
+          <img
+            src="/app-logo.png"
+            alt="Stitch & Scale"
+            className="mx-auto mb-6 h-24 w-24 rounded-2xl object-cover shadow-sm sm:h-28 sm:w-28"
+          />
           <p className="mb-4 inline-flex items-center gap-1.5 rounded-full border bg-muted/50 px-3 py-1 text-xs font-medium text-muted-foreground">
             <Package className="h-3.5 w-3.5" />
             For indie knitwear pattern designers
@@ -267,7 +274,7 @@ export default function Landing() {
       <footer className="mx-auto max-w-6xl px-4 py-8">
         <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-muted-foreground">
           <div className="flex items-center gap-2">
-            <Scissors className="h-3.5 w-3.5" />
+            <img src="/favicon.png" alt="" aria-hidden="true" className="h-4 w-4 rounded-sm object-cover" />
             <span>Stitch &amp; Scale — the knitwear designer's business toolkit</span>
           </div>
           <div>
