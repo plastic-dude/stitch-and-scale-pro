@@ -4,7 +4,7 @@
 >
 > **P0 update (CHK-037, Aug 14 2026):** P0 is now implemented. `RenderContext` in `src/lib/pdf/renderer.ts` carries optional `locale` and `templateId` (the embryo of the `PublicationSpec` identity), `renderProvenanceFooter()` renders the one-line provenance footer (pattern name · sizing standard · template id · renderer `v1.0.0` · date · locale) above the existing fixed footer on every export, and this document's sections 3–5 remain the standing research questions. The `RENDERER_VERSION` constant is the codified renderer identity; bump it on structural renderer changes.
 >
-> This document assesses an earlier (pre-19-tabs) vision of a "world-class publishing system" against the current state of `stitch-and-scale-pro` as of commit `9c82f6b`. It is a research starting point for the main worker, not an instruction set. Items marked *outdated* reflect how far the project has moved since the plan was written.
+> This document assesses an earlier (pre-79-tabs) vision of a "world-class publishing system" against the current state of `stitch-and-scale-pro` as of commit `9c82f6b`. It is a research starting point for the main worker, not an instruction set. Items marked *outdated* reflect how far the project has moved since the plan was written.
 >
 > **Prepared by:** the automated review agent (Aug 14, 2026), in response to the user finding the original planning documents. Lives at `artifacts/stitch-and-scale/docs/publishing-system-proposal.md` (the repo-level `docs/` holds reviewer prompts only).
 
@@ -26,7 +26,7 @@ The repository's PDF surface lives in `artifacts/stitch-and-scale/src/lib/pdf/`:
 |---|---|---|
 | Publication Personalities / token system | `themes.ts` — 4 themes (minimal, luxury, craft, technical) with fonts, colors, personality string, cover layout, watermark, callout tokens, table tokens | **Seed exists.** The token contract is exactly the shape the plan describes; its own header says "adding a new template = one entry to THEMES, zero new component code" — aspirational but not yet mechanically true |
 | Single publishing engine (`BasePDFRenderer`) | One `renderDocument()` consuming a `RenderContext` | **Compatible shape**, but a monolith: components are hand-coded inside, not composable |
-| Component library (~50 components) | None. The 23 `src/components/` files are app cards for the 19 tabs, not document components | **Absent.** YarnCard, GaugeCard, MeasurementTable, SizingTable, InstructionsSection do not exist yet |
+| Component library (~50 components) | None. The current `src/components/` files are app cards for the 79 workspace tabs, not document components | **Absent.** YarnCard, GaugeCard, MeasurementTable, SizingTable, InstructionsSection do not exist yet |
 | Content/design separation | Theming changes colors and fonts; layout logic is theme-agnostic but hardcoded | **Partial.** Colors/fonts separate cleanly; section structure does not |
 | Mathematical integrity boundary | `grading-engine.ts` computes grades; the renderer consumes values it never derives | **True in practice** — this principle is already embedded, needs only codification |
 | Multi-grading support | `sizingStandard` field + `resolveStandards()` exists; renderer doesn't vary output by standard | **Partial** |
@@ -39,7 +39,7 @@ The repository's PDF surface lives in `artifacts/stitch-and-scale/src/lib/pdf/`:
 
 ## 3. What survives, what is outdated, what to skip
 
-The vision remains sound in its core architecture — a spec-driven renderer that never computes authoritative math is genuinely the right spine, and it already matches the code. What is outdated is the framing: the plan predates the 19-tab business suite. The app is no longer "a PDF tool that might grow a publishing system"; it is a **design studio with 19 planners and one export**. The publishing system is now one of three pillars (business intelligence, publication quality, trust/infrastructure), and should be scoped accordingly.
+The vision remains sound in its core architecture — a spec-driven renderer that never computes authoritative math is genuinely the right spine, and it already matches the code. What is outdated is the framing: the plan predates the 79-tab business suite. The app is no longer "a PDF tool that might grow a publishing system"; it is a **design studio with 79 planners and a publishing surface**. The publishing system is now one of three pillars (business intelligence, publication quality, trust/infrastructure), and should be scoped accordingly.
 
 The six-layer marketplace ecosystem (Pattern Data → Spec → Layout Engine → Components → Templates → Collections → Marketplace) is the right long-term shape but premature now — there is no template subsystem to put collections on. AI-assisted layout should retain only the plan's own principle, "AI proposes; the deterministic engine decides", which conveniently mirrors this repository's review discipline. Interactive PDFs with embedded video should be skipped for the foreseeable future: a local-first app cannot reliably host video assets, and the plan itself concedes these are "future integration" items.
 

@@ -13,7 +13,7 @@ import { cn } from '@/lib/utils';
 export default function NewProjectWizard() {
   const [, setLocation] = useLocation();
   const { createProject } = useProjects();
-  const { unit: defaultUnit, sizingStandard, customStandard } = useSettings();
+  const { unit: defaultUnit, sizingStandard, customStandard, t } = useSettings();
 
   const [step, setStep] = useState(1);
   const [name, setName] = useState('');
@@ -60,8 +60,8 @@ export default function NewProjectWizard() {
   return (
     <div className="max-w-2xl mx-auto w-full pt-6 pb-20">
       <div className="mb-10 text-center">
-        <h1 className="text-3xl sm:text-4xl font-serif font-medium mb-3 text-foreground tracking-tight">Draft a Pattern</h1>
-        <p className="text-muted-foreground">Define the foundation for your next design.</p>
+        <h1 className="text-3xl sm:text-4xl font-serif font-medium mb-3 text-foreground tracking-tight">{t('workflow.newProject.title')}</h1>
+        <p className="text-muted-foreground">{t('workflow.newProject.description')}</p>
       </div>
 
       <div className="mb-12 flex items-center justify-center max-w-sm mx-auto relative">
@@ -107,12 +107,12 @@ export default function NewProjectWizard() {
                   <div className="w-12 h-12 bg-secondary/40 rounded-full flex items-center justify-center mx-auto mb-4 text-primary">
                     <BookOpen className="w-6 h-6" />
                   </div>
-                  <h2 className="text-2xl font-serif font-medium">Project Details</h2>
+                  <h2 className="text-2xl font-serif font-medium">{t('workflow.newProject.details')}</h2>
                 </div>
 
                 <div className="space-y-6 max-w-md mx-auto w-full">
                   <div className="space-y-2.5">
-                    <Label htmlFor="name" className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Pattern Name</Label>
+                    <Label htmlFor="name" className="text-sm font-medium text-muted-foreground uppercase tracking-wider">{t('workflow.newProject.patternName')}</Label>
                     <Input 
                       id="name" 
                       placeholder="e.g. The Autumn Cardigan" 
@@ -124,7 +124,7 @@ export default function NewProjectWizard() {
                     />
                   </div>
                   <div className="space-y-2.5">
-                    <Label htmlFor="author" className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Designer</Label>
+                    <Label htmlFor="author" className="text-sm font-medium text-muted-foreground uppercase tracking-wider">{t('workflow.newProject.designer')}</Label>
                     <div className="relative flex items-center">
                       <Fingerprint className="absolute left-0 w-5 h-5 text-muted-foreground/60" />
                       <Input 
@@ -170,8 +170,8 @@ export default function NewProjectWizard() {
                   <div className="w-12 h-12 bg-secondary/40 rounded-full flex items-center justify-center mx-auto mb-4 text-primary">
                     <Ruler className="w-6 h-6" />
                   </div>
-                  <h2 className="text-2xl font-serif font-medium">Base Size</h2>
-                  <p className="text-sm text-muted-foreground max-w-sm mx-auto">Select the primary size you are grading from. All other sizes will be calculated against this.</p>
+                  <h2 className="text-2xl font-serif font-medium">{t('workflow.newProject.baseSize')}</h2>
+                  <p className="text-sm text-muted-foreground max-w-sm mx-auto">{t('workflow.newProject.baseSizeDescription')}</p>
                 </div>
 
                 <div className="grid grid-cols-3 gap-3 sm:gap-4 max-w-lg mx-auto">
@@ -217,8 +217,8 @@ export default function NewProjectWizard() {
                   <div className="w-12 h-12 bg-secondary/40 rounded-full flex items-center justify-center mx-auto mb-4 text-primary">
                     <Scissors className="w-6 h-6" />
                   </div>
-                  <h2 className="text-2xl font-serif font-medium">Blocked Gauge</h2>
-                  <p className="text-sm text-muted-foreground max-w-sm mx-auto">Enter the stitch and row count of your blocked swatch per 4 inches (10 cm).</p>
+                  <h2 className="text-2xl font-serif font-medium">{t('workflow.newProject.blockedGauge')}</h2>
+                  <p className="text-sm text-muted-foreground max-w-sm mx-auto">{t('workflow.newProject.blockedGaugeDescription')}</p>
                 </div>
 
                 <div className="max-w-md mx-auto space-y-8">
@@ -229,21 +229,21 @@ export default function NewProjectWizard() {
                         onClick={() => setGauge({...gauge, unit: 'in'})}
                         data-testid="button-unit-inches"
                       >
-                        Inches
+                        {t('workflow.onboarding.inches')}
                       </button>
                       <button 
                         className={cn("px-6 py-2 text-sm font-semibold rounded-md transition-all", gauge.unit === 'cm' ? "bg-background shadow text-foreground" : "text-muted-foreground hover:text-foreground")}
                         onClick={() => setGauge({...gauge, unit: 'cm'})}
                         data-testid="button-unit-cm"
                       >
-                        Centimeters
+                        {t('workflow.onboarding.centimeters')}
                       </button>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-6">
                     <div className="space-y-3 bg-secondary/10 p-5 rounded-xl border border-border/40 relative overflow-hidden group focus-within:border-primary/50 transition-colors">
-                      <Label htmlFor="sts" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block">Stitches</Label>
+                      <Label htmlFor="sts" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block">{t('workflow.newProject.stitches')}</Label>
                       <div className="flex items-baseline">
                         <Input 
                           id="sts" 
@@ -260,7 +260,7 @@ export default function NewProjectWizard() {
                     </div>
                     
                     <div className="space-y-3 bg-secondary/10 p-5 rounded-xl border border-border/40 relative overflow-hidden group focus-within:border-primary/50 transition-colors">
-                      <Label htmlFor="rows" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block">Rows</Label>
+                      <Label htmlFor="rows" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block">{t('workflow.newProject.rows')}</Label>
                       <div className="flex items-baseline">
                         <Input 
                           id="rows" 
@@ -289,9 +289,9 @@ export default function NewProjectWizard() {
             className="font-medium text-muted-foreground hover:text-foreground"
             data-testid="button-back"
           >
-            {step === 1 ? 'Cancel' : (
+            {step === 1 ? t('workflow.newProject.cancel') : (
               <>
-                <ChevronLeft className="w-4 h-4 mr-1.5" /> Back
+                <ChevronLeft className="w-4 h-4 mr-1.5" /> {t('workflow.newProject.back')}
               </>
             )}
           </Button>
@@ -303,7 +303,7 @@ export default function NewProjectWizard() {
               className="font-medium px-8 rounded-full shadow-sm"
               data-testid="button-next"
             >
-              Continue <ChevronRight className="w-4 h-4 ml-1.5" />
+              {t('workflow.newProject.next')} <ChevronRight className="w-4 h-4 ml-1.5" />
             </Button>
           ) : (
             <Button 
@@ -312,7 +312,7 @@ export default function NewProjectWizard() {
               className="font-medium px-8 rounded-full bg-accent text-accent-foreground hover:bg-accent/90 shadow-md"
               data-testid="button-create"
             >
-              Finish Setup <Check className="w-4 h-4 ml-2" />
+              {t('workflow.newProject.create')} <Check className="w-4 h-4 ml-2" />
             </Button>
           )}
         </div>

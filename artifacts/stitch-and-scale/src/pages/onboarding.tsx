@@ -47,6 +47,7 @@ function StepDots({ current, total }: { current: number; total: number }) {
 // ─── STEP 1: Welcome ──────────────────────────────────────────────────────────
 
 function StepWelcome() {
+  const { t } = useSettings();
   return (
     <div className="flex flex-col items-center text-center max-w-md mx-auto">
       <img
@@ -56,17 +57,17 @@ function StepWelcome() {
         style={{ rotate: '2deg' }}
       />
       <h1 className="text-4xl font-serif font-semibold text-foreground mb-4 tracking-tight leading-tight">
-        Welcome to Stitch & Scale
+        {t('workflow.welcome.title')}
       </h1>
       <p className="text-muted-foreground text-base mb-8 leading-relaxed">
-        Professional knitwear grading software — built for designers who care about the details.
+        {t('workflow.welcome.description')}
       </p>
       <ul className="text-left space-y-3 w-full bg-secondary/20 rounded-2xl p-5 border border-border/40 mb-4">
         {[
-          'Local-first — your projects save instantly, no account needed',
-          'Works offline — full functionality without an internet connection',
-          'Your data belongs to you — export anytime, no lock-in',
-          'Publish-ready PDF exports — four professional templates',
+          t('workflow.welcome.localFirst'),
+          t('workflow.welcome.offline'),
+          t('workflow.welcome.ownership'),
+          t('workflow.welcome.pdf'),
         ].map((item) => (
           <li key={item} className="flex items-start gap-3 text-sm text-foreground/80">
             <Check className="w-4 h-4 text-accent mt-0.5 shrink-0" />
@@ -75,7 +76,7 @@ function StepWelcome() {
         ))}
       </ul>
       <p className="text-xs text-muted-foreground">
-        Cloud Sync is optional. You never need an account to start designing.
+        {t('workflow.welcome.cloud')}
       </p>
     </div>
   );
@@ -107,12 +108,19 @@ const PHILOSOPHY_CARDS = [
 ];
 
 function StepPhilosophy() {
+  const { t } = useSettings();
+  const philosophyCards = [
+    { icon: HardDrive, title: t('workflow.philosophy.localTitle'), body: t('workflow.philosophy.localBody') },
+    { icon: Cloud, title: t('workflow.philosophy.cloudTitle'), body: t('workflow.philosophy.cloudBody') },
+    { icon: ShieldCheck, title: t('workflow.philosophy.dataTitle'), body: t('workflow.philosophy.dataBody') },
+    { icon: Calculator, title: t('workflow.philosophy.mathTitle'), body: t('workflow.philosophy.mathBody') },
+  ];
   return (
     <div className="flex flex-col items-center text-center max-w-lg mx-auto">
-      <h2 className="text-3xl font-serif font-semibold mb-2 tracking-tight">Built on principles</h2>
-      <p className="text-muted-foreground text-sm mb-8">Four commitments we make to every designer.</p>
+        <h2 className="text-3xl font-serif font-semibold mb-2 tracking-tight">{t('workflow.onboarding.principlesTitle')}</h2>
+      <p className="text-muted-foreground text-sm mb-8">{t('workflow.onboarding.principlesDescription')}</p>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full text-left">
-        {PHILOSOPHY_CARDS.map(({ icon: Icon, title, body }) => (
+        {philosophyCards.map(({ icon: Icon, title, body }) => (
           <div key={title} className="bg-card rounded-2xl border border-border/60 p-5 shadow-sm">
             <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mb-3">
               <Icon className="w-5 h-5 text-primary" />
@@ -168,6 +176,7 @@ const SIZING_STANDARDS: { id: SizingStandard; label: string; description: string
 ];
 
 function StepSizingStandard({ sizingStandard, setSizingStandard }: { sizingStandard: SizingStandard; setSizingStandard: (s: SizingStandard) => void }) {
+  const { t } = useSettings();
   const [showMore, setShowMore] = useState(false);
   const available = SIZING_STANDARDS.filter(s => s.available);
   const unavailable = SIZING_STANDARDS.filter(s => !s.available);
@@ -209,9 +218,9 @@ function StepSizingStandard({ sizingStandard, setSizingStandard }: { sizingStand
   return (
     <div className="flex flex-col items-center max-w-lg mx-auto w-full">
       <div className="text-center mb-6">
-        <h2 className="text-3xl font-serif font-semibold mb-2 tracking-tight">Sizing Standard</h2>
+        <h2 className="text-3xl font-serif font-semibold mb-2 tracking-tight">{t('workflow.onboarding.sizingTitle')}</h2>
         <p className="text-muted-foreground text-sm leading-relaxed">
-          Every grading project is built from a sizing standard — a reference table of body measurements across sizes.
+          {t('workflow.onboarding.sizingDescription')}
         </p>
       </div>
       <div className="w-full space-y-2">
@@ -227,7 +236,7 @@ function StepSizingStandard({ sizingStandard, setSizingStandard }: { sizingStand
         className="w-full flex items-center justify-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors mt-4 py-2"
         data-testid="button-toggle-more-standards"
       >
-        {showMore ? 'Hide' : `Show ${unavailable.length} more standards`}
+        {showMore ? t('workflow.onboarding.hideMoreStandards') : `${t('workflow.onboarding.showMoreStandards')} (${unavailable.length})`}
         <ChevronDown className={cn('w-3.5 h-3.5 transition-transform', showMore && 'rotate-180')} />
       </button>
       <AnimatePresence initial={false}>
@@ -252,11 +261,12 @@ function StepSizingStandard({ sizingStandard, setSizingStandard }: { sizingStand
 // ─── STEP 4: Units ────────────────────────────────────────────────────────────
 
 function StepUnits({ unit, setUnit }: { unit: 'in' | 'cm'; setUnit: (u: 'in' | 'cm') => void }) {
+  const { t } = useSettings();
   return (
     <div className="flex flex-col items-center text-center max-w-sm mx-auto">
-      <h2 className="text-3xl font-serif font-semibold mb-2 tracking-tight">Measurement units</h2>
+      <h2 className="text-3xl font-serif font-semibold mb-2 tracking-tight">{t('workflow.onboarding.unitsTitle')}</h2>
       <p className="text-muted-foreground text-sm mb-8">
-        Choose your default unit. You can change this anytime in Settings.
+        {t('workflow.onboarding.unitsDescription')}
       </p>
       <div className="grid grid-cols-2 gap-4 w-full">
         <button
@@ -270,8 +280,8 @@ function StepUnits({ unit, setUnit }: { unit: 'in' | 'cm'; setUnit: (u: 'in' | '
           )}
         >
           <span className="font-mono text-3xl font-bold">in</span>
-          <span className="font-medium text-sm text-foreground">Inches</span>
-          <span className="text-xs text-muted-foreground">Used in US / Canada</span>
+          <span className="font-medium text-sm text-foreground">{t('workflow.onboarding.inches')}</span>
+          <span className="text-xs text-muted-foreground">{t('workflow.onboarding.inchesDescription')}</span>
         </button>
         <button
           onClick={() => setUnit('cm')}
@@ -284,8 +294,8 @@ function StepUnits({ unit, setUnit }: { unit: 'in' | 'cm'; setUnit: (u: 'in' | '
           )}
         >
           <span className="font-mono text-3xl font-bold">cm</span>
-          <span className="font-medium text-sm text-foreground">Centimeters</span>
-          <span className="text-xs text-muted-foreground">Used internationally</span>
+          <span className="font-medium text-sm text-foreground">{t('workflow.onboarding.centimeters')}</span>
+          <span className="text-xs text-muted-foreground">{t('workflow.onboarding.centimetersDescription')}</span>
         </button>
       </div>
     </div>
@@ -303,24 +313,32 @@ const TOUR_ITEMS = [
 ];
 
 function StepWorkspaceTour() {
+  const { t } = useSettings();
+  const tourKeys = [
+    ['workflow.onboarding.tour.dashboard', 'workflow.onboarding.tour.dashboardDescription'],
+    ['workflow.onboarding.tour.sections', 'workflow.onboarding.tour.sectionsDescription'],
+    ['workflow.onboarding.tour.measurements', 'workflow.onboarding.tour.measurementsDescription'],
+    ['workflow.onboarding.tour.preview', 'workflow.onboarding.tour.previewDescription'],
+    ['workflow.onboarding.tour.export', 'workflow.onboarding.tour.exportDescription'],
+  ] as const;
   return (
     <div className="flex flex-col items-center max-w-lg mx-auto w-full">
       <div className="text-center mb-6">
-        <h2 className="text-3xl font-serif font-semibold mb-2 tracking-tight">How it works</h2>
-        <p className="text-muted-foreground text-sm">Five concepts — that's the whole app.</p>
+        <h2 className="text-3xl font-serif font-semibold mb-2 tracking-tight">{t('workflow.onboarding.howTitle')}</h2>
+        <p className="text-muted-foreground text-sm">{t('workflow.onboarding.howDescription')}</p>
       </div>
       <div className="w-full space-y-3">
-        {TOUR_ITEMS.map(({ icon: Icon, label, desc }, i) => (
-          <div key={label} className="flex items-start gap-4 bg-card rounded-xl border border-border/50 px-4 py-3.5 shadow-sm">
+        {TOUR_ITEMS.map(({ icon: Icon }, i) => (
+          <div key={tourKeys[i][0]} className="flex items-start gap-4 bg-card rounded-xl border border-border/50 px-4 py-3.5 shadow-sm">
             <div className="shrink-0 w-9 h-9 rounded-lg bg-secondary/40 flex items-center justify-center">
               <Icon className="w-4.5 h-4.5 text-primary" />
             </div>
             <div>
               <div className="flex items-center gap-2 mb-0.5">
                 <span className="text-xs font-bold text-accent/70">{String(i + 1).padStart(2, '0')}</span>
-                <span className="font-semibold text-sm text-foreground">{label}</span>
+                <span className="font-semibold text-sm text-foreground">{t(tourKeys[i][0])}</span>
               </div>
-              <p className="text-xs text-muted-foreground leading-relaxed">{desc}</p>
+              <p className="text-xs text-muted-foreground leading-relaxed">{t(tourKeys[i][1])}</p>
             </div>
           </div>
         ))}
@@ -332,16 +350,15 @@ function StepWorkspaceTour() {
 // ─── STEP 6: Sample Journey ───────────────────────────────────────────────────
 
 function StepSampleJourney({ onOpenSample, onSkip }: { onOpenSample: () => void; onSkip: () => void }) {
+  const { t } = useSettings();
   return (
     <div className="flex flex-col items-center text-center max-w-md mx-auto">
       <div className="w-20 h-20 rounded-2xl bg-accent/10 border border-accent/20 flex items-center justify-center mb-6">
         <Scissors className="w-10 h-10 text-accent" />
       </div>
-      <h2 className="text-3xl font-serif font-semibold mb-3 tracking-tight">See it in action</h2>
+      <h2 className="text-3xl font-serif font-semibold mb-3 tracking-tight">{t('workflow.onboarding.actionTitle')}</h2>
       <p className="text-muted-foreground text-sm mb-8 leading-relaxed">
-        We've prepared a complete sample project — a{' '}
-        <strong className="text-foreground font-medium">Classic Crew Neck Sweater</strong> — so you can explore a real
-        grading table before starting your own.
+        {t('workflow.onboarding.sampleDescription')}
       </p>
       <div className="bg-card rounded-2xl border border-border/60 p-5 mb-8 text-left w-full shadow-sm">
         <div className="flex items-center gap-3 mb-3">
@@ -350,11 +367,11 @@ function StepSampleJourney({ onOpenSample, onSkip }: { onOpenSample: () => void;
           </div>
           <div>
             <div className="font-semibold text-sm text-foreground">Classic Crew Neck Sweater</div>
-            <div className="text-xs text-muted-foreground">3 sections · 8 measurements · Size M base</div>
+            <div className="text-xs text-muted-foreground">{t('workflow.onboarding.sampleMeta')}</div>
           </div>
         </div>
         <div className="text-xs text-muted-foreground leading-relaxed">
-          Body, Sleeve, and Neckline sections with real measurements and gauge (20 sts / 28 rows per 4in worsted weight).
+          {t('workflow.onboarding.sampleDetails')}
         </div>
       </div>
       <div className="flex flex-col sm:flex-row gap-3 w-full">
@@ -362,14 +379,14 @@ function StepSampleJourney({ onOpenSample, onSkip }: { onOpenSample: () => void;
           onClick={onOpenSample}
           className="flex-1 h-11 rounded-full font-medium shadow-sm bg-primary text-primary-foreground hover:bg-primary/90"
         >
-          Open Sample Project
+          {t('workflow.onboarding.openSample')}
         </Button>
         <Button
           onClick={onSkip}
           variant="outline"
           className="flex-1 h-11 rounded-full font-medium"
         >
-          Create My Own
+          {t('workflow.onboarding.createOwn')}
         </Button>
       </div>
     </div>
@@ -379,6 +396,7 @@ function StepSampleJourney({ onOpenSample, onSkip }: { onOpenSample: () => void;
 // ─── STEP 7: Completion ───────────────────────────────────────────────────────
 
 function StepCompletion({ onFinish }: { onFinish: () => void }) {
+  const { t } = useSettings();
   return (
     <div className="flex flex-col items-center text-center max-w-sm mx-auto">
       <motion.div
@@ -395,20 +413,19 @@ function StepCompletion({ onFinish }: { onFinish: () => void }) {
           <Check className="w-10 h-10 text-primary-foreground" />
         </motion.div>
       </motion.div>
-      <h2 className="text-3xl font-serif font-semibold mb-3 tracking-tight">You're ready.</h2>
+      <h2 className="text-3xl font-serif font-semibold mb-3 tracking-tight">{t('workflow.onboarding.readyTitle')}</h2>
       <p className="text-muted-foreground text-base mb-2 leading-relaxed">
-        Create your first pattern and let Stitch & Scale handle the grading math.
+        {t('workflow.onboarding.readyDescription')}
       </p>
       <p className="text-xs text-muted-foreground mb-10">
-        You can restart this setup anytime from{' '}
-        <span className="font-medium text-foreground">Settings → Restart Onboarding</span>.
+        {t('workflow.onboarding.restartHint')}
       </p>
       <Button
         onClick={onFinish}
         size="lg"
         className="rounded-full px-10 h-12 font-medium shadow-md bg-accent text-accent-foreground hover:bg-accent/90"
       >
-        Draft a Pattern <ChevronRight className="ml-2 w-4 h-4" />
+        {t('workflow.onboarding.draftPattern')} <ChevronRight className="ml-2 w-4 h-4" />
       </Button>
     </div>
   );
