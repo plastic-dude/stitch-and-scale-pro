@@ -1,0 +1,452 @@
+[
+  {
+    "kind": "settings",
+    "lang": "en",
+    "theme": "light",
+    "audit": {
+      "small": 13,
+      "overflow": false,
+      "text": 2088,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none"
+      }
+    },
+    "errors": []
+  },
+  {
+    "kind": "settings",
+    "lang": "en",
+    "theme": "dark",
+    "audit": {
+      "small": 13,
+      "overflow": false,
+      "text": 2088,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none"
+      }
+    },
+    "errors": []
+  },
+  {
+    "kind": "settings",
+    "lang": "de",
+    "theme": "light",
+    "audit": {
+      "small": 13,
+      "overflow": false,
+      "text": 2026,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none"
+      }
+    },
+    "errors": []
+  },
+  {
+    "kind": "settings",
+    "lang": "de",
+    "theme": "dark",
+    "audit": {
+      "small": 13,
+      "overflow": false,
+      "text": 2026,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none"
+      }
+    },
+    "errors": []
+  },
+  {
+    "kind": "settings",
+    "lang": "fr",
+    "theme": "light",
+    "audit": {
+      "small": 13,
+      "overflow": false,
+      "text": 2036,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none"
+      }
+    },
+    "errors": []
+  },
+  {
+    "kind": "settings",
+    "lang": "fr",
+    "theme": "dark",
+    "audit": {
+      "small": 13,
+      "overflow": false,
+      "text": 2036,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none"
+      }
+    },
+    "errors": []
+  },
+  {
+    "kind": "settings",
+    "lang": "es",
+    "theme": "light",
+    "audit": {
+      "small": 13,
+      "overflow": false,
+      "text": 2030,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none"
+      }
+    },
+    "errors": []
+  },
+  {
+    "kind": "settings",
+    "lang": "es",
+    "theme": "dark",
+    "audit": {
+      "small": 13,
+      "overflow": false,
+      "text": 2030,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none"
+      }
+    },
+    "errors": []
+  },
+  {
+    "kind": "settings",
+    "lang": "pt",
+    "theme": "light",
+    "audit": {
+      "small": 13,
+      "overflow": false,
+      "text": 2032,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none"
+      }
+    },
+    "errors": []
+  },
+  {
+    "kind": "settings",
+    "lang": "pt",
+    "theme": "dark",
+    "audit": {
+      "small": 13,
+      "overflow": false,
+      "text": 2032,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none"
+      }
+    },
+    "errors": []
+  },
+  {
+    "kind": "/landing",
+    "theme": "light",
+    "device": "mobile",
+    "audit": {
+      "small": 6,
+      "overflow": false,
+      "text": 3156,
+      "focus": {
+        "tag": "BUTTON",
+        "outline": "none"
+      }
+    },
+    "errors": []
+  },
+  {
+    "kind": "http://localhost:5173/project/sample-crew-neck-sweater",
+    "theme": "light",
+    "device": "mobile",
+    "audit": {
+      "small": 93,
+      "overflow": false,
+      "text": 1307,
+      "focus": {
+        "tag": "DIV",
+        "outline": "none"
+      }
+    },
+    "errors": []
+  },
+  {
+    "kind": "/landing",
+    "theme": "light",
+    "device": "mobile-lg",
+    "audit": {
+      "small": 6,
+      "overflow": false,
+      "text": 3156,
+      "focus": {
+        "tag": "BUTTON",
+        "outline": "none"
+      }
+    },
+    "errors": []
+  },
+  {
+    "kind": "http://localhost:5173/project/sample-crew-neck-sweater",
+    "theme": "light",
+    "device": "mobile-lg",
+    "audit": {
+      "small": 93,
+      "overflow": false,
+      "text": 1307,
+      "focus": {
+        "tag": "DIV",
+        "outline": "none"
+      }
+    },
+    "errors": []
+  },
+  {
+    "kind": "/landing",
+    "theme": "light",
+    "device": "tablet",
+    "audit": {
+      "small": 6,
+      "overflow": false,
+      "text": 3156,
+      "focus": {
+        "tag": "BUTTON",
+        "outline": "none"
+      }
+    },
+    "errors": []
+  },
+  {
+    "kind": "http://localhost:5173/project/sample-crew-neck-sweater",
+    "theme": "light",
+    "device": "tablet",
+    "audit": {
+      "small": 92,
+      "overflow": false,
+      "text": 1380,
+      "focus": {
+        "tag": "DIV",
+        "outline": "none"
+      }
+    },
+    "errors": []
+  },
+  {
+    "kind": "/landing",
+    "theme": "light",
+    "device": "desktop",
+    "audit": {
+      "small": 6,
+      "overflow": false,
+      "text": 3156,
+      "focus": {
+        "tag": "BUTTON",
+        "outline": "none"
+      }
+    },
+    "errors": []
+  },
+  {
+    "kind": "http://localhost:5173/project/sample-crew-neck-sweater",
+    "theme": "light",
+    "device": "desktop",
+    "audit": {
+      "small": 94,
+      "overflow": false,
+      "text": 1380,
+      "focus": {
+        "tag": "DIV",
+        "outline": "none"
+      }
+    },
+    "errors": []
+  },
+  {
+    "kind": "/landing",
+    "theme": "light",
+    "device": "wide",
+    "audit": {
+      "small": 6,
+      "overflow": false,
+      "text": 3156,
+      "focus": {
+        "tag": "BUTTON",
+        "outline": "none"
+      }
+    },
+    "errors": []
+  },
+  {
+    "kind": "http://localhost:5173/project/sample-crew-neck-sweater",
+    "theme": "light",
+    "device": "wide",
+    "audit": {
+      "small": 94,
+      "overflow": false,
+      "text": 1380,
+      "focus": {
+        "tag": "DIV",
+        "outline": "none"
+      }
+    },
+    "errors": []
+  },
+  {
+    "kind": "/landing",
+    "theme": "dark",
+    "device": "mobile",
+    "audit": {
+      "small": 6,
+      "overflow": false,
+      "text": 3156,
+      "focus": {
+        "tag": "BUTTON",
+        "outline": "none"
+      }
+    },
+    "errors": []
+  },
+  {
+    "kind": "http://localhost:5173/project/sample-crew-neck-sweater",
+    "theme": "dark",
+    "device": "mobile",
+    "audit": {
+      "small": 93,
+      "overflow": false,
+      "text": 1307,
+      "focus": {
+        "tag": "DIV",
+        "outline": "none"
+      }
+    },
+    "errors": []
+  },
+  {
+    "kind": "/landing",
+    "theme": "dark",
+    "device": "mobile-lg",
+    "audit": {
+      "small": 6,
+      "overflow": false,
+      "text": 3156,
+      "focus": {
+        "tag": "BUTTON",
+        "outline": "none"
+      }
+    },
+    "errors": []
+  },
+  {
+    "kind": "http://localhost:5173/project/sample-crew-neck-sweater",
+    "theme": "dark",
+    "device": "mobile-lg",
+    "audit": {
+      "small": 93,
+      "overflow": false,
+      "text": 1307,
+      "focus": {
+        "tag": "DIV",
+        "outline": "none"
+      }
+    },
+    "errors": []
+  },
+  {
+    "kind": "/landing",
+    "theme": "dark",
+    "device": "tablet",
+    "audit": {
+      "small": 6,
+      "overflow": false,
+      "text": 3156,
+      "focus": {
+        "tag": "BUTTON",
+        "outline": "none"
+      }
+    },
+    "errors": []
+  },
+  {
+    "kind": "http://localhost:5173/project/sample-crew-neck-sweater",
+    "theme": "dark",
+    "device": "tablet",
+    "audit": {
+      "small": 92,
+      "overflow": false,
+      "text": 1380,
+      "focus": {
+        "tag": "DIV",
+        "outline": "none"
+      }
+    },
+    "errors": []
+  },
+  {
+    "kind": "/landing",
+    "theme": "dark",
+    "device": "desktop",
+    "audit": {
+      "small": 6,
+      "overflow": false,
+      "text": 3156,
+      "focus": {
+        "tag": "BUTTON",
+        "outline": "none"
+      }
+    },
+    "errors": []
+  },
+  {
+    "kind": "http://localhost:5173/project/sample-crew-neck-sweater",
+    "theme": "dark",
+    "device": "desktop",
+    "audit": {
+      "small": 94,
+      "overflow": false,
+      "text": 1380,
+      "focus": {
+        "tag": "DIV",
+        "outline": "none"
+      }
+    },
+    "errors": []
+  },
+  {
+    "kind": "/landing",
+    "theme": "dark",
+    "device": "wide",
+    "audit": {
+      "small": 6,
+      "overflow": false,
+      "text": 3156,
+      "focus": {
+        "tag": "BUTTON",
+        "outline": "none"
+      }
+    },
+    "errors": []
+  },
+  {
+    "kind": "http://localhost:5173/project/sample-crew-neck-sweater",
+    "theme": "dark",
+    "device": "wide",
+    "audit": {
+      "small": 94,
+      "overflow": false,
+      "text": 1380,
+      "focus": {
+        "tag": "DIV",
+        "outline": "none"
+      }
+    },
+    "errors": []
+  }
+]

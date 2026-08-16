@@ -1,0 +1,2233 @@
+{
+  "results": [
+    {
+      "label": "route /landing light/en desktop",
+      "text_len": 3156,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 1280,
+        "h": 900,
+        "html": "light"
+      },
+      "metrics": {
+        "small": 6,
+        "off": 0
+      },
+      "perf": {
+        "dom": 258.60000002384186,
+        "load": 262.30000001192093,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "route /settings light/en desktop",
+      "text_len": 2088,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 1280,
+        "h": 900,
+        "html": "light"
+      },
+      "metrics": {
+        "small": 13,
+        "off": 2
+      },
+      "perf": {
+        "dom": 248.89999997615814,
+        "load": 252.60000002384186,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "route /portfolio light/en desktop",
+      "text_len": 2352,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 1280,
+        "h": 900,
+        "html": "light"
+      },
+      "metrics": {
+        "small": 15,
+        "off": 7
+      },
+      "perf": {
+        "dom": 230.10000002384186,
+        "load": 233.9000000357628,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "route /project/new light/en desktop",
+      "text_len": 405,
+      "h1": 1,
+      "focus": {
+        "tag": "INPUT",
+        "outline": "none",
+        "w": 1280,
+        "h": 900,
+        "html": "light"
+      },
+      "metrics": {
+        "small": 10,
+        "off": 3
+      },
+      "perf": {
+        "dom": 239.5,
+        "load": 243.19999998807907,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "route /project/import-csv light/en desktop",
+      "text_len": 486,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 1280,
+        "h": 900,
+        "html": "light"
+      },
+      "metrics": {
+        "small": 10,
+        "off": 2
+      },
+      "perf": {
+        "dom": 220.4000000357628,
+        "load": 224.5,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "route http://localhost:5173/project/sample-crew-neck-sweater light/en desktop",
+      "text_len": 1449,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 1280,
+        "h": 900,
+        "html": "light"
+      },
+      "metrics": {
+        "small": 98,
+        "off": 13
+      },
+      "perf": {
+        "dom": 240.9000000357628,
+        "load": 244.60000002384186,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "route /project/sample-crew-neck-sweater/grading light/en desktop",
+      "text_len": 3451,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 1280,
+        "h": 900,
+        "html": "light"
+      },
+      "metrics": {
+        "small": 11,
+        "off": 74
+      },
+      "perf": {
+        "dom": 254.5,
+        "load": 258.5,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "route /project/sample-crew-neck-sweater/pdf light/en desktop",
+      "text_len": 1257,
+      "h1": 0,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 1280,
+        "h": 900,
+        "html": "light"
+      },
+      "metrics": {
+        "small": 16,
+        "off": 4
+      },
+      "perf": {
+        "dom": 243.5,
+        "load": 248.60000002384186,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 1,
+      "failed": 0
+    },
+    {
+      "label": "route /not-a-real-route light/en desktop",
+      "text_len": 379,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 1280,
+        "h": 900,
+        "html": "light"
+      },
+      "metrics": {
+        "small": 7,
+        "off": 2
+      },
+      "perf": {
+        "dom": 246.19999998807907,
+        "load": 250.29999995231628,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "en-light-desktop-landing",
+      "text_len": 3156,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 1280,
+        "h": 900,
+        "html": "light"
+      },
+      "metrics": {
+        "small": 6,
+        "off": 0
+      },
+      "perf": {
+        "dom": 250,
+        "load": 253.80000001192093,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "en-light-desktop-settings",
+      "text_len": 2088,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 1280,
+        "h": 900,
+        "html": "light"
+      },
+      "metrics": {
+        "small": 13,
+        "off": 2
+      },
+      "perf": {
+        "dom": 242,
+        "load": 246,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "en-light-desktop-project-new",
+      "text_len": 405,
+      "h1": 1,
+      "focus": {
+        "tag": "INPUT",
+        "outline": "none",
+        "w": 1280,
+        "h": 900,
+        "html": "light"
+      },
+      "metrics": {
+        "small": 10,
+        "off": 3
+      },
+      "perf": {
+        "dom": 239.19999998807907,
+        "load": 244.0999999642372,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "en-light-desktop-http_--localhost_5173-project-sample-crew-neck-sweater",
+      "text_len": 1449,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 1280,
+        "h": 900,
+        "html": "light"
+      },
+      "metrics": {
+        "small": 98,
+        "off": 13
+      },
+      "perf": {
+        "dom": 231.10000002384186,
+        "load": 234.9000000357628,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "en-light-mobile-landing",
+      "text_len": 3156,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 375,
+        "h": 812,
+        "html": "light"
+      },
+      "metrics": {
+        "small": 6,
+        "off": 0
+      },
+      "perf": {
+        "dom": 240.69999998807907,
+        "load": 244.5,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "en-light-mobile-settings",
+      "text_len": 2015,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 375,
+        "h": 812,
+        "html": "light"
+      },
+      "metrics": {
+        "small": 12,
+        "off": 2
+      },
+      "perf": {
+        "dom": 230.19999998807907,
+        "load": 234,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "en-light-mobile-project-new",
+      "text_len": 332,
+      "h1": 1,
+      "focus": {
+        "tag": "INPUT",
+        "outline": "none",
+        "w": 375,
+        "h": 812,
+        "html": "light"
+      },
+      "metrics": {
+        "small": 9,
+        "off": 3
+      },
+      "perf": {
+        "dom": 233.60000002384186,
+        "load": 237.4000000357628,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "en-light-mobile-http_--localhost_5173-project-sample-crew-neck-sweater",
+      "text_len": 1376,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 375,
+        "h": 812,
+        "html": "light"
+      },
+      "metrics": {
+        "small": 97,
+        "off": 13
+      },
+      "perf": {
+        "dom": 223.30000001192093,
+        "load": 226.9000000357628,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "en-dark-desktop-landing",
+      "text_len": 3156,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 1280,
+        "h": 900,
+        "html": "dark"
+      },
+      "metrics": {
+        "small": 6,
+        "off": 0
+      },
+      "perf": {
+        "dom": 227.4000000357628,
+        "load": 231.30000001192093,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "en-dark-desktop-settings",
+      "text_len": 2088,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 1280,
+        "h": 900,
+        "html": "dark"
+      },
+      "metrics": {
+        "small": 13,
+        "off": 2
+      },
+      "perf": {
+        "dom": 223.89999997615814,
+        "load": 227.69999998807907,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "en-dark-desktop-project-new",
+      "text_len": 405,
+      "h1": 1,
+      "focus": {
+        "tag": "INPUT",
+        "outline": "none",
+        "w": 1280,
+        "h": 900,
+        "html": "dark"
+      },
+      "metrics": {
+        "small": 10,
+        "off": 3
+      },
+      "perf": {
+        "dom": 239.19999998807907,
+        "load": 242.9000000357628,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "en-dark-desktop-http_--localhost_5173-project-sample-crew-neck-sweater",
+      "text_len": 1449,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 1280,
+        "h": 900,
+        "html": "dark"
+      },
+      "metrics": {
+        "small": 98,
+        "off": 13
+      },
+      "perf": {
+        "dom": 243.29999995231628,
+        "load": 247.0999999642372,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "en-dark-mobile-landing",
+      "text_len": 3156,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 375,
+        "h": 812,
+        "html": "dark"
+      },
+      "metrics": {
+        "small": 6,
+        "off": 0
+      },
+      "perf": {
+        "dom": 224.39999997615814,
+        "load": 228.19999998807907,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "en-dark-mobile-settings",
+      "text_len": 2015,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 375,
+        "h": 812,
+        "html": "dark"
+      },
+      "metrics": {
+        "small": 12,
+        "off": 2
+      },
+      "perf": {
+        "dom": 225.5,
+        "load": 229.39999997615814,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 1,
+      "failed": 1
+    },
+    {
+      "label": "en-dark-mobile-project-new",
+      "text_len": 332,
+      "h1": 1,
+      "focus": {
+        "tag": "INPUT",
+        "outline": "none",
+        "w": 375,
+        "h": 812,
+        "html": "dark"
+      },
+      "metrics": {
+        "small": 9,
+        "off": 3
+      },
+      "perf": {
+        "dom": 239.5,
+        "load": 243.4000000357628,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "en-dark-mobile-http_--localhost_5173-project-sample-crew-neck-sweater",
+      "text_len": 1376,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 375,
+        "h": 812,
+        "html": "dark"
+      },
+      "metrics": {
+        "small": 97,
+        "off": 13
+      },
+      "perf": {
+        "dom": 239.9000000357628,
+        "load": 243.80000001192093,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 1,
+      "failed": 1
+    },
+    {
+      "label": "de-light-desktop-landing",
+      "text_len": 3156,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 1280,
+        "h": 900,
+        "html": "light"
+      },
+      "metrics": {
+        "small": 6,
+        "off": 0
+      },
+      "perf": {
+        "dom": 246.80000001192093,
+        "load": 250.9000000357628,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "de-light-desktop-settings",
+      "text_len": 2026,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 1280,
+        "h": 900,
+        "html": "light"
+      },
+      "metrics": {
+        "small": 13,
+        "off": 2
+      },
+      "perf": {
+        "dom": 227.4000000357628,
+        "load": 231.10000002384186,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "de-light-desktop-project-new",
+      "text_len": 414,
+      "h1": 1,
+      "focus": {
+        "tag": "INPUT",
+        "outline": "none",
+        "w": 1280,
+        "h": 900,
+        "html": "light"
+      },
+      "metrics": {
+        "small": 10,
+        "off": 3
+      },
+      "perf": {
+        "dom": 246.5999999642372,
+        "load": 249.89999997615814,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 2,
+      "failed": 2
+    },
+    {
+      "label": "de-light-desktop-http_--localhost_5173-project-sample-crew-neck-sweater",
+      "text_len": 1454,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 1280,
+        "h": 900,
+        "html": "light"
+      },
+      "metrics": {
+        "small": 98,
+        "off": 13
+      },
+      "perf": {
+        "dom": 240.69999998807907,
+        "load": 244.69999998807907,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "de-light-mobile-landing",
+      "text_len": 3156,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 375,
+        "h": 812,
+        "html": "light"
+      },
+      "metrics": {
+        "small": 6,
+        "off": 0
+      },
+      "perf": {
+        "dom": 233.5,
+        "load": 237.4000000357628,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "de-light-mobile-settings",
+      "text_len": 1948,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 375,
+        "h": 812,
+        "html": "light"
+      },
+      "metrics": {
+        "small": 12,
+        "off": 2
+      },
+      "perf": {
+        "dom": 234.9000000357628,
+        "load": 238.80000001192093,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "de-light-mobile-project-new",
+      "text_len": 336,
+      "h1": 1,
+      "focus": {
+        "tag": "INPUT",
+        "outline": "none",
+        "w": 375,
+        "h": 812,
+        "html": "light"
+      },
+      "metrics": {
+        "small": 9,
+        "off": 3
+      },
+      "perf": {
+        "dom": 241.10000002384186,
+        "load": 245.10000002384186,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "de-light-mobile-http_--localhost_5173-project-sample-crew-neck-sweater",
+      "text_len": 1376,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 375,
+        "h": 812,
+        "html": "light"
+      },
+      "metrics": {
+        "small": 97,
+        "off": 13
+      },
+      "perf": {
+        "dom": 237.10000002384186,
+        "load": 240.89999997615814,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 1,
+      "failed": 1
+    },
+    {
+      "label": "de-dark-desktop-landing",
+      "text_len": 3156,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 1280,
+        "h": 900,
+        "html": "dark"
+      },
+      "metrics": {
+        "small": 6,
+        "off": 0
+      },
+      "perf": {
+        "dom": 234.5,
+        "load": 238.30000001192093,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "de-dark-desktop-settings",
+      "text_len": 2026,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 1280,
+        "h": 900,
+        "html": "dark"
+      },
+      "metrics": {
+        "small": 13,
+        "off": 2
+      },
+      "perf": {
+        "dom": 232.29999995231628,
+        "load": 236,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 2,
+      "failed": 2
+    },
+    {
+      "label": "de-dark-desktop-project-new",
+      "text_len": 414,
+      "h1": 1,
+      "focus": {
+        "tag": "INPUT",
+        "outline": "none",
+        "w": 1280,
+        "h": 900,
+        "html": "dark"
+      },
+      "metrics": {
+        "small": 10,
+        "off": 3
+      },
+      "perf": {
+        "dom": 224.60000002384186,
+        "load": 228.30000001192093,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "de-dark-desktop-http_--localhost_5173-project-sample-crew-neck-sweater",
+      "text_len": 1454,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 1280,
+        "h": 900,
+        "html": "dark"
+      },
+      "metrics": {
+        "small": 98,
+        "off": 13
+      },
+      "perf": {
+        "dom": 230.89999997615814,
+        "load": 234.69999998807907,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 1,
+      "failed": 1
+    },
+    {
+      "label": "de-dark-mobile-landing",
+      "text_len": 3156,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 375,
+        "h": 812,
+        "html": "dark"
+      },
+      "metrics": {
+        "small": 6,
+        "off": 0
+      },
+      "perf": {
+        "dom": 236.60000002384186,
+        "load": 240.5,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "de-dark-mobile-settings",
+      "text_len": 1948,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 375,
+        "h": 812,
+        "html": "dark"
+      },
+      "metrics": {
+        "small": 12,
+        "off": 2
+      },
+      "perf": {
+        "dom": 237.4000000357628,
+        "load": 241.5,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "de-dark-mobile-project-new",
+      "text_len": 336,
+      "h1": 1,
+      "focus": {
+        "tag": "INPUT",
+        "outline": "none",
+        "w": 375,
+        "h": 812,
+        "html": "dark"
+      },
+      "metrics": {
+        "small": 9,
+        "off": 3
+      },
+      "perf": {
+        "dom": 243.79999995231628,
+        "load": 247.79999995231628,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "de-dark-mobile-http_--localhost_5173-project-sample-crew-neck-sweater",
+      "text_len": 1376,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 375,
+        "h": 812,
+        "html": "dark"
+      },
+      "metrics": {
+        "small": 97,
+        "off": 13
+      },
+      "perf": {
+        "dom": 243.0999999642372,
+        "load": 247,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "fr-light-desktop-landing",
+      "text_len": 3156,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 1280,
+        "h": 900,
+        "html": "light"
+      },
+      "metrics": {
+        "small": 6,
+        "off": 0
+      },
+      "perf": {
+        "dom": 237.5999999642372,
+        "load": 241.5,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "fr-light-desktop-settings",
+      "text_len": 2036,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 1280,
+        "h": 900,
+        "html": "light"
+      },
+      "metrics": {
+        "small": 13,
+        "off": 2
+      },
+      "perf": {
+        "dom": 228.69999998807907,
+        "load": 232.30000001192093,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "fr-light-desktop-project-new",
+      "text_len": 415,
+      "h1": 1,
+      "focus": {
+        "tag": "INPUT",
+        "outline": "none",
+        "w": 1280,
+        "h": 900,
+        "html": "light"
+      },
+      "metrics": {
+        "small": 10,
+        "off": 3
+      },
+      "perf": {
+        "dom": 238.5,
+        "load": 242.5,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "fr-light-desktop-http_--localhost_5173-project-sample-crew-neck-sweater",
+      "text_len": 1451,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 1280,
+        "h": 900,
+        "html": "light"
+      },
+      "metrics": {
+        "small": 98,
+        "off": 13
+      },
+      "perf": {
+        "dom": 235.5,
+        "load": 239.30000001192093,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "fr-light-mobile-landing",
+      "text_len": 3156,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 375,
+        "h": 812,
+        "html": "light"
+      },
+      "metrics": {
+        "small": 6,
+        "off": 0
+      },
+      "perf": {
+        "dom": 248.39999997615814,
+        "load": 252.39999997615814,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "fr-light-mobile-settings",
+      "text_len": 1961,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 375,
+        "h": 812,
+        "html": "light"
+      },
+      "metrics": {
+        "small": 12,
+        "off": 2
+      },
+      "perf": {
+        "dom": 245.19999998807907,
+        "load": 249.10000002384186,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "fr-light-mobile-project-new",
+      "text_len": 340,
+      "h1": 1,
+      "focus": {
+        "tag": "INPUT",
+        "outline": "none",
+        "w": 375,
+        "h": 812,
+        "html": "light"
+      },
+      "metrics": {
+        "small": 9,
+        "off": 3
+      },
+      "perf": {
+        "dom": 244.69999998807907,
+        "load": 248.39999997615814,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "fr-light-mobile-http_--localhost_5173-project-sample-crew-neck-sweater",
+      "text_len": 1376,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 375,
+        "h": 812,
+        "html": "light"
+      },
+      "metrics": {
+        "small": 97,
+        "off": 13
+      },
+      "perf": {
+        "dom": 230.39999997615814,
+        "load": 234.39999997615814,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "fr-dark-desktop-landing",
+      "text_len": 3156,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 1280,
+        "h": 900,
+        "html": "dark"
+      },
+      "metrics": {
+        "small": 6,
+        "off": 0
+      },
+      "perf": {
+        "dom": 241.60000002384186,
+        "load": 246.10000002384186,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "fr-dark-desktop-settings",
+      "text_len": 2036,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 1280,
+        "h": 900,
+        "html": "dark"
+      },
+      "metrics": {
+        "small": 13,
+        "off": 2
+      },
+      "perf": {
+        "dom": 240.60000002384186,
+        "load": 244.80000001192093,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "fr-dark-desktop-project-new",
+      "text_len": 415,
+      "h1": 1,
+      "focus": {
+        "tag": "INPUT",
+        "outline": "none",
+        "w": 1280,
+        "h": 900,
+        "html": "dark"
+      },
+      "metrics": {
+        "small": 10,
+        "off": 3
+      },
+      "perf": {
+        "dom": 244.80000001192093,
+        "load": 248.80000001192093,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "fr-dark-desktop-http_--localhost_5173-project-sample-crew-neck-sweater",
+      "text_len": 1451,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 1280,
+        "h": 900,
+        "html": "dark"
+      },
+      "metrics": {
+        "small": 98,
+        "off": 13
+      },
+      "perf": {
+        "dom": 228.9000000357628,
+        "load": 232.9000000357628,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "fr-dark-mobile-landing",
+      "text_len": 3156,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 375,
+        "h": 812,
+        "html": "dark"
+      },
+      "metrics": {
+        "small": 6,
+        "off": 0
+      },
+      "perf": {
+        "dom": 263.60000002384186,
+        "load": 267.5,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "fr-dark-mobile-settings",
+      "text_len": 1961,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 375,
+        "h": 812,
+        "html": "dark"
+      },
+      "metrics": {
+        "small": 12,
+        "off": 2
+      },
+      "perf": {
+        "dom": 251.39999997615814,
+        "load": 255.39999997615814,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "fr-dark-mobile-project-new",
+      "text_len": 340,
+      "h1": 1,
+      "focus": {
+        "tag": "INPUT",
+        "outline": "none",
+        "w": 375,
+        "h": 812,
+        "html": "dark"
+      },
+      "metrics": {
+        "small": 9,
+        "off": 3
+      },
+      "perf": {
+        "dom": 242,
+        "load": 245.9000000357628,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "fr-dark-mobile-http_--localhost_5173-project-sample-crew-neck-sweater",
+      "text_len": 1376,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 375,
+        "h": 812,
+        "html": "dark"
+      },
+      "metrics": {
+        "small": 97,
+        "off": 13
+      },
+      "perf": {
+        "dom": 249.69999998807907,
+        "load": 253.5,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "es-light-desktop-landing",
+      "text_len": 3156,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 1280,
+        "h": 900,
+        "html": "light"
+      },
+      "metrics": {
+        "small": 6,
+        "off": 0
+      },
+      "perf": {
+        "dom": 226.69999998807907,
+        "load": 231,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "es-light-desktop-settings",
+      "text_len": 2030,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 1280,
+        "h": 900,
+        "html": "light"
+      },
+      "metrics": {
+        "small": 13,
+        "off": 2
+      },
+      "perf": {
+        "dom": 226,
+        "load": 230,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "es-light-desktop-project-new",
+      "text_len": 422,
+      "h1": 1,
+      "focus": {
+        "tag": "INPUT",
+        "outline": "none",
+        "w": 1280,
+        "h": 900,
+        "html": "light"
+      },
+      "metrics": {
+        "small": 10,
+        "off": 3
+      },
+      "perf": {
+        "dom": 240.5999999642372,
+        "load": 244.69999998807907,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "es-light-desktop-http_--localhost_5173-project-sample-crew-neck-sweater",
+      "text_len": 1454,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 1280,
+        "h": 900,
+        "html": "light"
+      },
+      "metrics": {
+        "small": 98,
+        "off": 13
+      },
+      "perf": {
+        "dom": 235.10000002384186,
+        "load": 239.10000002384186,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "es-light-mobile-landing",
+      "text_len": 3156,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 375,
+        "h": 812,
+        "html": "light"
+      },
+      "metrics": {
+        "small": 6,
+        "off": 0
+      },
+      "perf": {
+        "dom": 256.5,
+        "load": 260.19999998807907,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "es-light-mobile-settings",
+      "text_len": 1952,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 375,
+        "h": 812,
+        "html": "light"
+      },
+      "metrics": {
+        "small": 12,
+        "off": 2
+      },
+      "perf": {
+        "dom": 226.39999997615814,
+        "load": 230.19999998807907,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "es-light-mobile-project-new",
+      "text_len": 344,
+      "h1": 1,
+      "focus": {
+        "tag": "INPUT",
+        "outline": "none",
+        "w": 375,
+        "h": 812,
+        "html": "light"
+      },
+      "metrics": {
+        "small": 9,
+        "off": 3
+      },
+      "perf": {
+        "dom": 230,
+        "load": 233.69999998807907,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "es-light-mobile-http_--localhost_5173-project-sample-crew-neck-sweater",
+      "text_len": 1376,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 375,
+        "h": 812,
+        "html": "light"
+      },
+      "metrics": {
+        "small": 97,
+        "off": 13
+      },
+      "perf": {
+        "dom": 229.19999998807907,
+        "load": 233.10000002384186,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "es-dark-desktop-landing",
+      "text_len": 3156,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 1280,
+        "h": 900,
+        "html": "dark"
+      },
+      "metrics": {
+        "small": 6,
+        "off": 0
+      },
+      "perf": {
+        "dom": 224.20000004768372,
+        "load": 228,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "es-dark-desktop-settings",
+      "text_len": 2030,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 1280,
+        "h": 900,
+        "html": "dark"
+      },
+      "metrics": {
+        "small": 13,
+        "off": 2
+      },
+      "perf": {
+        "dom": 240.89999997615814,
+        "load": 244.79999995231628,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "es-dark-desktop-project-new",
+      "text_len": 422,
+      "h1": 1,
+      "focus": {
+        "tag": "INPUT",
+        "outline": "none",
+        "w": 1280,
+        "h": 900,
+        "html": "dark"
+      },
+      "metrics": {
+        "small": 10,
+        "off": 3
+      },
+      "perf": {
+        "dom": 223.60000002384186,
+        "load": 227.39999997615814,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "es-dark-desktop-http_--localhost_5173-project-sample-crew-neck-sweater",
+      "text_len": 1454,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 1280,
+        "h": 900,
+        "html": "dark"
+      },
+      "metrics": {
+        "small": 98,
+        "off": 13
+      },
+      "perf": {
+        "dom": 230.5999999642372,
+        "load": 234.30000001192093,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "es-dark-mobile-landing",
+      "text_len": 3156,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 375,
+        "h": 812,
+        "html": "dark"
+      },
+      "metrics": {
+        "small": 6,
+        "off": 0
+      },
+      "perf": {
+        "dom": 226.80000001192093,
+        "load": 230.30000001192093,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "es-dark-mobile-settings",
+      "text_len": 1952,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 375,
+        "h": 812,
+        "html": "dark"
+      },
+      "metrics": {
+        "small": 12,
+        "off": 2
+      },
+      "perf": {
+        "dom": 265.80000001192093,
+        "load": 269.89999997615814,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "es-dark-mobile-project-new",
+      "text_len": 344,
+      "h1": 1,
+      "focus": {
+        "tag": "INPUT",
+        "outline": "none",
+        "w": 375,
+        "h": 812,
+        "html": "dark"
+      },
+      "metrics": {
+        "small": 9,
+        "off": 3
+      },
+      "perf": {
+        "dom": 262.30000001192093,
+        "load": 266.4000000357628,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "es-dark-mobile-http_--localhost_5173-project-sample-crew-neck-sweater",
+      "text_len": 1376,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 375,
+        "h": 812,
+        "html": "dark"
+      },
+      "metrics": {
+        "small": 97,
+        "off": 13
+      },
+      "perf": {
+        "dom": 256.5,
+        "load": 260.39999997615814,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "pt-light-desktop-landing",
+      "text_len": 3156,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 1280,
+        "h": 900,
+        "html": "light"
+      },
+      "metrics": {
+        "small": 6,
+        "off": 0
+      },
+      "perf": {
+        "dom": 244.69999998807907,
+        "load": 249.39999997615814,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "pt-light-desktop-settings",
+      "text_len": 2032,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 1280,
+        "h": 900,
+        "html": "light"
+      },
+      "metrics": {
+        "small": 13,
+        "off": 2
+      },
+      "perf": {
+        "dom": 241.19999998807907,
+        "load": 245.30000001192093,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "pt-light-desktop-project-new",
+      "text_len": 414,
+      "h1": 1,
+      "focus": {
+        "tag": "INPUT",
+        "outline": "none",
+        "w": 1280,
+        "h": 900,
+        "html": "light"
+      },
+      "metrics": {
+        "small": 10,
+        "off": 3
+      },
+      "perf": {
+        "dom": 276.80000001192093,
+        "load": 280.69999998807907,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "pt-light-desktop-http_--localhost_5173-project-sample-crew-neck-sweater",
+      "text_len": 1453,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 1280,
+        "h": 900,
+        "html": "light"
+      },
+      "metrics": {
+        "small": 98,
+        "off": 13
+      },
+      "perf": {
+        "dom": 256.5,
+        "load": 260.80000001192093,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "pt-light-mobile-landing",
+      "text_len": 3156,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 375,
+        "h": 812,
+        "html": "light"
+      },
+      "metrics": {
+        "small": 6,
+        "off": 0
+      },
+      "perf": {
+        "dom": 216.69999998807907,
+        "load": 220.30000001192093,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "pt-light-mobile-settings",
+      "text_len": 1955,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 375,
+        "h": 812,
+        "html": "light"
+      },
+      "metrics": {
+        "small": 12,
+        "off": 2
+      },
+      "perf": {
+        "dom": 222.60000002384186,
+        "load": 226.30000001192093,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "pt-light-mobile-project-new",
+      "text_len": 337,
+      "h1": 1,
+      "focus": {
+        "tag": "INPUT",
+        "outline": "none",
+        "w": 375,
+        "h": 812,
+        "html": "light"
+      },
+      "metrics": {
+        "small": 9,
+        "off": 3
+      },
+      "perf": {
+        "dom": 257.39999997615814,
+        "load": 261,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "pt-light-mobile-http_--localhost_5173-project-sample-crew-neck-sweater",
+      "text_len": 1376,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 375,
+        "h": 812,
+        "html": "light"
+      },
+      "metrics": {
+        "small": 97,
+        "off": 13
+      },
+      "perf": {
+        "dom": 231,
+        "load": 234.60000002384186,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "pt-dark-desktop-landing",
+      "text_len": 3156,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 1280,
+        "h": 900,
+        "html": "dark"
+      },
+      "metrics": {
+        "small": 6,
+        "off": 0
+      },
+      "perf": {
+        "dom": 233.5,
+        "load": 237.39999997615814,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "pt-dark-desktop-settings",
+      "text_len": 2032,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 1280,
+        "h": 900,
+        "html": "dark"
+      },
+      "metrics": {
+        "small": 13,
+        "off": 2
+      },
+      "perf": {
+        "dom": 216.39999997615814,
+        "load": 220.30000001192093,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "pt-dark-desktop-project-new",
+      "text_len": 414,
+      "h1": 1,
+      "focus": {
+        "tag": "INPUT",
+        "outline": "none",
+        "w": 1280,
+        "h": 900,
+        "html": "dark"
+      },
+      "metrics": {
+        "small": 10,
+        "off": 3
+      },
+      "perf": {
+        "dom": 243.20000004768372,
+        "load": 247.10000002384186,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "pt-dark-desktop-http_--localhost_5173-project-sample-crew-neck-sweater",
+      "text_len": 1453,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 1280,
+        "h": 900,
+        "html": "dark"
+      },
+      "metrics": {
+        "small": 98,
+        "off": 13
+      },
+      "perf": {
+        "dom": 263.80000001192093,
+        "load": 267.4000000357628,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "pt-dark-mobile-landing",
+      "text_len": 3156,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 375,
+        "h": 812,
+        "html": "dark"
+      },
+      "metrics": {
+        "small": 6,
+        "off": 0
+      },
+      "perf": {
+        "dom": 249.69999998807907,
+        "load": 253.19999998807907,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "pt-dark-mobile-settings",
+      "text_len": 1955,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 375,
+        "h": 812,
+        "html": "dark"
+      },
+      "metrics": {
+        "small": 12,
+        "off": 2
+      },
+      "perf": {
+        "dom": 246.5,
+        "load": 250.60000002384186,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "pt-dark-mobile-project-new",
+      "text_len": 337,
+      "h1": 1,
+      "focus": {
+        "tag": "INPUT",
+        "outline": "none",
+        "w": 375,
+        "h": 812,
+        "html": "dark"
+      },
+      "metrics": {
+        "small": 9,
+        "off": 3
+      },
+      "perf": {
+        "dom": 241.80000001192093,
+        "load": 245.89999997615814,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "pt-dark-mobile-http_--localhost_5173-project-sample-crew-neck-sweater",
+      "text_len": 1376,
+      "h1": 1,
+      "focus": {
+        "tag": "BODY",
+        "outline": "none",
+        "w": 375,
+        "h": 812,
+        "html": "dark"
+      },
+      "metrics": {
+        "small": 97,
+        "off": 13
+      },
+      "perf": {
+        "dom": 256.69999998807907,
+        "load": 260.30000001192093,
+        "lcp": null,
+        "cls": 0
+      },
+      "errors": 0,
+      "failed": 0
+    },
+    {
+      "label": "onboarding en-US",
+      "text": "Stitch & Scale\nSkip setup\nWelcome to Stitch & Scale\n\nProfessional knitwear grading software — built for designers who care about the details.\n\nLocal-first — your projects save instantly, no account needed\nWorks offline — full functionality without an internet connection\nYour data belongs to you — export anytime, no lock-in\nPublish-ready PDF exports — four professional templates\n\nCloud Sync is optional. You never need an account to start designing.\n\nBack\nBegin\nStitch & Scale\nLocal only\nSaved\nProj",
+      "perf": {
+        "dom": 241.89999997615814,
+        "load": 246,
+        "lcp": null,
+        "cls": 0
+      }
+    },
+    {
+      "label": "onboarding de-DE",
+      "text": "Stitch & Scale\nSkip setup\nWillkommen bei Stitch & Scale\n\nProfessionelle Strick-Gradierungssoftware — für Designer, die Wert auf Details legen.\n\nLocal-first — Projekte speichern sofort, kein Konto nötig\nOffline nutzbar — voller Funktionsumfang ohne Internet\nDeine Daten gehören dir — jederzeit exportierbar, ohne Bindung\nDruckfertige PDF-Exporte — vier professionelle Vorlagen\n\nCloud-Synchronisierung ist optional. Du brauchst zum Start kein Konto.\n\nBack\nBegin\nStitch & Scale\nLocal only\nSaved\nProjekte",
+      "perf": {
+        "dom": 286.80000001192093,
+        "load": 290.5,
+        "lcp": null,
+        "cls": 0
+      }
+    },
+    {
+      "label": "onboarding fr-FR",
+      "text": "Stitch & Scale\nSkip setup\nBienvenue dans Stitch & Scale\n\nLogiciel professionnel de gradation de tricot — pour les créateurs attentifs aux détails.\n\nLocal-first — vos projets sont enregistrés instantanément, sans compte\nHors ligne — toutes les fonctions sans connexion internet\nVos données vous appartiennent — exportez-les quand vous voulez\nExports PDF prêts à publier — quatre modèles professionnels\n\nLa synchronisation cloud est facultative. Aucun compte n’est nécessaire pour commencer.\n\nBack\nBegi",
+      "perf": {
+        "dom": 248.80000001192093,
+        "load": 252.89999997615814,
+        "lcp": null,
+        "cls": 0
+      }
+    },
+    {
+      "label": "onboarding es-ES",
+      "text": "Stitch & Scale\nSkip setup\nWelcome to Stitch & Scale\n\nProfessional knitwear grading software — built for designers who care about the details.\n\nLocal-first — your projects save instantly, no account needed\nWorks offline — full functionality without an internet connection\nYour data belongs to you — export anytime, no lock-in\nPublish-ready PDF exports — four professional templates\n\nCloud Sync is optional. You never need an account to start designing.\n\nBack\nBegin\nStitch & Scale\nLocal only\nSaved\nProy",
+      "perf": {
+        "dom": 254.69999998807907,
+        "load": 258.5,
+        "lcp": null,
+        "cls": 0
+      }
+    },
+    {
+      "label": "onboarding pt-BR",
+      "text": "Stitch & Scale\nSkip setup\nWelcome to Stitch & Scale\n\nProfessional knitwear grading software — built for designers who care about the details.\n\nLocal-first — your projects save instantly, no account needed\nWorks offline — full functionality without an internet connection\nYour data belongs to you — export anytime, no lock-in\nPublish-ready PDF exports — four professional templates\n\nCloud Sync is optional. You never need an account to start designing.\n\nBack\nBegin\nStitch & Scale\nLocal only\nSaved\nProj",
+      "perf": {
+        "dom": 236.19999998807907,
+        "load": 240.19999998807907,
+        "lcp": null,
+        "cls": 0
+      }
+    },
+    {
+      "label": "onboarding ja-JP",
+      "text": "Stitch & Scale\nSkip setup\nWelcome to Stitch & Scale\n\nProfessional knitwear grading software — built for designers who care about the details.\n\nLocal-first — your projects save instantly, no account needed\nWorks offline — full functionality without an internet connection\nYour data belongs to you — export anytime, no lock-in\nPublish-ready PDF exports — four professional templates\n\nCloud Sync is optional. You never need an account to start designing.\n\nBack\nBegin\nStitch & Scale\nLocal only\nSaved\nProj",
+      "perf": {
+        "dom": 233.9000000357628,
+        "load": 238,
+        "lcp": null,
+        "cls": 0
+      }
+    },
+    {
+      "label": "malformed storage + keyboard",
+      "body": "Stitch & Scale\nLocal only\nSaved\nProjects\nPortfolio\nSettings\nNew Project\n\nYour work is safe. Your last session closed unexpectedly — all projects were already saved locally.\n\nClassic Crew Neck Sweater\nM\n\nBy Stitch & Scale\n•\nGauge: 20sts × 28rows / 4in\n\nFull Grading Table\nExport PDF\nDesign & Pattern ·",
+      "focus": {
+        "tag": "BUTTON",
+        "outline": "none"
+      }
+    }
+  ],
+  "console_errors": [
+    "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. TR-05",
+    "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. TR-03",
+    "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. TR-05",
+    "Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. TR-03",
+    "Blocked script execution in 'about:srcdoc' because the document's frame is sandboxed and the 'allow-scripts' permission is not set.",
+    "Failed to load resource: the server responded with a status of 404 ()",
+    "Failed to load resource: the server responded with a status of 404 ()",
+    "Failed to load resource: the server responded with a status of 404 ()",
+    "Failed to load resource: the server responded with a status of 404 ()",
+    "Failed to load resource: the server responded with a status of 404 ()",
+    "Failed to load resource: the server responded with a status of 404 ()",
+    "Failed to load resource: the server responded with a status of 404 ()",
+    "Failed to load resource: the server responded with a status of 404 ()"
+  ],
+  "failed_requests": [
+    "https://fonts.gstatic.com/s/fraunces/v38/6NUh8FyLNQOQZAnv9bYEvDiIdE9Ea92uemAk_WBq8U_9v0c2Wa0K7iN7iQcIfJD58nht1dU3gg7S2nfgRYIcHhyTCf7T.woff2",
+    "https://fonts.gstatic.com/s/fraunces/v38/6NUh8FyLNQOQZAnv9bYEvDiIdE9Ea92uemAk_WBq8U_9v0c2Wa0K7iN7iQcIfJD58nht1dU3gg7S2nfgRYIcHhyTCf7T.woff2",
+    "https://fonts.gstatic.com/s/fraunces/v38/6NUh8FyLNQOQZAnv9bYEvDiIdE9Ea92uemAk_WBq8U_9v0c2Wa0K7iN7iQcIfJD58nht1dU3gg7S2nfgRYIcHhyTCf7T.woff2",
+    "https://fonts.gstatic.com/s/fraunces/v38/6NUh8FyLNQOQZAnv9bYEvDiIdE9Ea92uemAk_WBq8U_9v0c2Wa0K7iN7iQcIfJD58nht1dU3gg7S2nfgRYIcHhyTCf7T.woff2",
+    "https://fonts.gstatic.com/s/fraunces/v38/6NUh8FyLNQOQZAnv9bYEvDiIdE9Ea92uemAk_WBq8U_9v0c2Wa0K7iN7iQcIfJD58nht1dU3gg7S2nfgRYIcHhyTCf7T.woff2",
+    "https://fonts.gstatic.com/s/fraunces/v38/6NUh8FyLNQOQZAnv9bYEvDiIdE9Ea92uemAk_WBq8U_9v0c2Wa0K7iN7iQcIfJD58nht1dU3gg7S2nfgRYIcHhyTCf7T.woff2",
+    "https://fonts.gstatic.com/s/fraunces/v38/6NUh8FyLNQOQZAnv9bYEvDiIdE9Ea92uemAk_WBq8U_9v0c2Wa0K7iN7iQcIfJD58nht1dU3gg7S2nfgRYIcHhyTCf7T.woff2",
+    "https://fonts.gstatic.com/s/fraunces/v38/6NUh8FyLNQOQZAnv9bYEvDiIdE9Ea92uemAk_WBq8U_9v0c2Wa0K7iN7iQcIfJD58nht1dU3gg7S2nfgRYIcHhyTCf7T.woff2"
+  ]
+}

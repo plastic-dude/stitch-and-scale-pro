@@ -1,0 +1,231 @@
+[
+  {
+    "persona": "first-time",
+    "audit": {
+      "text": 1041,
+      "buttons": 19,
+      "hidden": 2,
+      "overflow": false,
+      "focus": {
+        "tag": "BODY",
+        "text": "Stitch & ScaleSee it in actionWe've prepared a complete sample project \u2014 a Class",
+        "outline": "none"
+      },
+      "headings": [
+        "H2",
+        "H3",
+        "H1"
+      ]
+    },
+    "errors": []
+  },
+  {
+    "persona": "power-user",
+    "audit": {
+      "text": 1449,
+      "buttons": 98,
+      "hidden": 0,
+      "overflow": false,
+      "focus": {
+        "tag": "BODY",
+        "text": "Stitch & ScaleLocal onlySavedProjectsPortfolioSettingsNew ProjectYour work is sa",
+        "outline": "none"
+      },
+      "headings": [
+        "H1",
+        "H3",
+        "H3",
+        "H3"
+      ]
+    },
+    "errors": [],
+    "tabs": 79
+  },
+  {
+    "persona": "low-vision-keyboard",
+    "audit": {
+      "text": 2024,
+      "buttons": 24,
+      "hidden": 1,
+      "overflow": true,
+      "focus": {
+        "tag": "BUTTON",
+        "text": "Local only",
+        "outline": "none"
+      },
+      "headings": [
+        "H1",
+        "H4",
+        "H4",
+        "H4"
+      ]
+    },
+    "focus": [
+      {
+        "tag": "A",
+        "text": "Stitch & Scale",
+        "outline": "auto"
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Local only",
+        "outline": "none"
+      },
+      {
+        "tag": "A",
+        "text": "Projekte",
+        "outline": "auto"
+      },
+      {
+        "tag": "A",
+        "text": "Portfolio",
+        "outline": "auto"
+      },
+      {
+        "tag": "A",
+        "text": "Einstellungen",
+        "outline": "auto"
+      },
+      {
+        "tag": "A",
+        "text": "New Project",
+        "outline": "none"
+      },
+      {
+        "tag": "BUTTON",
+        "text": "",
+        "outline": "none"
+      },
+      {
+        "tag": "BUTTON",
+        "text": "EnglishEnglish",
+        "outline": "auto"
+      },
+      {
+        "tag": "BUTTON",
+        "text": "DeutschGerman",
+        "outline": "auto"
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Fran\u00e7aisFrench",
+        "outline": "auto"
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Espa\u00f1olSpanish",
+        "outline": "auto"
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Portugu\u00easPortuguese",
+        "outline": "auto"
+      },
+      {
+        "tag": "INPUT",
+        "text": "",
+        "outline": "auto"
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Craft Yarn CouncilThe published CYC body-measurement chart.",
+        "outline": "auto"
+      },
+      {
+        "tag": "BUTTON",
+        "text": "CustomYour own measurement chart.",
+        "outline": "auto"
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Light",
+        "outline": "none"
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Dark",
+        "outline": "none"
+      },
+      {
+        "tag": "BUTTON",
+        "text": "System",
+        "outline": "none"
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Restart Guide",
+        "outline": "none"
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Download Backup",
+        "outline": "none"
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Upload File",
+        "outline": "none"
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Reconcile",
+        "outline": "none"
+      },
+      {
+        "tag": "BODY",
+        "text": "Stitch & ScaleLocal onlySavedProjektePortfolioEinstellungenNew ProjectYour work ",
+        "outline": "none"
+      },
+      {
+        "tag": "A",
+        "text": "Stitch & Scale",
+        "outline": "auto"
+      },
+      {
+        "tag": "BUTTON",
+        "text": "Local only",
+        "outline": "none"
+      }
+    ],
+    "errors": []
+  },
+  {
+    "persona": "adversarial",
+    "audit": {
+      "text": 3156,
+      "buttons": 11,
+      "hidden": 0,
+      "overflow": false,
+      "focus": {
+        "tag": "BODY",
+        "text": "Stitch & ScaleOpen demoTry it free For indie knitwear pattern designersYou can k",
+        "outline": "none"
+      },
+      "headings": [
+        "H1",
+        "H2",
+        "H3",
+        "H3",
+        "H3",
+        "H3",
+        "H3",
+        "H3",
+        "H2",
+        "H2"
+      ]
+    },
+    "dark_pattern_terms": {
+      "no signup": true,
+      "no spam": true,
+      "cancel": false,
+      "unsubscribe": false,
+      "free trial": false,
+      "credit card": false,
+      "required": false,
+      "limited time": false,
+      "act now": false,
+      "just $": false
+    },
+    "text_tail": "e real bugs get a significant discount when paid tiers ship. No fee, no spam \u2014 just honest answers.\n\nJoin the testers\nWho built this?\n\nI should tell you the unusual part up front: I don't know how to knit. I'm a developer, not a designer. My late mother knitted and crocheted, and what she taught me was that making things for people with your hands is a form of care. When I looked into the independent pattern-design world, I saw that care being buried under hundreds of unpaid hours of spreadsheet math \u2014 grading, yield, pricing, wholesale \u2014 the business side nobody builds tools for.\n\nSo I did the thing I can actually do: I wrote the math so designers don't have to fight Excel at 11\u00a0PM. What I can't do is pretend I understand your yarn, your fit, your eye. That's what this founding-tester group is for \u2014 the designers in the room checking that what I built is actually right. If you find something wrong in it, tell me. I built this to be torn apart and rebuilt better, not to be worshipped.\n\nStitch & Scale \u2014 the knitwear designer's business toolkit\nLocal-first: your projects live in your browser until accounts ship.\nBuilt by a developer whose late mother knitted \u2014 David Mokwunye (Emlux)."
+  }
+]

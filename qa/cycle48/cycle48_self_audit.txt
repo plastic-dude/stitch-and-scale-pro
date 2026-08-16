@@ -1,0 +1,42 @@
+--- artifacts ---
+qa-shots-cycle48 exists= True shots= 165
+qa-shots-cycle48-focused exists= True shots= 240
+qa-shots-cycle48-personas exists= True shots= 24
+qa-shots-cycle48-supp-fast exists= True shots= 85
+--- result summaries ---
+cycle48_results.json rows= 96 exceptions= 0 error_rows= 7
+cycle48_supp_fast_results.json MISSING
+cycle48_focused_results.json rows= 30 exceptions= 0 error_rows= 0
+cycle48_personas_results.json rows= 4 exceptions= 0 error_rows= 0
+--- repo safety ---
+$ git status --short
+
+$ git branch --show-current
+main
+$ git rev-parse HEAD
+b7781f144c0e76a9d9d679a3716ad743c6c82316
+$ git rev-parse origin/main
+b7781f144c0e76a9d9d679a3716ad743c6c82316
+reviewed_sha_file= d7b37f48c7f92ffb9d57682e1f7aa84e00112029
+--- source diff summary ---
+ .../stitch-and-scale/AUDIT-HONESTY-2026-08-16.md   |  47 [32m+++++++[m
+ .../docs/publishing-system-proposal.md             |   6 [32m+[m[31m-[m
+ artifacts/stitch-and-scale/src/App.tsx             |  26 [32m++[m[31m--[m
+ .../stitch-and-scale/src/components/shell.tsx      |  13 [32m+[m[31m-[m
+ .../src/context/SettingsContext.tsx                |  10 [32m++[m
+ artifacts/stitch-and-scale/src/lib/i18n.ts         | 135 [32m+++++++++++++++++++++[m
+ artifacts/stitch-and-scale/src/pages/landing.tsx   |  19 [32m++[m[31m-[m
+ .../stitch-and-scale/src/pages/new-project.tsx     |  36 [32m+++[m[31m---[m
+ .../stitch-and-scale/src/pages/onboarding.tsx      |  93 [32m++++++++[m[31m------[m
+ artifacts/stitch-and-scale/src/pages/settings.tsx  |  42 [32m++++++[m[31m-[m
+ playbook-schedule.md                               |   2 [32m+[m
+ 11 files changed, 345 insertions(+), 84 deletions(-)
+
+--- github issues ---
+status 200
+53 open [QA cycle 47] MAJOR: Payback Lab ignores marketplace fees on real stored sales — net-per-sale overstated, "recoup in N copies" optimistic
+52 open [QA cycle 46] Minor: Workspace group legend chips over-count by 4 (stale entries) and 20 live tabs unclassified (default to business)
+51 open [QA cycle 45] Minor: Intl Pricing Lab — fmtMoney dead compound key "EUR/CHF" renders bare numbers (Nordics & Switzerland row)
+50 open [QA cycle 44] Test Knit Lab dead tab — duplicate TabsTrigger value="testknit" shadows new panel (same class as #47)
+49 open [QA cycle 43] Minor: Intl Pricing Lab — 'fmtMoney' dead currencies (CHF/SEK/NOK/DKK/BRL/MXN/JPY/INR parity prices render without any symbol)
+48 open [QA cycle 42] Gift & Credit Lab — 'State escheat treatment' select is dead state (escheatMode written but never read; math frozen at 60%)
