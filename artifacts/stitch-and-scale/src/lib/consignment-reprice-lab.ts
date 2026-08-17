@@ -89,6 +89,9 @@ export interface RepriceResult {
   ladder: LadderStep[];
   /** Best ladder step by total net on current stock. */
   bestStep: LadderStep;
+  /** QA #45 (S255): true when units are stocked but nothing is selling — every
+   * ladder step's total net is $0.00, so no step can be meaningfully crowned BEST. */
+  zeroSellThrough: boolean;
   flags: Flag[];
   verdict: string;
 }
@@ -202,6 +205,9 @@ export function analyzeReprice(input: RepriceInput): RepriceResult {
 
   const ladder = buildLadder(input, chosen);
   const bestStep = [...ladder].sort((a, b) => b.totalNetOnCurrentStock - a.totalNetOnCurrentStock)[0];
+  // QA #45 (S255): with units in the shop and zero sell-through, every step
+  // clears $0.00 — the crown means nothing. Surface it to the UI.
+  const zeroSellThrough = input.unitsSoldPerMonth <= 0 && input.unitsAtShop > 0;
 
   const flags: Flag[] = [];
 
@@ -309,6 +315,7 @@ export function analyzeReprice(input: RepriceInput): RepriceResult {
     deadStockRisk,
     ladder,
     bestStep,
+    zeroSellThrough,
     flags,
     verdict,
   };

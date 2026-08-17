@@ -44,10 +44,19 @@ Every firing therefore works ONLY the existing Reviewer/QA defect backlog. Fresh
 | MINOR | #55 Take-Rate NumField suffix overlap — CLOSED 2026-08-17 (CHK-106 b96f474) | done |
 | MAJOR* | #56 Localization gaps (51-A workspace cards untranslated; 51-B onboarding overlay footer "Back/Begin/Continue" hardcoded English; 51-C pt missing `workflow.newProject.title`) — QA report only, awaiting Reviewer triage | next candidate if triaged |
 | MINOR | #54 Take-Rate duplicate React keys — CLOSED 2026-08-17 (CHK-110 dc2be73) | done |
+| MINOR | #45 Consignment zero sell-through $0.00 BEST crown — CLOSED 2026-08-17 (CHK-112) | zeroSellThrough flag + crown suppressed |
+| MINOR | #49 Intl fmtMoney dead currencies — CLOSED 2026-08-17 (fixed in flight CHK-079, verified by suite) | evidence posted |
+| MINOR | #51 Intl fmtMoney EUR/CHF compound key — CLOSED 2026-08-17 (fixed in flight CHK-084, verified by suite) | evidence posted |
+| MINOR | #43 Release-timing raw fraction — CLOSED 2026-08-17 (fixed in flight, card shows value×100) | evidence posted |
+| MINOR | #48 Gift & Credit escheatMode dead state — CLOSED 2026-08-17 (fixed in flight, resolvedEscheatTake consumed) | evidence posted |
+| MINOR | #50 Test Knit Lab dead tab — CLOSED 2026-08-17 (fixed in flight, tab present) | evidence posted |
 | MAJOR | S182 affCut conversion (legacy ledger) — long-open | next if triaged/escalated |
 | MAJOR | S251 yarn-company-deal royalty double-count at line ~173 — long-open | next if triaged/escalated |
 | MAJOR | S160/S123 related empty-standards fallback (`resolveProjectStandards({} as never)`) — partially fixed; remaining flat/royalty/exclusive double-count | next if triaged/escalated |
-| INFO | Raw-fraction % displays (#43/#44/#46 pattern), Promo mixed sign (#14), workspace legend overcount (#52), dead reads (51-E/F) | lower priority |
+| MINOR | #44 Workshop raw-fraction % — CLOSED 2026-08-17 (fixed in flight, rounded %) | evidence posted |
+| MINOR | #46 Pattern Bundle self-referencing copy — verify in next cycle | pending |
+| MINOR | #47 Podcast Lab tab + Magazine raw-fraction — verify in next cycle | pending |
+| INFO | Promo mixed sign (#14), workspace legend overcount (#52), dead reads (51-E/F) | lower priority |
 
 *#56 is the highest open item. Per the staff rules, treat a QA report as addressed to the Reviewer: the worker may act on it only where the Reviewer has triaged or where the staff handoff explicitly permits immediate repair of obvious, low-risk defects (a missing dictionary key and hardcoded footer buttons qualify as obvious low-risk; full workspace-card migration is a large tranche best left to a triaged scope).
 

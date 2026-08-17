@@ -333,7 +333,12 @@ export function ConsignmentRepriceLabCard({ project }: { project: PatternProject
             </thead>
             <tbody className="divide-y">
               {result.ladder.map(step => {
-                const best = step.label === result.bestStep.label;
+                // QA #45 (S255): with zero sell-through every step nets $0.00 —
+                // crowning a BEST step would read as "this recovers money" when
+                // no step moves any stock. The CR-04 critical flag already urges
+                // markdown/pull-back; keep the crown off until something sells.
+                const best =
+                  step.label === result.bestStep.label && !result.zeroSellThrough;
                 return (
                   <tr
                     key={step.label}
@@ -348,6 +353,11 @@ export function ConsignmentRepriceLabCard({ project }: { project: PatternProject
                       {best && (
                         <span className="ml-2 rounded bg-primary px-1.5 py-0.5 text-[10px] font-semibold text-primary-foreground">
                           {copyText.best}
+                        </span>
+                      )}
+                      {result.zeroSellThrough && step.label === result.bestStep.label && (
+                        <span className="ml-2 rounded bg-destructive/10 px-1.5 py-0.5 text-[10px] font-semibold text-destructive">
+                          $0.00 at zero sell-through
                         </span>
                       )}
                     </td>
@@ -368,7 +378,9 @@ export function ConsignmentRepriceLabCard({ project }: { project: PatternProject
           </table>
         </div>
         <div className="border-t px-4 py-3 text-xs text-muted-foreground">
-          {result.bestStep.rationale}
+          {result.zeroSellThrough
+            ? 'No step moves stock at zero sell-through — every row clears $0.00. Pull the unsold copies back to your own shop at a promo price, fold them into a bundle, or destash.'
+            : result.bestStep.rationale}
         </div>
       </div>
 

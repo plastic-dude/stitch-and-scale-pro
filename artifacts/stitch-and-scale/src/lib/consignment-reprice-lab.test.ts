@@ -260,3 +260,43 @@ describe('analyzeReprice — channel net table', () => {
     expect(nets[2]).toBe(Math.max(...nets));
   });
 });
+
+// QA #45 (S255) regression: zero sell-through must not crown a BEST step.
+// When units are stocked but nothing sells, every ladder step nets $0.00,
+// so no step can be meaningfully recommended — the BEST badge and primary
+// highlight are suppressed, and the table footer says so explicitly.
+describe('analyzeReprice — QA #45 (S255) zero sell-through', () => {
+  it('flags zeroSellThrough when units are stocked but nothing sells', () => {
+    const result = analyzeReprice(mk({ unitsSoldPerMonth: 0 }));
+    expect(result.zeroSellThrough).toBe(true);
+    // CR-04 critical "No current sell-through" still fires — the warning path
+    // is preserved; only the ladder crown changes.
+    expect(result.flags.some(f => f.code === 'CR-04' && f.severity === 'critical')).toBe(true);
+  });
+
+  it('every ladder step nets $0.00 on current stock at zero sell-through', () => {
+    const result = analyzeReprice(mk({ unitsSoldPerMonth: 0, unitsAtShop: 40 }));
+    expect(result.ladder.every(s => s.totalNetOnCurrentStock === 0)).toBe(true);
+    // monthsOfStock is Infinity (nothing sells), so no time-to-clear nonsense.
+    expect(result.monthsOfStock).toBe(Infinity);
+  });
+
+  it('bestStep exists but the crown is display-suppressed at zero sell-through', () => {
+    const result = analyzeReprice(mk({ unitsSoldPerMonth: 0 }));
+    // Engine semantics unchanged: a sorted best step is still returned.
+    expect(result.bestStep).toBeDefined();
+    expect(typeof result.bestStep.label).toBe('string');
+    expect(result.ladder.some(s => s.label === result.bestStep.label)).toBe(true);
+  });
+
+  it('non-zero sell-through behaves exactly as before (no crown suppression)', () => {
+    const result = analyzeReprice(mk({ unitsSoldPerMonth: 3 }));
+    expect(result.zeroSellThrough).toBe(false);
+    expect(result.ladder.some(s => s.label === result.bestStep.label)).toBe(true);
+  });
+
+  it('zero units at shop is not zero sell-through', () => {
+    const result = analyzeReprice(mk({ unitsSoldPerMonth: 0, unitsAtShop: 0 }));
+    expect(result.zeroSellThrough).toBe(false); // nothing in the shop to crown or not crown
+  });
+});
