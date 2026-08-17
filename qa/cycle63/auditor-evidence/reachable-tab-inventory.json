@@ -1,0 +1,318 @@
+[
+  {
+    "i": 0,
+    "label": "Sections"
+  },
+  {
+    "i": 1,
+    "label": "Preview"
+  },
+  {
+    "i": 2,
+    "label": "Yarn"
+  },
+  {
+    "i": 3,
+    "label": "Notes"
+  },
+  {
+    "i": 4,
+    "label": "Income"
+  },
+  {
+    "i": 5,
+    "label": "Draft"
+  },
+  {
+    "i": 6,
+    "label": "Pricing"
+  },
+  {
+    "i": 7,
+    "label": "Publish"
+  },
+  {
+    "i": 8,
+    "label": "Test Knit"
+  },
+  {
+    "i": 9,
+    "label": "Tech Edit"
+  },
+  {
+    "i": 10,
+    "label": "Finish"
+  },
+  {
+    "i": 11,
+    "label": "Deals"
+  },
+  {
+    "i": 12,
+    "label": "Launch"
+  },
+  {
+    "i": 13,
+    "label": "Trunk Show"
+  },
+  {
+    "i": 14,
+    "label": "Trans & Bundle"
+  },
+  {
+    "i": 15,
+    "label": "Pattern Club"
+  },
+  {
+    "i": 16,
+    "label": "Kits"
+  },
+  {
+    "i": 17,
+    "label": "Pipeline"
+  },
+  {
+    "i": 18,
+    "label": "KAL & Collab"
+  },
+  {
+    "i": 19,
+    "label": "Channels"
+  },
+  {
+    "i": 20,
+    "label": "Club Rev"
+  },
+  {
+    "i": 21,
+    "label": "Wholesale & Book"
+  },
+  {
+    "i": 22,
+    "label": "Hire vs Self"
+  },
+  {
+    "i": 23,
+    "label": "Inclusive"
+  },
+  {
+    "i": 24,
+    "label": "Licence It"
+  },
+  {
+    "i": 25,
+    "label": "Members"
+  },
+  {
+    "i": 26,
+    "label": "Promo"
+  },
+  {
+    "i": 27,
+    "label": "PriceWin"
+  },
+  {
+    "i": 28,
+    "label": "Repeat"
+  },
+  {
+    "i": 29,
+    "label": "Mix"
+  },
+  {
+    "i": 30,
+    "label": "Collab"
+  },
+  {
+    "i": 31,
+    "label": "Book It"
+  },
+  {
+    "i": 32,
+    "label": "Protect"
+  },
+  {
+    "i": 33,
+    "label": "Teach"
+  },
+  {
+    "i": 34,
+    "label": "Partners"
+  },
+  {
+    "i": 35,
+    "label": "Yarn Buy"
+  },
+  {
+    "i": 36,
+    "label": "KAL Planner"
+  },
+  {
+    "i": 37,
+    "label": "Grading Lab"
+  },
+  {
+    "i": 38,
+    "label": "Chart Lab"
+  },
+  {
+    "i": 39,
+    "label": "Test Knit Desk"
+  },
+  {
+    "i": 40,
+    "label": "Submissions"
+  },
+  {
+    "i": 41,
+    "label": "Lookbook"
+  },
+  {
+    "i": 42,
+    "label": "Spec Sheet"
+  },
+  {
+    "i": 43,
+    "label": "Distribution"
+  },
+  {
+    "i": 44,
+    "label": "Listing SEO"
+  },
+  {
+    "i": 45,
+    "label": "Ad Break-Even"
+  },
+  {
+    "i": 46,
+    "label": "Sample & Launch"
+  },
+  {
+    "i": 47,
+    "label": "Collab Deal Math"
+  },
+  {
+    "i": 48,
+    "label": "Photo ROI"
+  },
+  {
+    "i": 49,
+    "label": "Video & Social"
+  },
+  {
+    "i": 50,
+    "label": "Show ROI"
+  },
+  {
+    "i": 51,
+    "label": "Wholesale Lab"
+  },
+  {
+    "i": 52,
+    "label": "Pre-Order Lab"
+  },
+  {
+    "i": 53,
+    "label": "Listing Test Lab"
+  },
+  {
+    "i": 54,
+    "label": "Yarn Pool Lab"
+  },
+  {
+    "i": 55,
+    "label": "Membership Lab"
+  },
+  {
+    "i": 56,
+    "label": "Release Timing Lab"
+  },
+  {
+    "i": 57,
+    "label": "Booth Lab"
+  },
+  {
+    "i": 58,
+    "label": "Channel Lab"
+  },
+  {
+    "i": 59,
+    "label": "Workshop Lab"
+  },
+  {
+    "i": 60,
+    "label": "Re-Price Lab"
+  },
+  {
+    "i": 61,
+    "label": "Bundle Lab"
+  },
+  {
+    "i": 62,
+    "label": "Retreat Lab"
+  },
+  {
+    "i": 63,
+    "label": "Podcast Lab"
+  },
+  {
+    "i": 64,
+    "label": "Magazine Lab"
+  },
+  {
+    "i": 65,
+    "label": "Price Psych Lab"
+  },
+  {
+    "i": 66,
+    "label": "POD Patterns Lab"
+  },
+  {
+    "i": 67,
+    "label": "Take-Rate Lab"
+  },
+  {
+    "i": 68,
+    "label": "Box Inclusion Lab"
+  },
+  {
+    "i": 69,
+    "label": "Yarn Licensing Lab"
+  },
+  {
+    "i": 70,
+    "label": "Gift & Credit Lab"
+  },
+  {
+    "i": 71,
+    "label": "Wholesale List Lab"
+  },
+  {
+    "i": 72,
+    "label": "Intl Pricing Lab"
+  },
+  {
+    "i": 73,
+    "label": "Test Knit Lab"
+  },
+  {
+    "i": 74,
+    "label": "Gauge & Fit"
+  },
+  {
+    "i": 75,
+    "label": "Receipt Lab"
+  },
+  {
+    "i": 76,
+    "label": "Design Ledger"
+  },
+  {
+    "i": 77,
+    "label": "Brag Cards"
+  },
+  {
+    "i": 78,
+    "label": "Payback Lab"
+  }
+]

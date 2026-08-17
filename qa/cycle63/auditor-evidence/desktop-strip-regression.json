@@ -1,0 +1,131 @@
+[
+  {
+    "pos": "start",
+    "scrollLeft": 0,
+    "scrollWidth": 4678,
+    "clientWidth": 1214,
+    "strip": {
+      "x": 32,
+      "y": 235,
+      "w": 1216,
+      "h": 54
+    },
+    "labels": {
+      "Sections": {
+        "x": -3427.453125,
+        "y": 240,
+        "w": 83.375,
+        "h": 44,
+        "visible": false
+      },
+      "Preview": {
+        "x": -3340.078125,
+        "y": 240,
+        "w": 77.328125,
+        "h": 44,
+        "visible": false
+      },
+      "Yarn": {
+        "x": -3258.75,
+        "y": 240,
+        "w": 52.984375,
+        "h": 44,
+        "visible": false
+      },
+      "Payback Lab": {
+        "x": 4598.171875,
+        "y": 240,
+        "w": 109.296875,
+        "h": 44,
+        "visible": false
+      }
+    },
+    "file": "screenshots/desktop-tab-strip--start__desktop-1280.png"
+  },
+  {
+    "pos": "middle",
+    "scrollLeft": 1732,
+    "scrollWidth": 4678,
+    "clientWidth": 1214,
+    "strip": {
+      "x": 32,
+      "y": 235,
+      "w": 1216,
+      "h": 54
+    },
+    "labels": {
+      "Sections": {
+        "x": -5159.453125,
+        "y": 240,
+        "w": 83.375,
+        "h": 44,
+        "visible": false
+      },
+      "Preview": {
+        "x": -5072.078125,
+        "y": 240,
+        "w": 77.328125,
+        "h": 44,
+        "visible": false
+      },
+      "Yarn": {
+        "x": -4990.75,
+        "y": 240,
+        "w": 52.984375,
+        "h": 44,
+        "visible": false
+      },
+      "Payback Lab": {
+        "x": 2866.171875,
+        "y": 240,
+        "w": 109.296875,
+        "h": 44,
+        "visible": false
+      }
+    },
+    "file": "screenshots/desktop-tab-strip--middle__desktop-1280.png"
+  },
+  {
+    "pos": "end",
+    "scrollLeft": 3464,
+    "scrollWidth": 4678,
+    "clientWidth": 1214,
+    "strip": {
+      "x": 32,
+      "y": 235,
+      "w": 1216,
+      "h": 54
+    },
+    "labels": {
+      "Sections": {
+        "x": -6891.453125,
+        "y": 240,
+        "w": 83.375,
+        "h": 44,
+        "visible": false
+      },
+      "Preview": {
+        "x": -6804.078125,
+        "y": 240,
+        "w": 77.328125,
+        "h": 44,
+        "visible": false
+      },
+      "Yarn": {
+        "x": -6722.75,
+        "y": 240,
+        "w": 52.984375,
+        "h": 44,
+        "visible": false
+      },
+      "Payback Lab": {
+        "x": 1134.171875,
+        "y": 240,
+        "w": 109.296875,
+        "h": 44,
+        "visible": true
+      }
+    },
+    "file": "screenshots/desktop-tab-strip--end__desktop-1280.png"
+  }
+]

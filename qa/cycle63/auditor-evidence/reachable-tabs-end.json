@@ -1,0 +1,112 @@
+[
+  {
+    "i": 69,
+    "label": "Yarn Licensing Lab",
+    "rect": {
+      "x": 14.796875,
+      "y": 240,
+      "w": 146.515625,
+      "h": 44
+    },
+    "visible": true
+  },
+  {
+    "i": 70,
+    "label": "Gift & Credit Lab",
+    "rect": {
+      "x": 165.3125,
+      "y": 240,
+      "w": 135.4375,
+      "h": 44
+    },
+    "visible": true
+  },
+  {
+    "i": 71,
+    "label": "Wholesale List Lab",
+    "rect": {
+      "x": 304.75,
+      "y": 240,
+      "w": 147.515625,
+      "h": 44
+    },
+    "visible": true
+  },
+  {
+    "i": 72,
+    "label": "Intl Pricing Lab",
+    "rect": {
+      "x": 456.265625,
+      "y": 240,
+      "w": 120.796875,
+      "h": 44
+    },
+    "visible": true
+  },
+  {
+    "i": 73,
+    "label": "Test Knit Lab",
+    "rect": {
+      "x": 581.0625,
+      "y": 240,
+      "w": 107.625,
+      "h": 44
+    },
+    "visible": true
+  },
+  {
+    "i": 74,
+    "label": "Gauge & Fit",
+    "rect": {
+      "x": 692.6875,
+      "y": 240,
+      "w": 101.859375,
+      "h": 44
+    },
+    "visible": true
+  },
+  {
+    "i": 75,
+    "label": "Receipt Lab",
+    "rect": {
+      "x": 798.546875,
+      "y": 240,
+      "w": 103.703125,
+      "h": 44
+    },
+    "visible": true
+  },
+  {
+    "i": 76,
+    "label": "Design Ledger",
+    "rect": {
+      "x": 906.25,
+      "y": 240,
+      "w": 121.390625,
+      "h": 44
+    },
+    "visible": true
+  },
+  {
+    "i": 77,
+    "label": "Brag Cards",
+    "rect": {
+      "x": 1031.640625,
+      "y": 240,
+      "w": 98.53125,
+      "h": 44
+    },
+    "visible": true
+  },
+  {
+    "i": 78,
+    "label": "Payback Lab",
+    "rect": {
+      "x": 1134.171875,
+      "y": 240,
+      "w": 109.296875,
+      "h": 44
+    },
+    "visible": true
+  }
+]

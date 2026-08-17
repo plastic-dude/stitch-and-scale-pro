@@ -1,0 +1,1369 @@
+{
+  "base": "https://stitch-and-scale-pro-api-server.vercel.app",
+  "widths": [
+    {
+      "label": "android-360",
+      "width": 360,
+      "height": 800
+    },
+    {
+      "label": "iphone-390",
+      "width": 390,
+      "height": 844
+    },
+    {
+      "label": "iphone-430",
+      "width": 430,
+      "height": 932
+    },
+    {
+      "label": "tablet-768",
+      "width": 768,
+      "height": 1024
+    },
+    {
+      "label": "desktop-1280",
+      "width": 1280,
+      "height": 900
+    }
+  ],
+  "records": [
+    {
+      "file": "screenshots/sq1--root-first-paint__android-360.png",
+      "width": "android-360",
+      "slug": "sq1--root-first-paint",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/",
+      "title": "Stitch & Scale",
+      "text": "Skip setup Welcome to Stitch & Scale Professional knitwear grading software — built for designers who care about the details. Local-first — your projects save instantly, no account needed Works offline — full functionality without an internet connection Your data belongs to you — export anytime, no lock-in Publish-ready PDF exports — four professional templates Cloud Sync is optional. You never need an account to start designing. Back Begin Local Storage Notice Your patterns are saved right here on this device — no account needed. Clearing your browser data will delete them, so back up anything you can't afford to lose. Cloud sync is on the way, which will make this less of a worry. A blank canvas awaits Set your gauge, add your measurements, and let Stitch & Scale handle the grading math. Built for designers who care about the details. Draft a New Pattern Import from a Spreadsheet or restore a backup from a .json file A premium tool for independent knitwear designers",
+      "roleTabs": 0,
+      "buttons": 8,
+      "bodyHeight": 1145,
+      "viewportHeight": 800
+    },
+    {
+      "width": "android-360",
+      "slug": "sq1--root-state-check",
+      "onboarding": true,
+      "hasBlankOnly": false
+    },
+    {
+      "file": "screenshots/sq1--post-onboarding-workspace__android-360.png",
+      "width": "android-360",
+      "slug": "sq1--post-onboarding-workspace",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/sample-crew-neck-sweater",
+      "title": "Stitch & Scale",
+      "text": "Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Design & Pattern · 12 Sizing & Fit · 7 Pricing & Income · 15 Launch & Marketing · 13 Selling Channels · 10 Business & Community · 22 Body 3 measurements Sleeve 3 measurements Neckline 2 measurements Add New Section A premium tool for independent knitwear designers",
+      "roleTabs": 79,
+      "buttons": 91,
+      "bodyHeight": 932,
+      "viewportHeight": 800
+    },
+    {
+      "file": "screenshots/landing--first-viewport__android-360.png",
+      "width": "android-360",
+      "slug": "landing--first-viewport",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/landing",
+      "title": "Stitch & Scale",
+      "text": "Stitch & Scale Open demo Try it free For indie knitwear pattern designers You can knit anything. Can you price it? The pattern is only half the job — the math is the rest. Grading, yield, pricing, wholesale, international parity: the business side of knitting that nobody built tools for. So I built them. Run your pattern business on numbers, not hope. Try the live demo Join as a founding tester No signup. No install. The demo is the real app with a sample project. 79 business labs in one workspace 1,694+ verified tests behind the math 13 currencies in parity pricing 100% local-first — your data stays yours One workspace for the whole pattern business Marketplaces take 15–20% and own your customer. The tools below are built so you can price, publish, and sell on your own terms. Grading Lab Multi-size grading tables from one set of measurements. Enter a size, get the range — checked against your grading rules, every row. Yield & Cost Yarn estimates, wastage, and true unit cost per size. ",
+      "roleTabs": 0,
+      "buttons": 6,
+      "bodyHeight": 3850,
+      "viewportHeight": 800
+    },
+    {
+      "width": "android-360",
+      "slug": "landing--content-visibility-check",
+      "capabilityCards": [
+        {
+          "text": "Yield & Cost",
+          "visible": true
+        },
+        {
+          "text": "Pricing & Income",
+          "visible": true
+        },
+        {
+          "text": "Wholesale Line Sheets",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "file": "screenshots/landing--scrolled-top__android-360.png",
+      "width": "android-360",
+      "slug": "landing--scrolled-top",
+      "note": "scrollY=0",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/landing",
+      "title": "Stitch & Scale",
+      "text": "Stitch & Scale Open demo Try it free For indie knitwear pattern designers You can knit anything. Can you price it? The pattern is only half the job — the math is the rest. Grading, yield, pricing, wholesale, international parity: the business side of knitting that nobody built tools for. So I built them. Run your pattern business on numbers, not hope. Try the live demo Join as a founding tester No signup. No install. The demo is the real app with a sample project. 79 business labs in one workspace 1,694+ verified tests behind the math 13 currencies in parity pricing 100% local-first — your data stays yours One workspace for the whole pattern business Marketplaces take 15–20% and own your customer. The tools below are built so you can price, publish, and sell on your own terms. Grading Lab Multi-size grading tables from one set of measurements. Enter a size, get the range — checked against your grading rules, every row. Yield & Cost Yarn estimates, wastage, and true unit cost per size. ",
+      "roleTabs": 0,
+      "buttons": 6,
+      "bodyHeight": 3850,
+      "viewportHeight": 800
+    },
+    {
+      "file": "screenshots/landing--scrolled-middle__android-360.png",
+      "width": "android-360",
+      "slug": "landing--scrolled-middle",
+      "note": "scrollY=1525",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/landing",
+      "title": "Stitch & Scale",
+      "text": "Stitch & Scale Open demo Try it free For indie knitwear pattern designers You can knit anything. Can you price it? The pattern is only half the job — the math is the rest. Grading, yield, pricing, wholesale, international parity: the business side of knitting that nobody built tools for. So I built them. Run your pattern business on numbers, not hope. Try the live demo Join as a founding tester No signup. No install. The demo is the real app with a sample project. 79 business labs in one workspace 1,694+ verified tests behind the math 13 currencies in parity pricing 100% local-first — your data stays yours One workspace for the whole pattern business Marketplaces take 15–20% and own your customer. The tools below are built so you can price, publish, and sell on your own terms. Grading Lab Multi-size grading tables from one set of measurements. Enter a size, get the range — checked against your grading rules, every row. Yield & Cost Yarn estimates, wastage, and true unit cost per size. ",
+      "roleTabs": 0,
+      "buttons": 6,
+      "bodyHeight": 3850,
+      "viewportHeight": 800
+    },
+    {
+      "file": "screenshots/landing--scrolled-bottom__android-360.png",
+      "width": "android-360",
+      "slug": "landing--scrolled-bottom",
+      "note": "scrollY=3050",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/landing",
+      "title": "Stitch & Scale",
+      "text": "Stitch & Scale Open demo Try it free For indie knitwear pattern designers You can knit anything. Can you price it? The pattern is only half the job — the math is the rest. Grading, yield, pricing, wholesale, international parity: the business side of knitting that nobody built tools for. So I built them. Run your pattern business on numbers, not hope. Try the live demo Join as a founding tester No signup. No install. The demo is the real app with a sample project. 79 business labs in one workspace 1,694+ verified tests behind the math 13 currencies in parity pricing 100% local-first — your data stays yours One workspace for the whole pattern business Marketplaces take 15–20% and own your customer. The tools below are built so you can price, publish, and sell on your own terms. Grading Lab Multi-size grading tables from one set of measurements. Enter a size, get the range — checked against your grading rules, every row. Yield & Cost Yarn estimates, wastage, and true unit cost per size. ",
+      "roleTabs": 0,
+      "buttons": 6,
+      "bodyHeight": 3850,
+      "viewportHeight": 800
+    },
+    {
+      "file": "screenshots/landing--primary-cta-result__android-360.png",
+      "width": "android-360",
+      "slug": "landing--primary-cta-result",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/mss5osqd88j6fdyvtdu",
+      "title": "Stitch & Scale",
+      "text": "Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Design & Pattern · 12 Sizing & Fit · 7 Pricing & Income · 15 Launch & Marketing · 13 Selling Channels · 10 Business & Community · 22 Body 3 measurements Sleeve 3 measurements Neckline 2 measurements Add New Section A premium tool for independent knitwear designers",
+      "roleTabs": 79,
+      "buttons": 91,
+      "bodyHeight": 932,
+      "viewportHeight": 800
+    },
+    {
+      "width": "android-360",
+      "slug": "landing--primary-cta-check",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/mss5osqd88j6fdyvtdu",
+      "projectNotFound": false,
+      "hasWorkspace": true
+    },
+    {
+      "file": "screenshots/settings--top__android-360.png",
+      "width": "android-360",
+      "slug": "settings--top",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/settings",
+      "title": "Stitch & Scale",
+      "text": "Preferences Manage your workspace environment and data. 🌐 Language Choose the language Stitch & Scale uses for the interface. English English Deutsch German Français French Español Spanish Português Portuguese Detected from this browser on first opening. Your choice is remembered on this device. Measurement Defaults Choose the primary unit for your workspace. in Inches cm Centimeters You can override this setting per-project. Sizing Standard The grading standard your patterns are built from. Craft Yarn Council The published CYC body-measurement chart. Custom Your own measurement chart. Additional international standards (UK, EU, Japanese) will become available through future updates. Appearance How Stitch & Scale looks on this device. Light Dark System Onboarding Re-run the setup guide to review your workspace configuration. Restart Onboarding Walk through the setup guide again — sizing standard, units, workspace tour. Restart Guide Data & Backups Your patterns live right here in this",
+      "roleTabs": 0,
+      "buttons": 15,
+      "bodyHeight": 3474,
+      "viewportHeight": 800
+    },
+    {
+      "file": "screenshots/settings--scrolled-top__android-360.png",
+      "width": "android-360",
+      "slug": "settings--scrolled-top",
+      "note": "scrollY=0",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/settings",
+      "title": "Stitch & Scale",
+      "text": "Preferences Manage your workspace environment and data. 🌐 Language Choose the language Stitch & Scale uses for the interface. English English Deutsch German Français French Español Spanish Português Portuguese Detected from this browser on first opening. Your choice is remembered on this device. Measurement Defaults Choose the primary unit for your workspace. in Inches cm Centimeters You can override this setting per-project. Sizing Standard The grading standard your patterns are built from. Craft Yarn Council The published CYC body-measurement chart. Custom Your own measurement chart. Additional international standards (UK, EU, Japanese) will become available through future updates. Appearance How Stitch & Scale looks on this device. Light Dark System Onboarding Re-run the setup guide to review your workspace configuration. Restart Onboarding Walk through the setup guide again — sizing standard, units, workspace tour. Restart Guide Data & Backups Your patterns live right here in this",
+      "roleTabs": 0,
+      "buttons": 15,
+      "bodyHeight": 3474,
+      "viewportHeight": 800
+    },
+    {
+      "file": "screenshots/settings--scrolled-middle__android-360.png",
+      "width": "android-360",
+      "slug": "settings--scrolled-middle",
+      "note": "scrollY=1337",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/settings",
+      "title": "Stitch & Scale",
+      "text": "Preferences Manage your workspace environment and data. 🌐 Language Choose the language Stitch & Scale uses for the interface. English English Deutsch German Français French Español Spanish Português Portuguese Detected from this browser on first opening. Your choice is remembered on this device. Measurement Defaults Choose the primary unit for your workspace. in Inches cm Centimeters You can override this setting per-project. Sizing Standard The grading standard your patterns are built from. Craft Yarn Council The published CYC body-measurement chart. Custom Your own measurement chart. Additional international standards (UK, EU, Japanese) will become available through future updates. Appearance How Stitch & Scale looks on this device. Light Dark System Onboarding Re-run the setup guide to review your workspace configuration. Restart Onboarding Walk through the setup guide again — sizing standard, units, workspace tour. Restart Guide Data & Backups Your patterns live right here in this",
+      "roleTabs": 0,
+      "buttons": 15,
+      "bodyHeight": 3474,
+      "viewportHeight": 800
+    },
+    {
+      "file": "screenshots/settings--scrolled-bottom__android-360.png",
+      "width": "android-360",
+      "slug": "settings--scrolled-bottom",
+      "note": "scrollY=2674",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/settings",
+      "title": "Stitch & Scale",
+      "text": "Preferences Manage your workspace environment and data. 🌐 Language Choose the language Stitch & Scale uses for the interface. English English Deutsch German Français French Español Spanish Português Portuguese Detected from this browser on first opening. Your choice is remembered on this device. Measurement Defaults Choose the primary unit for your workspace. in Inches cm Centimeters You can override this setting per-project. Sizing Standard The grading standard your patterns are built from. Craft Yarn Council The published CYC body-measurement chart. Custom Your own measurement chart. Additional international standards (UK, EU, Japanese) will become available through future updates. Appearance How Stitch & Scale looks on this device. Light Dark System Onboarding Re-run the setup guide to review your workspace configuration. Restart Onboarding Walk through the setup guide again — sizing standard, units, workspace tour. Restart Guide Data & Backups Your patterns live right here in this",
+      "roleTabs": 0,
+      "buttons": 15,
+      "bodyHeight": 3474,
+      "viewportHeight": 800
+    },
+    {
+      "file": "screenshots/new-project--step1-empty__android-360.png",
+      "width": "android-360",
+      "slug": "new-project--step1-empty",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/new",
+      "title": "Stitch & Scale",
+      "text": "Draft a Pattern Define the foundation for your next design. 1 2 3 Project Details PATTERN NAME DESIGNER Sizing Standard: Craft Yarn Council (CYC) · change in Settings Cancel Next A premium tool for independent knitwear designers",
+      "roleTabs": 0,
+      "buttons": 3,
+      "bodyHeight": 957,
+      "viewportHeight": 800
+    },
+    {
+      "file": "screenshots/new-project--step2-base-size__android-360.png",
+      "width": "android-360",
+      "slug": "new-project--step2-base-size",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/new",
+      "title": "Stitch & Scale",
+      "text": "Draft a Pattern Define the foundation for your next design. 2 3 Base Size Select the primary size you are grading from. All other sizes will be calculated against this. XS S M L XL 2XL 3XL 4XL 5XL Grading calculations use standard Craft Yarn Council (CYC) body measurements to ensure consistent fit across all sizes. Back Next A premium tool for independent knitwear designers",
+      "roleTabs": 0,
+      "buttons": 12,
+      "bodyHeight": 1197,
+      "viewportHeight": 800
+    },
+    {
+      "file": "screenshots/new-project--step3-gauge__android-360.png",
+      "width": "android-360",
+      "slug": "new-project--step3-gauge",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/new",
+      "title": "Stitch & Scale",
+      "text": "Draft a Pattern Define the foundation for your next design. 3 Blocked Gauge Enter the stitch and row count of your blocked swatch per 4 inches (10 cm). Inches Centimeters STITCHES per 4 inches ROWS per 4 inches Back Create Project A premium tool for independent knitwear designers",
+      "roleTabs": 0,
+      "buttons": 5,
+      "bodyHeight": 977,
+      "viewportHeight": 800
+    },
+    {
+      "file": "screenshots/new-project--created-empty-workspace__android-360.png",
+      "width": "android-360",
+      "slug": "new-project--created-empty-workspace",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/msx27n3ectaa7ggeswv",
+      "title": "Stitch & Scale",
+      "text": "Cycle QA Cardigan M By Independent QA • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Design & Pattern · 12 Sizing & Fit · 7 Pricing & Income · 15 Launch & Marketing · 13 Selling Channels · 10 Business & Community · 22 No Sections Yet Divide your pattern into logical sections (e.g. Back, Front, Sleeves) to start adding measurements. Add First Section A premium tool for independent knitwear designers",
+      "roleTabs": 79,
+      "buttons": 88,
+      "bodyHeight": 920,
+      "viewportHeight": 800
+    },
+    {
+      "file": "screenshots/demo-project--current-clean-cta__android-360.png",
+      "width": "android-360",
+      "slug": "demo-project--current-clean-cta",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/mss5osqd88j6fdyvtdu",
+      "title": "Stitch & Scale",
+      "text": "Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Design & Pattern · 12 Sizing & Fit · 7 Pricing & Income · 15 Launch & Marketing · 13 Selling Channels · 10 Business & Community · 22 Body 3 measurements Sleeve 3 measurements Neckline 2 measurements Add New Section A premium tool for independent knitwear designers",
+      "roleTabs": 79,
+      "buttons": 91,
+      "bodyHeight": 932,
+      "viewportHeight": 800
+    },
+    {
+      "width": "android-360",
+      "slug": "demo-project--navigation-check",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/mss5osqd88j6fdyvtdu",
+      "projectNotFound": false,
+      "roleTabs": 79,
+      "hasLabsNavigator": false,
+      "hasCoreTabs": false
+    },
+    {
+      "file": "screenshots/demo-project--pdf-route__android-360.png",
+      "width": "android-360",
+      "slug": "demo-project--pdf-route",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/mss5osqd88j6fdyvtdu/pdf",
+      "title": "Stitch & Scale",
+      "text": "Back Classic Crew Neck Sweater PDF Export The filename is a suggestion — you can rename it before every export, and your preferred naming style will be remembered. TEMPLATE Sample Knitwear Pattern by Designer MINIMAL Clean, Apple-adjacent restraint. Generous whitespace, quiet precision. Sample Knitwear Pattern by Designer LUXURY Fashion-magazine editorial. Playfair Display serif, gold accents. Sample Knitwear Pattern by Designer CRAFT / COZY Warm, handmade. Lora serif, terracotta warmth, old-knitting-magazine feel. Sample Knitwear Pattern by Designer TECHNICAL / BLUEPRINT Engineering precision. IBM Plex, blueprint grid — the grading math is serious. BRANDING Upload your logo Replaces the Stitch & Scale mark on the cover INCLUDE Cover Page Gauge Summary Pattern Notes FILENAME .pdf Your naming style will be remembered after the first export. Export PDF A print dialog will open — choose “Save as PDF” there to finish Live preview · Page 1 / 6 Body · 3 measurements Sleeve · 3 measurements N",
+      "roleTabs": 0,
+      "buttons": 9,
+      "bodyHeight": 1935,
+      "viewportHeight": 800
+    },
+    {
+      "width": "android-360",
+      "slug": "demo-project--pdf-route-check",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/mss5osqd88j6fdyvtdu/pdf",
+      "hasPdfText": true
+    },
+    {
+      "file": "screenshots/sq1--root-first-paint__iphone-390.png",
+      "width": "iphone-390",
+      "slug": "sq1--root-first-paint",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/",
+      "title": "Stitch & Scale",
+      "text": "Skip setup Welcome to Stitch & Scale Professional knitwear grading software — built for designers who care about the details. Local-first — your projects save instantly, no account needed Works offline — full functionality without an internet connection Your data belongs to you — export anytime, no lock-in Publish-ready PDF exports — four professional templates Cloud Sync is optional. You never need an account to start designing. Back Begin Local Storage Notice Your patterns are saved right here on this device — no account needed. Clearing your browser data will delete them, so back up anything you can't afford to lose. Cloud sync is on the way, which will make this less of a worry. A blank canvas awaits Set your gauge, add your measurements, and let Stitch & Scale handle the grading math. Built for designers who care about the details. Draft a New Pattern Import from a Spreadsheet or restore a backup from a .json file A premium tool for independent knitwear designers",
+      "roleTabs": 0,
+      "buttons": 8,
+      "bodyHeight": 1098,
+      "viewportHeight": 844
+    },
+    {
+      "width": "iphone-390",
+      "slug": "sq1--root-state-check",
+      "onboarding": true,
+      "hasBlankOnly": false
+    },
+    {
+      "file": "screenshots/sq1--post-onboarding-workspace__iphone-390.png",
+      "width": "iphone-390",
+      "slug": "sq1--post-onboarding-workspace",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/sample-crew-neck-sweater",
+      "title": "Stitch & Scale",
+      "text": "Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Design & Pattern · 12 Sizing & Fit · 7 Pricing & Income · 15 Launch & Marketing · 13 Selling Channels · 10 Business & Community · 22 Body 3 measurements Sleeve 3 measurements Neckline 2 measurements Add New Section A premium tool for independent knitwear designers",
+      "roleTabs": 79,
+      "buttons": 91,
+      "bodyHeight": 852,
+      "viewportHeight": 844
+    },
+    {
+      "file": "screenshots/landing--first-viewport__iphone-390.png",
+      "width": "iphone-390",
+      "slug": "landing--first-viewport",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/landing",
+      "title": "Stitch & Scale",
+      "text": "Stitch & Scale Open demo Try it free For indie knitwear pattern designers You can knit anything. Can you price it? The pattern is only half the job — the math is the rest. Grading, yield, pricing, wholesale, international parity: the business side of knitting that nobody built tools for. So I built them. Run your pattern business on numbers, not hope. Try the live demo Join as a founding tester No signup. No install. The demo is the real app with a sample project. 79 business labs in one workspace 1,694+ verified tests behind the math 13 currencies in parity pricing 100% local-first — your data stays yours One workspace for the whole pattern business Marketplaces take 15–20% and own your customer. The tools below are built so you can price, publish, and sell on your own terms. Grading Lab Multi-size grading tables from one set of measurements. Enter a size, get the range — checked against your grading rules, every row. Yield & Cost Yarn estimates, wastage, and true unit cost per size. ",
+      "roleTabs": 0,
+      "buttons": 6,
+      "bodyHeight": 3706,
+      "viewportHeight": 844
+    },
+    {
+      "width": "iphone-390",
+      "slug": "landing--content-visibility-check",
+      "capabilityCards": [
+        {
+          "text": "Yield & Cost",
+          "visible": true
+        },
+        {
+          "text": "Pricing & Income",
+          "visible": true
+        },
+        {
+          "text": "Wholesale Line Sheets",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "file": "screenshots/landing--scrolled-top__iphone-390.png",
+      "width": "iphone-390",
+      "slug": "landing--scrolled-top",
+      "note": "scrollY=0",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/landing",
+      "title": "Stitch & Scale",
+      "text": "Stitch & Scale Open demo Try it free For indie knitwear pattern designers You can knit anything. Can you price it? The pattern is only half the job — the math is the rest. Grading, yield, pricing, wholesale, international parity: the business side of knitting that nobody built tools for. So I built them. Run your pattern business on numbers, not hope. Try the live demo Join as a founding tester No signup. No install. The demo is the real app with a sample project. 79 business labs in one workspace 1,694+ verified tests behind the math 13 currencies in parity pricing 100% local-first — your data stays yours One workspace for the whole pattern business Marketplaces take 15–20% and own your customer. The tools below are built so you can price, publish, and sell on your own terms. Grading Lab Multi-size grading tables from one set of measurements. Enter a size, get the range — checked against your grading rules, every row. Yield & Cost Yarn estimates, wastage, and true unit cost per size. ",
+      "roleTabs": 0,
+      "buttons": 6,
+      "bodyHeight": 3706,
+      "viewportHeight": 844
+    },
+    {
+      "file": "screenshots/landing--scrolled-middle__iphone-390.png",
+      "width": "iphone-390",
+      "slug": "landing--scrolled-middle",
+      "note": "scrollY=1431",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/landing",
+      "title": "Stitch & Scale",
+      "text": "Stitch & Scale Open demo Try it free For indie knitwear pattern designers You can knit anything. Can you price it? The pattern is only half the job — the math is the rest. Grading, yield, pricing, wholesale, international parity: the business side of knitting that nobody built tools for. So I built them. Run your pattern business on numbers, not hope. Try the live demo Join as a founding tester No signup. No install. The demo is the real app with a sample project. 79 business labs in one workspace 1,694+ verified tests behind the math 13 currencies in parity pricing 100% local-first — your data stays yours One workspace for the whole pattern business Marketplaces take 15–20% and own your customer. The tools below are built so you can price, publish, and sell on your own terms. Grading Lab Multi-size grading tables from one set of measurements. Enter a size, get the range — checked against your grading rules, every row. Yield & Cost Yarn estimates, wastage, and true unit cost per size. ",
+      "roleTabs": 0,
+      "buttons": 6,
+      "bodyHeight": 3706,
+      "viewportHeight": 844
+    },
+    {
+      "file": "screenshots/landing--scrolled-bottom__iphone-390.png",
+      "width": "iphone-390",
+      "slug": "landing--scrolled-bottom",
+      "note": "scrollY=2862",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/landing",
+      "title": "Stitch & Scale",
+      "text": "Stitch & Scale Open demo Try it free For indie knitwear pattern designers You can knit anything. Can you price it? The pattern is only half the job — the math is the rest. Grading, yield, pricing, wholesale, international parity: the business side of knitting that nobody built tools for. So I built them. Run your pattern business on numbers, not hope. Try the live demo Join as a founding tester No signup. No install. The demo is the real app with a sample project. 79 business labs in one workspace 1,694+ verified tests behind the math 13 currencies in parity pricing 100% local-first — your data stays yours One workspace for the whole pattern business Marketplaces take 15–20% and own your customer. The tools below are built so you can price, publish, and sell on your own terms. Grading Lab Multi-size grading tables from one set of measurements. Enter a size, get the range — checked against your grading rules, every row. Yield & Cost Yarn estimates, wastage, and true unit cost per size. ",
+      "roleTabs": 0,
+      "buttons": 6,
+      "bodyHeight": 3706,
+      "viewportHeight": 844
+    },
+    {
+      "file": "screenshots/landing--primary-cta-result__iphone-390.png",
+      "width": "iphone-390",
+      "slug": "landing--primary-cta-result",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/mss5osqd88j6fdyvtdu",
+      "title": "Stitch & Scale",
+      "text": "Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Design & Pattern · 12 Sizing & Fit · 7 Pricing & Income · 15 Launch & Marketing · 13 Selling Channels · 10 Business & Community · 22 Body 3 measurements Sleeve 3 measurements Neckline 2 measurements Add New Section A premium tool for independent knitwear designers",
+      "roleTabs": 79,
+      "buttons": 91,
+      "bodyHeight": 852,
+      "viewportHeight": 844
+    },
+    {
+      "width": "iphone-390",
+      "slug": "landing--primary-cta-check",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/mss5osqd88j6fdyvtdu",
+      "projectNotFound": false,
+      "hasWorkspace": true
+    },
+    {
+      "file": "screenshots/settings--top__iphone-390.png",
+      "width": "iphone-390",
+      "slug": "settings--top",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/settings",
+      "title": "Stitch & Scale",
+      "text": "Preferences Manage your workspace environment and data. 🌐 Language Choose the language Stitch & Scale uses for the interface. English English Deutsch German Français French Español Spanish Português Portuguese Detected from this browser on first opening. Your choice is remembered on this device. Measurement Defaults Choose the primary unit for your workspace. in Inches cm Centimeters You can override this setting per-project. Sizing Standard The grading standard your patterns are built from. Craft Yarn Council The published CYC body-measurement chart. Custom Your own measurement chart. Additional international standards (UK, EU, Japanese) will become available through future updates. Appearance How Stitch & Scale looks on this device. Light Dark System Onboarding Re-run the setup guide to review your workspace configuration. Restart Onboarding Walk through the setup guide again — sizing standard, units, workspace tour. Restart Guide Data & Backups Your patterns live right here in this",
+      "roleTabs": 0,
+      "buttons": 15,
+      "bodyHeight": 3399,
+      "viewportHeight": 844
+    },
+    {
+      "file": "screenshots/settings--scrolled-top__iphone-390.png",
+      "width": "iphone-390",
+      "slug": "settings--scrolled-top",
+      "note": "scrollY=0",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/settings",
+      "title": "Stitch & Scale",
+      "text": "Preferences Manage your workspace environment and data. 🌐 Language Choose the language Stitch & Scale uses for the interface. English English Deutsch German Français French Español Spanish Português Portuguese Detected from this browser on first opening. Your choice is remembered on this device. Measurement Defaults Choose the primary unit for your workspace. in Inches cm Centimeters You can override this setting per-project. Sizing Standard The grading standard your patterns are built from. Craft Yarn Council The published CYC body-measurement chart. Custom Your own measurement chart. Additional international standards (UK, EU, Japanese) will become available through future updates. Appearance How Stitch & Scale looks on this device. Light Dark System Onboarding Re-run the setup guide to review your workspace configuration. Restart Onboarding Walk through the setup guide again — sizing standard, units, workspace tour. Restart Guide Data & Backups Your patterns live right here in this",
+      "roleTabs": 0,
+      "buttons": 15,
+      "bodyHeight": 3399,
+      "viewportHeight": 844
+    },
+    {
+      "file": "screenshots/settings--scrolled-middle__iphone-390.png",
+      "width": "iphone-390",
+      "slug": "settings--scrolled-middle",
+      "note": "scrollY=1277",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/settings",
+      "title": "Stitch & Scale",
+      "text": "Preferences Manage your workspace environment and data. 🌐 Language Choose the language Stitch & Scale uses for the interface. English English Deutsch German Français French Español Spanish Português Portuguese Detected from this browser on first opening. Your choice is remembered on this device. Measurement Defaults Choose the primary unit for your workspace. in Inches cm Centimeters You can override this setting per-project. Sizing Standard The grading standard your patterns are built from. Craft Yarn Council The published CYC body-measurement chart. Custom Your own measurement chart. Additional international standards (UK, EU, Japanese) will become available through future updates. Appearance How Stitch & Scale looks on this device. Light Dark System Onboarding Re-run the setup guide to review your workspace configuration. Restart Onboarding Walk through the setup guide again — sizing standard, units, workspace tour. Restart Guide Data & Backups Your patterns live right here in this",
+      "roleTabs": 0,
+      "buttons": 15,
+      "bodyHeight": 3399,
+      "viewportHeight": 844
+    },
+    {
+      "file": "screenshots/settings--scrolled-bottom__iphone-390.png",
+      "width": "iphone-390",
+      "slug": "settings--scrolled-bottom",
+      "note": "scrollY=2555",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/settings",
+      "title": "Stitch & Scale",
+      "text": "Preferences Manage your workspace environment and data. 🌐 Language Choose the language Stitch & Scale uses for the interface. English English Deutsch German Français French Español Spanish Português Portuguese Detected from this browser on first opening. Your choice is remembered on this device. Measurement Defaults Choose the primary unit for your workspace. in Inches cm Centimeters You can override this setting per-project. Sizing Standard The grading standard your patterns are built from. Craft Yarn Council The published CYC body-measurement chart. Custom Your own measurement chart. Additional international standards (UK, EU, Japanese) will become available through future updates. Appearance How Stitch & Scale looks on this device. Light Dark System Onboarding Re-run the setup guide to review your workspace configuration. Restart Onboarding Walk through the setup guide again — sizing standard, units, workspace tour. Restart Guide Data & Backups Your patterns live right here in this",
+      "roleTabs": 0,
+      "buttons": 15,
+      "bodyHeight": 3399,
+      "viewportHeight": 844
+    },
+    {
+      "file": "screenshots/new-project--step1-empty__iphone-390.png",
+      "width": "iphone-390",
+      "slug": "new-project--step1-empty",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/new",
+      "title": "Stitch & Scale",
+      "text": "Draft a Pattern Define the foundation for your next design. 1 2 3 Project Details PATTERN NAME DESIGNER Sizing Standard: Craft Yarn Council (CYC) · change in Settings Cancel Next A premium tool for independent knitwear designers",
+      "roleTabs": 0,
+      "buttons": 3,
+      "bodyHeight": 957,
+      "viewportHeight": 844
+    },
+    {
+      "file": "screenshots/new-project--step2-base-size__iphone-390.png",
+      "width": "iphone-390",
+      "slug": "new-project--step2-base-size",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/new",
+      "title": "Stitch & Scale",
+      "text": "Draft a Pattern Define the foundation for your next design. 2 3 Base Size Select the primary size you are grading from. All other sizes will be calculated against this. XS S M L XL 2XL 3XL 4XL 5XL Grading calculations use standard Craft Yarn Council (CYC) body measurements to ensure consistent fit across all sizes. Back Next A premium tool for independent knitwear designers",
+      "roleTabs": 0,
+      "buttons": 12,
+      "bodyHeight": 1157,
+      "viewportHeight": 844
+    },
+    {
+      "file": "screenshots/new-project--step3-gauge__iphone-390.png",
+      "width": "iphone-390",
+      "slug": "new-project--step3-gauge",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/new",
+      "title": "Stitch & Scale",
+      "text": "Draft a Pattern Define the foundation for your next design. 3 Blocked Gauge Enter the stitch and row count of your blocked swatch per 4 inches (10 cm). Inches Centimeters STITCHES per 4 inches ROWS per 4 inches Back Create Project A premium tool for independent knitwear designers",
+      "roleTabs": 0,
+      "buttons": 5,
+      "bodyHeight": 977,
+      "viewportHeight": 844
+    },
+    {
+      "file": "screenshots/new-project--created-empty-workspace__iphone-390.png",
+      "width": "iphone-390",
+      "slug": "new-project--created-empty-workspace",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/msx27wv4mhpld1r76w8",
+      "title": "Stitch & Scale",
+      "text": "Cycle QA Cardigan M By Independent QA • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Design & Pattern · 12 Sizing & Fit · 7 Pricing & Income · 15 Launch & Marketing · 13 Selling Channels · 10 Business & Community · 22 No Sections Yet Divide your pattern into logical sections (e.g. Back, Front, Sleeves) to start adding measurements. Add First Section A premium tool for independent knitwear designers",
+      "roleTabs": 79,
+      "buttons": 88,
+      "bodyHeight": 872,
+      "viewportHeight": 844
+    },
+    {
+      "file": "screenshots/demo-project--current-clean-cta__iphone-390.png",
+      "width": "iphone-390",
+      "slug": "demo-project--current-clean-cta",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/mss5osqd88j6fdyvtdu",
+      "title": "Stitch & Scale",
+      "text": "Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Design & Pattern · 12 Sizing & Fit · 7 Pricing & Income · 15 Launch & Marketing · 13 Selling Channels · 10 Business & Community · 22 Body 3 measurements Sleeve 3 measurements Neckline 2 measurements Add New Section A premium tool for independent knitwear designers",
+      "roleTabs": 79,
+      "buttons": 91,
+      "bodyHeight": 852,
+      "viewportHeight": 844
+    },
+    {
+      "width": "iphone-390",
+      "slug": "demo-project--navigation-check",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/mss5osqd88j6fdyvtdu",
+      "projectNotFound": false,
+      "roleTabs": 79,
+      "hasLabsNavigator": false,
+      "hasCoreTabs": false
+    },
+    {
+      "file": "screenshots/demo-project--pdf-route__iphone-390.png",
+      "width": "iphone-390",
+      "slug": "demo-project--pdf-route",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/mss5osqd88j6fdyvtdu/pdf",
+      "title": "Stitch & Scale",
+      "text": "Back Classic Crew Neck Sweater PDF Export The filename is a suggestion — you can rename it before every export, and your preferred naming style will be remembered. TEMPLATE Sample Knitwear Pattern by Designer MINIMAL Clean, Apple-adjacent restraint. Generous whitespace, quiet precision. Sample Knitwear Pattern by Designer LUXURY Fashion-magazine editorial. Playfair Display serif, gold accents. Sample Knitwear Pattern by Designer CRAFT / COZY Warm, handmade. Lora serif, terracotta warmth, old-knitting-magazine feel. Sample Knitwear Pattern by Designer TECHNICAL / BLUEPRINT Engineering precision. IBM Plex, blueprint grid — the grading math is serious. BRANDING Upload your logo Replaces the Stitch & Scale mark on the cover INCLUDE Cover Page Gauge Summary Pattern Notes FILENAME .pdf Your naming style will be remembered after the first export. Export PDF A print dialog will open — choose “Save as PDF” there to finish Live preview · Page 1 / 6 Body · 3 measurements Sleeve · 3 measurements N",
+      "roleTabs": 0,
+      "buttons": 9,
+      "bodyHeight": 1935,
+      "viewportHeight": 844
+    },
+    {
+      "width": "iphone-390",
+      "slug": "demo-project--pdf-route-check",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/mss5osqd88j6fdyvtdu/pdf",
+      "hasPdfText": true
+    },
+    {
+      "file": "screenshots/sq1--root-first-paint__iphone-430.png",
+      "width": "iphone-430",
+      "slug": "sq1--root-first-paint",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/",
+      "title": "Stitch & Scale",
+      "text": "Skip setup Welcome to Stitch & Scale Professional knitwear grading software — built for designers who care about the details. Local-first — your projects save instantly, no account needed Works offline — full functionality without an internet connection Your data belongs to you — export anytime, no lock-in Publish-ready PDF exports — four professional templates Cloud Sync is optional. You never need an account to start designing. Back Begin Local Storage Notice Your patterns are saved right here on this device — no account needed. Clearing your browser data will delete them, so back up anything you can't afford to lose. Cloud sync is on the way, which will make this less of a worry. A blank canvas awaits Set your gauge, add your measurements, and let Stitch & Scale handle the grading math. Built for designers who care about the details. Draft a New Pattern Import from a Spreadsheet or restore a backup from a .json file A premium tool for independent knitwear designers",
+      "roleTabs": 0,
+      "buttons": 8,
+      "bodyHeight": 1098,
+      "viewportHeight": 932
+    },
+    {
+      "width": "iphone-430",
+      "slug": "sq1--root-state-check",
+      "onboarding": true,
+      "hasBlankOnly": false
+    },
+    {
+      "file": "screenshots/sq1--post-onboarding-workspace__iphone-430.png",
+      "width": "iphone-430",
+      "slug": "sq1--post-onboarding-workspace",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/sample-crew-neck-sweater",
+      "title": "Stitch & Scale",
+      "text": "Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Design & Pattern · 12 Sizing & Fit · 7 Pricing & Income · 15 Launch & Marketing · 13 Selling Channels · 10 Business & Community · 22 Body 3 measurements Sleeve 3 measurements Neckline 2 measurements Add New Section A premium tool for independent knitwear designers",
+      "roleTabs": 79,
+      "buttons": 91,
+      "bodyHeight": 932,
+      "viewportHeight": 932
+    },
+    {
+      "file": "screenshots/landing--first-viewport__iphone-430.png",
+      "width": "iphone-430",
+      "slug": "landing--first-viewport",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/landing",
+      "title": "Stitch & Scale",
+      "text": "Stitch & Scale Open demo Try it free For indie knitwear pattern designers You can knit anything. Can you price it? The pattern is only half the job — the math is the rest. Grading, yield, pricing, wholesale, international parity: the business side of knitting that nobody built tools for. So I built them. Run your pattern business on numbers, not hope. Try the live demo Join as a founding tester No signup. No install. The demo is the real app with a sample project. 79 business labs in one workspace 1,694+ verified tests behind the math 13 currencies in parity pricing 100% local-first — your data stays yours One workspace for the whole pattern business Marketplaces take 15–20% and own your customer. The tools below are built so you can price, publish, and sell on your own terms. Grading Lab Multi-size grading tables from one set of measurements. Enter a size, get the range — checked against your grading rules, every row. Yield & Cost Yarn estimates, wastage, and true unit cost per size. ",
+      "roleTabs": 0,
+      "buttons": 6,
+      "bodyHeight": 3514,
+      "viewportHeight": 932
+    },
+    {
+      "width": "iphone-430",
+      "slug": "landing--content-visibility-check",
+      "capabilityCards": [
+        {
+          "text": "Yield & Cost",
+          "visible": true
+        },
+        {
+          "text": "Pricing & Income",
+          "visible": true
+        },
+        {
+          "text": "Wholesale Line Sheets",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "file": "screenshots/landing--scrolled-top__iphone-430.png",
+      "width": "iphone-430",
+      "slug": "landing--scrolled-top",
+      "note": "scrollY=0",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/landing",
+      "title": "Stitch & Scale",
+      "text": "Stitch & Scale Open demo Try it free For indie knitwear pattern designers You can knit anything. Can you price it? The pattern is only half the job — the math is the rest. Grading, yield, pricing, wholesale, international parity: the business side of knitting that nobody built tools for. So I built them. Run your pattern business on numbers, not hope. Try the live demo Join as a founding tester No signup. No install. The demo is the real app with a sample project. 79 business labs in one workspace 1,694+ verified tests behind the math 13 currencies in parity pricing 100% local-first — your data stays yours One workspace for the whole pattern business Marketplaces take 15–20% and own your customer. The tools below are built so you can price, publish, and sell on your own terms. Grading Lab Multi-size grading tables from one set of measurements. Enter a size, get the range — checked against your grading rules, every row. Yield & Cost Yarn estimates, wastage, and true unit cost per size. ",
+      "roleTabs": 0,
+      "buttons": 6,
+      "bodyHeight": 3514,
+      "viewportHeight": 932
+    },
+    {
+      "file": "screenshots/landing--scrolled-middle__iphone-430.png",
+      "width": "iphone-430",
+      "slug": "landing--scrolled-middle",
+      "note": "scrollY=1291",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/landing",
+      "title": "Stitch & Scale",
+      "text": "Stitch & Scale Open demo Try it free For indie knitwear pattern designers You can knit anything. Can you price it? The pattern is only half the job — the math is the rest. Grading, yield, pricing, wholesale, international parity: the business side of knitting that nobody built tools for. So I built them. Run your pattern business on numbers, not hope. Try the live demo Join as a founding tester No signup. No install. The demo is the real app with a sample project. 79 business labs in one workspace 1,694+ verified tests behind the math 13 currencies in parity pricing 100% local-first — your data stays yours One workspace for the whole pattern business Marketplaces take 15–20% and own your customer. The tools below are built so you can price, publish, and sell on your own terms. Grading Lab Multi-size grading tables from one set of measurements. Enter a size, get the range — checked against your grading rules, every row. Yield & Cost Yarn estimates, wastage, and true unit cost per size. ",
+      "roleTabs": 0,
+      "buttons": 6,
+      "bodyHeight": 3514,
+      "viewportHeight": 932
+    },
+    {
+      "file": "screenshots/landing--scrolled-bottom__iphone-430.png",
+      "width": "iphone-430",
+      "slug": "landing--scrolled-bottom",
+      "note": "scrollY=2582",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/landing",
+      "title": "Stitch & Scale",
+      "text": "Stitch & Scale Open demo Try it free For indie knitwear pattern designers You can knit anything. Can you price it? The pattern is only half the job — the math is the rest. Grading, yield, pricing, wholesale, international parity: the business side of knitting that nobody built tools for. So I built them. Run your pattern business on numbers, not hope. Try the live demo Join as a founding tester No signup. No install. The demo is the real app with a sample project. 79 business labs in one workspace 1,694+ verified tests behind the math 13 currencies in parity pricing 100% local-first — your data stays yours One workspace for the whole pattern business Marketplaces take 15–20% and own your customer. The tools below are built so you can price, publish, and sell on your own terms. Grading Lab Multi-size grading tables from one set of measurements. Enter a size, get the range — checked against your grading rules, every row. Yield & Cost Yarn estimates, wastage, and true unit cost per size. ",
+      "roleTabs": 0,
+      "buttons": 6,
+      "bodyHeight": 3514,
+      "viewportHeight": 932
+    },
+    {
+      "file": "screenshots/landing--primary-cta-result__iphone-430.png",
+      "width": "iphone-430",
+      "slug": "landing--primary-cta-result",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/mss5osqd88j6fdyvtdu",
+      "title": "Stitch & Scale",
+      "text": "Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Design & Pattern · 12 Sizing & Fit · 7 Pricing & Income · 15 Launch & Marketing · 13 Selling Channels · 10 Business & Community · 22 Body 3 measurements Sleeve 3 measurements Neckline 2 measurements Add New Section A premium tool for independent knitwear designers",
+      "roleTabs": 79,
+      "buttons": 91,
+      "bodyHeight": 932,
+      "viewportHeight": 932
+    },
+    {
+      "width": "iphone-430",
+      "slug": "landing--primary-cta-check",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/mss5osqd88j6fdyvtdu",
+      "projectNotFound": false,
+      "hasWorkspace": true
+    },
+    {
+      "file": "screenshots/settings--top__iphone-430.png",
+      "width": "iphone-430",
+      "slug": "settings--top",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/settings",
+      "title": "Stitch & Scale",
+      "text": "Preferences Manage your workspace environment and data. 🌐 Language Choose the language Stitch & Scale uses for the interface. English English Deutsch German Français French Español Spanish Português Portuguese Detected from this browser on first opening. Your choice is remembered on this device. Measurement Defaults Choose the primary unit for your workspace. in Inches cm Centimeters You can override this setting per-project. Sizing Standard The grading standard your patterns are built from. Craft Yarn Council The published CYC body-measurement chart. Custom Your own measurement chart. Additional international standards (UK, EU, Japanese) will become available through future updates. Appearance How Stitch & Scale looks on this device. Light Dark System Onboarding Re-run the setup guide to review your workspace configuration. Restart Onboarding Walk through the setup guide again — sizing standard, units, workspace tour. Restart Guide Data & Backups Your patterns live right here in this",
+      "roleTabs": 0,
+      "buttons": 15,
+      "bodyHeight": 3339,
+      "viewportHeight": 932
+    },
+    {
+      "file": "screenshots/settings--scrolled-top__iphone-430.png",
+      "width": "iphone-430",
+      "slug": "settings--scrolled-top",
+      "note": "scrollY=0",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/settings",
+      "title": "Stitch & Scale",
+      "text": "Preferences Manage your workspace environment and data. 🌐 Language Choose the language Stitch & Scale uses for the interface. English English Deutsch German Français French Español Spanish Português Portuguese Detected from this browser on first opening. Your choice is remembered on this device. Measurement Defaults Choose the primary unit for your workspace. in Inches cm Centimeters You can override this setting per-project. Sizing Standard The grading standard your patterns are built from. Craft Yarn Council The published CYC body-measurement chart. Custom Your own measurement chart. Additional international standards (UK, EU, Japanese) will become available through future updates. Appearance How Stitch & Scale looks on this device. Light Dark System Onboarding Re-run the setup guide to review your workspace configuration. Restart Onboarding Walk through the setup guide again — sizing standard, units, workspace tour. Restart Guide Data & Backups Your patterns live right here in this",
+      "roleTabs": 0,
+      "buttons": 15,
+      "bodyHeight": 3339,
+      "viewportHeight": 932
+    },
+    {
+      "file": "screenshots/settings--scrolled-middle__iphone-430.png",
+      "width": "iphone-430",
+      "slug": "settings--scrolled-middle",
+      "note": "scrollY=1203",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/settings",
+      "title": "Stitch & Scale",
+      "text": "Preferences Manage your workspace environment and data. 🌐 Language Choose the language Stitch & Scale uses for the interface. English English Deutsch German Français French Español Spanish Português Portuguese Detected from this browser on first opening. Your choice is remembered on this device. Measurement Defaults Choose the primary unit for your workspace. in Inches cm Centimeters You can override this setting per-project. Sizing Standard The grading standard your patterns are built from. Craft Yarn Council The published CYC body-measurement chart. Custom Your own measurement chart. Additional international standards (UK, EU, Japanese) will become available through future updates. Appearance How Stitch & Scale looks on this device. Light Dark System Onboarding Re-run the setup guide to review your workspace configuration. Restart Onboarding Walk through the setup guide again — sizing standard, units, workspace tour. Restart Guide Data & Backups Your patterns live right here in this",
+      "roleTabs": 0,
+      "buttons": 15,
+      "bodyHeight": 3339,
+      "viewportHeight": 932
+    },
+    {
+      "file": "screenshots/settings--scrolled-bottom__iphone-430.png",
+      "width": "iphone-430",
+      "slug": "settings--scrolled-bottom",
+      "note": "scrollY=2407",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/settings",
+      "title": "Stitch & Scale",
+      "text": "Preferences Manage your workspace environment and data. 🌐 Language Choose the language Stitch & Scale uses for the interface. English English Deutsch German Français French Español Spanish Português Portuguese Detected from this browser on first opening. Your choice is remembered on this device. Measurement Defaults Choose the primary unit for your workspace. in Inches cm Centimeters You can override this setting per-project. Sizing Standard The grading standard your patterns are built from. Craft Yarn Council The published CYC body-measurement chart. Custom Your own measurement chart. Additional international standards (UK, EU, Japanese) will become available through future updates. Appearance How Stitch & Scale looks on this device. Light Dark System Onboarding Re-run the setup guide to review your workspace configuration. Restart Onboarding Walk through the setup guide again — sizing standard, units, workspace tour. Restart Guide Data & Backups Your patterns live right here in this",
+      "roleTabs": 0,
+      "buttons": 15,
+      "bodyHeight": 3339,
+      "viewportHeight": 932
+    },
+    {
+      "file": "screenshots/new-project--step1-empty__iphone-430.png",
+      "width": "iphone-430",
+      "slug": "new-project--step1-empty",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/new",
+      "title": "Stitch & Scale",
+      "text": "Draft a Pattern Define the foundation for your next design. 1 2 3 Project Details PATTERN NAME DESIGNER Sizing Standard: Craft Yarn Council (CYC) · change in Settings Cancel Next A premium tool for independent knitwear designers",
+      "roleTabs": 0,
+      "buttons": 3,
+      "bodyHeight": 957,
+      "viewportHeight": 932
+    },
+    {
+      "file": "screenshots/new-project--step2-base-size__iphone-430.png",
+      "width": "iphone-430",
+      "slug": "new-project--step2-base-size",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/new",
+      "title": "Stitch & Scale",
+      "text": "Draft a Pattern Define the foundation for your next design. 2 3 Base Size Select the primary size you are grading from. All other sizes will be calculated against this. XS S M L XL 2XL 3XL 4XL 5XL Grading calculations use standard Craft Yarn Council (CYC) body measurements to ensure consistent fit across all sizes. Back Next A premium tool for independent knitwear designers",
+      "roleTabs": 0,
+      "buttons": 12,
+      "bodyHeight": 1137,
+      "viewportHeight": 932
+    },
+    {
+      "file": "screenshots/new-project--step3-gauge__iphone-430.png",
+      "width": "iphone-430",
+      "slug": "new-project--step3-gauge",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/new",
+      "title": "Stitch & Scale",
+      "text": "Draft a Pattern Define the foundation for your next design. 3 Blocked Gauge Enter the stitch and row count of your blocked swatch per 4 inches (10 cm). Inches Centimeters STITCHES per 4 inches ROWS per 4 inches Back Create Project A premium tool for independent knitwear designers",
+      "roleTabs": 0,
+      "buttons": 5,
+      "bodyHeight": 977,
+      "viewportHeight": 932
+    },
+    {
+      "file": "screenshots/new-project--created-empty-workspace__iphone-430.png",
+      "width": "iphone-430",
+      "slug": "new-project--created-empty-workspace",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/msx286mksaep86d08e",
+      "title": "Stitch & Scale",
+      "text": "Cycle QA Cardigan M By Independent QA • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Design & Pattern · 12 Sizing & Fit · 7 Pricing & Income · 15 Launch & Marketing · 13 Selling Channels · 10 Business & Community · 22 No Sections Yet Divide your pattern into logical sections (e.g. Back, Front, Sleeves) to start adding measurements. Add First Section A premium tool for independent knitwear designers",
+      "roleTabs": 79,
+      "buttons": 88,
+      "bodyHeight": 932,
+      "viewportHeight": 932
+    },
+    {
+      "file": "screenshots/demo-project--current-clean-cta__iphone-430.png",
+      "width": "iphone-430",
+      "slug": "demo-project--current-clean-cta",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/mss5osqd88j6fdyvtdu",
+      "title": "Stitch & Scale",
+      "text": "Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Design & Pattern · 12 Sizing & Fit · 7 Pricing & Income · 15 Launch & Marketing · 13 Selling Channels · 10 Business & Community · 22 Body 3 measurements Sleeve 3 measurements Neckline 2 measurements Add New Section A premium tool for independent knitwear designers",
+      "roleTabs": 79,
+      "buttons": 91,
+      "bodyHeight": 932,
+      "viewportHeight": 932
+    },
+    {
+      "width": "iphone-430",
+      "slug": "demo-project--navigation-check",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/mss5osqd88j6fdyvtdu",
+      "projectNotFound": false,
+      "roleTabs": 79,
+      "hasLabsNavigator": false,
+      "hasCoreTabs": false
+    },
+    {
+      "file": "screenshots/demo-project--pdf-route__iphone-430.png",
+      "width": "iphone-430",
+      "slug": "demo-project--pdf-route",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/mss5osqd88j6fdyvtdu/pdf",
+      "title": "Stitch & Scale",
+      "text": "Back Classic Crew Neck Sweater PDF Export The filename is a suggestion — you can rename it before every export, and your preferred naming style will be remembered. TEMPLATE Sample Knitwear Pattern by Designer MINIMAL Clean, Apple-adjacent restraint. Generous whitespace, quiet precision. Sample Knitwear Pattern by Designer LUXURY Fashion-magazine editorial. Playfair Display serif, gold accents. Sample Knitwear Pattern by Designer CRAFT / COZY Warm, handmade. Lora serif, terracotta warmth, old-knitting-magazine feel. Sample Knitwear Pattern by Designer TECHNICAL / BLUEPRINT Engineering precision. IBM Plex, blueprint grid — the grading math is serious. BRANDING Upload your logo Replaces the Stitch & Scale mark on the cover INCLUDE Cover Page Gauge Summary Pattern Notes FILENAME .pdf Your naming style will be remembered after the first export. Export PDF A print dialog will open — choose “Save as PDF” there to finish Live preview · Page 1 / 6 Body · 3 measurements Sleeve · 3 measurements N",
+      "roleTabs": 0,
+      "buttons": 9,
+      "bodyHeight": 1959,
+      "viewportHeight": 932
+    },
+    {
+      "width": "iphone-430",
+      "slug": "demo-project--pdf-route-check",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/mss5osqd88j6fdyvtdu/pdf",
+      "hasPdfText": true
+    },
+    {
+      "file": "screenshots/sq1--root-first-paint__tablet-768.png",
+      "width": "tablet-768",
+      "slug": "sq1--root-first-paint",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/",
+      "title": "Stitch & Scale",
+      "text": "Stitch & Scale Skip setup Welcome to Stitch & Scale Professional knitwear grading software — built for designers who care about the details. Local-first — your projects save instantly, no account needed Works offline — full functionality without an internet connection Your data belongs to you — export anytime, no lock-in Publish-ready PDF exports — four professional templates Cloud Sync is optional. You never need an account to start designing. Back Begin Stitch & Scale Local only Saved Projects Portfolio Settings New Project Local Storage Notice Your patterns are saved right here on this device — no account needed. Clearing your browser data will delete them, so back up anything you can't afford to lose. Cloud sync is on the way, which will make this less of a worry. A blank canvas awaits Set your gauge, add your measurements, and let Stitch & Scale handle the grading math. Built for designers who care about the details. Draft a New Pattern Import from a Spreadsheet or restore a backu",
+      "roleTabs": 0,
+      "buttons": 8,
+      "bodyHeight": 1024,
+      "viewportHeight": 1024
+    },
+    {
+      "width": "tablet-768",
+      "slug": "sq1--root-state-check",
+      "onboarding": true,
+      "hasBlankOnly": false
+    },
+    {
+      "file": "screenshots/sq1--post-onboarding-workspace__tablet-768.png",
+      "width": "tablet-768",
+      "slug": "sq1--post-onboarding-workspace",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/sample-crew-neck-sweater",
+      "title": "Stitch & Scale",
+      "text": "Stitch & Scale Local only Saved Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Design & Pattern · 12 Sizing & Fit · 7 Pricing & Income · 15 Launch & Marketing · 13 Selling Channels · 10 Business & Community · 22 Body 3 measurements Sleeve 3 measurements Neckline 2 measurements Add New Section A premium tool for independent knitwear designers",
+      "roleTabs": 79,
+      "buttons": 91,
+      "bodyHeight": 1024,
+      "viewportHeight": 1024
+    },
+    {
+      "file": "screenshots/landing--first-viewport__tablet-768.png",
+      "width": "tablet-768",
+      "slug": "landing--first-viewport",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/landing",
+      "title": "Stitch & Scale",
+      "text": "Stitch & Scale Open demo Try it free For indie knitwear pattern designers You can knit anything. Can you price it? The pattern is only half the job — the math is the rest. Grading, yield, pricing, wholesale, international parity: the business side of knitting that nobody built tools for. So I built them. Run your pattern business on numbers, not hope. Try the live demo Join as a founding tester No signup. No install. The demo is the real app with a sample project. 79 business labs in one workspace 1,694+ verified tests behind the math 13 currencies in parity pricing 100% local-first — your data stays yours One workspace for the whole pattern business Marketplaces take 15–20% and own your customer. The tools below are built so you can price, publish, and sell on your own terms. Grading Lab Multi-size grading tables from one set of measurements. Enter a size, get the range — checked against your grading rules, every row. Yield & Cost Yarn estimates, wastage, and true unit cost per size. ",
+      "roleTabs": 0,
+      "buttons": 6,
+      "bodyHeight": 2637,
+      "viewportHeight": 1024
+    },
+    {
+      "width": "tablet-768",
+      "slug": "landing--content-visibility-check",
+      "capabilityCards": [
+        {
+          "text": "Yield & Cost",
+          "visible": true
+        },
+        {
+          "text": "Pricing & Income",
+          "visible": true
+        },
+        {
+          "text": "Wholesale Line Sheets",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "file": "screenshots/landing--scrolled-top__tablet-768.png",
+      "width": "tablet-768",
+      "slug": "landing--scrolled-top",
+      "note": "scrollY=0",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/landing",
+      "title": "Stitch & Scale",
+      "text": "Stitch & Scale Open demo Try it free For indie knitwear pattern designers You can knit anything. Can you price it? The pattern is only half the job — the math is the rest. Grading, yield, pricing, wholesale, international parity: the business side of knitting that nobody built tools for. So I built them. Run your pattern business on numbers, not hope. Try the live demo Join as a founding tester No signup. No install. The demo is the real app with a sample project. 79 business labs in one workspace 1,694+ verified tests behind the math 13 currencies in parity pricing 100% local-first — your data stays yours One workspace for the whole pattern business Marketplaces take 15–20% and own your customer. The tools below are built so you can price, publish, and sell on your own terms. Grading Lab Multi-size grading tables from one set of measurements. Enter a size, get the range — checked against your grading rules, every row. Yield & Cost Yarn estimates, wastage, and true unit cost per size. ",
+      "roleTabs": 0,
+      "buttons": 6,
+      "bodyHeight": 2637,
+      "viewportHeight": 1024
+    },
+    {
+      "file": "screenshots/landing--scrolled-middle__tablet-768.png",
+      "width": "tablet-768",
+      "slug": "landing--scrolled-middle",
+      "note": "scrollY=806",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/landing",
+      "title": "Stitch & Scale",
+      "text": "Stitch & Scale Open demo Try it free For indie knitwear pattern designers You can knit anything. Can you price it? The pattern is only half the job — the math is the rest. Grading, yield, pricing, wholesale, international parity: the business side of knitting that nobody built tools for. So I built them. Run your pattern business on numbers, not hope. Try the live demo Join as a founding tester No signup. No install. The demo is the real app with a sample project. 79 business labs in one workspace 1,694+ verified tests behind the math 13 currencies in parity pricing 100% local-first — your data stays yours One workspace for the whole pattern business Marketplaces take 15–20% and own your customer. The tools below are built so you can price, publish, and sell on your own terms. Grading Lab Multi-size grading tables from one set of measurements. Enter a size, get the range — checked against your grading rules, every row. Yield & Cost Yarn estimates, wastage, and true unit cost per size. ",
+      "roleTabs": 0,
+      "buttons": 6,
+      "bodyHeight": 2637,
+      "viewportHeight": 1024
+    },
+    {
+      "file": "screenshots/landing--scrolled-bottom__tablet-768.png",
+      "width": "tablet-768",
+      "slug": "landing--scrolled-bottom",
+      "note": "scrollY=1613",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/landing",
+      "title": "Stitch & Scale",
+      "text": "Stitch & Scale Open demo Try it free For indie knitwear pattern designers You can knit anything. Can you price it? The pattern is only half the job — the math is the rest. Grading, yield, pricing, wholesale, international parity: the business side of knitting that nobody built tools for. So I built them. Run your pattern business on numbers, not hope. Try the live demo Join as a founding tester No signup. No install. The demo is the real app with a sample project. 79 business labs in one workspace 1,694+ verified tests behind the math 13 currencies in parity pricing 100% local-first — your data stays yours One workspace for the whole pattern business Marketplaces take 15–20% and own your customer. The tools below are built so you can price, publish, and sell on your own terms. Grading Lab Multi-size grading tables from one set of measurements. Enter a size, get the range — checked against your grading rules, every row. Yield & Cost Yarn estimates, wastage, and true unit cost per size. ",
+      "roleTabs": 0,
+      "buttons": 6,
+      "bodyHeight": 2637,
+      "viewportHeight": 1024
+    },
+    {
+      "file": "screenshots/landing--primary-cta-result__tablet-768.png",
+      "width": "tablet-768",
+      "slug": "landing--primary-cta-result",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/mss5osqd88j6fdyvtdu",
+      "title": "Stitch & Scale",
+      "text": "Stitch & Scale Local only Saved Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Design & Pattern · 12 Sizing & Fit · 7 Pricing & Income · 15 Launch & Marketing · 13 Selling Channels · 10 Business & Community · 22 Body 3 measurements Sleeve 3 measurements Neckline 2 measurements Add New Section A premium tool for independent knitwear designers",
+      "roleTabs": 79,
+      "buttons": 91,
+      "bodyHeight": 1024,
+      "viewportHeight": 1024
+    },
+    {
+      "width": "tablet-768",
+      "slug": "landing--primary-cta-check",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/mss5osqd88j6fdyvtdu",
+      "projectNotFound": false,
+      "hasWorkspace": true
+    },
+    {
+      "file": "screenshots/settings--top__tablet-768.png",
+      "width": "tablet-768",
+      "slug": "settings--top",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/settings",
+      "title": "Stitch & Scale",
+      "text": "Stitch & Scale Local only Saved Projects Portfolio Settings New Project Preferences Manage your workspace environment and data. 🌐 Language Choose the language Stitch & Scale uses for the interface. English English Deutsch German Français French Español Spanish Português Portuguese Detected from this browser on first opening. Your choice is remembered on this device. Measurement Defaults Choose the primary unit for your workspace. in Inches cm Centimeters You can override this setting per-project. Sizing Standard The grading standard your patterns are built from. Craft Yarn Council The published CYC body-measurement chart. Custom Your own measurement chart. Additional international standards (UK, EU, Japanese) will become available through future updates. Appearance How Stitch & Scale looks on this device. Light Dark System Onboarding Re-run the setup guide to review your workspace configuration. Restart Onboarding Walk through the setup guide again — sizing standard, units, workspace ",
+      "roleTabs": 0,
+      "buttons": 15,
+      "bodyHeight": 2763,
+      "viewportHeight": 1024
+    },
+    {
+      "file": "screenshots/settings--scrolled-top__tablet-768.png",
+      "width": "tablet-768",
+      "slug": "settings--scrolled-top",
+      "note": "scrollY=0",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/settings",
+      "title": "Stitch & Scale",
+      "text": "Stitch & Scale Local only Saved Projects Portfolio Settings New Project Preferences Manage your workspace environment and data. 🌐 Language Choose the language Stitch & Scale uses for the interface. English English Deutsch German Français French Español Spanish Português Portuguese Detected from this browser on first opening. Your choice is remembered on this device. Measurement Defaults Choose the primary unit for your workspace. in Inches cm Centimeters You can override this setting per-project. Sizing Standard The grading standard your patterns are built from. Craft Yarn Council The published CYC body-measurement chart. Custom Your own measurement chart. Additional international standards (UK, EU, Japanese) will become available through future updates. Appearance How Stitch & Scale looks on this device. Light Dark System Onboarding Re-run the setup guide to review your workspace configuration. Restart Onboarding Walk through the setup guide again — sizing standard, units, workspace ",
+      "roleTabs": 0,
+      "buttons": 15,
+      "bodyHeight": 2763,
+      "viewportHeight": 1024
+    },
+    {
+      "file": "screenshots/settings--scrolled-middle__tablet-768.png",
+      "width": "tablet-768",
+      "slug": "settings--scrolled-middle",
+      "note": "scrollY=869",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/settings",
+      "title": "Stitch & Scale",
+      "text": "Stitch & Scale Local only Saved Projects Portfolio Settings New Project Preferences Manage your workspace environment and data. 🌐 Language Choose the language Stitch & Scale uses for the interface. English English Deutsch German Français French Español Spanish Português Portuguese Detected from this browser on first opening. Your choice is remembered on this device. Measurement Defaults Choose the primary unit for your workspace. in Inches cm Centimeters You can override this setting per-project. Sizing Standard The grading standard your patterns are built from. Craft Yarn Council The published CYC body-measurement chart. Custom Your own measurement chart. Additional international standards (UK, EU, Japanese) will become available through future updates. Appearance How Stitch & Scale looks on this device. Light Dark System Onboarding Re-run the setup guide to review your workspace configuration. Restart Onboarding Walk through the setup guide again — sizing standard, units, workspace ",
+      "roleTabs": 0,
+      "buttons": 15,
+      "bodyHeight": 2763,
+      "viewportHeight": 1024
+    },
+    {
+      "file": "screenshots/settings--scrolled-bottom__tablet-768.png",
+      "width": "tablet-768",
+      "slug": "settings--scrolled-bottom",
+      "note": "scrollY=1739",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/settings",
+      "title": "Stitch & Scale",
+      "text": "Stitch & Scale Local only Saved Projects Portfolio Settings New Project Preferences Manage your workspace environment and data. 🌐 Language Choose the language Stitch & Scale uses for the interface. English English Deutsch German Français French Español Spanish Português Portuguese Detected from this browser on first opening. Your choice is remembered on this device. Measurement Defaults Choose the primary unit for your workspace. in Inches cm Centimeters You can override this setting per-project. Sizing Standard The grading standard your patterns are built from. Craft Yarn Council The published CYC body-measurement chart. Custom Your own measurement chart. Additional international standards (UK, EU, Japanese) will become available through future updates. Appearance How Stitch & Scale looks on this device. Light Dark System Onboarding Re-run the setup guide to review your workspace configuration. Restart Onboarding Walk through the setup guide again — sizing standard, units, workspace ",
+      "roleTabs": 0,
+      "buttons": 15,
+      "bodyHeight": 2763,
+      "viewportHeight": 1024
+    },
+    {
+      "file": "screenshots/new-project--step1-empty__tablet-768.png",
+      "width": "tablet-768",
+      "slug": "new-project--step1-empty",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/new",
+      "title": "Stitch & Scale",
+      "text": "Stitch & Scale Local only Saved Projects Portfolio Settings New Project Draft a Pattern Define the foundation for your next design. 1 2 3 Project Details PATTERN NAME DESIGNER Sizing Standard: Craft Yarn Council (CYC) · change in Settings Cancel Next A premium tool for independent knitwear designers",
+      "roleTabs": 0,
+      "buttons": 3,
+      "bodyHeight": 1024,
+      "viewportHeight": 1024
+    },
+    {
+      "file": "screenshots/new-project--step2-base-size__tablet-768.png",
+      "width": "tablet-768",
+      "slug": "new-project--step2-base-size",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/new",
+      "title": "Stitch & Scale",
+      "text": "Stitch & Scale Local only Saved Projects Portfolio Settings New Project Draft a Pattern Define the foundation for your next design. 2 3 Base Size Select the primary size you are grading from. All other sizes will be calculated against this. XS S M L XL 2XL 3XL 4XL 5XL Grading calculations use standard Craft Yarn Council (CYC) body measurements to ensure consistent fit across all sizes. Back Next A premium tool for independent knitwear designers",
+      "roleTabs": 0,
+      "buttons": 12,
+      "bodyHeight": 1188,
+      "viewportHeight": 1024
+    },
+    {
+      "file": "screenshots/new-project--step3-gauge__tablet-768.png",
+      "width": "tablet-768",
+      "slug": "new-project--step3-gauge",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/new",
+      "title": "Stitch & Scale",
+      "text": "Stitch & Scale Local only Saved Projects Portfolio Settings New Project Draft a Pattern Define the foundation for your next design. 3 Blocked Gauge Enter the stitch and row count of your blocked swatch per 4 inches (10 cm). Inches Centimeters STITCHES per 4 inches ROWS per 4 inches Back Create Project A premium tool for independent knitwear designers",
+      "roleTabs": 0,
+      "buttons": 5,
+      "bodyHeight": 1040,
+      "viewportHeight": 1024
+    },
+    {
+      "file": "screenshots/new-project--created-empty-workspace__tablet-768.png",
+      "width": "tablet-768",
+      "slug": "new-project--created-empty-workspace",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/msx28gnmmuq3y61yamg",
+      "title": "Stitch & Scale",
+      "text": "Stitch & Scale Local only Saved Projects Portfolio Settings New Project Cycle QA Cardigan M By Independent QA • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Design & Pattern · 12 Sizing & Fit · 7 Pricing & Income · 15 Launch & Marketing · 13 Selling Channels · 10 Business & Community · 22 No Sections Yet Divide your pattern into logical sections (e.g. Back, Front, Sleeves) to start adding measurements. Add First Section A premium tool for independent knitwear designers",
+      "roleTabs": 79,
+      "buttons": 88,
+      "bodyHeight": 1024,
+      "viewportHeight": 1024
+    },
+    {
+      "file": "screenshots/demo-project--current-clean-cta__tablet-768.png",
+      "width": "tablet-768",
+      "slug": "demo-project--current-clean-cta",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/mss5osqd88j6fdyvtdu",
+      "title": "Stitch & Scale",
+      "text": "Stitch & Scale Local only Saved Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Design & Pattern · 12 Sizing & Fit · 7 Pricing & Income · 15 Launch & Marketing · 13 Selling Channels · 10 Business & Community · 22 Body 3 measurements Sleeve 3 measurements Neckline 2 measurements Add New Section A premium tool for independent knitwear designers",
+      "roleTabs": 79,
+      "buttons": 91,
+      "bodyHeight": 1024,
+      "viewportHeight": 1024
+    },
+    {
+      "width": "tablet-768",
+      "slug": "demo-project--navigation-check",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/mss5osqd88j6fdyvtdu",
+      "projectNotFound": false,
+      "roleTabs": 79,
+      "hasLabsNavigator": false,
+      "hasCoreTabs": false
+    },
+    {
+      "file": "screenshots/demo-project--pdf-route__tablet-768.png",
+      "width": "tablet-768",
+      "slug": "demo-project--pdf-route",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/mss5osqd88j6fdyvtdu/pdf",
+      "title": "Stitch & Scale",
+      "text": "Stitch & Scale Local only Saved Projects Portfolio Settings New Project Back Classic Crew Neck Sweater PDF Export The filename is a suggestion — you can rename it before every export, and your preferred naming style will be remembered. TEMPLATE Sample Knitwear Pattern by Designer MINIMAL Clean, Apple-adjacent restraint. Generous whitespace, quiet precision. Sample Knitwear Pattern by Designer LUXURY Fashion-magazine editorial. Playfair Display serif, gold accents. Sample Knitwear Pattern by Designer CRAFT / COZY Warm, handmade. Lora serif, terracotta warmth, old-knitting-magazine feel. Sample Knitwear Pattern by Designer TECHNICAL / BLUEPRINT Engineering precision. IBM Plex, blueprint grid — the grading math is serious. BRANDING Upload your logo Replaces the Stitch & Scale mark on the cover INCLUDE Cover Page Gauge Summary Pattern Notes FILENAME .pdf Your naming style will be remembered after the first export. Export PDF A print dialog will open — choose “Save as PDF” there to finish L",
+      "roleTabs": 0,
+      "buttons": 9,
+      "bodyHeight": 1253,
+      "viewportHeight": 1024
+    },
+    {
+      "width": "tablet-768",
+      "slug": "demo-project--pdf-route-check",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/mss5osqd88j6fdyvtdu/pdf",
+      "hasPdfText": true
+    },
+    {
+      "file": "screenshots/sq1--root-first-paint__desktop-1280.png",
+      "width": "desktop-1280",
+      "slug": "sq1--root-first-paint",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/",
+      "title": "Stitch & Scale",
+      "text": "Stitch & Scale Skip setup Welcome to Stitch & Scale Professional knitwear grading software — built for designers who care about the details. Local-first — your projects save instantly, no account needed Works offline — full functionality without an internet connection Your data belongs to you — export anytime, no lock-in Publish-ready PDF exports — four professional templates Cloud Sync is optional. You never need an account to start designing. Back Begin Stitch & Scale Local only Saved Projects Portfolio Settings New Project Local Storage Notice Your patterns are saved right here on this device — no account needed. Clearing your browser data will delete them, so back up anything you can't afford to lose. Cloud sync is on the way, which will make this less of a worry. A blank canvas awaits Set your gauge, add your measurements, and let Stitch & Scale handle the grading math. Built for designers who care about the details. Draft a New Pattern Import from a Spreadsheet or restore a backu",
+      "roleTabs": 0,
+      "buttons": 8,
+      "bodyHeight": 949,
+      "viewportHeight": 900
+    },
+    {
+      "width": "desktop-1280",
+      "slug": "sq1--root-state-check",
+      "onboarding": true,
+      "hasBlankOnly": false
+    },
+    {
+      "file": "screenshots/sq1--post-onboarding-workspace__desktop-1280.png",
+      "width": "desktop-1280",
+      "slug": "sq1--post-onboarding-workspace",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/sample-crew-neck-sweater",
+      "title": "Stitch & Scale",
+      "text": "Stitch & Scale Local only Saved Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab Listing Test Lab Yarn Pool Lab Membership Lab Release Timing Lab Booth Lab Channel Lab Workshop Lab Re-Price Lab Bundle Lab Retreat Lab Podcast Lab Magazine Lab Price Psych Lab POD Patterns Lab Take-Rate Lab Box Inclusion Lab Yarn Licensing Lab Gift & Credit Lab Wholesale List Lab Intl Pricing",
+      "roleTabs": 79,
+      "buttons": 91,
+      "bodyHeight": 900,
+      "viewportHeight": 900
+    },
+    {
+      "file": "screenshots/landing--first-viewport__desktop-1280.png",
+      "width": "desktop-1280",
+      "slug": "landing--first-viewport",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/landing",
+      "title": "Stitch & Scale",
+      "text": "Stitch & Scale Open demo Try it free For indie knitwear pattern designers You can knit anything. Can you price it? The pattern is only half the job — the math is the rest. Grading, yield, pricing, wholesale, international parity: the business side of knitting that nobody built tools for. So I built them. Run your pattern business on numbers, not hope. Try the live demo Join as a founding tester No signup. No install. The demo is the real app with a sample project. 79 business labs in one workspace 1,694+ verified tests behind the math 13 currencies in parity pricing 100% local-first — your data stays yours One workspace for the whole pattern business Marketplaces take 15–20% and own your customer. The tools below are built so you can price, publish, and sell on your own terms. Grading Lab Multi-size grading tables from one set of measurements. Enter a size, get the range — checked against your grading rules, every row. Yield & Cost Yarn estimates, wastage, and true unit cost per size. ",
+      "roleTabs": 0,
+      "buttons": 6,
+      "bodyHeight": 2431,
+      "viewportHeight": 900
+    },
+    {
+      "width": "desktop-1280",
+      "slug": "landing--content-visibility-check",
+      "capabilityCards": [
+        {
+          "text": "Yield & Cost",
+          "visible": true
+        },
+        {
+          "text": "Pricing & Income",
+          "visible": true
+        },
+        {
+          "text": "Wholesale Line Sheets",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "file": "screenshots/landing--scrolled-top__desktop-1280.png",
+      "width": "desktop-1280",
+      "slug": "landing--scrolled-top",
+      "note": "scrollY=0",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/landing",
+      "title": "Stitch & Scale",
+      "text": "Stitch & Scale Open demo Try it free For indie knitwear pattern designers You can knit anything. Can you price it? The pattern is only half the job — the math is the rest. Grading, yield, pricing, wholesale, international parity: the business side of knitting that nobody built tools for. So I built them. Run your pattern business on numbers, not hope. Try the live demo Join as a founding tester No signup. No install. The demo is the real app with a sample project. 79 business labs in one workspace 1,694+ verified tests behind the math 13 currencies in parity pricing 100% local-first — your data stays yours One workspace for the whole pattern business Marketplaces take 15–20% and own your customer. The tools below are built so you can price, publish, and sell on your own terms. Grading Lab Multi-size grading tables from one set of measurements. Enter a size, get the range — checked against your grading rules, every row. Yield & Cost Yarn estimates, wastage, and true unit cost per size. ",
+      "roleTabs": 0,
+      "buttons": 6,
+      "bodyHeight": 2431,
+      "viewportHeight": 900
+    },
+    {
+      "file": "screenshots/landing--scrolled-middle__desktop-1280.png",
+      "width": "desktop-1280",
+      "slug": "landing--scrolled-middle",
+      "note": "scrollY=765",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/landing",
+      "title": "Stitch & Scale",
+      "text": "Stitch & Scale Open demo Try it free For indie knitwear pattern designers You can knit anything. Can you price it? The pattern is only half the job — the math is the rest. Grading, yield, pricing, wholesale, international parity: the business side of knitting that nobody built tools for. So I built them. Run your pattern business on numbers, not hope. Try the live demo Join as a founding tester No signup. No install. The demo is the real app with a sample project. 79 business labs in one workspace 1,694+ verified tests behind the math 13 currencies in parity pricing 100% local-first — your data stays yours One workspace for the whole pattern business Marketplaces take 15–20% and own your customer. The tools below are built so you can price, publish, and sell on your own terms. Grading Lab Multi-size grading tables from one set of measurements. Enter a size, get the range — checked against your grading rules, every row. Yield & Cost Yarn estimates, wastage, and true unit cost per size. ",
+      "roleTabs": 0,
+      "buttons": 6,
+      "bodyHeight": 2431,
+      "viewportHeight": 900
+    },
+    {
+      "file": "screenshots/landing--scrolled-bottom__desktop-1280.png",
+      "width": "desktop-1280",
+      "slug": "landing--scrolled-bottom",
+      "note": "scrollY=1531",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/landing",
+      "title": "Stitch & Scale",
+      "text": "Stitch & Scale Open demo Try it free For indie knitwear pattern designers You can knit anything. Can you price it? The pattern is only half the job — the math is the rest. Grading, yield, pricing, wholesale, international parity: the business side of knitting that nobody built tools for. So I built them. Run your pattern business on numbers, not hope. Try the live demo Join as a founding tester No signup. No install. The demo is the real app with a sample project. 79 business labs in one workspace 1,694+ verified tests behind the math 13 currencies in parity pricing 100% local-first — your data stays yours One workspace for the whole pattern business Marketplaces take 15–20% and own your customer. The tools below are built so you can price, publish, and sell on your own terms. Grading Lab Multi-size grading tables from one set of measurements. Enter a size, get the range — checked against your grading rules, every row. Yield & Cost Yarn estimates, wastage, and true unit cost per size. ",
+      "roleTabs": 0,
+      "buttons": 6,
+      "bodyHeight": 2431,
+      "viewportHeight": 900
+    },
+    {
+      "file": "screenshots/landing--primary-cta-result__desktop-1280.png",
+      "width": "desktop-1280",
+      "slug": "landing--primary-cta-result",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/mss5osqd88j6fdyvtdu",
+      "title": "Stitch & Scale",
+      "text": "Stitch & Scale Local only Saved Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab Listing Test Lab Yarn Pool Lab Membership Lab Release Timing Lab Booth Lab Channel Lab Workshop Lab Re-Price Lab Bundle Lab Retreat Lab Podcast Lab Magazine Lab Price Psych Lab POD Patterns Lab Take-Rate Lab Box Inclusion Lab Yarn Licensing Lab Gift & Credit Lab Wholesale List Lab Intl Pricing",
+      "roleTabs": 79,
+      "buttons": 91,
+      "bodyHeight": 900,
+      "viewportHeight": 900
+    },
+    {
+      "width": "desktop-1280",
+      "slug": "landing--primary-cta-check",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/mss5osqd88j6fdyvtdu",
+      "projectNotFound": false,
+      "hasWorkspace": true
+    },
+    {
+      "file": "screenshots/settings--top__desktop-1280.png",
+      "width": "desktop-1280",
+      "slug": "settings--top",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/settings",
+      "title": "Stitch & Scale",
+      "text": "Stitch & Scale Local only Saved Projects Portfolio Settings New Project Preferences Manage your workspace environment and data. 🌐 Language Choose the language Stitch & Scale uses for the interface. English English Deutsch German Français French Español Spanish Português Portuguese Detected from this browser on first opening. Your choice is remembered on this device. Measurement Defaults Choose the primary unit for your workspace. in Inches cm Centimeters You can override this setting per-project. Sizing Standard The grading standard your patterns are built from. Craft Yarn Council The published CYC body-measurement chart. Custom Your own measurement chart. Additional international standards (UK, EU, Japanese) will become available through future updates. Appearance How Stitch & Scale looks on this device. Light Dark System Onboarding Re-run the setup guide to review your workspace configuration. Restart Onboarding Walk through the setup guide again — sizing standard, units, workspace ",
+      "roleTabs": 0,
+      "buttons": 15,
+      "bodyHeight": 2723,
+      "viewportHeight": 900
+    },
+    {
+      "file": "screenshots/settings--scrolled-top__desktop-1280.png",
+      "width": "desktop-1280",
+      "slug": "settings--scrolled-top",
+      "note": "scrollY=0",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/settings",
+      "title": "Stitch & Scale",
+      "text": "Stitch & Scale Local only Saved Projects Portfolio Settings New Project Preferences Manage your workspace environment and data. 🌐 Language Choose the language Stitch & Scale uses for the interface. English English Deutsch German Français French Español Spanish Português Portuguese Detected from this browser on first opening. Your choice is remembered on this device. Measurement Defaults Choose the primary unit for your workspace. in Inches cm Centimeters You can override this setting per-project. Sizing Standard The grading standard your patterns are built from. Craft Yarn Council The published CYC body-measurement chart. Custom Your own measurement chart. Additional international standards (UK, EU, Japanese) will become available through future updates. Appearance How Stitch & Scale looks on this device. Light Dark System Onboarding Re-run the setup guide to review your workspace configuration. Restart Onboarding Walk through the setup guide again — sizing standard, units, workspace ",
+      "roleTabs": 0,
+      "buttons": 15,
+      "bodyHeight": 2723,
+      "viewportHeight": 900
+    },
+    {
+      "file": "screenshots/settings--scrolled-middle__desktop-1280.png",
+      "width": "desktop-1280",
+      "slug": "settings--scrolled-middle",
+      "note": "scrollY=911",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/settings",
+      "title": "Stitch & Scale",
+      "text": "Stitch & Scale Local only Saved Projects Portfolio Settings New Project Preferences Manage your workspace environment and data. 🌐 Language Choose the language Stitch & Scale uses for the interface. English English Deutsch German Français French Español Spanish Português Portuguese Detected from this browser on first opening. Your choice is remembered on this device. Measurement Defaults Choose the primary unit for your workspace. in Inches cm Centimeters You can override this setting per-project. Sizing Standard The grading standard your patterns are built from. Craft Yarn Council The published CYC body-measurement chart. Custom Your own measurement chart. Additional international standards (UK, EU, Japanese) will become available through future updates. Appearance How Stitch & Scale looks on this device. Light Dark System Onboarding Re-run the setup guide to review your workspace configuration. Restart Onboarding Walk through the setup guide again — sizing standard, units, workspace ",
+      "roleTabs": 0,
+      "buttons": 15,
+      "bodyHeight": 2723,
+      "viewportHeight": 900
+    },
+    {
+      "file": "screenshots/settings--scrolled-bottom__desktop-1280.png",
+      "width": "desktop-1280",
+      "slug": "settings--scrolled-bottom",
+      "note": "scrollY=1823",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/settings",
+      "title": "Stitch & Scale",
+      "text": "Stitch & Scale Local only Saved Projects Portfolio Settings New Project Preferences Manage your workspace environment and data. 🌐 Language Choose the language Stitch & Scale uses for the interface. English English Deutsch German Français French Español Spanish Português Portuguese Detected from this browser on first opening. Your choice is remembered on this device. Measurement Defaults Choose the primary unit for your workspace. in Inches cm Centimeters You can override this setting per-project. Sizing Standard The grading standard your patterns are built from. Craft Yarn Council The published CYC body-measurement chart. Custom Your own measurement chart. Additional international standards (UK, EU, Japanese) will become available through future updates. Appearance How Stitch & Scale looks on this device. Light Dark System Onboarding Re-run the setup guide to review your workspace configuration. Restart Onboarding Walk through the setup guide again — sizing standard, units, workspace ",
+      "roleTabs": 0,
+      "buttons": 15,
+      "bodyHeight": 2723,
+      "viewportHeight": 900
+    },
+    {
+      "file": "screenshots/new-project--step1-empty__desktop-1280.png",
+      "width": "desktop-1280",
+      "slug": "new-project--step1-empty",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/new",
+      "title": "Stitch & Scale",
+      "text": "Stitch & Scale Local only Saved Projects Portfolio Settings New Project Draft a Pattern Define the foundation for your next design. 1 2 3 Project Details PATTERN NAME DESIGNER Sizing Standard: Craft Yarn Council (CYC) · change in Settings Cancel Next A premium tool for independent knitwear designers",
+      "roleTabs": 0,
+      "buttons": 3,
+      "bodyHeight": 1004,
+      "viewportHeight": 900
+    },
+    {
+      "file": "screenshots/new-project--step2-base-size__desktop-1280.png",
+      "width": "desktop-1280",
+      "slug": "new-project--step2-base-size",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/new",
+      "title": "Stitch & Scale",
+      "text": "Stitch & Scale Local only Saved Projects Portfolio Settings New Project Draft a Pattern Define the foundation for your next design. 2 3 Base Size Select the primary size you are grading from. All other sizes will be calculated against this. XS S M L XL 2XL 3XL 4XL 5XL Grading calculations use standard Craft Yarn Council (CYC) body measurements to ensure consistent fit across all sizes. Back Next A premium tool for independent knitwear designers",
+      "roleTabs": 0,
+      "buttons": 12,
+      "bodyHeight": 1188,
+      "viewportHeight": 900
+    },
+    {
+      "file": "screenshots/new-project--step3-gauge__desktop-1280.png",
+      "width": "desktop-1280",
+      "slug": "new-project--step3-gauge",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/new",
+      "title": "Stitch & Scale",
+      "text": "Stitch & Scale Local only Saved Projects Portfolio Settings New Project Draft a Pattern Define the foundation for your next design. 3 Blocked Gauge Enter the stitch and row count of your blocked swatch per 4 inches (10 cm). Inches Centimeters STITCHES per 4 inches ROWS per 4 inches Back Create Project A premium tool for independent knitwear designers",
+      "roleTabs": 0,
+      "buttons": 5,
+      "bodyHeight": 1040,
+      "viewportHeight": 900
+    },
+    {
+      "file": "screenshots/new-project--created-empty-workspace__desktop-1280.png",
+      "width": "desktop-1280",
+      "slug": "new-project--created-empty-workspace",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/msx28r458ovvbvuzacd",
+      "title": "Stitch & Scale",
+      "text": "Stitch & Scale Local only Saved Projects Portfolio Settings New Project Cycle QA Cardigan M By Independent QA • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab Listing Test Lab Yarn Pool Lab Membership Lab Release Timing Lab Booth Lab Channel Lab Workshop Lab Re-Price Lab Bundle Lab Retreat Lab Podcast Lab Magazine Lab Price Psych Lab POD Patterns Lab Take-Rate Lab Box Inclusion Lab Yarn Licensing Lab Gift & Credit Lab Wholesale List Lab Intl Pricing Lab Tes",
+      "roleTabs": 79,
+      "buttons": 88,
+      "bodyHeight": 900,
+      "viewportHeight": 900
+    },
+    {
+      "file": "screenshots/demo-project--current-clean-cta__desktop-1280.png",
+      "width": "desktop-1280",
+      "slug": "demo-project--current-clean-cta",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/mss5osqd88j6fdyvtdu",
+      "title": "Stitch & Scale",
+      "text": "Stitch & Scale Local only Saved Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab Listing Test Lab Yarn Pool Lab Membership Lab Release Timing Lab Booth Lab Channel Lab Workshop Lab Re-Price Lab Bundle Lab Retreat Lab Podcast Lab Magazine Lab Price Psych Lab POD Patterns Lab Take-Rate Lab Box Inclusion Lab Yarn Licensing Lab Gift & Credit Lab Wholesale List Lab Intl Pricing",
+      "roleTabs": 79,
+      "buttons": 91,
+      "bodyHeight": 900,
+      "viewportHeight": 900
+    },
+    {
+      "width": "desktop-1280",
+      "slug": "demo-project--navigation-check",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/mss5osqd88j6fdyvtdu",
+      "projectNotFound": false,
+      "roleTabs": 79,
+      "hasLabsNavigator": false,
+      "hasCoreTabs": true
+    },
+    {
+      "file": "screenshots/demo-project--pdf-route__desktop-1280.png",
+      "width": "desktop-1280",
+      "slug": "demo-project--pdf-route",
+      "note": "",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/mss5osqd88j6fdyvtdu/pdf",
+      "title": "Stitch & Scale",
+      "text": "Stitch & Scale Local only Saved Projects Portfolio Settings New Project Back Classic Crew Neck Sweater PDF Export The filename is a suggestion — you can rename it before every export, and your preferred naming style will be remembered. TEMPLATE Sample Knitwear Pattern by Designer MINIMAL Clean, Apple-adjacent restraint. Generous whitespace, quiet precision. Sample Knitwear Pattern by Designer LUXURY Fashion-magazine editorial. Playfair Display serif, gold accents. Sample Knitwear Pattern by Designer CRAFT / COZY Warm, handmade. Lora serif, terracotta warmth, old-knitting-magazine feel. Sample Knitwear Pattern by Designer TECHNICAL / BLUEPRINT Engineering precision. IBM Plex, blueprint grid — the grading math is serious. BRANDING Upload your logo Replaces the Stitch & Scale mark on the cover INCLUDE Cover Page Gauge Summary Pattern Notes FILENAME .pdf Your naming style will be remembered after the first export. Export PDF A print dialog will open — choose “Save as PDF” there to finish L",
+      "roleTabs": 0,
+      "buttons": 9,
+      "bodyHeight": 1253,
+      "viewportHeight": 900
+    },
+    {
+      "width": "desktop-1280",
+      "slug": "demo-project--pdf-route-check",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/mss5osqd88j6fdyvtdu/pdf",
+      "hasPdfText": true
+    }
+  ],
+  "errors": [],
+  "consoleErrors": []
+}

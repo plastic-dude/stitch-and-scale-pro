@@ -1,0 +1,123 @@
+[
+  {
+    "i": 55,
+    "label": "Membership Lab",
+    "rect": {
+      "x": 23.25,
+      "y": 240,
+      "w": 135.5,
+      "h": 44
+    },
+    "visible": true
+  },
+  {
+    "i": 56,
+    "label": "Release Timing Lab",
+    "rect": {
+      "x": 162.75,
+      "y": 240,
+      "w": 150.6875,
+      "h": 44
+    },
+    "visible": true
+  },
+  {
+    "i": 57,
+    "label": "Booth Lab",
+    "rect": {
+      "x": 317.4375,
+      "y": 240,
+      "w": 92.859375,
+      "h": 44
+    },
+    "visible": true
+  },
+  {
+    "i": 58,
+    "label": "Channel Lab",
+    "rect": {
+      "x": 414.296875,
+      "y": 240,
+      "w": 106.5625,
+      "h": 44
+    },
+    "visible": true
+  },
+  {
+    "i": 59,
+    "label": "Workshop Lab",
+    "rect": {
+      "x": 524.859375,
+      "y": 240,
+      "w": 120.421875,
+      "h": 44
+    },
+    "visible": true
+  },
+  {
+    "i": 60,
+    "label": "Re-Price Lab",
+    "rect": {
+      "x": 649.28125,
+      "y": 240,
+      "w": 110.3125,
+      "h": 44
+    },
+    "visible": true
+  },
+  {
+    "i": 61,
+    "label": "Bundle Lab",
+    "rect": {
+      "x": 763.59375,
+      "y": 240,
+      "w": 98.546875,
+      "h": 44
+    },
+    "visible": true
+  },
+  {
+    "i": 62,
+    "label": "Retreat Lab",
+    "rect": {
+      "x": 866.140625,
+      "y": 240,
+      "w": 100.96875,
+      "h": 44
+    },
+    "visible": true
+  },
+  {
+    "i": 63,
+    "label": "Podcast Lab",
+    "rect": {
+      "x": 971.109375,
+      "y": 240,
+      "w": 107.6875,
+      "h": 44
+    },
+    "visible": true
+  },
+  {
+    "i": 64,
+    "label": "Magazine Lab",
+    "rect": {
+      "x": 1082.796875,
+      "y": 240,
+      "w": 115.109375,
+      "h": 44
+    },
+    "visible": true
+  },
+  {
+    "i": 65,
+    "label": "Price Psych Lab",
+    "rect": {
+      "x": 1201.90625,
+      "y": 240,
+      "w": 127.96875,
+      "h": 44
+    },
+    "visible": true
+  }
+]

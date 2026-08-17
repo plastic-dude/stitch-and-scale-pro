@@ -1,0 +1,239 @@
+[
+  {
+    "label": "android-360",
+    "width": 360,
+    "data": {
+      "text": "All Labs",
+      "aria": "Open grouped list of all 79 workspace labs",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      },
+      "display": "inline-flex",
+      "visibility": "visible",
+      "opacity": "1",
+      "anc": [
+        {
+          "tag": "DIV",
+          "cls": "",
+          "display": "block",
+          "visibility": "visible",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          }
+        },
+        {
+          "tag": "DIV",
+          "cls": "lg:hidden mb-2",
+          "display": "block",
+          "visibility": "visible",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          }
+        },
+        {
+          "tag": "DIV",
+          "cls": "items-center justify-center rounded-lg text-muted-foreground hidden lg:flex lg:flex-nowrap w-full gap-1 bg-card border border-border p-1 h-auto overflow-x-auto",
+          "display": "none",
+          "visibility": "visible",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          }
+        },
+        {
+          "tag": "DIV",
+          "cls": "w-full",
+          "display": "block",
+          "visibility": "visible",
+          "rect": {
+            "x": 16,
+            "y": 339,
+            "w": 328,
+            "h": 508
+          }
+        },
+        {
+          "tag": "DIV",
+          "cls": "space-y-6 animate-in fade-in duration-500",
+          "display": "block",
+          "visibility": "visible",
+          "rect": {
+            "x": 16,
+            "y": 81,
+            "w": 328,
+            "h": 766
+          }
+        }
+      ]
+    }
+  },
+  {
+    "label": "iphone-390",
+    "width": 390,
+    "data": {
+      "text": "All Labs",
+      "aria": "Open grouped list of all 79 workspace labs",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      },
+      "display": "inline-flex",
+      "visibility": "visible",
+      "opacity": "1",
+      "anc": [
+        {
+          "tag": "DIV",
+          "cls": "",
+          "display": "block",
+          "visibility": "visible",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          }
+        },
+        {
+          "tag": "DIV",
+          "cls": "lg:hidden mb-2",
+          "display": "block",
+          "visibility": "visible",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          }
+        },
+        {
+          "tag": "DIV",
+          "cls": "items-center justify-center rounded-lg text-muted-foreground hidden lg:flex lg:flex-nowrap w-full gap-1 bg-card border border-border p-1 h-auto overflow-x-auto",
+          "display": "none",
+          "visibility": "visible",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          }
+        },
+        {
+          "tag": "DIV",
+          "cls": "w-full",
+          "display": "block",
+          "visibility": "visible",
+          "rect": {
+            "x": 16,
+            "y": 307,
+            "w": 358,
+            "h": 460
+          }
+        },
+        {
+          "tag": "DIV",
+          "cls": "space-y-6 animate-in fade-in duration-500",
+          "display": "block",
+          "visibility": "visible",
+          "rect": {
+            "x": 16,
+            "y": 81,
+            "w": 358,
+            "h": 686
+          }
+        }
+      ]
+    }
+  },
+  {
+    "label": "iphone-430",
+    "width": 430,
+    "data": {
+      "text": "All Labs",
+      "aria": "Open grouped list of all 79 workspace labs",
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0
+      },
+      "display": "inline-flex",
+      "visibility": "visible",
+      "opacity": "1",
+      "anc": [
+        {
+          "tag": "DIV",
+          "cls": "",
+          "display": "block",
+          "visibility": "visible",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          }
+        },
+        {
+          "tag": "DIV",
+          "cls": "lg:hidden mb-2",
+          "display": "block",
+          "visibility": "visible",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          }
+        },
+        {
+          "tag": "DIV",
+          "cls": "items-center justify-center rounded-lg text-muted-foreground hidden lg:flex lg:flex-nowrap w-full gap-1 bg-card border border-border p-1 h-auto overflow-x-auto",
+          "display": "none",
+          "visibility": "visible",
+          "rect": {
+            "x": 0,
+            "y": 0,
+            "w": 0,
+            "h": 0
+          }
+        },
+        {
+          "tag": "DIV",
+          "cls": "w-full",
+          "display": "block",
+          "visibility": "visible",
+          "rect": {
+            "x": 16,
+            "y": 247,
+            "w": 398,
+            "h": 460
+          }
+        },
+        {
+          "tag": "DIV",
+          "cls": "space-y-6 animate-in fade-in duration-500",
+          "display": "block",
+          "visibility": "visible",
+          "rect": {
+            "x": 16,
+            "y": 81,
+            "w": 398,
+            "h": 626
+          }
+        }
+      ]
+    }
+  }
+]

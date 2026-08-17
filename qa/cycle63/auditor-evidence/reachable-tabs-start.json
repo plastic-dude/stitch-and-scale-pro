@@ -1,0 +1,123 @@
+[
+  {
+    "i": 40,
+    "label": "Submissions",
+    "rect": {
+      "x": 6.359375,
+      "y": 240,
+      "w": 108.6875,
+      "h": 44
+    },
+    "visible": true
+  },
+  {
+    "i": 41,
+    "label": "Lookbook",
+    "rect": {
+      "x": 119.046875,
+      "y": 240,
+      "w": 93.109375,
+      "h": 44
+    },
+    "visible": true
+  },
+  {
+    "i": 42,
+    "label": "Spec Sheet",
+    "rect": {
+      "x": 216.15625,
+      "y": 240,
+      "w": 101.78125,
+      "h": 44
+    },
+    "visible": true
+  },
+  {
+    "i": 43,
+    "label": "Distribution",
+    "rect": {
+      "x": 321.9375,
+      "y": 240,
+      "w": 102.234375,
+      "h": 44
+    },
+    "visible": true
+  },
+  {
+    "i": 44,
+    "label": "Listing SEO",
+    "rect": {
+      "x": 428.171875,
+      "y": 240,
+      "w": 100.421875,
+      "h": 44
+    },
+    "visible": true
+  },
+  {
+    "i": 45,
+    "label": "Ad Break-Even",
+    "rect": {
+      "x": 532.59375,
+      "y": 240,
+      "w": 123.828125,
+      "h": 44
+    },
+    "visible": true
+  },
+  {
+    "i": 46,
+    "label": "Sample & Launch",
+    "rect": {
+      "x": 660.421875,
+      "y": 240,
+      "w": 138.703125,
+      "h": 44
+    },
+    "visible": true
+  },
+  {
+    "i": 47,
+    "label": "Collab Deal Math",
+    "rect": {
+      "x": 803.125,
+      "y": 240,
+      "w": 136.609375,
+      "h": 44
+    },
+    "visible": true
+  },
+  {
+    "i": 48,
+    "label": "Photo ROI",
+    "rect": {
+      "x": 943.734375,
+      "y": 240,
+      "w": 92.140625,
+      "h": 44
+    },
+    "visible": true
+  },
+  {
+    "i": 49,
+    "label": "Video & Social",
+    "rect": {
+      "x": 1039.875,
+      "y": 240,
+      "w": 120.515625,
+      "h": 44
+    },
+    "visible": true
+  },
+  {
+    "i": 50,
+    "label": "Show ROI",
+    "rect": {
+      "x": 1164.390625,
+      "y": 240,
+      "w": 89.234375,
+      "h": 44
+    },
+    "visible": true
+  }
+]
