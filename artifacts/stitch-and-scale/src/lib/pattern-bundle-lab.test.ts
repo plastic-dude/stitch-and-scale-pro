@@ -213,4 +213,64 @@ describe('pattern-bundle-lab', () => {
     expect(r.verdict).toBe('Skip the bundle — sell solo');
     expect(r.flags.length).toBeGreaterThanOrEqual(0);
   });
+
+  // QA #46.2 — the renegotiate note must never restate the current price as
+  // a "lift" lever (numerically inert suggestion).
+  it('renegotiate note never suggests lifting the bundle to the current price', () => {
+    const cases: Array<[Partial<PatternBundleInput>, number]> = [
+      // Bundle already at/above the 50%-of-sum floor (QA's reproduction case).
+      [
+        {
+          bundleSales: 30,
+          bundleSalesBest: 60,
+          bundleSalesWorst: 10,
+          soloSalesPerPattern: 20,
+          promoHours: 40,
+        },
+        14,
+      ],
+      // Higher-priced bundle, deep underwater, floor met long ago.
+      [
+        {
+          bundlePrice: 30,
+          bundleSales: 25,
+          bundleSalesBest: 50,
+          bundleSalesWorst: 5,
+          soloSalesPerPattern: 18,
+          promoHours: 35,
+          hostCommission: 0.3,
+        },
+        30,
+      ],
+    ];
+    for (const [ov, price] of cases) {
+      const r = analyzePatternBundle(bundleIn(ov));
+      expect(r.verdict).toBe('Not yet — renegotiate before signing');
+      expect(r.verdictNote).not.toContain(`lift the bundle to $${price}`);
+      expect(r.verdictNote).toContain(
+        `the $${price.toFixed(0)} price already sits at the 50%-of-sum floor — skip it`
+      );
+    }
+  });
+  it('renegotiate note lifts the price only when the suggestion beats the current one', () => {
+    const r = analyzePatternBundle(
+      bundleIn({
+        bundlePrice: 6,
+        bundleSales: 200,
+        bundleSalesBest: 400,
+        bundleSalesWorst: 100,
+        soloSalesPerPattern: 15,
+        promoHours: 30,
+        hostCommission: 0.3,
+        emailGained: 0,
+        hourlyRate: 40,
+      })
+    );
+    expect(r.verdict).toBe('Not yet — renegotiate before signing');
+    // $21-sum 50% floor is $10.50 — above the $6 current price, so the lift
+    // lever is named with the floor value.
+    expect(r.verdictNote).toContain('lift the bundle to $10.5 (40-60% off the $21 sum)');
+    expect(r.verdictNote).toContain('cut host commission under 25%');
+    expect(r.verdictNote).toContain('demand a host-floor');
+  });
 });

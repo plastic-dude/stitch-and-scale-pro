@@ -28,3 +28,15 @@
 - #50: fixed-in-flight — testknitlab in workspace (lines 110, 205, 945).
 
 ## Gates (from CHK-110/111): tsc clean, 1,779 tests/114 files, build green — re-run after fix.
+
+## Done
+- Commit: 7139247 pushed to origin/main. Gates: tsc clean, 1784 tests/114 files, build green. Screenshot saved docs/screenshots/chk-112-reprice-zero-sellthrough.webp (ladder shows "$0.00 at zero sell-through" chip on top row, no BEST badge, footer "No step moves stock at zero sell-through...").
+- Issue #45 to close with this evidence.
+- Issues #43/#44/#48/#49/#50/#51 to close as fixed-in-flight with evidence lines:
+  - #49: CHK-079 9d0011c; all 13+ currencies pinned by suite (fmtMoney coverage test).
+  - #51: CHK-084 e71b85a; test "renders the EUR/CHF compound key" → "€9.40 / CHF 9.40".
+  - #43: card release-timing-lab-card.tsx lines 144/145 display value*100 with % suffix.
+  - #44: workshop-teaching-lab.ts uses Math.round(pct*100)+"%" (line 193) — rounded %, no raw fraction.
+  - #48: giftcard-lab.ts resolvedEscheatTake consumed at lines 176 and 272.
+  - #50: workspace project-workspace.tsx lines 110/205/945 carry testknitlab.
+- Next backlog: #46 (bundle self-referencing copy, verify), #47 (podcast tab + magazine raw fraction, verify), then MAJORs S182/S251/S160.

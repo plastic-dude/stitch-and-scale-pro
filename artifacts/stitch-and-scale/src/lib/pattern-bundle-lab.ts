@@ -304,7 +304,7 @@ export function analyzePatternBundle(input: PatternBundleInput): PatternBundleRe
   }
 
   // ---- Verdict ladder ----
-  const worthGap = myReal.incremental - myReal.soloBaseline * 0.5;
+  const suggestedPrice = Math.round((standaloneSum * 0.5) * 2) / 2;
 
   let verdict: string;
   let verdictNote: string;
@@ -314,7 +314,11 @@ export function analyzePatternBundle(input: PatternBundleInput): PatternBundleRe
     verdictNote = `Even a best-case launch of ${input.bundleSalesBest} sales leaves you ≈$${(breakEvenSales === Infinity ? '∞' : (myReal.soloBaseline - scenarios[2].designers[0].netTake).toFixed(0))} behind your solo window. At ${input.patterns.length} pattern(s) and a ${(discountShare * 100).toFixed(0)}% discount, there is no volume story here — publish normally and keep 100% of the margin.`;
   } else if (myReal.incremental < 0) {
     verdict = 'Not yet — renegotiate before signing';
-    verdictNote = `Realistic sales of ${realistic.sales.toLocaleString('en-US')} net you $${myReal.netTake.toFixed(0)} vs $${myReal.soloBaseline.toFixed(0)} solo — $${Math.abs(myReal.incremental).toFixed(0)} underwater. Fix one lever: lift the bundle to $${Math.max(input.bundlePrice, Math.round((standaloneSum * 0.5) * 2) / 2)} (40-60% off), cut host commission under 25%, or demand a host-floor of ≈${floorSales === Infinity ? '∞' : floorSales.toLocaleString('en-US')} sales. The bundle then flips to +$${(perSaleIncrement * Math.max(breakEvenSales, input.bundleSales) - Math.max(0, mySoloWindow) - promoCost).toFixed(0)} territory.`;
+    const priceLever =
+      suggestedPrice > input.bundlePrice
+        ? `lift the bundle to $${suggestedPrice} (40-60% off the $${standaloneSum.toFixed(0)} sum), `
+        : `the $${input.bundlePrice.toFixed(0)} price already sits at the 50%-of-sum floor — skip it, `;
+    verdictNote = `Realistic sales of ${realistic.sales.toLocaleString('en-US')} net you $${myReal.netTake.toFixed(0)} vs $${myReal.soloBaseline.toFixed(0)} solo — $${Math.abs(myReal.incremental).toFixed(0)} underwater. Fix one lever: ${priceLever}cut host commission under 25%, or demand a host-floor of ≈${floorSales === Infinity ? '∞' : floorSales.toLocaleString('en-US')} sales. The bundle then flips to +$${(perSaleIncrement * Math.max(breakEvenSales, input.bundleSales) - Math.max(0, mySoloWindow) - promoCost).toFixed(0)} territory.`;
   } else if (realistic.effectiveHourly < input.hourlyRate * 0.6) {
     verdict = 'Worth it, but make the host carry the launch';
     verdictNote = `You clear $${myReal.incremental.toFixed(0)} over solo at realistic sales — but your ${input.promoHours} promo hours price at $${realistic.effectiveHourly.toFixed(0)}/hr. Make the host do the email blast, the Instagram takeover, and the giveaway logistics; that labor is what their ${input.hostCommission * 100}% commission is for. With a true floor and shared labor this is a solid launch.`;
