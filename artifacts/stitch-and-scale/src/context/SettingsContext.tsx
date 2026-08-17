@@ -9,7 +9,7 @@ import {
 // which persists to IndexedDB AND localStorage atomically.
 import { writeProjects } from '@/lib/storage-lib';
 import type { PatternProject } from '@/lib/grading-engine';
-import { getInitialLanguage, translate, type LanguageCode, type TranslationKey } from '@/lib/i18n';
+import { getInitialLanguage, translate, type LanguageCode, type TranslationKey, type TranslationVariables } from '@/lib/i18n';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -67,7 +67,7 @@ interface SettingsContextType extends SettingsState {
   importData:             (jsonData: string) => boolean;
   setOnboardingCompleted: (completed: boolean) => void;
   setLanguage:           (language: LanguageCode) => void;
-  t:                     (key: TranslationKey) => string;
+  t:                     (key: TranslationKey, variables?: TranslationVariables) => string;
 }
 
 // ─── Defaults ─────────────────────────────────────────────────────────────────
@@ -150,7 +150,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     setSettings(s => ({ ...s, customStandard: JSON.parse(JSON.stringify(SIZE_STANDARDS)) }));
   const setOnboardingCompleted = (onboardingCompleted: boolean)  => setSettings(s => ({ ...s, onboardingCompleted }));
   const setLanguage = (language: LanguageCode) => setSettings(s => ({ ...s, language }));
-  const t = (key: TranslationKey) => translate(settings.language, key);
+  const t = (key: TranslationKey, variables?: TranslationVariables) => translate(settings.language, key, variables);
 
   const exportData = () => {
     try {

@@ -16,6 +16,8 @@ import {
   type CollabType,
 } from '@/lib/collab-evaluator';
 import { PLATFORMS, PLATFORM_LABELS, type PlatformId } from '@/lib/pattern-income-calculator';
+import { useSettings } from '@/context/SettingsContext';
+import { COLLAB_EVALUATOR_COPY } from '@/lib/collab-evaluator-copy';
 
 interface StoredCollab {
   input: CollabInput;
@@ -79,6 +81,8 @@ function NumField({ id, label, value, onChange, min = 0, max, step = 1, hint }: 
 }
 
 export function CollabEvaluatorCard({ project }: { project: PatternProject }) {
+  const { language } = useSettings();
+  const copyText = COLLAB_EVALUATOR_COPY[language];
   const { toast } = useToast();
   const [stored, setStored] = useState<StoredCollab>(() => loadStored(project.id));
 
@@ -95,9 +99,9 @@ export function CollabEvaluatorCard({ project }: { project: PatternProject }) {
   const copy = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      toast({ title: 'Copied — paste it into your reply.' });
+      toast({ title: copyText.copied });
     } catch {
-      toast({ title: 'Copy failed — select the text manually.' });
+      toast({ title: copyText.copyFailed });
     }
   };
 
@@ -105,24 +109,21 @@ export function CollabEvaluatorCard({ project }: { project: PatternProject }) {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
-          <HeartHandshake className="h-4 w-4" /> Collab & Exposure Evaluator
+          <HeartHandshake className="h-4 w-4" /> {copyText.title}
         </CardTitle>
         <CardDescription>
-          "Exposure" is not currency — the Ravelry census found 72.3% of pattern sellers earned under
-          $50, and the 2026 wave of unpaid-collab asks demands more scrutiny than ever. This prices the
-          ask at your own rate, caps what a brand's followers are honestly worth, flags rights grabs,
-          and writes your counter or decline for you.
+          {copyText.description}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="rounded-md border border-border/60 bg-muted/40 p-4 space-y-4">
           <div className="flex items-center gap-2">
             <Handshake className="w-4 h-4 text-primary" />
-            <span className="text-sm font-medium">The offer on the table</span>
+            <span className="text-sm font-medium">{copyText.offer}</span>
           </div>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             <div className="col-span-2 sm:col-span-3 space-y-1.5">
-              <Label className="text-xs">What kind of ask is this?</Label>
+              <Label className="text-xs">{copyText.askType}</Label>
               <Select
                 value={input.collabType}
                 onValueChange={(v) => patchInput({ collabType: v as CollabType })}
@@ -137,33 +138,33 @@ export function CollabEvaluatorCard({ project }: { project: PatternProject }) {
                 </SelectContent>
               </Select>
             </div>
-            <NumField id="ce-offered" label="Offered fee / value ($)" value={input.offeredValue}
+            <NumField id="ce-offered" label={copyText.offered} value={input.offeredValue}
               onChange={(v) => patchInput({ offeredValue: v })} step={25}
               hint="The cash offer, or the lump sum for the license." />
-            <NumField id="ce-hours" label="Hours required" value={input.requiredHours}
+            <NumField id="ce-hours" label={copyText.hours} value={input.requiredHours}
               onChange={(v) => patchInput({ requiredHours: v })} hint="Design + grading + sampling + tech doc." />
-            <NumField id="ce-rate" label="Your rate ($/hr)" value={input.hourlyRate}
+            <NumField id="ce-rate" label={copyText.rate} value={input.hourlyRate}
               onChange={(v) => patchInput({ hourlyRate: v })} hint="From your income math." />
-            <NumField id="ce-sample" label="Sample cost ($)" value={input.sampleCost}
+            <NumField id="ce-sample" label={copyText.sample} value={input.sampleCost}
               onChange={(v) => patchInput({ sampleCost: v })} hint="Yarn + swatching + photos if not provided." />
-            <NumField id="ce-posts" label="Required posts / Reels" value={input.postingRequirements}
+            <NumField id="ce-posts" label={copyText.posts} value={input.postingRequirements}
               onChange={(v) => patchInput({ postingRequirements: v })} hint="Each demanded post is ~1.5h at your rate." />
-            <NumField id="ce-excl" label="Exclusivity (months)" value={input.exclusivityMonths}
+            <NumField id="ce-excl" label={copyText.exclusivity} value={input.exclusivityMonths}
               onChange={(v) => patchInput({ exclusivityMonths: v })} hint="What your own channel loses while locked out." />
             <div className="flex items-center gap-2 pt-6">
               <Checkbox id="ce-yarn" checked={input.yarnProvided}
                 onCheckedChange={(v) => patchInput({ yarnProvided: v === true })} />
-              <Label htmlFor="ce-yarn" className="text-xs">Yarn provided free</Label>
+              <Label htmlFor="ce-yarn" className="text-xs">{copyText.yarnFree}</Label>
             </div>
             <div className="flex items-center gap-2 pt-6">
               <Checkbox id="ce-copyright" checked={input.fullCopyrightTransfer}
                 onCheckedChange={(v) => patchInput({ fullCopyrightTransfer: v === true })} />
-              <Label htmlFor="ce-copyright" className="text-xs">Full copyright transfer</Label>
+              <Label htmlFor="ce-copyright" className="text-xs">{copyText.copyright}</Label>
             </div>
             <div className="flex items-center gap-2 pt-6">
               <Checkbox id="ce-reputation" checked={input.unpaidReputation}
                 onCheckedChange={(v) => patchInput({ unpaidReputation: v === true })} />
-              <Label htmlFor="ce-reputation" className="text-xs">Unpaid-ask reputation</Label>
+              <Label htmlFor="ce-reputation" className="text-xs">{copyText.reputation}</Label>
             </div>
           </div>
         </div>
@@ -171,28 +172,28 @@ export function CollabEvaluatorCard({ project }: { project: PatternProject }) {
         {(input.collabType === 'royalty' || input.collabType === 'flat_fee') && (
           <div className="rounded-md border border-border/60 bg-muted/40 p-4 space-y-4">
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-              <NumField id="ce-royaltypct" label="Royalty (%)" value={input.royaltyPct * 100}
+              <NumField id="ce-royaltypct" label={copyText.royalty} value={input.royaltyPct * 100}
                 onChange={(v) => patchInput({ royaltyPct: Math.min(Math.max(v, 0) / 100, 1) })} step={5}
                 hint="30% of net is the cited precedent (Making Stories)." />
               <div className="space-y-1.5">
-                <Label className="text-xs">Royalty base</Label>
+                <Label className="text-xs">{copyText.royaltyBase}</Label>
                 <Select value={input.royaltyBase}
                   onValueChange={(v) => patchInput({ royaltyBase: v as 'net' | 'gross' })}>
                   <SelectTrigger className="bg-background">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="net">Net (precedent)</SelectItem>
-                    <SelectItem value="gross">Gross (pays more)</SelectItem>
+                    <SelectItem value="net">{copyText.net}</SelectItem>
+                    <SelectItem value="gross">{copyText.gross}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
-              <NumField id="ce-companysales" label="Company channel sales" value={input.companySales}
+              <NumField id="ce-companysales" label={copyText.companySales} value={input.companySales}
                 onChange={(v) => patchInput({ companySales: v })} step={25} />
-              <NumField id="ce-price" label="Pattern price ($)" value={input.patternPrice}
+              <NumField id="ce-price" label={copyText.patternPrice} value={input.patternPrice}
                 onChange={(v) => patchInput({ patternPrice: v })} step={0.5} />
               <div className="col-span-2 space-y-1.5">
-                <Label className="text-xs">Royalty sales platform</Label>
+                <Label className="text-xs">{copyText.royaltyPlatform}</Label>
                 <Select value={input.platform}
                   onValueChange={(v) => patchInput({ platform: v as PlatformId })}>
                   <SelectTrigger className="bg-background">
@@ -212,17 +213,17 @@ export function CollabEvaluatorCard({ project }: { project: PatternProject }) {
         <div className="rounded-md border border-border/60 bg-muted/40 p-4 space-y-4">
           <div className="flex items-center gap-2">
             <Handshake className="w-4 h-4 text-primary" />
-            <span className="text-sm font-medium">Your own baseline + the brand</span>
+            <span className="text-sm font-medium">{copyText.baseline}</span>
           </div>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-            <NumField id="ce-ownsales" label="Own monthly sales" value={input.ownMonthlySales}
+            <NumField id="ce-ownsales" label={copyText.ownSales} value={input.ownMonthlySales}
               onChange={(v) => patchInput({ ownMonthlySales: v })} step={5}
               hint="Sales through your channel — what exclusivity locks out." />
-            <NumField id="ce-followers" label="Brand followers (total)" value={input.brandFollowers}
+            <NumField id="ce-followers" label={copyText.followers} value={input.brandFollowers}
               onChange={(v) => patchInput({ brandFollowers: v })} step={1000}
               hint="The ceiling of the 'reach' claim — 0.5% conversion cap." />
             <div className="space-y-1.5">
-              <Label className="text-xs">Channel platform</Label>
+              <Label className="text-xs">{copyText.channel}</Label>
               <Select value={input.platform}
                 onValueChange={(v) => patchInput({ platform: v as PlatformId })}>
                 <SelectTrigger className="bg-background">
@@ -248,10 +249,10 @@ export function CollabEvaluatorCard({ project }: { project: PatternProject }) {
           </div>
           <div className="rounded-md border border-border p-4 space-y-3">
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              Offer net of the floor
+              {copyText.offerNet}
               {input.collabType === 'exclusive_license' && (
                 <Badge variant="outline" className="text-[10px]">
-                  locked-out: {fmt$(result.lockedOutValue)}
+                  {copyText.lockedOut}: {fmt$(result.lockedOutValue)}
                 </Badge>
               )}
             </div>
@@ -263,8 +264,8 @@ export function CollabEvaluatorCard({ project }: { project: PatternProject }) {
             </p>
           </div>
           <div className="rounded-md border border-border p-4 space-y-3">
-            <div className="text-xs text-muted-foreground">Exposure — the honest reading</div>
-            <div className="text-2xl font-bold">{fmt$(result.exposure.realisticReach)} <span className="text-xs font-normal text-muted-foreground">/ ceiling {fmt$(result.exposure.grossExposureValue)}</span></div>
+            <div className="text-xs text-muted-foreground">{copyText.exposure}</div>
+            <div className="text-2xl font-bold">{fmt$(result.exposure.realisticReach)} <span className="text-xs font-normal text-muted-foreground">/ {copyText.ceiling} {fmt$(result.exposure.grossExposureValue)}</span></div>
             <p className="text-[11px] leading-relaxed text-muted-foreground">
               Followers × 0.5% conversion × your net per sale, floored at $50. Exposure is shown, not inflated — it can never turn a walk into a take.
             </p>
@@ -273,8 +274,8 @@ export function CollabEvaluatorCard({ project }: { project: PatternProject }) {
 
         <div className="rounded-md border border-border p-4 space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium">Verdict</span>
-            <Badge className={verdictBadge(result.verdict)}>{result.verdict === 'take' ? 'Take it' : result.verdict === 'counter' ? 'Counter' : 'Walk away'}</Badge>
+            <span className="text-sm font-medium">{copyText.verdict}</span>
+            <Badge className={verdictBadge(result.verdict)}>{result.verdict === 'take' ? copyText.take : result.verdict === 'counter' ? copyText.counter : copyText.walk}</Badge>
           </div>
           <p className="text-sm leading-relaxed">{result.verdictReason}</p>
         </div>
@@ -282,7 +283,7 @@ export function CollabEvaluatorCard({ project }: { project: PatternProject }) {
         {result.redFlags.length > 0 && (
           <div className="rounded-md border border-destructive/30 bg-destructive/5 p-4 space-y-2">
             <div className="flex items-center gap-2 text-sm font-medium text-destructive">
-              <AlertTriangle className="w-4 h-4" /> Red flags
+              <AlertTriangle className="w-4 h-4" /> {copyText.redFlags}
             </div>
             {result.redFlags.map((f) => (
               <div key={f.code} className="flex items-start gap-2 text-xs leading-relaxed">
@@ -297,9 +298,9 @@ export function CollabEvaluatorCard({ project }: { project: PatternProject }) {
 
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium">Your reply</span>
+            <span className="text-sm font-medium">{copyText.reply}</span>
             <Button variant="outline" size="sm" className="gap-2 h-8" onClick={() => copy(result.replyLetter)}>
-              <ClipboardCopy className="w-3.5 h-3.5" /> Copy letter
+              <ClipboardCopy className="w-3.5 h-3.5" /> {copyText.copyLetter}
             </Button>
           </div>
           <pre className="whitespace-pre-wrap rounded-md border border-border bg-muted/40 p-4 text-xs leading-relaxed">

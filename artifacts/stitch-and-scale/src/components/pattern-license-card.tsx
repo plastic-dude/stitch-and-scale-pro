@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { projectStorage, type ProjectStorageHandle } from '@/lib/storage-lib';
+import { useSettings } from '@/context/SettingsContext';
+import { PATTERN_LICENSE_COPY } from '@/lib/pattern-license-copy';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -79,6 +81,8 @@ export function PatternLicensePlannerCard({ project }: { project: PatternProject
   // issue #4 project seam: one scoped store per project; the legacy flat key 'pslc-v1' is folded in on first read, then removed.
   const handle = useMemo(() => projectStorage<StoredLicence>('pslicense', project.id, ['pslc-v1']), [project.id]);
   const { toast } = useToast();
+  const { language } = useSettings();
+  const copyText = PATTERN_LICENSE_COPY[language];
   const [stored, setStored] = useState(() => loadStored(handle));
 
   useEffect(() => {
@@ -108,9 +112,9 @@ export function PatternLicensePlannerCard({ project }: { project: PatternProject
   const copy = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      toast({ title: 'Copied to clipboard' });
+      toast({ title: copyText.copied });
     } catch {
-      toast({ title: 'Select and copy manually' });
+      toast({ title: copyText.copyManually });
     }
   };
 
@@ -126,18 +130,17 @@ export function PatternLicensePlannerCard({ project }: { project: PatternProject
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Scale className="h-5 w-5" /> Pattern License Planner
+          <Scale className="h-5 w-5" /> {copyText.title}
         </CardTitle>
         <CardDescription>
-          A yarn company or marketplace wants the rights to this pattern? Price their offer against what
-          self-publishing would earn — and run an eight-point rights audit before you sign anything.
+          {copyText.description}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Pattern baseline */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div className="space-y-1.5">
-            <Label htmlFor="pl-weight">Yarn weight</Label>
+            <Label htmlFor="pl-weight">{copyText.yarnWeight}</Label>
             <Select value={stored.yarnWeight} onValueChange={(v) => setField({ yarnWeight: v })}>
               <SelectTrigger id="pl-weight"><SelectValue /></SelectTrigger>
               <SelectContent>
@@ -148,7 +151,7 @@ export function PatternLicensePlannerCard({ project }: { project: PatternProject
             </Select>
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="pl-platform">Where you'd self-sell</Label>
+            <Label htmlFor="pl-platform">{copyText.selfSell}</Label>
             <Select value={stored.platform} onValueChange={(v) => setField({ platform: v as PlatformId })}>
               <SelectTrigger id="pl-platform"><SelectValue /></SelectTrigger>
               <SelectContent>
@@ -159,7 +162,7 @@ export function PatternLicensePlannerCard({ project }: { project: PatternProject
             </Select>
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="pl-price">Pattern price ($)</Label>
+            <Label htmlFor="pl-price">{copyText.patternPrice}</Label>
             <Input
               id="pl-price"
               type="number"
@@ -169,7 +172,7 @@ export function PatternLicensePlannerCard({ project }: { project: PatternProject
             />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="pl-sales">Expected monthly sales</Label>
+            <Label htmlFor="pl-sales">{copyText.monthlySales}</Label>
             <Input
               id="pl-sales"
               type="number"
@@ -179,7 +182,7 @@ export function PatternLicensePlannerCard({ project }: { project: PatternProject
             />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="pl-rate">Design rate ($/hr)</Label>
+            <Label htmlFor="pl-rate">{copyText.designRate}</Label>
             <Input
               id="pl-rate"
               type="number"
@@ -189,7 +192,7 @@ export function PatternLicensePlannerCard({ project }: { project: PatternProject
             />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="pl-hours">Hours already invested</Label>
+            <Label htmlFor="pl-hours">{copyText.hoursInvested}</Label>
             <Input
               id="pl-hours"
               type="number"
@@ -199,7 +202,7 @@ export function PatternLicensePlannerCard({ project }: { project: PatternProject
             />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="pl-horizon">Comparison horizon (months)</Label>
+            <Label htmlFor="pl-horizon">{copyText.horizon}</Label>
             <Input
               id="pl-horizon"
               type="number"
@@ -214,7 +217,7 @@ export function PatternLicensePlannerCard({ project }: { project: PatternProject
         {/* The offer */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <div className="space-y-1.5">
-            <Label htmlFor="pl-type">Deal structure</Label>
+            <Label htmlFor="pl-type">{copyText.dealStructure}</Label>
             <Select value={stored.offer.type} onValueChange={(v) => setOffer({ type: v as LicenceType })}>
               <SelectTrigger id="pl-type"><SelectValue /></SelectTrigger>
               <SelectContent>
@@ -226,7 +229,7 @@ export function PatternLicensePlannerCard({ project }: { project: PatternProject
           </div>
           {!isRoyalty && (
             <div className="space-y-1.5">
-              <Label htmlFor="pl-fee">One-off fee ($)</Label>
+              <Label htmlFor="pl-fee">{copyText.oneOffFee}</Label>
               <Input
                 id="pl-fee"
                 type="number"
@@ -239,7 +242,7 @@ export function PatternLicensePlannerCard({ project }: { project: PatternProject
           {isRoyalty && (
             <>
               <div className="space-y-1.5">
-                <Label htmlFor="pl-fee-r">Minimum guarantee ($)</Label>
+                <Label htmlFor="pl-fee-r">{copyText.minimumGuarantee}</Label>
                 <Input
                   id="pl-fee-r"
                   type="number"
@@ -249,7 +252,7 @@ export function PatternLicensePlannerCard({ project }: { project: PatternProject
                 />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="pl-royalty">Royalty (%)</Label>
+                <Label htmlFor="pl-royalty">{copyText.royalty}</Label>
                 <Input
                   id="pl-royalty"
                   type="number"
@@ -260,7 +263,7 @@ export function PatternLicensePlannerCard({ project }: { project: PatternProject
                 />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="pl-lm">Licensor monthly sales</Label>
+                <Label htmlFor="pl-lm">{copyText.licensorSales}</Label>
                 <Input
                   id="pl-lm"
                   type="number"
@@ -273,7 +276,7 @@ export function PatternLicensePlannerCard({ project }: { project: PatternProject
           )}
           {!isBuyout && (
             <div className="space-y-1.5">
-              <Label htmlFor="pl-window">Exclusivity window (months, 0 = none)</Label>
+              <Label htmlFor="pl-window">{copyText.exclusivity}</Label>
               <Input
                 id="pl-window"
                 type="number"
@@ -286,7 +289,7 @@ export function PatternLicensePlannerCard({ project }: { project: PatternProject
           )}
           {!isRoyalty && (
             <div className="space-y-1.5">
-              <Label htmlFor="pl-prod">Production you'd cover ($)</Label>
+              <Label htmlFor="pl-prod">{copyText.production}</Label>
               <Input
                 id="pl-prod"
                 type="number"
@@ -297,7 +300,7 @@ export function PatternLicensePlannerCard({ project }: { project: PatternProject
             </div>
           )}
           <div className="space-y-1.5">
-            <Label htmlFor="pl-pay">Payment lag (months)</Label>
+            <Label htmlFor="pl-pay">{copyText.paymentLag}</Label>
             <Input
               id="pl-pay"
               type="number"
@@ -315,28 +318,28 @@ export function PatternLicensePlannerCard({ project }: { project: PatternProject
               checked={stored.offer.licensorPaysProduction}
               onCheckedChange={(v) => setOffer({ licensorPaysProduction: v })}
             />
-            They cover sample / photo / tech edit
+            {copyText.coverCosts}
           </label>
           <label className="flex items-center gap-2 text-sm">
             <Switch
               checked={stored.offer.worldwide}
               onCheckedChange={(v) => setOffer({ worldwide: v })}
             />
-            Worldwide rights
+            {copyText.worldwide}
           </label>
           <label className="flex items-center gap-2 text-sm">
             <Switch
               checked={stored.offer.derivativeRightsTransferred}
               onCheckedChange={(v) => setOffer({ derivativeRightsTransferred: v })}
             />
-            Derivatives transfer to them
+            {copyText.derivatives}
           </label>
           <label className="flex items-center gap-2 text-sm">
             <Switch
               checked={stored.offer.creditAndPromotionRights}
               onCheckedChange={(v) => setOffer({ creditAndPromotionRights: v })}
             />
-            I keep credit &amp; promotion rights
+            {copyText.keepRights}
           </label>
         </div>
 
@@ -344,25 +347,23 @@ export function PatternLicensePlannerCard({ project }: { project: PatternProject
         <div className="space-y-3 rounded-lg border bg-muted/40 p-4">
           <div className="flex flex-wrap items-center gap-3">
             <Badge className={`${verdictColor} border text-base px-3 py-1 uppercase`}>{result.verdict}</Badge>
-            <span className="text-sm font-medium">Rights audit: {result.rightsScore}/8 passed</span>
+            <span className="text-sm font-medium">{copyText.rightsAuditPassed(result.rightsScore)}</span>
           </div>
           <p className="text-sm text-muted-foreground">{result.verdictNote}</p>
           <div className="grid gap-2 sm:grid-cols-4 text-sm">
-            <div>Self-sell window value<div className="font-semibold">{fmt$(result.selfSellValue)}</div></div>
-            <div>Fee + royalties value<div className="font-semibold">{fmt$(result.licensorIncomeValue)}</div></div>
-            <div>Your labour floor<div className="font-semibold">{fmt$(result.labourValue)}</div></div>
-            <div>Total offer value<div className="font-semibold">{fmt$(result.totalOfferValue)}</div></div>
+            <div>{copyText.selfSellWindow}<div className="font-semibold">{fmt$(result.selfSellValue)}</div></div>
+            <div>{copyText.feeRoyalties}<div className="font-semibold">{fmt$(result.licensorIncomeValue)}</div></div>
+            <div>{copyText.labourFloor}<div className="font-semibold">{fmt$(result.labourValue)}</div></div>
+            <div>{copyText.totalOffer}<div className="font-semibold">{fmt$(result.totalOfferValue)}</div></div>
           </div>
           <div className="text-sm text-muted-foreground">
-            Keep self-publishing for {stored.horizonMonths} months: {fmt$(result.keepVsSell.selfSell24)} ·
-            Sell under this deal now: {fmt$(result.keepVsSell.sellValue)} ·
-            <span className="font-semibold"> {result.keepVsSell.difference >= 0 ? 'Sell wins by' : 'Keep wins by'} {fmt$(Math.abs(result.keepVsSell.difference))}</span>
+            {copyText.keepVsSell(stored.horizonMonths, fmt$(result.keepVsSell.selfSell24), fmt$(result.keepVsSell.sellValue), result.keepVsSell.difference >= 0 ? copyText.sellWinsBy : copyText.keepWinsBy, fmt$(Math.abs(result.keepVsSell.difference)))}
           </div>
         </div>
 
         {/* Rights audit */}
         <div className="space-y-2">
-          <h4 className="text-sm font-semibold">Rights audit</h4>
+          <h4 className="text-sm font-semibold">{copyText.rightsAudit}</h4>
           {result.rightsAudit.map((check) => (
             <div key={check.check} className="rounded-md border bg-background p-3 text-sm">
               <div className="flex items-center gap-2">
@@ -385,10 +386,10 @@ export function PatternLicensePlannerCard({ project }: { project: PatternProject
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <h4 className="flex items-center gap-2 text-sm font-semibold">
-              <FileText className="h-4 w-4" /> Your reply
+              <FileText className="h-4 w-4" /> {copyText.reply}
             </h4>
             <Button variant="outline" size="sm" onClick={() => copy(result.offerLetter)}>
-              <ClipboardCopy className="h-4 w-4" /> Copy
+              <ClipboardCopy className="h-4 w-4" /> {copyText.copy}
             </Button>
           </div>
           <pre className="whitespace-pre-wrap rounded-md border bg-background p-4 text-sm">

@@ -7,6 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { AlertTriangle, CalendarClock } from 'lucide-react';
 import { PatternProject } from '@/lib/grading-engine';
 import { projectStorage } from '@/lib/storage-lib';
+import { useSettings } from '@/context/SettingsContext';
+import { KAL_PLANNER_COPY } from '@/lib/kal-planner-copy';
 import { analyzeKal, DEFAULT_KAL, KAL_FORMAT_LABELS, type KalFormat, type KalInput } from '@/lib/kal-planner';
 
 function defaultStored(): KalInput {
@@ -54,6 +56,8 @@ function NumField({ id, label, value, onChange, min = 0, max, step = 1, suffix }
 }
 
 export function KalPlannerCard({ project }: { project: PatternProject }) {
+  const { language } = useSettings();
+  const copy = KAL_PLANNER_COPY[language];
   const handle = useMemo(
     () => projectStorage<KalInput>('kalplanner', project.id || '', []),
     [project.id],
@@ -72,22 +76,17 @@ export function KalPlannerCard({ project }: { project: PatternProject }) {
     <Card>
       <CardHeader>
         <CardTitle className="flex flex-wrap items-center gap-2 text-lg">
-          <CalendarClock className="h-4 w-4 shrink-0" /> KAL Planner
+          <CalendarClock className="h-4 w-4 shrink-0" /> {copy.title}
         </CardTitle>
         <CardDescription>
-          No tool in the market prices a knit-along — Ravelry gives you a calendar event and a group,
-          and the rest lives in spreadsheets. This puts a real P&L on the four formats designers
-          actually run: launch, mystery (Westknits-style clue-a-week), guild, and seasonal. Prize
-          budgets, sponsor yarn, your own hours, launch-window uplift, and the 8-week afterglow all
-          land on one net number — plus the prize-recovery count (how many extra sales each prize
-          dollar must fund) and the KAL-specific red flags.
+          {copy.description}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Format + prices */}
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-1.5">
-            <Label htmlFor="kal-format" className="text-xs">KAL format</Label>
+            <Label htmlFor="kal-format" className="text-xs">{copy.format}</Label>
             <Select value={stored.format}
               onValueChange={(v) => patch({ format: v as KalFormat })}>
               <SelectTrigger id="kal-format"><SelectValue /></SelectTrigger>
@@ -98,47 +97,47 @@ export function KalPlannerCard({ project }: { project: PatternProject }) {
               </SelectContent>
             </Select>
           </div>
-          <NumField id="kal-price" label="Pattern price" value={stored.patternPrice}
+          <NumField id="kal-price" label={copy.price} value={stored.patternPrice}
             min={0} step={0.5} onChange={(n) => patch({ patternPrice: n })} suffix="$" />
         </div>
 
         {/* Sales & duration */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <NumField id="kal-base" label="Base weekly sales (no KAL)" value={stored.baseWeeklySales}
+          <NumField id="kal-base" label={copy.baseSales} value={stored.baseWeeklySales}
             min={0} step={0.5} onChange={(n) => patch({ baseWeeklySales: n })} suffix="wk" />
-          <NumField id="kal-duration" label="KAL duration" value={stored.durationWeeks}
+          <NumField id="kal-duration" label={copy.duration} value={stored.durationWeeks}
             min={1} max={12} onChange={(n) => patch({ durationWeeks: Math.min(12, Math.max(1, n)) })} suffix="wks" />
-          <NumField id="kal-lift" label="Launch-window lift factor" value={stored.launchLiftFactor}
+          <NumField id="kal-lift" label={copy.lift} value={stored.launchLiftFactor}
             min={1} max={10} step={0.1} onChange={(n) => patch({ launchLiftFactor: Math.min(10, Math.max(1, n)) })} suffix="×" />
-          <NumField id="kal-afterglow" label="Afterglow factor (8 wks)" value={stored.afterglowFactor}
+          <NumField id="kal-afterglow" label={copy.afterglow} value={stored.afterglowFactor}
             min={1} max={2} step={0.05} onChange={(n) => patch({ afterglowFactor: Math.min(2, Math.max(1, n)) })} suffix="×" />
         </div>
 
         {/* Prizes & costs */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <NumField id="kal-prizes" label="Number of prizes" value={stored.prizeCount}
+          <NumField id="kal-prizes" label={copy.prizes} value={stored.prizeCount}
             min={0} max={50} onChange={(n) => patch({ prizeCount: Math.min(50, n) })} />
-          <NumField id="kal-prize-value" label="Average prize value" value={stored.prizeValue}
+          <NumField id="kal-prize-value" label={copy.prizeValue} value={stored.prizeValue}
             min={0} step={5} onChange={(n) => patch({ prizeValue: n })} suffix="$" />
-          <NumField id="kal-sponsor" label="Yarn sponsor value" value={stored.yarnSponsorValue}
+          <NumField id="kal-sponsor" label={copy.sponsor} value={stored.yarnSponsorValue}
             onChange={(n) => patch({ yarnSponsorValue: n })} suffix="$" />
-          <NumField id="kal-sample" label="Sample yarn cost" value={stored.sampleCost}
+          <NumField id="kal-sample" label={copy.sample} value={stored.sampleCost}
             min={0} step={5} onChange={(n) => patch({ sampleCost: n })} suffix="$" />
         </div>
 
         {/* Hours & guild fees */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <NumField id="kal-hours" label="Your total hours" value={stored.totalHours}
+          <NumField id="kal-hours" label={copy.hours} value={stored.totalHours}
             min={0} onChange={(n) => patch({ totalHours: n })} suffix="hrs" />
-          <NumField id="kal-hourly" label="Your hourly cost" value={stored.hourlyCost}
+          <NumField id="kal-hourly" label={copy.hourly} value={stored.hourlyCost}
             min={0} step={1} onChange={(n) => patch({ hourlyCost: n })} suffix="$/hr" />
-          <NumField id="kal-fee" label="Per-session fee income (guild/seasonal)"
+          <NumField id="kal-fee" label={copy.sessionFee}
             value={stored.sessionFeeIncome ?? 0} onChange={(n) => patch({ sessionFeeIncome: n })} suffix="$" />
-          <NumField id="kal-sessions" label="Paid sessions (guild/seasonal)"
+          <NumField id="kal-sessions" label={copy.sessions}
             value={stored.sessionCount ?? 0} onChange={(n) => patch({ sessionCount: n })} />
         </div>
         {stored.format === 'mystery' && (
-          <NumField id="kal-clue-hours" label="Hours per clue (draft + tech edit)"
+          <NumField id="kal-clue-hours" label={copy.clueHours}
             value={stored.mysteryHoursPerClue ?? 4} min={1} max={12}
             onChange={(n) => patch({ mysteryHoursPerClue: Math.min(12, Math.max(1, n)) })} suffix="hrs" />
         )}
@@ -160,29 +159,30 @@ export function KalPlannerCard({ project }: { project: PatternProject }) {
         {/* P&L tiles */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="rounded-lg border bg-muted/30 p-4">
-            <div className="text-xs text-muted-foreground">Net P&L (incl. your hours)</div>
+            <div className="text-xs text-muted-foreground">{copy.netPnl}</div>
             <div className={`text-2xl font-bold ${result.net >= 0 ? 'text-emerald-600' : 'text-destructive'}`}>
               {fmt$(result.net)}
             </div>
           </div>
           <div className="rounded-lg border bg-muted/30 p-4">
-            <div className="text-xs text-muted-foreground">Launch-window sales / revenue</div>
+            <div className="text-xs text-muted-foreground">{copy.launchSales}</div>
             <div className="text-2xl font-bold">{result.launchWindowSales}</div>
             <div className="text-xs text-muted-foreground">{fmt$(result.launchWindowRevenue)}</div>
           </div>
           <div className="rounded-lg border bg-muted/30 p-4">
-            <div className="text-xs text-muted-foreground">Afterglow (8 wks) / revenue</div>
+            <div className="text-xs text-muted-foreground">{copy.afterglowSales}</div>
             <div className="text-2xl font-bold">{result.afterglowSales}</div>
             <div className="text-xs text-muted-foreground">{fmt$(result.afterglowRevenue)}</div>
           </div>
           <div className="rounded-lg border bg-muted/30 p-4">
-            <div className="text-xs text-muted-foreground">Prize + sample spend (after sponsor)</div>
+            <div className="text-xs text-muted-foreground">{copy.prizeSpend}</div>
             <div className={`text-2xl font-bold ${result.totalPrizeSpend > 0 ? 'text-destructive' : 'text-muted-foreground'}`}>
               {fmt$(result.totalPrizeSpend)}
             </div>
             <div className="text-xs text-muted-foreground">
-              recovers in {Number.isFinite(result.prizeRecoveryCopies)
-                ? `${result.prizeRecoveryCopies} copies / ${result.prizeRecoveryWeeks} wks` : 'never'}
+              {Number.isFinite(result.prizeRecoveryCopies)
+                ? `${copy.recovers} ${result.prizeRecoveryCopies} copies / ${result.prizeRecoveryWeeks} wks`
+                : copy.never}
             </div>
           </div>
         </div>
@@ -191,21 +191,20 @@ export function KalPlannerCard({ project }: { project: PatternProject }) {
         {result.clueTimeline && (
           <div className="space-y-2">
             <div className="font-semibold text-sm flex flex-wrap items-center gap-2">
-              <CalendarClock className="h-4 w-4 shrink-0" /> Mystery KAL clue calendar
+              <CalendarClock className="h-4 w-4 shrink-0" /> {copy.clueCalendar}
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {result.clueTimeline.map((c) => (
                 <div key={c.clueNumber} className="rounded-lg border bg-muted/30 p-3">
-                  <div className="text-xs font-semibold">Clue {c.clueNumber} — week {c.week}</div>
+                  <div className="text-xs font-semibold">{copy.clue} {c.clueNumber} — {copy.week} {c.week}</div>
                   <div className="text-xs text-muted-foreground mt-1">
-                    drafting {c.draftingHours}h · tech edit {c.techEditHours}h
+                    {copy.drafting} {c.draftingHours}h · {copy.techEdit} {c.techEditHours}h
                   </div>
                 </div>
               ))}
             </div>
             <p className="text-xs text-muted-foreground">
-              Grand reveal posts in the final week — schedule the clue drafts ahead of the KAL start
-              so no week runs on adrenaline.
+              {copy.reveal}
             </p>
           </div>
         )}
@@ -214,7 +213,7 @@ export function KalPlannerCard({ project }: { project: PatternProject }) {
         {result.redFlags.length > 0 && (
           <div className="space-y-2">
             <div className="font-semibold text-sm flex flex-wrap items-center gap-2">
-              <AlertTriangle className="h-4 w-4 shrink-0 text-amber-600" /> Red flags — K-01 to K-06
+              <AlertTriangle className="h-4 w-4 shrink-0 text-amber-600" /> {copy.redFlags}
             </div>
             {result.redFlags.map((f) => (
               <div key={f.id} className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-3 text-sm">

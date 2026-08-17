@@ -7,6 +7,7 @@ import { THEMES, resolveTheme, type ThemeId } from '@/lib/pdf/themes';
 import { renderDocument } from '@/lib/pdf/renderer';
 import { openPrintWindow, getDefaultFilename, detectNamingStyle, applyNamingTemplate } from '@/lib/pdf/print-utils';
 import { compressImageToDataUrl } from '@/lib/image-utils';
+import { getPdfLabels } from '@/lib/pdf/labels';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -25,7 +26,9 @@ function ThemeCard({
   accentColor,
   onSelect,
   onAccentChange,
+  labels,
 }: {
+  labels: ReturnType<typeof getPdfLabels>;
   theme: typeof THEMES[0];
   selected: boolean;
   accentColor: string;
@@ -93,9 +96,9 @@ function ThemeCard({
             WebkitBoxOrient: 'vertical',
           }}
         >
-          Sample Knitwear Pattern
+          {labels.samplePattern}
         </div>
-        <div style={{ fontSize: 8, color: theme.mutedTextColor }}>by Designer</div>
+        <div style={{ fontSize: 8, color: theme.mutedTextColor }}>{labels.sampleDesigner}</div>
       </div>
 
       {/* Color swatches */}
@@ -116,7 +119,7 @@ function ThemeCard({
         {selected && (
           <button
             type="button"
-            title="Change accent color"
+            title={labels.changeAccent}
             className="ml-auto flex items-center gap-1 text-[10px] text-muted-foreground hover:text-foreground transition-colors"
             onClick={e => { e.stopPropagation(); colorInputRef.current?.click(); }}
           >
@@ -128,7 +131,7 @@ function ThemeCard({
               onChange={e => onAccentChange(e.target.value)}
               onClick={e => e.stopPropagation()}
               className="sr-only"
-              aria-label="Pick accent color"
+              aria-label={labels.pickAccent}
             />
           </button>
         )}
@@ -168,7 +171,8 @@ export default function ProjectPdf() {
   const params = useParams<{ id: string }>();
   const [, setLocation] = useLocation();
   const projectHook = useProject(params.id);
-  const { pdfDefaults, setPdfDefaults, customStandard } = useSettings();
+  const { pdfDefaults, setPdfDefaults, customStandard, language } = useSettings();
+  const labels = getPdfLabels(language);
 
   // Template / accent
   const [selectedTheme, setSelectedTheme] = useState<ThemeId>(pdfDefaults.themeId);
@@ -228,10 +232,10 @@ export default function ProjectPdf() {
       includeGaugeSummary: includeGauge,
       includeNotes,
       customLogo,
-      locale: 'en',
+      locale: language,
       templateId: selectedTheme,
     });
-  }, [selectedTheme, accentColor, includeCover, includeGauge, includeNotes, customLogo, projectHook?.project, gradingResult]);
+  }, [selectedTheme, accentColor, includeCover, includeGauge, includeNotes, customLogo, language, projectHook?.project, gradingResult]);
 
   // Initialize filename from project + saved template
   useEffect(() => {
@@ -293,8 +297,8 @@ export default function ProjectPdf() {
   if (!projectHook) {
     return (
       <div className="flex flex-col items-center justify-center py-24 text-center">
-        <h2 className="text-2xl font-serif font-bold mb-4">Project Not Found</h2>
-        <Button onClick={() => setLocation('/')}>Return to Dashboard</Button>
+        <h2 className="text-2xl font-serif font-bold mb-4">{labels.projectNotFound}</h2>
+        <Button onClick={() => setLocation('/')}>{labels.returnDashboard}</Button>
       </div>
     );
   }
@@ -310,11 +314,11 @@ export default function ProjectPdf() {
         <div className="sticky top-0 z-10 bg-background border-b border-border/40 px-5 py-3.5 flex items-center gap-3">
           <Button variant="ghost" size="sm" className="gap-1.5 -ml-1.5 h-8 px-2" onClick={() => setLocation(`/project/${project.id}`)}>
             <ArrowLeft className="w-4 h-4" />
-            <span className="text-sm">Back</span>
+            <span className="text-sm">{labels.back}</span>
           </Button>
           <div className="flex-1 min-w-0">
             <div className="font-serif font-semibold text-sm leading-tight truncate">{project.name}</div>
-            <div className="text-[11px] text-muted-foreground">PDF Export</div>
+            <div className="text-[11px] text-muted-foreground">{labels.pdfExport}</div>
           </div>
         </div>
 
@@ -327,8 +331,8 @@ export default function ProjectPdf() {
 
           {/* ── Template Picker ── */}
           <section>
-            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Template</h3>
-            <div className="grid grid-cols-2 gap-2.5" role="radiogroup" aria-label="PDF template">
+            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">{labels.template}</h3>
+            <div className="grid grid-cols-2 gap-2.5" role="radiogroup" aria-label={labels.pdfTemplate}>
               {THEMES.map(theme => (
                 <ThemeCard
                   key={theme.id}
@@ -337,6 +341,7 @@ export default function ProjectPdf() {
                   accentColor={accentColor}
                   onSelect={() => handleThemeSelect(theme.id)}
                   onAccentChange={setAccentColor}
+                  labels={labels}
                 />
               ))}
             </div>
@@ -346,7 +351,7 @@ export default function ProjectPdf() {
                 className="text-[11px] text-muted-foreground hover:text-foreground mt-2 transition-colors"
                 onClick={() => setAccentColor('')}
               >
-                Reset accent to theme default
+                {labels.resetAccent}
               </button>
             )}
           </section>
@@ -355,7 +360,7 @@ export default function ProjectPdf() {
 
           {/* ── Branding ── */}
           <section>
-            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Branding</h3>
+            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">{labels.branding}</h3>
             <input
               ref={logoInputRef}
               type="file"
@@ -367,18 +372,18 @@ export default function ProjectPdf() {
             {customLogo ? (
               <div className="flex items-center gap-3 rounded-xl border border-border/50 p-3">
                 <div className="w-10 h-10 rounded-md border border-border/40 bg-background flex items-center justify-center shrink-0 overflow-hidden">
-                  <img src={customLogo} alt="Your logo" className="max-w-full max-h-full object-contain" />
+                  <img src={customLogo} alt={labels.yourLogo} className="max-w-full max-h-full object-contain" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-foreground">Your logo</p>
-                  <p className="text-xs text-muted-foreground">Replaces the Stitch & Scale mark on the cover</p>
+                  <p className="text-sm font-medium text-foreground">{labels.yourLogo}</p>
+                  <p className="text-xs text-muted-foreground">{labels.replacesMark}</p>
                 </div>
                 <Button
                   variant="ghost"
                   size="icon"
                   className="h-8 w-8 shrink-0 text-muted-foreground hover:text-destructive"
                   onClick={() => setCustomLogo(undefined)}
-                  aria-label="Remove custom logo"
+                  aria-label={labels.removeLogo}
                   data-testid="button-remove-logo"
                 >
                   <X className="w-4 h-4" />
@@ -396,8 +401,8 @@ export default function ProjectPdf() {
                   {isProcessingLogo ? <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" /> : <ImagePlus className="w-4 h-4 text-muted-foreground" />}
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-foreground">{isProcessingLogo ? 'Processing…' : 'Upload your logo'}</p>
-                  <p className="text-xs text-muted-foreground">Replaces the Stitch & Scale mark on the cover</p>
+                  <p className="text-sm font-medium text-foreground">{isProcessingLogo ? labels.processing : labels.uploadLogo}</p>
+                  <p className="text-xs text-muted-foreground">{labels.replacesMark}</p>
                 </div>
               </button>
             )}
@@ -407,17 +412,17 @@ export default function ProjectPdf() {
 
           {/* ── Export Options ── */}
           <section>
-            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Include</h3>
+            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">{labels.include}</h3>
             <div className="space-y-3">
               {[
-                { label: 'Cover Page', value: includeCover, set: setIncludeCover, id: 'cover' },
-                { label: 'Gauge Summary', value: includeGauge, set: setIncludeGauge, id: 'gauge' },
+                { label: labels.coverPage, value: includeCover, set: setIncludeCover, id: 'cover' },
+                { label: labels.gaugeSummary, value: includeGauge, set: setIncludeGauge, id: 'gauge' },
                 { label: 'Pattern Notes', value: includeNotes, set: setIncludeNotes, id: 'notes', disabled: !project.description },
               ].map(({ label, value, set, id, disabled }) => (
                 <div key={id} className="flex items-center justify-between">
                   <Label htmlFor={`opt-${id}`} className={cn("text-sm cursor-pointer", disabled && "text-muted-foreground")}>
                     {label}
-                    {disabled && <span className="text-xs text-muted-foreground/60 ml-1">(none added)</span>}
+                    {disabled && <span className="text-xs text-muted-foreground/60 ml-1">({labels.noneAdded})</span>}
                   </Label>
                   <Switch
                     id={`opt-${id}`}
@@ -435,21 +440,21 @@ export default function ProjectPdf() {
 
           {/* ── Filename ── */}
           <section>
-            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Filename</h3>
+            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">{labels.filename}</h3>
             <div className="flex gap-2 items-center">
               <Input
                 value={filename}
                 onChange={e => handleFilenameChange(e.target.value)}
-                placeholder="Pattern filename…"
+                placeholder={labels.filenamePlaceholder}
                 className="flex-1 text-sm h-9"
-                aria-label="Export filename"
+                aria-label={labels.exportFilename}
               />
               <span className="text-xs text-muted-foreground shrink-0">.pdf</span>
             </div>
             <p className="text-[11px] text-muted-foreground mt-1.5">
               {pdfDefaults.lastNamingTemplate
-                ? 'Using your saved naming style.'
-                : 'Your naming style will be remembered after the first export.'}
+                ? labels.usingSaved
+                : labels.namingRemembered}
             </p>
           </section>
         </div>
@@ -464,17 +469,17 @@ export default function ProjectPdf() {
             {isExporting ? (
               <>
                 <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                Preparing your PDF…
+                {labels.preparing}
               </>
             ) : (
               <>
                 <Download className="w-4 h-4" />
-                Export PDF
+                {labels.exportPdf}
               </>
             )}
           </Button>
           <p className="text-[10px] text-center text-muted-foreground mt-2">
-            A print dialog will open — choose "Save as PDF" there to finish
+            {labels.printDialog}
           </p>
         </div>
       </div>
@@ -483,7 +488,7 @@ export default function ProjectPdf() {
       <div className="flex-1 bg-muted/30 flex flex-col items-center justify-start pt-8 pb-8 overflow-auto">
         <div className="flex items-center gap-2 mb-4 text-xs text-muted-foreground">
           <Eye className="w-3.5 h-3.5" />
-          <span>Live preview · Page 1 of {1 + (gradingResult?.length ?? 0) + (includeGauge ? 1 : 0) + (gradingResult?.length > 0 ? 1 : 0)}</span>
+          <span>{labels.livePreview} · {labels.page} 1 / {1 + (gradingResult?.length ?? 0) + (includeGauge ? 1 : 0) + (gradingResult?.length > 0 ? 1 : 0)}</span>
         </div>
 
         {/* Paper shadow */}
@@ -501,7 +506,7 @@ export default function ProjectPdf() {
               <iframe
                 key={previewHtml.slice(0, 100)} // remount on significant HTML change
                 srcDoc={previewHtml}
-                title="PDF Preview"
+                title={labels.pdfExport}
                 sandbox="allow-same-origin"
                 style={{
                   position: 'absolute',
@@ -533,7 +538,7 @@ export default function ProjectPdf() {
             >
               <FileText className="w-10 h-10 opacity-25" />
               <span className="text-sm">
-                {!projectHook ? 'Loading…' : 'Select a template to preview'}
+                {!projectHook ? labels.loading : labels.selectTemplate}
               </span>
             </div>
           )}
@@ -547,12 +552,12 @@ export default function ProjectPdf() {
                 key={s.sectionId}
                 className="text-[10px] text-muted-foreground bg-background/80 border border-border/30 rounded px-2 py-1"
               >
-                {s.sectionName} · {s.measurements.length} measurements
+                {s.sectionName} · {s.measurements.length} {labels.measurements}
               </div>
             ))}
             {gradingResult.length > 5 && (
               <div className="text-[10px] text-muted-foreground bg-background/80 border border-border/30 rounded px-2 py-1">
-                +{gradingResult.length - 5} more sections
+                +{gradingResult.length - 5} {labels.moreSections}
               </div>
             )}
           </div>

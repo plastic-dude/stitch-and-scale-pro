@@ -10,6 +10,8 @@
  */
 import React, { useMemo, useState, useEffect } from 'react';
 import { projectStorage, type ProjectStorageHandle } from '@/lib/storage-lib';
+import { useSettings } from '@/context/SettingsContext';
+import { YARN_POOL_COPY } from '@/lib/yarn-pool-copy';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -88,6 +90,8 @@ const TIER_TONES: Record<SourceTier, 'good' | 'warn' | 'bad'> = {
 export function YarnPoolLabCard({ project }: { project: PatternProject }) {
   const handle = useMemo(() => projectStorage<StoredState>('yarnpool', project.id, [STORAGE_KEY]), [project.id]);
   const { toast } = useToast();
+  const { language } = useSettings();
+  const copyText = YARN_POOL_COPY[language];
   const [stored, setStored] = useState<StoredState>(() => loadStored(handle));
   useEffect(() => {
     handle.write(stored);
@@ -120,7 +124,7 @@ export function YarnPoolLabCard({ project }: { project: PatternProject }) {
 
   const addColorway = () => {
     if (!cwGrams || (input.colorways || []).length >= 6) {
-      toast({ title: 'Add grams needed (max 6 colorways).' });
+      toast({ title: `${copyText.grams} ${copyText.colorways.toLowerCase()} required (max 6).` });
       return;
     }
     setStored(s => ({
@@ -156,7 +160,7 @@ export function YarnPoolLabCard({ project }: { project: PatternProject }) {
 
   const addMember = () => {
     if (!mGrams || (input.members || []).length >= 8) {
-      toast({ title: 'Add grams needed (max 8 pool members).' });
+      toast({ title: `${copyText.grams} ${copyText.members.toLowerCase()} required (max 8).` });
       return;
     }
     setStored(s => ({
@@ -192,12 +196,10 @@ export function YarnPoolLabCard({ project }: { project: PatternProject }) {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Boxes className="size-5" />
-          Yarn Pool Lab
+          {copyText.title}
         </CardTitle>
         <CardDescription>
-          Competitors say "buy wholesale" but never answer what to order or whether the cash locked
-          in yarn is worth it. Mills want 20+ kg per colorway; you need 2–5. This lab pools your
-          catalog's demand, walks the price ladder to mill-direct, and prices the cash lock-up.
+          {copyText.description}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-8">
@@ -205,13 +207,13 @@ export function YarnPoolLabCard({ project }: { project: PatternProject }) {
         <div>
           <div className="mb-3 flex items-center gap-2">
             <Package className="size-4" />
-            <Label className="text-base font-semibold">Colorways (one row per dye lot)</Label>
+            <Label className="text-base font-semibold">{copyText.colorways}</Label>
           </div>
           <div className="space-y-4">
             {colorways.map((c, i) => (
               <div key={i} className="grid gap-3 rounded-lg border p-4 sm:grid-cols-5">
                 <div>
-                  <Label htmlFor={`yp-cw-name-${i}`}>Colorway name</Label>
+                  <Label htmlFor={`yp-cw-name-${i}`}>{copyText.colorwayName}</Label>
                   <Input
                     id={`yp-cw-name-${i}`}
                     value={c.name}
@@ -219,7 +221,7 @@ export function YarnPoolLabCard({ project }: { project: PatternProject }) {
                   />
                 </div>
                 <div>
-                  <Label htmlFor={`yp-cw-grams-${i}`}>Yarn need (g)</Label>
+                  <Label htmlFor={`yp-cw-grams-${i}`}>{copyText.yarnNeed}</Label>
                   <Input
                     id={`yp-cw-grams-${i}`}
                     type="number"
@@ -229,7 +231,7 @@ export function YarnPoolLabCard({ project }: { project: PatternProject }) {
                   />
                 </div>
                 <div>
-                  <Label htmlFor={`yp-cw-retail-${i}`}>Retail $/kg</Label>
+                  <Label htmlFor={`yp-cw-retail-${i}`}>{copyText.retailKg}</Label>
                   <Input
                     id={`yp-cw-retail-${i}`}
                     type="number"
@@ -240,7 +242,7 @@ export function YarnPoolLabCard({ project }: { project: PatternProject }) {
                   />
                 </div>
                 <div>
-                  <Label htmlFor={`yp-cw-mill-${i}`}>Mill $/kg</Label>
+                  <Label htmlFor={`yp-cw-mill-${i}`}>{copyText.millKg}</Label>
                   <Input
                     id={`yp-cw-mill-${i}`}
                     type="number"
@@ -266,18 +268,17 @@ export function YarnPoolLabCard({ project }: { project: PatternProject }) {
             ))}
             {colorways.length < 6 && (
               <div className="grid gap-3 rounded-lg border border-dashed p-4 sm:grid-cols-5">
-                <Input placeholder="New colorway" value={cwName} onChange={e => setCwName(e.target.value)} />
-                <Input placeholder="Grams" type="number" value={cwGrams} onChange={e => setCwGrams(e.target.value)} />
-                <Input placeholder="Retail $/kg" type="number" value={cwRetail} onChange={e => setCwRetail(e.target.value)} />
-                <Input placeholder="Mill $/kg" type="number" value={cwMill} onChange={e => setCwMill(e.target.value)} />
+                <Input placeholder={copyText.newColorway} value={cwName} onChange={e => setCwName(e.target.value)} />
+                <Input placeholder={copyText.grams} type="number" value={cwGrams} onChange={e => setCwGrams(e.target.value)} />
+                <Input placeholder={copyText.retailKg} type="number" value={cwRetail} onChange={e => setCwRetail(e.target.value)} />
+                <Input placeholder={copyText.millKg} type="number" value={cwMill} onChange={e => setCwMill(e.target.value)} />
                 <Button type="button" size="sm" onClick={addColorway}>
-                  <Plus className="size-4" /> Add
+                  <Plus className="size-4" /> {copyText.add}
                 </Button>
               </div>
             )}
             <p className="text-[11px] text-muted-foreground">
-              Mill tiers default to 20 kg/colorway MOQ, $250 dealer minimum, and 1 kg bulk minimum —
-              adjust in the advanced fields below each colorway if your suppliers differ.
+              {copyText.tierNote}
             </p>
           </div>
         </div>
@@ -286,13 +287,13 @@ export function YarnPoolLabCard({ project }: { project: PatternProject }) {
         <div>
           <div className="mb-3 flex items-center gap-2">
             <Users className="size-4" />
-            <Label className="text-base font-semibold">Pool members (patterns + designers)</Label>
+            <Label className="text-base font-semibold">{copyText.members}</Label>
           </div>
           <div className="space-y-3">
             {members.map((m, i) => (
               <div key={i} className="flex items-end gap-3">
                 <div className="grow">
-                  <Label htmlFor={`yp-m-name-${i}`}>Member</Label>
+                  <Label htmlFor={`yp-m-name-${i}`}>{copyText.member}</Label>
                   <Input
                     id={`yp-m-name-${i}`}
                     value={m.name}
@@ -300,7 +301,7 @@ export function YarnPoolLabCard({ project }: { project: PatternProject }) {
                   />
                 </div>
                 <div className="w-40">
-                  <Label htmlFor={`yp-m-grams-${i}`}>Yarn (g)</Label>
+                  <Label htmlFor={`yp-m-grams-${i}`}>{copyText.yarnNeed}</Label>
                   <Input
                     id={`yp-m-grams-${i}`}
                     type="number"
@@ -323,15 +324,15 @@ export function YarnPoolLabCard({ project }: { project: PatternProject }) {
             ))}
             {members.length < 8 && (
               <div className="flex items-end gap-3">
-                <Input className="grow" placeholder="Pattern or designer" value={mName} onChange={e => setMName(e.target.value)} />
-                <Input className="w-40" placeholder="Grams" type="number" value={mGrams} onChange={e => setMGrams(e.target.value)} />
+                <Input className="grow" placeholder={copyText.patternDesigner} value={mName} onChange={e => setMName(e.target.value)} />
+                <Input className="w-40" placeholder={copyText.grams} type="number" value={mGrams} onChange={e => setMGrams(e.target.value)} />
                 <Button type="button" size="sm" onClick={addMember}>
-                  <Plus className="size-4" /> Add
+                  <Plus className="size-4" /> {copyText.add}
                 </Button>
               </div>
             )}
             <p className="text-[11px] text-muted-foreground">
-              Each member's grams aggregate into their colorway's pool — that's what unlocks the tier.
+              {copyText.memberNote}
             </p>
           </div>
         </div>
@@ -340,11 +341,11 @@ export function YarnPoolLabCard({ project }: { project: PatternProject }) {
         <div>
           <div className="mb-3 flex items-center gap-2">
             <TrendingUp className="size-4" />
-            <Label className="text-base font-semibold">Cash and timing context</Label>
+            <Label className="text-base font-semibold">{copyText.context}</Label>
           </div>
           <div className="grid gap-4 sm:grid-cols-4">
             <div>
-              <Label htmlFor="yp-months">Monthly revenue ($)</Label>
+              <Label htmlFor="yp-months">{copyText.monthlyRevenue}</Label>
               <Input
                 id="yp-months"
                 type="number"
@@ -354,7 +355,7 @@ export function YarnPoolLabCard({ project }: { project: PatternProject }) {
               />
             </div>
             <div>
-              <Label htmlFor="yp-runway">Production runway (months)</Label>
+              <Label htmlFor="yp-runway">{copyText.runway}</Label>
               <Input
                 id="yp-runway"
                 type="number"
@@ -365,7 +366,7 @@ export function YarnPoolLabCard({ project }: { project: PatternProject }) {
               />
             </div>
             <div>
-              <Label htmlFor="yp-stash">Stash on hand (g)</Label>
+              <Label htmlFor="yp-stash">{copyText.stash}</Label>
               <Input
                 id="yp-stash"
                 type="number"
@@ -383,13 +384,12 @@ export function YarnPoolLabCard({ project }: { project: PatternProject }) {
                 className="h-4 w-4"
               />
               <Label htmlFor="yp-groupbuy" className="cursor-pointer">
-                A group buy / co-op path is open
+                {copyText.groupBuy}
               </Label>
             </div>
           </div>
           <p className="mt-2 text-[11px] text-muted-foreground">
-            Yarn bought today is cash that can't pay test-knitters or tech editors next month —
-            the lab measures how many months of revenue the outlay locks up.
+            {copyText.cashNote}
           </p>
         </div>
 
@@ -397,18 +397,18 @@ export function YarnPoolLabCard({ project }: { project: PatternProject }) {
         <div>
           <div className="mb-3 flex items-center gap-2">
             <TrendingUp className="size-4" />
-            <Label className="text-base font-semibold">The pooled numbers</Label>
+            <Label className="text-base font-semibold">{copyText.pooledNumbers}</Label>
           </div>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <StatBox label="Total yarn needed" value={fmtKg(analysis.totalGrams)} />
-            <StatBox label="Pooled order cost" value={fmt$(analysis.totalCost)} tone={analysis.totalCost > 0 ? 'warn' : undefined} />
+            <StatBox label={copyText.totalYarn} value={fmtKg(analysis.totalGrams)} />
+            <StatBox label={copyText.orderCost} value={fmt$(analysis.totalCost)} tone={analysis.totalCost > 0 ? 'warn' : undefined} />
             <StatBox
-              label="Savings vs everyone buying retail"
+              label={copyText.retailSavings}
               value={fmt$(analysis.totalSavings)}
               tone={analysis.totalSavings > 0 ? 'good' : 'bad'}
             />
             <StatBox
-              label="Cash locked vs monthly revenue"
+              label={copyText.cashLocked}
               value={isFinite(analysis.cashLockedMonths) ? `≈${fmtM(analysis.cashLockedMonths)} mo` : '∞'}
               tone={isFinite(analysis.cashLockedMonths) && analysis.cashLockedMonths > input.productionRunwayMonths ? 'bad' : isFinite(analysis.cashLockedMonths) ? 'warn' : undefined}
             />
@@ -417,12 +417,12 @@ export function YarnPoolLabCard({ project }: { project: PatternProject }) {
             <table className="w-full text-sm">
               <thead className="bg-muted/50">
                 <tr>
-                  <th className="px-3 py-2 text-left font-medium">Colorway</th>
-                  <th className="px-3 py-2 text-right font-medium">Need</th>
-                  <th className="px-3 py-2 text-right font-medium">Tier reached</th>
-                  <th className="px-3 py-2 text-right font-medium">$/kg</th>
-                  <th className="px-3 py-2 text-right font-medium">Cost</th>
-                  <th className="px-3 py-2 text-right font-medium">Saved</th>
+                  <th className="px-3 py-2 text-left font-medium">{copyText.colorway}</th>
+                  <th className="px-3 py-2 text-right font-medium">{copyText.need}</th>
+                  <th className="px-3 py-2 text-right font-medium">{copyText.tierReached}</th>
+                  <th className="px-3 py-2 text-right font-medium">{copyText.priceKg}</th>
+                  <th className="px-3 py-2 text-right font-medium">{copyText.cost}</th>
+                  <th className="px-3 py-2 text-right font-medium">{copyText.saved}</th>
                 </tr>
               </thead>
               <tbody>
@@ -450,7 +450,7 @@ export function YarnPoolLabCard({ project }: { project: PatternProject }) {
           <div>
             <div className="mb-3 flex items-center gap-2">
               <Flag className="size-4" />
-              <Label className="text-base font-semibold">Warnings</Label>
+              <Label className="text-base font-semibold">{copyText.warnings}</Label>
             </div>
             <div className="space-y-2">
               {analysis.flags.map(f => (

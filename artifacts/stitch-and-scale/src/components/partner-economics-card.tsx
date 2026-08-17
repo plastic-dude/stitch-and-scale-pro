@@ -11,6 +11,8 @@ import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
 import { Handshake, ClipboardCopy, AlertTriangle, ShieldCheck, CalendarClock, Plus, Trash2, Package } from 'lucide-react';
 import { PatternProject } from '@/lib/grading-engine';
+import { useSettings } from '@/context/SettingsContext';
+import { PARTNER_COPY } from '@/lib/partner-copy';
 import {
   analyzePartnerDeal,
   scorePitch,
@@ -97,6 +99,8 @@ function NumField({ id, label, value, onChange, min = 0, max, step = 1, suffix }
 
 export function PartnerEconomicsCard({ project }: { project: PatternProject }) {
   const { toast } = useToast();
+  const { language } = useSettings();
+  const partnerCopy = PARTNER_COPY[language];
   const projectId = project.id || '';
   const [stored, setStored] = useState<StoredPartner>(() => loadStored(projectId));
 
@@ -118,7 +122,7 @@ export function PartnerEconomicsCard({ project }: { project: PatternProject }) {
   const copy = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      toast({ title: 'Copied — paste it into your agreement draft.' });
+      toast({ title: partnerCopy.copied });
     } catch {
       toast({ title: 'Copy failed — select the text manually.' });
     }
@@ -135,7 +139,7 @@ export function PartnerEconomicsCard({ project }: { project: PatternProject }) {
       amount: stored.offer.dealType === 'lumpSum' ? stored.offer.offeredAmount : 0,
       notes: '',
     }, ...stored.pitches]);
-    toast({ title: 'Pitch added to the pipeline — fill in the company and deadline.' });
+    toast({ title: partnerCopy.added });
   };
 
   const updatePitch = (id: string, patch: Partial<PitchEntry>) =>
@@ -172,20 +176,17 @@ export function PartnerEconomicsCard({ project }: { project: PatternProject }) {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
-          <Handshake className="h-4 w-4" /> Yarn Partners & Deal Evaluator
+          <Handshake className="h-4 w-4" /> {partnerCopy.title}
         </CardTitle>
         <CardDescription>
-          Yarn companies, indie dyers, and yarn shops pay for design work in a dozen different
-          currencies — yarn support, a 15% flat fee, lump sums averaging $246 for an accessory, or a
-          full rights buyout. This prices every deal type against what you would earn selling the
-          pattern yourself, flags the underpaid-rights patterns (YP-01–06), keeps a signed-agreement checklist, and runs a pitch pipeline to every company you are courting — the agreement is what makes or breaks a partnership.
+                    {partnerCopy.description}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Deal type + rights */}
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-1.5">
-            <Label htmlFor="partner-deal" className="text-xs">Deal type being offered</Label>
+            <Label htmlFor="partner-deal" className="text-xs">{partnerCopy.dealType}</Label>
             <Select value={stored.offer.dealType}
               onValueChange={(v) => patchOffer({ dealType: v as DealType })}>
               <SelectTrigger id="partner-deal"><SelectValue /></SelectTrigger>
@@ -197,7 +198,7 @@ export function PartnerEconomicsCard({ project }: { project: PatternProject }) {
             </Select>
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="partner-rights" className="text-xs">Rights grant</Label>
+            <Label htmlFor="partner-rights" className="text-xs">{partnerCopy.rights}</Label>
             <Select value={stored.offer.rights}
               onValueChange={(v) => patchOffer({ rights: v as RightsGrant })}>
               <SelectTrigger id="partner-rights"><SelectValue /></SelectTrigger>
@@ -213,51 +214,51 @@ export function PartnerEconomicsCard({ project }: { project: PatternProject }) {
         {/* Offer numbers */}
         <div className="space-y-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <NumField id="partner-fee" label="Offered fee / lump sum" value={stored.offer.offeredAmount}
+            <NumField id="partner-fee" label={partnerCopy.offeredFee} value={stored.offer.offeredAmount}
               onChange={(n) => patchOffer({ offeredAmount: n })} suffix="$" />
             {stored.offer.dealType === 'idpListing' && (
-              <NumField id="partner-idp-fee" label="Company cut of each sale" value={stored.offer.idpFeePct}
+              <NumField id="partner-idp-fee" label={partnerCopy.companyCut} value={stored.offer.idpFeePct}
                 min={0} max={100} onChange={(n) => patchOffer({ idpFeePct: Math.min(100, n) })} suffix="%" />
             )}
             {stored.offer.exclusivityMonths > 0 && (
-              <NumField id="partner-excl" label="Exclusivity window" value={stored.offer.exclusivityMonths}
+              <NumField id="partner-excl" label={partnerCopy.exclusivity} value={stored.offer.exclusivityMonths}
                 min={0} max={36} onChange={(n) => patchOffer({ exclusivityMonths: n })} suffix="mo" />
             )}
             {stored.offer.dealType === 'lysDayExclusive' && (
-              <NumField id="partner-window" label="Exclusive window" value={stored.offer.lysDayWindowDays}
+              <NumField id="partner-window" label={partnerCopy.exclusiveWindow} value={stored.offer.lysDayWindowDays}
                 min={0} max={180} onChange={(n) => patchOffer({ lysDayWindowDays: n })} suffix="days" />
             )}
             {stored.offer.dealType === 'kalHost' && (
-              <NumField id="partner-followers" label="Company audience reach" value={stored.offer.kalfollowers}
+              <NumField id="partner-followers" label={partnerCopy.reach} value={stored.offer.kalfollowers}
                 onChange={(n) => patchOffer({ kalfollowers: n })} suffix="followers" />
             )}
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <NumField id="partner-price" label="Pattern listing price" value={stored.offer.patternPrice}
+            <NumField id="partner-price" label={partnerCopy.patternPrice} value={stored.offer.patternPrice}
               min={0} step={0.5} onChange={(n) => patchOffer({ patternPrice: n })} suffix="$" />
-            <NumField id="partner-units" label="Expected sales / 12 months (self-published)"
+            <NumField id="partner-units" label={partnerCopy.expectedSales}
               value={stored.offer.expectedUnitSales12m} onChange={(n) => patchOffer({ expectedUnitSales12m: n })} />
-            <NumField id="partner-yarn" label="Yarn support value" value={stored.offer.yarnValue}
+            <NumField id="partner-yarn" label={partnerCopy.yarnSupport} value={stored.offer.yarnValue}
               onChange={(n) => patchOffer({ yarnValue: n })} suffix="$" />
-            <NumField id="partner-reach" label="Company marketing reach" value={stored.offer.marketingReach}
+            <NumField id="partner-reach" label={partnerCopy.marketingReach} value={stored.offer.marketingReach}
               min={0} max={100} onChange={(n) => patchOffer({ marketingReach: Math.min(100, n) })} suffix="/100" />
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <NumField id="partner-prod" label="Production cost you pay" value={stored.offer.productionCost}
+            <NumField id="partner-prod" label={partnerCopy.productionCost} value={stored.offer.productionCost}
               onChange={(n) => patchOffer({ productionCost: n })} suffix="$" />
-            <NumField id="partner-hours" label="Total hours (incl. revisions)" value={stored.offer.hoursWorked}
+            <NumField id="partner-hours" label={partnerCopy.hours} value={stored.offer.hoursWorked}
               min={1} onChange={(n) => patchOffer({ hoursWorked: Math.max(1, n) })} suffix="hrs" />
-            <NumField id="partner-deliv" label="Deliverables owed to company" value={stored.offer.deliverablesCount}
+            <NumField id="partner-deliv" label={partnerCopy.deliverables} value={stored.offer.deliverablesCount}
               min={0} onChange={(n) => patchOffer({ deliverablesCount: n })} />
             <div className="space-y-1.5">
-              <Label className="text-xs">Self-publish locked during window</Label>
+              <Label className="text-xs">{partnerCopy.locked}</Label>
               <div className="flex items-center gap-2 pt-1">
                 <Switch checked={stored.offer.exclusiveListed}
                   onCheckedChange={(c) => patchOffer({ exclusiveListed: c })} />
                 <span className="text-xs text-muted-foreground">
                   {stored.offer.exclusiveListed
-                    ? 'Cannot self-sell during window — penalty applies'
-                    : 'Can keep self-publishing — lighter penalty'}
+                    ? partnerCopy.lockedYes
+                    : partnerCopy.lockedNo}
                 </span>
               </div>
             </div>
@@ -279,21 +280,21 @@ export function PartnerEconomicsCard({ project }: { project: PatternProject }) {
         {/* KPI cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="rounded-lg border bg-muted/30 p-4">
-            <div className="text-xs text-muted-foreground">Cash value of the deal</div>
+            <div className="text-xs text-muted-foreground">{partnerCopy.cash}</div>
             <div className="text-2xl font-bold">{fmt$(result.cashValue)}</div>
           </div>
           <div className="rounded-lg border bg-muted/30 p-4">
-            <div className="text-xs text-muted-foreground">Self-publish runway (12 mo)</div>
+            <div className="text-xs text-muted-foreground">{partnerCopy.runway}</div>
             <div className="text-2xl font-bold">{fmt$(result.platformNetSelfPublish)}</div>
           </div>
           <div className="rounded-lg border bg-muted/30 p-4">
-            <div className="text-xs text-muted-foreground">Rights surrendered</div>
+            <div className="text-xs text-muted-foreground">{partnerCopy.surrendered}</div>
             <div className={`text-2xl font-bold ${result.rightsPenalty > 0 ? 'text-destructive' : 'text-muted-foreground'}`}>
               {fmt$(result.rightsPenalty)}
             </div>
           </div>
           <div className="rounded-lg border bg-muted/30 p-4">
-            <div className="text-xs text-muted-foreground">Net / hour worked</div>
+            <div className="text-xs text-muted-foreground">{partnerCopy.hourly}</div>
             <div className={`text-2xl font-bold ${result.effectiveHourly >= 30 ? 'text-emerald-600' : result.effectiveHourly < 0 ? 'text-destructive' : 'text-amber-600'}`}>
               {fmt$(result.effectiveHourly)}
             </div>

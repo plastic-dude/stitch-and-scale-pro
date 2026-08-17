@@ -10,6 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useToast } from '@/hooks/use-toast';
 import { CalendarDays, ClipboardCopy, AlertTriangle, TrendingUp } from 'lucide-react';
 import { PatternProject } from '@/lib/grading-engine';
+import { useSettings } from '@/context/SettingsContext';
+import { PRICE_WINDOW_COPY } from '@/lib/price-window-copy';
 import {
   analyzePriceWindow,
   MONTH_SEASON,
@@ -79,6 +81,8 @@ function PathRow({ name, netRevenue, sales, verdict, note }: {
 }
 
 export function PriceWindowCard({ project }: { project: PatternProject }) {
+  const { language } = useSettings();
+  const copyText = PRICE_WINDOW_COPY[language];
   // issue #4 project seam: scoped store per project; flat key folded in on first read, then removed.
   const handle = useMemo(() => projectStorage<StoredPriceWindow>('pricewin', project.id, [STORAGE_KEY]), [project.id]);
   const { toast } = useToast();
@@ -99,9 +103,9 @@ export function PriceWindowCard({ project }: { project: PatternProject }) {
   const copy = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      toast({ title: 'Copied — paste it into your listing or newsletter.' });
+      toast({ title: copyText.copied });
     } catch {
-      toast({ title: 'Copy failed — select the text manually.' });
+      toast({ title: copyText.copyFailed });
     }
   };
 
@@ -111,26 +115,23 @@ export function PriceWindowCard({ project }: { project: PatternProject }) {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
-          <CalendarDays className="h-4 w-4" /> Price Window & Discount Optimizer
+          <CalendarDays className="h-4 w-4" /> {copyText.title}
         </CardTitle>
         <CardDescription>
-          The launch discount&apos;s real job is converting the fave queue in week one — then getting out of the way.
-          This models three paths (full price, launch window, forever sale) net of the platform fee stack, and
-          calls out the two traps designers keep falling into: sales with no end date, and discounts deep enough
-          to teach buyers to wait for the next one.
+          {copyText.description}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Baseline inputs */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="space-y-1.5">
-            <Label htmlFor="pw-price" className="text-xs">Pattern price ($)</Label>
+            <Label htmlFor="pw-price" className="text-xs">{copyText.price}</Label>
             <Input id="pw-price" type="number" min={1} step={0.5}
               value={stored.input.listPrice}
               onChange={(e) => patchInput({ listPrice: Number(e.target.value) || 0 })} />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="pw-platform" className="text-xs">Where you sell</Label>
+            <Label htmlFor="pw-platform" className="text-xs">{copyText.sellWhere}</Label>
             <Select value={stored.input.platform}
               onValueChange={(v) => patchInput({ platform: v as PlatformId })}>
               <SelectTrigger id="pw-platform"><SelectValue /></SelectTrigger>
@@ -142,13 +143,13 @@ export function PriceWindowCard({ project }: { project: PatternProject }) {
             </Select>
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="pw-baseline" className="text-xs">Baseline sales / month</Label>
+            <Label htmlFor="pw-baseline" className="text-xs">{copyText.baseline}</Label>
             <Input id="pw-baseline" type="number" min={0}
               value={stored.input.baselineMonthlySales}
               onChange={(e) => patchInput({ baselineMonthlySales: Number(e.target.value) || 0 })} />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="pw-faves" className="text-xs">Fave queue at launch</Label>
+            <Label htmlFor="pw-faves" className="text-xs">{copyText.queue}</Label>
             <Input id="pw-faves" type="number" min={0}
               value={stored.input.faveQueue}
               onChange={(e) => patchInput({ faveQueue: Number(e.target.value) || 0 })} />
@@ -159,37 +160,37 @@ export function PriceWindowCard({ project }: { project: PatternProject }) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <Label className="text-xs">Launch discount: {stored.input.launchDiscountPct}%</Label>
+              <Label className="text-xs">{copyText.launchDiscount(stored.input.launchDiscountPct)}</Label>
               <span className="text-xs text-muted-foreground">
-                Sale price {fmt$(salePrice)} → {fmt$(stored.input.listPrice)}
+                {copyText.salePrice(fmt$(salePrice), fmt$(stored.input.listPrice))}
               </span>
             </div>
             <Slider min={0} max={60} step={5}
               value={[stored.input.launchDiscountPct]}
               onValueChange={([v]) => patchInput({ launchDiscountPct: v })} />
             <p className="text-[11px] text-muted-foreground">
-              The competitive band is 15–25%. Past that, buyers learn the pattern is always on sale.
+              {copyText.discountHint}
             </p>
           </div>
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <Label className="text-xs">Sale runs {stored.input.launchWeeks} week(s)</Label>
+              <Label className="text-xs">{copyText.saleRuns(stored.input.launchWeeks)}</Label>
               <span className="text-xs text-muted-foreground">
-                Fave conversion {stored.input.fullPriceConversionPct}%/wk × {stored.input.discountUpliftMultiple.toFixed(1)} during sale
+                {copyText.conversion(stored.input.fullPriceConversionPct, stored.input.discountUpliftMultiple.toFixed(1))}
               </span>
             </div>
             <Slider min={0} max={12} step={1}
               value={[stored.input.launchWeeks]}
               onValueChange={([v]) => patchInput({ launchWeeks: v })} />
             <p className="text-[11px] text-muted-foreground">
-              Two weeks is the standard: long enough to reach promo threads, short enough to hold urgency.
+              {copyText.saleHint}
             </p>
           </div>
         </div>
 
         {/* Launch month / season */}
         <div className="space-y-2">
-          <Label className="text-xs">Launch month</Label>
+          <Label className="text-xs">{copyText.launchMonth}</Label>
           <div className="flex flex-wrap gap-1.5">
             {Object.entries(SEASON_MULTIPLIERS).map(([id, s]) => {
               const active = seasonId === id;
@@ -209,35 +210,35 @@ export function PriceWindowCard({ project }: { project: PatternProject }) {
               );
             })}
           </div>
-          <p className="text-[11px] text-muted-foreground">{seasonInfo.note} Season multiplier applied: {seasonInfo.mult.toFixed(2)}×</p>
+          <p className="text-[11px] text-muted-foreground">{seasonInfo.note} {copyText.seasonApplied(seasonInfo.mult.toFixed(2), seasonInfo.note)}</p>
         </div>
 
         {/* Advanced inputs */}
         <details className="text-sm">
           <summary className="cursor-pointer text-xs text-muted-foreground select-none">
-            Advanced — conversion rates & promo lift
+            {copyText.advanced}
           </summary>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-3">
             <div className="space-y-1.5">
-              <Label className="text-xs">Queue conversion (%/wk)</Label>
+              <Label className="text-xs">{copyText.queueConversion}</Label>
               <Input type="number" min={0} step={0.5}
                 value={stored.input.fullPriceConversionPct}
                 onChange={(e) => patchInput({ fullPriceConversionPct: Number(e.target.value) || 0 })} />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs">Discount uplift (×)</Label>
+              <Label className="text-xs">{copyText.uplift}</Label>
               <Input type="number" min={1} step={0.5}
                 value={stored.input.discountUpliftMultiple}
                 onChange={(e) => patchInput({ discountUpliftMultiple: Number(e.target.value) || 1 })} />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs">Promo-thread lift (sales/wk)</Label>
+              <Label className="text-xs">{copyText.promoLift}</Label>
               <Input type="number" min={0} step={0.5}
                 value={stored.input.promoThreadLiftPerWeek}
                 onChange={(e) => patchInput({ promoThreadLiftPerWeek: Number(e.target.value) || 0 })} />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs">Promo lift months</Label>
+              <Label className="text-xs">{copyText.liftMonths}</Label>
               <Input type="number" min={1} max={12} step={1}
                 value={stored.input.promoThreadMonths}
                 onChange={(e) => patchInput({ promoThreadMonths: Number(e.target.value) || 1 })} />
@@ -252,7 +253,7 @@ export function PriceWindowCard({ project }: { project: PatternProject }) {
           <PathRow {...result.permanentDiscountPath} />
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <TrendingUp className="h-3.5 w-3.5" />
-            Launch window vs full price: <span className={`font-semibold ${result.launchDelta > 0 ? 'text-emerald-600' : 'text-destructive'}`}>
+            {copyText.launchVsFull} <span className={`font-semibold ${result.launchDelta > 0 ? 'text-emerald-600' : 'text-destructive'}`}>
               {fmt$(result.launchDelta)}
             </span> over {result.horizonMonths} month(s)
           </div>
@@ -262,7 +263,7 @@ export function PriceWindowCard({ project }: { project: PatternProject }) {
         {result.trap.items.length > 0 && (
           <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-4 space-y-2">
             <div className="flex items-center gap-2 text-sm font-semibold text-destructive">
-              <AlertTriangle className="h-4 w-4" /> Discount train detected
+              <AlertTriangle className="h-4 w-4" /> {copyText.trap}
             </div>
             {result.trap.items.map((item, i) => (
               <p key={i} className="text-xs text-muted-foreground">{item}</p>
@@ -272,7 +273,7 @@ export function PriceWindowCard({ project }: { project: PatternProject }) {
 
         {/* Season table */}
         <div className="rounded-lg border bg-muted/30 p-4">
-          <div className="text-sm font-semibold mb-2">Season map — plan releases around these windows</div>
+          <div className="text-sm font-semibold mb-2">{copyText.seasonMap}</div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
             {Object.entries(SEASON_MULTIPLIERS)
               .sort((a, b) => b[1].mult - a[1].mult)
@@ -290,9 +291,9 @@ export function PriceWindowCard({ project }: { project: PatternProject }) {
         {/* Launch copy */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label className="text-sm font-semibold">Paste-ready launch listing copy</Label>
+            <Label className="text-sm font-semibold">{copyText.listing}</Label>
             <Button variant="outline" size="sm" onClick={() => copy(result.listingCopy)}
-              className="gap-1 text-xs"><ClipboardCopy className="h-3 w-3" /> Copy</Button>
+              className="gap-1 text-xs"><ClipboardCopy className="h-3 w-3" /> {copyText.copy}</Button>
           </div>
           <pre className="whitespace-pre-wrap rounded-lg border bg-muted/40 p-3 text-xs">{result.listingCopy}</pre>
         </div>

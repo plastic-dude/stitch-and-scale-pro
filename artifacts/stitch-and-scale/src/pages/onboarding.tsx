@@ -236,7 +236,7 @@ function StepSizingStandard({ sizingStandard, setSizingStandard }: { sizingStand
         className="w-full flex items-center justify-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors mt-4 py-2"
         data-testid="button-toggle-more-standards"
       >
-        {showMore ? t('workflow.onboarding.hideMoreStandards') : `${t('workflow.onboarding.showMoreStandards')} (${unavailable.length})`}
+        {showMore ? t('workflow.onboarding.hideMoreStandards') : t('workflow.onboarding.showMoreStandards', { count: unavailable.length })}
         <ChevronDown className={cn('w-3.5 h-3.5 transition-transform', showMore && 'rotate-180')} />
       </button>
       <AnimatePresence initial={false}>
@@ -366,7 +366,7 @@ function StepSampleJourney({ onOpenSample, onSkip }: { onOpenSample: () => void;
             <Layers className="w-4 h-4 text-primary" />
           </div>
           <div>
-            <div className="font-semibold text-sm text-foreground">Classic Crew Neck Sweater</div>
+            <div className="font-semibold text-sm text-foreground">{t('workflow.onboarding.sampleName')}</div>
             <div className="text-xs text-muted-foreground">{t('workflow.onboarding.sampleMeta')}</div>
           </div>
         </div>
@@ -434,7 +434,7 @@ function StepCompletion({ onFinish }: { onFinish: () => void }) {
 // ─── Main Overlay ─────────────────────────────────────────────────────────────
 
 export default function OnboardingOverlay() {
-  const { unit, setUnit, sizingStandard, setSizingStandard, setOnboardingCompleted } = useSettings();
+  const { unit, setUnit, sizingStandard, setSizingStandard, setOnboardingCompleted, t } = useSettings();
   const { projects, createProject } = useProjects();
   const [, setLocation] = useLocation();
 
@@ -525,7 +525,7 @@ export default function OnboardingOverlay() {
       className="fixed inset-0 z-50 bg-background/95 backdrop-blur-sm flex flex-col"
       role="dialog"
       aria-modal="true"
-      aria-label="Stitch & Scale onboarding"
+      aria-label={t('workflow.onboarding.dialogLabel')}
     >
       {/* Header */}
       <div className="flex items-center justify-between px-6 py-4 border-b border-border/30">
@@ -540,10 +540,10 @@ export default function OnboardingOverlay() {
           <button
             onClick={skipOnboarding}
             className="text-xs text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1 px-2 py-1 rounded-md hover:bg-secondary/30"
-            aria-label="Skip setup"
+            aria-label={t('workflow.onboarding.skipSetup')}
           >
             <X className="w-3.5 h-3.5" />
-            Skip setup
+            {t('workflow.onboarding.skipSetup')}
           </button>
         ) : (
           // Empty placeholder, same footprint as the button above, keeps

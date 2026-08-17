@@ -15,6 +15,9 @@
  *   selling point. (CTR effects are modeled conservatively — see thumbCtrLift.)
  */
 
+import type { LanguageCode } from './i18n';
+import { PHOTO_ROI_COPY } from './photo-roi-copy';
+
 export type PhotoStyle = 'catalog' | 'lifestyle';
 
 export interface PhotoRoiInput {
@@ -86,12 +89,10 @@ export interface PhotoRoiResult {
   suggestion: string;
 }
 
-export const PHOTO_STYLE_LABELS: Record<PhotoStyle, string> = {
-  catalog: 'Per-image catalog shoot',
-  lifestyle: 'Half-day lifestyle shoot',
-};
+export const PHOTO_STYLE_LABELS: Record<PhotoStyle, string> = PHOTO_ROI_COPY.en.style;
 
-export function analyzePhotoRoi(input: Partial<PhotoRoiInput> = {}): PhotoRoiResult {
+export function analyzePhotoRoi(input: Partial<PhotoRoiInput> = {}, language: LanguageCode = 'en'): PhotoRoiResult {
+  const copy = PHOTO_ROI_COPY[language];
   const patterns = Math.max(1, Math.round(input.patterns ?? 1));
   const imagesPerPattern = Math.max(1, Math.round(input.imagesPerPattern ?? 5));
   const hourlyRate = Math.max(0, input.hourlyRate ?? 25);
@@ -132,41 +133,41 @@ export function analyzePhotoRoi(input: Partial<PhotoRoiInput> = {}): PhotoRoiRes
   const options: PhotoRoiOption[] = [
     buildOption({
       id: 'diy',
-      label: 'DIY (your time + model)',
+      label: copy.style.diy,
       totalCost: Math.round(diyTotalPerPattern * patterns * 100) / 100,
       cashCost: Math.round(diyCashPerPattern * patterns * 100) / 100,
       timeCost: Math.round(diyTimeCost * patterns * 100) / 100,
       perPattern: Math.round(diyTotalPerPattern * 100) / 100,
       breakEvenUnits: netPerSale > 0 ? Math.ceil(diyTotalPerPattern / netPerSale) : 0,
     }, [
-      ...(diyHoursPerPattern > 4 ? [{ id: 'PR-01', detail: `At ${diyHoursPerPattern}h/pattern the DIY block is the second-largest time cost of the pattern after knitting — WKW's whole production is ~34.5h.` }] : []),
-      ...(gearValue > 0 && gearLibrarySize > 0 && gearValue / gearLibrarySize > 50 ? [{ id: 'PR-02', detail: `Gear amortization is $${(gearValue / gearLibrarySize).toFixed(0)}/pattern — the WKW camera stack ran £1,500+ and never stops depreciating.` }] : []),
-      ...(modelHourlyRate === 0 && diyHoursPerPattern > 0 ? [{ id: 'PR-03', detail: 'No model budget: only works if you can model your own designs.' }] : []),
+      ...(diyHoursPerPattern > 4 ? [{ id: 'PR-01', detail: copy.flag('PR-01', { diyHours: diyHoursPerPattern, gearPerPattern: gearValue / gearLibrarySize }) }] : []),
+      ...(gearValue > 0 && gearLibrarySize > 0 && gearValue / gearLibrarySize > 50 ? [{ id: 'PR-02', detail: copy.flag('PR-02', { diyHours: diyHoursPerPattern, gearPerPattern: gearValue / gearLibrarySize }) }] : []),
+      ...(modelHourlyRate === 0 && diyHoursPerPattern > 0 ? [{ id: 'PR-03', detail: copy.flag('PR-03', { diyHours: diyHoursPerPattern, gearPerPattern: gearValue / gearLibrarySize }) }] : []),
     ]),
     buildOption({
       id: 'proCatalog',
-      label: PHOTO_STYLE_LABELS.catalog,
+      label: copy.style.catalog,
       totalCost: Math.round(proCatalogPerPattern * patterns * 100) / 100,
       cashCost: Math.round(proCatalogPerPattern * patterns * 100) / 100,
       timeCost: 0,
       perPattern: Math.round(proCatalogPerPattern * 100) / 100,
       breakEvenUnits: netPerSale > 0 ? Math.ceil(proCatalogPerPattern / netPerSale) : 0,
     }, [
-      ...(proPerImageRate < 10 ? [{ id: 'PR-04', detail: 'Per-image quotes under ~$10 are the per-product-pricing red flag — check the portfolio before trusting the quote.' }] : []),
-      ...(proPerImageRate > 100 ? [{ id: 'PR-05', detail: 'Per-image rates above $100 are experienced-pro territory; only justify at high-volume patterns.' }] : []),
-      ...(imagesPerPattern > 8 ? [{ id: 'PR-06', detail: 'Tiered per-image pricing rewards fewer, stronger shots — 5-6 beats 10+ at this rate.' }] : []),
+      ...(proPerImageRate < 10 ? [{ id: 'PR-04', detail: copy.flag('PR-04', { diyHours: diyHoursPerPattern, gearPerPattern: gearValue / gearLibrarySize }) }] : []),
+      ...(proPerImageRate > 100 ? [{ id: 'PR-05', detail: copy.flag('PR-05', { diyHours: diyHoursPerPattern, gearPerPattern: gearValue / gearLibrarySize }) }] : []),
+      ...(imagesPerPattern > 8 ? [{ id: 'PR-06', detail: copy.flag('PR-06', { diyHours: diyHoursPerPattern, gearPerPattern: gearValue / gearLibrarySize }) }] : []),
     ]),
     buildOption({
       id: 'proLifestyle',
-      label: PHOTO_STYLE_LABELS.lifestyle,
+      label: copy.style.lifestyle,
       totalCost: Math.round(proLifestylePerPattern * patterns * 100) / 100,
       cashCost: Math.round(proLifestylePerPattern * patterns * 100) / 100,
       timeCost: 0,
       perPattern: Math.round(proLifestylePerPattern * 100) / 100,
       breakEvenUnits: netPerSale > 0 ? Math.ceil(proLifestylePerPattern / netPerSale) : 0,
     }, [
-      ...(patternsPerHalfDay >= patterns && patterns > 1 ? [{ id: 'PR-07', detail: 'Batch everything in one half-day — the lifestyle rate is paid once, not per pattern.' }] : []),
-      ...(proHalfDayRate > 1500 ? [{ id: 'PR-08', detail: 'Day rates above $1,500 are top-tier territory ($5-10k/day is the ceiling); half-day keeps you mid-band.' }] : []),
+      ...(patternsPerHalfDay >= patterns && patterns > 1 ? [{ id: 'PR-07', detail: copy.flag('PR-07', { diyHours: diyHoursPerPattern, gearPerPattern: gearValue / gearLibrarySize }) }] : []),
+      ...(proHalfDayRate > 1500 ? [{ id: 'PR-08', detail: copy.flag('PR-08', { diyHours: diyHoursPerPattern, gearPerPattern: gearValue / gearLibrarySize }) }] : []),
     ]),
   ];
 
@@ -178,24 +179,21 @@ export function analyzePhotoRoi(input: Partial<PhotoRoiInput> = {}): PhotoRoiRes
   const liftRevenue = Math.round(extraSalesPerMonth * netPerSale * liftMonths * 100) / 100;
 
   const bestOpt = options.find(o => o.id === best)!;
+  const values = { cost: bestOpt.totalCost.toFixed(0), copies: bestOpt.breakEvenUnits, lift: liftRevenue.toFixed(0), months: liftMonths, velocity: monthlySales };
   let verdict = '';
   let suggestion = '';
   if (bestOpt.totalCost <= 0 && bestOpt.breakEvenUnits === 0) {
-    verdict = 'Nearly free to shoot — the photos pay for themselves with the first sale.';
-    suggestion = 'Even a near-zero shoot buys the thumbnail; the first photo is the pattern\u2019s click-through engine.';
+    verdict = copy.verdict('free', values);
+    suggestion = copy.suggestion('free');
   } else if (bestOpt.breakEvenUnits <= Math.max(1, monthlySales)) {
-    verdict = `The best shoot costs $${bestOpt.totalCost.toFixed(0)} — a month of sales at your velocity covers it. Shoot first, sell second.`;
-    suggestion = 'Batch every shootable pattern into one session; the fixed cost divides across the batch.';
+    verdict = copy.verdict('month', values);
+    suggestion = copy.suggestion('batch');
   } else if (bestOpt.breakEvenUnits <= Math.max(1, monthlySales * 3)) {
-    verdict = `Break-even at ~${bestOpt.breakEvenUnits} copies — reachable within a season if the pattern is on-trend. The thumbnail lift ($${liftRevenue.toFixed(0)} over ${liftMonths}mo) sweetens the case.`;
-    suggestion = thumbCtrLift >= 0.2
-      ? 'Your CTR-lift assumption is aggressive (20%+); keep the thumbnail strong but don\u2019t bank the lift in the plan.'
-      : 'A stronger first photo compounds across every future month the pattern sells.';
+    verdict = copy.verdict('season', values);
+    suggestion = thumbCtrLift >= 0.2 ? copy.suggestion('aggressive') : copy.suggestion('compound');
   } else {
-    verdict = `Break-even needs ~${bestOpt.breakEvenUnits} copies — beyond your current velocity. Either shrink the shoot scope or wait until the pattern has a built-in audience.`;
-    suggestion = patterns >= 2
-      ? 'Cut the batch size to 1, shoot DIY, and reinvest the save into a pro half-day for your flagship pattern only.'
-      : 'Start with the DIY option and pay yourself in practice: the WKW gear stack cost £1,500+ but bought years of shoots.';
+    verdict = copy.verdict('beyond', values);
+    suggestion = patterns >= 2 ? copy.suggestion('cut') : copy.suggestion('diy');
   }
 
   return { options, best, extraSalesPerMonth, liftRevenue, verdict, suggestion };

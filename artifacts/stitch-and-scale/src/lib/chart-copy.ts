@@ -1,0 +1,62 @@
+import type { LanguageCode } from '@/lib/i18n';
+
+export interface ChartCopy {
+  title: string; description: string; verdictLabels: Record<string, string>; severityLabels: Record<'error' | 'warn' | 'info', string>; flagTitles: Record<string, string>; gradedCount: string; rowsBalanced: string; maxDrift: string; repeatBlock: string; verdict: string; symbolKey: string; chartRows: string; addRow: string; remove: string; row: string; repeatCount: string; selvedgeBefore: string; selvedgeAfter: string; rowTotal: string; symbolsInside: string; copyProse: string; copied: string; proseTitle: string; proseDescription: string; empty: string; stitchUnit: string; sourceNote: string;
+}
+
+const COPY: Record<LanguageCode, ChartCopy> = {
+  en: { title: 'Chart Lab', description: 'Keep the chart in the same project as the graded table: row budgets are checked against the graded count, repeat math is validated, and pattern prose is ready to paste.', verdictLabels: { ready: 'Ready', review: 'Review', blocked: 'Blocked' }, severityLabels: { error: 'Error', warn: 'Warning', info: 'Info' }, flagTitles: { 'C-01': 'Row has no repeat block', 'C-02': 'Repeat count below 1', 'C-03': 'Unknown symbol in row', 'C-04': 'Negative row budget', 'C-05': 'Row budget mismatch', 'C-06': 'No chart rows authored', 'C-07': 'No graded count to check against' }, gradedCount: 'Graded base stitch count', rowsBalanced: 'Rows balancing the graded count', maxDrift: 'Max drift vs graded count', repeatBlock: 'Repeat block size', verdict: 'Verdict', symbolKey: 'CYC symbol key (standard palette)', chartRows: 'Chart rows', addRow: 'Add row', remove: 'Remove', row: 'Row', repeatCount: 'Repeat count ×', selvedgeBefore: 'Selvedge before (knit st)', selvedgeAfter: 'Selvedge after (knit st)', rowTotal: 'Row total', symbolsInside: 'Symbols inside the repeat', copyProse: 'Copy pattern prose', copied: 'Copied', proseTitle: 'Pattern prose', proseDescription: 'Paste-ready row instructions generated from the chart.', empty: 'Add a row to begin building the chart.', stitchUnit: 'st', sourceNote: 'Sources: CYC standard knit chart symbols; chart-tool roundup by Knitgrammer; Brooklyn Tweed chart-reading guide. Repeat arithmetic is tied to the graded table.' },
+  de: { title: 'Diagramm-Labor', description: 'Das Diagramm bleibt im selben Projekt wie die gradierte Tabelle: Zeilenbudgets werden mit der Maschenzahl geprüft, Wiederholungen validiert und Mustertext zum Einfügen erzeugt.', verdictLabels: { ready: 'Bereit', review: 'Prüfen', blocked: 'Blockiert' }, severityLabels: { error: 'Fehler', warn: 'Warnung', info: 'Info' }, flagTitles: { 'C-01': 'Zeile hat keinen Wiederholungsblock', 'C-02': 'Wiederholungsanzahl unter 1', 'C-03': 'Unbekanntes Symbol in der Zeile', 'C-04': 'Negatives Zeilenbudget', 'C-05': 'Abweichung im Zeilenbudget', 'C-06': 'Keine Diagrammzeilen erstellt', 'C-07': 'Keine gradierte Maschenzahl zum Prüfen' }, gradedCount: 'Grund-Maschenzahl der Gradierung', rowsBalanced: 'Zeilen mit passender Maschenzahl', maxDrift: 'Maximale Abweichung zur Gradierung', repeatBlock: 'Größe des Wiederholungsblocks', verdict: 'Ergebnis', symbolKey: 'CYC-Symbolschlüssel (Standardpalette)', chartRows: 'Diagrammzeilen', addRow: 'Zeile hinzufügen', remove: 'Entfernen', row: 'Zeile', repeatCount: 'Wiederholungsanzahl ×', selvedgeBefore: 'Randmaschen davor (rechte Masche)', selvedgeAfter: 'Randmaschen danach (rechte Masche)', rowTotal: 'Zeilensumme', symbolsInside: 'Symbole innerhalb der Wiederholung', copyProse: 'Mustertext kopieren', copied: 'Kopiert', proseTitle: 'Mustertext', proseDescription: 'Aus dem Diagramm erzeugte, einfügefertige Zeilenanweisungen.', empty: 'Füge eine Zeile hinzu, um das Diagramm zu beginnen.', stitchUnit: 'M', sourceNote: 'Quellen: standardisierte CYC-Stricksymbole, Übersicht von Knitgrammer und Leitfaden von Brooklyn Tweed. Die Wiederholungsrechnung ist an die gradierte Tabelle gebunden.' },
+  fr: { title: 'Labo de diagramme', description: 'Le diagramme reste dans le même projet que le tableau gradué : les budgets de rangées sont vérifiés, les répétitions validées et le texte du patron est prêt à copier.', verdictLabels: { ready: 'Prêt', review: 'À vérifier', blocked: 'Bloqué' }, severityLabels: { error: 'Erreur', warn: 'Alerte', info: 'Info' }, flagTitles: { 'C-01': 'La rangée n’a pas de bloc de répétition', 'C-02': 'Nombre de répétitions inférieur à 1', 'C-03': 'Symbole inconnu dans la rangée', 'C-04': 'Budget de rangée négatif', 'C-05': 'Écart du budget de rangée', 'C-06': 'Aucune rangée de diagramme créée', 'C-07': 'Aucun nombre gradué à vérifier' }, gradedCount: 'Nombre de mailles de base gradué', rowsBalanced: 'Rangées correspondant au nombre gradué', maxDrift: 'Écart maximal par rapport au nombre gradué', repeatBlock: 'Taille du bloc de répétition', verdict: 'Résultat', symbolKey: 'Légende CYC (palette standard)', chartRows: 'Rangées du diagramme', addRow: 'Ajouter une rangée', remove: 'Supprimer', row: 'Rangée', repeatCount: 'Nombre de répétitions ×', selvedgeBefore: 'Lisière avant (maille endroit)', selvedgeAfter: 'Lisière après (maille endroit)', rowTotal: 'Total de la rangée', symbolsInside: 'Symboles dans la répétition', copyProse: 'Copier le texte du patron', copied: 'Copié', proseTitle: 'Texte du patron', proseDescription: 'Instructions de rangées prêtes à coller, générées depuis le diagramme.', empty: 'Ajoutez une rangée pour commencer le diagramme.', stitchUnit: 'm', sourceNote: 'Sources : symboles CYC standard, comparatif de Knitgrammer et guide de Brooklyn Tweed. Le calcul des répétitions reste lié au tableau gradué.' },
+  es: { title: 'Laboratorio de gráficos', description: 'El gráfico vive en el mismo proyecto que la tabla graduada: se comprueban los presupuestos de cada fila, las repeticiones y el texto del patrón listo para copiar.', verdictLabels: { ready: 'Listo', review: 'Revisar', blocked: 'Bloqueado' }, severityLabels: { error: 'Error', warn: 'Aviso', info: 'Info' }, flagTitles: { 'C-01': 'La fila no tiene bloque de repetición', 'C-02': 'Cantidad de repeticiones menor que 1', 'C-03': 'Símbolo desconocido en la fila', 'C-04': 'Presupuesto de fila negativo', 'C-05': 'Desajuste del presupuesto de fila', 'C-06': 'No se han creado filas del gráfico', 'C-07': 'No hay cantidad graduada con la que comparar' }, gradedCount: 'Puntos base graduados', rowsBalanced: 'Filas que equilibran los puntos graduados', maxDrift: 'Máxima desviación frente a los puntos graduados', repeatBlock: 'Tamaño del bloque de repetición', verdict: 'Resultado', symbolKey: 'Clave de símbolos CYC (paleta estándar)', chartRows: 'Filas del gráfico', addRow: 'Añadir fila', remove: 'Eliminar', row: 'Fila', repeatCount: 'Cantidad de repeticiones ×', selvedgeBefore: 'Borde antes (punto derecho)', selvedgeAfter: 'Borde después (punto derecho)', rowTotal: 'Total de la fila', symbolsInside: 'Símbolos dentro de la repetición', copyProse: 'Copiar texto del patrón', copied: 'Copiado', proseTitle: 'Texto del patrón', proseDescription: 'Instrucciones de filas listas para pegar, generadas desde el gráfico.', empty: 'Añade una fila para empezar el gráfico.', stitchUnit: 'p', sourceNote: 'Fuentes: símbolos CYC estándar, comparativa de Knitgrammer y guía de Brooklyn Tweed. La aritmética de repetición está vinculada a la tabla graduada.' },
+  pt: { title: 'Laboratório de gráficos', description: 'O gráfico fica no mesmo projeto que a tabela graduada: os orçamentos das carreiras são verificados, as repetições validadas e o texto do padrão fica pronto a copiar.', verdictLabels: { ready: 'Pronto', review: 'Rever', blocked: 'Bloqueado' }, severityLabels: { error: 'Erro', warn: 'Aviso', info: 'Info' }, flagTitles: { 'C-01': 'A carreira não tem bloco de repetição', 'C-02': 'Número de repetições inferior a 1', 'C-03': 'Símbolo desconhecido na carreira', 'C-04': 'Orçamento de carreira negativo', 'C-05': 'Desvio no orçamento de carreira', 'C-06': 'Não foram criadas carreiras no gráfico', 'C-07': 'Não há contagem graduada para comparar' }, gradedCount: 'Contagem base de malhas graduada', rowsBalanced: 'Carreiras que equilibram a contagem graduada', maxDrift: 'Variação máxima face à contagem graduada', repeatBlock: 'Tamanho do bloco de repetição', verdict: 'Resultado', symbolKey: 'Chave de símbolos CYC (paleta padrão)', chartRows: 'Carreiras do gráfico', addRow: 'Adicionar carreira', remove: 'Remover', row: 'Carreira', repeatCount: 'Número de repetições ×', selvedgeBefore: 'Borda antes (malha de meia)', selvedgeAfter: 'Borda depois (malha de meia)', rowTotal: 'Total da carreira', symbolsInside: 'Símbolos dentro da repetição', copyProse: 'Copiar texto do padrão', copied: 'Copiado', proseTitle: 'Texto do padrão', proseDescription: 'Instruções de carreiras prontas a colar, geradas a partir do gráfico.', empty: 'Adicione uma carreira para começar o gráfico.', stitchUnit: 'm', sourceNote: 'Fontes: símbolos CYC padrão, resumo da Knitgrammer e guia da Brooklyn Tweed. A aritmética das repetições está ligada à tabela graduada.' },
+};
+
+export function getChartCopy(locale: string): ChartCopy {
+  return COPY[locale.toLowerCase().split('-')[0] as LanguageCode] ?? COPY.en;
+}
+
+const FLAG_DETAILS: Record<LanguageCode, Record<string, string>> = {
+  en: {},
+  de: {
+    'C-01': 'Mindestens eine Zeile enthält nur Randmaschen. Füge Wiederholungssymbole hinzu.',
+    'C-02': 'Eine Wiederholung muss mindestens einmal pro Zeile laufen.',
+    'C-03': 'Ein Symbol ist nicht im CYC-Schlüssel. Definiere für eigene Symbole die Maschenkosten.',
+    'C-04': 'Mindestens eine Zeile verbraucht eine negative Maschenzahl.',
+    'C-05': 'Mindestens eine Zeile stimmt nicht mit der graduierten Grundzahl überein. Prüfe Randmaschen, Umschläge und Wiederholungen.',
+    'C-06': 'Das Diagramm ist leer — erstelle mindestens eine Zeile.',
+    'C-07': 'Gib die Maschenzahl der Grundgröße an, damit die Zeilenbudgets geprüft werden können.',
+  },
+  fr: {
+    'C-01': 'Au moins une rangée ne contient que des lisières. Ajoutez les symboles de répétition.',
+    'C-02': 'Une répétition doit apparaître au moins une fois dans la rangée.',
+    'C-03': 'Un symbole ne figure pas dans la légende CYC. Définissez le coût en mailles des symboles personnalisés.',
+    'C-04': 'Au moins une rangée consomme un nombre négatif de mailles.',
+    'C-05': 'Au moins une rangée ne correspond pas au nombre gradué. Vérifiez lisières, jetés et répétitions.',
+    'C-06': 'Le diagramme est vide — créez au moins une rangée.',
+    'C-07': 'Indiquez le nombre de mailles de base pour vérifier les budgets des rangées.',
+  },
+  es: {
+    'C-01': 'Al menos una fila solo declara bordes. Añade los símbolos de repetición.',
+    'C-02': 'Una repetición debe ejecutarse al menos una vez en la fila.',
+    'C-03': 'Hay un símbolo que no está en la clave CYC. Define el coste de los símbolos personalizados.',
+    'C-04': 'Al menos una fila consume un número negativo de puntos.',
+    'C-05': 'Al menos una fila no coincide con la cantidad graduada. Revisa bordes, lazadas y repeticiones.',
+    'C-06': 'El gráfico está vacío — crea al menos una fila.',
+    'C-07': 'Indica la cantidad de puntos de la talla base para verificar los presupuestos.',
+  },
+  pt: {
+    'C-01': 'Pelo menos uma carreira contém apenas bordas. Adicione os símbolos de repetição.',
+    'C-02': 'Uma repetição deve ocorrer pelo menos uma vez na carreira.',
+    'C-03': 'Há um símbolo que não está na chave CYC. Defina o custo de malhas dos símbolos personalizados.',
+    'C-04': 'Pelo menos uma carreira consome uma contagem negativa de malhas.',
+    'C-05': 'Pelo menos uma carreira não corresponde à contagem graduada. Verifique bordas, laçadas e repetições.',
+    'C-06': 'O gráfico está vazio — crie pelo menos uma carreira.',
+    'C-07': 'Informe a contagem de malhas da base para verificar os orçamentos das carreiras.',
+  },
+};
+
+export function getChartFlagDetail(locale: string, code: string, fallback: string): string {
+  const lang = (locale.toLowerCase().split('-')[0] as LanguageCode);
+  return FLAG_DETAILS[lang]?.[code] ?? fallback;
+}

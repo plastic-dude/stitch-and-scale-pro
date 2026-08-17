@@ -7,10 +7,9 @@ import { AutosaveIndicator } from "@/components/autosave-indicator"
 import { StorageBadge } from "@/components/storage-badge"
 import { InstallBanner } from "@/components/install-banner"
 import { useSettings } from "@/context/SettingsContext"
-import { translate } from "@/lib/i18n"
-
 function RecoveryBanner() {
   const { recovered, dismissRecovery } = useProjects()
+  const { t } = useSettings()
   if (!recovered) return null
   return (
     <motion.div
@@ -22,13 +21,13 @@ function RecoveryBanner() {
       <div className="flex items-center gap-3 bg-secondary/40 border border-border rounded-lg px-4 py-2.5 text-sm">
         <ShieldCheck className="w-4 h-4 text-primary flex-shrink-0" aria-hidden="true" />
         <p className="flex-1 text-foreground/80">
-          <span className="font-medium text-foreground">Your work is safe.</span>{' '}
-          Your last session closed unexpectedly — all projects were already saved locally.
+          <span className="font-medium text-foreground">{t('nav.recoveryTitle')}</span>{' '}
+          {t('nav.recoveryDescription')}
         </p>
         <button
           onClick={dismissRecovery}
           className="p-1 rounded text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          aria-label="Dismiss"
+          aria-label={t('nav.dismiss')}
         >
           <X className="w-3.5 h-3.5" />
         </button>
@@ -40,9 +39,9 @@ function RecoveryBanner() {
 export function Shell({ children }: { children: React.ReactNode }) {
   const [location] = useLocation()
   const { saveStatus } = useProjects()
-  const { language } = useSettings()
-  const projectsLabel = translate(language, 'nav.projects')
-  const settingsLabel = translate(language, 'nav.settings')
+  const { t } = useSettings()
+  const projectsLabel = t('nav.projects')
+  const settingsLabel = t('nav.settings')
   const [justExported, setJustExported] = React.useState(false)
 
   React.useEffect(() => {
@@ -76,9 +75,9 @@ export function Shell({ children }: { children: React.ReactNode }) {
               <BookOpen className="w-5 h-5" />
               <span className="hidden md:inline text-sm font-medium">{projectsLabel}</span>
             </Link>
-            <Link href="/portfolio" aria-label="Portfolio" className={`p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors flex items-center gap-2 ${location === '/portfolio' ? 'bg-secondary/50' : ''}`}>
+            <Link href="/portfolio" aria-label={t('nav.portfolio')} className={`p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors flex items-center gap-2 ${location === '/portfolio' ? 'bg-secondary/50' : ''}`}>
               <Package className="w-5 h-5" />
-              <span className="hidden md:inline text-sm font-medium">Portfolio</span>
+              <span className="hidden md:inline text-sm font-medium">{t('nav.portfolio')}</span>
             </Link>
             <Link href="/settings" aria-label={settingsLabel} className={`p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors flex items-center gap-2 ${location === '/settings' ? 'bg-secondary/50' : ''}`}>
               <Settings className="w-5 h-5" />
@@ -87,9 +86,9 @@ export function Shell({ children }: { children: React.ReactNode }) {
             
             <div className="w-px h-6 bg-border mx-2"></div>
             
-            <Link href="/project/new" aria-label="New Project" className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2 gap-2">
+            <Link href="/project/new" aria-label={t('nav.newProject')} className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2 gap-2">
               <Plus className="w-4 h-4" />
-              <span className="hidden sm:inline">New Project</span>
+              <span className="hidden sm:inline">{t('nav.newProject')}</span>
             </Link>
           </nav>
         </div>
@@ -117,7 +116,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
       </main>
       
       <footer className="border-t py-6 md:py-0 md:h-16 flex items-center justify-center text-sm text-muted-foreground">
-        <p>A premium tool for independent knitwear designers</p>
+        <p>{t('nav.footerDescription')}</p>
       </footer>
     </div>
   )

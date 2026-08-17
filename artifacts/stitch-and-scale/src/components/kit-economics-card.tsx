@@ -13,6 +13,8 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { CheckCircle2, ClipboardCopy, Package, TrendingUp, ShieldCheck } from 'lucide-react';
 import { PatternProject } from '@/lib/grading-engine';
+import { useSettings } from '@/context/SettingsContext';
+import { KIT_ECONOMICS_COPY } from '@/lib/kit-economics-copy';
 import { YarnWeight, YARN_WEIGHTS, YARN_WEIGHT_LABELS } from '@/lib/yarn-estimator';
 import { PlatformId, PLATFORMS, PLATFORM_LABELS } from '@/lib/pattern-income-calculator';
 import {
@@ -29,7 +31,7 @@ function num(v: string): number {
   return Number.isFinite(n) ? n : 0;
 }
 
-function CopyLine({ text, label }: { text: string; label: string }) {
+function CopyLine({ text, label, copyLabels }: { text: string; label: string; copyLabels: { copied: string; copyFailed: string; selectManually: string } }) {
   const { toast } = useToast();
   const [copied, setCopied] = React.useState(false);
   const copy = async () => {
@@ -37,16 +39,16 @@ function CopyLine({ text, label }: { text: string; label: string }) {
       await navigator.clipboard.writeText(text);
       setCopied(true);
       setTimeout(() => setCopied(false), 2500);
-      toast({ title: 'Copied', description: label });
+      toast({ title: copyLabels.copied, description: label });
     } catch {
-      toast({ title: 'Copy failed', description: 'Select the text manually.' });
+      toast({ title: copyLabels.copyFailed, description: copyLabels.selectManually });
     }
   };
   return (
     <div>
       <div className="flex items-start justify-between gap-2 rounded-md border bg-muted/40 px-3 py-2">
         <p className="whitespace-pre-wrap text-sm text-muted-foreground leading-relaxed font-mono">{text}</p>
-        <Button variant="ghost" size="sm" onClick={copy} aria-label={`Copy ${label}`}>
+        <Button variant="ghost" size="sm" onClick={copy} aria-label={`${copyLabels.copied} ${label}`}>
           {copied ? <CheckCircle2 className="size-4 text-emerald-600" /> : <ClipboardCopy className="size-4" />}
         </Button>
       </div>
@@ -105,6 +107,8 @@ function loadStored(projectId: string): StoredKitState {
 }
 
 export function KitEconomicsCard({ project }: { project: PatternProject }) {
+  const { language } = useSettings();
+  const copyText = KIT_ECONOMICS_COPY[language];
   const stored = React.useRef<StoredKitState>(loadStored(project.id));
   const saved = stored.current;
 
@@ -227,19 +231,16 @@ export function KitEconomicsCard({ project }: { project: PatternProject }) {
       <CardHeader>
         <CardTitle className="font-serif flex items-center gap-2">
           <Package className="w-5 h-5 text-accent" />
-          Kit Economics
+          {copyText.title}
         </CardTitle>
         <CardDescription>
-          The only thing that turns a pattern into a kit channel is a price the market accepts against a cost
-          stack you actually pay. This builds the kit's true COGS from the project's yardage model, then
-          stress-tests three channels side by side — self-sell, LYS consignment, and keystone wholesale —
-          with cited fee models.
+          {copyText.description}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="space-y-2">
-            <Label>Yarn weight</Label>
+            <Label>{copyText.weight}</Label>
             <select
               className="w-full rounded-md border bg-background px-3 py-2 text-sm"
               value={weight}
@@ -250,20 +251,20 @@ export function KitEconomicsCard({ project }: { project: PatternProject }) {
                 </option>
               ))}
             </select>
-            <p className="text-xs text-muted-foreground">Drives yarn COGS via the yardage model.</p>
+            <p className="text-xs text-muted-foreground">{copyText.weightHint}</p>
           </div>
           <div className="space-y-2">
-            <Label>Yarn price / 100g skein ($)</Label>
+            <Label>{copyText.yarnPrice}</Label>
             <Input type="number" min={0} value={pricePerSkein} onChange={e => setPricePerSkein(e.target.value)} />
-            <p className="text-xs text-muted-foreground">What you actually pay per skein.</p>
+            <p className="text-xs text-muted-foreground">{copyText.yarnPriceHint}</p>
           </div>
           <div className="space-y-2">
-            <Label>Kit retail price ($)</Label>
+            <Label>{copyText.retailPrice}</Label>
             <Input type="number" min={0} value={retailPrice} onChange={e => setRetailPrice(e.target.value)} />
-            <p className="text-xs text-muted-foreground">The price knitters see everywhere.</p>
+            <p className="text-xs text-muted-foreground">{copyText.retailHint}</p>
           </div>
           <div className="space-y-2">
-            <Label>Self-sell platform</Label>
+            <Label>{copyText.platform}</Label>
             <select
               className="w-full rounded-md border bg-background px-3 py-2 text-sm"
               value={platform}
@@ -274,86 +275,86 @@ export function KitEconomicsCard({ project }: { project: PatternProject }) {
                 </option>
               ))}
             </select>
-            <p className="text-xs text-muted-foreground">Fees from the Income Planner's cited model — one seam.</p>
+            <p className="text-xs text-muted-foreground">{copyText.platformHint}</p>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="space-y-2">
-            <Label>Notions ($)</Label>
+            <Label>{copyText.notions}</Label>
             <Input type="number" min={0} value={notionsCost} onChange={e => setNotionsCost(e.target.value)} />
-            <p className="text-xs text-muted-foreground">Buttons, ties, waste yarn, printout.</p>
+            <p className="text-xs text-muted-foreground">{copyText.notionsHint}</p>
           </div>
           <div className="space-y-2">
-            <Label>Packaging ($)</Label>
+            <Label>{copyText.packaging}</Label>
             <Input type="number" min={0} value={packagingCost} onChange={e => setPackagingCost(e.target.value)} />
-            <p className="text-xs text-muted-foreground">Box, label, tissue paper.</p>
+            <p className="text-xs text-muted-foreground">{copyText.packagingHint}</p>
           </div>
           <div className="space-y-2">
-            <Label>Kitting labour (hours)</Label>
+            <Label>{copyText.labourHours}</Label>
             <Input type="number" min={0} value={labourHours} onChange={e => setLabourHours(e.target.value)} />
-            <p className="text-xs text-muted-foreground">Assembly time per kit.</p>
+            <p className="text-xs text-muted-foreground">{copyText.labourHoursHint}</p>
           </div>
           <div className="space-y-2">
-            <Label>Labour rate ($/hr)</Label>
+            <Label>{copyText.labourRate}</Label>
             <Input type="number" min={0} value={labourRate} onChange={e => setLabourRate(e.target.value)} />
-            <p className="text-xs text-muted-foreground">Including your own time — the line most makers skip.</p>
+            <p className="text-xs text-muted-foreground">{copyText.labourRateHint}</p>
           </div>
           <div className="space-y-2">
-            <Label>Overhead share ($)</Label>
+            <Label>{copyText.overhead}</Label>
             <Input type="number" min={0} value={overheadShare} onChange={e => setOverheadShare(e.target.value)} />
-            <p className="text-xs text-muted-foreground">Studio share per kit.</p>
+            <p className="text-xs text-muted-foreground">{copyText.overheadHint}</p>
           </div>
           <div className="space-y-2">
-            <Label>Consignor share</Label>
+            <Label>{copyText.consignor}</Label>
             <Input type="number" min={0} max={1} step={0.05} value={consignorShare} onChange={e => setConsignorShare(e.target.value)} />
-            <p className="text-xs text-muted-foreground">0.60 = you keep 60% — the cited industry standard.</p>
+            <p className="text-xs text-muted-foreground">{copyText.consignorHint}</p>
           </div>
           <div className="space-y-2">
-            <Label>Processor fee (deducted before split)</Label>
+            <Label>{copyText.processor}</Label>
             <Input type="number" min={0} max={1} step={0.001} value={processorFeePct} onChange={e => setProcessorFeePct(e.target.value)} />
-            <p className="text-xs text-muted-foreground">2.6–3.5% card processing, off the top.</p>
+            <p className="text-xs text-muted-foreground">{copyText.processorHint}</p>
           </div>
           <div className="space-y-2">
-            <Label>Wholesale marketplace fee</Label>
+            <Label>{copyText.wholesaleFee}</Label>
             <Input type="number" min={0} max={1} step={0.05} value={wholesaleMarketplaceFeePct} onChange={e => setWholesaleMarketplaceFeePct(e.target.value)} />
-            <p className="text-xs text-muted-foreground">Faire-style: 15% new retailers, 0% existing.</p>
+            <p className="text-xs text-muted-foreground">{copyText.wholesaleFeeHint}</p>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="space-y-2">
-            <Label>Kits / mo — self-sell</Label>
+            <Label>{copyText.selfSell}</Label>
             <Input type="number" min={0} value={monthlyKitSales} onChange={e => setMonthlyKitSales(e.target.value)} />
           </div>
           <div className="space-y-2">
-            <Label>Kits / mo — consignment</Label>
+            <Label>{copyText.consignment}</Label>
             <Input type="number" min={0} value={monthlyConsignmentSales} onChange={e => setMonthlyConsignmentSales(e.target.value)} />
           </div>
           <div className="space-y-2">
-            <Label>Wholesale kits per order</Label>
+            <Label>{copyText.wholesalePerOrder}</Label>
             <Input type="number" min={1} value={wholesaleKitsPerOrder} onChange={e => setWholesaleKitsPerOrder(e.target.value)} />
           </div>
           <div className="space-y-2">
-            <Label>Wholesale orders / mo</Label>
+            <Label>{copyText.wholesaleOrders}</Label>
             <Input type="number" min={0} value={monthlyWholesaleOrders} onChange={e => setMonthlyWholesaleOrders(e.target.value)} />
           </div>
           <div className="space-y-2">
-            <Label>Solo pattern income ($/mo)</Label>
+            <Label>{copyText.soloIncome}</Label>
             <Input type="number" min={0} value={soloPatternIncome} onChange={e => setSoloPatternIncome(e.target.value)} />
-            <p className="text-xs text-muted-foreground">Your current baseline, for the like-for-like comparison.</p>
+            <p className="text-xs text-muted-foreground">{copyText.soloHint}</p>
           </div>
           <div className="space-y-2">
-            <Label>Target shop name (optional)</Label>
-            <Input value={shopName} onChange={e => setShopName(e.target.value)} placeholder="The Wool Room" />
+            <Label>{copyText.shopName}</Label>
+            <Input value={shopName} onChange={e => setShopName(e.target.value)} placeholder={copyText.shopPlaceholder} />
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
           <div className="rounded-lg border bg-muted/40 p-4">
-            <p className="text-xs uppercase tracking-wide text-muted-foreground">Kit COGS</p>
+            <p className="text-xs uppercase tracking-wide text-muted-foreground">{copyText.cogs}</p>
             <p className="text-2xl font-semibold">{fmt(cogs.totalCogs)}</p>
-            <p className="text-xs text-muted-foreground">{cogs.skeins} skeins ≈ {cogs.estimatedYards} yd</p>
+            <p className="text-xs text-muted-foreground">{cogs.skeins} {copyText.skeins} ≈ {cogs.estimatedYards} yd</p>
           </div>
           {(Object.keys(CHANNEL_LABELS) as KitChannel[]).map(ch => {
             const o = result.channels.find(c => c.channel === ch)!;
@@ -361,7 +362,7 @@ export function KitEconomicsCard({ project }: { project: PatternProject }) {
               <div key={ch} className="rounded-lg border bg-muted/40 p-4">
                 <p className="text-xs uppercase tracking-wide text-muted-foreground">{CHANNEL_LABELS[ch]}</p>
                 <p className="text-2xl font-semibold">{fmt(o.netPerKit)}/kit</p>
-                <p className="text-xs text-muted-foreground">{fmt(o.monthlyNet)}/mo · take {o.takePct}%</p>
+                <p className="text-xs text-muted-foreground">{fmt(o.monthlyNet)}/mo · {copyText.take} {o.takePct}%</p>
               </div>
             );
           })}
@@ -372,19 +373,19 @@ export function KitEconomicsCard({ project }: { project: PatternProject }) {
             <Badge
               variant={result.capacity.keystoneCapacity ? 'default' : 'destructive'}
               className="text-xs">
-              Keystone capacity: {result.capacity.keystoneCapacity ? 'holds' : 'fails'} (COGS {result.capacity.cogsSharePct}% of retail; retail ÷ 4 {'>'} COGS)
+              {copyText.capacity}: {result.capacity.keystoneCapacity ? copyText.holds : copyText.fails} (COGS {result.capacity.cogsSharePct}% of retail; retail ÷ 4 {'>'} COGS)
             </Badge>
             <Badge variant={result.capacity.conveniencePremiumWarning ? 'destructive' : 'secondary'} className="text-xs">
-              Retail is {result.capacity.retailToYarnMultiple}× yarn cost{result.capacity.conveniencePremiumWarning ? ' — buyers may anchor DIY' : ' — in line with market tolerance'}
+              {copyText.retailAnchor} {result.capacity.retailToYarnMultiple}× yarn cost{result.capacity.conveniencePremiumWarning ? ` ${copyText.diyWarning}` : ` ${copyText.marketTolerance}`}
             </Badge>
             <Badge
               variant={result.bestChannel && result.beatsBaseline ? 'default' : 'secondary'}
               className="text-xs">
               {result.bestChannel && result.beatsBaseline
-                ? `${CHANNEL_LABELS[result.bestChannel]} beats the solo baseline`
+                ? `${CHANNEL_LABELS[result.bestChannel]} ${copyText.beatsBaseline}`
                 : result.bestChannel
-                  ? `${CHANNEL_LABELS[result.bestChannel]} is best but under the solo baseline`
-                  : 'No channel sells at these volumes'}
+                  ? `${CHANNEL_LABELS[result.bestChannel]} ${copyText.underBaseline}`
+                  : copyText.noChannel}
             </Badge>
           </div>
 
@@ -392,8 +393,8 @@ export function KitEconomicsCard({ project }: { project: PatternProject }) {
             <div className="flex items-start gap-2 rounded-md border bg-primary/5 px-3 py-2 text-sm">
               <TrendingUp className="size-4 mt-0.5 shrink-0" />
               <span>
-                Best channel nets {fmt(result.bestMonthlyNet)}/mo versus {fmt(num(soloPatternIncome))} pattern baseline —{' '}
-                {result.beatsBaseline ? 'the kit channel earns more on its own.' : 'it supplements rather than replaces pattern income.'}
+                {copyText.bestChannel} {fmt(result.bestMonthlyNet)}/mo versus {fmt(num(soloPatternIncome))} pattern baseline —{' '}
+                {result.beatsBaseline ? copyText.earnsMore : copyText.supplements}
               </span>
             </div>
           )}
@@ -402,7 +403,7 @@ export function KitEconomicsCard({ project }: { project: PatternProject }) {
         <div className="space-y-3">
           <Label className="flex items-center gap-2 text-base font-semibold">
             <ShieldCheck className="size-4" />
-            Consignment agreement checklist
+            {copyText.checklist}
           </Label>
           <ul className="space-y-1 text-sm text-muted-foreground">
             {clauses.map((c, i) => (
@@ -412,15 +413,15 @@ export function KitEconomicsCard({ project }: { project: PatternProject }) {
               </li>
             ))}
           </ul>
-          <CopyLine text={clauses.join('\n')} label="consignment checklist" />
+          <CopyLine text={clauses.join('\n')} label={copyText.checklistLabel} copyLabels={copyText} />
         </div>
 
         <div className="space-y-3">
-          <Label className="flex items-center gap-2 text-base font-semibold">Paste-ready kit proposal</Label>
+          <Label className="flex items-center gap-2 text-base font-semibold">{copyText.proposal}</Label>
           <p className="text-sm text-muted-foreground">
-            Wholesale price is keystone — half retail ({fmt(wholesalePrice)}) — so the shop's margin holds at full retail.
+            {copyText.proposalHint} ({fmt(wholesalePrice)}).
           </p>
-          <CopyLine text={proposal} label="kit proposal to the shop" />
+          <CopyLine text={proposal} label={copyText.proposal} copyLabels={copyText} />
         </div>
       </CardContent>
     </Card>

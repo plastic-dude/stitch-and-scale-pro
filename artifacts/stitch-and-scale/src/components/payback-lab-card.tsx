@@ -15,6 +15,8 @@
  * LOCAL-FIRST: pure read of sibling labs + localStorage for settings.
  */
 import { useMemo, useState } from "react";
+import { useSettings } from '@/context/SettingsContext';
+import { PAYBACK_COPY, type PaybackCopy } from '@/lib/payback-copy';
 import { TrendingUp, AlertTriangle, CheckCircle2, Clock, PiggyBank } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -169,12 +171,14 @@ function DesignPaybackCard({
   currency,
   hours,
   onHours,
+  copy,
 }: {
   r: PaybackDesignResult;
   rate: number;
   currency: string;
   hours: number;
   onHours: (n: number) => void;
+  copy: PaybackCopy;
 }) {
   const whatIf10 = whatIfRecoup(r.investment, r.avgNetPerSale, r.avgNetPerSale * 1.1);
   const whatIf20 = whatIfRecoup(r.investment, r.avgNetPerSale, r.avgNetPerSale * 1.2);
@@ -195,26 +199,26 @@ function DesignPaybackCard({
           </div>
           {r.paidBack ? (
             <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300">
-              <CheckCircle2 className="h-3 w-3" /> Paid back
+              <CheckCircle2 className="h-3 w-3" /> {copy.paidBackBadge}
             </span>
           ) : isReachable(r.recoupCopies) ? (
             <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700 dark:bg-amber-900/40 dark:text-amber-300">
-              <Clock className="h-3 w-3" /> {r.monthsSinceLastSale >= 3 ? "Bleeding" : "Recouping"}
+              <Clock className="h-3 w-3" /> {r.monthsSinceLastSale >= 3 ? copy.bleedingBadge : copy.recoupingBadge}
             </span>
           ) : (
             <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700 dark:bg-red-900/40 dark:text-red-300">
-              <AlertTriangle className="h-3 w-3" /> No net on sales yet
+              <AlertTriangle className="h-3 w-3" /> {copy.noNet}
             </span>
           )}
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
-          <Stat label="Invested" value={fmtMoney(r.investment, currency)} />
-          <Stat label="Net earned" value={fmtMoney(r.revenueNet, currency)} />
-          <Stat label="Copies sold" value={String(r.copiesSold)} />
+          <Stat label={copy.invested} value={fmtMoney(r.investment, currency)} />
+          <Stat label={copy.netEarned} value={fmtMoney(r.revenueNet, currency)} />
+          <Stat label={copy.copiesSold} value={String(r.copiesSold)} />
           <Stat
-            label="Avg net / sale"
+            label={copy.avgNet}
             value={fmtMoney(r.avgNetPerSale, currency)}
             muted={!isReachable(r.recoupCopies) && r.copiesSold === 0}
           />
@@ -225,11 +229,11 @@ function DesignPaybackCard({
             <span className="text-muted-foreground">
               {isReachable(r.recoupCopies) ? (
                 <>
-                  Needs <strong className="text-foreground">{r.recoupCopies}</strong> net sales to recoup
+                  {copy.needs(String(r.recoupCopies)).split(String(r.recoupCopies))[0]}<strong className="text-foreground">{r.recoupCopies}</strong>{copy.needs(String(r.recoupCopies)).split(String(r.recoupCopies))[1]}
                 </>
               ) : (
                 <>
-                  Needs <strong className="text-foreground">∞</strong> net sales at this average
+                  {copy.netSalesAtAverage}
                 </>
               )}
             </span>
@@ -241,44 +245,44 @@ function DesignPaybackCard({
         </div>
 
         <div className="grid gap-3 text-sm sm:grid-cols-3">
-          <MiniStat label="Out of pocket" value={fmtMoney(r.directCost, currency)} />
-          <MiniStat label="Overhead share" value={fmtMoney(r.overheadShare, currency)} />
-          <MiniStat label="Time cost" value={fmtMoney(r.timeCost, currency)} sub={`${hours}h × ${fmtMoney(rate, currency)}/h`} />
+          <MiniStat label={copy.outOfPocket} value={fmtMoney(r.directCost, currency)} />
+          <MiniStat label={copy.overhead} value={fmtMoney(r.overheadShare, currency)} />
+          <MiniStat label={copy.timeCost} value={fmtMoney(r.timeCost, currency)} sub={`${hours}h × ${fmtMoney(rate, currency)}/h`} />
         </div>
 
         <div className="grid gap-3 text-sm sm:grid-cols-3">
           <MiniStat
-            label={r.paidBack ? "Ahead by" : "Still in deficit"}
+            label={r.paidBack ? copy.aheadBy : copy.deficit}
             value={r.paidBack ? "+" + fmtMoney(r.surplus, currency) : "−" + fmtMoney(r.deficit, currency)}
             accent={r.paidBack ? "emerald" : "red"}
           />
-          <MiniStat label="Cost-only copies" value={isReachable(r.costCopies) ? String(r.costCopies) : "∞"} sub="recovers out-of-pocket only" />
+          <MiniStat label={copy.costCopies} value={isReachable(r.costCopies) ? String(r.costCopies) : "∞"} sub={copy.costOnly} />
           <MiniStat
-            label="Months since last sale"
+            label={copy.monthsSinceSale}
             value={r.copiesSold === 0 ? "—" : String(r.monthsSinceLastSale)}
-            sub={r.lastSaleDate ? ("last sale " + r.lastSaleDate) : undefined}
+            sub={r.lastSaleDate ? `${copy.lastSale} ${r.lastSaleDate}` : undefined}
           />
         </div>
 
         {isReachable(r.recoupCopies) && r.avgNetPerSale > 0 && (
           <div className="rounded-md border bg-muted/40 p-3 text-xs">
-            <p className="mb-1.5 font-medium text-muted-foreground">What-if: price the pattern higher</p>
+            <p className="mb-1.5 font-medium text-muted-foreground">{copy.whatIf}</p>
             <div className="flex flex-wrap gap-3">
-              <span>+10% net → recoup in <strong>{whatIf10.projected}</strong> copies (was {whatIf10.current})</span>
-              <span>+20% net → recoup in <strong>{whatIf20.projected}</strong> copies (was {whatIf20.current})</span>
+              <span>{copy.plus10(String(whatIf10.projected), String(whatIf10.current))}</span>
+              <span>{copy.plus20(String(whatIf20.projected), String(whatIf20.current))}</span>
             </div>
           </div>
         )}
 
         {!r.paidBack && r.monthsSinceLastSale >= 3 && r.copiesSold > 0 && (
           <p className="text-xs text-muted-foreground">
-            No sale in {r.monthsSinceLastSale} months — the Promo Lab and Re-Price Lab can give this pattern a second life.
+            {copy.staleSale(r.monthsSinceLastSale)}
           </p>
         )}
 
         <div className="space-y-1">
           <Label htmlFor={"pb-hours-" + r.design.id} className="text-xs text-muted-foreground">
-            Design hours (knitting + writing + revising)
+            {copy.designHours}
           </Label>
           <Input
             id={"pb-hours-" + r.design.id}
@@ -336,6 +340,8 @@ function MiniStat({
 
 export function PaybackLabCard(props: { project: PatternProject }) {
   const { project } = props;
+  const { language } = useSettings();
+  const copy = PAYBACK_COPY[language];
   const [settings, setSettings] = useState<PaybackStored>(() => readPaybackSettings(project));
   const [rateInput, setRateInput] = useState<string>(() => String(settings.hourlyRate ?? PAYBACK_DEFAULTS.floorHourlyRate));
 
@@ -405,28 +411,26 @@ export function PaybackLabCard(props: { project: PatternProject }) {
     <Card className="mt-3">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
-          <TrendingUp className="h-4 w-4" /> Payback Lab
+          <TrendingUp className="h-4 w-4" /> {copy.title}
         </CardTitle>
         <CardDescription>
-          Your time has a price. This lab counts every pound, dollar and hour you put into a pattern — and tells you the
-          exact moment it pays you back.
+          {copy.description}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-5">
         {!hasData && (
           <div className="rounded-md border border-dashed bg-muted/40 p-4 text-sm text-muted-foreground">
             <PiggyBank className="mb-1.5 h-4 w-4" />
-            Nothing to recoup yet. Add designs and costs in the <strong>Design Ledger</strong> tab and record sales in
-            the <strong>Receipt Lab</strong> — this lab watches them both and updates automatically.
+            {copy.empty.replace('Design Ledger', copy.designLedger).replace('Receipt Lab', copy.receiptLab)}
           </div>
         )}
 
         <div className="flex flex-wrap items-end gap-4">
           <div className="space-y-1">
-            <Label className="text-xs text-muted-foreground">Your hourly rate (currency/hour)</Label>
+            <Label className="text-xs text-muted-foreground">{copy.rateLabel}</Label>
             <div className="flex items-center gap-2">
               <Input
-                aria-label="Hourly rate"
+                aria-label={copy.rateAria}
                 type="number"
                 min={0}
                 value={rateInput}
@@ -438,21 +442,21 @@ export function PaybackLabCard(props: { project: PatternProject }) {
                 className="h-8 w-28 text-sm"
               />
               <Button variant="outline" size="sm" onClick={commitRate}>
-                Apply
+                {copy.apply}
               </Button>
             </div>
             {(settings.hourlyRate ?? 0) < PAYBACK_DEFAULTS.floorHourlyRate && (
               <p className="text-xs text-muted-foreground">
-                Tip: even {PAYBACK_DEFAULTS.floorHourlyRate}/h is honest — your skill took years to build.
+                {copy.rateTip(PAYBACK_DEFAULTS.floorHourlyRate)}
               </p>
             )}
           </div>
 
           <div className="grid grid-cols-2 gap-4 text-sm sm:grid-cols-3">
-            <Stat label="Total invested" value={fmtMoney(result.totalInvestment, currency)} />
-            <Stat label="Total net earned" value={fmtMoney(result.totalNet, currency)} />
+            <Stat label={copy.totalInvested} value={fmtMoney(result.totalInvestment, currency)} />
+            <Stat label={copy.totalNet} value={fmtMoney(result.totalNet, currency)} />
             <Stat
-              label="Patterns paid back"
+              label={copy.paidBack}
               value={result.paidBackCount + " / " + result.paidBackCountOfRelevant}
               muted={result.paidBackCountOfRelevant === 0}
             />
@@ -460,15 +464,15 @@ export function PaybackLabCard(props: { project: PatternProject }) {
         </div>
 
         {designs.length === 0 && hasData && (
-          <p className="text-sm text-muted-foreground">No pattern has recorded costs or sales yet.</p>
+          <p className="text-sm text-muted-foreground">{copy.noCosts}</p>
         )}
 
         <Tabs defaultValue="all">
           <TabsList className="flex-wrap">
-            <TabsTrigger value="all">All patterns ({designs.length})</TabsTrigger>
-            <TabsTrigger value="winners">Winners ({designs.filter((d) => d.paidBack).length})</TabsTrigger>
+            <TabsTrigger value="all">{copy.all} ({designs.length})</TabsTrigger>
+            <TabsTrigger value="winners">{copy.winners} ({designs.filter((d) => d.paidBack).length})</TabsTrigger>
             <TabsTrigger value="bleeders">
-              Recouping ({designs.filter((d) => !d.paidBack && (d.copiesSold > 0 || d.investment > 0)).length})
+              {copy.recouping} ({designs.filter((d) => !d.paidBack && (d.copiesSold > 0 || d.investment > 0)).length})
             </TabsTrigger>
           </TabsList>
           <TabsContent value="all" className="mt-4">
@@ -481,6 +485,7 @@ export function PaybackLabCard(props: { project: PatternProject }) {
                   currency={currency}
                   hours={settings.hoursMap?.[d.design.id] ?? 0}
                   onHours={(n) => setHours(d.design.id, n)}
+                  copy={copy}
                 />
               ))}
             </div>
@@ -497,6 +502,7 @@ export function PaybackLabCard(props: { project: PatternProject }) {
                     currency={currency}
                     hours={settings.hoursMap?.[d.design.id] ?? 0}
                     onHours={(n) => setHours(d.design.id, n)}
+                    copy={copy}
                   />
                 ))}
             </div>
@@ -513,6 +519,7 @@ export function PaybackLabCard(props: { project: PatternProject }) {
                     currency={currency}
                     hours={settings.hoursMap?.[d.design.id] ?? 0}
                     onHours={(n) => setHours(d.design.id, n)}
+                    copy={copy}
                   />
                 ))}
             </div>
@@ -520,8 +527,7 @@ export function PaybackLabCard(props: { project: PatternProject }) {
         </Tabs>
 
         <p className="text-xs text-muted-foreground">
-          Local-first: everything is computed from your Design Ledger and Receipt Lab data on this device. No cloud, no
-          subscription, no guesswork — just the math of when your work pays you back.
+          {copy.localFirst}
         </p>
       </CardContent>
     </Card>

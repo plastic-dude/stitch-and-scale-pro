@@ -1,5 +1,7 @@
 import * as React from 'react';
 import type { GradingKey } from '@/lib/grading-engine';
+import { useSettings } from '@/context/SettingsContext';
+import { BODY_SCHEMATIC_COPY } from '@/lib/body-schematic-copy';
 
 interface PointDef {
   key: GradingKey;
@@ -40,6 +42,8 @@ const LABELS: Record<GradingKey, string> = {
 };
 
 export function BodySchematic({ usedKeys }: { usedKeys: GradingKey[] }) {
+  const { language } = useSettings();
+  const copy = BODY_SCHEMATIC_COPY[language];
   const activeSet = new Set(usedKeys);
   const activePoints = POINTS.filter(p => activeSet.has(p.key));
 
@@ -47,15 +51,15 @@ export function BodySchematic({ usedKeys }: { usedKeys: GradingKey[] }) {
 
   return (
     <div className="rounded-2xl border border-border/60 bg-card p-5 sm:p-6">
-      <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-1">Measurement Reference</p>
-      <p className="text-sm text-muted-foreground mb-4">Where each measurement below is taken from, at a glance.</p>
+      <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-1">{copy.heading}</p>
+      <p className="text-sm text-muted-foreground mb-4">{copy.description}</p>
       <div className="w-full overflow-x-auto" style={{ contain: 'layout inline-size' }}>
         <svg
           viewBox="-50 0 400 460"
           className="mx-auto block h-auto"
           style={{ width: 'min(100%, 380px)' }}
           role="img"
-          aria-label="Body measurement reference diagram"
+          aria-label={copy.aria}
         >
           {/* Silhouette — simple technical flat, not anatomical illustration */}
           <g fill="none" stroke="currentColor" strokeWidth="1.5" className="text-muted-foreground/50">
@@ -90,7 +94,7 @@ export function BodySchematic({ usedKeys }: { usedKeys: GradingKey[] }) {
                 className="fill-foreground"
                 style={{ fontSize: '11px', fontWeight: 500 }}
               >
-                {LABELS[p.key]}
+                {copy.labels[p.key] ?? LABELS[p.key]}
               </text>
             </g>
           ))}

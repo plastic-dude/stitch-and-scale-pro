@@ -5,6 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { AlertTriangle, Flag, Package, Layers, Lightbulb } from 'lucide-react';
 import { PatternProject } from '@/lib/grading-engine';
+import { useSettings } from '@/context/SettingsContext';
+import { BOX_INCLUSION_COPY, getBoxFlagTitle, getBoxVerdictLabel, getBoxFlagNote, getBoxVerdictNote } from '@/lib/box-inclusion-copy';
 import { projectStorage } from '@/lib/storage-lib';
 import {
   analyzeBoxInclusion,
@@ -74,6 +76,8 @@ const verdictColor = (v: string) =>
   'bg-sky-500/15 text-sky-700 border-sky-500/30';
 
 export function BoxInclusionLabCard({ project }: { project: PatternProject }) {
+  const { language } = useSettings();
+  const copy = BOX_INCLUSION_COPY[language];
   const handle = useMemo(() => projectStorage<StoredState>('box-inclusion', project.id, [STORAGE_KEY]), [project.id]);
   const [input, setInput] = useState<BoxInclusionInput>(() => loadStored(handle));
 
@@ -92,77 +96,77 @@ export function BoxInclusionLabCard({ project }: { project: PatternProject }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-base"><Package className="size-4" />Box Inclusion Lab</CardTitle>
-        <CardDescription>A yarn box offers to feature your pattern. Is it a payday, a marketing deal, or the KnitCrate trap? KnitCrate — the biggest US knit box — paid contributing makers a maximum of $3 per item, demanded ~85% wholesale discounts, called itself a "friend to indie dyers and makers", and closed in November 2022 owing $2.95M in SBA loans, with featured designers receiving nothing after closure. This lab prices the offer's fee, exposure funnel, time cost, and exclusivity lock against your self-publish baseline, then discounts everything by the box's survival odds (industry churn averages 10–12% of subscribers monthly; well-run boxes hold under 5%).</CardDescription>
+        <CardTitle className="flex items-center gap-2 text-base"><Package className="size-4" />{copy.title}</CardTitle>
+        <CardDescription>{copy.description}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <section className="space-y-3">
-          <h3 className="text-sm font-semibold flex items-center gap-1.5"><Layers className="size-4" />The box & the offer</h3>
+          <h3 className="text-sm font-semibold flex items-center gap-1.5"><Layers className="size-4" />{copy.offer}</h3>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
             <div className="space-y-1.5 col-span-2">
-              <Label htmlFor="box-name" className="text-xs">Box name</Label>
+              <Label htmlFor="box-name" className="text-xs">{copy.boxName}</Label>
               <Input id="box-name" value={input.boxName} onChange={e => set('boxName', e.target.value)} className="text-sm" />
             </div>
-            <NumField id="box-subs" label="Subscribers" value={input.subs} onChange={n => set('subs', Math.max(0, Math.round(n)))} min={0} suffix="subs" />
-            <NumField id="box-price" label="Box price / month" value={input.boxPrice} onChange={n => set('boxPrice', Math.max(1, n))} min={1} step={0.01} suffix="$" />
-            <NumField id="box-fee" label="Flat design fee" value={input.designerFee} onChange={n => set('designerFee', Math.max(0, n))} suffix="$" />
-            <NumField id="box-royalty" label="Royalty / box shipped" value={input.royaltyPerBox} onChange={n => set('royaltyPerBox', Math.max(0, n))} step={0.01} suffix="$" />
-            <NumField id="box-lock" label="Exclusivity lock" value={input.exclusiveMonths} onChange={n => set('exclusiveMonths', Math.max(0, Math.min(12, n)))} min={0} max={12} suffix="mo" />
-            <NumField id="box-hrs" label="Design + swatch hours" value={input.designHours} onChange={n => set('designHours', Math.max(0.5, n))} min={0.5} step={0.5} suffix="hrs" />
-            <NumField id="box-rate" label="Your hourly rate" value={input.hourlyRate} onChange={n => set('hourlyRate', Math.max(1, n))} suffix="$/hr" />
-            <NumField id="box-wavefreq" label="Feature frequency" value={input.waveFreqMonths} onChange={n => set('waveFreqMonths', Math.max(0.25, n))} step={0.5} suffix="mo/wave" />
-            <NumField id="box-goods" label="Free/discounted goods" value={input.extraGoodsValue} onChange={n => set('extraGoodsValue', Math.max(0, n))} suffix="$" />
-            <NumField id="box-health" label="Box health (0 = frail / 1 = stable)" value={input.boxHealth} onChange={n => set('boxHealth', Math.max(0, Math.min(1, n)))} step={0.05} />
+            <NumField id="box-subs" label={copy.subscribers} value={input.subs} onChange={n => set('subs', Math.max(0, Math.round(n)))} min={0} suffix="subs" />
+            <NumField id="box-price" label={copy.boxPrice} value={input.boxPrice} onChange={n => set('boxPrice', Math.max(1, n))} min={1} step={0.01} suffix="$" />
+            <NumField id="box-fee" label={copy.designFee} value={input.designerFee} onChange={n => set('designerFee', Math.max(0, n))} suffix="$" />
+            <NumField id="box-royalty" label={copy.royalty} value={input.royaltyPerBox} onChange={n => set('royaltyPerBox', Math.max(0, n))} step={0.01} suffix="$" />
+            <NumField id="box-lock" label={copy.exclusivity} value={input.exclusiveMonths} onChange={n => set('exclusiveMonths', Math.max(0, Math.min(12, n)))} min={0} max={12} suffix="mo" />
+            <NumField id="box-hrs" label={copy.designHours} value={input.designHours} onChange={n => set('designHours', Math.max(0.5, n))} min={0.5} step={0.5} suffix="hrs" />
+            <NumField id="box-rate" label={copy.hourlyRate} value={input.hourlyRate} onChange={n => set('hourlyRate', Math.max(1, n))} suffix="$/hr" />
+            <NumField id="box-wavefreq" label={copy.frequency} value={input.waveFreqMonths} onChange={n => set('waveFreqMonths', Math.max(0.25, n))} step={0.5} suffix="mo/wave" />
+            <NumField id="box-goods" label={copy.goods} value={input.extraGoodsValue} onChange={n => set('extraGoodsValue', Math.max(0, n))} suffix="$" />
+            <NumField id="box-health" label={copy.health} value={input.boxHealth} onChange={n => set('boxHealth', Math.max(0, Math.min(1, n)))} step={0.05} />
             <div className="flex flex-col justify-end gap-3 pb-1">
               <label className="flex items-center gap-2 text-xs">
                 <input type="checkbox" checked={input.byline === 1} onChange={e => set('byline', e.target.checked ? 1 : 0)} />
-                Pattern credits you by name
+                {copy.byline}
               </label>
               <label className="flex items-center gap-2 text-xs">
                 <input type="checkbox" checked={input.rightsAssignment === 1} onChange={e => set('rightsAssignment', e.target.checked ? 1 : 0)} />
-                Contract demands rights / first-publication assignment
+                {copy.rights}
               </label>
             </div>
           </div>
         </section>
 
         <section className="space-y-3">
-          <h3 className="text-sm font-semibold flex items-center gap-1.5"><Layers className="size-4" />Your exposure funnel & baseline</h3>
+          <h3 className="text-sm font-semibold flex items-center gap-1.5"><Layers className="size-4" />{copy.funnel}</h3>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            <NumField id="box-signup" label="Exposed → joins your list" value={input.listSignupsPct} onChange={n => set('listSignupsPct', Math.max(0, Math.min(1, n)))} step={0.01} suffix="%" />
-            <NumField id="box-salet" label="List → buys pattern (12 mo)" value={input.listToSalePct} onChange={n => set('listToSalePct', Math.max(0, Math.min(1, n)))} step={0.01} suffix="%" />
-            <NumField id="box-digprice" label="Your digital price" value={input.patternPrice} onChange={n => set('patternPrice', Math.max(0.5, n))} min={0.5} step={0.5} suffix="$" />
-            <NumField id="box-selfpub" label="Your shop earnings / month now" value={input.selfPublishEarningsMonthly} onChange={n => set('selfPublishEarningsMonthly', Math.max(0, n))} suffix="$/mo" />
+            <NumField id="box-signup" label={copy.exposed} value={input.listSignupsPct} onChange={n => set('listSignupsPct', Math.max(0, Math.min(1, n)))} step={0.01} suffix="%" />
+            <NumField id="box-salet" label={copy.listSale} value={input.listToSalePct} onChange={n => set('listToSalePct', Math.max(0, Math.min(1, n)))} step={0.01} suffix="%" />
+            <NumField id="box-digprice" label={copy.digitalPrice} value={input.patternPrice} onChange={n => set('patternPrice', Math.max(0.5, n))} min={0.5} step={0.5} suffix="$" />
+            <NumField id="box-selfpub" label={copy.earnings} value={input.selfPublishEarningsMonthly} onChange={n => set('selfPublishEarningsMonthly', Math.max(0, n))} suffix="$/mo" />
           </div>
         </section>
 
         <section className="space-y-3">
-          <h3 className="text-sm font-semibold flex items-center gap-1.5"><Package className="size-4" />What the offer is actually worth</h3>
+          <h3 className="text-sm font-semibold flex items-center gap-1.5"><Package className="size-4" />{copy.worth}</h3>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            <StatBox label="Direct income / wave" value={FMT(result.feeIncomePerWave)} tone="good" />
-            <StatBox label="Wave reach (with byline)" value={result.exposure.waveReach.toLocaleString()} tone="default" />
-            <StatBox label="List joins / wave" value={result.exposure.listSignups.toFixed(1)} tone={result.exposure.listSignups > 0 ? 'good' : 'bad'} />
-            <StatBox label="Funnel sales / wave" value={result.exposure.funnelSales.toFixed(1)} tone={result.exposure.funnelSales > 0 ? 'good' : 'bad'} />
-            <StatBox label="Funnel revenue / wave" value={FMT2(result.exposure.funnelRevenue)} tone={result.exposure.funnelRevenue > 0 ? 'good' : 'bad'} />
-            <StatBox label="Your time cost (this design)" value={FMT(result.timeCost)} tone="default" />
-            <StatBox label="Exclusivity drag / yr" value={'−' + FMT(result.exclusivityDragPerYear)} tone={result.exclusivityDragPerYear > 0 ? 'warn' : 'default'} />
-            <StatBox label="Annual net EV (health-weighted)" value={(result.annualNetEv >= 0 ? '' : '−') + '$' + Math.abs(result.annualNetEv).toLocaleString('en-US', { maximumFractionDigits: 0 })} tone={result.annualNetEv > 0 ? 'good' : 'bad'} />
-            <StatBox label="Break-even fee / wave" value={FMT(result.breakEvenFee)} tone={input.designerFee >= result.breakEvenFee ? 'good' : 'warn'} />
-            <StatBox label="Fair floor fee (6% of retail)" value={FMT2(result.fairFloorFee)} tone="default" />
-            <StatBox label="Avg subscriber life" value={`${result.avgSubscriberLifeMonths.toFixed(0)} mo`} tone={result.avgSubscriberLifeMonths >= 12 ? 'good' : 'warn'} />
-            <StatBox label="Health weight applied" value={`${(result.healthMultiplier * 100).toFixed(0)}%`} tone={result.healthMultiplier >= 0.8 ? 'good' : 'warn'} />
+            <StatBox label={copy.direct} value={FMT(result.feeIncomePerWave)} tone="good" />
+            <StatBox label={copy.reach} value={result.exposure.waveReach.toLocaleString()} tone="default" />
+            <StatBox label={copy.joins} value={result.exposure.listSignups.toFixed(1)} tone={result.exposure.listSignups > 0 ? 'good' : 'bad'} />
+            <StatBox label={copy.sales} value={result.exposure.funnelSales.toFixed(1)} tone={result.exposure.funnelSales > 0 ? 'good' : 'bad'} />
+            <StatBox label={copy.revenue} value={FMT2(result.exposure.funnelRevenue)} tone={result.exposure.funnelRevenue > 0 ? 'good' : 'bad'} />
+            <StatBox label={copy.timeCost} value={FMT(result.timeCost)} tone="default" />
+            <StatBox label={copy.drag} value={'−' + FMT(result.exclusivityDragPerYear)} tone={result.exclusivityDragPerYear > 0 ? 'warn' : 'default'} />
+            <StatBox label={copy.netEv} value={(result.annualNetEv >= 0 ? '' : '−') + '$' + Math.abs(result.annualNetEv).toLocaleString('en-US', { maximumFractionDigits: 0 })} tone={result.annualNetEv > 0 ? 'good' : 'bad'} />
+            <StatBox label={copy.breakEven} value={FMT(result.breakEvenFee)} tone={input.designerFee >= result.breakEvenFee ? 'good' : 'warn'} />
+            <StatBox label={copy.fairFloor} value={FMT2(result.fairFloorFee)} tone="default" />
+            <StatBox label={copy.life} value={`${result.avgSubscriberLifeMonths.toFixed(0)} mo`} tone={result.avgSubscriberLifeMonths >= 12 ? 'good' : 'warn'} />
+            <StatBox label={copy.healthWeight} value={`${(result.healthMultiplier * 100).toFixed(0)}%`} tone={result.healthMultiplier >= 0.8 ? 'good' : 'warn'} />
           </div>
-          <p className="text-xs text-muted-foreground leading-4">Industry anchors: boxes run $10–$225/mo (average US box ~$43); subscriber churn 10–12%/mo (well-run &lt;5% → ~20-month lifetimes); CAC $70–135/subscriber (sustainable ≤25–35% of CLTV); gross margin must stay ≥40–50% per box — below 30% is a KnitCrate-style death spiral. KnitCrate's own value sheet priced patterns at $3–5 each. A fee near the fair floor with royalties ≈2% of box price is what a healthy operator can afford.</p>
+          <p className="text-xs text-muted-foreground leading-4">{copy.anchors}</p>
         </section>
 
         {result.flags.length > 0 && (
           <section className="space-y-2">
-            <h3 className="text-sm font-semibold flex items-center gap-1.5"><Flag className="size-4" />Watch-outs</h3>
+            <h3 className="text-sm font-semibold flex items-center gap-1.5"><Flag className="size-4" />{copy.watch}</h3>
             <div className="flex flex-wrap gap-2">
               {result.flags.map(f => (
                 <Badge key={f.id} variant="outline" className="border-amber-500/40 bg-amber-500/10 text-amber-700 gap-1.5 py-1.5">
                   <AlertTriangle className="size-3" />
-                  <span className="font-medium">{f.id}</span> — {f.title}
+                  <span className="font-medium">{f.id}</span> — {getBoxFlagTitle(language, f.id, f.title)}<span className="sr-only">: {getBoxFlagNote(language, f.id, f.note)}</span>
                 </Badge>
               ))}
             </div>
@@ -170,8 +174,8 @@ export function BoxInclusionLabCard({ project }: { project: PatternProject }) {
         )}
 
         <section className={`rounded-md border p-4 ${verdictColor(result.verdict)}`}>
-          <div className="flex items-center gap-2 font-semibold"><Lightbulb className="size-4" />{result.verdict}</div>
-          <p className="mt-1.5 text-sm">{result.verdictNote}</p>
+          <div className="flex items-center gap-2 font-semibold"><Lightbulb className="size-4" />{copy.verdict}: {getBoxVerdictLabel(language, result.verdict)}</div>
+          <p className="mt-1.5 text-sm">{getBoxVerdictNote(language, result.verdict, result.verdictNote)}</p>
         </section>
       </CardContent>
     </Card>

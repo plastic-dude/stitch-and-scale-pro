@@ -41,6 +41,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { BookMarked, Copy, Download, FileSpreadsheet, Plus, Trash2 } from "lucide-react";
+import { useSettings } from "@/context/SettingsContext";
+import { DESIGN_LEDGER_COPY, type DesignLedgerCopy } from "@/lib/design-ledger-copy";
 
 const LEGACY_STORAGE_KEY = "stitch-and-scale-designledger-v1";
 
@@ -122,6 +124,8 @@ function receiptSaleRows(receiptStored: ReceiptStoredState, currency: string): D
 export function DesignLedgerCard(props: { project: PatternProject }) {
   const { project } = props;
   const { toast } = useToast();
+  const { language } = useSettings();
+  const copy = DESIGN_LEDGER_COPY[language];
   const handle = useMemo(
     () => projectStorage<StoredState>("designledger", project.id, [LEGACY_STORAGE_KEY]),
     [project.id],
@@ -177,16 +181,16 @@ export function DesignLedgerCard(props: { project: PatternProject }) {
     a.download = "design-ledger.csv";
     a.click();
     URL.revokeObjectURL(url);
-    toast({ title: "Ledger exported", description: "design-ledger.csv downloaded — accountant-ready." });
+    toast({ title: copy.export, description: copy.csvDownloaded });
   };
 
   const copySummary = async () => {
     const summary = exportLedgerSummary(roll, studioName);
     try {
       await navigator.clipboard.writeText(summary);
-      toast({ title: "Summary copied", description: "Paste it anywhere — tax chats, DMs, notes." });
+      toast({ title: copy.export, description: copy.summaryCopied });
     } catch {
-      toast({ title: "Could not copy", description: "Use the CSV export instead." });
+      toast({ title: copy.export, description: copy.summaryCopyFailed });
     }
   };
 
@@ -195,37 +199,34 @@ export function DesignLedgerCard(props: { project: PatternProject }) {
       <Card>
         <CardHeader>
           <CardTitle className="font-serif flex items-center gap-2">
-            <BookMarked className="h-5 w-5" /> Design Ledger
+            <BookMarked className="h-5 w-5" /> {copy.title}
           </CardTitle>
           <CardDescription>
-            The record room — every design, every cost, every sale in one place.
-            Sales flow in automatically from the Receipt Lab. Local-first; when
-            sign-in arrives, your account id links this ledger to your cloud
-            copy with no re-creation needed.
+            {copy.description}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="studio">
             <TabsList className="flex-wrap h-auto">
-              <TabsTrigger value="studio">Studio</TabsTrigger>
-              <TabsTrigger value="designs">Designs ({state.designs.length})</TabsTrigger>
-              <TabsTrigger value="costs">Costs ({state.expenses.length})</TabsTrigger>
-              <TabsTrigger value="export">Export</TabsTrigger>
+              <TabsTrigger value="studio">{copy.studio}</TabsTrigger>
+              <TabsTrigger value="designs">{copy.designs} ({state.designs.length})</TabsTrigger>
+              <TabsTrigger value="costs">{copy.costs} ({state.expenses.length})</TabsTrigger>
+              <TabsTrigger value="export">{copy.export}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="studio" className="space-y-4 pt-4">
               <div className="grid gap-4 sm:grid-cols-3">
                 <div>
-                  <Label htmlFor="dl-studio-name">Studio name</Label>
+                  <Label htmlFor="dl-studio-name">{copy.studioName}</Label>
                   <Input
                     id="dl-studio-name"
                     value={state.studioName}
-                    placeholder="Your brand / studio"
+                    placeholder={copy.studioPlaceholder}
                     onChange={(e) => persist({ ...state, studioName: e.target.value })}
                   />
                 </div>
                 <div>
-                  <Label htmlFor="dl-currency">Currency</Label>
+                  <Label htmlFor="dl-currency">{copy.currency}</Label>
                   <NativeSelect
                     id="dl-currency"
                     value={state.currency}
@@ -247,10 +248,10 @@ export function DesignLedgerCard(props: { project: PatternProject }) {
                   </NativeSelect>
                 </div>
                 <div>
-                  <Label htmlFor="dl-auth-bridge">Account bridge</Label>
+                  <Label htmlFor="dl-auth-bridge">{copy.accountBridge}</Label>
                   <Input
                     id="dl-auth-bridge"
-                    value={state.authId || "not signed in yet"}
+                    value={state.authId || copy.notSignedIn}
                     readOnly
                     className="text-muted-foreground"
                   />
@@ -258,24 +259,24 @@ export function DesignLedgerCard(props: { project: PatternProject }) {
               </div>
 
               <div className="grid gap-3 pt-2 sm:grid-cols-2 lg:grid-cols-5">
-                <Stat label="Pipeline designs" value={String(state.designs.length)} />
-                <Stat label="Published" value={String(roll.publishedCount)} />
-                <Stat label="Sales" value={String(roll.totalSales)} />
-                <Stat label="Revenue" value={fmt(roll.totalRevenue)} />
-                <Stat label="Profit after fees &amp; costs" value={fmt(roll.totalProfit)} strong />
+                <Stat label={copy.pipeline} value={String(state.designs.length)} />
+                <Stat label={copy.published} value={String(roll.publishedCount)} />
+                <Stat label={copy.sales} value={String(roll.totalSales)} />
+                <Stat label={copy.revenue} value={fmt(roll.totalRevenue)} />
+                <Stat label={copy.profit} value={fmt(roll.totalProfit)} strong />
               </div>
 
               {roll.monthly.length > 0 && (
                 <div className="pt-2">
-                  <div className="text-sm font-medium mb-2">Monthly P&amp;L</div>
+                  <div className="text-sm font-medium mb-2">{copy.monthly}</div>
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>
                         <tr className="text-muted-foreground border-b">
-                          <th className="text-left py-1 pr-4">Month</th>
-                          <th className="text-right py-1 pr-4">Revenue</th>
-                          <th className="text-right py-1 pr-4">Design costs</th>
-                          <th className="text-right py-1">Profit</th>
+                          <th className="text-left py-1 pr-4">{copy.month}</th>
+                          <th className="text-right py-1 pr-4">{copy.revenueHeader}</th>
+                          <th className="text-right py-1 pr-4">{copy.designCosts}</th>
+                          <th className="text-right py-1">{copy.profitHeader}</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -298,13 +299,13 @@ export function DesignLedgerCard(props: { project: PatternProject }) {
               <div className="flex flex-wrap gap-2">
                 <Input
                   value={designName}
-                  placeholder="Design name — e.g. Mossy Yoke Sweater"
+                  placeholder={copy.designPlaceholder}
                   onChange={(e) => setDesignName(e.target.value)}
                   className="max-w-xs"
                 />
                 <Input
                   value={designNotes}
-                  placeholder="Notes (optional)"
+                  placeholder={copy.notesPlaceholder}
                   onChange={(e) => setDesignNotes(e.target.value)}
                   className="max-w-xs"
                 />
@@ -312,7 +313,7 @@ export function DesignLedgerCard(props: { project: PatternProject }) {
                   size="sm"
                   onClick={() => {
                     if (!designName.trim()) {
-                      toast({ title: "Name required", description: "A design needs at least a name." });
+                      toast({ title: copy.nameRequired, description: copy.nameRequiredDescription });
                       return;
                     }
                     persist({
@@ -324,16 +325,16 @@ export function DesignLedgerCard(props: { project: PatternProject }) {
                     });
                     setDesignName("");
                     setDesignNotes("");
-                    toast({ title: "Design added", description: "It starts at Concept — move it along as it grows." });
+                    toast({ title: copy.designAdded, description: copy.designAddedDescription });
                   }}
                 >
-                  <Plus className="h-4 w-4 mr-1" /> Add design
+                  <Plus className="h-4 w-4 mr-1" /> {copy.addDesign}
                 </Button>
               </div>
 
               {state.designs.length === 0 ? (
                 <p className="text-sm text-muted-foreground">
-                  No designs recorded yet. Add your first — one name is enough.
+                  {copy.noDesigns}
                 </p>
               ) : (
                 <div className="space-y-2">
@@ -358,6 +359,7 @@ export function DesignLedgerCard(props: { project: PatternProject }) {
                       onRemove={() =>
                         persist({ ...state, designs: removeDesign(state.designs, d.id) })
                       }
+                      copy={copy}
                     />
                   ))}
                 </div>
@@ -367,13 +369,13 @@ export function DesignLedgerCard(props: { project: PatternProject }) {
             <TabsContent value="costs" className="space-y-4 pt-4">
               <div className="flex flex-wrap items-end gap-2">
                 <div>
-                  <Label htmlFor="dl-cost-design">Design (optional — studio overhead if empty)</Label>
+                  <Label htmlFor="dl-cost-design">{copy.designOptional}</Label>
                   <NativeSelect
                     id="dl-cost-design"
                     value={expDesign}
                     onChange={(e) => setExpDesign(e.target.value)}
                   >
-                    <option value="">— overhead —</option>
+                    <option value="">{copy.overhead}</option>
                     {state.designs.map((d) => (
                       <option key={d.id} value={d.id}>
                         {d.name}
@@ -382,7 +384,7 @@ export function DesignLedgerCard(props: { project: PatternProject }) {
                   </NativeSelect>
                 </div>
                 <div>
-                  <Label htmlFor="dl-cost-cat">Category</Label>
+                  <Label htmlFor="dl-cost-cat">{copy.category}</Label>
                   <NativeSelect
                     id="dl-cost-cat"
                     value={expCategory}
@@ -396,15 +398,15 @@ export function DesignLedgerCard(props: { project: PatternProject }) {
                   </NativeSelect>
                 </div>
                 <div>
-                  <Label htmlFor="dl-cost-desc">What for</Label>
-                  <Input id="dl-cost-desc" value={expDesc} placeholder="e.g. sample yarn" onChange={(e) => setExpDesc(e.target.value)} />
+                  <Label htmlFor="dl-cost-desc">{copy.whatFor}</Label>
+                  <Input id="dl-cost-desc" value={expDesc} placeholder={copy.whatFor} onChange={(e) => setExpDesc(e.target.value)} />
                 </div>
                 <div>
-                  <Label htmlFor="dl-cost-amt">Amount</Label>
+                  <Label htmlFor="dl-cost-amt">{copy.amount}</Label>
                   <Input id="dl-cost-amt" type="number" min="0" step="0.01" value={expAmount} placeholder="0.00" onChange={(e) => setExpAmount(e.target.value)} />
                 </div>
                 <div>
-                  <Label htmlFor="dl-cost-date">Date</Label>
+                  <Label htmlFor="dl-cost-date">{copy.date}</Label>
                   <Input id="dl-cost-date" type="date" value={expDate} onChange={(e) => setExpDate(e.target.value)} />
                 </div>
                 <Button
@@ -412,7 +414,7 @@ export function DesignLedgerCard(props: { project: PatternProject }) {
                   onClick={() => {
                     const amount = parseFloat(expAmount);
                     if (!(amount > 0)) {
-                      toast({ title: "Amount required", description: "Enter the cost as a positive number." });
+                      toast({ title: copy.amountRequired, description: copy.amountRequiredDescription });
                       return;
                     }
                     persist({
@@ -429,28 +431,27 @@ export function DesignLedgerCard(props: { project: PatternProject }) {
                     setExpDesc("");
                     setExpAmount("");
                     setExpDate(new Date().toISOString().slice(0, 10));
-                    toast({ title: "Cost recorded" });
+                    toast({ title: copy.costRecorded });
                   }}
                 >
-                  <Plus className="h-4 w-4 mr-1" /> Record cost
+                  <Plus className="h-4 w-4 mr-1" /> {copy.recordCost}
                 </Button>
               </div>
 
               {state.expenses.length === 0 ? (
                 <p className="text-sm text-muted-foreground">
-                  No costs recorded yet. Yarn for samples, tech edits, test-knit
-                  fees — log each once and the ledger does the rest.
+                  {copy.noCosts}
                 </p>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
                       <tr className="text-muted-foreground border-b">
-                        <th className="text-left py-1 pr-4">Date</th>
-                        <th className="text-left py-1 pr-4">Design</th>
-                        <th className="text-left py-1 pr-4">Category</th>
-                        <th className="text-left py-1 pr-4">What for</th>
-                        <th className="text-right py-1 pr-4">Amount</th>
+                        <th className="text-left py-1 pr-4">{copy.date}</th>
+                        <th className="text-left py-1 pr-4">{copy.designs}</th>
+                        <th className="text-left py-1 pr-4">{copy.category}</th>
+                        <th className="text-left py-1 pr-4">{copy.whatFor}</th>
+                        <th className="text-right py-1 pr-4">{copy.amount}</th>
                         <th className="py-1" />
                       </tr>
                     </thead>
@@ -459,14 +460,14 @@ export function DesignLedgerCard(props: { project: PatternProject }) {
                         <tr key={e.id} className="border-b">
                           <td className="py-1.5 pr-4">{e.date}</td>
                           <td className="py-1.5 pr-4">
-                            {state.designs.find((d) => d.id === e.designId)?.name || "—"}
+                            {state.designs.find((d) => d.id === e.designId)?.name || copy.noDesign}
                           </td>
                           <td className="py-1.5 pr-4">{ExpenseCategoryLabels[e.category]}</td>
                           <td className="py-1.5 pr-4">{e.description || "—"}</td>
                           <td className="py-1.5 pr-4 text-right">{fmtMoney(e.amount, e.currency || state.currency)}</td>
                           <td className="py-1.5">
                             <button
-                              aria-label="Remove cost"
+                              aria-label={copy.removeCost}
                               className="text-muted-foreground hover:text-destructive"
                               onClick={() => persist({ ...state, expenses: removeExpense(state.expenses, e.id) })}
                             >
@@ -483,16 +484,14 @@ export function DesignLedgerCard(props: { project: PatternProject }) {
 
             <TabsContent value="export" className="space-y-4 pt-4">
               <p className="text-sm text-muted-foreground">
-                Accountant-ready. The CSV lists every design, cost, and sale
-                with dates and categories; the summary is a one-glance number
-                sheet you can paste into any message.
+                {copy.exportDescription}
               </p>
               <div className="flex flex-wrap gap-2">
                 <Button size="sm" variant="secondary" onClick={exportCsv}>
-                  <FileSpreadsheet className="h-4 w-4 mr-1" /> Download CSV
+                  <FileSpreadsheet className="h-4 w-4 mr-1" /> {copy.downloadCsv}
                 </Button>
                 <Button size="sm" variant="secondary" onClick={copySummary}>
-                  <Copy className="h-4 w-4 mr-1" /> Copy summary
+                  <Copy className="h-4 w-4 mr-1" /> {copy.copySummary}
                 </Button>
               </div>
               <div className="text-sm">
@@ -501,6 +500,7 @@ export function DesignLedgerCard(props: { project: PatternProject }) {
                   currency={state.currency}
                   price={breakEvenPrice}
                   onPrice={setBreakEvenPrice}
+                  copy={copy}
                 />
               </div>
             </TabsContent>
@@ -529,8 +529,9 @@ function DesignRow(props: {
   onStatus: (s: DesignStatus) => void;
   onNotes: (n: string) => void;
   onRemove: () => void;
+  copy: DesignLedgerCopy;
 }) {
-  const { design, currency, summary, onStatus, onNotes, onRemove } = props;
+  const { design, currency, summary, onStatus, onNotes, onRemove, copy } = props;
   const [notes, setNotes] = useState(design.notes);
   const [noteSet, setNoteSet] = useState(false);
   const commitNotes = () => {
@@ -550,13 +551,11 @@ function DesignRow(props: {
         </NativeSelect>
         {summary && (
           <span className="text-xs text-muted-foreground">
-            cost {fmtMoney(summary.costTotal, currency)} · revenue{" "}
-            {fmtMoney(summary.revenueTotal, currency)} · sales {summary.salesCount} ·
-            profit {fmtMoney(summary.profitAttributed, currency)}
+            {copy.rowCost} {fmtMoney(summary.costTotal, currency)} · {copy.rowRevenue} {fmtMoney(summary.revenueTotal, currency)} · {copy.rowSales} {summary.salesCount} · {copy.rowProfit} {fmtMoney(summary.profitAttributed, currency)}
           </span>
         )}
         <button
-          aria-label="Remove design"
+          aria-label={copy.removeDesign}
           className="ml-auto text-muted-foreground hover:text-destructive"
           onClick={onRemove}
         >
@@ -566,7 +565,7 @@ function DesignRow(props: {
       <div className="mt-2 flex gap-2">
         <Textarea
           value={notes}
-          placeholder="Notes — swatch yarn, sizes planned, launch ideas…"
+          placeholder={copy.notesPlaceholder}
           className="min-h-[56px]"
           onChange={(e) => {
             setNotes(e.target.value);
@@ -576,7 +575,7 @@ function DesignRow(props: {
         />
         {!noteSet && notes !== design.notes && (
           <Button size="sm" variant="ghost" onClick={commitNotes}>
-            Save notes
+            {copy.saveNotes}
           </Button>
         )}
       </div>
@@ -589,22 +588,24 @@ function BreakEvenPanel(props: {
   currency: string;
   price: string;
   onPrice: (v: string) => void;
+  copy: DesignLedgerCopy;
 }) {
+  const { copy } = props;
   const price = parseFloat(props.price);
   const be = breakEven(props.cost, isNaN(price) ? 0 : price);
   return (
     <div className="mt-4 space-y-2">
-      <div className="font-medium">Break-even against recorded costs ({fmtMoney(props.cost, props.currency)})</div>
+      <div className="font-medium">{copy.breakEven} ({fmtMoney(props.cost, props.currency)})</div>
       <div className="flex flex-wrap items-center gap-2">
         <Label htmlFor="dl-be-price" className="sr-only">
-          Price per copy
+          {copy.pricePerCopy}
         </Label>
         <Input
           id="dl-be-price"
           type="number"
           min="0"
           step="0.01"
-          placeholder="Price per copy, e.g. 12.00"
+          placeholder={copy.pricePerCopy}
           value={props.price}
           onChange={(e) => props.onPrice(e.target.value)}
           className="max-w-[200px]"

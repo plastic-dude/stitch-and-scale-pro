@@ -4,6 +4,7 @@ import { useProject } from '@/context/ProjectsContext';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { TAB_GROUPS } from '@/lib/workspace-tab-groups';
 import { TAB_REGISTRY } from '@/lib/tab-registry';
+import { getWorkspaceTabLabel } from '@/lib/workspace-tab-labels';
 import { GaugeFitTranslatorCard } from '@/components/gauge-fit-translator-card';
 import {
   AlertDialog,
@@ -27,6 +28,7 @@ import { Plus, Edit2, Trash2, ArrowRight, Table as TableIcon, Copy, Settings, Ch
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useSettings } from '@/context/SettingsContext';
+import { getWorkspaceCopy } from '@/lib/workspace-copy';
 // CHK-094 bundle fix: lab cards are lazy-loaded on first tab activation.
 // LAB maps each tab value to a dynamic import (each card is a named export,
 // so the import is remapped to { default } for React.lazy). LazyPanel wraps
@@ -116,32 +118,37 @@ const LAB = {
 // React 19's LazyExoticComponent carries no component typing, so the props
 // object is cast to satisfy TypeScript when rendering the lazy lab.
 function LazyPanel({ loader, project }: { loader: React.LazyExoticComponent<any>; project: any }): React.ReactElement {
+  const { t } = useSettings();
   const Lab = loader as React.ComponentType<{ project: any }>;
-  return <React.Suspense fallback={<div className="py-10 text-center text-sm text-muted-foreground">Loading lab…</div>}><Lab project={project} /></React.Suspense>;
+  return <React.Suspense fallback={<div className="py-10 text-center text-sm text-muted-foreground">{t('workspace.loadingLab')}</div>}><Lab project={project} /></React.Suspense>;
 }
 
-function TriggerChildren({ value }: { value: string }): React.ReactElement {
+function TriggerChildren({ value, label }: { value: string; label?: string }): React.ReactElement {
+  // Labels come from the canonical locale-aware workspace registry. Keep the
+  // raw tab id only as a last-resort diagnostic fallback for an unregistered tab.
+  return <>{label ?? value}</>;
+  /* Legacy icon switch retained below as unreachable reference during migration.
   switch (value) {
-        case 'sections': return <>Sections</>;
-        case 'preview': return <>Preview</>;
-        case 'yarn': return <>Yarn</>;
-        case 'notes': return <>Notes</>;
-        case 'income': return <>Income</>;
-        case 'draft': return <>Draft</>;
-        case 'pricing': return <>Pricing</>;
-        case 'publish': return <>Publish</>;
-        case 'testknit': return <>Test Knit</>;
-        case 'techedit': return <>Tech Edit</>;
-        case 'finish': return <>Finish</>;
+        case 'sections': return <>{label ?? 'Sections'}</>;
+        case 'preview': return <>{label ?? 'Preview'}</>;
+        case 'yarn': return <>{label ?? 'Yarn'}</>;
+        case 'notes': return <>{label ?? 'Notes'}</>;
+        case 'income': return <>{label ?? 'Income'}</>;
+        case 'draft': return <>{label ?? 'Draft'}</>;
+        case 'pricing': return <>{label ?? 'Pricing'}</>;
+        case 'publish': return <>{label ?? 'Publish'}</>;
+        case 'testknit': return <>{label ?? 'Test Knit'}</>;
+        case 'techedit': return <>{label ?? 'Tech Edit'}</>;
+        case 'finish': return <>{label ?? 'Finish'}</>;
         case 'deals': return <>Deals</>;
-        case 'launch': return <>Launch</>;
+        case 'launch': return <>{label ?? 'Launch'}</>;
         case 'trunkshow': return <>Trunk Show</>;
         case 'transbundle': return <>Trans & Bundle</>;
         case 'patternclub': return <>Pattern Club</>;
         case 'kits': return <>Kits</>;
         case 'pipeline': return <>Pipeline</>;
         case 'kalroi': return <>KAL &amp; Collab</>;
-        case 'channels': return <>Channels</>;
+        case 'channels': return <>{label ?? 'Channels'}</>;
         case 'clubrev': return <>Club Rev</>;
         case 'wsbook': return <>Wholesale &amp; Book</>;
         case 'hireself': return <>Hire vs Self</>;
@@ -203,6 +210,7 @@ function TriggerChildren({ value }: { value: string }): React.ReactElement {
         case 'payback': return <><TrendingUp className="h-3.5 w-3.5 mr-1.5" /> Payback Lab</>;
     default: return <>{value}</>;
   }
+  */
 }
 
 type RoundingMode = 'exact' | 'multiple' | 'even' | 'odd';
@@ -288,7 +296,8 @@ export default function ProjectWorkspace() {
   const projectHook = useProject(id);
   const [, setLocation] = useLocation();
   const { toast } = useToast();
-  const { customStandard } = useSettings();
+  const { customStandard, t, language } = useSettings();
+  const copy = getWorkspaceCopy(language);
 
   const [activeTab, setActiveTab] = React.useState('sections');
   const [expandedSection, setExpandedSection] = React.useState<string | null>(null);
@@ -370,8 +379,8 @@ export default function ProjectWorkspace() {
   if (!projectHook) {
     return (
       <div className="flex flex-col items-center justify-center py-24 text-center">
-        <h2 className="text-2xl font-serif font-bold mb-4">Project Not Found</h2>
-        <Button onClick={() => setLocation('/')}>Return to Dashboard</Button>
+        <h2 className="text-2xl font-serif font-bold mb-4">{copy.projectNotFound}</h2>
+        <Button onClick={() => setLocation('/')}>{copy.returnDashboard}</Button>
       </div>
     );
   }
@@ -490,7 +499,7 @@ export default function ProjectWorkspace() {
       title: `"${measurement.label}" deleted`,
       description: 'One click is never final: hit Undo within 8s to get it back.',
       action: (
-        <button onClick={() => handleUndoDelete(stashKey)} className="text-sm font-medium text-primary underline underline-offset-2 px-2">Undo</button>
+        <button onClick={() => handleUndoDelete(stashKey)} className="text-sm font-medium text-primary underline underline-offset-2 px-2">{copy.undo}</button>
       ),
     });
   };
@@ -547,7 +556,7 @@ export default function ProjectWorkspace() {
                 <div className="w-16 h-16 bg-secondary/30 rounded-full flex items-center justify-center mb-4 text-primary">
                   <Calculator className="w-8 h-8" />
                 </div>
-                <h3 className="text-xl font-serif font-medium mb-2">No Sections Yet</h3>
+                <h3 className="text-xl font-serif font-medium mb-2">{copy.noSections}</h3>
                 <p className="text-muted-foreground max-w-sm mb-6">
                   Divide your pattern into logical sections (e.g. Back, Front, Sleeves) to start adding measurements.
                 </p>
@@ -576,7 +585,7 @@ export default function ProjectWorkspace() {
                     </div>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
-                        <Button variant="ghost" size="icon" onClick={(e) => e.stopPropagation()} className="text-destructive hover:text-destructive hover:bg-destructive/10" aria-label={`Delete section "${section.name}"`}>
+                        <Button variant="ghost" size="icon" onClick={(e) => e.stopPropagation()} className="text-destructive hover:text-destructive hover:bg-destructive/10" aria-label={copy.deleteSectionNamed(section.name)}>
                           <Trash2 className="w-4 h-4" />
                         </Button>
                       </AlertDialogTrigger>
@@ -590,7 +599,7 @@ export default function ProjectWorkspace() {
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                          <AlertDialogCancel>Keep It</AlertDialogCancel>
+                          <AlertDialogCancel>{copy.keepIt}</AlertDialogCancel>
                           <AlertDialogAction onClick={() => handleDeleteSection(section.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
                             Delete Section
                           </AlertDialogAction>
@@ -606,11 +615,11 @@ export default function ProjectWorkspace() {
                           <table className="w-full text-sm text-left">
                             <thead className="text-xs text-muted-foreground bg-muted/30 border-b border-border">
                               <tr>
-                                <th className="px-4 py-3 font-medium">Measurement</th>
-                                <th className="px-4 py-3 font-medium">Type</th>
-                                <th className="px-4 py-3 font-medium">Grading Base</th>
+                                <th className="px-4 py-3 font-medium">{copy.measurement}</th>
+                                <th className="px-4 py-3 font-medium">{copy.type}</th>
+                                <th className="px-4 py-3 font-medium">{copy.gradingBase}</th>
                                 <th className="px-4 py-3 font-medium">Value ({project.gauge?.unit ?? "in"})</th>
-                                <th className="px-4 py-3 font-medium text-right">Actions</th>
+                                <th className="px-4 py-3 font-medium text-right">{copy.actions}</th>
                               </tr>
                             </thead>
                             <tbody className="divide-y divide-border">
@@ -621,12 +630,12 @@ export default function ProjectWorkspace() {
                                   <td className="px-4 py-3 text-muted-foreground">{GRADING_KEY_LABELS[m.gradingKey]}</td>
                                   <td className="px-4 py-3 font-mono">{m.baseValue}</td>
                                   <td className="px-4 py-3 text-right">
-                                    <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity" onClick={() => handleEditMeasurement(section.id, m.id)} aria-label={`Edit measurement "${m.label}"`}>
+                                    <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity" onClick={() => handleEditMeasurement(section.id, m.id)} aria-label={copy.editMeasurement(m.label)}>
                                       <Edit2 className="w-4 h-4" />
                                     </Button>
                                     <AlertDialog>
                                       <AlertDialogTrigger asChild>
-                                        <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity" aria-label={`Delete measurement "${m.label}"`}>
+                                        <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity" aria-label={copy.deleteMeasurement(m.label)}>
                                           <Trash2 className="w-4 h-4" />
                                         </Button>
                                       </AlertDialogTrigger>
@@ -639,7 +648,7 @@ export default function ProjectWorkspace() {
                                           </AlertDialogDescription>
                                         </AlertDialogHeader>
                                         <AlertDialogFooter>
-                                          <AlertDialogCancel>Keep It</AlertDialogCancel>
+                                          <AlertDialogCancel>{copy.keepIt}</AlertDialogCancel>
                                           <AlertDialogAction onClick={() => handleDeleteMeasurement(section.id, m.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
                                             Delete Measurement
                                           </AlertDialogAction>
@@ -669,20 +678,20 @@ export default function ProjectWorkspace() {
                           </h4>
                           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                             <div className="space-y-1.5">
-                              <Label className="text-xs">Label</Label>
+                              <Label className="text-xs">{copy.label}</Label>
                               <Input placeholder="e.g. Back Width" value={mLabel} onChange={(e) => setMLabel(e.target.value)} className="h-10" />
                             </div>
                             <div className="space-y-1.5">
-                              <Label className="text-xs">Type</Label>
+                              <Label className="text-xs">{copy.typeLabel}</Label>
                               <NativeSelect value={mType} onChange={(e) => setMType(e.target.value as MeasurementType)}>
-                                <option value="circumference">Circumference (Full)</option>
-                                <option value="width">Width (Half)</option>
-                                <option value="length">Length</option>
-                                <option value="direct">Direct (No Grading)</option>
+                                <option value="circumference">{copy.circumferenceFull}</option>
+                                <option value="width">{copy.widthHalf}</option>
+                                <option value="length">{copy.length}</option>
+                                <option value="direct">{copy.directNoGrading}</option>
                               </NativeSelect>
                             </div>
                             <div className="space-y-1.5">
-                              <Label className="text-xs">Grading Key</Label>
+                              <Label className="text-xs">{copy.gradingKey}</Label>
                               <NativeSelect value={mKey} onChange={(e) => setMKey(e.target.value as GradingKey)} disabled={mType === 'direct'}>
                                 {Object.entries(GRADING_KEY_LABELS).map(([key, label]) => (
                                   <option key={key} value={key}>{label}</option>
@@ -722,18 +731,18 @@ export default function ProjectWorkspace() {
                             {(!mLabel.trim() || !mBaseValue) && (
                               <p className="text-xs text-muted-foreground" data-testid="text-save-requirement">
                                 {!mLabel.trim() && !mBaseValue
-                                  ? 'Add a label and a base value to save'
+                                  ? t('workspace.editor.addLabelAndBase')
                                   : !mLabel.trim()
-                                  ? 'Add a label to save'
-                                  : 'Add a base value to save'}
+                                  ? t('workspace.editor.addLabel')
+                                  : t('workspace.editor.addBase')}
                               </p>
                             )}
                             <div className="flex gap-2">
                               <Button variant="outline" size="sm" onClick={() => { setAddingMeasurementTo(null); resetMeasurementForm(); }}>
-                                {isEditingThisSection ? 'Cancel Edit' : 'Close'}
+                                {isEditingThisSection ? t('workspace.editor.cancel') : t('workspace.editor.close')}
                               </Button>
                               <Button size="sm" onClick={() => handleAddMeasurement(section.id)} disabled={!mLabel.trim() || !mBaseValue}>
-                                {isEditingThisSection ? 'Save Changes' : 'Save Measurement'}
+                                {isEditingThisSection ? t('workspace.editor.saveChanges') : t('workspace.editor.saveMeasurement')}
                               </Button>
                             </div>
                           </div>
@@ -741,7 +750,7 @@ export default function ProjectWorkspace() {
                       ) : (
                         <div className="p-3 bg-muted/10 border-t border-border flex justify-center">
                           <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-primary w-full max-w-sm" onClick={() => setAddingMeasurementTo(section.id)}>
-                            <Plus className="w-4 h-4 mr-2" /> Add Measurement to {section.name}
+                            <Plus className="w-4 h-4 mr-2" /> {t('workspace.editor.addMeasurement', { section: section.name })}
                           </Button>
                         </div>
                       )}
@@ -754,18 +763,18 @@ export default function ProjectWorkspace() {
                 <Card className="p-4 border-primary">
                   <div className="flex items-center gap-4">
                     <Input 
-                      placeholder="Section Name (e.g., Sleeves)" 
+                      placeholder={t('workspace.editor.sectionPlaceholder')}
                       value={newSectionName} 
                       onChange={(e) => setNewSectionName(e.target.value)}
                       autoFocus
                     />
-                    <Button onClick={handleAddSection}>Save</Button>
-                    <Button variant="ghost" onClick={() => setIsAddingSection(false)}>Cancel</Button>
+                    <Button onClick={handleAddSection}>{t('workspace.editor.save')}</Button>
+                    <Button variant="ghost" onClick={() => setIsAddingSection(false)}>{t('workspace.editor.close')}</Button>
                   </div>
                 </Card>
               ) : (
                 <Button variant="outline" className="w-full border-dashed" onClick={() => setIsAddingSection(true)}>
-                  <Plus className="w-4 h-4 mr-2" /> Add New Section
+                  <Plus className="w-4 h-4 mr-2" /> {t('workspace.editor.newSection')}
                 </Button>
               )}
             </div>
@@ -774,16 +783,16 @@ export default function ProjectWorkspace() {
             <CardHeader>
               <CardTitle className="font-serif flex items-center gap-2">
                 <Calculator className="w-5 h-5 text-accent" />
-                Grading Preview
+                {t('workspace.editor.previewTitle')}
               </CardTitle>
               <CardDescription>
-                A quick look at your stitch and row counts. Go to the Full Grading Table for export.
+                {t('workspace.editor.previewDescription')}
               </CardDescription>
             </CardHeader>
             <CardContent>
               {gradingResults.length === 0 || gradingResults.every(s => s.measurements.length === 0) ? (
                  <div className="text-center py-8 text-muted-foreground">
-                   Add sections and measurements first to see grading results.
+                   {t('workspace.editor.emptyPreview')}
                  </div>
               ) : (
                 <div className="space-y-8">
@@ -794,7 +803,7 @@ export default function ProjectWorkspace() {
                         <table className="w-full text-sm text-left whitespace-nowrap min-w-[600px]">
                           <thead>
                             <tr className="text-xs text-muted-foreground border-b border-border">
-                              <th className="px-2 py-2 font-medium sticky left-0 bg-card z-10 w-48 shadow-[1px_0_0_0_hsl(var(--border))]">Measurement</th>
+                              <th className="px-2 py-2 font-medium sticky left-0 bg-card z-10 w-48 shadow-[1px_0_0_0_hsl(var(--border))]">{copy.measurement}</th>
                               {ALL_SIZES.map(size => (
                                 <th key={size} className={cn("px-3 py-2 font-bold text-center", size === project.baseSize ? "text-primary bg-primary/5 rounded-t-md" : "")}>
                                   {size}
@@ -836,10 +845,10 @@ export default function ProjectWorkspace() {
             <CardHeader>
               <CardTitle className="font-serif flex items-center gap-2">
                 <Edit2 className="w-5 h-5 text-accent" />
-                Pattern Notes
+                {t('workspace.editor.notesTitle')}
               </CardTitle>
               <CardDescription>
-                Designer notes, construction reminders, or anything worth remembering about this pattern. These can be included on the PDF cover page — see Export PDF.
+                {t('workspace.editor.notesDescription')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -852,10 +861,10 @@ export default function ProjectWorkspace() {
               />
               <div className="flex items-center justify-between">
                 <p className="text-xs text-muted-foreground">
-                  {notesDirty ? 'Unsaved changes' : 'Saved'}
+                  {notesDirty ? t('workspace.editor.unsaved') : t('workspace.editor.saved')}
                 </p>
                 <Button onClick={handleSaveNotes} disabled={!notesDirty} size="sm" data-testid="button-save-notes">
-                  Save Notes
+                  {t('workspace.editor.saveNotes')}
                 </Button>
               </div>
             </CardContent>
@@ -957,21 +966,21 @@ export default function ProjectWorkspace() {
             </span>
           </div>
           <p className="text-muted-foreground flex flex-wrap items-center gap-x-2 gap-y-1">
-            By {project.author} <span className="text-border">•</span> 
-            Gauge: {project.gauge?.stitchesPer4In ?? "—"}sts × {project.gauge?.rowsPer4In ?? "—"}rows / 4{project.gauge?.unit ?? "in"}
+            {copy.by} {project.author} <span className="text-border">•</span>
+            {copy.gauge}: {project.gauge?.stitchesPer4In ?? "—"}sts × {project.gauge?.rowsPer4In ?? "—"}rows / 4{project.gauge?.unit ?? "in"}
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
           <Button variant="outline" size="sm" asChild>
             <Link href={`/project/${project.id}/grading`}>
               <TableIcon className="w-4 h-4 mr-2" />
-              Full Grading Table
+              {t('workspace.header.gradingTable')}
             </Link>
           </Button>
           <Button variant="default" size="sm" asChild className="bg-primary hover:bg-primary/90">
             <Link href={`/project/${project.id}/pdf`}>
               <Copy className="w-4 h-4 mr-2" />
-              Export PDF
+              {t('workspace.header.exportPdf')}
             </Link>
           </Button>
         </div>
@@ -980,12 +989,12 @@ export default function ProjectWorkspace() {
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <div className="flex flex-wrap gap-1 mb-1.5 px-0.5">
           {[
-            { g: 'design', label: 'Design & Pattern' },
-            { g: 'fit', label: 'Sizing & Fit' },
-            { g: 'pricing', label: 'Pricing & Income' },
-            { g: 'launch', label: 'Launch & Marketing' },
-            { g: 'channels', label: 'Selling Channels' },
-            { g: 'business', label: 'Business & Community' },
+            { g: 'design', label: t('workspace.group.design') },
+            { g: 'fit', label: t('workspace.group.fit') },
+            { g: 'pricing', label: t('workspace.group.pricing') },
+            { g: 'launch', label: t('workspace.group.launch') },
+            { g: 'channels', label: t('workspace.group.channels') },
+            { g: 'business', label: t('workspace.group.business') },
           ].map(({ g, label }) => {
             const first = Object.keys(TAB_GROUPS).find((v) => TAB_GROUPS[v] === g);
             const count = Object.values(TAB_GROUPS).filter((x) => x === g).length;
@@ -1002,15 +1011,20 @@ export default function ProjectWorkspace() {
           })}
         </div>
         <TabsList className="flex flex-wrap md:flex-nowrap w-full gap-1 bg-card border border-border p-1 h-auto overflow-x-auto">
-          {TAB_REGISTRY.map((t) => (
+          {TAB_REGISTRY.map((tab) => {
+              const localizedLabel = getWorkspaceTabLabel(language, tab.value, ({
+                sections: t('workspace.tab.sections'), preview: t('workspace.tab.preview'), yarn: t('workspace.tab.yarn'), notes: t('workspace.tab.notes'), income: t('workspace.tab.income'), draft: t('workspace.tab.draft'), pricing: t('workspace.tab.pricing'), publish: t('workspace.tab.publish'), testknit: t('workspace.tab.testKnit'), techedit: t('workspace.tab.techEdit'), finish: t('workspace.tab.finish'), launch: t('workspace.tab.launch'), channels: t('workspace.tab.channels'),
+              }[tab.value] ?? tab.label));
+            return (
             <TabsTrigger
-              key={t.value}
-              value={t.value}
+              key={tab.value}
+              value={tab.value}
               className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded"
             >
-              <TriggerChildren value={t.value} />
+              <TriggerChildren value={tab.value} label={localizedLabel ?? tab.label} />
             </TabsTrigger>
-          ))}
+            );
+          })}
         </TabsList>
 
         {TAB_REGISTRY.map((t) => (

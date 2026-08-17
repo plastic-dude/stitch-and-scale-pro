@@ -6,6 +6,8 @@ import { Label } from '@/components/ui/label';
 import { PlatformId, PLATFORMS, PLATFORM_LABELS, platformNet, breakeven } from '@/lib/pattern-income-calculator';
 import { PatternProject } from '@/lib/grading-engine';
 import { cn } from '@/lib/utils';
+import { useSettings } from '@/context/SettingsContext';
+import { INCOME_COPY } from '@/lib/income-copy';
 
 /**
  * Pattern income calculator: revenue planning across selling platforms.
@@ -20,6 +22,8 @@ import { cn } from '@/lib/utils';
  * pattern; we never promise any income outcome.
  */
 export function IncomeCalculatorCard({ project }: { project: PatternProject }) {
+  const { language } = useSettings();
+  const copy = INCOME_COPY[language];
   const [platform, setPlatform] = React.useState<PlatformId>('ravelry');
   const [price, setPrice] = React.useState('8.00');
   const [monthlySales, setMonthlySales] = React.useState('15');
@@ -47,32 +51,30 @@ export function IncomeCalculatorCard({ project }: { project: PatternProject }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="font-serif flex items-center gap-2">Pattern Income Planner</CardTitle>
+        <CardTitle className="font-serif flex items-center gap-2">{copy.title}</CardTitle>
         <CardDescription>
-          Estimate your net revenue per sale after platform fees, see how many sales
-          recover your design time, and compare platforms side by side. A planning
-          figure only — actual sales depend on your audience and marketing.
+          {copy.description}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div>
-            <Label htmlFor="income-price" className="text-xs text-muted-foreground mb-1 block">Pattern price (USD)</Label>
+            <Label htmlFor="income-price" className="text-xs text-muted-foreground mb-1 block">{copy.price}</Label>
             <Input id="income-price" type="number" min="0" step="0.5" value={price}
               onChange={(e) => setPrice(e.target.value)} data-testid="income-price" className="h-10" />
           </div>
           <div>
-            <Label htmlFor="income-sales" className="text-xs text-muted-foreground mb-1 block">Sales / month</Label>
+            <Label htmlFor="income-sales" className="text-xs text-muted-foreground mb-1 block">{copy.sales}</Label>
             <Input id="income-sales" type="number" min="0" value={monthlySales}
               onChange={(e) => setMonthlySales(e.target.value)} data-testid="income-sales" className="h-10" />
           </div>
           <div>
-            <Label htmlFor="income-hours" className="text-xs text-muted-foreground mb-1 block">Design hours</Label>
+            <Label htmlFor="income-hours" className="text-xs text-muted-foreground mb-1 block">{copy.hours}</Label>
             <Input id="income-hours" type="number" min="0" value={designHours}
               onChange={(e) => setDesignHours(e.target.value)} data-testid="income-hours" className="h-10" />
           </div>
           <div>
-            <Label htmlFor="income-rate" className="text-xs text-muted-foreground mb-1 block">Hourly rate (USD)</Label>
+            <Label htmlFor="income-rate" className="text-xs text-muted-foreground mb-1 block">{copy.rate}</Label>
             <Input id="income-rate" type="number" min="0" value={hourlyRate}
               onChange={(e) => setHourlyRate(e.target.value)} data-testid="income-rate" className="h-10" />
           </div>
@@ -80,7 +82,7 @@ export function IncomeCalculatorCard({ project }: { project: PatternProject }) {
 
         <div className="flex flex-col sm:flex-row sm:items-end gap-4">
           <div className="flex-1 max-w-xs">
-            <Label htmlFor="income-platform-select" className="text-xs text-muted-foreground mb-1 block">Primary platform</Label>
+            <Label htmlFor="income-platform-select" className="text-xs text-muted-foreground mb-1 block">{copy.platform}</Label>
             <NativeSelect id="income-platform-select" value={platform}
               onChange={(e) => setPlatform(e.target.value as PlatformId)} data-testid="select-income-platform">
               {PLATFORMS.map(p => (
@@ -93,29 +95,29 @@ export function IncomeCalculatorCard({ project }: { project: PatternProject }) {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="bg-muted/40 rounded-lg p-4 text-center">
             <div className="text-2xl font-mono font-bold text-foreground">${net.netRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-            <div className="text-xs text-muted-foreground mt-1">net / month ({platform})</div>
+            <div className="text-xs text-muted-foreground mt-1">{copy.netMonth} ({platform})</div>
           </div>
           <div className="bg-muted/40 rounded-lg p-4 text-center">
             <div className="text-2xl font-mono font-bold text-foreground">
               {Number.isFinite(be.salesToBreakEven) ? Math.round(be.salesToBreakEven).toLocaleString() : '—'}
             </div>
-            <div className="text-xs text-muted-foreground mt-1">sales to recover design time</div>
+            <div className="text-xs text-muted-foreground mt-1">{copy.breakEven}</div>
           </div>
           <div className="bg-muted/40 rounded-lg p-4 text-center">
             <div className="text-2xl font-mono font-bold text-foreground">${be.annualizedNet.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-            <div className="text-xs text-muted-foreground mt-1">annualized net at this velocity</div>
+            <div className="text-xs text-muted-foreground mt-1">{copy.annualized}</div>
           </div>
         </div>
 
         <div>
-          <h3 className="text-sm font-medium mb-2">Compare platforms at this price & volume</h3>
+          <h3 className="text-sm font-medium mb-2">{copy.compare}</h3>
           <div className="overflow-x-auto">
             <table className="w-full text-sm text-left whitespace-nowrap">
               <thead>
                 <tr className="text-xs text-muted-foreground border-b border-border">
-                  <th className="px-2 py-2 font-medium">Platform</th>
-                  <th className="px-3 py-2 text-right font-medium">Net / month</th>
-                  <th className="px-3 py-2 text-right font-medium">Effective fees</th>
+                  <th className="px-2 py-2 font-medium">{copy.platformHead}</th>
+                  <th className="px-3 py-2 text-right font-medium">{copy.netHead}</th>
+                  <th className="px-3 py-2 text-right font-medium">{copy.feesHead}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
@@ -132,9 +134,7 @@ export function IncomeCalculatorCard({ project }: { project: PatternProject }) {
         </div>
 
         <p className="text-[11px] text-muted-foreground leading-relaxed">
-          Fee models as published by each platform: Ravelry (3.5% commission above $30/month, ~5% processing),
-          Etsy (6.5% transaction + 3% + $0.25 per sale + $0.20 listing), Ribblr (4% or $0.25 per sale + Stripe),
-          Payhip (5% + processor). Effective fees fall as volume rises because fixed per-sale fees dilute.
+          {copy.feeNote}
         </p>
       </CardContent>
     </Card>

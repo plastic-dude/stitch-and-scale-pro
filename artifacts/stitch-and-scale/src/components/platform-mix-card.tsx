@@ -15,6 +15,8 @@ import {
   type PlatformMixInput,
 } from '@/lib/platform-mix-planner';
 import { PLATFORM_LABELS, type PlatformId } from '@/lib/pattern-income-calculator';
+import { useSettings } from '@/context/SettingsContext';
+import { PLATFORM_MIX_COPY } from '@/lib/platform-mix-copy';
 
 const STORAGE_KEY = 'pmix-v1';
 
@@ -59,6 +61,8 @@ export function PlatformMixCard({ project }: { project: PatternProject }) {
   // issue #4 project seam: scoped store per project; flat key folded in on first read, then removed.
   const handle = useMemo(() => projectStorage<StoredMix>('pmix', project.id, [STORAGE_KEY]), [project.id]);
   const { toast } = useToast();
+  const { language } = useSettings();
+  const copyText = PLATFORM_MIX_COPY[language];
   const [stored, setStored] = useState(() => loadStored(handle));
 
   useEffect(() => {
@@ -82,9 +86,9 @@ export function PlatformMixCard({ project }: { project: PatternProject }) {
   const copy = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      toast({ title: 'Copied — paste it into your notes or planning doc.' });
+      toast({ title: copyText.copied });
     } catch {
-      toast({ title: 'Copy failed — select the text manually.' });
+      toast({ title: copyText.copyFailed });
     }
   };
 
@@ -104,44 +108,41 @@ export function PlatformMixCard({ project }: { project: PatternProject }) {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
-          <Store className="h-4 w-4" /> Platform Mix Planner
+          <Store className="h-4 w-4" /> {copyText.title}
         </CardTitle>
         <CardDescription>
-          Every listing is a maintenance bill: 1–2.5 hours a month of photos, SEO tweaks, promo threads, and fee
-          checks per platform. This models your monthly mix net of every platform&apos;s fee stack, the Etsy
-          offsite-ads 15%, maintenance hours at your design rate, and the VAT admin burden — so you can see
-          exactly which storefronts earn their keep at your actual volume.
+          {copyText.description}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Store-wide inputs */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="space-y-1.5">
-            <Label htmlFor="pm-sales" className="text-xs">Monthly sales (all platforms)</Label>
+            <Label htmlFor="pm-sales" className="text-xs">{copyText.sales}</Label>
             <Input id="pm-sales" type="number" min={0}
               value={stored.input.monthlySales}
               onChange={(e) => patchInput({ monthlySales: Number(e.target.value) || 0 })} />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="pm-price" className="text-xs">Average pattern price ($)</Label>
+            <Label htmlFor="pm-price" className="text-xs">{copyText.price}</Label>
             <Input id="pm-price" type="number" min={0} step={0.5}
               value={stored.input.avgPrice}
               onChange={(e) => patchInput({ avgPrice: Number(e.target.value) || 0 })} />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="pm-rate" className="text-xs">Your design rate ($/hr)</Label>
+            <Label htmlFor="pm-rate" className="text-xs">{copyText.rate}</Label>
             <Input id="pm-rate" type="number" min={0} step={1}
               value={stored.input.designRate}
               onChange={(e) => patchInput({ designRate: Number(e.target.value) || 0 })} />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="pm-hours" className="text-xs">Marketing hours / month</Label>
+            <Label htmlFor="pm-hours" className="text-xs">{copyText.hours}</Label>
             <Input id="pm-hours" type="number" min={0} step={1}
               value={stored.input.marketingHoursAvailable}
               onChange={(e) => patchInput({ marketingHoursAvailable: Number(e.target.value) || 0 })} />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="pm-intl" className="text-xs">International sales (%)</Label>
+            <Label htmlFor="pm-intl" className="text-xs">{copyText.international}</Label>
             <Input id="pm-intl" type="number" min={0} max={100}
               value={stored.input.internationalSalesPct}
               onChange={(e) => patchInput({ internationalSalesPct: Number(e.target.value) || 0 })} />
@@ -150,7 +151,7 @@ export function PlatformMixCard({ project }: { project: PatternProject }) {
             <Switch id="pm-offsite" checked={stored.input.subjectToOffsiteAds}
               onCheckedChange={(v) => patchInput({ subjectToOffsiteAds: v })} />
             <Label htmlFor="pm-offsite" className="text-xs cursor-pointer">
-              Charge Etsy offsite ads (15%) — mandatory once you cross $10k/yr, and Etsy decides when your traffic came from its ads
+              {copyText.offsite}
             </Label>
           </div>
         </div>
@@ -158,19 +159,19 @@ export function PlatformMixCard({ project }: { project: PatternProject }) {
         {/* Totals strip */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <div className="rounded-lg border bg-muted/30 p-3">
-            <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Gross / mo</div>
+            <div className="text-[11px] uppercase tracking-wide text-muted-foreground">{copyText.gross}</div>
             <div className="text-xl font-bold">{fmt$(result.totalGross)}</div>
           </div>
           <div className="rounded-lg border bg-muted/30 p-3">
-            <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Fees & ads</div>
+            <div className="text-[11px] uppercase tracking-wide text-muted-foreground">{copyText.fees}</div>
             <div className="text-xl font-bold text-destructive">{fmt$(result.totalFees)}</div>
           </div>
           <div className="rounded-lg border bg-muted/30 p-3">
-            <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Maintenance</div>
+            <div className="text-[11px] uppercase tracking-wide text-muted-foreground">{copyText.maintenance}</div>
             <div className="text-xl font-bold text-destructive">{fmt$(result.totalMaintenanceCost)}</div>
           </div>
           <div className="rounded-lg border bg-primary/10 border-primary/30 p-3">
-            <div className="text-[11px] uppercase tracking-wide text-muted-foreground">Net after all of it</div>
+            <div className="text-[11px] uppercase tracking-wide text-muted-foreground">{copyText.net}</div>
             <div className={`text-xl font-bold ${result.totalNetAfterMaintenance >= 0 ? 'text-emerald-600' : 'text-destructive'}`}>
               {fmt$(result.totalNetAfterMaintenance)}
             </div>

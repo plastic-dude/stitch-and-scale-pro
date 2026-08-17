@@ -49,6 +49,8 @@ import {
   TesterSlot,
 } from '@/lib/test-knit-programme';
 import { CalendarDays, ClipboardCopy, CheckCircle2, XCircle, Flame, Rocket, RotateCcw, Flag, Gauge, TrendingUp, Target, Banknote } from 'lucide-react';
+import { useSettings } from '@/context/SettingsContext';
+import { LAUNCH_CAMPAIGN_COPY, type LaunchCampaignCopy } from '@/lib/launch-campaign-copy';
 
 const STORAGE_KEY = 'stitch-and-scale-launch-campaign';
 
@@ -83,11 +85,11 @@ function persist(handle: ProjectStorageHandle<unknown>, next: StoredState) {
   }
 }
 
-function PhaseBadge({ phase }: { phase: CampaignMilestone['phase'] }) {
+function PhaseBadge({ phase, copyText }: { phase: CampaignMilestone['phase']; copyText: Pick<LaunchCampaignCopy, 'preLaunch' | 'launchDay' | 'postLaunch'> }) {
   const meta = {
-    pre: { label: 'Pre-launch', className: 'bg-slate-500/15 text-slate-600 border-slate-500/40' },
-    launch: { label: 'Launch day', className: 'bg-rose-500/15 text-rose-600 border-rose-500/40' },
-    post: { label: 'Post-launch', className: 'bg-emerald-500/15 text-emerald-600 border-emerald-500/40' },
+    pre: { label: copyText.preLaunch, className: 'bg-slate-500/15 text-slate-600 border-slate-500/40' },
+    launch: { label: copyText.launchDay, className: 'bg-rose-500/15 text-rose-600 border-rose-500/40' },
+    post: { label: copyText.postLaunch, className: 'bg-emerald-500/15 text-emerald-600 border-emerald-500/40' },
   }[ { pre: 'pre', launch: 'launch', post: 'post' }[phase] as 'pre' | 'launch' | 'post' ];
   return (
     <Badge variant="outline" className={cn('font-medium', meta.className)}>
@@ -96,7 +98,7 @@ function PhaseBadge({ phase }: { phase: CampaignMilestone['phase'] }) {
   );
 }
 
-function CopyLine({ text }: { text: string }) {
+function CopyLine({ text, copyText }: { text: string; copyText: { copied: string; copyFailed: string; selectManually: string; copyMilestone: string } }) {
   const { toast } = useToast();
   const [copied, setCopied] = React.useState(false);
   const copy = async () => {
@@ -104,16 +106,16 @@ function CopyLine({ text }: { text: string }) {
       await navigator.clipboard.writeText(text);
       setCopied(true);
       setTimeout(() => setCopied(false), 2500);
-      toast({ title: 'Copied', description: 'Paste it wherever the campaign runs.' });
+      toast({ title: copyText.copied, description: copyText.copyMilestone });
     } catch {
-      toast({ title: 'Copy failed', description: 'Select the text manually.' });
+      toast({ title: copyText.copyFailed, description: copyText.selectManually });
     }
   };
   return (
     <div className="mt-2">
       <div className="flex items-start justify-between gap-2">
         <p className="whitespace-pre-wrap text-sm text-muted-foreground leading-relaxed">{text}</p>
-        <Button variant="ghost" size="sm" onClick={copy} aria-label="Copy milestone text">
+        <Button variant="ghost" size="sm" onClick={copy} aria-label={copyText.copyMilestone}>
           {copied ? <CheckCircle2 className="size-4 text-emerald-600" /> : <ClipboardCopy className="size-4" />}
         </Button>
       </div>
@@ -122,6 +124,8 @@ function CopyLine({ text }: { text: string }) {
 }
 
 export function LaunchCampaignCard({ project }: { project: PatternProject }) {
+  const { language } = useSettings();
+  const copyText = LAUNCH_CAMPAIGN_COPY[language];
   // issue #4 project seam: one scoped store per project; the legacy flat key 'stitch-and-scale-launch-campaign' is folded in on first read, then removed.
   const handle = useMemo(() => projectStorage<StoredState>('launch', project.id, ['stitch-and-scale-launch-campaign']), [project.id]);
 
@@ -186,7 +190,7 @@ export function LaunchCampaignCard({ project }: { project: PatternProject }) {
     setTeaserSent(false);
     setAdBudget(0);
     persist(handle, { config: {}, kalMode: false, doneMilestones: {}, review: '', emailListSize: 0, photoCount: 0, couponDurationDays: 7, teaserSent: false, adBudget: 0 });
-    toast({ title: 'Campaign reset', description: 'All settings and checkboxes cleared.' });
+    toast({ title: copyText.reset, description: copyText.setDate });
   };
 
   const allDone = plan.milestones.length > 0 && plan.milestones.every(m => doneMilestones[`${m.dayOffset}-${m.title}`]);
@@ -259,19 +263,17 @@ export function LaunchCampaignCard({ project }: { project: PatternProject }) {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Rocket className="size-5" />
-          Launch Campaign
+          {copyText.title}
         </CardTitle>
         <CardDescription>
-          A dated, paste-ready plan for launching {project.name}. Set a launch date, and every milestone
-          generates its copy from the pattern's real data — sizes, yarn, price band. Gate status checks
-          the Publish checklist, tech-edit score and finished test knits before you go public.
+          {copyText.description}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* ---------- Settings ---------- */}
         <div className="grid gap-3 sm:grid-cols-2">
           <div>
-            <Label htmlFor="lc-launch-date">Launch date</Label>
+            <Label htmlFor="lc-launch-date">{copyText.launchDate}</Label>
             <Input
               id="lc-launch-date"
               type="date"
@@ -279,53 +281,53 @@ export function LaunchCampaignCard({ project }: { project: PatternProject }) {
               onChange={e => saveConfig({ ...config, launchDate: e.target.value })}
             />
             <p className="mt-1 text-xs text-muted-foreground">
-              {launchDate ? `Launch lands on a ${milestoneDate(launchDate, 0).split(',')[0]} — pick a weekend-inclusive coupon week, most sales run Sat–Sun.` : 'Set a date to build the timeline.'}
+              {launchDate ? copyText.launchDateSummary(milestoneDate(launchDate, 0).split(',')[0]) : copyText.launchDateHint}
             </p>
           </div>
           <div>
-            <Label htmlFor="lc-yarn-company">Yarn company</Label>
+            <Label htmlFor="lc-yarn-company">{copyText.yarnCompany}</Label>
             <Input
               id="lc-yarn-company"
-              placeholder="e.g. The Fibre Co"
+              placeholder={copyText.yarnPlaceholder}
               value={config.yarnCompany ?? ''}
               onChange={e => saveConfig({ ...config, yarnCompany: e.target.value })}
             />
           </div>
           <div>
-            <Label htmlFor="lc-ravelry-url">Ravelry pattern page</Label>
+            <Label htmlFor="lc-ravelry-url">{copyText.ravelry}</Label>
             <Input
               id="lc-ravelry-url"
-              placeholder="https://ravelry.com/patterns/library/…"
+              placeholder={copyText.ravelryPlaceholder}
               value={config.ravelryUrl ?? ''}
               onChange={e => saveConfig({ ...config, ravelryUrl: e.target.value })}
             />
           </div>
           <div>
-            <Label htmlFor="lc-etsy-url">Etsy listing (optional)</Label>
+            <Label htmlFor="lc-etsy-url">{copyText.etsy}</Label>
             <Input
               id="lc-etsy-url"
-              placeholder="https://etsy.com/listing/…"
+              placeholder={copyText.etsyPlaceholder}
               value={config.etsyUrl ?? ''}
               onChange={e => saveConfig({ ...config, etsyUrl: e.target.value })}
             />
           </div>
           <div>
-            <Label htmlFor="lc-coupon-code">Launch coupon code</Label>
+            <Label htmlFor="lc-coupon-code">{copyText.couponCode}</Label>
             <Input
               id="lc-coupon-code"
-              placeholder="LAUNCH15"
+              placeholder={copyText.couponCodePlaceholder}
               value={config.couponCode ?? ''}
               onChange={e => saveConfig({ ...config, couponCode: e.target.value })}
             />
           </div>
           <div>
-            <Label htmlFor="lc-coupon-percent">Coupon % off</Label>
+            <Label htmlFor="lc-coupon-percent">{copyText.couponPercent}</Label>
             <Input
               id="lc-coupon-percent"
               type="number"
               min={1}
               max={50}
-              placeholder="15"
+              placeholder={copyText.couponPercentPlaceholder}
               value={config.couponPercent ?? ''}
               onChange={e => saveConfig({ ...config, couponPercent: e.target.value ? Number(e.target.value) : undefined })}
             />
@@ -334,66 +336,66 @@ export function LaunchCampaignCard({ project }: { project: PatternProject }) {
             </p>
           </div>
           <div>
-            <Label htmlFor="lc-coupon-days">Coupon window (days)</Label>
+            <Label htmlFor="lc-coupon-days">{copyText.couponDays}</Label>
             <Input
               id="lc-coupon-days"
               type="number"
               min={1}
               max={30}
-              placeholder="7"
+              placeholder={copyText.couponDaysPlaceholder}
               value={couponDurationDays || ''}
               onChange={e => setCouponDurationDays(e.target.value ? Number(e.target.value) : 0)}
             />
-            <p className="mt-1 text-xs text-muted-foreground">One week max — end it on a Sunday so the window includes a weekend.</p>
+            <p className="mt-1 text-xs text-muted-foreground">{copyText.couponDaysHint}</p>
           </div>
           <div>
-            <Label htmlFor="lc-email-list">Email list size</Label>
+            <Label htmlFor="lc-email-list">{copyText.emailList}</Label>
             <Input
               id="lc-email-list"
               type="number"
               min={0}
-              placeholder="e.g. 250"
+              placeholder={copyText.emailPlaceholder}
               value={emailListSize || ''}
               onChange={e => setEmailListSize(e.target.value ? Number(e.target.value) : 0)}
             />
-            <p className="mt-1 text-xs text-muted-foreground">59% of buyers say marketing email drives purchases — the list is your biggest sales lever.</p>
+            <p className="mt-1 text-xs text-muted-foreground">{copyText.emailHint}</p>
           </div>
           <div>
-            <Label htmlFor="lc-sales-target">Sales target (copies)</Label>
+            <Label htmlFor="lc-sales-target">{copyText.salesTarget}</Label>
             <Input
               id="lc-sales-target"
               type="number"
               min={1}
-              placeholder="50"
+              placeholder={copyText.salesPlaceholder}
               value={config.salesTarget ?? ''}
               onChange={e => saveConfig({ ...config, salesTarget: e.target.value ? Number(e.target.value) : undefined })}
             />
           </div>
           <div>
-            <Label htmlFor="lc-photo-count">Pattern photos</Label>
+            <Label htmlFor="lc-photo-count">{copyText.photos}</Label>
             <Input
               id="lc-photo-count"
               type="number"
               min={0}
               max={30}
-              placeholder="e.g. 6"
+              placeholder={copyText.photosPlaceholder}
               value={photoCount || ''}
               onChange={e => setPhotoCount(e.target.value ? Number(e.target.value) : 0)}
             />
-            <p className="mt-1 text-xs text-muted-foreground">Aim for 6+ — front/back/sides, flat-lay, WIP and detail shots across Ravelry, Etsy and Pinterest.</p>
+            <p className="mt-1 text-xs text-muted-foreground">{copyText.photosHint}</p>
           </div>
           <div>
-            <Label htmlFor="lc-ad-budget">Paid banner budget ($)</Label>
+            <Label htmlFor="lc-ad-budget">{copyText.adBudget}</Label>
             <Input
               id="lc-ad-budget"
               type="number"
               min={0}
-              placeholder="e.g. 45"
+              placeholder={copyText.adPlaceholder}
               value={adBudget || ''}
               onChange={e => setAdBudget(e.target.value ? Number(e.target.value) : 0)}
             />
             <p className="mt-1 text-xs text-muted-foreground">
-              Ravelry Group Forum Banner PPC runs ≈ $1.50 per 1,000 impressions — the cheapest targeted ad in the niche.
+              {copyText.adHint}
             </p>
           </div>
           <div className="flex items-end">
@@ -404,7 +406,7 @@ export function LaunchCampaignCard({ project }: { project: PatternProject }) {
                 onChange={e => setTeaserSent(e.target.checked)}
                 className="size-4 accent-rose-600"
               />
-              Teaser email sent (2 days before launch)
+              {copyText.teaser}
             </label>
           </div>
           <div className="flex items-end">
@@ -415,7 +417,7 @@ export function LaunchCampaignCard({ project }: { project: PatternProject }) {
                 onChange={e => saveKal(e.target.checked)}
                 className="size-4 accent-rose-600"
               />
-              Run as a KAL (4 weekly clues) instead of a standard launch
+              {copyText.kal}
             </label>
           </div>
         </div>
@@ -433,7 +435,7 @@ export function LaunchCampaignCard({ project }: { project: PatternProject }) {
           <div className="mb-2 flex items-center justify-between">
             <Label className="flex items-center gap-2 text-base font-semibold">
               <Flag className="size-4" />
-              Launch gates
+              {copyText.gates}
             </Label>
             <Badge variant={allDone && launchDate ? 'default' : 'outline'} className={allDone && launchDate ? 'bg-emerald-600' : ''}>
               {plan.gateSummary}
@@ -450,7 +452,7 @@ export function LaunchCampaignCard({ project }: { project: PatternProject }) {
                 <div>
                   <span className="font-medium">{g.label}</span>
                   <span className={cn('ml-2', g.ok ? 'text-emerald-700' : 'text-destructive')}>
-                    {g.ok ? 'open' : 'blocked'}
+                    {g.ok ? copyText.open : copyText.blocked}
                   </span>
                   <p className="mt-0.5 text-muted-foreground">{g.why}</p>
                 </div>
@@ -464,7 +466,7 @@ export function LaunchCampaignCard({ project }: { project: PatternProject }) {
           <div className="mb-2 flex items-center justify-between">
             <Label className="flex items-center gap-2 text-base font-semibold">
               <Gauge className="size-4" />
-              Launch readiness
+              {copyText.readiness}
             </Label>
             <Badge
               variant={readiness.band === 'cleared-for-announcement' ? 'default' : 'outline'}
@@ -507,7 +509,7 @@ export function LaunchCampaignCard({ project }: { project: PatternProject }) {
           <div className="mt-4 grid gap-3 sm:grid-cols-3">
             <div className="rounded-md border bg-muted/30 p-3">
               <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
-                <TrendingUp className="size-3.5" /> Email revenue
+                <TrendingUp className="size-3.5" /> {copyText.emailRevenue}
               </div>
               <p className="mt-1 text-lg font-semibold">
                 ${revenue.emailRevenueLow.toLocaleString()}–${revenue.emailRevenueHigh.toLocaleString()}
@@ -515,26 +517,26 @@ export function LaunchCampaignCard({ project }: { project: PatternProject }) {
               <p className="text-xs text-muted-foreground">
                 {emailListSize > 0
                   ? `${emailListSize.toLocaleString()} subscribers at ${revenue.conversionLowPct}–${revenue.conversionHighPct}% conversion, $${avgPrice} avg. price`
-                  : 'Set your email list size to project launch-week revenue.'}
+                  : copyText.setEmail}
               </p>
             </div>
             <div className="rounded-md border bg-muted/30 p-3">
               <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
-                <Banknote className="size-3.5" /> Copies sold
+                <Banknote className="size-3.5" /> {copyText.copiesSold}
               </div>
               <p className="mt-1 text-lg font-semibold">
                 {revenue.copiesLow}–{revenue.copiesHigh}
               </p>
               <p className="text-xs text-muted-foreground">
-                Email-attributed copies — launch-week sales will also stack from Ravelry momentum.
+                {copyText.copiesHint}
               </p>
             </div>
             <div className="rounded-md border bg-muted/30 p-3">
               <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
-                <Target className="size-3.5" /> Momentum targets
+                <Target className="size-3.5" /> {copyText.momentum}
               </div>
               <p className="mt-1 text-lg font-semibold">
-                {momentum.queueTarget} queue{momentum.queueTarget === 1 ? '' : 's'} · {momentum.faveTarget} favourites
+                {momentum.queueTarget} {copyText.queue}{momentum.queueTarget === 1 ? '' : 's'} · {momentum.faveTarget} {copyText.favourites}
               </p>
               <p className="text-xs text-muted-foreground">{momentum.reason}</p>
             </div>
@@ -545,8 +547,8 @@ export function LaunchCampaignCard({ project }: { project: PatternProject }) {
             <p className="mt-3 flex items-start gap-2 rounded-md border bg-muted/40 px-3 py-2 text-sm text-muted-foreground">
               <Banknote className="mt-0.5 size-4 shrink-0" />
               At ${adBudget} on Ravelry banners: ≈ {banner.impressions.toLocaleString()} impressions, {banner.clicks} clicks,
-              ≈ {banner.expectedCopies} copies (~${banner.expectedRevenue.toLocaleString()} revenue). Net {banner.net >= 0 ? 'profit' : 'loss'} of ${banner.net.toLocaleString()} at a cost of ${banner.costPerCopy}/copy.
-              Cheap enough to test — but the email list usually beats it.
+              ≈ {banner.expectedCopies} copies (~${banner.expectedRevenue.toLocaleString()} revenue). {copyText.bannerNet} {banner.net >= 0 ? copyText.bannerProfit : copyText.bannerLoss} of ${banner.net.toLocaleString()} at a cost of ${banner.costPerCopy}/copy.
+              {copyText.bannerHint}
             </p>
           )}
         </div>
@@ -556,15 +558,15 @@ export function LaunchCampaignCard({ project }: { project: PatternProject }) {
           <div className="mb-3 flex items-center justify-between">
             <Label className="flex items-center gap-2 text-base font-semibold">
               <Flame className="size-4" />
-              {kalMode ? 'KAL clues' : 'Campaign timeline'}
+              {kalMode ? copyText.kalClues : copyText.timeline}
             </Label>
             <span className="text-xs text-muted-foreground">
-              {doneCount}/{plan.milestones.length} done
+              {doneCount}/{plan.milestones.length} {copyText.done}
             </span>
           </div>
           {plan.milestones.length === 0 && !launchDate && (
             <p className="rounded-md border border-dashed px-3 py-6 text-center text-sm text-muted-foreground">
-              Set a launch date above to generate the dated plan.
+              {copyText.setDate}
             </p>
           )}
           <div className="space-y-3">
@@ -581,24 +583,24 @@ export function LaunchCampaignCard({ project }: { project: PatternProject }) {
                 >
                   <div className="flex flex-wrap items-center gap-2">
                     <span className="font-mono text-xs text-muted-foreground">
-                      {m.dayOffset === 0 ? 'day 0' : m.dayOffset > 0 ? `+${m.dayOffset}` : `${m.dayOffset}`}
+                      {m.dayOffset === 0 ? `${copyText.day} 0` : m.dayOffset > 0 ? `+${m.dayOffset}` : `${m.dayOffset}`}
                     </span>
                     {launchDate && (
                       <span className="text-xs text-muted-foreground">{milestoneDate(launchDate, m.dayOffset)}</span>
                     )}
-                    <PhaseBadge phase={m.phase} />
+                    <PhaseBadge phase={m.phase} copyText={copyText} />
                     <span className={cn('font-medium', done && 'line-through opacity-70')}>{m.title}</span>
                     <Button
                       variant="ghost"
                       size="sm"
                       className="ml-auto"
                       onClick={() => toggleMilestone(m)}
-                      aria-label={done ? 'Mark milestone not done' : 'Mark milestone done'}
+                      aria-label={done ? copyText.markNotDone : copyText.markDone}
                     >
                       {done ? <CheckCircle2 className="size-4 text-emerald-600" /> : <ClipboardCopy className="size-4" />}
                     </Button>
                   </div>
-                  <CopyLine text={m.copy} />
+                  <CopyLine text={m.copy} copyText={copyText} />
                   {m.checklist.length > 0 && (
                     <ul className="mt-2 grid gap-1 sm:grid-cols-2">
                       {m.checklist.map(c => (
@@ -625,10 +627,10 @@ export function LaunchCampaignCard({ project }: { project: PatternProject }) {
         <div>
           <Label htmlFor="lc-review" className="flex items-center gap-2 text-base font-semibold">
             <RotateCcw className="size-4" />
-            Post-launch review
+            {copyText.review}
           </Label>
           <p className="mb-2 text-xs text-muted-foreground">
-            Fill this in two weeks after launch while it's fresh — your next launch improves when you keep notes.
+            {copyText.reviewHint}
           </p>
           <textarea
             id="lc-review"
@@ -642,7 +644,7 @@ export function LaunchCampaignCard({ project }: { project: PatternProject }) {
 
         <div className="flex justify-end border-t pt-4">
           <Button variant="outline" size="sm" onClick={resetAll}>
-            Reset campaign
+            {copyText.reset}
           </Button>
         </div>
       </CardContent>

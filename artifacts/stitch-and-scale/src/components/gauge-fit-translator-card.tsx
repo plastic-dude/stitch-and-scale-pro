@@ -32,6 +32,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { useSettings } from "@/context/SettingsContext";
+import { GAUGE_FIT_COPY, getGaugeFlagTitle, getGaugeFlagNote, getGaugeKeyLabel, getGaugeVerdict, getGaugeVerdictNote } from "@/lib/gauge-fit-copy";
 import {
   Select,
   SelectContent,
@@ -130,6 +132,8 @@ function pct(n: number): string {
 }
 
 export function GaugeFitTranslatorCard({ project }: { project: PatternProject }) {
+  const { language } = useSettings();
+  const copy = GAUGE_FIT_COPY[language];
   const [input, setInput] = useState<FitInput>(() => loadStored(project));
 
   const persist = (next: FitInput) => {
@@ -174,38 +178,35 @@ export function GaugeFitTranslatorCard({ project }: { project: PatternProject })
         <div className="flex items-start gap-2.5">
           <Ruler className="h-4 w-4 mt-0.5 text-primary shrink-0" />
           <div>
-            <h3 className="font-semibold text-sm">Gauge &amp; Fit Translator</h3>
+            <h3 className="font-semibold text-sm">{copy.title}</h3>
             <p className="text-xs text-muted-foreground mt-0.5">
-              Enter each test knitter's 4-inch swatch (stitches and rows) and see how their
-              tension translates your graded sizing — every written size, in both directions.
-              Their gauge moves the finished measurements; this tells you which size each
-              tester should knit before the swatch becomes a sweater.
+              {copy.description}
             </p>
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-3">
           <NumField
-            label="Pattern gauge — stitches per 4 in"
+            label={copy.patternStitches}
             value={input.patternStitchesPer4In}
             step={0.25}
             min={0}
-            hint="Your pattern's published stitch gauge."
+            hint={copy.patternStitchesHint}
             onChange={(v) => set("patternStitchesPer4In", v)}
           />
           <NumField
-            label="Pattern gauge — rows per 4 in"
+            label={copy.patternRows}
             value={input.patternRowsPer4In}
             step={0.25}
             min={0}
-            hint="Your pattern's published row gauge."
+            hint={copy.patternRowsHint}
             onChange={(v) => set("patternRowsPer4In", v)}
           />
         </div>
 
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label className="text-xs font-medium">Test knitters' swatch gauges</Label>
+            <Label className="text-xs font-medium">{copy.testers}</Label>
             <Button
               variant="ghost"
               size="sm"
@@ -217,7 +218,7 @@ export function GaugeFitTranslatorCard({ project }: { project: PatternProject })
                 ])
               }
             >
-              <Plus className="h-3.5 w-3.5 mr-1" /> Add tester
+              <Plus className="h-3.5 w-3.5 mr-1" /> {copy.addTester}
             </Button>
           </div>
           <div className="space-y-2.5">
@@ -225,7 +226,7 @@ export function GaugeFitTranslatorCard({ project }: { project: PatternProject })
               <div key={idx} className="rounded-md border bg-muted/30 p-3 space-y-2.5">
                 <div className="flex items-center gap-2">
                   <Input
-                    placeholder={`Tester ${idx + 1}`}
+                    placeholder={`${copy.tester} ${idx + 1}`}
                     value={tester.label}
                     onChange={(e) => {
                       const next = [...input.testers];
@@ -248,7 +249,7 @@ export function GaugeFitTranslatorCard({ project }: { project: PatternProject })
                 </div>
                 <div className="grid grid-cols-2 gap-2.5">
                   <NumField
-                    label="Stitches per 4 in"
+                    label={copy.stitches}
                     value={tester.stitchesPer4In}
                     step={0.25}
                     min={0}
@@ -259,7 +260,7 @@ export function GaugeFitTranslatorCard({ project }: { project: PatternProject })
                     }}
                   />
                   <NumField
-                    label="Rows per 4 in"
+                    label={copy.rows}
                     value={tester.rowsPer4In}
                     step={0.25}
                     min={0}
@@ -277,7 +278,7 @@ export function GaugeFitTranslatorCard({ project }: { project: PatternProject })
 
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1.5">
-            <Label className="text-xs font-medium">Primary measurement</Label>
+            <Label className="text-xs font-medium">{copy.primary}</Label>
             <Select
               value={primaryKey}
               onValueChange={(v) => set("translateKeys", [v as GradingKey])}
@@ -288,21 +289,21 @@ export function GaugeFitTranslatorCard({ project }: { project: PatternProject })
               <SelectContent>
                 {circumferenceKeys.map((k) => (
                   <SelectItem key={k} value={k}>
-                    {FIT_KEYS_LABEL[k] ?? k}
+                    {getGaugeKeyLabel(language, k, FIT_KEYS_LABEL[k] ?? k)}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
             <p className="text-[11px] text-muted-foreground">
-              Circumferences translate by the stitch ratio; lengths by the row ratio.
+              {copy.ratioHint}
             </p>
           </div>
           <NumField
-            label="Target finished circumference (optional)"
+            label={copy.target}
             value={input.targetCircumference ?? 0}
             step={0.5}
             min={0}
-            hint="A fit spec to check each translated size against, e.g. the intended M bust."
+            hint={copy.targetHint}
             onChange={(v) =>
               set("targetCircumference", v > 0 ? v : undefined)
             }
@@ -313,9 +314,7 @@ export function GaugeFitTranslatorCard({ project }: { project: PatternProject })
           <div className="flex items-start gap-2 rounded-md border border-dashed p-3 text-xs text-muted-foreground">
             <HelpCircle className="h-3.5 w-3.5 mt-0.5 shrink-0" />
             <span>
-              This project has no graded sections yet. Translate will use placeholder sizes
-              (XS–XL) until you add measurements in <strong>Grading Lab</strong> — the
-              translation math works the same either way.
+              {copy.empty.replace('Grading Lab', '')} <strong>{copy.gradingLab}</strong> — the translation math works the same either way.
             </span>
           </div>
         )}
@@ -328,12 +327,12 @@ export function GaugeFitTranslatorCard({ project }: { project: PatternProject })
               <h4 className="font-medium text-sm">
                 {t.label || `Tester ${idx + 1}`}
                 <span className="text-xs text-muted-foreground ml-2 font-normal">
-                  stitch ratio {t.stitchRatio.toFixed(3)} · row ratio {t.rowRatio.toFixed(3)}
+                  {copy.ratio} {t.stitchRatio.toFixed(3)} · {copy.ratio} {t.rowRatio.toFixed(3)}
                 </span>
               </h4>
               <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 text-primary text-[11px] font-medium px-2.5 py-0.5">
-                <BadgeCheck className="h-3 w-3" />
-                Recommended size: {t.recommendedSize}
+                  <BadgeCheck className="h-3 w-3" />
+                  {copy.recommended}: {t.recommendedSize}
               </span>
             </div>
 
@@ -341,12 +340,12 @@ export function GaugeFitTranslatorCard({ project }: { project: PatternProject })
               <table className="w-full text-xs">
                 <thead>
                   <tr className="bg-muted/50 text-left">
-                    <th className="px-2.5 py-1.5 font-medium">Size</th>
-                    <th className="px-2.5 py-1.5 font-medium">Nominal</th>
-                    <th className="px-2.5 py-1.5 font-medium">At their gauge</th>
-                    <th className="px-2.5 py-1.5 font-medium">Shift</th>
+                    <th className="px-2.5 py-1.5 font-medium">{copy.size}</th>
+                    <th className="px-2.5 py-1.5 font-medium">{copy.nominal}</th>
+                    <th className="px-2.5 py-1.5 font-medium">{copy.atGauge}</th>
+                    <th className="px-2.5 py-1.5 font-medium">{copy.shift}</th>
                     {t.fits.some((f) => f.targetDelta != null) && (
-                      <th className="px-2.5 py-1.5 font-medium">vs target</th>
+                      <th className="px-2.5 py-1.5 font-medium">{copy.vsTarget}</th>
                     )}
                   </tr>
                 </thead>
@@ -388,8 +387,8 @@ export function GaugeFitTranslatorCard({ project }: { project: PatternProject })
                   >
                     <AlertTriangle className="h-3.5 w-3.5 mt-0.5 text-amber-600 shrink-0" />
                     <div>
-                      <span className="font-medium">{f.title}</span>
-                      <span className="text-muted-foreground"> — {f.note}</span>
+                      <span className="font-medium">{getGaugeFlagTitle(language, f.code, f.title)}</span>
+                      <span className="text-muted-foreground"> — {getGaugeFlagNote(language, f.code, f.note, t.label, t.stitchRatio, t.rowRatio)}</span>
                     </div>
                   </div>
                 ))}
@@ -407,9 +406,9 @@ export function GaugeFitTranslatorCard({ project }: { project: PatternProject })
         >
           <div className="flex items-center gap-2 font-semibold">
             <Lightbulb className="h-3.5 w-3.5" />
-            {result.verdict}
+            {copy.verdict}: {getGaugeVerdict(language, result.verdict)}
           </div>
-          <p className="mt-1 text-muted-foreground">{result.verdictNote}</p>
+          <p className="mt-1 text-muted-foreground">{copy.verdictNote} {getGaugeVerdictNote(language, result.verdict, result.testers.length, result.testers.filter((t) => Math.abs(t.stitchRatio - 1) >= 0.05).length)}</p>
         </div>
       </CardContent>
     </Card>

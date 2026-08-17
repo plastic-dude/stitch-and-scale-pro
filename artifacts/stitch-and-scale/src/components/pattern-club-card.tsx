@@ -25,6 +25,8 @@ import {
 } from '@/lib/pattern-club-planner';
 import { useToast } from '@/hooks/use-toast';
 import type { PatternProject } from '@/lib/grading-engine';
+import { useSettings } from '@/context/SettingsContext';
+import { PATTERN_CLUB_COPY } from '@/lib/pattern-club-copy';
 
 interface ClubDraftState {
   monthlyPrice: string;
@@ -141,6 +143,8 @@ function Field({
 
 function CopyLine({ text }: { text: string }) {
   const { toast } = useToast();
+  const { language } = useSettings();
+  const copy = PATTERN_CLUB_COPY[language];
   return (
     <Button
       size="sm"
@@ -148,11 +152,11 @@ function CopyLine({ text }: { text: string }) {
       className="gap-1.5 text-xs"
       onClick={() => {
         navigator.clipboard.writeText(text).catch(() => {});
-        toast({ title: 'Copied', description: 'Ready to paste wherever you need it.' });
+        toast({ title: copy.copied, description: copy.copyHint });
       }}
     >
       <Copy className="h-3.5 w-3.5" />
-      Copy
+      {copy.copy}
     </Button>
   );
 }
@@ -171,6 +175,8 @@ export function PatternClubCard({ project }: { project: PatternProject }) {
   const [draft, setDraft] = useState<ClubDraftState>(() => loadStored(handle).draft);
   const [mag, setMag] = useState<MagazineDraftState>(() => loadStored(handle).magazine);
   const { toast } = useToast();
+  const { language } = useSettings();
+  const copy = PATTERN_CLUB_COPY[language];
 
   useEffect(() => {
     handle.write({ draft, magazine: mag });
@@ -255,23 +261,19 @@ export function PatternClubCard({ project }: { project: PatternProject }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg">Pattern Club & Magazine Lockout</CardTitle>
+        <CardTitle className="text-lg">{copy.title}</CardTitle>
         <CardDescription>
-          The two channels nobody models honestly. A club only pays when it beats selling the
-          same patterns solo — this compares club net against your own baseline after churn,
-          gift-code fulfilment and production costs. And a magazine fee has to beat the income
-          the pattern loses during its exclusive window (cited: Knitty ~3 months, Laine 5,
-          Farm & Fiber 12).
+          {copy.description}
         </CardDescription>
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="club" className="w-full">
           <TabsList className="w-full">
             <TabsTrigger value="club" className="flex-1 text-xs">
-              Pattern Club
+              {copy.club}
             </TabsTrigger>
             <TabsTrigger value="magazine" className="flex-1 text-xs">
-              Magazine Offer
+              {copy.magazine}
             </TabsTrigger>
           </TabsList>
 
@@ -295,9 +297,9 @@ export function PatternClubCard({ project }: { project: PatternProject }) {
 
             <div className="grid grid-cols-1 gap-x-4 gap-y-4 md:grid-cols-3">
               <Field label="Solo copies / month (baseline)" hint="What this pattern sells per month if you don't put it in the club." value={draft.soloCopiesPerMonth} onChange={v => setDraft(d => ({ ...d, soloCopiesPerMonth: v }))} step="1" />
-              <Field label="Solo price ($)" hint="Same price in all languages." value={draft.soloPrice} onChange={v => setDraft(d => ({ ...d, soloPrice: v }))} step="0.01" />
+              <Field label="{copy.soloPrice}" hint="Same price in all languages." value={draft.soloPrice} onChange={v => setDraft(d => ({ ...d, soloPrice: v }))} step="0.01" />
               <div className="space-y-1.5">
-                <Label className="text-xs font-medium">Solo platform</Label>
+                <Label className="text-xs font-medium">{copy.soloPlatform}</Label>
                 <select
                   value={draft.platform}
                   onChange={e =>
@@ -318,19 +320,19 @@ export function PatternClubCard({ project }: { project: PatternProject }) {
 
             <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
               <div className="rounded-lg border bg-card p-3">
-                <p className="text-[11px] text-muted-foreground">Month-12 club net</p>
+                <p className="text-[11px] text-muted-foreground">{copy.month12Net}</p>
                 <p className="text-lg font-semibold">{fmt(result.months[11]?.netRevenue ?? 0)}</p>
               </div>
               <div className="rounded-lg border bg-card p-3">
-                <p className="text-[11px] text-muted-foreground">Solo income lost / mo</p>
+                <p className="text-[11px] text-muted-foreground">{copy.soloLost}</p>
                 <p className="text-lg font-semibold">{fmt(result.months[11]?.soloOpportunityCost ?? 0)}</p>
               </div>
               <div className="rounded-lg border bg-card p-3">
-                <p className="text-[11px] text-muted-foreground">Net vs selling solo</p>
+                <p className="text-[11px] text-muted-foreground">{copy.netVsSolo}</p>
                 <p className="text-lg font-semibold">{fmt(result.finalMonthlyNetVsSolo)}</p>
               </div>
               <div className="rounded-lg border bg-card p-3">
-                <p className="text-[11px] text-muted-foreground">Steady-state members needed</p>
+                <p className="text-[11px] text-muted-foreground">{copy.membersNeeded}</p>
                 <p className="text-lg font-semibold">{nfmt(result.breakEvenMembers)}</p>
               </div>
             </div>
@@ -342,7 +344,7 @@ export function PatternClubCard({ project }: { project: PatternProject }) {
 
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label className="text-xs font-medium">Paste-ready club FAQ</Label>
+                <Label className="text-xs font-medium">{copy.faq}</Label>
                 <CopyLine text={faqText} />
               </div>
               <pre className="max-h-56 overflow-auto whitespace-pre-wrap rounded-lg border bg-background p-3 text-xs">
@@ -353,13 +355,13 @@ export function PatternClubCard({ project }: { project: PatternProject }) {
 
           <TabsContent value="magazine" className="mt-4 space-y-6">
             <div className="grid grid-cols-2 gap-x-4 gap-y-4 md:grid-cols-3">
-              <Field label="Offered fee ($)" hint="Cited band: Knitty $200–$300, Farm & Fiber $200–$750 by garment size." value={mag.fee} onChange={v => setMag(m => ({ ...m, fee: v }))} step="1" />
-              <Field label="Exclusivity window (months)" hint="Cited: Knitty ~3, Laine 5, I Like Knitting 6, Farm & Fiber 12." value={mag.exclusiveMonths} onChange={v => setMag(m => ({ ...m, exclusiveMonths: v }))} step="1" />
-              <Field label="Pattern production you'd pay ($)" hint="Tech edit + media if the publisher doesn't cover them." value={mag.mediaCost} onChange={v => setMag(m => ({ ...m, mediaCost: v }))} step="1" />
-              <Field label="Pattern sells solo (copies/mo)" hint="Your realistic steady state after the window ends." value={mag.soloCopiesPerMonth} onChange={v => setMag(m => ({ ...m, soloCopiesPerMonth: v }))} step="1" />
-              <Field label="Solo price ($)" value={mag.soloPrice} onChange={v => setMag(m => ({ ...m, soloPrice: v }))} step="0.01" />
+              <Field label="{copy.offeredFee}" hint="Cited band: Knitty $200–$300, Farm & Fiber $200–$750 by garment size." value={mag.fee} onChange={v => setMag(m => ({ ...m, fee: v }))} step="1" />
+              <Field label="{copy.exclusivity}" hint="Cited: Knitty ~3, Laine 5, I Like Knitting 6, Farm & Fiber 12." value={mag.exclusiveMonths} onChange={v => setMag(m => ({ ...m, exclusiveMonths: v }))} step="1" />
+              <Field label="{copy.production}" hint="Tech edit + media if the publisher doesn't cover them." value={mag.mediaCost} onChange={v => setMag(m => ({ ...m, mediaCost: v }))} step="1" />
+              <Field label="{copy.soloCopies}" hint="Your realistic steady state after the window ends." value={mag.soloCopiesPerMonth} onChange={v => setMag(m => ({ ...m, soloCopiesPerMonth: v }))} step="1" />
+              <Field label="{copy.soloPrice}" value={mag.soloPrice} onChange={v => setMag(m => ({ ...m, soloPrice: v }))} step="0.01" />
               <div className="space-y-1.5">
-                <Label className="text-xs font-medium">Solo platform</Label>
+                <Label className="text-xs font-medium">{copy.soloPlatform}</Label>
                 <select
                   value={mag.platform}
                   onChange={e =>
@@ -382,29 +384,29 @@ export function PatternClubCard({ project }: { project: PatternProject }) {
                   className="h-4 w-4"
                 />
                 <Label htmlFor="tech-edit-covered" className="cursor-pointer text-xs">
-                  Publisher covers tech editing (Knitty does)
+                  {copy.techCovered}
                 </Label>
               </div>
-              <Field label="Your tech-edit cost ($) if not covered" value={mag.techEditCost} onChange={v => setMag(m => ({ ...m, techEditCost: v }))} step="1" />
-              <Field label="Design hours" value={mag.designHours} onChange={v => setMag(m => ({ ...m, designHours: v }))} step="1" />
-              <Field label="Your hourly rate ($/hr)" hint="Used for the effective rate check." value={mag.hourlyRate} onChange={v => setMag(m => ({ ...m, hourlyRate: v }))} step="1" />
+              <Field label="{copy.techCost}" value={mag.techEditCost} onChange={v => setMag(m => ({ ...m, techEditCost: v }))} step="1" />
+              <Field label="{copy.designHours}" value={mag.designHours} onChange={v => setMag(m => ({ ...m, designHours: v }))} step="1" />
+              <Field label="{copy.hourlyRate}" hint="Used for the effective rate check." value={mag.hourlyRate} onChange={v => setMag(m => ({ ...m, hourlyRate: v }))} step="1" />
             </div>
 
             <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
               <div className="rounded-lg border bg-card p-3">
-                <p className="text-[11px] text-muted-foreground">Net fee (after your costs)</p>
+                <p className="text-[11px] text-muted-foreground">{copy.netFee}</p>
                 <p className="text-lg font-semibold">{fmt(magOutcome.netFee)}</p>
               </div>
               <div className="rounded-lg border bg-card p-3">
-                <p className="text-[11px] text-muted-foreground">Income lost in the window</p>
+                <p className="text-[11px] text-muted-foreground">{copy.incomeLost}</p>
                 <p className="text-lg font-semibold">{fmt(magOutcome.windowSoloNet)}</p>
               </div>
               <div className="rounded-lg border bg-card p-3">
-                <p className="text-[11px] text-muted-foreground">Min. fee worth accepting</p>
+                <p className="text-[11px] text-muted-foreground">{copy.minFee}</p>
                 <p className="text-lg font-semibold">{fmt(magOutcome.minimumWorthwhileFee)}</p>
               </div>
               <div className="rounded-lg border bg-card p-3">
-                <p className="text-[11px] text-muted-foreground">Effective rate / hour</p>
+                <p className="text-[11px] text-muted-foreground">{copy.effectiveRate}</p>
                 <p className="text-lg font-semibold">{fmt(magOutcome.effectiveHourlyRate)}/hr</p>
               </div>
             </div>
@@ -416,7 +418,7 @@ export function PatternClubCard({ project }: { project: PatternProject }) {
 
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label className="text-xs font-medium">Paste-ready reply to the editor</Label>
+                <Label className="text-xs font-medium">{copy.editorReply}</Label>
                 <CopyLine text={magReply} />
               </div>
               <pre className="max-h-64 overflow-auto whitespace-pre-wrap rounded-lg border bg-background p-3 text-xs">

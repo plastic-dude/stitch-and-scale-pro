@@ -25,6 +25,8 @@ import { NativeSelect } from '@/components/ui/native-select';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
+import { useSettings } from '@/context/SettingsContext';
+import { DEALS_COPY } from '@/lib/deals-copy';
 import { cn } from '@/lib/utils';
 import {
   compareDeal,
@@ -82,6 +84,8 @@ export function DealsTabCard({
   project: PatternProject;
 }) {
   const { toast } = useToast();
+  const { language } = useSettings();
+  const copy = DEALS_COPY[language];
 
   const [hours, setHours] = React.useState(DEFAULT_HOURS);
   const [rate, setRate] = React.useState(DEFAULT_RATE);
@@ -126,9 +130,9 @@ export function DealsTabCard({
     const text = generateTermsResponse(input, outcome);
     try {
       await navigator.clipboard.writeText(text);
-      toast({ title: 'Terms response copied', description: 'Paste it into your reply to the yarn company.' });
+      toast({ title: copy.copyTerms, description: copy.pasteReply });
     } catch {
-      toast({ title: 'Copy failed', description: 'Select the text manually from the response box.' });
+      toast({ title: copy.copyFailed, description: copy.manualCopy });
     }
   };
 
@@ -165,7 +169,7 @@ export function DealsTabCard({
             <Icon className="w-4 h-4 text-primary" />
             <CardTitle className="text-sm font-serif">{title}</CardTitle>
           </div>
-          <VerdictBadge verdict={outcome.verdict} label={outcome.verdict === 'walk_away' ? 'Walk away' : outcome.verdict} />
+          <VerdictBadge verdict={outcome.verdict} label={outcome.verdict === 'walk_away' ? copy.walk : outcome.verdict === 'take' ? copy.take : copy.counter} />
         </div>
         <CardDescription className="text-xs">{subtitle}</CardDescription>
       </CardHeader>
@@ -173,18 +177,18 @@ export function DealsTabCard({
         {offer.type === 'flat_fee' && (
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <Label className="text-xs">Fee offered ($)</Label>
+              <Label className="text-xs">{copy.fee}</Label>
               {inputField(flatFee, setFlatFee, '50', 'fee offered')}
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs">Yarn + support value ($)<DefaultBadge text="optional" /></Label>
+              <Label className="text-xs">{copy.support}<DefaultBadge text={copy.optional} /></Label>
               {inputField(supportValue, setSupportValue, '25', 'support value')}
             </div>
             <div className="col-span-2 space-y-1.5">
-              <Label className="text-xs">You keep self-resell rights?</Label>
-              <NativeSelect value={retainsRights ? 'yes' : 'no'} onChange={(e) => setRetainsRights(e.target.value === 'yes')} aria-label="keep resale rights">
-                <option value="yes">Yes — sell on Ravelry/Etsy too</option>
-                <option value="no">No — company owns it outright</option>
+              <Label className="text-xs">{copy.rights}</Label>
+              <NativeSelect value={retainsRights ? 'yes' : 'no'} onChange={(e) => setRetainsRights(e.target.value === 'yes')} aria-label={copy.rights}>
+                <option value="yes">{copy.yes}</option>
+                <option value="no">{copy.no}</option>
               </NativeSelect>
             </div>
           </div>
@@ -192,16 +196,16 @@ export function DealsTabCard({
         {offer.type === 'royalty_no_exclusivity' && (
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <Label className="text-xs">Royalty of {royaltyBase === 'net' ? 'net' : 'gross'} (%)<DefaultBadge text="30% cited" /></Label>
+              <Label className="text-xs">{royaltyBase === 'net' ? copy.royaltyNet : copy.royaltyGross}<DefaultBadge text="30% cited" /></Label>
               {inputField(royaltyPct * 100, (v) => setRoyaltyPct(Math.min(Math.max(v, 0) / 100, 1)), '5', 'royalty percent')}
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs">Company channel sales<DefaultBadge text="their reach" /></Label>
+              <Label className="text-xs">{copy.companySales}<DefaultBadge text="their reach" /></Label>
               {inputField(companySales, setCompanySales, '50', 'company sales')}
             </div>
             <div className="col-span-2 space-y-1.5">
-              <Label className="text-xs">Royalty is a share of<DefaultBadge text="issue #2 base" /></Label>
-              <NativeSelect value={royaltyBase} onChange={(e) => setRoyaltyBase(e.target.value as 'net' | 'gross')} aria-label="royalty base">
+              <Label className="text-xs">{copy.royaltyNet}<DefaultBadge text="issue #2 base" /></Label>
+              <NativeSelect value={royaltyBase} onChange={(e) => setRoyaltyBase(e.target.value as 'net' | 'gross')} aria-label={copy.royaltyNet}>
                 <option value="net">Net channel proceeds (Making Stories precedent)</option>
                 <option value="gross">Gross sales (negotiate this — it pays more)</option>
               </NativeSelect>
@@ -216,7 +220,7 @@ export function DealsTabCard({
         {offer.type === 'exclusive_flat_fee' && (
           <div className="grid grid-cols-3 gap-3">
             <div className="space-y-1.5">
-              <Label className="text-xs">Fee offered ($)</Label>
+              <Label className="text-xs">{copy.fee}</Label>
               {inputField(exclusiveFee, setExclusiveFee, '50', 'exclusive fee')}
             </div>
             <div className="space-y-1.5">
@@ -259,7 +263,7 @@ export function DealsTabCard({
       <CardHeader>
         <div className="flex items-center gap-2">
           <Handshake className="w-5 h-5 text-primary" />
-          <CardTitle className="font-serif">Deal Comparator — yarn-company offers</CardTitle>
+          <CardTitle className="font-serif">{copy.title} — yarn-company offers</CardTitle>
         </div>
         <CardDescription className="leading-relaxed">
           Modelling whether a yarn-company collaboration beats self-publishing. Deal structures and pay benchmarks are from
@@ -312,15 +316,15 @@ export function DealsTabCard({
         <div className="grid gap-4 lg:grid-cols-3">
           <DealCard
             icon={BadgeDollarSign}
-            title="Flat fee"
-            subtitle="Company pays once; decide whether to keep resale rights."
+            title={copy.flat}
+            subtitle={copy.yesDetail}
             offer={{ type: 'flat_fee', fee: flatFee, supportValue, retainsResellRights: retainsRights }}
             outcome={flatOutcome}
             onCopy={() => copyTerms({ type: 'flat_fee', fee: flatFee, supportValue, retainsResellRights: retainsRights }, flatOutcome)}
           />
           <DealCard
             icon={TrendingUp}
-            title="Royalty, no exclusivity"
+            title={copy.royalty}
             subtitle={`Designer sells anywhere; royalty is a share of the company's ${royaltyBase} channel ${royaltyBase === 'net' ? 'net proceeds' : 'gross sales'}.`}
             offer={{ type: 'royalty_no_exclusivity', royaltyPct, royaltyBase, companySales }}
             outcome={royaltyOutcome}
@@ -328,8 +332,8 @@ export function DealsTabCard({
           />
           <DealCard
             icon={Lock}
-            title="Exclusive flat fee"
-            subtitle="Fee for a locked-out window; the fee must cover the direct sales you give up."
+            title={copy.exclusive}
+            subtitle={copy.noDetail}
             offer={{ type: 'exclusive_flat_fee', fee: exclusiveFee, supportValue, exclusivityMonths: exclusiveMonths, lockedOutFraction: lockedFraction }}
             outcome={exclusiveOutcome}
             onCopy={() => copyTerms({ type: 'exclusive_flat_fee', fee: exclusiveFee, supportValue, exclusivityMonths: exclusiveMonths, lockedOutFraction: lockedFraction }, exclusiveOutcome)}
@@ -362,6 +366,8 @@ function DesignOfferSection({
   fmt: (n: number) => string;
 }) {
   const { toast } = useToast();
+  const { language } = useSettings();
+  const copy = DEALS_COPY[language];
 
   const [offerType, setOfferType] = React.useState<DesignOfferType>('flat_fee');
   const [designFee, setDesignFee] = React.useState(350);
@@ -397,9 +403,9 @@ function DesignOfferSection({
   const copyOfferResponse = async () => {
     try {
       await navigator.clipboard.writeText(generateOfferResponse(designInput, designVerdict));
-      toast({ title: 'Offer response copied', description: 'Paste it into your reply about the design offer.' });
+      toast({ title: copy.copyTerms, description: copy.pasteReply });
     } catch {
-      toast({ title: 'Copy failed', description: 'Select the text manually from the response box.' });
+      toast({ title: copy.copyFailed, description: copy.manualCopy });
     }
   };
 
@@ -418,17 +424,15 @@ function DesignOfferSection({
     <div className="space-y-4">
       <div className="flex items-center gap-2 border-t border-border/60 pt-4">
         <Handshake className="w-4 h-4 text-primary" />
-        <span className="text-sm font-medium font-serif">Design offers — evaluate an offer made to you</span>
+        <span className="text-sm font-medium font-serif">{copy.title}</span>
       </div>
       <p className="text-xs leading-relaxed text-muted-foreground">
-        When a yarn company or magazine makes you an offer, model it term by term. Cited touchstones: WPK accessory
-        flat fees avg $246 (tech edit/photo/layout excluded), Making Stories royalties 30%/20% of net, Quince-style
-        fairness = company keeps its site + Ravelry, you keep your own-site sales, exclusivity 3–12 months.
+        {copy.description}
       </p>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <div className="space-y-1.5">
-          <Label className="text-xs">Offer type</Label>
-          <NativeSelect value={offerType} onChange={(e) => setOfferType(e.target.value as DesignOfferType)} aria-label="offer type">
+          <Label className="text-xs">{copy.title}</Label>
+          <NativeSelect value={offerType} onChange={(e) => setOfferType(e.target.value as DesignOfferType)} aria-label={copy.title}>
             {DESIGN_OFFER_TYPES.map((t) => (
               <option key={t} value={t}>{DESIGN_OFFER_TYPE_LABELS[t]}</option>
             ))}
@@ -436,34 +440,34 @@ function DesignOfferSection({
         </div>
         {(offerType === 'flat_fee' || offerType === 'non_exclusive_license' || offerType === 'royalty_with_exclusivity') && (
           <div className="space-y-1.5">
-            <Label className="text-xs">Fee offered ($)</Label>
+            <Label className="text-xs">{copy.fee}</Label>
             {inputField2(designFee, setDesignFee, '25', 'design fee')}
           </div>
         )}
         {(offerType === 'royalty_no_exclusivity' || offerType === 'royalty_with_exclusivity') && (
           <div className="space-y-1.5">
-            <Label className="text-xs">Royalty of net (%)</Label>
+            <Label className="text-xs">{copy.royaltyNet}</Label>
             {inputField2(designRoyalty * 100, (v) => setDesignRoyalty(Math.min(Math.max(v, 0) / 100, 1)), '5', 'design royalty')}
           </div>
         )}
         {(offerType === 'royalty_with_exclusivity' || offerType === 'non_exclusive_license') && (
           <div className="space-y-1.5">
-            <Label className="text-xs">Exclusivity (mo)</Label>
+            <Label className="text-xs">{copy.exclusive}</Label>
             {inputField2(designExclusivity, setDesignExclusivity, '1', 'design exclusivity')}
           </div>
         )}
         <div className="space-y-1.5">
-          <Label className="text-xs">Yarn support value ($)</Label>
+          <Label className="text-xs">{copy.support}</Label>
           {inputField2(yarnValue, setYarnValue, '25', 'yarn value')}
         </div>
       </div>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <div className="space-y-1.5">
-          <Label className="text-xs">Your own-channel sales<DefaultBadge text="the baseline" /></Label>
+          <Label className="text-xs">{copy.sales}<DefaultBadge text={copy.optional} /></Label>
           {inputField2(designSales, setDesignSales, '10', 'own sales')}
         </div>
         <div className="space-y-1.5">
-          <Label className="text-xs">Pattern price ($)</Label>
+          <Label className="text-xs">{copy.price}</Label>
           {inputField2(designPrice, setDesignPrice, '1', 'pattern price')}
         </div>
         <div className="space-y-1.5">
@@ -482,10 +486,10 @@ function DesignOfferSection({
         </div>
       </div>
       <div className="space-y-1.5 sm:w-1/2">
-        <Label className="text-xs">You keep selling on your own site/Payhip?</Label>
+        <Label className="text-xs">{copy.rights}</Label>
         <NativeSelect value={keepsOwnSite ? 'yes' : 'no'} onChange={(e) => setKeepsOwnSite(e.target.value === 'yes')} aria-label="keep own-site rights">
-          <option value="yes">Yes — own channel stays yours</option>
-          <option value="no">No — exclusive to them</option>
+          <option value="yes">{copy.yesDetail}</option>
+          <option value="no">{copy.noDetail}</option>
         </NativeSelect>
       </div>
 
@@ -494,14 +498,14 @@ function DesignOfferSection({
           <div className="flex items-center gap-2">
             <VerdictBadge2 verdict={designVerdict.verdict} />
           </div>
-          <span className="text-muted-foreground">Effective rate: <span className="font-semibold">${designVerdict.effectiveHourlyRate.toFixed(2)}/hr</span></span>
+          <span className="text-muted-foreground">{copy.rate}: <span className="font-semibold">${designVerdict.effectiveHourlyRate.toFixed(2)}/hr</span></span>
         </div>
         <div className="flex items-center justify-between">
-          <span>Offer value over the window</span>
+          <span>{copy.value}</span>
           <span className="font-semibold">{fmt(designVerdict.estimatedOfferValue)}</span>
         </div>
         <div className="flex items-center justify-between text-muted-foreground">
-          <span>Your own-channel baseline (this window)</span>
+          <span>{copy.sales}</span>
           <span>{fmt(baseNet >= 0 ? baseNet : 0)}</span>
         </div>
       </div>
@@ -527,7 +531,7 @@ function DesignOfferSection({
       <p className="text-xs leading-relaxed text-muted-foreground">{designVerdict.summary}</p>
       <Button variant="outline" size="sm" className="w-full gap-2" data-testid="copy-design-response" onClick={copyOfferResponse}>
         <Copy className="w-3.5 h-3.5" />
-        Copy offer response
+        {copy.copyTerms}
       </Button>
     </div>
   );
@@ -542,7 +546,7 @@ function VerdictBadge2({ verdict }: { verdict: DesignOfferVerdict['verdict'] }) 
   return (
     <Badge variant="outline" className={cn('gap-1 font-semibold uppercase tracking-wide', config)}>
       <Scale className="w-3 h-3" />
-      {verdict === 'walk_away' ? 'Walk away' : verdict}
+      {verdict === 'walk_away' ? 'Walk away' : verdict === 'take' ? 'Take' : 'Counter'}
     </Badge>
   );
 }

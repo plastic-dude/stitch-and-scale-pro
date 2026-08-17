@@ -33,6 +33,8 @@ import {
 } from '@/lib/pattern-pricing-advisor';
 import { PLATFORMS } from '@/lib/pattern-income-calculator';
 import { Coins, ListChecks, Package, Rocket, Target, TrendingUp } from 'lucide-react';
+import { useSettings } from '@/context/SettingsContext';
+import { PORTFOLIO_COPY, type PortfolioCopy } from '@/lib/portfolio-copy';
 
 const DEFAULT_INPUTS: PortfolioInputs = {
   itemType: 'sweater',
@@ -59,14 +61,14 @@ function usd(n: number) {
 }
 
 /** Readiness score → label + tone. */
-function readinessMeta(score: number) {
-  if (score >= 75) return { label: 'Ready to launch', tone: 'bg-emerald-500/15 text-emerald-600 border-emerald-500/40' as const };
-  if (score >= 40) return { label: 'Almost there', tone: 'bg-amber-500/15 text-amber-600 border-amber-500/40' as const };
-  return { label: 'Needs work', tone: 'bg-destructive/10 text-destructive border-destructive/40' as const };
+function readinessMeta(score: number, copy: PortfolioCopy) {
+  if (score >= 75) return { label: copy.readyLaunch, tone: 'bg-emerald-500/15 text-emerald-600 border-emerald-500/40' as const };
+  if (score >= 40) return { label: copy.almost, tone: 'bg-amber-500/15 text-amber-600 border-amber-500/40' as const };
+  return { label: copy.needs, tone: 'bg-destructive/10 text-destructive border-destructive/40' as const };
 }
 
-function PortfolioLineRow({ line }: { line: PortfolioLine }) {
-  const meta = readinessMeta(line.readinessScore);
+function PortfolioLineRow({ line, copy }: { line: PortfolioLine; copy: PortfolioCopy }) {
+  const meta = readinessMeta(line.readinessScore, copy);
   return (
     <div className="grid grid-cols-12 gap-2 items-center py-2.5 border-b border-border/60 last:border-b-0 text-sm">
       <div className="col-span-4">
@@ -99,6 +101,9 @@ function PortfolioLineRow({ line }: { line: PortfolioLine }) {
 
 export default function PortfolioPage() {
   const { projects } = useProjects();
+  const { language } = useSettings();
+  const copy = PORTFOLIO_COPY[language];
+  const interpolate = (template: string, values: Record<string, string | number>) => template.replace(/\{(\w+)\}/g, (_, key) => String(values[key] ?? ''));
   const [inputs, setInputs] = React.useState<PortfolioInputs>(DEFAULT_INPUTS);
   const [inputsRaw, setInputsRaw] = React.useState({ hours: '20', rate: '25', price: '8' });
 
@@ -108,27 +113,26 @@ export default function PortfolioPage() {
   return (
     <div className="max-w-5xl mx-auto p-4 md:p-6 space-y-5">
       <header>
-        <h1 className="font-serif text-2xl flex items-center gap-2">
-          <Package className="h-6 w-6" /> Release Portfolio
+          <h1 className="font-serif text-2xl flex items-center gap-2">
+            <Package className="h-6 w-6" /> {copy.title}
         </h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Your whole catalogue, ranked for launch. Every tool stops at one pattern —
-          your income is a portfolio decision.
+          {copy.description}
         </p>
       </header>
 
       {/* Planning inputs */}
       <Card className="border-border/70 bg-card/50">
         <CardHeader>
-          <CardTitle className="font-serif text-base">Your launch plan</CardTitle>
+          <CardTitle className="font-serif text-base">{copy.plan}</CardTitle>
           <CardDescription>
-            The advisory inputs applied across every pattern (per-pattern engineering data still comes from each project).
+            {copy.planDescription}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="flex flex-wrap gap-3">
             <div className="flex-1 min-w-[9rem]">
-              <Label htmlFor="port-item" className="text-xs text-muted-foreground mb-1 block">Item type</Label>
+              <Label htmlFor="port-item" className="text-xs text-muted-foreground mb-1 block">{copy.itemType}</Label>
               <NativeSelect id="port-item" value={inputs.itemType}
                 onChange={(e) => setInputs((p) => ({ ...p, itemType: e.target.value }))}
                 className="h-9" data-testid="portfolio-item-type">
@@ -138,7 +142,7 @@ export default function PortfolioPage() {
               </NativeSelect>
             </div>
             <div className="flex-1 min-w-[9rem]">
-              <Label htmlFor="port-skill" className="text-xs text-muted-foreground mb-1 block">Skill level</Label>
+              <Label htmlFor="port-skill" className="text-xs text-muted-foreground mb-1 block">{copy.skill}</Label>
               <NativeSelect id="port-skill" value={inputs.skillLevel}
                 onChange={(e) => setInputs((p) => ({ ...p, skillLevel: e.target.value }))}
                 className="h-9" data-testid="portfolio-skill">
@@ -148,7 +152,7 @@ export default function PortfolioPage() {
               </NativeSelect>
             </div>
             <div className="flex-1 min-w-[9rem]">
-              <Label htmlFor="port-target" className="text-xs text-muted-foreground mb-1 block">Market target</Label>
+              <Label htmlFor="port-target" className="text-xs text-muted-foreground mb-1 block">{copy.market}</Label>
               <NativeSelect id="port-target" value={inputs.marketTarget}
                 onChange={(e) => setInputs((p) => ({ ...p, marketTarget: e.target.value as 'standard' | 'premium' }))}
                 className="h-9" data-testid="portfolio-target">
@@ -157,9 +161,9 @@ export default function PortfolioPage() {
                 ))}
               </NativeSelect>
             </div>
-            {numberInput('port-hours', 'Hours per pattern', 'Your tracked design hours', inputsRaw.hours, (v) => { setInputsRaw((p) => ({ ...p, hours: v })); setInputs((p) => ({ ...p, hoursWorked: parseFloat(v) || 0 })); })}
-            {numberInput('port-rate', 'Hourly rate (USD)', 'What your time is worth', inputsRaw.rate, (v) => { setInputsRaw((p) => ({ ...p, rate: v })); setInputs((p) => ({ ...p, hourlyRate: parseFloat(v) || 0 })); })}
-            {numberInput('port-price', 'Launch price (USD)', 'Your planned list price', inputsRaw.price, (v) => { setInputsRaw((p) => ({ ...p, price: v })); setInputs((p) => ({ ...p, currentPrice: parseFloat(v) || 0 })); })}
+            {numberInput('port-hours', copy.hours, copy.hoursHint, inputsRaw.hours, (v) => { setInputsRaw((p) => ({ ...p, hours: v })); setInputs((p) => ({ ...p, hoursWorked: parseFloat(v) || 0 })); })}
+            {numberInput('port-rate', copy.rate, copy.rateHint, inputsRaw.rate, (v) => { setInputsRaw((p) => ({ ...p, rate: v })); setInputs((p) => ({ ...p, hourlyRate: parseFloat(v) || 0 })); })}
+            {numberInput('port-price', copy.price, copy.priceHint, inputsRaw.price, (v) => { setInputsRaw((p) => ({ ...p, price: v })); setInputs((p) => ({ ...p, currentPrice: parseFloat(v) || 0 })); })}
           </div>
         </CardContent>
       </Card>
@@ -221,7 +225,7 @@ export default function PortfolioPage() {
               <div className="col-span-2 text-center">Launch priority</div>
             </div>
           )}
-          {portfolio.lines.map(line => <PortfolioLineRow key={line.projectId} line={line} />)}
+          {portfolio.lines.map(line => <PortfolioLineRow key={line.projectId} line={line} copy={copy} />)}
         </CardContent>
       </Card>
 
@@ -229,17 +233,16 @@ export default function PortfolioPage() {
       <Card className="border-border/70 bg-card/50">
         <CardHeader>
           <CardTitle className="font-serif text-base flex items-center gap-2">
-            <Package className="h-4 w-4" /> Bundle candidates
+            <Package className="h-4 w-4" /> {copy.bundle}
           </CardTitle>
           <CardDescription>
-            Patterns sharing a yarn weight knit as a matching set — bundle at 71% of the sum of parts
-            (Fit for Art's documented positioning: $36 vs $51 individual) to lift revenue per customer.
+            {copy.bundleDescription}
           </CardDescription>
         </CardHeader>
         <CardContent>
           {portfolio.bundles.length === 0 ? (
             <div className="text-sm text-muted-foreground py-4 text-center">
-              No bundle candidates yet — you need at least two patterns in the same yarn weight (or two graded garments).
+              {copy.noBundles}
             </div>
           ) : (
             <div className="space-y-3">
@@ -253,7 +256,7 @@ export default function PortfolioPage() {
                   </div>
                   <div className="text-xs text-muted-foreground mt-2">{bundle.why}</div>
                   <div className="text-[11px] text-muted-foreground mt-1">
-                    Net per bundle on {bestPlatform} ≈ {usd(bundle.bundleNetExtra)} beyond selling separately at the discounted rate.
+                    {interpolate(copy.bundleNet, { platform: bestPlatform, amount: usd(bundle.bundleNetExtra) })}
                   </div>
                 </div>
               ))}
@@ -264,8 +267,8 @@ export default function PortfolioPage() {
 
       {/* Footnote */}
       <div className="text-[11px] text-muted-foreground space-y-1 border-t border-border/60 pt-3">
-        <p>Readiness reuses the Pre-Publish Toolkit's checks; pricing reuses the Pricing Advisor's cited market bands ($5–10 standard, $12–18 premium); per-platform net reuses the Income Planner's verified fee model.</p>
-        <p>Bundle math: 71% of sum of parts (Fit for Art's $36/$51 observed positioning). Cadence: one release per month (Sister Mountain, Dec 2023).</p>
+        <p>{copy.footnoteReadiness}</p>
+        <p>{copy.footnoteBundle}</p>
       </div>
     </div>
   );

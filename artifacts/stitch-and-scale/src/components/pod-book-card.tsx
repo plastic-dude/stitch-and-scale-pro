@@ -19,6 +19,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { BookOpen, ClipboardCopy, Printer, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { PatternProject } from '@/lib/grading-engine';
+import { useSettings } from '@/context/SettingsContext';
+import { POD_BOOK_COPY } from '@/lib/pod-book-copy';
 import {
   analyzePodBook,
   POD_CHANNELS,
@@ -75,6 +77,8 @@ const num = (
 );
 
 export function PodBookCard({ project }: { project: PatternProject }) {
+  const { language } = useSettings();
+  const copyText = POD_BOOK_COPY[language];
   const { toast } = useToast();
   const stored = React.useMemo(() => loadStored(project.id), [project.id]);
   const [listPrice, setListPrice] = React.useState<number>(stored?.listPrice ?? 24);
@@ -134,13 +138,13 @@ export function PodBookCard({ project }: { project: PatternProject }) {
     const r = result;
     const book = `${project.name || 'My collection'} — ${r.primary.channel === 'direct_self' ? 'self-fulfilled' : POD_CHANNEL_LABELS[r.primary.channel]} edition`;
     return [
-      `THE BOOK: ${book}`,
+      `${copyText.title.toUpperCase()}: ${book}`,
       `${r.primary.printCost.toFixed(2)} print cost / copy at $${listPrice} list → ${fmt$(r.primary.netPerBook)} net per copy.`,
-      `Break-even: ${r.primary.breakEvenCopies} copies (production + marketing = ${fmt$(productionBudget + marketingBudget)}).`,
+      `${copyText.breakEven}: ${r.primary.breakEvenCopies} copies (production + marketing = ${fmt$(productionBudget + marketingBudget)}).`,
       `At ${copiesExpected} copies the book nets ${fmt$(r.netTotal)} vs ${fmt$(pdfBaselineNet)} selling the same patterns as PDFs (${r.incrementalVsPdf >= 0 ? '+' : ''}${fmt$(r.incrementalVsPdf)} incremental).`,
-      ...r.watchOuts.map(w => `WATCH-OUT: ${w}`),
+      ...r.watchOuts.map(w => `${copyText.watchOut}: ${w}`),
       '',
-      'PRE-FLIGHT CHECKLIST:',
+      `${copyText.checklist.toUpperCase()}:`,
       ...r.checklist.map(c => `- [${c.done ? 'x' : ' '}] ${c.item}`),
       '',
       r.verdictReason,
@@ -150,9 +154,9 @@ export function PodBookCard({ project }: { project: PatternProject }) {
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(pitch);
-      toast({ title: 'Copied', description: 'Paste it into your launch plan, LYS pitch, or KAL thread.' });
+      toast({ title: copyText.copied, description: copyText.copyDescription });
     } catch {
-      toast({ title: 'Copy failed', description: 'Select the text manually.' });
+      toast({ title: copyText.copyFailed, description: copyText.copyFailedDescription });
     }
   };
 
@@ -163,29 +167,28 @@ export function PodBookCard({ project }: { project: PatternProject }) {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-base">
-          <Printer className="w-4 h-4" /> Book It — pattern collection planner
+          <Printer className="w-4 h-4" /> {copyText.title}
         </CardTitle>
         <CardDescription>
-          Bundle your patterns into one print collection and price every channel honestly. Color pages cost 6x a B&W
-          page on print-on-demand — this planner counts them.
+          {copyText.description}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-5">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {num(listPrice, setListPrice, 'Book list price', '$15–35 is the pattern-book band', 5, 100, 0.01)}
-          {num(pageCount, setPageCount, 'Total pages', 'B&W pages including front/back matter', 10, 600, 1)}
-          {num(colorPageCount, setColorPageCount, 'Color pages', 'Charts + photography; the margin killer', 0, pageCount, 1)}
-          {num(copiesExpected, setCopiesExpected, 'Expected launch-window copies', 'Be honest — this sets break-even', 0, 50000, 1)}
-          {num(productionBudget, setProductionBudget, 'Production budget', 'Tech edit ≈$100/pattern, photos, layout, cover', 0, 50000, 10)}
-          {num(marketingBudget, setMarketingBudget, 'Marketing spend', 'Ads, review copies, launch-team swag', 0, 50000, 10)}
-          {num(pdfBaselineNet, setPdfBaselineNet, 'PDF baseline net', 'Same patterns sold solo, net of fees', 0, 100000, 10)}
+          {num(listPrice, setListPrice, copyText.listPrice, '$15–35 is the pattern-book band', 5, 100, 0.01)}
+          {num(pageCount, setPageCount, copyText.pages, 'B&W pages including front/back matter', 10, 600, 1)}
+          {num(colorPageCount, setColorPageCount, copyText.colorPages, 'Charts + photography; the margin killer', 0, pageCount, 1)}
+          {num(copiesExpected, setCopiesExpected, copyText.expectedCopies, 'Be honest — this sets break-even', 0, 50000, 1)}
+          {num(productionBudget, setProductionBudget, copyText.productionBudget, 'Tech edit ≈$100/pattern, photos, layout, cover', 0, 50000, 10)}
+          {num(marketingBudget, setMarketingBudget, copyText.marketingBudget, 'Ads, review copies, launch-team swag', 0, 50000, 10)}
+          {num(pdfBaselineNet, setPdfBaselineNet, copyText.pdfBaseline, 'Same patterns sold solo, net of fees', 0, 100000, 10)}
           <div className="space-y-1">
-            <Label className="text-xs text-muted-foreground">Primary channel</Label>
+            <Label className="text-xs text-muted-foreground">{copyText.primaryChannel}</Label>
             <select
               value={primaryChannel}
               onChange={e => setPrimaryChannel(e.target.value as PodChannelId)}
               className="w-full h-9 rounded-md border border-input bg-background px-2 text-sm"
-              aria-label="Primary channel"
+              aria-label={copyText.primaryChannel}
             >
               {(Object.keys(POD_CHANNELS) as PodChannelId[]).map(c => (
                 <option key={c} value={c}>
@@ -201,11 +204,11 @@ export function PodBookCard({ project }: { project: PatternProject }) {
           <table className="w-full text-xs">
             <thead>
               <tr className="border-b border-border bg-secondary/40">
-                <th className="text-left p-2 font-medium">Channel</th>
-                <th className="text-right p-2 font-medium">Net / copy</th>
-                <th className="text-right p-2 font-medium">Break-even</th>
-                <th className="text-right p-2 font-medium">Payout</th>
-                <th className="text-right p-2 font-medium">Clears?</th>
+                <th className="text-left p-2 font-medium">{copyText.channel}</th>
+                <th className="text-right p-2 font-medium">{copyText.netCopy}</th>
+                <th className="text-right p-2 font-medium">{copyText.breakEven}</th>
+                <th className="text-right p-2 font-medium">{copyText.payout}</th>
+                <th className="text-right p-2 font-medium">{copyText.clears}</th>
               </tr>
             </thead>
             <tbody>
@@ -215,7 +218,7 @@ export function PodBookCard({ project }: { project: PatternProject }) {
                   <td className={'p-2 text-right ' + (r.netPerBook <= 0 ? 'text-destructive' : 'text-accent')}>{fmt$1(r.netPerBook)}</td>
                   <td className="p-2 text-right">{r.breakEvenCopies.toLocaleString()}</td>
                   <td className="p-2 text-right">
-                    {r.channel === 'direct_self' ? 'on delivery' : `~${POD_CHANNELS[r.channel].payoutDays}d`}
+                    {r.channel === 'direct_self' ? copyText.onDelivery : `~${POD_CHANNELS[r.channel].payoutDays}d`}
                   </td>
                   <td className="p-2 text-right">
                     {r.netPerBook <= 0 ? (
@@ -238,23 +241,23 @@ export function PodBookCard({ project }: { project: PatternProject }) {
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
           <div className="rounded-lg border border-border p-3">
-            <p className="text-[11px] text-muted-foreground uppercase tracking-wide">Net book total (after all spend)</p>
+            <p className="text-[11px] text-muted-foreground uppercase tracking-wide">{copyText.netTotal}</p>
             <p className={'text-lg font-semibold ' + (result.netTotal < 0 ? 'text-destructive' : 'text-accent')}>{fmt$(result.netTotal)}</p>
           </div>
           <div className="rounded-lg border border-border p-3">
-            <p className="text-[11px] text-muted-foreground uppercase tracking-wide">Incremental vs selling PDFs solo</p>
+            <p className="text-[11px] text-muted-foreground uppercase tracking-wide">{copyText.incremental}</p>
             <p className={'text-lg font-semibold ' + (result.incrementalVsPdf >= 0 ? 'text-accent' : 'text-destructive')}>
               {result.incrementalVsPdf >= 0 ? '+' : ''}{fmt$(result.incrementalVsPdf)}
             </p>
           </div>
           <div className="rounded-lg border border-border p-3">
-            <p className="text-[11px] text-muted-foreground uppercase tracking-wide">Verdict</p>
+            <p className="text-[11px] text-muted-foreground uppercase tracking-wide">{copyText.verdict}</p>
             <Badge className={'uppercase mt-1 ' + (result.verdict === 'great' || result.verdict === 'good' ? 'bg-accent text-accent-foreground' : '')}>
               {result.verdict}
             </Badge>
           </div>
           <div className="rounded-lg border border-border p-3">
-            <p className="text-[11px] text-muted-foreground uppercase tracking-wide">Print cost / copy</p>
+            <p className="text-[11px] text-muted-foreground uppercase tracking-wide">{copyText.printCost}</p>
             <p className="text-lg font-semibold">{fmt$(result.primary.printCost)}</p>
           </div>
         </div>
@@ -274,7 +277,7 @@ export function PodBookCard({ project }: { project: PatternProject }) {
 
         <div className="space-y-2">
           <p className="text-xs font-medium flex items-center gap-1.5">
-            <BookOpen className="w-3.5 h-3.5" /> Production pre-flight checklist
+            <BookOpen className="w-3.5 h-3.5" /> {copyText.checklist}
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5">
             {result.checklist.map((c, i) => (
@@ -291,18 +294,18 @@ export function PodBookCard({ project }: { project: PatternProject }) {
         </div>
 
         <div className="space-y-2">
-          <p className="text-xs font-medium">Launch-ready summary (copies anywhere)</p>
+          <p className="text-xs font-medium">{copyText.summary}</p>
           <pre className="text-xs whitespace-pre-wrap rounded-lg bg-secondary/30 p-3 border border-border max-h-72 overflow-y-auto">
             {pitch}
           </pre>
           <Button variant="outline" size="sm" onClick={copy}>
-            <ClipboardCopy className="w-3.5 h-3.5 mr-1" /> Copy summary
+            <ClipboardCopy className="w-3.5 h-3.5 mr-1" /> {copyText.copySummary}
           </Button>
         </div>
 
         <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
           <CheckCircle2 className="w-3 h-3" />
-          Modeled on cited 2026 PoD economics: KDP 60% minus a per-page print model ($2.30 base per 100pp + $0.011 per
+          {copyText.modelled} KDP 60% minus a per-page print model ($2.30 base per 100pp + $0.011 per
           B&W page + $0.07 per color page — a 200pp B&W book prints at ≈ $4.50, not the flat $3.40 the footnote once
           cited), Lulu direct 80% minus print (200pp B&W ≈ $10.00), IngramSpark 70% minus print, direct storefronts
           ~100% minus print with zero discovery.

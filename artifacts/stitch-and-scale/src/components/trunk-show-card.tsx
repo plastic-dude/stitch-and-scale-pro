@@ -17,6 +17,8 @@
  */
 import React, { useMemo, useState, useEffect } from 'react';
 import { projectStorage, type ProjectStorageHandle } from '@/lib/storage-lib';
+import { useSettings } from '@/context/SettingsContext';
+import { TRUNK_SHOW_COPY } from '@/lib/trunk-show-copy';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -60,15 +62,17 @@ function numField(value: string): number {
 
 function CopyLine({ text, label }: { text: string; label: string }) {
   const { toast } = useToast();
+  const { language } = useSettings();
+  const copyText = TRUNK_SHOW_COPY[language];
   const [copied, setCopied] = React.useState(false);
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(text);
       setCopied(true);
       setTimeout(() => setCopied(false), 2500);
-      toast({ title: 'Copied', description: label });
+      toast({ title: copyText.copied, description: label });
     } catch {
-      toast({ title: 'Copy failed', description: 'Select the text manually.' });
+      toast({ title: copyText.copyFailed, description: copyText.selectManually });
     }
   };
   return (
@@ -91,6 +95,8 @@ export function TrunkShowCard({ project }: { project: PatternProject }) {
   const handle = useMemo(() => projectStorage<StoredState>('trunkshow', project.id, ['stitch-and-scale-trunk-show'], { partition: true }), [project.id]);
 
   const [stored, setStored] = React.useState<StoredState>(() => loadStored(handle));
+  const { language } = useSettings();
+  const copyText = TRUNK_SHOW_COPY[language];
   const saved: StoredState = stored;
 
   // ---- Trunk show inputs ----
@@ -194,13 +200,10 @@ export function TrunkShowCard({ project }: { project: PatternProject }) {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Truck className="size-5" />
-          Trunk Show &amp; License Planner
+          {copyText.title}
         </CardTitle>
         <CardDescription>
-          The in-person channel no tool covers: model a trunk show at a yarn shop — traffic,
-          split, costs, your time — and get a go / review / skip verdict, a dated task list and
-          a paste-ready proposal. Then price cottage licenses for selling finished knits, on the
-          published market tiers.
+          {copyText.description}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-8">
@@ -208,91 +211,91 @@ export function TrunkShowCard({ project }: { project: PatternProject }) {
         <div>
           <div className="mb-3 flex items-center gap-2">
             <DollarSign className="size-4" />
-            <Label className="text-base font-semibold">Trunk show at a yarn shop</Label>
+            <Label className="text-base font-semibold">{copyText.trunkShop}</Label>
           </div>
           <div className="grid gap-3 sm:grid-cols-3">
             <div>
-              <Label htmlFor="ts-event-date">Trunk kick-off date</Label>
+              <Label htmlFor="ts-event-date">{copyText.kickoff}</Label>
               <Input id="ts-event-date" type="date" value={eventDate}
                 onChange={e => { setEventDate(e.target.value); saveTrunk({ ...trunkInput, eventDate: e.target.value }); }} />
             </div>
             <div>
-              <Label htmlFor="ts-visitors">Visitors/day at the shop</Label>
+              <Label htmlFor="ts-visitors">{copyText.visitors}</Label>
               <Input id="ts-visitors" type="number" min={0} placeholder="10" value={visitorsPerDay}
                 onChange={e => { setVisitorsPerDay(e.target.value); saveTrunk({ ...trunkInput, visitorsPerDay: numField(e.target.value) }); }} />
             </div>
             <div>
-              <Label htmlFor="ts-tryon">Try-on rate</Label>
+              <Label htmlFor="ts-tryon">{copyText.tryOn}</Label>
               <Input id="ts-tryon" type="number" min={0} max={1} step={0.05} placeholder="0.35" value={tryOnRate}
                 onChange={e => { setTryOnRate(e.target.value); saveTrunk({ ...trunkInput, tryOnRate: numField(e.target.value) }); }} />
-              <p className="mt-1 text-[11px] text-muted-foreground">Share of visitors who handle or try on a sample.</p>
+              <p className="mt-1 text-[11px] text-muted-foreground">{copyText.tryOnHelp}</p>
             </div>
             <div>
-              <Label htmlFor="ts-conversion">Conversion of try-ons</Label>
+              <Label htmlFor="ts-conversion">{copyText.conversion}</Label>
               <Input id="ts-conversion" type="number" min={0} max={1} step={0.05} placeholder="0.3" value={conversionRate}
                 onChange={e => { setConversionRate(e.target.value); saveTrunk({ ...trunkInput, conversionRate: numField(e.target.value) }); }} />
             </div>
             <div>
-              <Label htmlFor="ts-shop-split">Shop's cut of pattern sales</Label>
+              <Label htmlFor="ts-shop-split">{copyText.shopCut}</Label>
               <Input id="ts-shop-split" type="number" min={0} max={1} step={0.05} placeholder="0.3" value={shopSplit}
                 onChange={e => { setShopSplit(e.target.value); saveTrunk({ ...trunkInput, shopSplit: numField(e.target.value) }); }} />
               <p className="mt-1 text-[11px] text-muted-foreground">0.3 = classic 70/30 to you; wholesale proper is usually 50/50.</p>
             </div>
             <div>
-              <Label htmlFor="ts-price">Pattern price $/copy</Label>
+              <Label htmlFor="ts-price">{copyText.patternPrice}</Label>
               <Input id="ts-price" type="number" min={0} step={0.5} placeholder="8" value={patternPrice}
                 onChange={e => { setPatternPrice(e.target.value); saveTrunk({ ...trunkInput, patternPrice: numField(e.target.value) }); }} />
             </div>
             <div>
-              <Label htmlFor="ts-channel-fee">Channel fee on copies</Label>
+              <Label htmlFor="ts-channel-fee">{copyText.channelFee}</Label>
               <Input id="ts-channel-fee" type="number" min={0} max={1} step={0.01} placeholder="0" value={channelFeeRate}
                 onChange={e => { setChannelFeeRate(e.target.value); saveTrunk({ ...trunkInput, channelFeeRate: numField(e.target.value) }); }} />
               <p className="mt-1 text-[11px] text-muted-foreground">e.g. 0.15 if the shop sells via Ravelry's in-store channel.</p>
             </div>
             <div>
-              <Label htmlFor="ts-trunk-days">Trunk length (days)</Label>
+              <Label htmlFor="ts-trunk-days">{copyText.trunkLength}</Label>
               <Input id="ts-trunk-days" type="number" min={1} max={30} placeholder="14" value={trunkDays}
                 onChange={e => { setTrunkDays(e.target.value); saveTrunk({ ...trunkInput, trunkDays: numField(e.target.value) }); }} />
             </div>
             <div>
-              <Label htmlFor="ts-yarn-sales">Paired yarn sales ($/event)</Label>
+              <Label htmlFor="ts-yarn-sales">{copyText.yarnSales}</Label>
               <Input id="ts-yarn-sales" type="number" min={0} placeholder="1200" value={yarnSales}
                 onChange={e => { setYarnSales(e.target.value); saveTrunk({ ...trunkInput, yarnSales: numField(e.target.value) }); }} />
               <p className="mt-1 text-[11px] text-muted-foreground">Trunks move yarn — often the real income.</p>
             </div>
             <div>
-              <Label htmlFor="ts-yarn-split">Shop's cut of yarn sales</Label>
+              <Label htmlFor="ts-yarn-split">{copyText.yarnCut}</Label>
               <Input id="ts-yarn-split" type="number" min={0} max={1} step={0.05} placeholder="0.5" value={yarnShopSplit}
                 onChange={e => { setYarnShopSplit(e.target.value); saveTrunk({ ...trunkInput, yarnShopSplit: numField(e.target.value) }); }} />
             </div>
             <div>
-              <Label htmlFor="ts-sample-yards">Sample yardage (yd)</Label>
+              <Label htmlFor="ts-sample-yards">{copyText.sampleYardage}</Label>
               <Input id="ts-sample-yards" type="number" min={0} placeholder="1800" value={sampleYards}
                 onChange={e => { setSampleYards(e.target.value); saveTrunk({ ...trunkInput, sampleYards: numField(e.target.value) }); }} />
               <p className="mt-1 text-[11px] text-muted-foreground">All garments in the trunk, time-costed at ~30 yd/hr.</p>
             </div>
             <div>
-              <Label htmlFor="ts-sample-cost">Sample yarn cost ($)</Label>
+              <Label htmlFor="ts-sample-cost">{copyText.sampleCost}</Label>
               <Input id="ts-sample-cost" type="number" min={0} placeholder="105" value={sampleCost}
                 onChange={e => { setSampleCost(e.target.value); saveTrunk({ ...trunkInput, sampleCost: numField(e.target.value) }); }} />
             </div>
             <div>
-              <Label htmlFor="ts-shipping">Shipping ($)</Label>
+              <Label htmlFor="ts-shipping">{copyText.shipping}</Label>
               <Input id="ts-shipping" type="number" min={0} placeholder="30" value={shippingCost}
                 onChange={e => { setShippingCost(e.target.value); saveTrunk({ ...trunkInput, shippingCost: numField(e.target.value) }); }} />
             </div>
             <div>
-              <Label htmlFor="ts-travel">Travel + lodging ($)</Label>
+              <Label htmlFor="ts-travel">{copyText.travel}</Label>
               <Input id="ts-travel" type="number" min={0} placeholder="50" value={travelCost}
                 onChange={e => { setTravelCost(e.target.value); saveTrunk({ ...trunkInput, travelCost: numField(e.target.value) }); }} />
             </div>
             <div>
-              <Label htmlFor="ts-event-cost">Kick-off catering/swag ($)</Label>
+              <Label htmlFor="ts-event-cost">{copyText.eventCost}</Label>
               <Input id="ts-event-cost" type="number" min={0} placeholder="90" value={eventCost}
                 onChange={e => { setEventCost(e.target.value); saveTrunk({ ...trunkInput, eventCost: numField(e.target.value) }); }} />
             </div>
             <div>
-              <Label htmlFor="ts-rate">Your rate ($/hr)</Label>
+              <Label htmlFor="ts-rate">{copyText.rate}</Label>
               <Input id="ts-rate" type="number" min={0} placeholder="25" value={hourlyRate}
                 onChange={e => { setHourlyRate(e.target.value); saveTrunk({ ...trunkInput, hourlyRate: numField(e.target.value) }); }} />
             </div>
@@ -301,11 +304,11 @@ export function TrunkShowCard({ project }: { project: PatternProject }) {
                 <input type="checkbox" checked={attending}
                   onChange={e => { setAttending(e.target.checked); saveTrunk({ ...trunkInput, attending: e.target.checked }); }}
                   className="size-4 accent-rose-600" />
-                Attend in person
+                {copyText.attend}
               </label>
               <Input type="number" min={0} placeholder="8 event hrs" value={attendingHours}
                 onChange={e => { setAttendingHours(e.target.value); saveTrunk({ ...trunkInput, attendingHours: numField(e.target.value) }); }}
-                className="w-24" aria-label="Attending hours" />
+                className="w-24" aria-label={copyText.attendingHours} />
             </div>
           </div>
         </div>
@@ -313,24 +316,24 @@ export function TrunkShowCard({ project }: { project: PatternProject }) {
         {/* ---------- Verdict ---------- */}
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <div className="rounded-lg border px-4 py-3">
-            <p className="text-xs text-muted-foreground">Expected copies sold</p>
+            <p className="text-xs text-muted-foreground">{copyText.expectedCopies}</p>
             <p className="text-2xl font-bold" data-testid="ts-expected-copies">{analysis.expectedCopies}</p>
           </div>
           <div className="rounded-lg border px-4 py-3">
-            <p className="text-xs text-muted-foreground">Your net (after split, fees, costs, time)</p>
+            <p className="text-xs text-muted-foreground">{copyText.net}</p>
             <p className={cn('text-2xl font-bold', analysis.netToDesigner >= 0 ? 'text-emerald-600' : 'text-destructive')}
               data-testid="ts-net-designer">
               {analysis.netToDesigner.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
             </p>
           </div>
           <div className="rounded-lg border px-4 py-3">
-            <p className="text-xs text-muted-foreground">Effective $/hr on your time</p>
+            <p className="text-xs text-muted-foreground">{copyText.effectiveRate}</p>
             <p className="text-2xl font-bold" data-testid="ts-effective-rate">
               {analysis.effectiveHourlyRate.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}
             </p>
           </div>
           <div className="rounded-lg border px-4 py-3">
-            <p className="text-xs text-muted-foreground">Hours invested</p>
+            <p className="text-xs text-muted-foreground">{copyText.invested}</p>
             <p className="text-2xl font-bold">{analysis.hoursInvested}</p>
           </div>
         </div>
@@ -357,7 +360,7 @@ export function TrunkShowCard({ project }: { project: PatternProject }) {
         <div>
           <Label className="mb-2 flex items-center gap-2 text-base font-semibold">
             <ListChecks className="size-4" />
-            Dated task list
+            {copyText.tasks}
           </Label>
           <div className="space-y-1.5">
             {analysis.tasks.map(t => (
@@ -378,14 +381,14 @@ export function TrunkShowCard({ project }: { project: PatternProject }) {
           <div>
             <Label className="mb-2 flex items-center gap-2 text-base font-semibold">
               <ScrollText className="size-4" />
-              Shop proposal letter
+              {copyText.proposal}
             </Label>
             <CopyLine text={analysis.proposalLetter} label="shop proposal letter" />
           </div>
           <div>
             <Label className="mb-2 flex items-center gap-2 text-base font-semibold">
               <ScrollText className="size-4" />
-              Kick-off event pitch (shop's socials / window card)
+              {copyText.eventPitch}
             </Label>
             <CopyLine text={analysis.eventPitch} label="kick-off event pitch" />
           </div>
@@ -395,12 +398,10 @@ export function TrunkShowCard({ project }: { project: PatternProject }) {
         <div>
           <div className="mb-3 flex items-center gap-2">
             <DollarSign className="size-4" />
-            <Label className="text-base font-semibold">Cottage licenses — sell finished knits</Label>
+            <Label className="text-base font-semibold">{copyText.licenses}</Label>
           </div>
           <p className="mb-3 text-xs text-muted-foreground">
-            Price tiers for letting knitters sell finished garments made from your patterns.
-            Defaults are the published market norms (Sheila Toy Stromberg); edit any tier.
-            Prices save for this project.
+            {copyText.licenseHelp}
           </p>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {licensePricing.map(row => (
@@ -435,7 +436,7 @@ export function TrunkShowCard({ project }: { project: PatternProject }) {
 
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             <div>
-              <Label htmlFor="ts-designer-name">Your design name (for terms)</Label>
+              <Label htmlFor="ts-designer-name">{copyText.designName}</Label>
               <Input id="ts-designer-name" placeholder="e.g. Stitch & Scale" value={designerName}
                 onChange={e => { setDesignerName(e.target.value); saveLicense({ licenseConfig: { designerName: e.target.value, patternRequired, machineAllowed, resaleAllowed } }); }} />
             </div>
@@ -444,19 +445,19 @@ export function TrunkShowCard({ project }: { project: PatternProject }) {
                 <input type="checkbox" checked={patternRequired}
                   onChange={e => { setPatternRequired(e.target.checked); saveLicense({ licenseConfig: { designerName, patternRequired: e.target.checked, machineAllowed, resaleAllowed } }); }}
                   className="size-4 accent-rose-600" />
-                Pattern purchase required first
+                {copyText.purchaseRequired}
               </label>
               <label className="flex items-center gap-2 text-sm">
                 <input type="checkbox" checked={machineAllowed}
                   onChange={e => { setMachineAllowed(e.target.checked); saveLicense({ licenseConfig: { designerName, patternRequired, machineAllowed: e.target.checked, resaleAllowed } }); }}
                   className="size-4 accent-rose-600" />
-                Allow machine knitting
+                {copyText.machine}
               </label>
               <label className="flex items-center gap-2 text-sm">
                 <input type="checkbox" checked={resaleAllowed}
                   onChange={e => { setResaleAllowed(e.target.checked); saveLicense({ licenseConfig: { designerName, patternRequired, machineAllowed, resaleAllowed: e.target.checked } }); }}
                   className="size-4 accent-rose-600" />
-                Allow resale
+                {copyText.resale}
               </label>
             </div>
           </div>
@@ -465,14 +466,14 @@ export function TrunkShowCard({ project }: { project: PatternProject }) {
             <div>
               <Label className="mb-2 flex items-center gap-2 text-base font-semibold">
                 <ScrollText className="size-4" />
-                License terms for your site
+                {copyText.licenseTerms}
               </Label>
               <CopyLine text={licenseTerms} label="license terms" />
             </div>
             <div>
               <Label className="mb-2 flex items-center gap-2 text-base font-semibold">
                 <ScrollText className="size-4" />
-                Buyer offer letter ({project.name})
+                {copyText.buyerOffer} ({project.name})
               </Label>
               <CopyLine text={licenseOffer} label="buyer offer letter" />
             </div>

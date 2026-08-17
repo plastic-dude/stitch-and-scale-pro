@@ -178,6 +178,19 @@ describe('pattern-bundle-lab', () => {
     expect(r.flags.some(f => f.code === 'PB-05')).toBe(true);
   });
 
+  it('uses each partner pattern’s collected solo-sales input in its baseline', () => {
+    const low = analyzePatternBundle(bundleIn({
+      patterns: [{ price: 8, monthlySales: 6 }, { price: 7, monthlySales: 2 }],
+    }));
+    const high = analyzePatternBundle(bundleIn({
+      patterns: [{ price: 8, monthlySales: 6 }, { price: 7, monthlySales: 20 }],
+    }));
+    expect(high.scenarios[1].designers[1].soloBaseline)
+      .toBeGreaterThan(low.scenarios[1].designers[1].soloBaseline);
+    expect(high.scenarios[1].designers[1].incremental)
+      .toBeLessThan(low.scenarios[1].designers[1].incremental);
+  });
+
   it('email capture raises effective hourly and net take', () => {
     const a = analyzePatternBundle(bundleIn({ emailGained: 0 }));
     const b = analyzePatternBundle(bundleIn({ emailGained: 300 }));

@@ -11,6 +11,7 @@
 import type { ResolvedTheme } from './themes';
 import type { PatternProject, GradingResult, GradedSection, SizeKey } from '@/lib/grading-engine';
 import { ALL_SIZES } from '@/lib/grading-engine';
+import { getPdfLabels } from './labels';
 
 export interface RenderContext {
   theme: ResolvedTheme;
@@ -32,12 +33,13 @@ export interface RenderContext {
 // ─── Document Entry Point ─────────────────────────────────────────────────────
 
 export function renderDocument(ctx: RenderContext): string {
-  const { theme, pattern, gradingResult, includeCover = true, includeGaugeSummary = true, includeNotes = true, customLogo } = ctx;
+  const { theme, pattern, gradingResult, includeCover = true, includeGaugeSummary = true, includeNotes = true, customLogo, locale = 'en' } = ctx;
+  const labels = getPdfLabels(locale);
 
-  const coverHtml  = includeCover ? renderCover(theme, pattern, customLogo) : '';
-  const tocHtml    = gradingResult.length > 0 ? renderTOC(theme, gradingResult, includeGaugeSummary) : '';
-  const materialsHtml = includeGaugeSummary ? renderMaterials(theme, pattern, includeNotes) : '';
-  const sectionsHtml  = gradingResult.map((s, i) => renderSection(theme, s, pattern, i)).join('');
+  const coverHtml  = includeCover ? renderCover(theme, pattern, customLogo, labels) : '';
+  const tocHtml    = gradingResult.length > 0 ? renderTOC(theme, gradingResult, includeGaugeSummary, labels) : '';
+  const materialsHtml = includeGaugeSummary ? renderMaterials(theme, pattern, includeNotes, labels) : '';
+  const sectionsHtml  = gradingResult.map((s, i) => renderSection(theme, s, pattern, i, labels)).join('');
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -116,16 +118,16 @@ function renderBlueprintGrid(theme: ResolvedTheme): string {
 // branding while every existing theme honors it - an inconsistency that's
 // easy to miss in review since the theme will still render correctly with
 // the DEFAULT Stitch & Scale mark, just never with anything else.
-function renderCover(theme: ResolvedTheme, p: PatternProject, customLogo?: string): string {
+function renderCover(theme: ResolvedTheme, p: PatternProject, customLogo: string | undefined, labels: ReturnType<typeof getPdfLabels>): string {
   switch (theme.coverLayout) {
-    case 'luxury':    return coverLuxury(theme, p, customLogo);
-    case 'craft':     return coverCraft(theme, p, customLogo);
-    case 'technical': return coverTechnical(theme, p, customLogo);
-    default:          return coverMinimal(theme, p, customLogo);
+    case 'luxury':    return coverLuxury(theme, p, customLogo, labels);
+    case 'craft':     return coverCraft(theme, p, customLogo, labels);
+    case 'technical': return coverTechnical(theme, p, customLogo, labels);
+    default:          return coverMinimal(theme, p, customLogo, labels);
   }
 }
 
-function coverMinimal(t: ResolvedTheme, p: PatternProject, customLogo?: string): string {
+function coverMinimal(t: ResolvedTheme, p: PatternProject, customLogo: string | undefined, labels: ReturnType<typeof getPdfLabels>): string {
   const date = fmtDate(p.updatedAt);
   return `<div style="
     height:11in;overflow:hidden;position:relative;background:${t.backgroundColor};padding:0.75in;
@@ -138,12 +140,12 @@ function coverMinimal(t: ResolvedTheme, p: PatternProject, customLogo?: string):
     <div>
       <h1 style="font-family:${t.headingFont};font-size:58px;font-weight:700;line-height:1.08;letter-spacing:-0.02em;color:${t.textColor};margin:0 0 30px;max-width:620px;">${esc(p.name)}</h1>
       <div style="width:48px;height:3px;background:${t.accent};margin-bottom:22px;"></div>
-      <p style="font-size:16px;color:${t.mutedTextColor};margin:0 0 6px;">by ${esc(p.author)}</p>
+      <p style="font-size:16px;color:${t.mutedTextColor};margin:0 0 6px;">${labels.by} ${esc(p.author)}</p>
     </div>
     <div style="position:absolute;left:0.75in;right:0.75in;bottom:1.15in;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
-      ${metaCell(t,'Gauge',`${p.gauge.stitchesPer4In} sts · ${p.gauge.rowsPer4In} rows / 4${p.gauge.unit}`)}
-      ${metaCell(t,'Base Size',p.baseSize)}
-      ${p.yarnWeight ? metaCell(t,'Yarn Weight',cap(p.yarnWeight)) : ''}
+      ${metaCell(t,labels.gauge,`${p.gauge.stitchesPer4In} sts · ${p.gauge.rowsPer4In} rows / 4${p.gauge.unit}`)}
+      ${metaCell(t,labels.baseSize,p.baseSize)}
+      ${p.yarnWeight ? metaCell(t,labels.yarnWeight,cap(p.yarnWeight)) : ''}
     </div>
     <div style="position:absolute;left:0.75in;right:0.75in;bottom:0.75in;display:flex;justify-content:space-between;font-size:9px;color:${t.mutedTextColor};padding-top:14px;border-top:1px solid ${t.dividerColor};">
       <span>Stitch &amp; Scale</span><span>${date}</span>
@@ -151,7 +153,7 @@ function coverMinimal(t: ResolvedTheme, p: PatternProject, customLogo?: string):
   </div>`;
 }
 
-function coverLuxury(t: ResolvedTheme, p: PatternProject, customLogo?: string): string {
+function coverLuxury(t: ResolvedTheme, p: PatternProject, customLogo: string | undefined, labels: ReturnType<typeof getPdfLabels>): string {
   const date = fmtDate(p.updatedAt);
   return `<div style="height:11in;overflow:hidden;background:${t.backgroundColor};font-family:${t.bodyFont};color:${t.textColor};">
     <div style="display:flex;justify-content:center;padding:24px 0 10px;">
@@ -165,20 +167,20 @@ function coverLuxury(t: ResolvedTheme, p: PatternProject, customLogo?: string): 
       <div style="padding-top:44px;max-width:580px;">
         <h1 style="font-family:${t.headingFont};font-size:60px;font-weight:800;font-style:italic;line-height:1.06;color:${t.textColor};margin:0 0 28px;">${esc(p.name)}</h1>
         <div style="width:100%;height:1px;background:${t.accent};opacity:.35;margin-bottom:20px;"></div>
-        <p style="font-family:${t.headingFont};font-size:16px;font-style:italic;color:${t.mutedTextColor};margin:0 0 6px;">by ${esc(p.author)}</p>
+        <p style="font-family:${t.headingFont};font-size:16px;font-style:italic;color:${t.mutedTextColor};margin:0 0 6px;">${labels.by} ${esc(p.author)}</p>
         ${p.yarnWeight ? `<p style="font-size:12.5px;color:${t.mutedTextColor};margin:0 0 40px;">${cap(p.yarnWeight)} weight</p>` : '<div style="margin-bottom:40px;"></div>'}
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;border:1px solid ${t.dividerColor};max-width:480px;">
-        ${luxuryMeta(t,'Gauge',`${p.gauge.stitchesPer4In} sts · ${p.gauge.rowsPer4In} rows / 4${p.gauge.unit}`,true,false)}
-        ${luxuryMeta(t,'Base Size',p.baseSize,false,false)}
-        ${p.yarnWeight ? luxuryMeta(t,'Yarn Weight',cap(p.yarnWeight),true,true) : ''}
+        ${luxuryMeta(t,labels.gauge,`${p.gauge.stitchesPer4In} sts · ${p.gauge.rowsPer4In} rows / 4${p.gauge.unit}`,true,false)}
+        ${luxuryMeta(t,labels.baseSize,p.baseSize,false,false)}
+        ${p.yarnWeight ? luxuryMeta(t,labels.yarnWeight,cap(p.yarnWeight),true,true) : ''}
       </div>
       <div style="margin-top:44px;font-family:${t.headingFont};font-size:10px;letter-spacing:0.2em;color:${t.mutedTextColor};text-align:center;text-transform:uppercase;">A Stitch &amp; Scale Publication</div>
     </div>
   </div>`;
 }
 
-function coverCraft(t: ResolvedTheme, p: PatternProject, customLogo?: string): string {
+function coverCraft(t: ResolvedTheme, p: PatternProject, customLogo: string | undefined, labels: ReturnType<typeof getPdfLabels>): string {
   return `<div style="height:11in;overflow:hidden;background:${t.backgroundColor};padding:0.75in;font-family:${t.bodyFont};color:${t.textColor};position:relative;">
     <div style="color:${t.accent};font-size:22px;letter-spacing:5px;margin-bottom:30px;opacity:.6;">· · ·</div>
     <div style="margin-left:20px;">
@@ -188,14 +190,14 @@ function coverCraft(t: ResolvedTheme, p: PatternProject, customLogo?: string): s
         ${brandMark(22, customLogo)}
         <div style="flex:1;border-top:2px dashed ${t.accent};opacity:.75;"></div>
       </div>
-      <p style="font-family:${t.headingFont};font-style:italic;font-size:16px;color:${t.textColor};margin:0 0 5px;">designed by ${esc(p.author)}</p>
+      <p style="font-family:${t.headingFont};font-style:italic;font-size:16px;color:${t.textColor};margin:0 0 5px;">${labels.designedBy} ${esc(p.author)}</p>
       <p style="font-size:12px;color:${t.mutedTextColor};margin:0 0 36px;">${fmtDate(p.updatedAt)}</p>
     </div>
     <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px;margin-left:20px;">
       ${warmBadge(t,`${p.gauge.stitchesPer4In} sts / 4${p.gauge.unit}`)}
       ${warmBadge(t,`${p.gauge.rowsPer4In} rows / 4${p.gauge.unit}`)}
       ${p.yarnWeight ? warmBadge(t,cap(p.yarnWeight)+' weight') : ''}
-      ${warmBadge(t,'Base: '+p.baseSize)}
+      ${warmBadge(t,labels.base+': '+p.baseSize)}
     </div>
     ${p.description ? `<div style="background:rgba(0,0,0,.04);border-radius:4px;padding:14px 18px;margin-left:20px;max-width:430px;font-size:12px;line-height:1.65;color:${t.mutedTextColor};white-space:pre-wrap;">${esc(p.description.slice(0,220))}${p.description.length>220?'…':''}</div>` : ''}
     <div style="position:absolute;bottom:0.75in;left:0.75in;right:0.75in;display:flex;justify-content:space-between;font-size:9px;color:${t.mutedTextColor};">
@@ -204,7 +206,7 @@ function coverCraft(t: ResolvedTheme, p: PatternProject, customLogo?: string): s
   </div>`;
 }
 
-function coverTechnical(t: ResolvedTheme, p: PatternProject, customLogo?: string): string {
+function coverTechnical(t: ResolvedTheme, p: PatternProject, customLogo: string | undefined, labels: ReturnType<typeof getPdfLabels>): string {
   const date   = new Date(p.updatedAt).toISOString().slice(0,10);
   const ref    = `S-S-${p.id.slice(0,8).toUpperCase()}`;
   const grid   = t.gridLineColor ?? 'rgba(27,58,92,0.08)';
@@ -245,13 +247,13 @@ function coverTechnical(t: ResolvedTheme, p: PatternProject, customLogo?: string
 
 // ─── Table of Contents ────────────────────────────────────────────────────────
 
-function renderTOC(t: ResolvedTheme, sections: GradedSection[], includeGauge: boolean): string {
+function renderTOC(t: ResolvedTheme, sections: GradedSection[], includeGauge: boolean, labels: ReturnType<typeof getPdfLabels>): string {
   const entries = [
-    ...(includeGauge ? ['Materials & Gauge'] : []),
+    ...(includeGauge ? [labels.materialsGauge] : []),
     ...sections.map(s => s.sectionName),
   ];
   return `<div style="padding:8px 0;font-family:${t.bodyFont};color:${t.textColor};">
-    <h2 style="font-family:${t.headingFont};font-size:20px;font-weight:700;margin:0 0 20px;color:${t.textColor};">Contents</h2>
+    <h2 style="font-family:${t.headingFont};font-size:20px;font-weight:700;margin:0 0 20px;color:${t.textColor};">${labels.contents}</h2>
     <div style="border-top:1px solid ${t.dividerColor};padding-top:12px;">
       ${entries.map(title => `
         <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid ${t.dividerColor};font-size:11px;color:${t.textColor};">
@@ -263,23 +265,23 @@ function renderTOC(t: ResolvedTheme, sections: GradedSection[], includeGauge: bo
 
 // ─── Materials & Gauge Page ───────────────────────────────────────────────────
 
-function renderMaterials(t: ResolvedTheme, p: PatternProject, includeNotes: boolean): string {
+function renderMaterials(t: ResolvedTheme, p: PatternProject, includeNotes: boolean, labels: ReturnType<typeof getPdfLabels>): string {
   return `<div style="padding:8px 0;font-family:${t.bodyFont};color:${t.textColor};">
-    ${sectionHeader(t,'Materials & Gauge',0)}
-    ${gaugeBlock(t, p)}
-    ${yarnBlock(t, p)}
+    ${sectionHeader(t,labels.materialsGauge,0)}
+    ${gaugeBlock(t, p, labels)}
+    ${yarnBlock(t, p, labels)}
     ${p.description && includeNotes ? `
       <div style="margin-top:20px;">
-        ${sectionHeader(t,'Pattern Notes',1)}
+        ${sectionHeader(t,labels.patternNotes,1)}
         <p style="font-size:11px;line-height:1.7;color:${t.textColor};margin:0 0 14px;white-space:pre-wrap;">${esc(p.description)}</p>
-        ${callout(t,'note','All stitch counts are calculated from CYC standard body measurements using the gauge above. Match your gauge exactly before beginning.')}
+        ${callout(t,'note',labels.gradingNote,labels)}
       </div>` : ''}
   </div>`;
 }
 
 // ─── Section (Grading Table) ──────────────────────────────────────────────────
 
-function renderSection(t: ResolvedTheme, section: GradedSection, p: PatternProject, idx: number): string {
+function renderSection(t: ResolvedTheme, section: GradedSection, p: PatternProject, idx: number, labels: ReturnType<typeof getPdfLabels>): string {
   const originalSection = p.sections.find(s => s.id === section.sectionId);
 
   const thStyle = `background:${t.tableHeaderBg};color:${t.tableHeaderText};font-family:${t.headingFont};font-size:8px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;padding:6px 7px;border:1px solid ${t.tableBorderColor};`;
@@ -323,7 +325,7 @@ function renderSection(t: ResolvedTheme, section: GradedSection, p: PatternProje
         <table style="width:100%;border-collapse:collapse;">
           <thead>
             <tr>
-              <th style="${thStyle}text-align:left;min-width:110px;">Measurement</th>
+              <th style="${thStyle}text-align:left;min-width:110px;">${labels.measurement}</th>
               ${(ALL_SIZES as SizeKey[]).map(s =>
                 `<th style="${thStyle}${s === p.baseSize ? `background:${t.accent};color:#fff;` : ''}">${s}</th>`
               ).join('')}
@@ -338,26 +340,26 @@ function renderSection(t: ResolvedTheme, section: GradedSection, p: PatternProje
 
 // ─── Gauge Block ──────────────────────────────────────────────────────────────
 
-function gaugeBlock(t: ResolvedTheme, p: PatternProject): string {
+function gaugeBlock(t: ResolvedTheme, p: PatternProject, labels: ReturnType<typeof getPdfLabels>): string {
   return `<div class="avoid" style="
     background:${t.tableStripeBg};border:1px solid ${t.tableBorderColor};
     border-left:3px solid ${t.accent};padding:11px 14px;margin-bottom:14px;
     display:flex;gap:28px;font-family:${t.bodyFont};
   ">
     <div>
-      <div style="font-size:8px;text-transform:uppercase;letter-spacing:.12em;color:${t.mutedTextColor};margin-bottom:2px;">Stitches</div>
+      <div style="font-size:8px;text-transform:uppercase;letter-spacing:.12em;color:${t.mutedTextColor};margin-bottom:2px;">${labels.stitches}</div>
       <div style="font-size:20px;font-weight:700;font-family:${t.headingFont};color:${t.textColor};">${p.gauge.stitchesPer4In}</div>
       <div style="font-size:9px;color:${t.mutedTextColor};">per 4 ${p.gauge.unit}</div>
     </div>
     <div style="width:1px;background:${t.dividerColor};"></div>
     <div>
-      <div style="font-size:8px;text-transform:uppercase;letter-spacing:.12em;color:${t.mutedTextColor};margin-bottom:2px;">Rows</div>
+      <div style="font-size:8px;text-transform:uppercase;letter-spacing:.12em;color:${t.mutedTextColor};margin-bottom:2px;">${labels.rows}</div>
       <div style="font-size:20px;font-weight:700;font-family:${t.headingFont};color:${t.textColor};">${p.gauge.rowsPer4In}</div>
       <div style="font-size:9px;color:${t.mutedTextColor};">per 4 ${p.gauge.unit}</div>
     </div>
     <div style="width:1px;background:${t.dividerColor};"></div>
     <div>
-      <div style="font-size:8px;text-transform:uppercase;letter-spacing:.12em;color:${t.mutedTextColor};margin-bottom:2px;">Base Size</div>
+      <div style="font-size:8px;text-transform:uppercase;letter-spacing:.12em;color:${t.mutedTextColor};margin-bottom:2px;">${labels.baseSize}</div>
       <div style="font-size:20px;font-weight:700;font-family:${t.headingFont};color:${t.accent};">${p.baseSize}</div>
       <div style="font-size:9px;color:${t.mutedTextColor};">design size</div>
     </div>
@@ -366,21 +368,22 @@ function gaugeBlock(t: ResolvedTheme, p: PatternProject): string {
 
 // ─── Yarn Block ───────────────────────────────────────────────────────────────
 
-function yarnBlock(t: ResolvedTheme, p: PatternProject): string {
+function yarnBlock(t: ResolvedTheme, p: PatternProject, labels: ReturnType<typeof getPdfLabels>): string {
   if (!p.yarnWeight) return '';
   return `<div class="avoid" style="border:1px solid ${t.tableBorderColor};border-left:3px solid ${t.accent};padding:11px 14px;margin-bottom:14px;font-family:${t.bodyFont};">
-    <div style="font-size:8px;text-transform:uppercase;letter-spacing:.12em;color:${t.mutedTextColor};margin-bottom:4px;">Yarn Weight</div>
+    <div style="font-size:8px;text-transform:uppercase;letter-spacing:.12em;color:${t.mutedTextColor};margin-bottom:4px;">${labels.yarnWeight}</div>
     <div style="font-size:13px;color:${t.textColor};font-weight:500;">${cap(p.yarnWeight)}</div>
   </div>`;
 }
 
 // ─── Callout ──────────────────────────────────────────────────────────────────
 
-function callout(t: ResolvedTheme, variant: 'note' | 'tip' | 'warning', text: string): string {
+function callout(t: ResolvedTheme, variant: 'note' | 'tip' | 'warning', text: string, labels?: ReturnType<typeof getPdfLabels>): string {
   const style = t[`callout${cap(variant) as 'Note' | 'Tip' | 'Warning'}`];
-  const labels = { note: 'Note', tip: 'Tip', warning: 'Important' } as const;
+  const calloutLabels = labels ?? getPdfLabels('en');
+  const calloutNames = { note: calloutLabels.note, tip: calloutLabels.tip, warning: calloutLabels.important } as const;
   return `<div class="avoid" style="background:${style.bg};border-left:3px solid ${style.border};padding:9px 13px;margin-bottom:14px;border-radius:${t.badgeRadius};font-family:${t.bodyFont};">
-    <div style="font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:${style.border};margin-bottom:3px;">${labels[variant]}</div>
+    <div style="font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:${style.border};margin-bottom:3px;">${calloutNames[variant]}</div>
     <div style="font-size:10px;color:${style.text};">${esc(text)}</div>
   </div>`;
 }

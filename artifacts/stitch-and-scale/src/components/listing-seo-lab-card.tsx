@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { CheckCircle2, Copy, Tag, TrendingUp } from 'lucide-react';
 import { PatternProject } from '@/lib/grading-engine';
+import { useSettings } from '@/context/SettingsContext';
+import { LISTING_SEO_COPY } from '@/lib/listing-seo-copy';
 import { projectStorage } from '@/lib/storage-lib';
 import { sizeCountForProject } from '@/lib/pattern-pricing-advisor';
 import {
@@ -80,6 +82,8 @@ function NumField({ id, label, value, onChange, min = 0, max, suffix }: {
 }
 
 export function ListingSeoLabCard({ project }: { project: PatternProject }) {
+  const { language } = useSettings();
+  const copyText = LISTING_SEO_COPY[language];
   const handle = useMemo(
     () => projectStorage<StoredState>('listingseo', project.id || '', []),
     [project.id],
@@ -128,12 +132,10 @@ export function ListingSeoLabCard({ project }: { project: PatternProject }) {
     <Card>
       <CardHeader className="pb-3">
         <CardTitle className="text-base flex flex-wrap items-center gap-2">
-          <Tag className="h-4 w-4 shrink-0" /> Listing SEO Lab
+          <Tag className="h-4 w-4 shrink-0" /> {copyText.title}
         </CardTitle>
         <CardDescription>
-          The pre-publish audit no marketplace gives you: score the listing, generate the
-          paste-ready kit, and see net-per-sale on every channel. Fees documented in the
-          research file — competitors blind you until the listing is live; we check it first.
+          {copyText.description}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -167,23 +169,23 @@ export function ListingSeoLabCard({ project }: { project: PatternProject }) {
 
         {/* Listing inputs */}
         <div className="space-y-2">
-          <div className="font-semibold text-sm">Your planned listing</div>
+          <div className="font-semibold text-sm">{copyText.planned}</div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <div className="space-y-1.5 col-span-2">
-              <Label htmlFor="ls-title" className="text-xs">Listing title</Label>
-              <Input id="ls-title" placeholder='e.g. "Willow Raglan Sweater in Fingering"'
+              <Label htmlFor="ls-title" className="text-xs">{copyText.listingTitle}</Label>
+              <Input id="ls-title" placeholder={copyText.titlePlaceholder}
                 value={stored.title}
                 onChange={(e) => patch('title', e.target.value)} />
             </div>
-            <NumField id="ls-sizes" label="Advertised sizes" value={stored.sizeCount}
+            <NumField id="ls-sizes" label={copyText.sizes} value={stored.sizeCount}
               onChange={(n) => patch('sizeCount', n)} max={20} />
-            <NumField id="ls-photos" label="Photos ready" value={stored.photoCount}
+            <NumField id="ls-photos" label={copyText.photos} value={stored.photoCount}
               onChange={(n) => patch('photoCount', n)} max={12} />
-            <NumField id="ls-price" label="Listing price" value={stored.listPrice}
+            <NumField id="ls-price" label={copyText.price} value={stored.listPrice}
               onChange={(n) => patch('listPrice', n)} suffix="$" />
             <div className="space-y-1.5 col-span-2">
-              <Label htmlFor="ls-tags" className="text-xs">Tag draft (comma-separated, max 13)</Label>
-              <Input id="ls-tags" placeholder="raglan, pullover, easy, cozy, gift, winter"
+              <Label htmlFor="ls-tags" className="text-xs">{copyText.tags}</Label>
+              <Input id="ls-tags" placeholder={copyText.tagsPlaceholder}
                 value={stored.tagDraft}
                 onChange={(e) => {
                   const tags = e.target.value.split(',')
@@ -201,22 +203,22 @@ export function ListingSeoLabCard({ project }: { project: PatternProject }) {
               <label className="flex items-center gap-2 text-xs" htmlFor="ls-written">
                 <Switch id="ls-written" checked={stored.writtenAndCharted}
                   onCheckedChange={(c) => patch('writtenAndCharted', c)} />
-                Written + charts
+                {copyText.written}
               </label>
               <label className="flex items-center gap-2 text-xs" htmlFor="ls-inclusive">
                 <Switch id="ls-inclusive" checked={stored.sizeInclusive}
                   onCheckedChange={(c) => patch('sizeInclusive', c)} />
-                Size-inclusive
+                {copyText.inclusive}
               </label>
               <label className="flex items-center gap-2 text-xs" htmlFor="ls-teaser">
                 <Switch id="ls-teaser" checked={stored.teaserReady}
                   onCheckedChange={(c) => patch('teaserReady', c)} />
-                Teaser ready
+                {copyText.teaser}
               </label>
               <label className="flex items-center gap-2 text-xs" htmlFor="ls-email">
                 <Switch id="ls-email" checked={stored.emailListReady}
                   onCheckedChange={(c) => patch('emailListReady', c)} />
-                Email list
+                {copyText.email}
               </label>
             </div>
           </div>
@@ -225,7 +227,7 @@ export function ListingSeoLabCard({ project }: { project: PatternProject }) {
         {/* Net per sale */}
         <div className="space-y-2">
           <div className="font-semibold text-sm flex flex-wrap items-center gap-2">
-            <TrendingUp className="h-4 w-4 shrink-0" /> Net per sale by channel
+            <TrendingUp className="h-4 w-4 shrink-0" /> {copyText.netSale}
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             {nets.map((n) => (
@@ -238,8 +240,7 @@ export function ListingSeoLabCard({ project }: { project: PatternProject }) {
           </div>
           {stored.listPrice > 0 && (
             <p className="text-xs text-muted-foreground">
-              $6 example (documented fee model): Ravelry ≈ $5.70 → Etsy ≈ $5.10 → LoveCrafts ≈ $4.20.
-              The live tiles show the same fees applied and rounded at each step — values may differ by a few cents from the unrounded model. Ravelry keeps the most per sale — worth the discovery effort.
+              {copyText.exampleFees}
             </p>
           )}
         </div>
@@ -247,20 +248,20 @@ export function ListingSeoLabCard({ project }: { project: PatternProject }) {
         {/* Paste-ready listing kit */}
         <div className="space-y-2">
           <div className="flex flex-wrap items-center gap-2">
-            <div className="font-semibold text-sm">Paste-ready listing kit</div>
+            <div className="font-semibold text-sm">{copyText.kit}</div>
             <Button variant="outline" size="sm" className="h-7 text-xs"
               onClick={() => copy(kitText, 'kit')}>
               {copied === 'kit' ? <CheckCircle2 className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
-              {copied === 'kit' ? 'Copied' : 'Copy kit'}
+              {copied === 'kit' ? copyText.copied : copyText.copyKit}
             </Button>
           </div>
           <div className="space-y-2 text-sm">
             <div className="rounded-lg border p-3">
-              <div className="text-xs text-muted-foreground mb-1">Title</div>
+              <div className="text-xs text-muted-foreground mb-1">{copyText.titleLabel}</div>
               <div className="font-medium">{kit.title}</div>
             </div>
             <div className="rounded-lg border p-3">
-              <div className="text-xs text-muted-foreground mb-1">Tags ({kit.tags.split(',').length}/13)</div>
+              <div className="text-xs text-muted-foreground mb-1">{copyText.tagsCount} ({kit.tags.split(',').length}/13)</div>
               <div>{kit.tags}</div>
             </div>
             <Textarea value={kit.description} readOnly rows={8}
@@ -271,18 +272,16 @@ export function ListingSeoLabCard({ project }: { project: PatternProject }) {
         {/* Momentum targets */}
         <div className="space-y-2">
           <div className="font-semibold text-sm flex flex-wrap items-center gap-2">
-            <TrendingUp className="h-4 w-4 shrink-0" /> First-week momentum targets
+            <TrendingUp className="h-4 w-4 shrink-0" /> {copyText.momentum}
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <div className="rounded-lg border bg-muted/30 p-3 text-sm">{momentum.queues}</div>
             <div className="rounded-lg border bg-muted/30 p-3 text-sm">{momentum.favourites}</div>
             <div className="rounded-lg border bg-muted/30 p-3 text-sm">{momentum.projects}</div>
-            <div className="rounded-lg border bg-muted/30 p-3 text-sm">Sweet spot: $5–6 paid</div>
+            <div className="rounded-lg border bg-muted/30 p-3 text-sm">{copyText.sweetSpot}</div>
           </div>
           <p className="text-xs text-muted-foreground">
-            HRN ("recently popular") responds to queues and favourites, new-release
-            announcements, and KAL launches — these are the targets that push a fresh
-            listing onto the surface.
+            {copyText.momentumHint}
           </p>
         </div>
       </CardContent>

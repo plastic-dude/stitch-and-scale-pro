@@ -9,6 +9,8 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { ClipboardCopy, Scissors, Pencil } from 'lucide-react';
 import { PatternProject } from '@/lib/grading-engine';
+import { useSettings } from '@/context/SettingsContext';
+import { HIRE_VS_SELF_COPY } from '@/lib/hire-vs-self-copy';
 import {
   analyzeHireDecision,
   buildHiringPack,
@@ -64,6 +66,8 @@ export function HireVsSelfCard({ project }: { project: PatternProject }) {
   // issue #4 project seam: one scoped store per project; the legacy flat key 'kskhirevsself-v1' is folded in on first read, then removed.
   const handle = useMemo(() => projectStorage<StoredHire>('hirevsself', project.id, ['kskhirevsself-v1']), [project.id]);
   const { toast } = useToast();
+  const { language } = useSettings();
+  const copyText = HIRE_VS_SELF_COPY[language];
   const [stored, setStored] = useState(() => loadStored(handle));
 
   useEffect(() => {
@@ -103,9 +107,9 @@ export function HireVsSelfCard({ project }: { project: PatternProject }) {
   const copy = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      toast({ title: 'Copied to clipboard' });
+      toast({ title: copyText.copied });
     } catch {
-      toast({ title: 'Select and copy manually' });
+      toast({ title: copyText.copyFailed });
     }
   };
 
@@ -129,25 +133,22 @@ export function HireVsSelfCard({ project }: { project: PatternProject }) {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Scissors className="h-5 w-5" /> Hire-vs-Self Analyzer
+          <Scissors className="h-5 w-5" /> {copyText.title}
         </CardTitle>
         <CardDescription>
-          Price the two outsourcing decisions every release forces: knit the sample yourself or hire a sample
-          knitter, tech-edit yourself or hire an editor. It works in opportunity cost — every sample-knit hour is
-          design/marketing time at your rate — against the cited pay standards: $0.12/yard (Tendyke, Sloan),
-          ~$80 per sweater flat fee, and $30–40/hr tech editing with sweaters reading as 4 hours.
+          {copyText.description}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* ---------------------------------------------------------------- */}
         <section className="space-y-4">
           <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-            Your rates
+            {copyText.rates}
           </h3>
           <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
             <div className="space-y-1.5">
               <Label className="text-xs" htmlFor="hvs-opp">
-                Your opportunity rate ($/hr)
+                {copyText.opportunity}
               </Label>
               <Input
                 id="hvs-opp"
@@ -157,12 +158,12 @@ export function HireVsSelfCard({ project }: { project: PatternProject }) {
                 onChange={(e) => setStored((s) => ({ ...s, opportunityRate: num(e) }))}
               />
               <p className="text-[11px] text-muted-foreground">
-                What an hour of your time sells at — design/marketing work, not floor wage.
+                {copyText.opportunityHint}
               </p>
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs" htmlFor="hvs-rate">
-                Sample-knitter rate ($/yard, 0 = market $0.12)
+                {copyText.sampleRate}
               </Label>
               <Input
                 id="hvs-rate"
@@ -175,7 +176,7 @@ export function HireVsSelfCard({ project }: { project: PatternProject }) {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs" htmlFor="hvs-flat">
-                Flat sample fee ($, 0 = per-yard model)
+                {copyText.flatFee}
               </Label>
               <Input
                 id="hvs-flat"
@@ -187,7 +188,7 @@ export function HireVsSelfCard({ project }: { project: PatternProject }) {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs" htmlFor="hvs-ship">
-                Return shipping ($)
+                {copyText.shipping}
               </Label>
               <Input
                 id="hvs-ship"
@@ -199,7 +200,7 @@ export function HireVsSelfCard({ project }: { project: PatternProject }) {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs" htmlFor="hvs-editor">
-                Tech editor rate ($/hr, 0 = $30 market low)
+                {copyText.editorRate}
               </Label>
               <Input
                 id="hvs-editor"
@@ -211,7 +212,7 @@ export function HireVsSelfCard({ project }: { project: PatternProject }) {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs" htmlFor="hvs-edithrs">
-                Self-edit hours (0 = auto by scope)
+                {copyText.selfEdit}
               </Label>
               <Input
                 id="hvs-edithrs"
@@ -227,23 +228,23 @@ export function HireVsSelfCard({ project }: { project: PatternProject }) {
         {/* ---------------------------------------------------------------- */}
         <section className="space-y-3">
           <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-            Verdict for this pattern
+            {copyText.verdict}
           </h3>
           <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
             <div className="rounded-md border bg-card/50 p-3">
-              <p className="text-xs text-muted-foreground">Sample yardage (incl. swatches)</p>
+              <p className="text-xs text-muted-foreground">{copyText.yardage}</p>
               <p className="text-lg font-semibold">{result.sampleYards.toLocaleString()} yd</p>
               <p className="text-[11px] text-muted-foreground">≈ {fmtDec(result.selfKnitHours)} hr at 30 yd/hr</p>
             </div>
             <div className="rounded-md border bg-card/50 p-3">
-              <p className="text-xs text-muted-foreground">Hire sample cost</p>
+              <p className="text-xs text-muted-foreground">{copyText.hireSample}</p>
               <p className="text-lg font-semibold">{fmt$(result.hireSampleCost)}</p>
               <Badge variant="outline" className={`mt-1 border ${legBadge(result.sampleVerdict)}`}>
                 {result.sampleVerdict === 'hire' ? 'HIRE' : result.sampleVerdict === 'self' ? 'SELF' : 'EITHER'}
               </Badge>
             </div>
             <div className="rounded-md border bg-card/50 p-3">
-              <p className="text-xs text-muted-foreground">Edit scope · editor cost</p>
+              <p className="text-xs text-muted-foreground">{copyText.editScope}</p>
               <p className="text-lg font-semibold">
                 {fmtDec(result.editHours)} hr · {fmt$(result.hireEditCost)}
               </p>
@@ -252,13 +253,13 @@ export function HireVsSelfCard({ project }: { project: PatternProject }) {
               </Badge>
             </div>
             <div className="rounded-md border bg-card/50 p-3">
-              <p className="text-xs text-muted-foreground">Hours freed · income potential</p>
+              <p className="text-xs text-muted-foreground">{copyText.hoursFreed}</p>
               <p className="text-lg font-semibold">{fmtDec(result.hoursFreed)} hr</p>
               <p className="text-[11px] text-muted-foreground">≈ {fmt$(result.freedIncomePotential)} at your rate</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">Overall:</span>
+            <span className="text-sm text-muted-foreground">{copyText.overall}</span>
             <Badge variant="outline" className={`border ${verdictBadge}`}>
               {result.overallVerdict.toUpperCase()} — self costs {fmt$(result.totalSelfCost)}, hiring costs{' '}
               {fmt$(result.totalHireCost)}
@@ -272,7 +273,7 @@ export function HireVsSelfCard({ project }: { project: PatternProject }) {
         {/* ---------------------------------------------------------------- */}
         <section className="space-y-2">
           <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-            The reasoning
+            {copyText.reasoning}
           </h3>
           <ul className="space-y-2">
             {result.sampleNotes.map((n, i) => (
@@ -292,7 +293,7 @@ export function HireVsSelfCard({ project }: { project: PatternProject }) {
         <section className="space-y-3">
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-              Hiring checklist ({pack.items.filter((i) => !i.flag).length}/{pack.items.length} clear)
+              {copyText.checklist} ({pack.items.filter((i) => !i.flag).length}/{pack.items.length} {copyText.clear})
             </h3>
           </div>
           <ul className="space-y-2">
@@ -320,7 +321,7 @@ export function HireVsSelfCard({ project }: { project: PatternProject }) {
               onCheckedChange={(v) => setStored((s) => ({ ...s, showListing: v }))}
             />
             <Label htmlFor="hvs-listing" className="text-sm">
-              Show paste-ready sample-knitter listing
+              {copyText.listing}
             </Label>
           </div>
           {stored.showListing && (
@@ -332,7 +333,7 @@ export function HireVsSelfCard({ project }: { project: PatternProject }) {
                 className="absolute right-2 top-2"
                 onClick={() => copy(pack.sampleKnitListing)}
               >
-                <ClipboardCopy className="h-3.5 w-3.5" /> Copy
+                <ClipboardCopy className="h-3.5 w-3.5" /> {copyText.copy}
               </Button>
             </div>
           )}

@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GradingKey, GRADING_KEY_LABELS, ALL_SIZES, SIZE_STANDARDS } from '@/lib/grading-engine';
 import { getInitialLanguage, LANGUAGE_OPTIONS, languageLabel, translate, type LanguageCode } from '@/lib/i18n';
+import { getSettingsCopy } from '@/lib/settings-copy';
 
 export default function SettingsPage() {
   const {
@@ -20,6 +21,7 @@ export default function SettingsPage() {
   const { toast } = useToast();
   const [editingKey, setEditingKey] = React.useState<GradingKey>('bust');
   const t = (key: Parameters<typeof translate>[1]) => translate(language, key);
+  const copy = getSettingsCopy(language);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -115,7 +117,7 @@ export default function SettingsPage() {
                 <Ruler className="w-5 h-5 text-accent" />
                 Measurement Defaults
               </CardTitle>
-              <CardDescription className="text-[13px]">Choose the primary unit for your workspace.</CardDescription>
+              <CardDescription className="text-[13px]">{copy.unitsDescription}</CardDescription>
             </CardHeader>
             <CardContent className="p-6">
               <div className="grid grid-cols-2 gap-4">
@@ -125,7 +127,7 @@ export default function SettingsPage() {
                 )}>
                   <input type="radio" name="unit" value="in" checked={unit === 'in'} onChange={() => setUnit('in')} className="sr-only" data-testid="radio-unit-inches" />
                   <span className="font-mono text-2xl font-bold">in</span>
-                  <span className="font-medium text-sm text-foreground">Inches</span>
+                  <span className="font-medium text-sm text-foreground">{copy.inches}</span>
                 </label>
                 <label className={cn(
                   "cursor-pointer border-2 rounded-xl p-5 flex flex-col items-center gap-3 transition-all",
@@ -133,10 +135,10 @@ export default function SettingsPage() {
                 )}>
                   <input type="radio" name="unit" value="cm" checked={unit === 'cm'} onChange={() => setUnit('cm')} className="sr-only" data-testid="radio-unit-cm" />
                   <span className="font-mono text-2xl font-bold">cm</span>
-                  <span className="font-medium text-sm text-foreground">Centimeters</span>
+                  <span className="font-medium text-sm text-foreground">{copy.centimeters}</span>
                 </label>
               </div>
-              <p className="text-xs text-muted-foreground mt-4 text-center">You can override this setting per-project.</p>
+              <p className="text-xs text-muted-foreground mt-4 text-center">{copy.projectOverride}</p>
             </CardContent>
           </Card>
         </motion.div>
@@ -148,7 +150,7 @@ export default function SettingsPage() {
                 <Layers className="w-5 h-5 text-accent" />
                 Sizing Standard
               </CardTitle>
-              <CardDescription className="text-[13px]">The grading standard your patterns are built from.</CardDescription>
+              <CardDescription className="text-[13px]">{copy.gradingDescription}</CardDescription>
             </CardHeader>
             <CardContent className="p-6">
               <div className="grid grid-cols-2 gap-3">
@@ -161,10 +163,10 @@ export default function SettingsPage() {
                   data-testid="button-standard-cyc"
                 >
                   <div className="flex items-center justify-between mb-1">
-                    <span className="font-medium text-sm text-foreground">Craft Yarn Council</span>
+                    <span className="font-medium text-sm text-foreground">{copy.cycName}</span>
                     {sizingStandard === 'CYC' && <Check className="w-4 h-4 text-primary shrink-0" />}
                   </div>
-                  <span className="text-xs text-muted-foreground">The published CYC body-measurement chart.</span>
+                  <span className="text-xs text-muted-foreground">{copy.cycDescription}</span>
                 </button>
                 <button
                   onClick={() => setSizingStandard('Custom')}
@@ -175,10 +177,10 @@ export default function SettingsPage() {
                   data-testid="button-standard-custom"
                 >
                   <div className="flex items-center justify-between mb-1">
-                    <span className="font-medium text-sm text-foreground">Custom</span>
+                    <span className="font-medium text-sm text-foreground">{copy.custom}</span>
                     {sizingStandard === 'Custom' && <Check className="w-4 h-4 text-primary shrink-0" />}
                   </div>
-                  <span className="text-xs text-muted-foreground">Your own measurement chart.</span>
+                  <span className="text-xs text-muted-foreground">{copy.customDescription}</span>
                 </button>
               </div>
 
@@ -269,7 +271,7 @@ export default function SettingsPage() {
                               />
                               <span className="text-[11px] text-muted-foreground shrink-0">in</span>
                               {isModified && (
-                                <span className="text-[10px] text-muted-foreground shrink-0" title={`CYC value: ${cycValue}"`}>
+                                <span className="text-[10px] text-muted-foreground shrink-0" title={copy.cycValue(cycValue)}>
                                   CYC: {cycValue}"
                                 </span>
                               )}
@@ -307,7 +309,7 @@ export default function SettingsPage() {
                   data-testid="button-theme-light"
                 >
                   <Sun className="w-5 h-5" />
-                  <span className="font-medium">Light</span>
+                  <span className="font-medium">{copy.light}</span>
                 </Button>
                 <Button
                   variant={theme === 'dark' ? 'default' : 'outline'}
@@ -316,7 +318,7 @@ export default function SettingsPage() {
                   data-testid="button-theme-dark"
                 >
                   <Moon className="w-5 h-5" />
-                  <span className="font-medium">Dark</span>
+                  <span className="font-medium">{copy.dark}</span>
                 </Button>
                 <Button
                   variant={theme === 'system' ? 'default' : 'outline'}
@@ -325,7 +327,7 @@ export default function SettingsPage() {
                   data-testid="button-theme-system"
                 >
                   <Monitor className="w-5 h-5" />
-                  <span className="font-medium">System</span>
+                  <span className="font-medium">{copy.system}</span>
                 </Button>
               </div>
             </CardContent>
@@ -346,7 +348,7 @@ export default function SettingsPage() {
             <CardContent className="p-6">
               <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between p-5 border border-border/60 rounded-xl bg-background hover:border-primary/30 transition-colors group">
                 <div>
-                  <h4 className="font-medium text-foreground">Restart Onboarding</h4>
+                  <h4 className="font-medium text-foreground">{copy.restartOnboarding}</h4>
                   <p className="text-sm text-muted-foreground mt-1">
                     Walk through the setup guide again — sizing standard, units, workspace tour.
                   </p>
@@ -379,8 +381,8 @@ export default function SettingsPage() {
             <CardContent className="p-6 space-y-4">
               <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between p-5 border border-border/60 rounded-xl bg-background hover:border-primary/30 transition-colors group">
                 <div>
-                  <h4 className="font-medium text-foreground">Export Workspace</h4>
-                  <p className="text-sm text-muted-foreground mt-1">Download a JSON file containing all your patterns and settings.</p>
+                  <h4 className="font-medium text-foreground">{copy.exportWorkspace}</h4>
+                  <p className="text-sm text-muted-foreground mt-1">{copy.exportDescription}</p>
                 </div>
                 <Button onClick={handleExport} className="shrink-0 rounded-full shadow-sm group-hover:bg-primary/90 transition-colors" data-testid="button-export-data">
                   <Download className="w-4 h-4 mr-2" />
@@ -390,8 +392,8 @@ export default function SettingsPage() {
 
               <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between p-5 border border-border/60 rounded-xl bg-background hover:border-primary/30 transition-colors group">
                 <div>
-                  <h4 className="font-medium text-foreground">Restore from Backup</h4>
-                  <p className="text-sm text-muted-foreground mt-1">Merges with your workspace — your existing patterns are never deleted or overwritten.</p>
+                  <h4 className="font-medium text-foreground">{copy.restoreBackup}</h4>
+                  <p className="text-sm text-muted-foreground mt-1">{copy.restoreDescription}</p>
                 </div>
                 <div>
                   <input type="file" accept=".json" className="hidden" ref={fileInputRef} onChange={handleFileChange} />

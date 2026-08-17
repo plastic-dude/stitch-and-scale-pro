@@ -1,0 +1,263 @@
+=== src/components/deals-tab-card.tsx ===
+227: <Label className="text-xs">Exclusivity (mo)<DefaultBadge text="3–12 typical" /></Label>
+231: <Label className="text-xs">Direct sales locked (%)<DefaultBadge text="est. your share" /></Label>
+282: <Label className="text-xs">Design hours<DefaultBadge text="your time" /></Label>
+286: <Label className="text-xs">Your rate ($/hr)<DefaultBadge text="your rate" /></Label>
+290: <Label className="text-xs">Fixed costs ($)<DefaultBadge text="edit, test, model, yarn" /></Label>
+294: <Label className="text-xs">Price ($)<DefaultBadge text="advisor" /></Label>
+298: <Label className="text-xs">Est. lifetime sales<DefaultBadge text="your forecast" /></Label>
+302: <Label className="text-xs">Direct-sales platform</Label>
+303: <NativeSelect value={platform} onChange={(e) => setPlatform(e.target.value as PlatformId)} aria-label="platform">
+474: <Label className="text-xs">Company covers tech edit?</Label>
+475: <NativeSelect value={techEditCovered ? 'yes' : 'no'} onChange={(e) => setTechEditCovered(e.target.value === 'yes')} aria-label="tech edit covered">
+481: <Label className="text-xs">Company covers photography?</Label>
+482: <NativeSelect value={photoCovered ? 'yes' : 'no'} onChange={(e) => setPhotoCovered(e.target.value === 'yes')} aria-label="photography covered">
+490: <NativeSelect value={keepsOwnSite ? 'yes' : 'no'} onChange={(e) => setKeepsOwnSite(e.target.value === 'yes')} aria-label="keep own-site rights">
+=== src/components/design-ledger-card.tsx ===
+406: <Input id="dl-cost-amt" type="number" min="0" step="0.01" value={expAmount} placeholder="0.00" onChange={(e) => setExpAmount(e.target.value)} />
+=== src/components/partner-economics-card.tsx ===
+127: toast({ title: 'Copy failed — select the text manually.' });
+408: placeholder="Yarn company / dyer / shop" className="h-8 text-sm" />
+418: onClick={() => removePitch(p.id)} aria-label="Remove pitch">
+425: className="h-8 text-sm" aria-label="Due date" />
+431: placeholder="Notes — yarn received, deliverables owed, next deadline…"
+=== src/components/pod-patterns-lab-card.tsx ===
+104: <CardDescription>Would a printed booklet of your patterns actually make money — or silently cannibalize your PDF sales while the print cost eats the margin? The spec is verified: KDP charges a flat $2.30 per copy through 110 black-and-white pages then $0.012/page, the 60% royalty band only applies at $9.99+ list, color ink runs $0.065/page, the paperback floor is 24 pages, and IngramSpark's ~55% wholesale discount means direct-reader sales through it net ~$0.70–2.40/copy where Lulu direct nets $5.50–12.70 on the same price. Designers have paid KDP print bills that left $1/copy against a $6 PDF — this lab prices the spec, the channel, and the cannibalization before you commit.</CardDescription>
+114: <Label htmlFor="pod-platform" className="text-xs">Channel</Label>
+=== src/components/podcast-affiliate-lab-card.tsx ===
+122: <CardDescription>What is your knitting podcast, newsletter, or following actually worth — and which lane should you take at your current audience size? Industry CPM rates run $18 for a 30-sec pre-roll and $25 for a 60-sec mid-roll, with host-read mid-rolls at niche fiber-arts shows trading at $25–50 (a craft audience is a targeting premium, not a discount). Affiliate programs pay 10% (Knit Picks, Crochet.com) up to 30% (LoveCrafts). CPM deals only make sense from around 5,000 downloads/episode — below that, flat-fee reads and affiliate links are where small relevant shows actually profit. This lab models all three lanes side by side, nets out the 10–30% network cuts, prices your production hours against your real rate, and flags the exact deal terms to renegotiate.</CardDescription>
+161: <Label htmlFor={`pa-name-${i}`} className="text-xs">Program</Label>
+164: className="text-sm" placeholder="e.g. LoveCrafts (15%)" />
+=== src/components/pricing-psychology-lab-card.tsx ===
+130: <CardDescription>Is $9.99 actually better than $10.00 — and is $64.99 quietly hurting a premium design? Field experiments show nine-endings outselling identical rounded prices by ~8% at zero discount (Sori & Widjaja) and lifting apparel demand 10–30% in catalog trials (Schindler & Kibarian), but the effect FLIPS at higher price points where .99 endings damage quality perception. This lab prices the left-digit barrier ($10 → $9.99 crosses the "under ten" line), the charm-vs-premium flip, decoy tier placement inside your shop, and the proven bundle-endings rule (even component prices + odd bundle total, Baumgartner & Hähnchen 2016) — each scored against your real unit volume and marketplace take rate.</CardDescription>
+137: <Label htmlFor="pp-name" className="text-xs">Pattern name</Label>
+147: <Label htmlFor="pp-position" className="text-xs">Design positioning</Label>
+165: <Label htmlFor="pp-tiers" className="text-xs">Other tier prices in the shop (comma-separated, up to 5)</Label>
+168: placeholder="5.00, 8.00, 14.00"
+=== src/components/publish-toolkit-card.tsx ===
+89: toast({ title: 'Credibility statement copied', description: 'Paste it into any marketplace listing.' });
+140: toast({ title: 'Listing copied', description: 'Paste it straight into your marketplace draft.' });
+146: toast({ title: 'Notes saved', description: 'The listing pulls from these, so they are already included.' });
+264: <Label className="text-xs">Buyer-facing credibility statement</Label>
+301: <Label className="text-xs">Marketplace</Label>
+313: <Label className="text-xs">Yarn weight (yardage)</Label>
+326: <Label className="text-xs">Tagline (optional)</Label>
+328: placeholder="e.g. A modern take on the classic gansey"
+344: <Label className="text-xs">Generated description</Label>
+386: placeholder="A relaxed crewneck worked flat and seamed, with drop shoulders and deep ribbing."
+=== src/components/receipt-lab-card.tsx ===
+454: <Input type="number" min={0} max={100} value={taxPct || ""} onChange={(e) => setTaxPct(Number(e.target.value))} placeholder="0" />
+458: <Input type="number" min={0} max={100} step="0.1" value={commissionPct || ""} onChange={(e) => setCommissionPct(Number(e.target.value))} placeholder="0" />
+462: <Input type="number" min={0} max={100} step="0.1" value={processingPct || ""} onChange={(e) => setProcessingPct(Number(e.target.value))} placeholder="0" />
+466: <Input type="number" min={0} step="0.01" value={processingFlat || ""} onChange={(e) => setProcessingFlat(Number(e.target.value))} placeholder="0.00" />
+470: <Input type="number" min={0} step="0.01" value={shippingCharged || ""} onChange={(e) => setShippingCharged(Number(e.target.value))} placeholder="0.00" />
+474: <Input type="number" min={0} step="0.01" value={shippingCost || ""} onChange={(e) => setShippingCost(Number(e.target.value))} placeholder="0.00" />
+478: <Input type="number" min={0} step="0.01" value={materialsCost || ""} onChange={(e) => setMaterialsCost(Number(e.target.value))} placeholder="0.00" />
+=== src/components/release-timing-lab-card.tsx ===
+119: <CardDescription>When should this design actually drop? Launch checklists schedule a date and SEO tools optimize tags, but nobody prices the season itself. Knitwear demand is strongly seasonal — the October–December holiday push is most designers' highest-revenue window and summer is the lull — and a design dropped out of season earns a fraction of its potential because buyers simply don't search for it. This lab scores every month of your window, prices the 3–4 month backward-planning rule, and checks your launch promo against the ≤15% / one-week / include-a-weekend consensus.</CardDescription>
+=== src/components/retreat-teaching-lab-card.tsx ===
+134: <CardDescription>Should you say yes as a guest teacher at someone's retreat or cruise, or host your own — and at what price does the trip actually pay? Top instructors run a $125/class-hr guest baseline plus travel, meals and lodging (and it still nets $25–30/hr after 5–40 hrs of class development per class), while host retreats price to a $100/person/day profit floor against minimum attendance. Verified market tuition runs from $235 weekend formats through $1,075 tuition-only 3-day retreats to $2,999 all-inclusive. This lab models guest-fee vs host economics, development and prep hours, materials fees, cruise-design sales, alumni conversion value, and cancellation risk — so you never accept an "exposure" deal again.</CardDescription>
+163: <Label htmlFor={`rt-title-${i}`} className="text-xs">Class title</Label>
+166: className="text-sm" placeholder="e.g. Seamless yoke sweater construction" />
+=== src/components/sample-launch-lab-card.tsx ===
+198: <Label htmlFor="sl-season" className="text-xs">Garment season</Label>
+208: <Label htmlFor="sl-launchmonth" className="text-xs">Planned release month</Label>
+=== src/components/show-roi-lab-card.tsx ===
+129: toast({ title: 'Show tier noted', description: `${SHOW_TIER_LABELS[tier]} — defaults are starting points, tune attendance and fees to the actual event.`, });
+=== src/components/spec-sheet-lab-card.tsx ===
+182: <Label htmlFor="ss-construction" className="text-xs">Construction</Label>
+184: <SelectTrigger id="ss-construction"><SelectValue placeholder="Choose" /></SelectTrigger>
+186: <SelectItem value="">— not chosen —</SelectItem>
+187: <SelectItem value="flat">Flat-bed panels</SelectItem>
+188: <SelectItem value="circular">Circular knit</SelectItem>
+189: <SelectItem value="fully-fashioned">Fully-fashioned</SelectItem>
+194: <Label htmlFor="ss-yarn-weight" className="text-xs">Yarn weight class</Label>
+263: <Label className="text-xs">Label</Label>
+264: <Input value={p.label} placeholder='e.g. "Half Chest, 1" below armhole"'
+268: <Label className="text-xs">Tolerance (in, 0 = default)</Label>
+289: <Label htmlFor="ss-fibre" className="text-xs">Fibre / composition</Label>
+291: placeholder='e.g. "100% superwash merino, worsted"'
+319: <Label className="text-xs">Name</Label>
+320: <Input value={c.name} placeholder="Oatmeal"
+324: <Label className="text-xs">Yarn spec</Label>
+325: <Input value={c.yarnSpec} placeholder='e.g. "merino fingering"'
+343: <Label htmlFor="ss-notes" className="text-xs">Sheet notes (finish, blocking, trim)</Label>
+345: placeholder="e.g. steam-block panels flat; 1x1 rib, 2-ply; no finishing required."
+=== src/components/storage-badge.tsx ===
+28: aria-label="Local storage status and backup"
+=== src/components/storage-health-card.tsx ===
+41: toast({ title: 'Reconcile failed', description: 'Something went wrong while unifying storage.', variant: 'destructive' });
+=== src/components/submission-desk-card.tsx ===
+142: <Label htmlFor="sub-type" className="text-xs">Offer type</Label>
+153: <Label htmlFor="sub-difficulty" className="text-xs">Difficulty</Label>
+=== src/components/submission-pipeline-card.tsx ===
+166: <Label className="text-sm font-semibold">Calls you're tracking</Label>
+200: <Label className="text-xs">Publication</Label>
+201: <Input value={editing.publication} placeholder="Making Stories" onChange={(e) => updateCall({ publication: e.target.value })} />
+204: <Label className="text-xs">Issue / theme</Label>
+205: <Input value={editing.issue} placeholder="Issue 11 — Seashore" onChange={(e) => updateCall({ issue: e.target.value })} />
+208: <Label className="text-xs">Submission deadline</Label>
+212: <Label className="text-xs">Decision date</Label>
+216: <Label className="text-xs">Pattern due</Label>
+220: <Label className="text-xs">Sample due</Label>
+224: <Label className="text-xs">Launch date</Label>
+228: <Label className="text-xs">Exclusive window (months from launch)</Label>
+232: <Label className="text-xs">Fee on publishing ($)</Label>
+236: <Label className="text-xs">Sample yarn weight</Label>
+248: <Label className="text-xs">Magazine covers tech editing &amp; test knitting</Label>
+252: <Label className="text-xs">Yarn support / shipping provided</Label>
+263: <Label className="text-xs">Sample knitting (yd/hr)</Label>
+267: <Label className="text-xs">Pattern writing (hrs)</Label>
+271: <Label className="text-xs">Swatch work (hrs)</Label>
+275: <Label className="text-xs">Hours/week available</Label>
+332: <Label className="text-xs">Compare against solo baseline</Label>
+338: <Label className="text-xs">Baseline platform</Label>
+349: <Label className="text-xs">Monthly sales (units)</Label>
+353: <Label className="text-xs">Self-publish price ($)</Label>
+=== src/components/teach-economics-card.tsx ===
+154: toast({ title: 'Copied — paste it into your course page or pitch email.' });
+156: toast({ title: 'Copy failed — select the text manually.' });
+182: <Label htmlFor="teach-format" className="text-xs">Offer format</Label>
+232: <Label htmlFor="teach-eb-pct" className="text-xs">Early-bird discount</Label>
+241: <Label htmlFor="teach-eb-share" className="text-xs">Early-bird share of buyers</Label>
+250: <Label htmlFor="teach-ins-pct" className="text-xs">Installment premium</Label>
+259: <Label htmlFor="teach-ins-share" className="text-xs">Installment share of buyers</Label>
+=== src/components/tech-edit-card.tsx ===
+93: toast({ title: 'Pre-edit summary copied', description: 'Paste it into your tech editor brief or your own to-do list.' });
+95: toast({ title: 'Could not copy', description: 'Select and copy the text manually.' });
+171: <Label htmlFor="te-rate" className="text-xs text-muted-foreground">Your editor's hourly rate</Label>
+=== src/components/test-knit-card.tsx ===
+110: toast({ title: 'Roster rebuilt', description: `${sizes.length} sizes × ${slotsPerSize} slot${slotsPerSize > 1 ? 's' : ''}.` });
+118: toast({ title: 'Tester call copied', description: 'Paste it into the Ravelry Testing Pool, Yarnpond, or your newsletter.' });
+120: toast({ title: 'Copy failed', description: 'Select the text manually from the box below.' });
+150: <Label className="text-xs">Slots per size</Label>
+158: aria-label="slots per size"
+167: <Label className="text-xs">Yarn weight for yardage check</Label>
+168: <NativeSelect value={weight} onChange={e => setWeight(e.target.value as YarnWeight)} aria-label="yarn weight">
+175: <Label className="text-xs">Lead time (weeks)</Label>
+176: <NativeSelect value={String(leadWeeks)} onChange={e => setLeadWeeks(Number(e.target.value))} aria-label="lead weeks">
+240: placeholder="Tester name"
+262: placeholder="— yd"
+281: placeholder="Notes per tester"
+335: <Label className="text-xs">Incentive (optional — blank uses the standard free-pattern + credit line)</Label>
+339: placeholder="e.g. Plus a $10 gift card to my yarn sponsor"
+=== src/components/testknit-desk-card.tsx ===
+180: placeholder="handle / name" className="h-8 text-xs" />
+185: placeholder="$/yd" className="h-8 text-xs pr-6" />
+193: placeholder="yarn $" className="h-8 text-xs" />
+=== src/components/translation-bundle-card.tsx ===
+80: toast({ title: 'Copied', description: 'Paste it wherever the campaign runs.' });
+82: toast({ title: 'Copy failed', description: 'Select the text manually.' });
+87: <Button variant="outline" size="sm" onClick={copy} aria-label="Copy text">
+208: placeholder="0"
+240: <Label className="text-xs text-muted-foreground">Pattern word count</Label>
+245: <Label className="text-xs text-muted-foreground">Repeated size-section words</Label>
+250: <Label className="text-xs text-muted-foreground">Per-word rate ($)</Label>
+255: <Label className="text-xs text-muted-foreground">Repeat-section discount</Label>
+260: <Label className="text-xs text-muted-foreground">Fixed fees ($)</Label>
+265: <Label className="text-xs text-muted-foreground">Home monthly copies</Label>
+270: <Label className="text-xs text-muted-foreground">Price per copy ($)</Label>
+275: <Label className="text-xs text-muted-foreground">Channel fee</Label>
+282: <Label className="text-xs text-muted-foreground">Markets to consider</Label>
+377: <Label className="text-xs text-muted-foreground">My pattern name</Label>
+378: <Input value={patternName} onChange={e => setPatternName(e.target.value)} placeholder="e.g. Calyx Pullover" />
+381: <Label className="text-xs text-muted-foreground">My retail price ($)</Label>
+385: <Label className="text-xs text-muted-foreground">Solo copies in bundle window</Label>
+390: <Label className="text-xs text-muted-foreground">Bundle price ($)</Label>
+394: <Label className="text-xs text-muted-foreground">Expected bundle units</Label>
+399: <Label className="text-xs text-muted-foreground">Channel fee</Label>
+403: <Label className="text-xs text-muted-foreground">Bundle host fee</Label>
+408: <Label className="text-xs text-muted-foreground">Split mode</Label>
+427: <Label className="text-xs text-muted-foreground">Designer count</Label>
+442: aria-label="Add partner pattern"
+456: <Label className="text-[10px] text-muted-foreground">Pattern name *</Label>
+460: placeholder="e.g. Luna Wrap"
+465: <Label className="text-[10px] text-muted-foreground">Their retail ($)</Label>
+469: <Label className="text-[10px] text-muted-foreground">Solo copies</Label>
+=== src/components/trunk-show-card.tsx ===
+224: <Input id="ts-visitors" type="number" min={0} placeholder="10" value={visitorsPerDay}
+229: <Input id="ts-tryon" type="number" min={0} max={1} step={0.05} placeholder="0.35" value={tryOnRate}
+235: <Input id="ts-conversion" type="number" min={0} max={1} step={0.05} placeholder="0.3" value={conversionRate}
+240: <Input id="ts-shop-split" type="number" min={0} max={1} step={0.05} placeholder="0.3" value={shopSplit}
+246: <Input id="ts-price" type="number" min={0} step={0.5} placeholder="8" value={patternPrice}
+251: <Input id="ts-channel-fee" type="number" min={0} max={1} step={0.01} placeholder="0" value={channelFeeRate}
+257: <Input id="ts-trunk-days" type="number" min={1} max={30} placeholder="14" value={trunkDays}
+262: <Input id="ts-yarn-sales" type="number" min={0} placeholder="1200" value={yarnSales}
+268: <Input id="ts-yarn-split" type="number" min={0} max={1} step={0.05} placeholder="0.5" value={yarnShopSplit}
+273: <Input id="ts-sample-yards" type="number" min={0} placeholder="1800" value={sampleYards}
+279: <Input id="ts-sample-cost" type="number" min={0} placeholder="105" value={sampleCost}
+284: <Input id="ts-shipping" type="number" min={0} placeholder="30" value={shippingCost}
+289: <Input id="ts-travel" type="number" min={0} placeholder="50" value={travelCost}
+294: <Input id="ts-event-cost" type="number" min={0} placeholder="90" value={eventCost}
+299: <Input id="ts-rate" type="number" min={0} placeholder="25" value={hourlyRate}
+309: <Input type="number" min={0} placeholder="8 event hrs" value={attendingHours}
+440: <Input id="ts-designer-name" placeholder="e.g. Stitch & Scale" value={designerName}
+=== src/components/video-social-lab-card.tsx ===
+201: <Label htmlFor="vs-under60" className="text-xs">Under 60 seconds</Label>
+205: <Label htmlFor="vs-hook" className="text-xs">Message in first 3 seconds (+13% breakthrough)</Label>
+209: <Label htmlFor="vs-cta" className="text-xs">Call to action in every post</Label>
+214: <Label className="text-xs">Where every post links to</Label>
+218: <SelectItem value="pattern_page">Pattern page (direct sales)</SelectItem>
+219: <SelectItem value="list_building">List-building link (compounds)</SelectItem>
+220: <SelectItem value="none">Nowhere (vanity posting)</SelectItem>
+=== src/components/wholesale-book-card.tsx ===
+103: toast({ title: 'Copied to clipboard' });
+105: toast({ title: 'Select and copy manually' });
+140: <Label htmlFor="ws-patterns">Patterns offered</Label>
+146: <Label htmlFor="ws-retail">Your retail price ($)</Label>
+152: <Label htmlFor="ws-rate">Wholesale rate offered ($)</Label>
+158: <Label htmlFor="ws-qty">Order quantity / term</Label>
+164: <Label htmlFor="ws-repeat">Repeat-order chance (%)</Label>
+170: <Label htmlFor="ws-hours">Your work hours</Label>
+176: <Label htmlFor="ws-costs">Cash costs — test knitting, tech edit, photo ($)</Label>
+182: <Label htmlFor="ws-net">Your direct net / pattern ($, 0 = Ravelry default)</Label>
+191: <Label htmlFor="ws-exclusive">Exclusive (can&apos;t self-sell)</Label>
+251: <Label htmlFor="bk-patterns">Patterns in the book</Label>
+257: <Label htmlFor="bk-advance">Total advance ($)</Label>
+263: <Label htmlFor="bk-inst">Installments</Label>
+269: <Label htmlFor="bk-royalty">Royalty (% of cover)</Label>
+275: <Label htmlFor="bk-cover">Cover price ($)</Label>
+281: <Label htmlFor="bk-hours">Your total work hours</Label>
+287: <Label htmlFor="bk-selfmonths">Self-publish window (months)</Label>
+293: <Label htmlFor="bk-units">Monthly self-sold units</Label>
+299: <Label htmlFor="bk-unitnet">Net / self-sold unit ($)</Label>
+=== src/components/workshop-teaching-lab-card.tsx ===
+100: <CardDescription>Is this in-person class worth your hours — and where does the money actually go? Festival contracts now pay per student with no guaranteed floor and the teacher funding their own travel (#FairFiberWage exists for a reason), while LYS classes keep most of the ticket with zero travel. This lab prices the whole event: deal net, break-even students, slot-risk exposure, follow-up pattern attach, and the same hours rerouted to pattern work.</CardDescription>
+=== src/components/yarn-buy-calculator-card.tsx ===
+129: <Label className="text-xs">Quick-load a market-standard yarn (edit the numbers to match your ball band)</Label>
+131: <SelectTrigger className="w-72"><SelectValue placeholder="Pick a yarn..." /></SelectTrigger>
+143: <Label className="text-xs">Yarn weight</Label>
+155: <Label className="text-xs">Yardage per skein (ball band)</Label>
+157: placeholder="e.g. 220"
+161: <Label className="text-xs">Price per skein</Label>
+163: placeholder="e.g. 14.99"
+167: <Label className="text-xs">Stash of this yarn (grams)</Label>
+169: placeholder="0"
+173: <Label className="text-xs">Grams per skein</Label>
+175: placeholder="100"
+181: <Label className="text-xs">Swatch confirmed before buying</Label>
+=== src/components/yarn-estimator-card.tsx ===
+32: <CardTitle className="font-serif flex items-center gap-2">Yarn Requirement Estimate</CardTitle>
+=== src/components/yarn-licensing-lab-card.tsx ===
+111: <CardDescription>A yarn company is offering you $350 for a pattern or a royalty on their kits — is it a good deal? This lab prices the offer against your own shop's long tail, verified against real industry terms: Farm &amp; Fiber Knits pays $200–400 for accessories and $400–750 for garments with a 1-year exclusive; Knit Picks keeps 15% on its IDP program; Interweave Knits flats run $200–600 with 20–40% royalties after exclusivity; Malabrigo still issues unpaid "exposure" calls; and full buyouts are the trend designers refuse. Everything the brand gives — cash, royalty stream (risk-haircut by brand size), free yarn, paid tech edit and photography — is weighed against your time, the exclusivity drag, and your self-publish baseline.</CardDescription>
+118: <Label htmlFor="yl-brand" className="text-xs">Brand</Label>
+122: <Label htmlFor="yl-scope" className="text-xs">Scope</Label>
+134: <Label htmlFor="yl-reach" className="text-xs">Brand reach tier</Label>
+=== src/pages/project-grading.tsx ===
+24: <Button onClick={() => setLocation('/')}>Return to Dashboard</Button>
+53: toast({ title: "Table Copied", description: "Grading table copied to clipboard." });
+=== src/pages/project-pdf.tsx ===
+197: toast({ title: 'Could not use this image', description: error ?? 'Unknown error.', variant: 'destructive' });
+=== src/pages/project-workspace.tsx ===
+269: placeholder="e.g. 6"
+279: placeholder="0"
+395: toast({ title: 'Notes saved' });
+419: toast({ title: 'Section deleted', description: 'If that was a misclick, it is saved in your last export.' });
+682: <Input placeholder="e.g. Back Width" value={mLabel} onChange={(e) => setMLabel(e.target.value)} className="h-10" />
+703: <Input type="number" step="0.125" placeholder="0.0" value={mBaseValue} onChange={(e) => setMBaseValue(e.target.value)} className="h-10" />
+858: placeholder="e.g. Worked flat, seamed at the side. Blocks generously — swatch and block before committing to a size."
+=== src/pages/settings.tsx ===
+43: toast({ title: 'Import failed', description: 'The file could not be parsed correctly.', variant: 'destructive' });
+61: toast({ title: 'Backup downloaded', description: `${snapshot.projects.length} project${snapshot.projects.length === 1 ? '' : 's'} saved to the file.` });
+66: toast({ title: "Onboarding restarted", description: "The setup guide will appear on your next visit to the dashboard." });
+208: toast({ title: 'Reset to CYC values', description: 'Your custom chart now matches CYC again.' });

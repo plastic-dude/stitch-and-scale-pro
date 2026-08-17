@@ -26,6 +26,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { useSettings } from "@/context/SettingsContext";
+import { getBragCardCopy } from "@/lib/brag-copy";
 import { Camera, Copy, Download, Share2 } from "lucide-react";
 
 type ReceiptStored = { brand?: { studioName?: string; currency?: string }; ledger?: SavedSale[]; ts?: number };
@@ -59,6 +61,8 @@ const STYLES: { id: BragCardStyle; label: string }[] = [
 export function BragCardCard(props: { project: PatternProject }) {
   const { project } = props;
   const { toast } = useToast();
+  const { language } = useSettings();
+  const copy = getBragCardCopy(language);
 
   const ledger = useMemo<MonthlyLedgerRow[]>(() => {
     try {
@@ -116,10 +120,10 @@ export function BragCardCard(props: { project: PatternProject }) {
     [studioName, currency, ledger, publishedCount, salesCount],
   );
 
-  const displayStudio = (nameOverride || studioName || "My Studio").trim();
+  const displayStudio = (nameOverride || studioName || copy.studioPlaceholder).trim();
   const caption = useMemo(
-    () => buildBragCaption(stats, currency, template, displayStudio),
-    [stats, currency, template, displayStudio],
+    () => buildBragCaption(stats, currency, template, displayStudio, copy),
+    [stats, currency, template, displayStudio, copy],
   );
 
   const svgRef = useRef<HTMLDivElement | null>(null);
@@ -136,7 +140,7 @@ export function BragCardCard(props: { project: PatternProject }) {
   const downloadPng = useCallback(async () => {
     try {
       const { buildBragCardSvg } = await import("@/lib/brag-card");
-      const svg = buildBragCardSvg(stats, currency, template, displayStudio, accent, style);
+      const svg = buildBragCardSvg(stats, currency, template, displayStudio, accent, style, copy);
       const blob = new Blob([svg], { type: "image/svg+xml" });
       const url = URL.createObjectURL(blob);
       const img = new Image();
@@ -155,44 +159,44 @@ export function BragCardCard(props: { project: PatternProject }) {
           a.download = `brag-card-${template}-${Date.now()}.png`;
           a.click();
           URL.revokeObjectURL(a.href);
-          toast({ title: "Card saved", description: "PNG ready to share anywhere." });
+          toast({ title: copy.cardSaved, description: copy.pngReady });
         }, "image/png");
       };
       img.onerror = () => {
         URL.revokeObjectURL(url);
-        toast({ title: "Card export failed", description: "Your browser blocked the image export — try another browser or screenshot the preview.", variant: "destructive" });
+        toast({ title: copy.exportFailed, description: copy.description, variant: "destructive" });
       };
       img.src = url;
     } catch {
-      toast({ title: "Card export failed", description: "Something went wrong building the PNG.", variant: "destructive" });
+      toast({ title: copy.exportFailed, description: copy.description, variant: "destructive" });
     }
-  }, [stats, currency, template, displayStudio, accent, style, toast]);
+  }, [stats, currency, template, displayStudio, accent, style, toast, copy]);
 
   const copyCaption = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(caption.caption);
-      toast({ title: "Caption copied", description: "Paste it on Instagram, X, Mastodon, Bluesky or wherever your knitters hang out." });
+      toast({ title: copy.copyCaption, description: copy.description });
     } catch {
-      toast({ title: "Copy failed", description: "Select the caption text manually and copy it.", variant: "destructive" });
+      toast({ title: copy.copyFailed, description: copy.description, variant: "destructive" });
     }
-  }, [caption, toast]);
+  }, [caption, toast, copy]);
 
   const shareNative = useCallback(async () => {
     try {
       const { buildBragCardSvg } = await import("@/lib/brag-card");
-      const svg = buildBragCardSvg(stats, currency, template, displayStudio, accent, style);
+      const svg = buildBragCardSvg(stats, currency, template, displayStudio, accent, style, copy);
       const blob = new Blob([svg], { type: "image/svg+xml" });
       const file = new File([blob], "brag-card.svg", { type: "image/svg+xml" });
       if (navigator.share) {
-        await navigator.share({ title: "My knitwear numbers", text: caption.caption, files: [file] });
-        toast({ title: "Shared", description: "Picked the platform — card sent." });
+        await navigator.share({ title: copy.title, text: caption.caption, files: [file] });
+        toast({ title: copy.shared, description: copy.pngReady });
       }
     } catch (err) {
       if ((err as Error).name !== "AbortError") {
         downloadPng();
       }
     }
-  }, [stats, currency, template, displayStudio, accent, style, caption, toast, downloadPng]);
+  }, [stats, currency, template, displayStudio, accent, style, caption, toast, downloadPng, copy]);
 
   const hasData = ledger.length > 0 || publishedCount > 0;
 
@@ -201,10 +205,10 @@ export function BragCardCard(props: { project: PatternProject }) {
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
           <Camera className="h-4 w-4" />
-          Brag Cards
+          {copy.title}
         </CardTitle>
         <CardDescription>
-          Turn your own ledger into a shareable card — your numbers, your studio name, a caption that sounds like you. Download the PNG and post it wherever your knitters hang out.
+          {copy.description}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-5">
@@ -212,7 +216,7 @@ export function BragCardCard(props: { project: PatternProject }) {
           <Card className="border-dashed">
             <CardContent className="pt-4">
               <p className="text-sm text-muted-foreground">
-                Nothing to brag about yet — your receipts and designs stay empty. Log a few sales in the Receipt Lab or publish a design in the Design Ledger, and the cards will fill themselves in from your own records.
+                {copy.empty}
               </p>
             </CardContent>
           </Card>
@@ -221,11 +225,11 @@ export function BragCardCard(props: { project: PatternProject }) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-3">
             <div>
-              <Label className="text-xs font-medium">Studio name on the card</Label>
-              <Input value={nameOverride} onChange={(e) => setNameOverride(e.target.value)} placeholder={studioName ? studioName : "My Studio"} />
+              <Label className="text-xs font-medium">{copy.studioName}</Label>
+              <Input value={nameOverride} onChange={(e) => setNameOverride(e.target.value)} placeholder={studioName ? studioName : copy.studioPlaceholder} />
             </div>
             <div>
-              <Label className="text-xs font-medium">Pick your highlight</Label>
+              <Label className="text-xs font-medium">{copy.highlight}</Label>
               <div className="grid grid-cols-2 gap-2 mt-1.5">
                 {TEMPLATES.map((t) => (
                   <Button
@@ -242,7 +246,7 @@ export function BragCardCard(props: { project: PatternProject }) {
               </div>
             </div>
             <div>
-              <Label className="text-xs font-medium">Card style</Label>
+              <Label className="text-xs font-medium">{copy.style}</Label>
               <div className="flex flex-wrap gap-1.5 mt-1.5">
                 {STYLES.map((s) => (
                   <Button
@@ -257,13 +261,13 @@ export function BragCardCard(props: { project: PatternProject }) {
               </div>
             </div>
             <div>
-              <Label className="text-xs font-medium">Card accent</Label>
+              <Label className="text-xs font-medium">{copy.accent}</Label>
               <div className="flex gap-2 mt-1.5">
                 {ACCENTS.map((a) => (
                   <button
                     key={a.id}
                     type="button"
-                    aria-label={a.label}
+                    aria-label={`${copy.accent}: ${a.label}`}
                     onClick={() => setAccent(a.id)}
                     className="h-8 w-8 rounded-full border-2 transition-all"
                     style={{
@@ -278,26 +282,26 @@ export function BragCardCard(props: { project: PatternProject }) {
           </div>
 
           <div className="space-y-2">
-            <Label className="text-xs font-medium">Card preview (1080 × 1080)</Label>
-            <BragCardPreview stats={stats} currency={currency} template={template} studioName={displayStudio} accent={accent} style={style} />
+            <Label className="text-xs font-medium">{copy.preview}</Label>
+            <BragCardPreview stats={stats} currency={currency} template={template} studioName={displayStudio} accent={accent} style={style} copy={copy} />
           </div>
         </div>
 
         <div className="space-y-1.5">
-          <Label className="text-xs font-medium">Caption</Label>
+          <Label className="text-xs font-medium">{copy.captionLabel}</Label>
           <Textarea value={caption.caption} readOnly className="min-h-20 text-sm" />
           <div className="flex gap-2">
             <Button size="sm" onClick={copyCaption}>
               <Copy className="h-4 w-4 mr-1" />
-              Copy caption
+              {copy.copyCaption}
             </Button>
             <Button size="sm" variant="outline" onClick={shareNative}>
               <Share2 className="h-4 w-4 mr-1" />
-              Share
+              {copy.share}
             </Button>
             <Button size="sm" variant="outline" onClick={downloadPng} disabled={!hasData}>
               <Download className="h-4 w-4 mr-1" />
-              Download PNG
+              {copy.download}
             </Button>
           </div>
         </div>
@@ -306,7 +310,7 @@ export function BragCardCard(props: { project: PatternProject }) {
   );
 }
 
-function BragCardPreview(props: { stats: ReturnType<typeof computeBragStats>; currency: string; template: BragCardTemplate; studioName: string; accent: string; style: BragCardStyle }) {
+function BragCardPreview(props: { stats: ReturnType<typeof computeBragStats>; currency: string; template: BragCardTemplate; studioName: string; accent: string; style: BragCardStyle; copy: ReturnType<typeof getBragCardCopy> }) {
   const ref = useRef<HTMLDivElement | null>(null);
   const markup = useMemo(() => {
     try {
@@ -325,18 +329,18 @@ function BragCardPreview(props: { stats: ReturnType<typeof computeBragStats>; cu
   let big = "";
   let unit = "";
   let sub = "";
-  const { stats, currency, template, studioName, accent, style } = props;
-  const c = buildBragCaption(stats, currency, template, studioName);
+  const { stats, currency, template, studioName, accent, style, copy } = props;
+  const c = buildBragCaption(stats, currency, template, studioName, props.copy);
   if (template === "income") { big = fmtMoney(stats.totalRevenue, currency); }
-  else if (template === "sales") { big = String(stats.totalSales); unit = "sales"; }
-  else if (template === "published") { big = String(stats.publishedCount); unit = "published"; }
-  else { big = String(stats.profitMonths); unit = "profitable months"; }
+  else if (template === "sales") { big = String(stats.totalSales); unit = props.copy.sales; }
+  else if (template === "published") { big = String(stats.publishedCount); unit = props.copy.published; }
+  else { big = String(stats.profitMonths); unit = props.copy.profitableMonths; }
 
-  const monthNote = stats.bestMonth ? `best month ${fmtMoney(stats.bestMonthProfit, currency)}` : "";
+  const monthNote = stats.bestMonth ? `${props.copy.bestMonth} ${fmtMoney(stats.bestMonthProfit, currency)}` : "";
   const footer = [
-    stats.publishedCount > 0 ? `${stats.publishedCount} published design${stats.publishedCount === 1 ? "" : "s"}` : "",
-    `${stats.totalSales} sales`,
-    `${stats.profitRatio}% profitable months`,
+    stats.publishedCount > 0 ? `${stats.publishedCount} ${props.copy.published}` : "",
+    `${stats.totalSales} ${props.copy.sales}`,
+    `${stats.profitRatio}% ${props.copy.profitableMonths}`,
   ]
     .filter(Boolean)
     .join("  ·  ");
@@ -389,7 +393,7 @@ function BragCardPreview(props: { stats: ReturnType<typeof computeBragStats>; cu
         {style === "swiss" ? (
           <div className="flex flex-col gap-4">
             <div className="text-center -mx-5 -mt-5 py-4" style={{ background: pal.ink }}>
-              <p className="font-sans font-semibold" style={{ color: pal.bg, fontSize: "clamp(8px, 1.6vw, 12px)", letterSpacing: "0.2em" }}>{esc((studioName || "My Studio").toUpperCase())}</p>
+              <p className="font-sans font-semibold" style={{ color: pal.bg, fontSize: "clamp(8px, 1.6vw, 12px)", letterSpacing: "0.2em" }}>{esc((studioName || copy.studioPlaceholder).toUpperCase())}</p>
             </div>
             <p className="font-mono font-bold leading-none" style={{ fontSize: "clamp(34px, 14vw, 72px)", color: pal.ink }}>{esc(big)}</p>
             <div style={{ width: "32%", height: "6px", background: accent }} />
@@ -399,7 +403,7 @@ function BragCardPreview(props: { stats: ReturnType<typeof computeBragStats>; cu
           </div>
         ) : (
           <>
-            <p className={style === "editorial" ? "font-serif font-semibold" : "font-serif"} style={{ color: pal.ink, fontSize: "clamp(12px, 2.6vw, 17px)" }}>{esc(studioName || "My Studio")}</p>
+            <p className={style === "editorial" ? "font-serif font-semibold" : "font-serif"} style={{ color: pal.ink, fontSize: "clamp(12px, 2.6vw, 17px)" }}>{esc(studioName || copy.studioPlaceholder)}</p>
             <p className={style === "swatch" || style === "cameo" ? "font-mono font-bold leading-tight" : "font-serif font-bold leading-tight"} style={{ fontSize: "clamp(26px, 6.5vw, 54px)", color: style === "navy" ? accent : pal.ink }}>{esc(line)}</p>
             {style === "editorial" ? <div style={{ width: "36%", height: "5px", background: accent, marginBottom: "4px" }} /> : null}
             <p className="font-serif italic" style={{ fontSize: "clamp(12px, 2.8vw, 17px)", color: pal.soft }}>{esc(c.headline)}</p>

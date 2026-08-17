@@ -9,6 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useToast } from '@/hooks/use-toast';
 import { Users, ClipboardCopy, AlertTriangle, HeartHandshake } from 'lucide-react';
 import { PatternProject } from '@/lib/grading-engine';
+import { useSettings } from '@/context/SettingsContext';
+import { RETENTION_COPY } from '@/lib/retention-copy';
 import {
   analyzeRetention,
   DEFAULT_RETENTION,
@@ -77,6 +79,8 @@ function NumField({ id, label, value, onChange, min = 0, max, step = 1, suffix }
 }
 
 export function RetentionCard({ project: _project }: { project: PatternProject }) {
+  const { language } = useSettings();
+  const copyText = RETENTION_COPY[language];
   // issue #4 project seam: scoped store per project; flat key folded in on first read, then removed.
   const handle = useMemo(() => projectStorage<StoredRetention>('retain', _project.id, [STORAGE_KEY]), [_project.id]);
   const { toast } = useToast();
@@ -94,9 +98,9 @@ export function RetentionCard({ project: _project }: { project: PatternProject }
   const copy = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      toast({ title: 'Copied — paste it into your email tool.' });
+      toast({ title: copyText.copied });
     } catch {
-      toast({ title: 'Copy failed — select the text manually.' });
+      toast({ title: copyText.copyFailed });
     }
   };
 
@@ -110,43 +114,40 @@ export function RetentionCard({ project: _project }: { project: PatternProject }
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
-          <HeartHandshake className="h-4 w-4" /> Repeat Buyer & Retention Planner
+          <HeartHandshake className="h-4 w-4" /> {copyText.title}
         </CardTitle>
         <CardDescription>
-          The cheapest revenue you will ever earn is a buyer who already trusts you — acquiring a new
-          customer costs 5–10× more than keeping an existing one. This models what your email list is
-          worth net of platform fees and tooling costs, how far the repeat ladder climbs, and whether
-          your release cadence matches what knitters actually knit.
+          {copyText.description}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* List inputs */}
         <div className="space-y-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <NumField id="rt-list" label="Email list size" value={stored.input.listSize} min={0}
+            <NumField id="rt-list" label={copyText.list} value={stored.input.listSize} min={0}
               onChange={(n) => patchInput({ listSize: n })} />
-            <NumField id="rt-active" label="Active / engaged" value={stored.input.activeRatePct} min={0} max={100}
+            <NumField id="rt-active" label={copyText.active} value={stored.input.activeRatePct} min={0} max={100}
               onChange={(n) => patchInput({ activeRatePct: Math.min(100, n) })} suffix="%" />
-            <NumField id="rt-release-rate" label="Buys at each release" value={stored.input.releasePurchaseRatePct}
+            <NumField id="rt-release-rate" label={copyText.buysEach} value={stored.input.releasePurchaseRatePct}
               min={0} max={100} step={0.5} onChange={(n) => patchInput({ releasePurchaseRatePct: Math.min(100, n) })}
               suffix="%" />
-            <NumField id="rt-repeat" label="Repeat next release" value={stored.input.repeatPurchaseRatePct}
+            <NumField id="rt-repeat" label={copyText.repeat} value={stored.input.repeatPurchaseRatePct}
               min={0} max={100} step={1} onChange={(n) => patchInput({ repeatPurchaseRatePct: Math.min(100, n) })}
               suffix="%" />
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <NumField id="rt-releases" label="Releases / month" value={stored.input.releasesPerMonth} min={0}
+            <NumField id="rt-releases" label={copyText.releases} value={stored.input.releasesPerMonth} min={0}
               step={0.5} onChange={(n) => patchInput({ releasesPerMonth: n })} />
-            <NumField id="rt-price" label="Avg pattern price" value={stored.input.avgPrice} min={0} step={0.5}
+            <NumField id="rt-price" label={copyText.price} value={stored.input.avgPrice} min={0} step={0.5}
               onChange={(n) => patchInput({ avgPrice: n })} suffix="$" />
-            <NumField id="rt-growth" label="New signups / month" value={stored.input.listGrowthPerMonth} min={0}
+            <NumField id="rt-growth" label={copyText.signups} value={stored.input.listGrowthPerMonth} min={0}
               onChange={(n) => patchInput({ listGrowthPerMonth: n })} />
-            <NumField id="rt-consumption" label="Patterns knit / quarter (base)"
+            <NumField id="rt-consumption" label={copyText.consumed}
               value={stored.input.patternsConsumedPerQuarter} min={0} onChange={(n) => patchInput({ patternsConsumedPerQuarter: n })} />
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="space-y-1.5">
-              <Label htmlFor="rt-platform" className="text-xs">Where you sell</Label>
+              <Label htmlFor="rt-platform" className="text-xs">{copyText.sellWhere}</Label>
               <Select value={stored.input.platform}
                 onValueChange={(v) => patchInput({ platform: v as PlatformId })}>
                 <SelectTrigger id="rt-platform"><SelectValue /></SelectTrigger>
@@ -158,7 +159,7 @@ export function RetentionCard({ project: _project }: { project: PatternProject }
               </Select>
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="rt-tooling" className="text-xs">Email tooling / month</Label>
+              <Label htmlFor="rt-tooling" className="text-xs">{copyText.tooling}</Label>
               <Select value={String(stored.input.emailToolingMonthly)}
                 onValueChange={(v) => patchInput({ emailToolingMonthly: Number(v) })}>
                 <SelectTrigger id="rt-tooling"><SelectValue /></SelectTrigger>
@@ -171,13 +172,11 @@ export function RetentionCard({ project: _project }: { project: PatternProject }
                 </SelectContent>
               </Select>
             </div>
-            <NumField id="rt-acq" label="Cost to acquire one fan" value={stored.input.acquisitionCostPerFan}
+            <NumField id="rt-acq" label={copyText.acq} value={stored.input.acquisitionCostPerFan}
               min={0} step={0.5} onChange={(n) => patchInput({ acquisitionCostPerFan: n })} suffix="$" />
           </div>
           <p className="text-xs text-muted-foreground">
-            Suggested tooling tier for a list of {stored.input.listSize.toLocaleString()}: {suggestedTier.label}.
-            Healthy email benchmark: ~5% of an engaged list buys a release; a warm list repeats at 20%+;
-            17% of craft emails are deleted unread, so say less, better.
+            {copyText.suggested(stored.input.listSize.toLocaleString(), suggestedTier.label)} {copyText.benchmark}
           </p>
         </div>
 
@@ -192,19 +191,19 @@ export function RetentionCard({ project: _project }: { project: PatternProject }
         {/* Monthly summary */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="rounded-lg border bg-muted/30 p-4">
-            <div className="text-xs text-muted-foreground">Buyers / month</div>
+            <div className="text-xs text-muted-foreground">{copyText.buyers}</div>
             <div className="text-2xl font-bold">{result.monthlyBuyers.toFixed(1)}</div>
           </div>
           <div className="rounded-lg border bg-muted/30 p-4">
-            <div className="text-xs text-muted-foreground">List revenue / month (net)</div>
+            <div className="text-xs text-muted-foreground">{copyText.revenue}</div>
             <div className="text-2xl font-bold">{fmt$(result.monthlyListRevenue)}</div>
           </div>
           <div className="rounded-lg border bg-muted/30 p-4">
-            <div className="text-xs text-muted-foreground">Motion cost / month</div>
+            <div className="text-xs text-muted-foreground">{copyText.motion}</div>
             <div className="text-2xl font-bold">{fmt$(result.monthlyCost)}</div>
           </div>
           <div className="rounded-lg border bg-muted/30 p-4">
-            <div className="text-xs text-muted-foreground">Profit / month</div>
+            <div className="text-xs text-muted-foreground">{copyText.profit}</div>
             <div className={`text-2xl font-bold ${result.monthlyProfit >= 0 ? 'text-emerald-600' : 'text-destructive'}`}>
               {fmt$(result.monthlyProfit)}
             </div>
@@ -214,7 +213,7 @@ export function RetentionCard({ project: _project }: { project: PatternProject }
         {/* Retained vs acquired */}
         <div className="rounded-lg border bg-muted/30 p-4 space-y-2">
           <div className="font-semibold text-sm flex items-center gap-2">
-            <Users className="h-4 w-4" /> The retention advantage
+            <Users className="h-4 w-4" /> {copyText.advantage}
           </div>
           <div className="text-sm text-muted-foreground">
             A retained sale costs about ${result.costPerRetainedSale < 1
@@ -230,7 +229,7 @@ export function RetentionCard({ project: _project }: { project: PatternProject }
 
         {/* Cohort ladder */}
         <div className="space-y-2">
-          <div className="font-semibold text-sm">Repeat ladder — what the base actually pays for</div>
+          <div className="font-semibold text-sm">{copyText.ladder}</div>
           <div className="grid gap-2">
             {result.cohortLadder.map((step) => (
               <div key={step.label} className="flex items-center justify-between rounded-lg border bg-muted/30 px-4 py-2 text-sm">
@@ -246,7 +245,7 @@ export function RetentionCard({ project: _project }: { project: PatternProject }
         {/* 12-month projection */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           <div className="rounded-lg border bg-muted/30 p-4">
-            <div className="text-xs text-muted-foreground">12-month list revenue</div>
+            <div className="text-xs text-muted-foreground">{copyText.month12}</div>
             <div className="text-xl font-bold">{fmt$(result.twelveMonthListRevenue)}</div>
           </div>
           <div className="rounded-lg border bg-muted/30 p-4">

@@ -26,6 +26,8 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { Copy, Check, Sparkles } from 'lucide-react';
 import { PatternProject } from '@/lib/grading-engine';
+import { useSettings } from '@/context/SettingsContext';
+import { FINISH_COPY } from '@/lib/finish-copy';
 import {
   FIBRE_LABELS,
   Fibre,
@@ -82,6 +84,8 @@ export function FinishGuideCard({ project }: { project: PatternProject }) {
   const handle = useMemo(() => projectStorage<FinishGuideSettings>('finishguide', project.id, ['stitch-and-scale-finishguide']), [project.id]);
 
   const { toast } = useToast();
+  const { language } = useSettings();
+  const copy = FINISH_COPY[language];
   const [settings, setSettings] = useState<FinishGuideSettings>(() => loadSettings(project.id));
   const [copied, setCopied] = useState(false);
 
@@ -113,7 +117,7 @@ export function FinishGuideCard({ project }: { project: PatternProject }) {
   const copySection = async () => {
     await navigator.clipboard.writeText(guide.patternSection);
     setCopied(true);
-    toast({ title: 'Copied to clipboard', description: 'Paste it straight into your pattern doc.' });
+    toast({ title: copy.copied, description: copy.copiedDescription });
     setTimeout(() => setCopied(false), 2000);
   };
 
@@ -122,20 +126,18 @@ export function FinishGuideCard({ project }: { project: PatternProject }) {
       <CardHeader className="pb-3">
         <CardTitle className="font-serif text-lg flex items-center gap-2">
           <Sparkles className="w-5 h-5 text-primary" />
-          Finish &amp; Care Guide
+          {copy.title}
         </CardTitle>
         <CardDescription>
-          The last page of every good pattern — fibre-correct substitution, blocking,
-          wash, dry and store notes, generated from your yarn weight and declared blend.
+          {copy.description}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Fibre blend */}
         <div className="space-y-2">
-          <Label className="text-sm font-medium">Your fibre blend</Label>
+          <Label className="text-sm font-medium">{copy.blend}</Label>
           <p className="text-xs text-muted-foreground">
-            Tick every fibre in your yarn. A blend follows its most delicate fibre —
-            wool + acrylic is treated as wool.
+            {copy.blendHint}
           </p>
           <div className="flex flex-wrap gap-2">
             {FIBRE_ORDER.map(f => (
@@ -156,11 +158,10 @@ export function FinishGuideCard({ project }: { project: PatternProject }) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="fg-putup" className="text-sm font-medium">
-              Metres per 100 g (optional)
+              {copy.putUp}
             </Label>
             <p className="text-xs text-muted-foreground">
-              Your yarn's put-up pins the substitution line to the actual skein;
-              leave blank for the weight-class band.
+              {copy.putUpHint}
             </p>
             <Input
               id="fg-putup"
@@ -174,14 +175,14 @@ export function FinishGuideCard({ project }: { project: PatternProject }) {
           </div>
           <div className="space-y-2">
             <Label htmlFor="fg-notes" className="text-sm font-medium">
-              Fabric notes (optional)
+              {copy.notes}
             </Label>
             <p className="text-xs text-muted-foreground">
               Anything specific to this design, e.g. "ribbing blocked with steam only".
             </p>
             <Input
               id="fg-notes"
-              placeholder="e.g. steam ribbing separately"
+              placeholder={copy.notesPlaceholder}
               value={settings.fabricNotes ?? ''}
               onChange={e => setNotes(e.target.value)}
               className="h-9"
@@ -199,13 +200,13 @@ export function FinishGuideCard({ project }: { project: PatternProject }) {
           <Badge variant="outline">{b.drape} drape</Badge>
           <Badge variant="outline">{b.elasticity}</Badge>
           <Badge variant="outline">{b.warmth.replace('-', ' ')}</Badge>
-          {b.mothRisk && <Badge variant="outline">moth-prone fibre</Badge>}
+          {b.mothRisk && <Badge variant="outline">{copy.moth}</Badge>}
         </div>
 
         {/* The pattern section */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label className="text-sm font-medium">Copy-ready pattern section</Label>
+            <Label className="text-sm font-medium">{copy.copyReady}</Label>
             <Button
               type="button"
               variant="outline"
@@ -213,7 +214,7 @@ export function FinishGuideCard({ project }: { project: PatternProject }) {
               onClick={copySection}
               className="h-8">
               {copied ? <Check className="w-4 h-4 mr-1 text-green-600" /> : <Copy className="w-4 h-4 mr-1" />}
-              {copied ? 'Copied' : 'Copy'}
+              {copied ? copy.copied : copy.copy}
             </Button>
           </div>
           <pre className="whitespace-pre-wrap text-xs bg-muted/60 border border-border rounded-md p-4 font-sans leading-relaxed max-h-96 overflow-y-auto">

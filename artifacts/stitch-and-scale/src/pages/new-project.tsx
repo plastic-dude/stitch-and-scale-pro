@@ -9,11 +9,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ALL_SIZES, SizeKey, Gauge, generateId, PatternProject } from '@/lib/grading-engine';
 import { ChevronRight, ChevronLeft, Check, Ruler, Scissors, BookOpen, Fingerprint, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { NEW_PROJECT_COPY } from '@/lib/new-project-copy';
 
 export default function NewProjectWizard() {
   const [, setLocation] = useLocation();
   const { createProject } = useProjects();
-  const { unit: defaultUnit, sizingStandard, customStandard, t } = useSettings();
+  const { unit: defaultUnit, sizingStandard, customStandard, t, language } = useSettings();
+  const copy = NEW_PROJECT_COPY[language];
 
   const [step, setStep] = useState(1);
   const [name, setName] = useState('');
@@ -115,7 +117,7 @@ export default function NewProjectWizard() {
                     <Label htmlFor="name" className="text-sm font-medium text-muted-foreground uppercase tracking-wider">{t('workflow.newProject.patternName')}</Label>
                     <Input 
                       id="name" 
-                      placeholder="e.g. The Autumn Cardigan" 
+                      placeholder={copy.patternPlaceholder}
                       value={name} 
                       onChange={(e) => setName(e.target.value)}
                       className="text-xl py-6 border-0 border-b-2 border-border rounded-none focus-visible:ring-0 focus-visible:border-primary px-0 bg-transparent shadow-none"
@@ -129,7 +131,7 @@ export default function NewProjectWizard() {
                       <Fingerprint className="absolute left-0 w-5 h-5 text-muted-foreground/60" />
                       <Input 
                         id="author" 
-                        placeholder="Your name or brand" 
+                        placeholder={copy.authorPlaceholder}
                         value={author} 
                         onChange={(e) => setAuthor(e.target.value)}
                         className="text-lg py-6 pl-8 border-0 border-b-2 border-border rounded-none focus-visible:ring-0 focus-visible:border-primary bg-transparent shadow-none"
@@ -142,13 +144,13 @@ export default function NewProjectWizard() {
                   <div className="flex items-center gap-2 px-3 py-2.5 bg-secondary/20 rounded-lg border border-border/40 text-xs text-muted-foreground">
                     <Info className="w-3.5 h-3.5 shrink-0 text-accent/70" />
                     <span>
-                      Sizing Standard:{' '}
+                      {copy.sizingStandard}{' '}
                       <span className="font-medium text-foreground">
-                        {sizingStandard === 'Custom' ? 'Custom Standard' : 'Craft Yarn Council (CYC)'}
+                        {sizingStandard === 'Custom' ? copy.customStandard : copy.cycStandard}
                       </span>
                       {' · '}
                       <Link href="/settings" className="underline underline-offset-2 hover:text-foreground transition-colors">
-                        change in Settings
+                        {copy.changeSettings}
                       </Link>
                     </span>
                   </div>
@@ -195,9 +197,9 @@ export default function NewProjectWizard() {
                 <div className="max-w-lg mx-auto bg-muted/40 p-4 rounded-xl text-sm text-muted-foreground flex items-start gap-3 border border-border/40">
                   <Check className="w-4 h-4 text-primary mt-0.5 shrink-0" />
                   <p>
-                    Grading calculations use{' '}
-                    {sizingStandard === 'Custom' ? 'your Custom Standard' : 'standard Craft Yarn Council (CYC)'}
-                    {' '}body measurements to ensure consistent fit across all sizes.
+                    {copy.gradingUses}{' '}
+                    {sizingStandard === 'Custom' ? copy.custom : copy.standard}{' '}
+                    {copy.across}
                   </p>
                 </div>
               </motion.div>

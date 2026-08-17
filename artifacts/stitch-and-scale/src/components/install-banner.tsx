@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Download, X, Sparkles, Share } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { usePWAInstall } from '@/hooks/use-pwa-install';
+import { useSettings } from '@/context/SettingsContext';
+import { INSTALL_BANNER_COPY } from '@/lib/install-banner-copy';
 
 type Trigger = 'onboarding' | 'export';
 
@@ -31,6 +33,8 @@ function markShown(trigger: Trigger): void {
  */
 export function InstallBanner({ trigger }: { trigger: Trigger }) {
   const { canInstall, isIOSSafari, isInstalled, promptInstall } = usePWAInstall();
+  const { language } = useSettings();
+  const copy = INSTALL_BANNER_COPY[language];
   const [dismissed, setDismissed] = React.useState(false);
   const [installing, setInstalling] = React.useState(false);
 
@@ -70,16 +74,16 @@ export function InstallBanner({ trigger }: { trigger: Trigger }) {
 
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-foreground flex items-center gap-1.5">
-                Install Stitch & Scale
+                {copy.title}
                 <Sparkles className="w-3.5 h-3.5 text-accent" />
               </p>
               {variant === 'ios' ? (
                 <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
-                  Tap <Share className="w-3 h-3 inline -mt-0.5 mx-0.5" strokeWidth={2} /> in Safari's toolbar, then choose <span className="font-medium text-foreground">"Add to Home Screen."</span>
+                  {copy.ios}
                 </p>
               ) : (
                 <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
-                  Add it to your device for a faster, full-screen experience — works offline, opens like any other app.
+                  {copy.standard}
                 </p>
               )}
             </div>
@@ -93,7 +97,7 @@ export function InstallBanner({ trigger }: { trigger: Trigger }) {
                   className="rounded-full h-9 px-4 font-medium"
                   data-testid={`button-install-pwa-${trigger}`}
                 >
-                  {installing ? 'Installing…' : 'Install'}
+                  {installing ? copy.installing : copy.install}
                 </Button>
               )}
               {variant === 'ios' && (
@@ -104,13 +108,13 @@ export function InstallBanner({ trigger }: { trigger: Trigger }) {
                   className="rounded-full h-9 px-4 font-medium"
                   data-testid={`button-acknowledge-install-${trigger}`}
                 >
-                  Got it
+                  {copy.gotIt}
                 </Button>
               )}
               <button
                 onClick={() => setDismissed(true)}
                 className="p-1.5 rounded-md text-muted-foreground/70 hover:text-foreground hover:bg-background/60 transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                aria-label="Dismiss"
+                aria-label={copy.dismiss}
                 data-testid={`button-dismiss-install-${trigger}`}
               >
                 <X className="w-4 h-4" />

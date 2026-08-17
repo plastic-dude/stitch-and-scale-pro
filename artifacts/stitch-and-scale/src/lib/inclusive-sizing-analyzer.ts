@@ -24,6 +24,7 @@
 import { PatternProject } from '@/lib/grading-engine';
 import { estimateYarn, YarnWeight } from '@/lib/yarn-estimator';
 import { platformNet, PlatformId } from '@/lib/pattern-income-calculator';
+import type { InclusiveDynamicCopy } from '@/lib/inclusive-sizing-copy';
 
 // ---------------- constants & types ----------------
 
@@ -297,33 +298,43 @@ export type InclusivePack = {
   launchCopy: string;
 };
 
-export function buildInclusivePack(result: InclusiveSizingResult): InclusivePack {
+export function buildInclusivePack(result: InclusiveSizingResult, dynamicCopy?: InclusiveDynamicCopy): InclusivePack {
+  const copy = dynamicCopy ?? {
+    effortPriced: 'Effort priced — {hours} hrs + ${edit} edit = ${cost}',
+    plusTransparency: 'Plus-yardage transparency — {count} plus sizes with per-size schematics',
+    adaptiveQuoted: 'Adaptive mods quoted separately — ${fee} of bespoke consulting',
+    newTitle: 'New — Graded across {count} sizes.',
+    everySize: 'Every size in this range was graded individually — schematics, yardage and fit notes for each, including the plus sizes.',
+    adaptiveOptions: 'Adaptive options are available on request: {mods} — quoted as bespoke work.',
+    betweenChart: 'If your body sits between my chart and your measurements, message me — I’d rather help you adapt this pattern than have it not fit you.',
+  };
+  const interpolate = (template: string, values: Record<string, string | number>) => template.replace(/\{(\w+)\}/g, (_, key) => String(values[key] ?? ''));
   const items = result.audit.items.map(i => ({ check: i.check, rationale: i.rationale, flag: !i.pass }));
   items.push({
-    check: `Effort priced — ${result.effort.totalEffortHours.toFixed(1)} hrs + $${result.effort.techEditCost} edit = $${result.effort.effortCost.toFixed(0)}`,
+    check: interpolate(copy.effortPriced, { hours: result.effort.totalEffortHours.toFixed(1), edit: result.effort.techEditCost, cost: result.effort.effortCost.toFixed(0) }),
     rationale: `Grading ${result.effort.sizeCount} sizes at Wolcott-grade depth; every extra size multiplies grading passes, yardage work and test-knit hours.`,
     flag: result.pricing.shortfall > 0,
   });
   items.push({
-    check: `Plus-yardage transparency — ${result.effort.largeSizeCount} plus size${result.effort.largeSizeCount === 1 ? '' : 's'} with per-size schematics`,
+    check: interpolate(copy.plusTransparency, { count: result.effort.largeSizeCount }),
     rationale: `A 2XL sweater knits to ~$147 of materials/time; plus buyers reward honest yardage and schematics per size.`,
     flag: result.effort.largeSizeCount === 0,
   });
   if (result.mods.length > 0) {
     items.push({
-      check: `Adaptive mods quoted separately — $${result.totalModFee} of bespoke consulting`,
+      check: interpolate(copy.adaptiveQuoted, { fee: result.totalModFee }),
       rationale: `Adaptive construction (magnetic bands, seated-rise, sensory-flat seams) is consulting work from the adaptive-apparel syllabus, never a pattern extra.`,
       flag: false,
     });
   }
   const cleanLaunchCopy =
-    `New — Graded across ${result.effort.sizeCount} sizes.\n\n` +
-    `Every size in this range was graded individually — schematics, yardage and fit notes for each, including the plus sizes. ` +
+    `${interpolate(copy.newTitle, { count: result.effort.sizeCount })}\n\n` +
+    `${copy.everySize} ` +
     `The range was graded at real ${result.effort.sizeCount}-size depth: ${result.pricing.badgeStatement}\n\n` +
     (result.mods.length > 0
-      ? `Adaptive options are available on request: ${result.mods.map(m => m.item.label).join(', ')} — quoted as bespoke work at $${result.mods[0]?.item.hours ? Math.round(result.mods[0].item.hours * DEFAULT_DESIGN_RATE) : 0}+ each.\n\n`
+      ? `${interpolate(copy.adaptiveOptions, { mods: result.mods.map(m => m.item.label).join(', ') })}\n\n`
       : '') +
-    `If your body sits between my chart and your measurements, message me — I'd rather help you adapt this pattern than have it not fit you.`;
+    copy.betweenChart;
 
   return { items, launchCopy: cleanLaunchCopy };
 }

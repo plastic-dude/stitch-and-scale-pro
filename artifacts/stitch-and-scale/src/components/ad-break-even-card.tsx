@@ -14,6 +14,8 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { Target, Mail, TrendingUp, TrendingDown, AlertTriangle, Zap } from 'lucide-react';
 import { PatternProject } from '@/lib/grading-engine';
+import { useSettings } from '@/context/SettingsContext';
+import { AD_BREAK_EVEN_COPY, getAdVerdictLabel, getAdBudgetLabel, getAdChannelLabel, getAdReason, getAdBudgetReason } from '@/lib/ad-break-even-copy';
 import { PLATFORMS, PLATFORM_LABELS, type PlatformId } from '@/lib/pattern-income-calculator';
 import {
   AD_CHANNEL_LABELS,
@@ -52,18 +54,18 @@ const fmt$ = (n: number) =>
   n.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 });
 const fmt2 = (n: number) => (Math.round(n * 100) / 100).toFixed(2);
 
-const verdictBadge = (v: string) => {
+const verdictBadge = (v: string, language = 'en') => {
   switch (v) {
-    case 'strong': return { cls: 'bg-emerald-500/15 text-emerald-700 border-emerald-500/30', label: 'Fund it' };
-    case 'avoid': return { cls: 'bg-destructive/15 text-destructive border-destructive/30', label: 'Avoid' };
-    case 'baseline': return { cls: 'bg-blue-500/15 text-blue-700 border-blue-500/30', label: 'Baseline' };
-    default: return { cls: 'bg-amber-500/15 text-amber-700 border-amber-500/30', label: 'Marginal' };
+    case 'strong': return { cls: 'bg-emerald-500/15 text-emerald-700 border-emerald-500/30', label: getAdVerdictLabel(language, v) };
+    case 'avoid': return { cls: 'bg-destructive/15 text-destructive border-destructive/30', label: getAdVerdictLabel(language, v) };
+    case 'baseline': return { cls: 'bg-blue-500/15 text-blue-700 border-blue-500/30', label: getAdVerdictLabel(language, v) };
+    default: return { cls: 'bg-amber-500/15 text-amber-700 border-amber-500/30', label: getAdVerdictLabel(language, v) };
   }
 };
-const budgetBadge = (v: string) =>
-  v === 'fund' ? { cls: 'bg-emerald-500/15 text-emerald-700 border-emerald-500/30', label: 'Fund the budget' } :
-  v === 'skip' ? { cls: 'bg-destructive/15 text-destructive border-destructive/30', label: 'Skip — feed the list instead' } :
-  { cls: 'bg-amber-500/15 text-amber-700 border-amber-500/30', label: 'Test small (≤$5/day)' };
+const budgetBadge = (v: string, language = 'en') =>
+  v === 'fund' ? { cls: 'bg-emerald-500/15 text-emerald-700 border-emerald-500/30', label: getAdBudgetLabel(language, v) } :
+  v === 'skip' ? { cls: 'bg-destructive/15 text-destructive border-destructive/30', label: getAdBudgetLabel(language, v) } :
+  { cls: 'bg-amber-500/15 text-amber-700 border-amber-500/30', label: getAdBudgetLabel(language, v) };
 
 function NumField({ id, label, value, onChange, min = 0, max, step = 1, suffix }: {
   id: string; label: string; value: number;
@@ -87,38 +89,40 @@ function NumField({ id, label, value, onChange, min = 0, max, step = 1, suffix }
   );
 }
 
-function ChannelRow({ ch }: { ch: ReturnType<typeof analyzeAdSpend>['channels'][number] }) {
-  const badge = verdictBadge(ch.verdict);
+function ChannelRow({ ch, copy, language }: { ch: ReturnType<typeof analyzeAdSpend>['channels'][number]; copy: typeof AD_BREAK_EVEN_COPY.en; language: string }) {
+  const badge = verdictBadge(ch.verdict, language);
   return (
     <div className="border rounded-lg p-3 space-y-1.5">
       <div className="flex items-center justify-between gap-2">
-        <span className="font-medium text-sm">{AD_CHANNEL_LABELS[ch.channel]}</span>
+        <span className="font-medium text-sm">{getAdChannelLabel(language, ch.channel, AD_CHANNEL_LABELS[ch.channel])}</span>
         <Badge variant="outline" className={`text-xs border ${badge.cls}`}>{badge.label}</Badge>
       </div>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-1 text-xs text-muted-foreground">
-        <span>Net / sale: <span className="text-foreground font-medium">{fmt$(ch.netPerSale)}</span></span>
+        <span>{copy.netSale}: <span className="text-foreground font-medium">{fmt$(ch.netPerSale)}</span></span>
         {ch.verdict !== 'baseline' && ch.verdict !== 'avoid' && ch.expectedDailyProfit !== null && (
           <span>
-            Projected orders/day: <span className="text-foreground font-medium">{ch.expectedOrdersPerDay?.toFixed(2)}</span>
+            {copy.ordersDay}: <span className="text-foreground font-medium">{ch.expectedOrdersPerDay?.toFixed(2)}</span>
           </span>
         )}
         {ch.channel !== 'etsy_offsite' && ch.channel !== 'ravelry_featured_source' && ch.channel !== 'email_list' && (
           <span>
-            Max break-even CPC: <span className="text-foreground font-medium">{fmt$(ch.maxBreakEvenCpc)}</span>
+            {copy.maxCpc}: <span className="text-foreground font-medium">{fmt$(ch.maxBreakEvenCpc)}</span>
           </span>
         )}
         <span>
-          Break-even ROAS: <span className="text-foreground font-medium">
+          {copy.roas}: <span className="text-foreground font-medium">
             {Number.isFinite(ch.breakEvenRoas) ? `${fmt2(ch.breakEvenRoas)}x` : '∞'}
           </span>
         </span>
       </div>
-      <p className="text-xs text-muted-foreground leading-relaxed">{ch.reason}</p>
+      <p className="text-xs text-muted-foreground leading-relaxed">{getAdReason(language, ch.channel, ch.reason)}</p>
     </div>
   );
 }
 
 export function AdBreakEvenCard({ project }: { project: PatternProject }) {
+  const { language } = useSettings();
+  const copy = AD_BREAK_EVEN_COPY[language];
   // Issue #4 project seam: scoped store per project; legacy flat key folded in on first read then removed.
   const handle = useMemo(() => projectStorage<StoredAdLab>('adlab', project.id, [STORAGE_KEY]), [project.id]);
   const { toast } = useToast();
@@ -134,26 +138,24 @@ export function AdBreakEvenCard({ project }: { project: PatternProject }) {
   const emailCh = result.channels.find((c) => c.channel === 'email_list')!;
   const paidSorted = [...result.channels.filter((c) => c.channel !== 'email_list')]
     .sort((a, b) => (b.expectedDailyProfit ?? -Infinity) - (a.expectedDailyProfit ?? -Infinity));
-  const budgetB = budgetBadge(result.budget.verdict);
+  const budgetB = budgetBadge(result.budget.verdict, language);
   const best = paidSorted[0];
 
   return (
     <Card>
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-lg">
-          <Target className="h-4 w-4" /> Ad Break-Even Lab
+          <Target className="h-4 w-4" /> {copy.title}
         </CardTitle>
         <CardDescription>
-          The ceiling a click is worth before you buy it. Per-channel break-even CPC, ROAS and
-          the 15%/12% Offsite-Ads haircut, benchmarked against the ~$36/$1 email baseline —
-          session-50 market research (Etsy/Meta/Google/Pinterest/Ravelry, 2026).
+          {copy.description}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-5">
         {/* Input grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="space-y-1.5">
-            <Label className="text-xs">Sale completes on</Label>
+            <Label className="text-xs">{copy.saleOn}</Label>
             <select
               value={platform}
               onChange={(e) => {
@@ -167,19 +169,19 @@ export function AdBreakEvenCard({ project }: { project: PatternProject }) {
               ))}
             </select>
           </div>
-          <NumField id="ad-price" label="Pattern price" value={stored.input.price}
+          <NumField id="ad-price" label={copy.price} value={stored.input.price}
             onChange={(n) => patchInput({ price: n })} min={0.01} step={0.5} suffix="USD" />
-          <NumField id="ad-cpc" label="Typical CPC (Etsy digital)" value={stored.input.typicalCpc}
+          <NumField id="ad-cpc" label={copy.cpc} value={stored.input.typicalCpc}
             onChange={(n) => patchInput({ typicalCpc: n })} min={0.01} step={0.05} suffix="$/click" />
-          <NumField id="ad-conv" label="Click → order rate" value={stored.input.clickToOrder}
+          <NumField id="ad-conv" label={copy.conversion} value={stored.input.clickToOrder}
             onChange={(n) => patchInput({ clickToOrder: n })} min={0} max={1} step={0.005} />
-          <NumField id="ad-budget" label="Daily ad budget" value={stored.input.dailyBudget}
+          <NumField id="ad-budget" label={copy.budget} value={stored.input.dailyBudget}
             onChange={(n) => patchInput({ dailyBudget: n })} min={0} max={100} suffix="$/day" />
-          <NumField id="ad-email" label="Email list size" value={stored.input.emailListSize}
+          <NumField id="ad-email" label={copy.listSize} value={stored.input.emailListSize}
             onChange={(n) => patchInput({ emailListSize: n })} step={10} />
-          <NumField id="ad-emailconv" label="Email conversion" value={stored.input.emailConversion}
+          <NumField id="ad-emailconv" label={copy.emailConversion} value={stored.input.emailConversion}
             onChange={(n) => patchInput({ emailConversion: n })} min={0} max={1} step={0.005} />
-          <NumField id="ad-revenue" label="Annual shop revenue" value={stored.input.annualShopRevenue}
+          <NumField id="ad-revenue" label={copy.shopRevenue} value={stored.input.annualShopRevenue}
             onChange={(n) => patchInput({ annualShopRevenue: n })} min={0} step={1000} suffix="$/yr" />
         </div>
 
@@ -191,10 +193,8 @@ export function AdBreakEvenCard({ project }: { project: PatternProject }) {
         }`}>
           <AlertTriangle className="h-3.5 w-3.5 mt-0.5 shrink-0" />
           <p>
-            <strong>Offsite Ads tier: {result.offsiteTier === 'fifteen_pct' ? '15% (under $10k/yr)' : '12% (≥$10k/yr — mandatory for the lifetime of the shop)'}</strong>.
-            Any Etsy sale within 30 days of an Offsite Ad click loses this share on top of the
-            standard fees; it is a margin haircut, not an ad you control. Every channel row below
-            prices this in.
+            <strong>{copy.offsite}: {result.offsiteTier === 'fifteen_pct' ? copy.offsiteUnder : copy.offsiteOver}</strong>.
+            {copy.offsiteBody}
           </p>
         </div>
 
@@ -203,8 +203,8 @@ export function AdBreakEvenCard({ project }: { project: PatternProject }) {
           <div className="flex items-center gap-2">
             <Zap className="h-4 w-4" />
             <div className="text-sm">
-              <span className="font-medium">Budget verdict — </span>
-              <span>{result.budget.reason}</span>
+              <span className="font-medium">{copy.budgetVerdict} — </span>
+              <span>{getAdBudgetReason(language, result.budget.verdict, result.budget.reason)}</span>
             </div>
           </div>
           <Badge variant="outline" className={`whitespace-nowrap border ${budgetB.cls}`}>{budgetB.label}</Badge>
@@ -213,11 +213,11 @@ export function AdBreakEvenCard({ project }: { project: PatternProject }) {
         {/* Channel rows — email baseline first */}
         <div className="space-y-2.5">
           <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            Channels, ordered by projected daily profit
+            {copy.channels}
           </h3>
-          <ChannelRow ch={emailCh} />
+          <ChannelRow ch={emailCh} copy={copy} language={language} />
           {paidSorted.map((ch) => (
-            <ChannelRow key={ch.channel} ch={ch} />
+            <ChannelRow key={ch.channel} ch={ch} copy={copy} language={language} />
           ))}
         </div>
 
@@ -225,7 +225,7 @@ export function AdBreakEvenCard({ project }: { project: PatternProject }) {
         <div className="grid md:grid-cols-2 gap-3">
           <div className="rounded-lg border p-3 space-y-1 text-sm">
             <div className="flex items-center gap-2 font-medium">
-              <Mail className="h-4 w-4" /> Email baseline (one warm send)
+              <Mail className="h-4 w-4" /> {copy.emailBaseline}
             </div>
             <p className="text-xs text-muted-foreground">
               {result.email.expectedOrders} expected orders → {fmt$(result.email.netRevenue)} net · {emailCh.reason}
@@ -233,15 +233,15 @@ export function AdBreakEvenCard({ project }: { project: PatternProject }) {
           </div>
           <div className="rounded-lg border p-3 space-y-1 text-sm">
             <div className="flex items-center gap-2 font-medium">
-              <TrendingUp className="h-4 w-4" /> Best paid channel
+              <TrendingUp className="h-4 w-4" /> {copy.bestPaid}
             </div>
             <p className="text-xs text-muted-foreground">
-              {best ? `${AD_CHANNEL_LABELS[best.channel]} · ${fmt$(best.expectedDailyProfit ?? 0)}/day · ${result.budget.spendableClicksPerDay} clicks/day at ${fmt$(stored.input.typicalCpc)} — anything above ${fmt$(result.budget.wastefulSpendThreshold)}/day is wasted spend.`
-                : 'No paid channel clears at the assumed conversion.'}
+              {best ? `${getAdChannelLabel(language, best.channel, AD_CHANNEL_LABELS[best.channel])} · ${fmt$(best.expectedDailyProfit ?? 0)}/day · ${result.budget.spendableClicksPerDay} clicks/day at ${fmt$(stored.input.typicalCpc)} — anything above ${fmt$(result.budget.wastefulSpendThreshold)}/day is wasted spend.`
+                : copy.noPaid}
               {result.emailBeatsAllAds && (
                 <span className="block mt-1 font-medium text-blue-700">
                   <TrendingDown className="h-3.5 w-3.5 inline mr-1" />
-                  Your email list outsells a month of paid spend — grow it first.
+                  {copy.emailWins}
                 </span>
               )}
             </p>

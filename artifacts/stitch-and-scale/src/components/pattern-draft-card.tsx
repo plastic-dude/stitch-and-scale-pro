@@ -7,6 +7,7 @@ import { PatternProject, ALL_SIZES, GRADING_KEY_LABELS } from '@/lib/grading-eng
 import { renderDraft } from '@/lib/pattern-draft-renderer';
 import { useSettings } from '@/context/SettingsContext';
 import { useToast } from '@/hooks/use-toast';
+import { PATTERN_DRAFT_COPY } from '@/lib/pattern-draft-copy';
 import { estimateYarn } from '@/lib/yarn-estimator';
 
 /**
@@ -62,7 +63,8 @@ A seamless crewneck worked top-down.
 **Yarn:** approx {Yardage} yards (base size).`;
 
 export function PatternDraftCard({ project }: { project: PatternProject }) {
-  const { customStandard } = useSettings();
+  const { customStandard, language } = useSettings();
+  const copy = PATTERN_DRAFT_COPY[language];
   const { toast } = useToast();
   const [draft, setDraft] = React.useState(
     () => (project as any).__draft || '',
@@ -76,15 +78,15 @@ export function PatternDraftCard({ project }: { project: PatternProject }) {
 
   const handleSave = () => {
     (project as any).__draft = draft;
-    toast({ title: 'Draft saved locally', description: 'It reopens with your project.' });
+    toast({ title: copy.saved, description: copy.savedHint });
   };
 
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(rendered);
-      toast({ title: 'Pattern text copied', description: 'Paste it into Ravelry, Etsy, or your tech editor.' });
+      toast({ title: copy.copied, description: copy.copiedHint });
     } catch {
-      toast({ title: 'Copy blocked', description: 'Your browser blocked clipboard access.' });
+      toast({ title: copy.copyBlocked, description: copy.copyBlockedHint });
     }
   };
 
@@ -93,11 +95,10 @@ export function PatternDraftCard({ project }: { project: PatternProject }) {
       <CardHeader>
         <CardTitle className="font-serif flex items-center gap-2">
           <FileText className="w-5 h-5 text-accent" />
-          Pattern Draft
+          {copy.title}
         </CardTitle>
         <CardDescription>
-          Write your pattern in plain text. Placeholders like {`{Size.bust}`} and {`{Gauge.stitches}`}
-          resolve live against your grading tables — change a measurement and the pattern updates with it.
+          {copy.description}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-5">
@@ -125,14 +126,14 @@ export function PatternDraftCard({ project }: { project: PatternProject }) {
             onClick={() => setDraft(SAMPLE_DRAFT)}
             data-testid="button-load-sample-draft"
           >
-            <Type className="w-3.5 h-3.5 mr-1" /> Load sample draft
+            <Type className="w-3.5 h-3.5 mr-1" /> {copy.loadSample}
           </Button>
         </div>
 
         <Textarea
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
-          placeholder="Start typing your pattern text… e.g. Work {Size.XS.bust.stitch} sts across."
+          placeholder={copy.placeholder}
           className="min-h-[160px] resize-y font-mono text-sm"
           data-testid="textarea-pattern-draft"
         />
@@ -140,17 +141,17 @@ export function PatternDraftCard({ project }: { project: PatternProject }) {
         <div className="flex items-center justify-between flex-wrap gap-2">
           <div className="flex gap-2">
             <Button variant="outline" size="sm" onClick={() => setPreview(p => !p)} data-testid="button-toggle-preview">
-              {preview ? 'Hide preview' : 'Show preview'}
+              {preview ? copy.hidePreview : copy.showPreview}
             </Button>
             <Button size="sm" onClick={handleSave} data-testid="button-save-draft">
-              Save Draft
+              {copy.save}
             </Button>
             <Button variant="default" size="sm" className="bg-primary hover:bg-primary/90" onClick={handleCopy} data-testid="button-copy-pattern">
-              <Copy className="w-4 h-4 mr-2" /> Copy Pattern
+              <Copy className="w-4 h-4 mr-2" /> {copy.copyPattern}
             </Button>
           </div>
           <p className="text-xs text-muted-foreground">
-            Numbers are computed from your live grading tables — never typed twice, never out of sync.
+            {copy.footer}
           </p>
         </div>
 

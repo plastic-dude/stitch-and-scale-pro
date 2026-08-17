@@ -5,6 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { AlertTriangle, Flag, Lightbulb, Tent, Users, Plus, Minus } from 'lucide-react';
 import { PatternProject } from '@/lib/grading-engine';
+import { useSettings } from '@/context/SettingsContext';
+import { CONVENTION_BOOTH_COPY } from '@/lib/convention-booth-copy';
 import { projectStorage } from '@/lib/storage-lib';
 import {
   analyzeConventionBooth,
@@ -74,6 +76,8 @@ const verdictColor = (v: string) =>
   'bg-sky-500/15 text-sky-700 border-sky-500/30';
 
 export function ConventionBoothLabCard({ project }: { project: PatternProject }) {
+  const { language } = useSettings();
+  const copyText = CONVENTION_BOOTH_COPY[language];
   const handle = useMemo(() => projectStorage<StoredState>('booth', project.id, [STORAGE_KEY]), [project.id]);
   const [input, setInput] = useState<ConventionBoothInput>(() => loadStored(handle));
 
@@ -100,54 +104,54 @@ export function ConventionBoothLabCard({ project }: { project: PatternProject })
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-base"><Tent className="size-4" />Convention Booth Lab</CardTitle>
-        <CardDescription>Should this show be worth the table fee, the travel, and the inventory hours? Models foot traffic × 1-2% per-vendor conversion across worst/realistic/best scenarios, the full fixed-cost stack, inventory knitting time at your opportunity rate, and the email-list long tail. Unlike craft-show trackers that only log sales after, this is a pre-commitment decision tool — the 7x rule and the honest "skip" verdict built in.</CardDescription>
+        <CardTitle className="flex items-center gap-2 text-base"><Tent className="size-4" />{copyText.title}</CardTitle>
+        <CardDescription>{copyText.description}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <section className="space-y-3">
-          <h3 className="text-sm font-semibold flex items-center gap-1.5"><Users className="size-4" />Show costs & traffic</h3>
+          <h3 className="text-sm font-semibold flex items-center gap-1.5"><Users className="size-4" />{copyText.costsTraffic}</h3>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
-            <NumField id="cb-booth" label="Booth fee" value={input.showCosts.boothFee} onChange={n => setCosts('boothFee', n)} suffix="$" />
-            <NumField id="cb-app" label="Application fee" value={input.showCosts.applicationFee} onChange={n => setCosts('applicationFee', n)} suffix="$" />
-            <NumField id="cb-travel" label="Travel & lodging" value={input.showCosts.travelLodging} onChange={n => setCosts('travelLodging', n)} suffix="$" />
-            <NumField id="cb-display" label="Display & packing" value={input.showCosts.displayPackingCost} onChange={n => setCosts('displayPackingCost', n)} suffix="$" />
-            <NumField id="cb-days" label="Show days" value={input.days} onChange={n => set('days', Math.max(1, n))} min={1} />
+            <NumField id="cb-booth" label={copyText.boothFee} value={input.showCosts.boothFee} onChange={n => setCosts('boothFee', n)} suffix="$" />
+            <NumField id="cb-app" label={copyText.applicationFee} value={input.showCosts.applicationFee} onChange={n => setCosts('applicationFee', n)} suffix="$" />
+            <NumField id="cb-travel" label={copyText.travel} value={input.showCosts.travelLodging} onChange={n => setCosts('travelLodging', n)} suffix="$" />
+            <NumField id="cb-display" label={copyText.display} value={input.showCosts.displayPackingCost} onChange={n => setCosts('displayPackingCost', n)} suffix="$" />
+            <NumField id="cb-days" label={copyText.showDays} value={input.days} onChange={n => set('days', Math.max(1, n))} min={1} />
           </div>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
-            <NumField id="cb-shoppers" label="Shoppers / day" value={input.shoppersPerDay} onChange={n => set('shoppersPerDay', Math.max(0, n))} />
-            <NumField id="cb-conv-w" label="Conversion worst" value={input.conversionWorst} onChange={n => set('conversionWorst', n)} min={0} max={100} step={0.25} suffix="%" />
-            <NumField id="cb-conv-r" label="Conversion realistic" value={input.conversionRealistic} onChange={n => set('conversionRealistic', n)} min={0} max={100} step={0.25} suffix="%" />
-            <NumField id="cb-conv-b" label="Conversion best" value={input.conversionBest} onChange={n => set('conversionBest', n)} min={0} max={100} step={0.25} suffix="%" />
-            <NumField id="cb-hours" label="Prep + setup + teardown hrs" value={input.prepSetupTeardownHours} onChange={n => set('prepSetupTeardownHours', n)} />
+            <NumField id="cb-shoppers" label={copyText.shoppers} value={input.shoppersPerDay} onChange={n => set('shoppersPerDay', Math.max(0, n))} />
+            <NumField id="cb-conv-w" label={copyText.conversionWorst} value={input.conversionWorst} onChange={n => set('conversionWorst', n)} min={0} max={100} step={0.25} suffix="%" />
+            <NumField id="cb-conv-r" label={copyText.conversionRealistic} value={input.conversionRealistic} onChange={n => set('conversionRealistic', n)} min={0} max={100} step={0.25} suffix="%" />
+            <NumField id="cb-conv-b" label={copyText.conversionBest} value={input.conversionBest} onChange={n => set('conversionBest', n)} min={0} max={100} step={0.25} suffix="%" />
+            <NumField id="cb-hours" label={copyText.prepHours} value={input.prepSetupTeardownHours} onChange={n => set('prepSetupTeardownHours', n)} />
           </div>
           <p className="text-xs text-muted-foreground italic">Traffic heuristics: {SHOW_SIZE_HINTS.small} · {SHOW_SIZE_HINTS.medium} · {SHOW_SIZE_HINTS.large}. Ask the organizer — it is the single biggest number in this math. Industry per-vendor conversion averages 1-2% of show footfall.</p>
         </section>
 
         <section className="space-y-3">
-          <h3 className="text-sm font-semibold flex items-center gap-1.5"><Users className="size-4" />Product mix at the booth</h3>
+          <h3 className="text-sm font-semibold flex items-center gap-1.5"><Users className="size-4" />{copyText.productMix}</h3>
           <div className="space-y-2">
             {input.mix.map((m, idx) => (
               <div key={idx} className="grid grid-cols-1 gap-2 md:grid-cols-12 items-end border rounded-md p-2">
                 <div className="md:col-span-3">
-                  <Label className="text-xs">Item</Label>
+                  <Label className="text-xs">{copyText.item}</Label>
                   <Input value={m.label} onChange={e => updateMix(idx, { label: e.target.value })} className="text-sm h-8" />
                 </div>
                 <div className="md:col-span-2">
-                  <Label className="text-xs">Price</Label>
+                  <Label className="text-xs">{copyText.price}</Label>
                   <Input type="number" min={0} value={m.price} onChange={e => {
                     const n = parseFloat(e.target.value);
                     if (Number.isFinite(n)) updateMix(idx, { price: n });
                   }} className="text-sm h-8" />
                 </div>
                 <div className="md:col-span-2">
-                  <Label className="text-xs">Share of sales</Label>
+                  <Label className="text-xs">{copyText.share}</Label>
                   <Input type="number" min={0} max={100} step={1} value={m.share} onChange={e => {
                     const n = parseFloat(e.target.value);
                     if (Number.isFinite(n)) updateMix(idx, { share: n });
                   }} className="text-sm h-8" />
                 </div>
                 <div className="md:col-span-2">
-                  <Label className="text-xs">Hours / unit</Label>
+                  <Label className="text-xs">{copyText.hoursUnit}</Label>
                   <Input type="number" min={0} step={0.5} value={m.hoursPerUnit} onChange={e => {
                     const n = parseFloat(e.target.value);
                     if (Number.isFinite(n)) updateMix(idx, { hoursPerUnit: n });
@@ -165,34 +169,34 @@ export function ConventionBoothLabCard({ project }: { project: PatternProject })
             ))}
           </div>
           <div className={`grid grid-cols-2 gap-3 md:grid-cols-4 text-xs ${totalMixShare !== 100 ? 'text-amber-600' : 'text-muted-foreground'}`}>
-            <div>Mix share total: <span className="font-semibold">{totalMixShare}%</span>{totalMixShare !== 100 ? ' (not 100%)' : ''}</div>
-            <div>Opportunity rate: ${input.hourlyRate}/hr</div>
-            <div>Units available: {input.unitsAvailable}</div>
-            <div>Card fee: {input.cardFeePct}%</div>
+            <div>{copyText.mixTotal}: <span className="font-semibold">{totalMixShare}%</span>{totalMixShare !== 100 ? ` (${copyText.not100})` : ''}</div>
+            <div>{copyText.opportunity}: ${input.hourlyRate}/hr</div>
+            <div>{copyText.units}: {input.unitsAvailable}</div>
+            <div>{copyText.cardFee}: {input.cardFeePct}%</div>
           </div>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            <NumField id="cb-rate" label="Opportunity rate" value={input.hourlyRate} onChange={n => set('hourlyRate', n)} suffix="$/hr" />
-            <NumField id="cb-units" label="Units available" value={input.unitsAvailable} onChange={n => set('unitsAvailable', Math.max(1, n))} min={1} />
-            <NumField id="cb-card" label="Card processing fee" value={input.cardFeePct} onChange={n => set('cardFeePct', n)} suffix="%" step={0.1} />
-            <NumField id="cb-captures" label="Email captures expected" value={input.emailCaptures} onChange={n => set('emailCaptures', Math.max(0, n))} />
+            <NumField id="cb-rate" label={copyText.opportunity} value={input.hourlyRate} onChange={n => set('hourlyRate', n)} suffix="$/hr" />
+            <NumField id="cb-units" label={copyText.units} value={input.unitsAvailable} onChange={n => set('unitsAvailable', Math.max(1, n))} min={1} />
+            <NumField id="cb-card" label={copyText.cardFee} value={input.cardFeePct} onChange={n => set('cardFeePct', n)} suffix="%" step={0.1} />
+            <NumField id="cb-captures" label={copyText.emailCaptures} value={input.emailCaptures} onChange={n => set('emailCaptures', Math.max(0, n))} />
           </div>
-          <NumField id="cb-followup" label="Follow-up purchase rate (from email list, ~60 days)" value={input.followupConversionPct} onChange={n => set('followupConversionPct', n)} suffix="%" step={1} />
+          <NumField id="cb-followup" label={copyText.followup} value={input.followupConversionPct} onChange={n => set('followupConversionPct', n)} suffix="%" step={1} />
         </section>
 
         <section className="space-y-3">
-          <h3 className="text-sm font-semibold flex items-center gap-1.5"><Users className="size-4" />What the numbers say</h3>
+          <h3 className="text-sm font-semibold flex items-center gap-1.5"><Users className="size-4" />{copyText.numbers}</h3>
           <div className="overflow-x-auto rounded-md border">
             <table className="w-full text-xs">
               <thead className="bg-accent/60 text-muted-foreground">
                 <tr>
-                  <th className="p-2 text-left">Scenario</th>
-                  <th className="p-2 text-right">Shoppers</th>
-                  <th className="p-2 text-right">Customers</th>
-                  <th className="p-2 text-right">Units sold</th>
-                  <th className="p-2 text-right">Revenue</th>
-                  <th className="p-2 text-right">Production cost</th>
-                  <th className="p-2 text-right">Net profit</th>
-                  <th className="p-2 text-right">$/hour</th>
+                  <th className="p-2 text-left">{copyText.scenario}</th>
+                  <th className="p-2 text-right">{copyText.shoppersTable}</th>
+                  <th className="p-2 text-right">{copyText.customers}</th>
+                  <th className="p-2 text-right">{copyText.unitsSold}</th>
+                  <th className="p-2 text-right">{copyText.revenue}</th>
+                  <th className="p-2 text-right">{copyText.production}</th>
+                  <th className="p-2 text-right">{copyText.netProfit}</th>
+                  <th className="p-2 text-right">{copyText.perHour}</th>
                 </tr>
               </thead>
               <tbody>
@@ -212,16 +216,16 @@ export function ConventionBoothLabCard({ project }: { project: PatternProject })
             </table>
           </div>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            <StatBox label="Fixed costs" value={fmt$(result.fixedCosts)} />
-            <StatBox label="Break-even units" value={result.breakEvenUnits === Infinity ? '∞' : result.breakEvenUnits.toLocaleString('en-US')} tone={result.breakEvenUnits <= realistic.sellableUnits ? 'good' : 'warn'} />
-            <StatBox label="7x multiple" value={`${result.sevenXMultiple.toFixed(1)}×`} tone={result.sevenXMultiple >= 7 ? 'good' : result.sevenXMultiple >= 5 ? 'warn' : 'bad'} />
-            <StatBox label="Email long-tail EV" value={fmt$(realistic.emailLongTail)} />
+            <StatBox label={copyText.fixedCosts} value={fmt$(result.fixedCosts)} />
+            <StatBox label={copyText.breakEven} value={result.breakEvenUnits === Infinity ? '∞' : result.breakEvenUnits.toLocaleString('en-US')} tone={result.breakEvenUnits <= realistic.sellableUnits ? 'good' : 'warn'} />
+            <StatBox label={copyText.multiple7} value={`${result.sevenXMultiple.toFixed(1)}×`} tone={result.sevenXMultiple >= 7 ? 'good' : result.sevenXMultiple >= 5 ? 'warn' : 'bad'} />
+            <StatBox label={copyText.emailEV} value={fmt$(realistic.emailLongTail)} />
           </div>
         </section>
 
         {result.flags.length > 0 && (
           <section className="space-y-2">
-            <h3 className="text-sm font-semibold flex items-center gap-1.5"><Flag className="size-4" />Watch-outs</h3>
+            <h3 className="text-sm font-semibold flex items-center gap-1.5"><Flag className="size-4" />{copyText.watchOuts}</h3>
             <div className="flex flex-wrap gap-2">
               {result.flags.map(f => (
                 <Badge key={f.code} variant="outline" className="border-amber-500/40 bg-amber-500/10 text-amber-700 gap-1.5 py-1.5">

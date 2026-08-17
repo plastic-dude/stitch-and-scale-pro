@@ -23,6 +23,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { ShieldCheck, ShieldAlert, ClipboardCopy, Lock, AlertTriangle, CalendarDays, Search } from 'lucide-react';
 import { PatternProject } from '@/lib/grading-engine';
+import { useSettings } from '@/context/SettingsContext';
+import { COPYRIGHT_COPY } from '@/lib/copyright-copy';
 import {
   analyzeProtection,
   buildDmcaNotice,
@@ -101,6 +103,8 @@ function dateField(
 
 export function CopyrightProtectionCard({ project }: { project: PatternProject }) {
   const { toast } = useToast();
+  const { language } = useSettings();
+  const copy = COPYRIGHT_COPY[language];
   const stored = React.useMemo(() => loadStored(project.id), [project.id]);
   const [monthlyPatternCopies, setMonthlyPatternCopies] = React.useState<number>(
     stored?.monthlyPatternCopies ?? DEFAULT_PROTECT.monthlyPatternCopies
@@ -179,12 +183,12 @@ export function CopyrightProtectionCard({ project }: { project: PatternProject }
   const toggleTerm = (k: keyof typeof DEFAULT_LICENSE_TERMS) =>
     setLicenseTerms(prev => ({ ...prev, [k]: !prev[k] }));
 
-  const copyText = async (text: string, title: string) => {
+  const copyToClipboard = async (text: string, title: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      toast({ title, description: 'Ready to paste into an email, form, or forum.' });
+      toast({ title, description: copy.copied });
     } catch {
-      toast({ title: 'Copy failed', description: 'Select the text manually.' });
+      toast({ title: copy.copyFailed, description: copy.manual });
     }
   };
 
@@ -218,38 +222,36 @@ export function CopyrightProtectionCard({ project }: { project: PatternProject }
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-base">
-          <ShieldCheck className="w-4 h-4" /> Protect — copyright protection planner
+          <ShieldCheck className="w-4 h-4" /> {copy.title}
         </CardTitle>
         <CardDescription>
-          Your leak budget, license strength, prevention stack, and takedown ladder in one view. Etsy removed
-          346,000+ counterfeit listings in a single year — the long tail cannot absorb lost sales. Price the
-          fight before you start it.
+          {copy.description}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-5">
         {/* Verdict */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <div className="rounded-lg border border-border p-3">
-            <p className="text-[11px] text-muted-foreground uppercase tracking-wide">Readiness</p>
+            <p className="text-[11px] text-muted-foreground uppercase tracking-wide">{copy.readiness}</p>
             <Badge className={'uppercase mt-1 ' + (result.verdict === 'protected' ? 'bg-accent text-accent-foreground' : result.verdict === 'patch' ? 'bg-amber-500 text-white' : 'bg-destructive text-destructive-foreground')}>
               {result.verdict}
             </Badge>
           </div>
           <div className="rounded-lg border border-border p-3">
-            <p className="text-[11px] text-muted-foreground uppercase tracking-wide">Leak exposure / yr (gross)</p>
+            <p className="text-[11px] text-muted-foreground uppercase tracking-wide">{copy.exposure}</p>
             <p className={'text-lg font-semibold ' + (result.exposure.expectedLostNetPerYear > 0 ? 'text-destructive' : 'text-accent')}>
               {fmt$(result.exposure.leakExposurePerYear)}
             </p>
           </div>
           <div className="rounded-lg border border-border p-3">
-            <p className="text-[11px] text-muted-foreground uppercase tracking-wide">License strength</p>
+            <p className="text-[11px] text-muted-foreground uppercase tracking-wide">{copy.strength}</p>
             <div className="flex items-center gap-2 mt-1">
               <p className="text-lg font-semibold">{result.licenseAudit.score}</p>
               <Badge variant="secondary" className="uppercase">{licenseStrengthLabel(result.licenseAudit.score)}</Badge>
             </div>
           </div>
           <div className="rounded-lg border border-border p-3">
-            <p className="text-[11px] text-muted-foreground uppercase tracking-wide">Prevention score</p>
+            <p className="text-[11px] text-muted-foreground uppercase tracking-wide">{copy.prevention}</p>
             <p className="text-lg font-semibold">{result.prevention.preventionScore}/100</p>
           </div>
         </div>
@@ -271,20 +273,20 @@ export function CopyrightProtectionCard({ project }: { project: PatternProject }
 
         {/* Exposure inputs */}
         <div className="space-y-2">
-          <p className="text-xs font-medium">Leak exposure — price the fight</p>
+          <p className="text-xs font-medium">{copy.exposureSection}</p>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-            {num(monthlyPatternCopies, setMonthlyPatternCopies, 'Copies sold / month', 'All channels, one pattern')}
-            {num(avgPrice, setAvgPrice, 'Average price', '$5–12 pattern band', 0, 200, 0.01)}
-            {num(channelFeePct, setChannelFeePct, 'Platform fee', 'Etsy 6.5% + 3% ≈ 15% with card', 0, 1, 0.001)}
-            {num(monthlyMarketingHours, setMonthlyMarketingHours, 'Marketing hrs / month', 'Sunk cost — not counted')}
-            {num(designRatePerHour, setDesignRatePerHour, 'Your rate / hr', 'What a takedown costs you', 5, 300, 1)}
+            {num(monthlyPatternCopies, setMonthlyPatternCopies, copy.copies, 'All channels, one pattern')}
+            {num(avgPrice, setAvgPrice, copy.price, '$5–12 pattern band', 0, 200, 0.01)}
+            {num(channelFeePct, setChannelFeePct, copy.platformFee, 'Etsy 6.5% + 3% ≈ 15% with card', 0, 1, 0.001)}
+            {num(monthlyMarketingHours, setMonthlyMarketingHours, copy.marketingHours, 'Sunk cost — not counted')}
+            {num(designRatePerHour, setDesignRatePerHour, copy.rate, 'What a takedown costs you', 5, 300, 1)}
           </div>
         </div>
 
         {/* Prevention stack */}
         <div className="space-y-2">
           <p className="text-xs font-medium flex items-center gap-1.5">
-            <Lock className="w-3.5 h-3.5" /> Prevention stack
+            <Lock className="w-3.5 h-3.5" /> {copy.preventionStack}
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5">
             {(
@@ -308,16 +310,16 @@ export function CopyrightProtectionCard({ project }: { project: PatternProject }
 
         {/* License terms */}
         <div className="space-y-2">
-          <p className="text-xs font-medium">License boundaries — draw the lines before a copy does</p>
+          <p className="text-xs font-medium">{copy.boundaries}</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5">
             {(
               [
-                ['personalUseOnly', 'Personal / non-commercial use only'],
-                ['finishedItemsMayBeSold', 'Buyers may sell finished items'],
-                ['massProductionAllowed', 'Mass production / commercial resale allowed'],
-                ['translationAllowed', 'Translations / derivative languages allowed'],
-                ['teachingAllowed', 'Teaching / classroom use allowed'],
-                ['derivativeChartsAllowed', 'Derivative charts allowed'],
+                ['personalUseOnly', copy.personal],
+                ['finishedItemsMayBeSold', copy.finished],
+                ['massProductionAllowed', copy.mass],
+                ['translationAllowed', copy.translations],
+                ['teachingAllowed', copy.teaching],
+                ['derivativeChartsAllowed', copy.derivative],
               ] as const
             ).map(([k, label]) => (
               <label key={k} className="flex items-start gap-2 text-xs rounded-md border border-border/60 p-2 cursor-pointer hover:border-primary/40">
@@ -341,16 +343,16 @@ export function CopyrightProtectionCard({ project }: { project: PatternProject }
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <p className="text-xs font-medium flex items-center gap-1.5">
-              <Search className="w-3.5 h-3.5" /> Monitor watch words
+              <Search className="w-3.5 h-3.5" /> {copy.monitor}
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
               <div className="space-y-1">
-                <Label className="text-xs text-muted-foreground">Pattern name</Label>
-                <Input value={patternName} onChange={e => setPatternName(e.target.value)} placeholder="e.g. Calyx Pullover" aria-label="Pattern name" />
+                <Label className="text-xs text-muted-foreground">{copy.patternName}</Label>
+                <Input value={patternName} onChange={e => setPatternName(e.target.value)} placeholder={copy.patternName} aria-label={copy.patternName} />
               </div>
               <div className="space-y-1">
-                <Label className="text-xs text-muted-foreground">Your shop / designer name</Label>
-                <Input value={designerName} onChange={e => setDesignerName(e.target.value)} placeholder="Optional — boosts coverage" aria-label="Designer name" />
+                <Label className="text-xs text-muted-foreground">{copy.designerName}</Label>
+                <Input value={designerName} onChange={e => setDesignerName(e.target.value)} placeholder={copy.optional} aria-label={copy.designerName} />
               </div>
             </div>
             <div className="space-y-1">
@@ -358,21 +360,21 @@ export function CopyrightProtectionCard({ project }: { project: PatternProject }
                 <button
                   key={i}
                   type="button"
-                  onClick={() => copyText(w, 'Watch word copied')}
+                  onClick={() => copyToClipboard(w, copy.copyWatch ?? '')}
                   className="w-full text-left text-xs font-mono rounded-md border border-border/60 bg-secondary/30 px-2 py-1.5 hover:border-primary/40"
-                  title="Copy watch word"
+                  title={copy.copyWatch}
                 >
                   {w}
                 </button>
               ))}
             </div>
             <p className="text-[11px] text-muted-foreground">
-              Run these on Google weekly and Pinterest monthly. Copy any term to search.
+              {copy.searchWeekly}
             </p>
           </div>
 
           <div className="space-y-2">
-            <p className="text-xs font-medium">Evidence pack — assemble before you need it</p>
+            <p className="text-xs font-medium">{copy.evidenceHeading}</p>
             <div className="space-y-1">
               {evidence.map((e: string, i: number) => (
                 <div key={i} className="text-xs rounded-md border border-border/60 px-2 py-1.5">
@@ -381,8 +383,7 @@ export function CopyrightProtectionCard({ project }: { project: PatternProject }
               ))}
             </div>
             <p className="text-[11px] text-muted-foreground">
-              A DMCA notice without exact URLs of your original and the copy gets rejected. Screenshots move
-              or disappear — capture them now.
+              {copy.evidenceHint}
             </p>
           </div>
         </div>
@@ -390,22 +391,22 @@ export function CopyrightProtectionCard({ project }: { project: PatternProject }
         {/* Escalation ladder */}
         <div className="space-y-2">
           <p className="text-xs font-medium flex items-center gap-1.5">
-            <ShieldAlert className="w-3.5 h-3.5" /> Escalation ladder
+            <ShieldAlert className="w-3.5 h-3.5" /> {copy.escalation}
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-            {dateField(leakDiscovered, setLeakDiscovered, 'Leak discovered (date)', 'Starts the ladder — step 1: polite contact comes first, but clock it')}
-            {dateField(counterNoticeDeadline, setCounterNoticeDeadline, 'Counter-notice deadline', '10 business days from counter-notice — miss it and the listing is reinstated')}
+            {dateField(leakDiscovered, setLeakDiscovered, copy.leakDate ?? '', copy.leakHint ?? '')}
+            {dateField(counterNoticeDeadline, setCounterNoticeDeadline, copy.counterDeadline ?? '', copy.counterHint ?? '')}
             <label className="flex items-start gap-2 text-xs rounded-md border border-border/60 p-2 cursor-pointer hover:border-primary/40">
-              <Checkbox checked={infringerContactedPolitely} onCheckedChange={() => setInfringerContactedPolitely(!infringerContactedPolitely)} aria-label="Contacted the seller politely" />
-              <span className="text-muted-foreground">Step 1 done — polite private contact sent</span>
+              <Checkbox checked={infringerContactedPolitely} onCheckedChange={() => setInfringerContactedPolitely(!infringerContactedPolitely)} aria-label={copy.contactDone} />
+              <span className="text-muted-foreground">{copy.contactDone}</span>
             </label>
             <div className="space-y-1">
-              <Label className="text-xs text-muted-foreground">Takedown channel</Label>
+              <Label className="text-xs text-muted-foreground">{copy.takedownChannel}</Label>
               <select
                 value={platformForDmca}
                 onChange={e => setPlatformForDmca(e.target.value as DmcaPlatform)}
                 className="w-full h-9 rounded-md border border-input bg-background px-2 text-sm"
-                aria-label="Takedown channel"
+                aria-label={copy.takedownChannel}
               >
                 {(Object.keys(DMCA_PLATFORM_LABELS) as DmcaPlatform[]).map(p => (
                   <option key={p} value={p}>
@@ -439,7 +440,7 @@ export function CopyrightProtectionCard({ project }: { project: PatternProject }
             <p className="text-xs font-medium flex items-center gap-1.5">
               <ClipboardCopy className="w-3.5 h-3.5" /> DMCA notice — {DMCA_PLATFORM_LABELS[platformForDmca]}
             </p>
-            <Button variant="outline" size="sm" onClick={() => copyText(result.dmcaNotice, 'DMCA notice copied')}>
+            <Button variant="outline" size="sm" onClick={() => copyToClipboard(result.dmcaNotice, 'DMCA notice copied')}>
               <ClipboardCopy className="w-3.5 h-3.5 mr-1" /> Copy notice
             </Button>
           </div>

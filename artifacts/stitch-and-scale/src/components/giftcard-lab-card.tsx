@@ -8,6 +8,8 @@ import {
   type GiftCardResult,
 } from "@/lib/giftcard-lab";
 import type { PatternProject } from "@/lib/grading-engine";
+import { useSettings } from "@/context/SettingsContext";
+import { GIFTCARD_COPY, giftCardFlagTitle, giftCardVerdictLabel } from "@/lib/giftcard-copy";
 import { projectStorage } from "@/lib/storage-lib";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -125,6 +127,8 @@ function effectiveEscheatTake(input: GiftCardInput): number {
 }
 
 export function GiftCardLabCard({ project }: { project: PatternProject }) {
+  const { language } = useSettings();
+  const copy = GIFTCARD_COPY[language];
   const [input, setInput] = useState<GiftCardInput>(() => loadStored(project));
 
   const result: GiftCardResult = useMemo(() => analyzeGiftCard(input), [input]);
@@ -173,18 +177,13 @@ export function GiftCardLabCard({ project }: { project: PatternProject }) {
           <div className="flex items-start gap-2">
             <Info className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
             <p className="text-xs leading-relaxed text-muted-foreground">
-              Prices your gift-card and store-credit program the honest accounting way: cash-in float vs the
-              liability behind it, ASC 606 proportionate breakage recognition, state escheat takes (100% or 60%
-              of face value — many states exempt merchandise-only credits), the small-balance cash-back laws
-              that convert a $4 balance into a cash payout, and the refund-credit loop that can silently eat
-              the float. Redeemers also spend 20-30% more than face value — that uplift is a real revenue line
-              most sellers never count.
+              {copy.intro}
             </p>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-3">
             <NumField
-              label="Card sales per month"
+              label={copy.cardSales}
               value={input.cardSalesPerMonth}
               step={25}
               hint="New gift cards sold — this is your float."
@@ -192,7 +191,7 @@ export function GiftCardLabCard({ project }: { project: PatternProject }) {
               onChange={(v) => set("cardSalesPerMonth", v)}
             />
             <NumField
-              label="Refund credit issued per month"
+              label={copy.refundCredit}
               value={input.refundCreditPerMonth}
               step={10}
               hint="Store credit given for returns — pure liability, no new cash."
@@ -200,7 +199,7 @@ export function GiftCardLabCard({ project }: { project: PatternProject }) {
               onChange={(v) => set("refundCreditPerMonth", v)}
             />
             <NumField
-              label="Redemption rate"
+              label={copy.redemption}
               value={input.redemptionRate}
               step={0.01}
               max={1}
@@ -209,7 +208,7 @@ export function GiftCardLabCard({ project }: { project: PatternProject }) {
               onChange={(v) => set("redemptionRate", Math.min(1, v))}
             />
             <NumField
-              label="Spend uplift when redeeming"
+              label={copy.uplift}
               value={input.spendUpliftPct}
               step={0.01}
               max={1}
@@ -218,7 +217,7 @@ export function GiftCardLabCard({ project }: { project: PatternProject }) {
               onChange={(v) => set("spendUpliftPct", Math.min(1, v))}
             />
             <NumField
-              label="Redemption lag"
+              label={copy.lag}
               value={input.redemptionLagMonths}
               step={1}
               hint="Average months between a card sale and its redemption."
@@ -226,7 +225,7 @@ export function GiftCardLabCard({ project }: { project: PatternProject }) {
               onChange={(v) => set("redemptionLagMonths", v)}
             />
             <NumField
-              label="Dormancy / escheat clock"
+              label={copy.dormancy}
               value={input.dormancyMonths}
               step={1}
               hint="Months of inactivity before the balance escheats or expires — typically 3-5 years."
@@ -234,7 +233,7 @@ export function GiftCardLabCard({ project }: { project: PatternProject }) {
               onChange={(v) => set("dormancyMonths", v)}
             />
             <div className="space-y-1.5">
-              <Label className="text-xs font-medium">State escheat treatment</Label>
+              <Label className="text-xs font-medium">{copy.escheat}</Label>
               <Select
                 value={input.escheatMode}
                 onValueChange={(v) =>
@@ -340,33 +339,33 @@ export function GiftCardLabCard({ project }: { project: PatternProject }) {
               className="h-7 gap-1 text-xs"
               onClick={() => persist({ ...DEFAULT_GIFTCARD })}
             >
-              <RefreshCw className="h-3 w-3" /> Reset to demo
+              <RefreshCw className="h-3 w-3" /> {copy.reset}
             </Button>
           </div>
         </CardContent>
       </Card>
 
       <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-5">
-        <StatBox label="Cash collected" value={fmt$(result.totalCashIn)} hint="Card sales minus processing" />
+        <StatBox label={copy.cash} value={fmt$(result.totalCashIn)} hint="Card sales minus processing" />
         <StatBox
-          label="Expected redemptions"
+          label={copy.redemptions}
           value={fmt$(result.expectedRedemptions)}
           hint={`Uplift value ${fmt$(result.upliftValue)}`}
         />
         <StatBox
-          label="Kept breakage"
+          label={copy.breakage}
           value={fmt$(result.keptBreakage)}
           tone={result.escheatSurrender > 0 ? "warn" : "good"}
           hint={`Escheat surrender ${fmt$(result.escheatSurrender)}`}
         />
         <StatBox
-          label="Ending liability"
+          label={copy.liability}
           value={fmt$(result.endingLiability)}
           tone={result.endingLiability > input.cardSalesPerMonth * 4 ? "bad" : "warn"}
           hint={`Peak ${fmt$(result.peakLiability)}`}
         />
         <StatBox
-          label="Recognized profit"
+          label={copy.profit}
           value={fmt$(result.netProgramProfit)}
           tone={result.netProgramProfit >= 0 ? "good" : "bad"}
           hint={`Margin ${result.effectiveMarginPct.toFixed(1)}% of face value`}
@@ -396,7 +395,7 @@ export function GiftCardLabCard({ project }: { project: PatternProject }) {
       <Card>
         <CardContent className="pt-5">
           <div className="mb-3 flex items-center gap-2">
-            <h3 className="text-sm font-semibold">Watch-out flags ({result.flags.length})</h3>
+            <h3 className="text-sm font-semibold">{copy.flags} ({result.flags.length})</h3>
             {highFlags.length > 0 && (
               <span className="rounded-full bg-destructive/10 px-2 py-0.5 text-[11px] font-medium text-destructive">
                 {highFlags.length} high
@@ -405,7 +404,7 @@ export function GiftCardLabCard({ project }: { project: PatternProject }) {
           </div>
           {result.flags.length === 0 ? (
             <p className="flex items-center gap-2 text-xs text-muted-foreground">
-              <BadgeCheck className="h-4 w-4 text-emerald-500" /> No flags — program structure is clean.
+              <BadgeCheck className="h-4 w-4 text-emerald-500" /> {copy.noFlags}
             </p>
           ) : (
             <div className="space-y-2">
@@ -422,7 +421,7 @@ export function GiftCardLabCard({ project }: { project: PatternProject }) {
                     <HelpCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                   )}
                   <p className="text-xs leading-relaxed">
-                    <span className="font-semibold">{f.code} — {f.title}.</span> {f.note}
+                    <span className="font-semibold">{f.code} — {giftCardFlagTitle(language, f.code, f.title)}.</span> {f.note}
                   </p>
                 </div>
               ))}
@@ -451,10 +450,10 @@ export function GiftCardLabCard({ project }: { project: PatternProject }) {
                     : "h-4 w-4 text-destructive"
               }
             />
-            <h3 className="text-sm font-semibold">Verdict</h3>
+            <h3 className="text-sm font-semibold">{copy.verdict}</h3>
           </div>
           <p className={`text-sm font-medium ${verdictTone === "good" ? "text-emerald-700 dark:text-emerald-400" : verdictTone === "warn" ? "text-amber-700 dark:text-amber-400" : "text-destructive"}`}>
-            {result.verdict}
+            {giftCardVerdictLabel(language, result.verdict)}
           </p>
           <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">{result.verdictNote}</p>
           <Separator className="my-3" />

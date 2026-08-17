@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { projectStorage, type ProjectStorageHandle } from '@/lib/storage-lib';
+import { useSettings } from '@/context/SettingsContext';
+import { MEMBERSHIP_COPY } from '@/lib/membership-copy';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -78,6 +80,8 @@ export function MembershipCard({ project }: { project: PatternProject }) {
   // issue #4 project seam: one scoped store per project; the legacy flat key 'mspl-v1' is folded in on first read, then removed.
   const handle = useMemo(() => projectStorage<StoredMembership>('membership', project.id, ['mspl-v1']), [project.id]);
   const { toast } = useToast();
+  const { language } = useSettings();
+  const copyText = MEMBERSHIP_COPY[language];
   const [stored, setStored] = useState(() => loadStored(handle));
 
   useEffect(() => {
@@ -101,9 +105,9 @@ export function MembershipCard({ project }: { project: PatternProject }) {
   const copy = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      toast({ title: 'Copied to clipboard' });
+      toast({ title: copyText.copied });
     } catch {
-      toast({ title: 'Select and copy manually' });
+      toast({ title: copyText.copyManually });
     }
   };
 
@@ -116,39 +120,38 @@ export function MembershipCard({ project }: { project: PatternProject }) {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Users className="h-5 w-5" /> Membership Planner
+          <Users className="h-5 w-5" /> {copyText.title}
         </CardTitle>
         <CardDescription>
-          Thinking about a Patreon-style membership? Model the tiers net of platform fees, the cost of
-          monthly exclusive patterns, and what a parked pattern really costs your shop — before you commit.
+          {copyText.description}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Tiers */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h4 className="text-sm font-semibold">Membership tiers (1–5)</h4>
+            <h4 className="text-sm font-semibold">{copyText.tiers}</h4>
             <Button
               variant="outline"
               size="sm"
               disabled={stored.tiers.length >= 5}
               onClick={addTier}
             >
-              <Plus className="h-4 w-4" /> Add tier
+              <Plus className="h-4 w-4" /> {copyText.addTier}
             </Button>
           </div>
           {stored.tiers.map((tier, index) => (
             <div key={index} className="rounded-lg border bg-muted/30 p-4 space-y-3">
               <div className="flex flex-wrap items-end gap-3">
                 <div className="min-w-24 grow space-y-1.5">
-                  <Label className="text-xs">Tier name</Label>
+                  <Label className="text-xs">{copyText.tierName}</Label>
                   <Input
                     value={tier.name}
                     onChange={(e) => setTier(index, { name: e.target.value })}
                   />
                 </div>
                 <div className="w-20 min-w-20 space-y-1.5">
-                  <Label className="text-xs">Price ($/mo)</Label>
+                  <Label className="text-xs">{copyText.price}</Label>
                   <Input
                     type="number"
                     min={1}
@@ -157,7 +160,7 @@ export function MembershipCard({ project }: { project: PatternProject }) {
                   />
                 </div>
                 <div className="w-20 min-w-20 space-y-1.5">
-                  <Label className="text-xs">Members</Label>
+                  <Label className="text-xs">{copyText.members}</Label>
                   <Input
                     type="number"
                     min={0}
@@ -166,7 +169,7 @@ export function MembershipCard({ project }: { project: PatternProject }) {
                   />
                 </div>
                 <div className="w-20 min-w-20 space-y-1.5">
-                  <Label className="text-xs">Churn %/mo</Label>
+                  <Label className="text-xs">{copyText.churn}</Label>
                   <Input
                     type="number"
                     min={0}
@@ -186,7 +189,7 @@ export function MembershipCard({ project }: { project: PatternProject }) {
                 </Button>
               </div>
               <div className="space-y-1.5">
-                <Label className="text-xs">Perks (one per line)</Label>
+                <Label className="text-xs">{copyText.perks}</Label>
                 <textarea
                   className="flex min-h-14 w-full rounded-md border bg-background px-3 py-2 text-sm"
                   value={tier.perks.join('\n')}
@@ -202,7 +205,7 @@ export function MembershipCard({ project }: { project: PatternProject }) {
         {/* Economics inputs */}
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div className="space-y-1.5">
-            <Label htmlFor="mp-platform">Where you'd self-sell</Label>
+            <Label htmlFor="mp-platform">{copyText.selfSell}</Label>
             <select
               id="mp-platform"
               className="flex h-9 w-full rounded-md border bg-background px-3 py-1 text-sm"
@@ -215,7 +218,7 @@ export function MembershipCard({ project }: { project: PatternProject }) {
             </select>
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="mp-ramp">Ramp to steady state (months)</Label>
+            <Label htmlFor="mp-ramp">{copyText.ramp}</Label>
             <Input
               id="mp-ramp"
               type="number"
@@ -226,7 +229,7 @@ export function MembershipCard({ project }: { project: PatternProject }) {
             />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="mp-prate">Platform rate (%)</Label>
+            <Label htmlFor="mp-prate">{copyText.platformRate}</Label>
             <Input
               id="mp-prate"
               type="number"
@@ -237,7 +240,7 @@ export function MembershipCard({ project }: { project: PatternProject }) {
             />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="mp-pcrate">Processing rate (%)</Label>
+            <Label htmlFor="mp-pcrate">{copyText.processingRate}</Label>
             <Input
               id="mp-pcrate"
               type="number"
@@ -248,7 +251,7 @@ export function MembershipCard({ project }: { project: PatternProject }) {
             />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="mp-eppm">Exclusive patterns / month</Label>
+            <Label htmlFor="mp-eppm">{copyText.exclusivePerMonth}</Label>
             <Input
               id="mp-eppm"
               type="number"
@@ -259,7 +262,7 @@ export function MembershipCard({ project }: { project: PatternProject }) {
             />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="mp-epcost">Pattern production cost ($)</Label>
+            <Label htmlFor="mp-epcost">{copyText.productionCost}</Label>
             <Input
               id="mp-epcost"
               type="number"
@@ -269,7 +272,7 @@ export function MembershipCard({ project }: { project: PatternProject }) {
             />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="mp-eph">Hours per exclusive pattern</Label>
+            <Label htmlFor="mp-eph">{copyText.hoursPerPattern}</Label>
             <Input
               id="mp-eph"
               type="number"
@@ -279,7 +282,7 @@ export function MembershipCard({ project }: { project: PatternProject }) {
             />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="mp-rate">Design rate ($/hr)</Label>
+            <Label htmlFor="mp-rate">{copyText.designRate}</Label>
             <Input
               id="mp-rate"
               type="number"
@@ -289,7 +292,7 @@ export function MembershipCard({ project }: { project: PatternProject }) {
             />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="mp-parked-price">Parked pattern price ($)</Label>
+            <Label htmlFor="mp-parked-price">{copyText.parkedPrice}</Label>
             <Input
               id="mp-parked-price"
               type="number"
@@ -299,7 +302,7 @@ export function MembershipCard({ project }: { project: PatternProject }) {
             />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="mp-parked-sales">Sales lost / month</Label>
+            <Label htmlFor="mp-parked-sales">{copyText.salesLost}</Label>
             <Input
               id="mp-parked-sales"
               type="number"
@@ -309,7 +312,7 @@ export function MembershipCard({ project }: { project: PatternProject }) {
             />
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="mp-parked-horizon">Parked horizon (months)</Label>
+            <Label htmlFor="mp-parked-horizon">{copyText.parkedHorizon}</Label>
             <Input
               id="mp-parked-horizon"
               type="number"
@@ -325,20 +328,20 @@ export function MembershipCard({ project }: { project: PatternProject }) {
         <div className="space-y-3 rounded-lg border bg-muted/40 p-4">
           <div className="flex flex-wrap items-center gap-3">
             <Badge className={`${verdictColor} border text-base px-3 py-1 uppercase`}>{result.verdict}</Badge>
-            <span className="text-sm font-medium">{result.totalMembers} members · ~{result.monthlyChurnedMembers.toFixed(0)} churn/mo</span>
-            <span className="text-sm text-muted-foreground">Breakeven ≈ {result.breakevenMembers} members</span>
+            <span className="text-sm font-medium">{copyText.memberChurn(result.totalMembers, result.monthlyChurnedMembers)}</span>
+            <span className="text-sm text-muted-foreground">{copyText.breakeven(result.breakevenMembers)}</span>
           </div>
           <p className="text-sm text-muted-foreground">{result.verdictNote}</p>
           <div className="grid gap-2 sm:grid-cols-5 text-sm">
-            <div>Gross/mo<div className="font-semibold">{fmt$(result.grossMonthly)}</div></div>
-            <div>Platform fees<div className="font-semibold">{fmt$(result.platformFees)}</div></div>
-            <div>Processing<div className="font-semibold">{fmt$(result.processingFees)}</div></div>
-            <div>Net/mo<div className="font-semibold">{fmt$(result.netMonthly)}</div></div>
-            <div>Production<div className="font-semibold">{fmt$(result.productionCost)}</div></div>
+            <div>{copyText.gross}<div className="font-semibold">{fmt$(result.grossMonthly)}</div></div>
+            <div>{copyText.platformFees}<div className="font-semibold">{fmt$(result.platformFees)}</div></div>
+            <div>{copyText.processing}<div className="font-semibold">{fmt$(result.processingFees)}</div></div>
+            <div>{copyText.net}<div className="font-semibold">{fmt$(result.netMonthly)}</div></div>
+            <div>{copyText.production}<div className="font-semibold">{fmt$(result.productionCost)}</div></div>
           </div>
           <div className="text-sm">
             <span className={result.profitMonthly >= 0 ? 'text-emerald-700' : 'text-destructive'}>
-              Profit/mo after production: <span className="font-semibold">{fmt$(result.profitMonthly)}</span>
+              {copyText.profit} <span className="font-semibold">{fmt$(result.profitMonthly)}</span>
             </span>
             {result.cannibalization.parkedLoss > 0 && (
               <span className="ml-2 text-muted-foreground">
@@ -351,9 +354,9 @@ export function MembershipCard({ project }: { project: PatternProject }) {
 
         {/* Flags */}
         <div className="space-y-2">
-          <h4 className="text-sm font-semibold">Watch-outs</h4>
+          <h4 className="text-sm font-semibold">{copyText.watchouts}</h4>
           {result.flags.length === 0 && (
-            <p className="text-sm text-muted-foreground">Tier structure looks healthy — no red flags.</p>
+            <p className="text-sm text-muted-foreground">{copyText.healthy}</p>
           )}
           {result.flags.map((f) => (
             <div key={f} className="rounded-md border bg-background p-3 text-sm text-muted-foreground">
@@ -365,13 +368,13 @@ export function MembershipCard({ project }: { project: PatternProject }) {
         {/* Tier page copy */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <h4 className="text-sm font-semibold">Tier page copy (paste-ready)</h4>
+            <h4 className="text-sm font-semibold">{copyText.tierCopy}</h4>
             <Button variant="outline" size="sm" onClick={() => copy(result.tierCopy)}>
-              <ClipboardCopy className="h-4 w-4" /> Copy
+              <ClipboardCopy className="h-4 w-4" /> {copyText.copy}
             </Button>
           </div>
           <pre className="whitespace-pre-wrap rounded-md border bg-background p-4 text-sm">
-            {result.tierCopy || 'Add tiers to generate copy.'}
+            {result.tierCopy || copyText.addTiers}
           </pre>
         </div>
       </CardContent>

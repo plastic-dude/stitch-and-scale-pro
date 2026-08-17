@@ -36,6 +36,7 @@
  *   D-10 1080x1080, social-ready.
  */
 import { fmtMoney } from "./receipt-lab";
+import { getBragCardCopy, type BragCardCopy } from "./brag-copy";
 import type { MonthlyLedgerRow } from "./receipt-lab";
 
 export interface BragCardInput {
@@ -152,11 +153,11 @@ export interface BragCaption {
 }
 
 /** One hero number + its unit per highlight template (D-1). */
-export function heroLine(stats: BragStats, currency: string, template: BragCardTemplate): { big: string; unit: string } {
+export function heroLine(stats: BragStats, currency: string, template: BragCardTemplate, copy: BragCardCopy = getBragCardCopy('en')): { big: string; unit: string } {
   if (template === "income") return { big: fmtMoney(stats.totalRevenue, currency), unit: "" };
-  if (template === "sales") return { big: String(stats.totalSales), unit: "sales" };
-  if (template === "published") return { big: String(stats.publishedCount), unit: "published" };
-  return { big: String(stats.profitMonths), unit: "profitable months" };
+  if (template === "sales") return { big: String(stats.totalSales), unit: copy.sales };
+  if (template === "published") return { big: String(stats.publishedCount), unit: copy.published };
+  return { big: String(stats.profitMonths), unit: copy.profitableMonths };
 }
 
 /**
@@ -164,35 +165,35 @@ export function heroLine(stats: BragStats, currency: string, template: BragCardT
  * designer posting — never generic SaaS copy, never claiming the founder
  * knits (Rule 1). All numbers come straight from the designer's ledger.
  */
-export function buildBragCaption(stats: BragStats, currency: string, template: BragCardTemplate, studioName: string): BragCaption {
+export function buildBragCaption(stats: BragStats, currency: string, template: BragCardTemplate, studioName: string, copy: BragCardCopy = getBragCardCopy('en')): BragCaption {
   const rev = fmtMoney(stats.totalRevenue, currency);
   const perSale = fmtMoney(stats.revenuePerSale, currency);
-  const best = stats.bestMonth ? `best month: ${fmtMoney(stats.bestMonthProfit, currency)}` : "";
+  const best = stats.bestMonth ? `${copy.bestMonth}: ${fmtMoney(stats.bestMonthProfit, currency)}` : "";
 
   switch (template) {
     case "income":
       return {
-        headline: `${rev} in pattern sales`,
-        subline: `${stats.totalSales} sales${best ? ` · ${best}` : ""}`,
-        caption: `${studioName ? studioName + ": " : ""}${rev} earned from my own patterns — ${stats.totalSales} sales at an average of ${perSale} each. Every number here came out of my ledger, not a guess. #knitwearnetwork #indiedesigner #handmadewithnumbers`,
+        headline: `${rev} ${copy.patternSales}`,
+        subline: `${stats.totalSales} ${copy.sales}${best ? ` · ${best}` : ""}`,
+        caption: `${studioName ? studioName + ": " : ""}${rev} ${copy.earned} — ${stats.totalSales} ${copy.sales}, ${perSale} ${copy.averagePerSale}.`,
       };
     case "sales":
       return {
-        headline: `${stats.totalSales} sales, one studio`,
-        subline: `${perSale} average per sale${best ? ` · ${best}` : ""}`,
-        caption: `${studioName ? studioName + ": " : ""}${stats.totalSales} sales of patterns I designed — ${perSale} on average, ${rev} total. Small studio, honest books. #knitwear #indiedesigner #makersmove`,
+        headline: `${stats.totalSales} ${copy.sales}, ${copy.oneStudio}`,
+        subline: `${perSale} ${copy.averagePerSale}${best ? ` · ${best}` : ""}`,
+        caption: `${studioName ? studioName + ": " : ""}${stats.totalSales} ${copy.sales}, ${rev} ${copy.total}.`,
       };
     case "streak":
       return {
-        headline: `${stats.profitMonths} months, all profitable`,
-        subline: `on record · ${rev} total${best ? ` · ${best}` : ""}`,
-        caption: `${studioName ? studioName + ": " : ""}${stats.profitMonths} months in a row finishing above zero. ${rev} on the books and still designing. This is what a real design studio looks like. #knitwearnetwork #profitablemaker`,
+        headline: `${stats.profitMonths} ${copy.monthsAllProfitable}`,
+        subline: `${copy.onRecord} · ${rev} ${copy.total}${best ? ` · ${best}` : ""}`,
+        caption: `${studioName ? studioName + ": " : ""}${copy.streakCaption.replace('{count}', String(stats.profitMonths)).replace('{total}', rev)}`,
       };
     case "published":
       return {
-        headline: `${stats.publishedCount} patterns published`,
-        subline: `${rev} earned · ${stats.totalSales} sales`,
-        caption: `${studioName ? studioName + ": " : ""}${stats.publishedCount} published patterns, ${rev} earned, ${stats.totalSales} sales. The portfolio is the résumé. #knitwear #indiedesigner #patternpublisher`,
+        headline: `${stats.publishedCount} ${copy.publishedHeadline}`,
+        subline: `${rev} ${copy.earned} · ${stats.totalSales} ${copy.sales}`,
+        caption: `${studioName ? studioName + ": " : ""}${copy.publishedCaption.replace('{count}', String(stats.publishedCount)).replace('{revenue}', rev).replace('{sales}', String(stats.totalSales))}`,
       };
   }
 }
@@ -216,11 +217,11 @@ function knitPatternDefs(accent: string): string {
   </defs>`;
 }
 
-function footerBlock(stats: BragStats, currency: string, rule: string, inkSoft: string): string {
+function footerBlock(stats: BragStats, currency: string, rule: string, inkSoft: string, copy: BragCardCopy = getBragCardCopy('en')): string {
   const items = [
-    stats.publishedCount > 0 ? `${stats.publishedCount} published design${stats.publishedCount === 1 ? "" : "s"}` : "",
-    `${stats.totalSales} sales`,
-    `${stats.profitRatio}% profitable months`,
+    stats.publishedCount > 0 ? `${stats.publishedCount} ${copy.published}` : "",
+    `${stats.totalSales} ${copy.sales}`,
+    `${stats.profitRatio}% ${copy.profitableMonths}`,
   ]
     .filter(Boolean)
     .join("   ·   ");
@@ -231,10 +232,10 @@ function footerBlock(stats: BragStats, currency: string, rule: string, inkSoft: 
 
 /* ---------- per-style SVG composers ---------- */
 
-function styleNavy(stats: BragStats, currency: string, template: BragCardTemplate, studioName: string, accent: string): string {
+function styleNavy(stats: BragStats, currency: string, template: BragCardTemplate, studioName: string, accent: string, copy: BragCardCopy = getBragCardCopy('en')): string {
   const p = CARD_BASE_INK.navy;
-  const h = heroLine(stats, currency, template);
-  const c = buildBragCaption(stats, currency, template, studioName);
+  const h = heroLine(stats, currency, template, copy);
+  const c = buildBragCaption(stats, currency, template, studioName, copy);
   const line = h.unit ? `${h.big} ${h.unit}` : h.big;
   return `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080">
   ${knitPatternDefs(accent)}
@@ -245,15 +246,15 @@ function styleNavy(stats: BragStats, currency: string, template: BragCardTemplat
   <text x="80" y="420" font-family="${FONT_SERIF}" font-size="130" font-weight="bold" fill="${accent}">${esc(line)}</text>
   <text x="80" y="505" font-family="${FONT_SERIF}" font-size="42" fill="${p.ink}">${esc(c.headline)}</text>
   <text x="80" y="572" font-family="${FONT_SANS}" font-size="31" fill="${p.inkSoft}">${esc(c.subline)}</text>
-  ${footerBlock(stats, currency, p.rule, p.inkSoft)}
+  ${footerBlock(stats, currency, p.rule, p.inkSoft, copy)}
 </svg>`;
 }
 
 /** Editorial magazine cover: cream paper, serif display, kicker + folio (D-2, D-4). */
-function styleEditorial(stats: BragStats, currency: string, template: BragCardTemplate, studioName: string, accent: string): string {
+function styleEditorial(stats: BragStats, currency: string, template: BragCardTemplate, studioName: string, accent: string, copy: BragCardCopy = getBragCardCopy('en')): string {
   const p = CARD_BASE_INK.editorial;
-  const h = heroLine(stats, currency, template);
-  const c = buildBragCaption(stats, currency, template, studioName);
+  const h = heroLine(stats, currency, template, copy);
+  const c = buildBragCaption(stats, currency, template, studioName, copy);
   const line = h.unit ? `${h.big} ${h.unit}` : h.big;
   return `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080">
   ${knitPatternDefs(p.rule)}
@@ -267,15 +268,15 @@ function styleEditorial(stats: BragStats, currency: string, template: BragCardTe
   <line x1="80" y1="464" x2="440" y2="464" stroke="${accent}" stroke-width="5"/>
   <text x="80" y="552" font-family="${FONT_SERIF}" font-style="italic" font-size="44" fill="${p.inkSoft}">${esc(c.headline)}</text>
   <text x="80" y="620" font-family="${FONT_SANS}" font-size="30" fill="${p.inkSoft}">${esc(c.subline)}</text>
-  ${footerBlock(stats, currency, p.rule, p.inkSoft)}
+  ${footerBlock(stats, currency, p.rule, p.inkSoft, copy)}
 </svg>`;
 }
 
 /** Gauge swatch: graph-paper knit grid + gauge block — the most authentic card for knitters (D-9). */
-function styleSwatch(stats: BragStats, currency: string, template: BragCardTemplate, studioName: string, accent: string): string {
+function styleSwatch(stats: BragStats, currency: string, template: BragCardTemplate, studioName: string, accent: string, copy: BragCardCopy = getBragCardCopy('en')): string {
   const p = CARD_BASE_INK.swatch;
-  const h = heroLine(stats, currency, template);
-  const c = buildBragCaption(stats, currency, template, studioName);
+  const h = heroLine(stats, currency, template, copy);
+  const c = buildBragCaption(stats, currency, template, studioName, copy);
   let grid = "";
   for (let i = 0; i <= 20; i += 1) {
     grid += `<line x1="${720 + i * 15}" y1="96" x2="${720 + i * 15}" y2="396" stroke="${p.rule}" stroke-width="1"/>
@@ -298,15 +299,15 @@ function styleSwatch(stats: BragStats, currency: string, template: BragCardTempl
   <text x="80" y="430" font-family="${FONT_MONO}" font-size="112" font-weight="bold" fill="${p.ink}">${esc(line)}</text>
   <text x="80" y="516" font-family="${FONT_SERIF}" font-style="italic" font-size="44" fill="${p.inkSoft}">${esc(c.headline)}</text>
   <text x="80" y="584" font-family="${FONT_SANS}" font-size="30" fill="${p.inkSoft}">${esc(c.subline)}</text>
-  ${footerBlock(stats, currency, p.rule, p.inkSoft)}
+  ${footerBlock(stats, currency, p.rule, p.inkSoft, copy)}
 </svg>`;
 }
 
 /** Selvedge yarn band: narrow vertical band with running letterspaced text — like a selvedge edge or yarn label (D-4, D-9). */
-function styleSelvedge(stats: BragStats, currency: string, template: BragCardTemplate, studioName: string, accent: string): string {
+function styleSelvedge(stats: BragStats, currency: string, template: BragCardTemplate, studioName: string, accent: string, copy: BragCardCopy = getBragCardCopy('en')): string {
   const p = CARD_BASE_INK.selvedge;
-  const h = heroLine(stats, currency, template);
-  const c = buildBragCaption(stats, currency, template, studioName);
+  const h = heroLine(stats, currency, template, copy);
+  const c = buildBragCaption(stats, currency, template, studioName, copy);
   const line = h.unit ? `${h.big} ${h.unit}` : h.big;
   const band = `STITCH &amp; SCALE   ·   ${esc((studioName || "My Studio").toUpperCase())}   ·   HONEST LEDGER   ·   KNIT LOCAL   ·   `;
   return `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080">
@@ -318,15 +319,15 @@ function styleSelvedge(stats: BragStats, currency: string, template: BragCardTem
   <line x1="120" y1="476" x2="500" y2="476" stroke="${accent}" stroke-width="5"/>
   <text x="120" y="564" font-family="${FONT_SERIF}" font-style="italic" font-size="42" fill="${p.ink}">${esc(c.headline)}</text>
   <text x="120" y="628" font-family="${FONT_SANS}" font-size="30" fill="${p.inkSoft}">${esc(c.subline)}</text>
-  ${footerBlock(stats, currency, p.rule, p.inkSoft)}
+  ${footerBlock(stats, currency, p.rule, p.inkSoft, copy)}
 </svg>`;
 }
 
 /** Swiss poster: giant hero number, tight asymmetric grid, ink on paper (D-1, D-4). */
-function styleSwiss(stats: BragStats, currency: string, template: BragCardTemplate, studioName: string, accent: string): string {
+function styleSwiss(stats: BragStats, currency: string, template: BragCardTemplate, studioName: string, accent: string, copy: BragCardCopy = getBragCardCopy('en')): string {
   const p = CARD_BASE_INK.swiss;
-  const h = heroLine(stats, currency, template);
-  const c = buildBragCaption(stats, currency, template, studioName);
+  const h = heroLine(stats, currency, template, copy);
+  const c = buildBragCaption(stats, currency, template, studioName, copy);
   return `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080">
   <rect width="1080" height="1080" fill="${p.bg}"/>
   <rect x="0" y="0" width="1080" height="72" fill="${p.ink}"/>
@@ -336,15 +337,15 @@ function styleSwiss(stats: BragStats, currency: string, template: BragCardTempla
   <text x="80" y="516" font-family="${FONT_SANS}" font-size="40" font-weight="bold" letter-spacing="1" fill="${p.ink}">${esc((h.unit || "earned").toUpperCase())}</text>
   <text x="80" y="596" font-family="${FONT_SERIF}" font-size="38" fill="${p.inkSoft}">${esc(c.headline)}</text>
   <text x="80" y="656" font-family="${FONT_SANS}" font-size="28" fill="${p.inkSoft}">${esc(c.subline)}</text>
-  ${footerBlock(stats, currency, p.rule, p.inkSoft)}
+  ${footerBlock(stats, currency, p.rule, p.inkSoft, copy)}
 </svg>`;
 }
 
 /** Stitch cameo: a knit-symbol cameo panel (O = knit, | = purl, X = cable) — the one card no rival can fake (D-8, D-9). */
-function styleCameo(stats: BragStats, currency: string, template: BragCardTemplate, studioName: string, accent: string): string {
+function styleCameo(stats: BragStats, currency: string, template: BragCardTemplate, studioName: string, accent: string, copy: BragCardCopy = getBragCardCopy('en')): string {
   const p = CARD_BASE_INK.cameo;
-  const h = heroLine(stats, currency, template);
-  const c = buildBragCaption(stats, currency, template, studioName);
+  const h = heroLine(stats, currency, template, copy);
+  const c = buildBragCaption(stats, currency, template, studioName, copy);
   const line = h.unit ? `${h.big} ${h.unit}` : h.big;
   const rows = ["O O X O | O O", "O | O O X O |", "X O | O O X O", "O O X | O O O", "| O O X O | O"];
   const cameo = rows
@@ -359,7 +360,7 @@ function styleCameo(stats: BragStats, currency: string, template: BragCardTempla
   <text x="80" y="430" font-family="${FONT_SERIF}" font-size="122" font-weight="bold" fill="${p.ink}">${esc(line)}</text>
   <text x="80" y="512" font-family="${FONT_SERIF}" font-style="italic" font-size="42" fill="${p.inkSoft}">${esc(c.headline)}</text>
   <text x="80" y="578" font-family="${FONT_SANS}" font-size="30" fill="${p.inkSoft}">${esc(c.subline)}</text>
-  ${footerBlock(stats, currency, p.rule, p.inkSoft)}
+  ${footerBlock(stats, currency, p.rule, p.inkSoft, copy)}
 </svg>`;
 }
 
@@ -367,14 +368,14 @@ function styleCameo(stats: BragStats, currency: string, template: BragCardTempla
  * The visual card: returns SVG markup (1080x1080, social-ready).
  * Render client-side, then rasterize to PNG with canvas.
  */
-export function buildBragCardSvg(stats: BragStats, currency: string, template: BragCardTemplate, studioName: string, accent: string, style: BragCardStyle = "navy"): string {
+export function buildBragCardSvg(stats: BragStats, currency: string, template: BragCardTemplate, studioName: string, accent: string, style: BragCardStyle = "navy", copy: BragCardCopy = getBragCardCopy('en')): string {
   switch (style) {
-    case "editorial": return styleEditorial(stats, currency, template, studioName, accent);
-    case "swatch": return styleSwatch(stats, currency, template, studioName, accent);
-    case "selvedge": return styleSelvedge(stats, currency, template, studioName, accent);
-    case "swiss": return styleSwiss(stats, currency, template, studioName, accent);
-    case "cameo": return styleCameo(stats, currency, template, studioName, accent);
+    case "editorial": return styleEditorial(stats, currency, template, studioName, accent, copy);
+    case "swatch": return styleSwatch(stats, currency, template, studioName, accent, copy);
+    case "selvedge": return styleSelvedge(stats, currency, template, studioName, accent, copy);
+    case "swiss": return styleSwiss(stats, currency, template, studioName, accent, copy);
+    case "cameo": return styleCameo(stats, currency, template, studioName, accent, copy);
     case "navy":
-    default: return styleNavy(stats, currency, template, studioName, accent);
+    default: return styleNavy(stats, currency, template, studioName, accent, copy);
   }
 }

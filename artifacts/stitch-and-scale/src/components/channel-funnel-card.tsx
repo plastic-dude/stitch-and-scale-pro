@@ -10,6 +10,8 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { ClipboardCopy, Send, Megaphone, Mail, TrendingUp } from 'lucide-react';
 import { PatternProject } from '@/lib/grading-engine';
+import { useSettings } from '@/context/SettingsContext';
+import { CHANNEL_FUNNEL_COPY, getChannelTypeLabel, getChannelVerdictLabel, getChannelNote } from '@/lib/channel-funnel-copy';
 import {
   analyzeChannel,
   analyzeFunnel,
@@ -79,6 +81,8 @@ const fmt$ = (n: number) =>
   n.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
 
 export function ChannelFunnelCard({ project }: { project: PatternProject }) {
+  const { language } = useSettings();
+  const copyText = CHANNEL_FUNNEL_COPY[language];
   // issue #4 project seam: one scoped store per project; the legacy flat key 'kskchannels-v1' is folded in on first read, then removed.
   const handle = useMemo(() => projectStorage<StoredChannel>('channels', project.id, ['kskchannels-v1']), [project.id]);
   const { toast } = useToast();
@@ -111,9 +115,9 @@ export function ChannelFunnelCard({ project }: { project: PatternProject }) {
   const copy = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      toast({ title: 'Copied to clipboard' });
+      toast({ title: copyText.copied });
     } catch {
-      toast({ title: 'Select and copy manually' });
+      toast({ title: copyText.copyManual });
     }
   };
 
@@ -126,24 +130,19 @@ export function ChannelFunnelCard({ project }: { project: PatternProject }) {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <TrendingUp className="h-5 w-5" /> Channel &amp; Funnel Planner
+          <TrendingUp className="h-5 w-5" /> {copyText.title}
         </CardTitle>
-        <CardDescription>
-          Price a subscription box, brand collab or magazine offer against what self-publishing would earn — and see
-          whether your email list is turning pattern releases into real money. Boxes run on hard assembly dates and
-          only ~10% of suppliers include a marketing insert; the funnel shows why release-week email does the heavy
-          lifting.
-        </CardDescription>
+        <CardDescription>{copyText.description}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* ---------------------------------------------------------------- */}
         <section className="space-y-4">
           <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-            Channel offer (box, brand, magazine)
+            {copyText.offer}
           </h3>
           <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
             <div className="space-y-1.5">
-              <Label className="text-xs">Channel type</Label>
+              <Label className="text-xs">{copyText.channelType}</Label>
               <Select
                 value={stored.channel.type}
                 onValueChange={(v) => setChannel({ type: v as ChannelDeal['type'] })}
@@ -154,7 +153,7 @@ export function ChannelFunnelCard({ project }: { project: PatternProject }) {
                 <SelectContent>
                   {(Object.keys(CHANNEL_TYPE_LABELS) as ChannelDeal['type'][]).map((t) => (
                     <SelectItem key={t} value={t}>
-                      {CHANNEL_TYPE_LABELS[t]}
+                      {getChannelTypeLabel(language, t, CHANNEL_TYPE_LABELS[t])}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -162,19 +161,19 @@ export function ChannelFunnelCard({ project }: { project: PatternProject }) {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs" htmlFor="cf-name">
-                Channel name
+                {copyText.channelName}
               </Label>
               <Input
                 id="cf-name"
                 className="h-9"
-                placeholder="e.g. The Wool Parcels"
+                placeholder={copyText.channelPlaceholder}
                 value={stored.channel.name}
                 onChange={(e) => setChannel({ name: e.target.value })}
               />
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs" htmlFor="cf-fee">
-                Design fee ($)
+                {copyText.designFee}
               </Label>
               <Input
                 id="cf-fee"
@@ -186,7 +185,7 @@ export function ChannelFunnelCard({ project }: { project: PatternProject }) {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs" htmlFor="cf-extras">
-                Extras value ($)
+                {copyText.extras}
               </Label>
               <Input
                 id="cf-extras"
@@ -198,7 +197,7 @@ export function ChannelFunnelCard({ project }: { project: PatternProject }) {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs" htmlFor="cf-excl">
-                Exclusivity (months)
+                {copyText.exclusivity}
               </Label>
               <Input
                 id="cf-excl"
@@ -210,7 +209,7 @@ export function ChannelFunnelCard({ project }: { project: PatternProject }) {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs" htmlFor="cf-reach">
-                Audience reach (subs)
+                {copyText.reach}
               </Label>
               <Input
                 id="cf-reach"
@@ -222,7 +221,7 @@ export function ChannelFunnelCard({ project }: { project: PatternProject }) {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs" htmlFor="cf-visit">
-                Visit your shop (%)
+                {copyText.visit}
               </Label>
               <Input
                 id="cf-visit"
@@ -234,7 +233,7 @@ export function ChannelFunnelCard({ project }: { project: PatternProject }) {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs" htmlFor="cf-conv">
-                Visitor conversion (%)
+                {copyText.conversion}
               </Label>
               <Input
                 id="cf-conv"
@@ -246,7 +245,7 @@ export function ChannelFunnelCard({ project }: { project: PatternProject }) {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs" htmlFor="cf-spend">
-                Avg visitor spend ($)
+                {copyText.spend}
               </Label>
               <Input
                 id="cf-spend"
@@ -258,7 +257,7 @@ export function ChannelFunnelCard({ project }: { project: PatternProject }) {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs" htmlFor="cf-effect">
-                Effect runs (months)
+                {copyText.effect}
               </Label>
               <Input
                 id="cf-effect"
@@ -270,7 +269,7 @@ export function ChannelFunnelCard({ project }: { project: PatternProject }) {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs" htmlFor="cf-baseline">
-                Your baseline sales (units/mo)
+                {copyText.baseline}
               </Label>
               <Input
                 id="cf-baseline"
@@ -282,7 +281,7 @@ export function ChannelFunnelCard({ project }: { project: PatternProject }) {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs" htmlFor="cf-price">
-                Pattern price ($)
+                {copyText.patternPrice}
               </Label>
               <Input
                 id="cf-price"
@@ -294,7 +293,7 @@ export function ChannelFunnelCard({ project }: { project: PatternProject }) {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs" htmlFor="cf-hours">
-                Work hours
+                {copyText.hours}
               </Label>
               <Input
                 id="cf-hours"
@@ -306,7 +305,7 @@ export function ChannelFunnelCard({ project }: { project: PatternProject }) {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs" htmlFor="cf-buffer">
-                Deadline buffer (weeks)
+                {copyText.buffer}
               </Label>
               <Input
                 id="cf-buffer"
@@ -318,7 +317,7 @@ export function ChannelFunnelCard({ project }: { project: PatternProject }) {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs" htmlFor="cf-defunct">
-                Channel defunct risk (%)
+                {copyText.defunct}
               </Label>
               <Input
                 id="cf-defunct"
@@ -330,7 +329,7 @@ export function ChannelFunnelCard({ project }: { project: PatternProject }) {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs" htmlFor="cf-excl2">
-                Self-sell during exclusivity
+                {copyText.selfSell}
               </Label>
               <Select
                 value={stored.channel.isExclusive ? 'yes' : 'no'}
@@ -340,22 +339,22 @@ export function ChannelFunnelCard({ project }: { project: PatternProject }) {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="yes">Exclusive (can't self-sell)</SelectItem>
-                  <SelectItem value="no">Not exclusive</SelectItem>
+                  <SelectItem value="yes">{copyText.exclusiveYes}</SelectItem>
+                  <SelectItem value="no">{copyText.exclusiveNo}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <label className="flex items-center justify-between rounded-md border px-3 py-2 text-sm">
-              <span>Marketing insert in the box</span>
+              <span>{copyText.insert}</span>
               <Switch
                 checked={stored.channel.hasMarketingInsert}
                 onCheckedChange={(v) => setChannel({ hasMarketingInsert: v })}
               />
             </label>
             <label className="flex items-center justify-between rounded-md border px-3 py-2 text-sm">
-              <span>Fee &amp; terms in writing</span>
+              <span>{copyText.writing}</span>
               <Switch
                 checked={stored.channel.paidInWriting}
                 onCheckedChange={(v) => setChannel({ paidInWriting: v })}
@@ -363,10 +362,10 @@ export function ChannelFunnelCard({ project }: { project: PatternProject }) {
             </label>
             <div className="flex items-center gap-2">
               <Badge className={`${verdictColor} border px-3 py-1 text-sm`}>
-                {channel.verdict.toUpperCase()} · {fmt$(channel.netProfit)} · {channel.effectiveHourly.toFixed(1)}/hr
+                {getChannelVerdictLabel(language, channel.verdict)} · {fmt$(channel.netProfit)} · {channel.effectiveHourly.toFixed(1)}/hr
               </Badge>
               <Badge variant="outline" className="px-3 py-1 text-sm">
-                Deadline: {channel.deadlineRisk}
+                {copyText.deadline}: {channel.deadlineRisk}
               </Badge>
             </div>
           </div>
@@ -374,7 +373,7 @@ export function ChannelFunnelCard({ project }: { project: PatternProject }) {
             <div className="space-y-2">
               {channel.notes.map((note, i) => (
                 <p key={i} className="text-sm leading-relaxed text-muted-foreground">
-                  {note}
+                  {getChannelNote(language, note)}
                 </p>
               ))}
             </div>
@@ -384,12 +383,12 @@ export function ChannelFunnelCard({ project }: { project: PatternProject }) {
         {/* ---------------------------------------------------------------- */}
         <section className="space-y-4">
           <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-            Newsletter funnel
+            {copyText.funnel}
           </h3>
           <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
             <div className="space-y-1.5">
               <Label className="text-xs" htmlFor="cf-list">
-                List size
+                {copyText.listSize}
               </Label>
               <Input
                 id="cf-list"
@@ -401,7 +400,7 @@ export function ChannelFunnelCard({ project }: { project: PatternProject }) {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs" htmlFor="cf-leads">
-                New leads/mo (freebie)
+                {copyText.newLeads}
               </Label>
               <Input
                 id="cf-leads"
@@ -413,7 +412,7 @@ export function ChannelFunnelCard({ project }: { project: PatternProject }) {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs" htmlFor="cf-lc">
-                Launch conversion (%)
+                {copyText.launchConversion}
               </Label>
               <Input
                 id="cf-lc"
@@ -425,7 +424,7 @@ export function ChannelFunnelCard({ project }: { project: PatternProject }) {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs" htmlFor="cf-lprice">
-                Launch price ($)
+                {copyText.launchPrice}
               </Label>
               <Input
                 id="cf-lprice"
@@ -437,7 +436,7 @@ export function ChannelFunnelCard({ project }: { project: PatternProject }) {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs" htmlFor="cf-week">
-                Launch-week share (%)
+                {copyText.launchWeek}
               </Label>
               <Input
                 id="cf-week"
@@ -449,7 +448,7 @@ export function ChannelFunnelCard({ project }: { project: PatternProject }) {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs" htmlFor="cf-ev">
-                Evergreen conversion (%)
+                {copyText.evergreen}
               </Label>
               <Input
                 id="cf-ev"
@@ -461,7 +460,7 @@ export function ChannelFunnelCard({ project }: { project: PatternProject }) {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs" htmlFor="cf-post">
-                Post-launch conversion (%)
+                {copyText.evergreen}
               </Label>
               <Input
                 id="cf-post"
@@ -473,7 +472,7 @@ export function ChannelFunnelCard({ project }: { project: PatternProject }) {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs" htmlFor="cf-months">
-                Months tracked
+                {copyText.effect}
               </Label>
               <Input
                 id="cf-months"
@@ -485,7 +484,7 @@ export function ChannelFunnelCard({ project }: { project: PatternProject }) {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs" htmlFor="cf-maint">
-                Maintenance hours/mo
+                {copyText.hours}
               </Label>
               <Input
                 id="cf-maint"
@@ -497,7 +496,7 @@ export function ChannelFunnelCard({ project }: { project: PatternProject }) {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs" htmlFor="cf-leffort">
-                Launch effort hours
+                {copyText.hours}
               </Label>
               <Input
                 id="cf-leffort"
@@ -509,7 +508,7 @@ export function ChannelFunnelCard({ project }: { project: PatternProject }) {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs" htmlFor="cf-funnelnet">
-                Net this cycle
+                {copyText.deadline}
               </Label>
               <Input
                 id="cf-funnelnet"
@@ -524,7 +523,7 @@ export function ChannelFunnelCard({ project }: { project: PatternProject }) {
             <div className="space-y-2">
               {funnel.notes.map((note, i) => (
                 <p key={i} className="text-sm leading-relaxed text-muted-foreground">
-                  {note}
+                  {getChannelNote(language, note)}
                 </p>
               ))}
             </div>
@@ -538,14 +537,14 @@ export function ChannelFunnelCard({ project }: { project: PatternProject }) {
               checked={stored.showPitch}
               onCheckedChange={(v) => setStored((s) => ({ ...s, showPitch: v }))}
             />
-            <Send className="h-4 w-4" /> Pitch email to a box operator
+            <Send className="h-4 w-4" /> {copyText.pitch}
           </label>
           {stored.showPitch && (
             <div className="space-y-3">
               <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
                 <div className="space-y-1.5">
                   <Label className="text-xs" htmlFor="cf-dname">
-                    Your name
+                    {copyText.channelName}
                   </Label>
                   <Input
                     id="cf-dname"
@@ -556,7 +555,7 @@ export function ChannelFunnelCard({ project }: { project: PatternProject }) {
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs" htmlFor="cf-pname">
-                    Pattern name
+                    {copyText.patternPrice}
                   </Label>
                   <Input
                     id="cf-pname"
@@ -567,7 +566,7 @@ export function ChannelFunnelCard({ project }: { project: PatternProject }) {
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs" htmlFor="cf-bname">
-                    Box name
+                    {copyText.channelName}
                   </Label>
                   <Input
                     id="cf-bname"
@@ -578,7 +577,7 @@ export function ChannelFunnelCard({ project }: { project: PatternProject }) {
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs" htmlFor="cf-pask">
-                    Fee ask ($)
+                    {copyText.designFee}
                   </Label>
                   <Input
                     id="cf-pask"
@@ -590,7 +589,7 @@ export function ChannelFunnelCard({ project }: { project: PatternProject }) {
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs" htmlFor="cf-pexcl">
-                    Exclusivity (months)
+                    {copyText.exclusivity}
                   </Label>
                   <Input
                     id="cf-pexcl"
@@ -602,7 +601,7 @@ export function ChannelFunnelCard({ project }: { project: PatternProject }) {
                 </div>
                 <label className="flex items-center justify-between rounded-md border px-3 py-2 text-sm">
                   <span className="flex items-center gap-2">
-                    <Megaphone className="h-4 w-4" /> Insert card w/ code
+                    <Megaphone className="h-4 w-4" /> {copyText.insert}
                   </span>
                   <Switch
                     checked={stored.pitch.insertPromise}
@@ -617,7 +616,7 @@ export function ChannelFunnelCard({ project }: { project: PatternProject }) {
                   size="sm"
                   className="absolute right-2 top-2"
                   onClick={() => copy(pitch)}
-                  aria-label="Copy pitch"
+                  aria-label={copyText.copyPitch}
                 >
                   <ClipboardCopy className="h-4 w-4" />
                 </Button>

@@ -5,6 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { AlertTriangle, Crown, Flag, Lightbulb, TrendingUp, Users } from 'lucide-react';
 import { PatternProject } from '@/lib/grading-engine';
+import { useSettings } from '@/context/SettingsContext';
+import { MEMBERSHIP_SITE_COPY } from '@/lib/membership-site-copy';
 import { projectStorage } from '@/lib/storage-lib';
 import {
   analyzeMembershipSite,
@@ -72,6 +74,8 @@ const verdictColor = (v: string) =>
   'bg-sky-500/15 text-sky-700 border-sky-500/30';
 
 export function MembershipSiteLabCard({ project }: { project: PatternProject }) {
+  const { language } = useSettings();
+  const copyText = MEMBERSHIP_SITE_COPY[language];
   const handle = useMemo(() => projectStorage<StoredState>('membership', project.id, [STORAGE_KEY]), [project.id]);
   const [input, setInput] = useState<MembershipSiteInput>(() => loadStored(handle));
 
@@ -92,35 +96,35 @@ export function MembershipSiteLabCard({ project }: { project: PatternProject }) 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-base"><Crown className="size-4" />Membership Site Lab</CardTitle>
-        <CardDescription>Should you launch a paid pattern membership — and does the math support it? Models a realistic conversion band (median free-to-paid is under 1% for newsletters, 3-5% good for freemium), the real fee stack, churn-capped member lifetime, and whether the monthly pattern treadmill pays your hours.</CardDescription>
+        <CardTitle className="flex items-center gap-2 text-base"><Crown className="size-4" />{copyText.title}</CardTitle>
+        <CardDescription>{copyText.description}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <section className="space-y-3">
-          <h3 className="text-sm font-semibold flex items-center gap-1.5"><Users className="size-4" />Audience & conversion</h3>
+          <h3 className="text-sm font-semibold flex items-center gap-1.5"><Users className="size-4" />{copyText.audience}</h3>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            <NumField id="ms-audience" label="Engaged followers" value={input.audienceSize} onChange={n => set('audienceSize', n)} suffix="people" />
-            <NumField id="ms-conv-w" label="Conservative conversion" value={input.conversionWorst * 100} onChange={n => set('conversionWorst', n / 100)} min={0} max={10} step={0.5} suffix="%" />
-            <NumField id="ms-conv-r" label="Realistic conversion" value={input.conversionRealistic * 100} onChange={n => set('conversionRealistic', n / 100)} min={0} max={10} step={0.5} suffix="%" />
-            <NumField id="ms-conv-b" label="Best conversion" value={input.conversionBest * 100} onChange={n => set('conversionBest', n / 100)} min={0} max={10} step={0.5} suffix="%" />
+            <NumField id="ms-audience" label={copyText.engaged} value={input.audienceSize} onChange={n => set('audienceSize', n)} suffix={copyText.people} />
+            <NumField id="ms-conv-w" label={copyText.conservative} value={input.conversionWorst * 100} onChange={n => set('conversionWorst', n / 100)} min={0} max={10} step={0.5} suffix="%" />
+            <NumField id="ms-conv-r" label={copyText.realistic} value={input.conversionRealistic * 100} onChange={n => set('conversionRealistic', n / 100)} min={0} max={10} step={0.5} suffix="%" />
+            <NumField id="ms-conv-b" label={copyText.best} value={input.conversionBest * 100} onChange={n => set('conversionBest', n / 100)} min={0} max={10} step={0.5} suffix="%" />
           </div>
-          <p className="text-xs text-muted-foreground italic">Conversion entered as a percent in inputs; 3% is a healthy realistic band — the median newsletter converts just 0.62% of readers to paid.</p>
+          <p className="text-xs text-muted-foreground italic">{copyText.conversionNote}</p>
         </section>
 
         <section className="space-y-3">
-          <h3 className="text-sm font-semibold">Pricing & retention</h3>
+          <h3 className="text-sm font-semibold">{copyText.pricing}</h3>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            <NumField id="ms-monthly" label="Monthly price" value={input.monthlyPrice} onChange={n => set('monthlyPrice', n)} step={0.5} suffix="$" />
-            <NumField id="ms-annual" label="Annual price (0 = none)" value={input.annualPrice} onChange={n => set('annualPrice', n)} step={1} suffix="$" />
-            <NumField id="ms-annual-share" label="Members on annual" value={input.annualShare * 100} onChange={n => set('annualShare', n / 100)} min={0} max={100} step={5} suffix="%" />
-            <NumField id="ms-churn" label="Monthly churn" value={input.monthlyChurn * 100} onChange={n => set('monthlyChurn', n / 100)} min={0} max={20} step={0.5} suffix="%" />
+            <NumField id="ms-monthly" label={copyText.monthly} value={input.monthlyPrice} onChange={n => set('monthlyPrice', n)} step={0.5} suffix="$" />
+            <NumField id="ms-annual" label={copyText.annual} value={input.annualPrice} onChange={n => set('annualPrice', n)} step={1} suffix="$" />
+            <NumField id="ms-annual-share" label={copyText.annualMembers} value={input.annualShare * 100} onChange={n => set('annualShare', n / 100)} min={0} max={100} step={5} suffix="%" />
+            <NumField id="ms-churn" label={copyText.churn} value={input.monthlyChurn * 100} onChange={n => set('monthlyChurn', n / 100)} min={0} max={20} step={0.5} suffix="%" />
           </div>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            <NumField id="ms-content-h" label="Content hours / month" value={input.contentHours} onChange={n => set('contentHours', n)} suffix="hrs" />
-            <NumField id="ms-support-h" label="Support / moderation hrs" value={input.supportHours} onChange={n => set('supportHours', n)} suffix="hrs" />
-            <NumField id="ms-rate" label="Opportunity rate" value={input.hourlyRate} onChange={n => set('hourlyRate', n)} suffix="$/hr" />
+            <NumField id="ms-content-h" label={copyText.contentHours} value={input.contentHours} onChange={n => set('contentHours', n)} suffix="hrs" />
+            <NumField id="ms-support-h" label={copyText.supportHours} value={input.supportHours} onChange={n => set('supportHours', n)} suffix="hrs" />
+            <NumField id="ms-rate" label={copyText.rate} value={input.hourlyRate} onChange={n => set('hourlyRate', n)} suffix="$/hr" />
             <div className="space-y-1.5">
-              <Label htmlFor="ms-stack" className="text-xs">Fee stack</Label>
+              <Label htmlFor="ms-stack" className="text-xs">{copyText.feeStack}</Label>
               <select id="ms-stack" value={input.feeStackKey}
                 onChange={e => set('feeStackKey', e.target.value)}
                 className="flex h-9 w-full rounded-md border border-input bg-background px-2 text-sm shadow-sm">
@@ -131,17 +135,17 @@ export function MembershipSiteLabCard({ project }: { project: PatternProject }) 
         </section>
 
         <section className="space-y-3">
-          <h3 className="text-sm font-semibold flex items-center gap-1.5"><TrendingUp className="size-4" />What the numbers say</h3>
+          <h3 className="text-sm font-semibold flex items-center gap-1.5"><TrendingUp className="size-4" />{copyText.numbers}</h3>
           <div className="overflow-x-auto rounded-md border">
             <table className="w-full text-xs">
               <thead className="bg-accent/60 text-muted-foreground">
                 <tr>
-                  <th className="p-2 text-left">Scenario</th>
-                  <th className="p-2 text-right">Members</th>
-                  <th className="p-2 text-right">Gross / mo</th>
-                  <th className="p-2 text-right">Fees / mo</th>
-                  <th className="p-2 text-right">Net / mo</th>
-                  <th className="p-2 text-right">LTV / member</th>
+                  <th className="p-2 text-left">{copyText.scenario}</th>
+                  <th className="p-2 text-right">{copyText.members}</th>
+                  <th className="p-2 text-right">{copyText.gross}</th>
+                  <th className="p-2 text-right">{copyText.fees}</th>
+                  <th className="p-2 text-right">{copyText.net}</th>
+                  <th className="p-2 text-right">{copyText.ltv}</th>
                 </tr>
               </thead>
               <tbody>
@@ -159,16 +163,16 @@ export function MembershipSiteLabCard({ project }: { project: PatternProject }) 
             </table>
           </div>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            <StatBox label="Break-even audience" value={result.breakEvenAudience === Infinity ? '∞' : result.breakEvenAudience.toLocaleString('en-US')} />
-            <StatBox label="Treadmill gap / mo" value={`${result.treadmillGap >= 0 ? '+' : ''}${fmt$(result.treadmillGap)}`} tone={result.treadmillGap >= 0 ? 'good' : 'bad'} />
-            <StatBox label="Net ÷ hours cost" value={`${result.treadmillRatio === Infinity ? '∞' : result.treadmillRatio.toFixed(2)}×`} tone={result.treadmillRatio >= 1.5 ? 'good' : 'warn'} />
-            <StatBox label="Member lifetime" value={`≈${(1 / input.monthlyChurn).toFixed(0)} mo`} />
+            <StatBox label={copyText.breakEven} value={result.breakEvenAudience === Infinity ? '∞' : result.breakEvenAudience.toLocaleString('en-US')} />
+            <StatBox label={copyText.treadmill} value={`${result.treadmillGap >= 0 ? '+' : ''}${fmt$(result.treadmillGap)}`} tone={result.treadmillGap >= 0 ? 'good' : 'bad'} />
+            <StatBox label={copyText.ratio} value={`${result.treadmillRatio === Infinity ? '∞' : result.treadmillRatio.toFixed(2)}×`} tone={result.treadmillRatio >= 1.5 ? 'good' : 'warn'} />
+            <StatBox label={copyText.lifetime} value={`≈${(1 / input.monthlyChurn).toFixed(0)} mo`} />
           </div>
         </section>
 
         {result.flags.length > 0 && (
           <section className="space-y-2">
-            <h3 className="text-sm font-semibold flex items-center gap-1.5"><Flag className="size-4" />Watch-outs</h3>
+            <h3 className="text-sm font-semibold flex items-center gap-1.5"><Flag className="size-4" />{copyText.watchouts}</h3>
             <div className="flex flex-wrap gap-2">
               {result.flags.map(f => (
                 <Badge key={f.code} variant="outline" className="border-amber-500/40 bg-amber-500/10 text-amber-700 gap-1.5 py-1.5">
@@ -181,7 +185,7 @@ export function MembershipSiteLabCard({ project }: { project: PatternProject }) 
         )}
 
         <section className={`rounded-md border p-4 ${verdictColor(result.verdict)}`}>
-          <div className="flex items-center gap-2 font-semibold"><Lightbulb className="size-4" />{result.verdict}</div>
+          <div className="flex items-center gap-2 font-semibold"><Lightbulb className="size-4" />{copyText.verdict}: {result.verdict}</div>
           <p className="mt-1.5 text-sm">{result.verdictNote}</p>
         </section>
       </CardContent>

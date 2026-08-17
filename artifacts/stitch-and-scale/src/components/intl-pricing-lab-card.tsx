@@ -22,6 +22,8 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
+import { useSettings } from "@/context/SettingsContext";
+import { INTL_PRICING_COPY } from "@/lib/intl-pricing-copy";
 
 const STORAGE_KEY = "stitch-and-scale-intlpricing-v1";
 
@@ -120,6 +122,8 @@ function StatBox(props: { label: string; value: string; tone?: "good" | "warn" |
 }
 
 export function IntlPricingLabCard({ project }: { project: PatternProject }) {
+  const { language } = useSettings();
+  const copyText = INTL_PRICING_COPY[language];
   const [input, setInput] = useState<IntlPricingInput>(() => loadStored(project));
 
   const result: IntlPricingResult = useMemo(() => analyzeIntlPricing(input), [input]);
@@ -173,37 +177,30 @@ export function IntlPricingLabCard({ project }: { project: PatternProject }) {
         <CardContent className="space-y-4 pt-5">
           <div className="flex items-start gap-2">
             <Globe className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
-            <p className="text-xs leading-relaxed text-muted-foreground">
-              Your flat USD price is actually an international price — everyone sees it converted. Ravelry sells
-              to a global audience but gives you zero pricing tiers; LoveCrafts lets you pick one of GBP/USD/EUR
-              and converts from there. This lab works out where PPP-based parity tiers earn you real revenue
-              (+5-15% is what parity-priced digital sellers report), how much the FX spread is leaking, and
-              which markets are undercharging or being priced out. Parity only works end-to-end on Gumroad,
-              Payhip and your own site — so the verdict tells you where the tiers actually fit.
-            </p>
+            <p className="text-xs leading-relaxed text-muted-foreground">{copyText.intro}</p>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-3">
             <NumField
-              label="Pattern anchor price"
+              label={copyText.anchor}
               value={input.basePriceUsd}
               step={0.5}
               min={1}
               max={50}
               prefix="$"
-              hint="The US price the rest of the world sees converted — set it for your US buyer."
+              hint={copyText.anchorHint}
               onChange={(v) => set("basePriceUsd", v)}
             />
             <NumField
-              label="Monthly pattern revenue"
+              label={copyText.monthly}
               value={input.currentMonthlyRevenue}
               step={25}
               prefix="$"
-              hint="All markets, converted to USD."
+              hint={copyText.monthlyHint}
               onChange={(v) => set("currentMonthlyRevenue", v)}
             />
             <NumField
-              label="Platform take"
+              label={copyText.platformTake}
               value={input.platformFeePct}
               step={0.5}
               suffix="%"
@@ -211,7 +208,7 @@ export function IntlPricingLabCard({ project }: { project: PatternProject }) {
               onChange={(v) => set("platformFeePct", v)}
             />
             <div className="space-y-1.5">
-              <Label className="text-xs font-medium">Hosting platform</Label>
+              <Label className="text-xs font-medium">{copyText.hosting}</Label>
               <Select value={input.platform} onValueChange={(v) => set("platform", v as IntlPricingInput["platform"])}>
                 <SelectTrigger className="h-8 bg-background">
                   <SelectValue />
@@ -227,16 +224,16 @@ export function IntlPricingLabCard({ project }: { project: PatternProject }) {
               <p className="text-[11px] leading-tight text-muted-foreground">{result.anchorNote}</p>
             </div>
             <NumField
-              label="Demand elasticity"
+              label={copyText.elasticity}
               value={input.elasticity}
               step={0.05}
               max={1}
               suffix="0–1"
-              hint="Volume response to parity: 0.75 is the indie-parity midpoint (0.6-0.8 range)."
+              hint={copyText.elasticityHint}
               onChange={(v) => set("elasticity", Math.min(1, v))}
             />
             <NumField
-              label="Abuse / coupon fraud"
+              label={copyText.abuse}
               value={input.abuseRate}
               step={0.5}
               suffix="%"
@@ -249,23 +246,23 @@ export function IntlPricingLabCard({ project }: { project: PatternProject }) {
 
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <Label className="text-xs font-medium">Markets & PPP tiers</Label>
+              <Label className="text-xs font-medium">{copyText.markets}</Label>
               <Button variant="ghost" size="sm" className="h-7 gap-1 text-xs" onClick={addMarket}>
-                Add market
+                {copyText.addMarket}
               </Button>
             </div>
             <div className="overflow-x-auto rounded-lg border">
               <table className="w-full min-w-[640px] border-collapse text-xs">
                 <thead>
                   <tr className="border-b bg-muted/40 text-left">
-                    <th className="p-2 font-medium">Market</th>
-                    <th className="p-2 font-medium">Currency</th>
-                    <th className="p-2 font-medium">PPP index</th>
-                    <th className="p-2 font-medium">Audience share</th>
-                    <th className="p-2 font-medium">FX fee</th>
-                    <th className="p-2 font-medium">Parity price</th>
-                    <th className="p-2 font-medium">Net now</th>
-                    <th className="p-2 font-medium">Net parity</th>
+                    <th className="p-2 font-medium">{copyText.market}</th>
+                    <th className="p-2 font-medium">{copyText.currency}</th>
+                    <th className="p-2 font-medium">{copyText.ppp}</th>
+                    <th className="p-2 font-medium">{copyText.audience}</th>
+                    <th className="p-2 font-medium">{copyText.fx}</th>
+                    <th className="p-2 font-medium">{copyText.parity}</th>
+                    <th className="p-2 font-medium">{copyText.netNow}</th>
+                    <th className="p-2 font-medium">{copyText.netParity}</th>
                     <th className="p-2"></th>
                   </tr>
                 </thead>
@@ -356,7 +353,7 @@ export function IntlPricingLabCard({ project }: { project: PatternProject }) {
                             className="h-6 w-6 text-muted-foreground hover:text-destructive"
                             onClick={() => removeMarket(i)}
                           >
-                            <span className="sr-only">Remove</span>×
+                            <span className="sr-only">{copyText.remove}</span>×
                           </Button>
                         </td>
                       </tr>
@@ -379,7 +376,7 @@ export function IntlPricingLabCard({ project }: { project: PatternProject }) {
               className="h-7 gap-1 text-xs"
               onClick={() => persist({ ...DEFAULT_INTL_PRICING })}
             >
-              <RefreshCw className="h-3 w-3" /> Reset to demo
+              <RefreshCw className="h-3 w-3" /> {copyText.reset}
             </Button>
           </div>
         </CardContent>
@@ -387,25 +384,25 @@ export function IntlPricingLabCard({ project }: { project: PatternProject }) {
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <StatBox
-          label="Revenue now / month"
+          label={copyText.revenueNow}
           value={result.fmtTotalCurrentMonthly}
           tone="good"
-          hint="Flat-USD baseline across all markets"
+          hint={copyText.revenueNowHint}
         />
         <StatBox
-          label="Parity revenue / month"
+          label={copyText.parityRevenue}
           value={result.fmtTotalParityMonthly}
           tone={result.liftPct >= 5 ? "good" : result.liftPct > 0 ? "warn" : "bad"}
           hint={`${result.liftPct >= 0 ? "+" : ""}${result.fmtLiftPct}% lift`}
         />
         <StatBox
-          label="Annual revenue lift"
+          label={copyText.annualLift}
           value={`${result.annualRevenueLift >= 0 ? "+" : ""}${result.fmtAnnualRevenueLift}`}
           tone={result.liftPct >= 5 ? "good" : "warn"}
-          hint="If you run tiers across every market"
+          hint={copyText.annualHint}
         />
         <StatBox
-          label="FX leak / month"
+          label={copyText.fxLeak}
           value={result.fmtTotalFxLeakMonthly}
           tone={result.totalFxLeakMonthly / Math.max(result.totalCurrentMonthly, 1) > 0.04 ? "bad" : "warn"}
           hint={`≈ ${result.fmtTotalFxLeakAnnual}/yr (${result.fmtFxLeakPct}% of revenue) to conversion spreads`}
@@ -413,7 +410,7 @@ export function IntlPricingLabCard({ project }: { project: PatternProject }) {
       </div>
 
       <div className="rounded-lg border bg-card/60 p-4">
-        <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Verdict</p>
+        <p className="text-[11px] uppercase tracking-wide text-muted-foreground">{copyText.verdict}</p>
         <div className="mt-1 flex items-start gap-2">
           {result.liftPct >= 5 ? (
             <Lightbulb className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
@@ -431,7 +428,7 @@ export function IntlPricingLabCard({ project }: { project: PatternProject }) {
 
       {highFlags.length > 0 && (
         <div className="space-y-2">
-          <p className="text-[11px] uppercase tracking-wide text-muted-foreground">High priority</p>
+          <p className="text-[11px] uppercase tracking-wide text-muted-foreground">{copyText.highPriority}</p>
           {highFlags.map((f, i) => (
             <div key={`${f.code}-${i}`} className="rounded-lg border border-destructive/30 bg-destructive/5 p-3">
               <p className="text-xs font-semibold">
@@ -445,7 +442,7 @@ export function IntlPricingLabCard({ project }: { project: PatternProject }) {
 
       {otherFlags.length > 0 && (
         <div className="space-y-2">
-          <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Watch items</p>
+          <p className="text-[11px] uppercase tracking-wide text-muted-foreground">{copyText.watchItems}</p>
           {otherFlags.map((f, i) => (
             <div key={`${f.code}-${i}`} className="rounded-lg border bg-card/60 p-3">
               <p className="text-xs font-medium">

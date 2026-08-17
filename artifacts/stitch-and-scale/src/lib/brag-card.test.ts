@@ -5,6 +5,7 @@ import {
   computeBragStats,
 } from "./brag-card";
 import type { MonthlyLedgerRow } from "./receipt-lab";
+import { getBragCardCopy } from "./brag-copy";
 
 const rows = (pairs: [string, number, number, number][]): MonthlyLedgerRow[] =>
   pairs.map(([month, sales, revenue, profit]) => ({
@@ -105,6 +106,15 @@ describe("buildBragCaption", () => {
     expect(c.caption).not.toMatch(/:{2}/);
   });
 
+  it("uses the selected locale for generated captions", () => {
+    const stats = { totalRevenue: 250, totalSales: 25, totalProfit: 130, publishedCount: 3, revenuePerSale: 10, bestMonth: "2026-05", bestMonthProfit: 80, profitMonths: 3, profitRatio: 100 };
+    const c = buildBragCaption(stats, "EUR", "income", "Wollwerk", getBragCardCopy("de"));
+    expect(c.headline).toContain("Musterverkäufen");
+    expect(c.subline).toContain("Verkäufe");
+    expect(c.caption).toContain("Wollwerk");
+    expect(c.caption).not.toContain("pattern sales");
+  });
+
   it("published template leads with the portfolio", () => {
     const c = buildBragCaption(
       { totalRevenue: 500, totalSales: 30, totalProfit: 300, publishedCount: 6, revenuePerSale: 16.67, bestMonth: undefined, bestMonthProfit: 0, profitMonths: 0, profitRatio: 0 },
@@ -141,6 +151,20 @@ describe("buildBragCardSvg", () => {
       expect(svg).toContain("#d87093");
     }
     expect(() => buildBragCardSvg(s, "USD", "income", "Studio", "#d87093")).not.toThrow();
+  });
+
+  it("emits localized SVG text when a locale copy object is supplied", () => {
+    const svg = buildBragCardSvg(
+      { totalRevenue: 130, totalSales: 9, totalProfit: 40, publishedCount: 2, revenuePerSale: 14.44, bestMonth: undefined, bestMonthProfit: 0, profitMonths: 4, profitRatio: 80 },
+      "EUR",
+      "sales",
+      "Wollwerk",
+      "#d87093",
+      "navy",
+      getBragCardCopy("de"),
+    );
+    expect(svg).toContain("Verkäufe");
+    expect(svg).not.toContain(">sales<");
   });
 
   it("streak template shows the month count as the big number", () => {

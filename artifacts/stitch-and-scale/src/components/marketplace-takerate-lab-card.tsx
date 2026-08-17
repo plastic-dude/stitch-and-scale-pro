@@ -5,6 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { AlertTriangle, Flag, Store, Lightbulb } from 'lucide-react';
 import { PatternProject } from '@/lib/grading-engine';
+import { useSettings } from '@/context/SettingsContext';
+import { MARKETPLACE_TAKERATE_COPY } from '@/lib/marketplace-takerate-copy';
 import { projectStorage } from '@/lib/storage-lib';
 import {
   analyzeTakeRate,
@@ -86,6 +88,12 @@ const verdictColor = (v: string) =>
 const ORDER: ChannelId[] = ['etsy', 'ravelry', 'lovecrafts', 'ribblr', 'payhip', 'own-site'];
 
 export function MarketplaceTakeRateLabCard({ project }: { project: PatternProject }) {
+  const { language } = useSettings();
+  const copyText = MARKETPLACE_TAKERATE_COPY[language];
+  const channelLabels: Record<ChannelId, string> = {
+    etsy: copyText.channels.etsy, ravelry: copyText.channels.ravelry, lovecrafts: copyText.channels.lovecrafts,
+    ribblr: copyText.channels.ribblr, payhip: copyText.channels.payhip, 'own-site': copyText.channels.ownSite,
+  };
   const handle = useMemo(() => projectStorage<StoredState>('marketplace-takerate', project.id, [STORAGE_KEY]), [project.id]);
   const [input, setInput] = useState<MarketplaceTakeRateInput>(() => loadStored(handle));
 
@@ -115,31 +123,31 @@ export function MarketplaceTakeRateLabCard({ project }: { project: PatternProjec
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-base"><Store className="size-4" />Take-Rate War Lab</CardTitle>
-        <CardDescription>Where does your pattern revenue actually leak? Sticker percentages mislead on $4–10 patterns — the fixed tolls ($0.20–$0.80 per sale) decide the real take, and monthly thresholds flip effective rates as volume scales: Ravelry takes 3.5% only between $30 and $1,500/month, LoveCrafts adds 5% between $40 and $1,500/month, and Ribblr's advertised 4% hides a $0.25 floor that makes a $3.84 pattern pay 6.5% and a $1.99 pattern 12.6%. Etsy has already moved 5% → 6.5% (2022), Gumroad 3.5% → 10% (2023), and LoveCrafts has culled libraries — this lab prices all six routes (Etsy, Ravelry, LoveCrafts, Ribblr, Payhip, own-site Stripe) including the Offsite Ads trap, payout lag, delisting exposure and channel concentration, so you can see exactly which $ to move.</CardDescription>
+        <CardTitle className="flex items-center gap-2 text-base"><Store className="size-4" />{copyText.title}</CardTitle>
+        <CardDescription>{copyText.description}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <section className="space-y-3">
-          <h3 className="text-sm font-semibold flex items-center gap-1.5"><Store className="size-4" />Monthly units &amp; average price per channel</h3>
+          <h3 className="text-sm font-semibold flex items-center gap-1.5"><Store className="size-4" />{copyText.monthlyUnits}</h3>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
             {ORDER.map(id => {
               const ch = input.channels.find(c => c.id === id) ?? input.channels[0];
               const breakdown = result.channels.find(b => b.channel === id);
               return (
                 <div key={id} className="rounded-md border border-border/70 bg-accent/30 p-3 space-y-2.5">
-                  <div className="text-xs font-semibold text-muted-foreground">{ch?.label ?? CHANNEL_LABELS[id]}</div>
+                  <div className="text-xs font-semibold text-muted-foreground">{channelLabels[id]}</div>
                   <div className="grid grid-cols-2 gap-2">
-                    <NumField id={`tr-units-${id}`} label="Units / month" value={ch?.unitsPerMonth ?? 0} onChange={n => setChannel(id, 'unitsPerMonth', Math.max(0, Math.min(10000, n)))} suffix="u/mo" />
-                    <NumField id={`tr-price-${id}`} label="Avg price" value={ch?.price !== undefined ? Math.round(ch.price * 100) / 100 : 0} onChange={n => setChannel(id, 'price', Math.max(0.5, Math.min(999, n)))} step={0.5} suffix="$" />
+                    <NumField id={`tr-units-${id}`} label={copyText.unitsMonth} value={ch?.unitsPerMonth ?? 0} onChange={n => setChannel(id, 'unitsPerMonth', Math.max(0, Math.min(10000, n)))} suffix="u/mo" />
+                    <NumField id={`tr-price-${id}`} label={copyText.avgPrice} value={ch?.price !== undefined ? Math.round(ch.price * 100) / 100 : 0} onChange={n => setChannel(id, 'price', Math.max(0.5, Math.min(999, n)))} step={0.5} suffix="$" />
                   </div>
                   {id === 'etsy' && (
-                    <NumField id={`tr-offsite-${id}`} label="Offsite-Ads share" value={(ch?.offsiteAdsShare ?? 0) * 100} onChange={n => setChannel(id, 'offsiteAdsShare', Math.max(0, Math.min(100, n)) / 100)} suffix="%" />
+                    <NumField id={`tr-offsite-${id}`} label={copyText.offsiteShare} value={(ch?.offsiteAdsShare ?? 0) * 100} onChange={n => setChannel(id, 'offsiteAdsShare', Math.max(0, Math.min(100, n)) / 100)} suffix="%" />
                   )}
                   {breakdown && breakdown.revenue > 0 && (
                     <div className="text-xs text-muted-foreground">
-                      keeps <span className={breakdown.effectiveTakePct >= 15 ? 'text-amber-700 font-medium' : 'text-emerald-700 font-medium'}>
+                      {copyText.keeps} <span className={breakdown.effectiveTakePct >= 15 ? 'text-amber-700 font-medium' : 'text-emerald-700 font-medium'}>
                         {(100 - breakdown.effectiveTakePct).toFixed(0)}¢/$1
-                      </span> · {fmt$(breakdown.netPerSale)} net/sale · {fmt$(breakdown.netPerMonth)}/mo
+                      </span> · {fmt$(breakdown.netPerSale)} {copyText.netSale} · {fmt$(breakdown.netPerMonth)}/{copyText.netMonth}
                     </div>
                   )}
                 </div>
@@ -148,53 +156,53 @@ export function MarketplaceTakeRateLabCard({ project }: { project: PatternProjec
           </div>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
             <div className="space-y-1.5">
-              <Label htmlFor="tr-adsrate" className="text-xs">Offsite Ads rate</Label>
+              <Label htmlFor="tr-adsrate" className="text-xs">{copyText.offsiteRate}</Label>
               <select
                 id="tr-adsrate"
                 value={input.offsiteAdsRate}
                 onChange={e => setRoot('offsiteAdsRate', parseFloat(e.target.value))}
                 className="h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm">
-                <option value={0.15}>15% (shop under $10k/yr)</option>
-                <option value={0.12}>12% (shop over $10k/yr)</option>
+                <option value={0.15}>{copyText.under10k}</option>
+                <option value={0.12}>{copyText.over10k}</option>
               </select>
             </div>
-            <NumField id="tr-ppfixed" label="PayPal fixed per sale" value={input.ravelryPayPalFixed} onChange={n => setRoot('ravelryPayPalFixed', Math.max(0, n))} step={0.05} suffix="$" />
-            <NumField id="tr-pppct" label="PayPal processing" value={Math.round(input.ravelryPayPalPct * 1000) / 10} onChange={n => setRoot('ravelryPayPalPct', Math.round(Math.max(0, Math.min(20, n)) * 10) / 1000)} step={0.1} suffix="%" />
+            <NumField id="tr-ppfixed" label={copyText.paypalFixed} value={input.ravelryPayPalFixed} onChange={n => setRoot('ravelryPayPalFixed', Math.max(0, n))} step={0.05} suffix="$" />
+            <NumField id="tr-pppct" label={copyText.paypalProcessing} value={Math.round(input.ravelryPayPalPct * 1000) / 10} onChange={n => setRoot('ravelryPayPalPct', Math.round(Math.max(0, Math.min(20, n)) * 10) / 1000)} step={0.1} suffix="%" />
             <div className="flex flex-col justify-end gap-2 pb-1">
               <label className="flex items-center gap-2 text-xs">
                 <input type="checkbox" checked={input.ravelryHighTier} onChange={e => setRoot('ravelryHighTier', e.target.checked)} />
-                Ravelry above $1,500/mo (commission removed)
+                {copyText.ravelryHigh}
               </label>
             </div>
           </div>
         </section>
 
         <section className="space-y-3">
-          <h3 className="text-sm font-semibold">Portfolio summary</h3>
+          <h3 className="text-sm font-semibold">{copyText.portfolio}</h3>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            <StatBox label="Monthly revenue" value={fmt$(result.totalRevenue)} tone="default" />
-            <StatBox label="Monthly fees (all channels)" value={fmt$(result.totalFees)} tone={result.overallTakePct <= 15 ? 'good' : 'warn'} />
-            <StatBox label="Monthly net" value={fmt$(result.totalNet)} tone={result.totalNet > 0 ? 'good' : 'bad'} />
-            <StatBox label="Overall take %" value={`${result.overallTakePct.toFixed(1)}%`} tone={result.overallTakePct <= 15 ? 'good' : 'warn'} />
-            <StatBox label="Largest channel share of net" value={`${result.concentrationShare.toFixed(0)}%`} tone={result.concentrationShare <= 50 ? 'good' : 'bad'} />
-            <StatBox label="Net with no discovery engine" value={`${result.discoveryFreeNetShare.toFixed(0)}%`} tone={result.discoveryFreeNetShare < 40 ? 'good' : 'warn'} />
+            <StatBox label={copyText.monthlyRevenue} value={fmt$(result.totalRevenue)} tone="default" />
+            <StatBox label={copyText.monthlyFees} value={fmt$(result.totalFees)} tone={result.overallTakePct <= 15 ? 'good' : 'warn'} />
+            <StatBox label={copyText.monthlyNet} value={fmt$(result.totalNet)} tone={result.totalNet > 0 ? 'good' : 'bad'} />
+            <StatBox label={copyText.overallTake} value={`${result.overallTakePct.toFixed(1)}%`} tone={result.overallTakePct <= 15 ? 'good' : 'warn'} />
+            <StatBox label={copyText.largestShare} value={`${result.concentrationShare.toFixed(0)}%`} tone={result.concentrationShare <= 50 ? 'good' : 'bad'} />
+            <StatBox label={copyText.discoveryFree} value={`${result.discoveryFreeNetShare.toFixed(0)}%`} tone={result.discoveryFreeNetShare < 40 ? 'good' : 'warn'} />
           </div>
         </section>
 
         <section className="space-y-2.5">
-          <h3 className="text-sm font-semibold">Fee-leak leaderboard (worst first)</h3>
+          <h3 className="text-sm font-semibold">{copyText.leaderboard} ({copyText.worstFirst})</h3>
           <div className="overflow-x-auto">
             <table className="w-full text-xs md:text-sm">
               <thead>
                 <tr className="text-left text-muted-foreground border-b">
                   <th className="py-1.5 pr-3">#</th>
-                  <th className="py-1.5 pr-3">Channel</th>
-                  <th className="py-1.5 pr-3 text-right">Revenue/mo</th>
-                  <th className="py-1.5 pr-3 text-right">Fees/mo</th>
-                  <th className="py-1.5 pr-3 text-right">Take %</th>
+                  <th className="py-1.5 pr-3">{copyText.channel}</th>
+                  <th className="py-1.5 pr-3 text-right">{copyText.revenueMonth}</th>
+                  <th className="py-1.5 pr-3 text-right">{copyText.feesMonth}</th>
+                  <th className="py-1.5 pr-3 text-right">{copyText.takePct}</th>
                   <th className="py-1.5 pr-3 text-right">Net/sale</th>
                   <th className="py-1.5 pr-3 text-right">Net/mo</th>
-                  <th className="py-1.5 text-right">Annual net</th>
+                  <th className="py-1.5 text-right">{copyText.annualNet}</th>
                 </tr>
               </thead>
               <tbody>
@@ -222,7 +230,7 @@ export function MarketplaceTakeRateLabCard({ project }: { project: PatternProjec
 
         {result.thresholdAlerts.length > 0 && (
           <section className="space-y-2">
-            <h3 className="text-sm font-semibold flex items-center gap-1.5"><Store className="size-4" />Threshold alerts</h3>
+            <h3 className="text-sm font-semibold flex items-center gap-1.5"><Store className="size-4" />{copyText.thresholds}</h3>
             <div className="flex flex-col gap-2">
               {result.thresholdAlerts.map((t, i) => (
                 <div key={i} className="text-xs rounded-md border border-sky-500/30 bg-sky-500/10 text-sky-800 p-2.5">
@@ -235,7 +243,7 @@ export function MarketplaceTakeRateLabCard({ project }: { project: PatternProjec
 
         {result.flags.length > 0 && (
           <section className="space-y-2">
-            <h3 className="text-sm font-semibold flex items-center gap-1.5"><Flag className="size-4" />Watch-outs</h3>
+            <h3 className="text-sm font-semibold flex items-center gap-1.5"><Flag className="size-4" />{copyText.watchouts}</h3>
             <div className="flex flex-wrap gap-2">
               {result.flags.map(f => (
                 <Badge key={f.code} variant="outline" className="border-amber-500/40 bg-amber-500/10 text-amber-700 gap-1.5 py-1.5 max-w-sm">
@@ -248,11 +256,11 @@ export function MarketplaceTakeRateLabCard({ project }: { project: PatternProjec
         )}
 
         <section className={`rounded-md border p-4 ${verdictColor(result.verdict)}`}>
-          <div className="flex items-center gap-2 font-semibold"><Lightbulb className="size-4" />{result.verdict}</div>
+          <div className="flex items-center gap-2 font-semibold"><Lightbulb className="size-4" />{copyText.verdict}: {result.verdict}</div>
           <p className="mt-1.5 text-sm">{result.verdictNote}</p>
         </section>
 
-        <p className="text-xs text-muted-foreground leading-4">Verified anchors (Aug 2026): Etsy $0.20 listing + 6.5% transaction + 0.21% regulatory + 3% + $0.25 processing + Offsite Ads 12–15%; Ravelry 3.5% commission only between $30–$1,500/mo with PayPal-only payouts (2.9% + $0.30); LoveCrafts 2% + $0.20 base plus 5% between $40–$1,500/mo, paid a month in arrears; Ribblr 4% with a $0.25 minimum + Stripe 2.9% + $0.30; Payhip free 5% + Stripe; own-site Stripe only (2.9% + $0.30) but no discovery. Fee history: Etsy 5%→6.5% (2022), Gumroad 3.5%→10% (2023).</p>
+        <p className="text-xs text-muted-foreground leading-4">{copyText.anchors}</p>
       </CardContent>
     </Card>
   );

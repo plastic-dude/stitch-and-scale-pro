@@ -53,6 +53,8 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { useSettings } from "@/context/SettingsContext";
+import { getReceiptCopy, getReceiptOptionLabels } from "@/lib/receipt-copy";
 
 const STORAGE_KEY = "stitch-and-scale-receipt-v1";
 
@@ -91,6 +93,9 @@ function cloneNode<T extends HTMLElement>(node: T): T {
 export function ReceiptLabCard(props: { project: PatternProject }) {
   const { project } = props;
   const { toast } = useToast();
+  const { language } = useSettings();
+  const copy = getReceiptCopy(language);
+  const optionLabels = getReceiptOptionLabels(language);
 
   const [brand, setBrand] = useState<BrandProfile>(() => loadBrand(project));
   const [ledger, setLedger] = useState<SavedSale[]>(() => loadStored(project).ledger);
@@ -205,7 +210,7 @@ export function ReceiptLabCard(props: { project: PatternProject }) {
 
   function saveSale() {
     if (items.every((it) => !it.name && it.unitPrice <= 0)) {
-      toast({ title: "Add at least one item with a price", variant: "destructive" });
+      toast({ title: copy.addPricedItem, variant: "destructive" });
       return;
     }
     const docNumber = result.nextDocNumber;
@@ -229,8 +234,8 @@ export function ReceiptLabCard(props: { project: PatternProject }) {
     setLedger(nextLedger);
     persist({ brand, ledger: nextLedger, ts: Date.now() });
     toast({
-      title: kind === "quote" ? "Quote saved" : kind === "refund" ? "Refund saved" : "Receipt saved",
-      description: docNumber + " added to the ledger",
+      title: kind === "quote" ? copy.quoteSaved : kind === "refund" ? copy.refundSaved : copy.receiptSaved,
+      description: docNumber + " " + copy.addedToLedger,
     });
   }
 
@@ -242,35 +247,35 @@ export function ReceiptLabCard(props: { project: PatternProject }) {
 
   function saveBrand() {
     persist({ brand, ledger, ts: Date.now() });
-    toast({ title: "Brand saved", description: "Receipts will carry " + (brand.businessName || "your business name") });
+    toast({ title: copy.brandSaved, description: copy.receiptsCarry + " " + (brand.businessName || copy.yourStudio) });
   }
 
   function buildTextLines(): string {
     const lines: string[] = [];
     if (brand.businessName) lines.push(brand.businessName);
-    lines.push(DOC_KIND_LABELS[kind] + " #" + result.document.docNumber.replace(/\*\*\*/, String(ledger.filter((s) => s.kind === kind).length + 1).padStart(3, "0")));
-    lines.push("Date: " + date);
-    if (customerName) lines.push("Customer: " + customerName);
-    lines.push("Channel: " + SALE_CHANNEL_LABELS[channel]);
+    lines.push(optionLabels.document[kind] + " #" + result.document.docNumber.replace(/\*\*\*/, String(ledger.filter((s) => s.kind === kind).length + 1).padStart(3, "0")));
+    lines.push(copy.date + ": " + date);
+    if (customerName) lines.push(copy.customer + ": " + customerName);
+    lines.push(copy.channel + ": " + optionLabels.channel[channel]);
     for (const it of items) {
       if (!it.name && it.unitPrice <= 0) continue;
       const lineTotal = it.qty * it.unitPrice;
       lines.push(it.name + " — ×" + it.qty + " @ " + fmtMoney(it.unitPrice, brand.currency) + " = " + fmtMoney(lineTotal, brand.currency));
     }
-    if (taxPct > 0) lines.push("Tax (" + taxPct + "%): " + fmtMoney(result.fees.taxAmount, brand.currency));
-    if (shippingCharged > 0) lines.push("Shipping: " + fmtMoney(shippingCharged, brand.currency));
-    lines.push("Total: " + fmtMoney(result.fees.grossTotal, brand.currency));
+    if (taxPct > 0) lines.push(copy.tax + " (" + taxPct + "%): " + fmtMoney(result.fees.taxAmount, brand.currency));
+    if (shippingCharged > 0) lines.push(copy.shipping + ": " + fmtMoney(shippingCharged, brand.currency));
+    lines.push(copy.total + ": " + fmtMoney(result.fees.grossTotal, brand.currency));
     if (kind === "receipt") {
-      if (result.fees.platformFee > 0) lines.push("Platform fee: −" + fmtMoney(result.fees.platformFee, brand.currency));
-      if (result.fees.processingFee > 0) lines.push("Processing fee: −" + fmtMoney(result.fees.processingFee, brand.currency));
-      lines.push("Profit on this sale: " + fmtMoney(result.document.profit, brand.currency));
+      if (result.fees.platformFee > 0) lines.push(copy.platformFee + ": −" + fmtMoney(result.fees.platformFee, brand.currency));
+      if (result.fees.processingFee > 0) lines.push(copy.processingFee + ": −" + fmtMoney(result.fees.processingFee, brand.currency));
+      lines.push(copy.profit + ": " + fmtMoney(result.document.profit, brand.currency));
     }
     if (kind === "quote") {
-      lines.push("Deposit due (" + (depositPct).toFixed(0) + "%): " + fmtMoney(result.fees.grossTotal * (depositPct / 100), brand.currency));
-      lines.push("Lead time: " + leadDays + " days · valid " + validDays + " days");
+      lines.push(copy.depositDue + " (" + (depositPct).toFixed(0) + "%): " + fmtMoney(result.fees.grossTotal * (depositPct / 100), brand.currency));
+      lines.push(copy.leadTime + ": " + leadDays + " days · " + copy.valid + " " + validDays + " days");
     }
     if (note) lines.push(note);
-    lines.push("made with stitchandscale.app");
+    lines.push(copy.madeWith);
     return lines.join("\n");
   }
 
@@ -279,9 +284,9 @@ export function ReceiptLabCard(props: { project: PatternProject }) {
       await navigator.clipboard.writeText(buildTextLines());
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
-      toast({ title: "Receipt copied", description: "Paste it straight into the chat" });
+      toast({ title: copy.receiptCopied, description: copy.pasteIntoChat });
     } catch {
-      toast({ title: "Copy failed", description: "Your browser blocked clipboard access", variant: "destructive" });
+      toast({ title: copy.copyFailed, description: copy.clipboardBlocked, variant: "destructive" });
     }
   }
 
@@ -306,8 +311,8 @@ export function ReceiptLabCard(props: { project: PatternProject }) {
     // capture of the styled card using the browser's own tooling is not
     // available without a dependency, so we keep the promise honest:
     toast({
-      title: "Use your device screenshot",
-      description: "On mobile the card is sized for chat. Screenshot it and send — it arrives looking native in WhatsApp, Signal and iMessage.",
+      title: copy.screenshotTitle,
+      description: copy.screenshotDescription,
     });
   }
 
@@ -333,13 +338,13 @@ export function ReceiptLabCard(props: { project: PatternProject }) {
     <Tabs defaultValue="new">
       <TabsList className="mb-4 flex-wrap h-auto">
         <TabsTrigger value="new" className="font-medium text-sm whitespace-nowrap data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
-          <ReceiptText className="h-3.5 w-3.5 mr-1.5" /> New Receipt
+          <ReceiptText className="h-3.5 w-3.5 mr-1.5" /> {copy.newReceipt}
         </TabsTrigger>
         <TabsTrigger value="ledger" className="font-medium text-sm whitespace-nowrap data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
-          <CalendarDays className="h-3.5 w-3.5 mr-1.5" /> Ledger ({ledger.length})
+          <CalendarDays className="h-3.5 w-3.5 mr-1.5" /> {copy.ledger} ({ledger.length})
         </TabsTrigger>
         <TabsTrigger value="brand" className="font-medium text-sm whitespace-nowrap data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
-          <Users className="h-3.5 w-3.5 mr-1.5" /> Brand &amp; Settings
+          <Users className="h-3.5 w-3.5 mr-1.5" /> {copy.brandSettings}
         </TabsTrigger>
       </TabsList>
 
@@ -348,98 +353,95 @@ export function ReceiptLabCard(props: { project: PatternProject }) {
           <CardHeader>
             <CardTitle className="font-serif flex items-center gap-2">
               <ReceiptText className="w-5 h-5 text-accent" />
-              Receipt Lab
+              {copy.title}
             </CardTitle>
-            <CardDescription>
-              Chat-first receipts for WhatsApp, Signal and iMessage — plus a printable PDF path and a monthly
-              ledger. Etsy never issues buyer invoices; this is yours.
-            </CardDescription>
+            <CardDescription>{copy.description}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-5">
             <div className="flex flex-wrap gap-2">
               {(["receipt", "quote", "refund"] as ReceiptDocKind[]).map((k) => (
                 <Button key={k} variant={kind === k ? "default" : "outline"} size="sm" onClick={() => setKind(k)}>
-                  {DOC_KIND_LABELS[k]}
+                  {optionLabels.document[k]}
                 </Button>
               ))}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <Label className="text-xs font-medium">Customer</Label>
-                <Input value={customerName} onChange={(e) => setCustomerName(e.target.value)} placeholder="e.g. @knitwithlena" />
+                <Label className="text-xs font-medium">{copy.customer}</Label>
+                <Input value={customerName} onChange={(e) => setCustomerName(e.target.value)} placeholder={copy.customerPlaceholder} />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-xs font-medium">Date</Label>
+                <Label className="text-xs font-medium">{copy.date}</Label>
                 <Input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-xs font-medium">Channel</Label>
+                <Label className="text-xs font-medium">{copy.channel}</Label>
                 <NativeSelect value={channel} onChange={(e) => setChannel(e.target.value as SaleChannel)}>
-                  {Object.entries(SALE_CHANNEL_LABELS).map(([v, l]) => (
+                  {Object.entries(optionLabels.channel).map(([v, l]) => (
                     <option key={v} value={v}>{l}</option>
                   ))}
                 </NativeSelect>
               </div>
               <div className="space-y-1.5">
-                <Label className="text-xs font-medium">Sale type</Label>
+                <Label className="text-xs font-medium">{copy.saleType}</Label>
                 <NativeSelect value={saleType} onChange={(e) => setSaleType(e.target.value as SaleType)}>
-                  {Object.entries(SALE_TYPE_LABELS).map(([v, l]) => (
+                  {Object.entries(optionLabels.saleType).map(([v, l]) => (
                     <option key={v} value={v}>{l}</option>
                   ))}
                 </NativeSelect>
               </div>
               <div className="space-y-1.5 md:col-span-2">
-                <Label className="text-xs font-medium">Pattern / design name</Label>
-                <Input value={patternName} onChange={(e) => setPatternName(e.target.value)} placeholder="e.g. Mossy Yoke Sweater" />
+                <Label className="text-xs font-medium">{copy.patternName}</Label>
+                <Input value={patternName} onChange={(e) => setPatternName(e.target.value)} placeholder={copy.patternName} />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label className="text-xs font-medium">Items</Label>
+              <Label className="text-xs font-medium">{copy.items}</Label>
               {items.map((it, idx) => (
                 <div key={idx} className="flex items-center gap-2">
                   <Input
                     className="flex-1"
                     value={it.name}
                     onChange={(e) => setItemField(idx, { name: e.target.value })}
-                    placeholder="e.g. Custom knit — Size L, wool-mohair blend"
+                    placeholder={copy.itemNamePlaceholder}
                   />
-                  <Input className="w-20" type="number" min={0} max={999} value={it.qty} onChange={(e) => setItemField(idx, { qty: Number(e.target.value) })} placeholder="Qty" />
-                  <Input className="w-28" type="number" min={0} step="0.01" value={it.unitPrice || ""} onChange={(e) => setItemField(idx, { unitPrice: Number(e.target.value) })} placeholder="Price" />
+                  <Input className="w-20" type="number" min={0} max={999} value={it.qty} onChange={(e) => setItemField(idx, { qty: Number(e.target.value) })} placeholder={copy.qty} />
+                  <Input className="w-28" type="number" min={0} step="0.01" value={it.unitPrice || ""} onChange={(e) => setItemField(idx, { unitPrice: Number(e.target.value) })} placeholder={copy.price} />
                   {items.length > 1 && (
-                    <Button variant="ghost" size="icon" onClick={() => removeItem(idx)} aria-label="Remove item">
+                    <Button variant="ghost" size="icon" onClick={() => removeItem(idx)} aria-label={copy.removeItem}>
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   )}
                 </div>
               ))}
               <Button variant="outline" size="sm" onClick={addItem}>
-                + Add item
+                + {copy.addItem}
               </Button>
             </div>
 
             {kind === "quote" && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 rounded-lg border border-dashed p-4">
-                <Label className="text-xs font-semibold col-span-full">Custom-order protection (what was agreed, deposit, timeline)</Label>
+                <Label className="text-xs font-semibold col-span-full">{copy.customOrderProtection}</Label>
                 <div className="space-y-1.5 md:col-span-2">
-                  <Label className="text-xs font-medium">Agreed description</Label>
-                  <Textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Size L, wool-mohair blend, forest green, wooden buttons, ribbed cuffs — as discussed 14 Aug" />
+                  <Label className="text-xs font-medium">{copy.agreedDescription}</Label>
+                  <Textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder={copy.descriptionPlaceholder} />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-medium">Deposit %</Label>
+                  <Label className="text-xs font-medium">{copy.depositPercent}</Label>
                   <Input type="number" min={0} max={100} value={depositPct} onChange={(e) => setDepositPct(Number(e.target.value))} />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-medium">Lead time (days)</Label>
+                  <Label className="text-xs font-medium">{copy.leadTimeDays}</Label>
                   <Input type="number" min={1} value={leadDays} onChange={(e) => setLeadDays(Number(e.target.value))} />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-medium">Quote valid (days)</Label>
+                  <Label className="text-xs font-medium">{copy.quoteValidDays}</Label>
                   <Input type="number" min={1} value={validDays} onChange={(e) => setValidDays(Number(e.target.value))} />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-medium">Deposit already received</Label>
+                  <Label className="text-xs font-medium">{copy.depositReceived}</Label>
                   <Input type="number" min={0} step="0.01" value={depositReceived || ""} onChange={(e) => setDepositReceived(Number(e.target.value))} />
                 </div>
               </div>
@@ -448,39 +450,39 @@ export function ReceiptLabCard(props: { project: PatternProject }) {
             {kind !== "quote" && (
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-medium">Tax %</Label>
+                  <Label className="text-xs font-medium">{copy.tax} %</Label>
                   <Input type="number" min={0} max={100} value={taxPct || ""} onChange={(e) => setTaxPct(Number(e.target.value))} placeholder="0" />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-medium">Platform fee %</Label>
+                  <Label className="text-xs font-medium">{copy.platformFee} %</Label>
                   <Input type="number" min={0} max={100} step="0.1" value={commissionPct || ""} onChange={(e) => setCommissionPct(Number(e.target.value))} placeholder="0" />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-medium">Processing %</Label>
+                  <Label className="text-xs font-medium">{copy.processingFee} %</Label>
                   <Input type="number" min={0} max={100} step="0.1" value={processingPct || ""} onChange={(e) => setProcessingPct(Number(e.target.value))} placeholder="0" />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-medium">Processing flat</Label>
+                  <Label className="text-xs font-medium">{copy.processingFee}</Label>
                   <Input type="number" min={0} step="0.01" value={processingFlat || ""} onChange={(e) => setProcessingFlat(Number(e.target.value))} placeholder="0.00" />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-medium">Shipping charged</Label>
+                  <Label className="text-xs font-medium">{copy.shipping} (charged)</Label>
                   <Input type="number" min={0} step="0.01" value={shippingCharged || ""} onChange={(e) => setShippingCharged(Number(e.target.value))} placeholder="0.00" />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-medium">Shipping cost</Label>
+                  <Label className="text-xs font-medium">{copy.shipping} (cost)</Label>
                   <Input type="number" min={0} step="0.01" value={shippingCost || ""} onChange={(e) => setShippingCost(Number(e.target.value))} placeholder="0.00" />
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-xs font-medium">Materials cost</Label>
+                  <Label className="text-xs font-medium">{copy.materialsCost}</Label>
                   <Input type="number" min={0} step="0.01" value={materialsCost || ""} onChange={(e) => setMaterialsCost(Number(e.target.value))} placeholder="0.00" />
                 </div>
               </div>
             )}
 
             <div className="space-y-1.5">
-              <Label className="text-xs font-medium">Note (optional)</Label>
-              <Textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder="e.g. Thank you — enjoy the sweater!" rows={2} />
+              <Label className="text-xs font-medium">{copy.noteOptional}</Label>
+              <Textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder={copy.notePlaceholder} rows={2} />
             </div>
           </CardContent>
         </Card>
@@ -490,85 +492,83 @@ export function ReceiptLabCard(props: { project: PatternProject }) {
           <div className="lg:col-span-2 space-y-2">
             <div className="flex flex-wrap gap-1.5">
               {(["chat", "studio", "selvedge"] as ReceiptStyle[]).map((s) => (
-                <Button key={s} variant={receiptStyle === s ? "default" : "outline"} size="sm" onClick={() => setReceiptStyle(s)}>{s === "chat" ? "Chat" : s === "studio" ? "Craft Paper" : "Selvedge"}</Button>
+                <Button key={s} variant={receiptStyle === s ? "default" : "outline"} size="sm" onClick={() => setReceiptStyle(s)}>{s === "chat" ? copy.chat : s === "studio" ? copy.craftPaper : copy.selvedge}</Button>
               ))}
             </div>
             <div ref={cardRef} className={`p-6 max-w-sm mx-auto w-full relative ${receiptTheme.frame}`} style={receiptStyle === "selvedge" ? { boxShadow: "inset 4px 0 0 0 #d87093" } : undefined}>
               {receiptStyle === "studio" ? <div className="absolute top-0 left-1/2 -translate-x-1/2 w-16 h-5 bg-[#d87093]/25" /> : null}
               <div className="flex items-start justify-between">
                 <div>
-                  <div className={receiptTheme.title}>{brand.businessName || "Your Studio"}</div>
+                  <div className={receiptTheme.title}>{brand.businessName || copy.yourStudio}</div>
                   {brand.contact && <div className="text-xs opacity-70">{brand.contact}</div>}
                 </div>
                 <div className={receiptTheme.pill}>
-                  {DOC_KIND_LABELS[kind]}
+                  {optionLabels.document[kind]}
                 </div>
               </div>
               <div className="my-4 border-t border-dashed" />
               <div className="space-y-1.5 text-sm">
                 <div className="flex justify-between"><span className="text-muted-foreground">#{result.document.docNumber.replace(/\*\*\*/g, String(ledger.filter((s) => s.kind === kind).length + 1).padStart(3, "0"))}</span><span>{date}</span></div>
-                {customerName && <div className="flex justify-between"><span className="text-muted-foreground">Customer</span><span className="font-medium">{customerName}</span></div>}
-                <div className="flex justify-between"><span className="text-muted-foreground">Channel</span><span>{SALE_CHANNEL_LABELS[channel]}</span></div>
-                {patternName && <div className="flex justify-between"><span className="text-muted-foreground">Pattern</span><span className="font-medium">{patternName}</span></div>}
+                {customerName && <div className="flex justify-between"><span className="text-muted-foreground">{copy.customer}</span><span className="font-medium">{customerName}</span></div>}
+                <div className="flex justify-between"><span className="text-muted-foreground">{copy.channel}</span><span>{optionLabels.channel[channel]}</span></div>
+                {patternName && <div className="flex justify-between"><span className="text-muted-foreground">{copy.pattern}</span><span className="font-medium">{patternName}</span></div>}
                 {items.some((it) => it.name || it.unitPrice > 0) && <div className={`my-2 border-t border-dashed ${receiptStyle === "selvedge" ? "border-[#4a443c]" : ""}`} />}
                 {items.map((it, idx) => {
                   if (!it.name && it.unitPrice <= 0) return null;
                   return (
                     <div key={idx} className="flex justify-between">
-                      <span className="flex-1">{it.name || "Item"}</span>
+                      <span className="flex-1">{it.name || copy.item}</span>
                       <span>×{it.qty} {fmtMoney(it.qty * it.unitPrice, brand.currency)}</span>
                     </div>
                   );
                 })}
-                {taxPct > 0 && <div className="flex justify-between text-xs text-muted-foreground"><span>Tax ({taxPct}%)</span><span>{fmtMoney(result.fees.taxAmount, brand.currency)}</span></div>}
-                {shippingCharged > 0 && <div className="flex justify-between text-xs text-muted-foreground"><span>Shipping</span><span>{fmtMoney(shippingCharged, brand.currency)}</span></div>}
-                <div className="flex justify-between font-semibold text-base"><span>Total</span><span>{fmtMoney(result.fees.grossTotal, brand.currency)}</span></div>
+                {taxPct > 0 && <div className="flex justify-between text-xs text-muted-foreground"><span>{copy.tax} ({taxPct}%)</span><span>{fmtMoney(result.fees.taxAmount, brand.currency)}</span></div>}
+                {shippingCharged > 0 && <div className="flex justify-between text-xs text-muted-foreground"><span>{copy.shipping}</span><span>{fmtMoney(shippingCharged, brand.currency)}</span></div>}
+                <div className="flex justify-between font-semibold text-base"><span>{copy.total}</span><span>{fmtMoney(result.fees.grossTotal, brand.currency)}</span></div>
                 {kind === "receipt" && (
                   <>
-                    {result.fees.platformFee > 0 && <div className="flex justify-between text-xs text-muted-foreground"><span>Platform fee</span><span>−{fmtMoney(result.fees.platformFee, brand.currency)}</span></div>}
-                    {result.fees.processingFee > 0 && <div className="flex justify-between text-xs text-muted-foreground"><span>Processing</span><span>−{fmtMoney(result.fees.processingFee, brand.currency)}</span></div>}
-                    <div className="flex justify-between font-semibold text-accent"><span>Profit</span><span>{fmtMoney(result.document.profit, brand.currency)}</span></div>
+                    {result.fees.platformFee > 0 && <div className="flex justify-between text-xs text-muted-foreground"><span>{copy.platformFee}</span><span>−{fmtMoney(result.fees.platformFee, brand.currency)}</span></div>}
+                    {result.fees.processingFee > 0 && <div className="flex justify-between text-xs text-muted-foreground"><span>{copy.processingFee}</span><span>−{fmtMoney(result.fees.processingFee, brand.currency)}</span></div>}
+                    <div className="flex justify-between font-semibold text-accent"><span>{copy.profit}</span><span>{fmtMoney(result.document.profit, brand.currency)}</span></div>
                   </>
                 )}
                 {kind === "quote" && (
-                  <div className="flex justify-between font-semibold text-accent"><span>Deposit due ({depositPct}%)</span><span>{fmtMoney(result.fees.grossTotal * (depositPct / 100), brand.currency)}</span></div>
+                  <div className="flex justify-between font-semibold text-accent"><span>{copy.depositDue} ({depositPct}%)</span><span>{fmtMoney(result.fees.grossTotal * (depositPct / 100), brand.currency)}</span></div>
                 )}
                 {note && <div className={`text-xs italic pt-1 ${receiptStyle === "chat" ? "text-muted-foreground" : receiptStyle === "studio" ? "text-[#7a7161]" : "text-[#b3ab9b]"}`}>{note}</div>}
               </div>
               <div className={`mt-4 border-t border-dashed pt-3 flex items-center justify-between ${receiptTheme.footer}`}>
-                <span>made with stitchandscale.app</span>
+                <span>{copy.madeWith}</span>
                 <span className="font-serif">{brand.businessName ? brand.businessName.slice(0, 12) : "Stitch & Scale"}</span>
               </div>
             </div>
             <p className="text-xs text-muted-foreground text-center">
-              The card above is sized for chat — pick a style above (Chat / Craft Paper / Selvedge) and screenshot
-              it on your device; it lands in WhatsApp, Signal or iMessage looking native, or use the text copy below
-              for a plain-text receipt.
+              {copy.screenshotDescription}
             </p>
           </div>
 
           <div className="lg:col-span-3 space-y-4">
             <Card>
               <CardHeader>
-                <CardTitle className="font-serif text-base">Share &amp; save</CardTitle>
-                <CardDescription>Send it in the same chat the order came from.</CardDescription>
+                <CardTitle className="font-serif text-base">{copy.shareSave}</CardTitle>
+                <CardDescription>{copy.sendInChat}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="flex flex-wrap gap-2">
                   <Button onClick={shareReceipt} size="sm">
-                    <Share2 className="h-4 w-4 mr-1.5" /> {copied ? "Copied!" : "Copy / Share receipt"}
+                    <Share2 className="h-4 w-4 mr-1.5" /> {copied ? copy.copied : copy.copyShare}
                   </Button>
                   <Button variant="outline" size="sm" onClick={saveReceiptImage}>
-                    <Download className="h-4 w-4 mr-1.5" /> Save as image
+                    <Download className="h-4 w-4 mr-1.5" /> {copy.saveImage}
                   </Button>
                   <Button variant="outline" size="sm" onClick={() => window.print()}>
-                    <Printer className="h-4 w-4 mr-1.5" /> Print / PDF
+                    <Printer className="h-4 w-4 mr-1.5" /> {copy.printPdf}
                   </Button>
                   <Button variant="outline" size="sm" onClick={saveSale}>
-                    <Check className="h-4 w-4 mr-1.5" /> Save to ledger
+                    <Check className="h-4 w-4 mr-1.5" /> {copy.saveLedger}
                   </Button>
                   <Button variant="ghost" size="sm" onClick={resetDraft}>
-                    Reset
+                    {copy.reset}
                   </Button>
                 </div>
                 <div className="rounded-lg bg-muted/50 p-3 text-xs font-mono whitespace-pre-wrap max-h-48 overflow-auto">
@@ -588,32 +588,32 @@ export function ReceiptLabCard(props: { project: PatternProject }) {
               <Card>
                 <CardHeader className="pb-2">
                   <CardTitle className="font-serif text-base flex items-center justify-between">
-                    <span>Monthly ledger</span>
+                    <span>{copy.monthlyLedger}</span>
                     <Button variant="ghost" size="sm" className="text-xs" onClick={() => setShowLedger((v) => !v)}>
-                      {showLedger ? "Hide rows" : "Show rows"}
+                      {showLedger ? copy.hideRows : copy.showRows}
                     </Button>
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-2">
                   <div className="grid grid-cols-2 md:grid-cols-5 gap-2 text-center">
                     <div className="rounded-lg bg-secondary/40 p-2">
-                      <div className="text-xs text-muted-foreground">Sales</div>
+                      <div className="text-xs text-muted-foreground">{copy.sales}</div>
                       <div className="font-semibold">{result.totals.salesCount}</div>
                     </div>
                     <div className="rounded-lg bg-secondary/40 p-2">
-                      <div className="text-xs text-muted-foreground">Revenue</div>
+                      <div className="text-xs text-muted-foreground">{copy.revenue}</div>
                       <div className="font-semibold">{fmtMoney(result.totals.revenue, brand.currency)}</div>
                     </div>
                     <div className="rounded-lg bg-secondary/40 p-2">
-                      <div className="text-xs text-muted-foreground">Refunds</div>
+                      <div className="text-xs text-muted-foreground">{copy.refunds}</div>
                       <div className="font-semibold">{fmtMoney(result.totals.refunds, brand.currency)}</div>
                     </div>
                     <div className="rounded-lg bg-accent/10 p-2">
-                      <div className="text-xs text-muted-foreground">Profit (net fees)</div>
+                      <div className="text-xs text-muted-foreground">{copy.profitNetFees}</div>
                       <div className="font-semibold">{fmtMoney(result.totals.profit, brand.currency)}</div>
                     </div>
                     <div className="rounded-lg bg-secondary/40 p-2">
-                      <div className="text-xs text-muted-foreground">Months</div>
+                      <div className="text-xs text-muted-foreground">{copy.months}</div>
                       <div className="font-semibold">{result.ledger.length}</div>
                     </div>
                   </div>
@@ -622,12 +622,12 @@ export function ReceiptLabCard(props: { project: PatternProject }) {
                       <table className="w-full text-xs">
                         <thead>
                           <tr className="text-muted-foreground">
-                            <th className="text-left p-1.5">Month</th>
-                            <th className="text-right p-1.5">Sales</th>
-                            <th className="text-right p-1.5">Revenue</th>
-                            <th className="text-right p-1.5">Refunds</th>
-                            <th className="text-right p-1.5">Fees</th>
-                            <th className="text-right p-1.5">Profit</th>
+                            <th className="text-left p-1.5">{copy.month}</th>
+                            <th className="text-right p-1.5">{copy.sales}</th>
+                            <th className="text-right p-1.5">{copy.revenue}</th>
+                            <th className="text-right p-1.5">{copy.refunds}</th>
+                            <th className="text-right p-1.5">{copy.processingFee}</th>
+                            <th className="text-right p-1.5">{copy.profit}</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -657,13 +657,13 @@ export function ReceiptLabCard(props: { project: PatternProject }) {
           <CardHeader>
             <CardTitle className="font-serif flex items-center gap-2">
               <CalendarDays className="w-5 h-5 text-accent" />
-              Saved sales ledger
+              {copy.savedSalesLedger}
             </CardTitle>
-            <CardDescription>Every saved receipt, quote and refund for this pattern.</CardDescription>
+            <CardDescription>{copy.ledgerDescription}</CardDescription>
           </CardHeader>
           <CardContent>
             {ledger.length === 0 ? (
-              <p className="text-sm text-muted-foreground py-6 text-center">No saved sales yet — create one in New Receipt and hit &quot;Save to ledger&quot;.</p>
+              <p className="text-sm text-muted-foreground py-6 text-center">{copy.noSavedSales}</p>
             ) : (
               <div className="space-y-2">
                 {ledger.map((s) => {
@@ -672,23 +672,23 @@ export function ReceiptLabCard(props: { project: PatternProject }) {
                     <div key={s.id} className="flex items-center justify-between rounded-lg border px-3 py-2 text-sm">
                       <div>
                         <span className="font-mono text-xs text-muted-foreground mr-2">{s.docNumber}</span>
-                        <span className="font-medium">{DOC_KIND_LABELS[s.kind]}</span>
+                        <span className="font-medium">{optionLabels.document[s.kind]}</span>
                         <span className="text-muted-foreground mx-1.5">·</span>
-                        <span>{s.customerName || "customer"}</span>
+                        <span>{s.customerName || copy.customer}</span>
                         <span className="text-muted-foreground mx-1.5">·</span>
                         <span>{s.date}</span>
                         <span className="text-muted-foreground mx-1.5">·</span>
-                        <span>{SALE_CHANNEL_LABELS[s.channel]}</span>
+                        <span>{optionLabels.channel[s.channel]}</span>
                         {s.kind === "quote" && (
                           <>
                             <span className="text-muted-foreground mx-1.5">·</span>
-                            <span className="text-xs">balance due {fmtMoney(perSale.document.balanceDue, brand.currency)}</span>
+                            <span className="text-xs">{copy.balanceDue} {fmtMoney(perSale.document.balanceDue, brand.currency)}</span>
                           </>
                         )}
                       </div>
                       <div className="flex items-center gap-2">
                         <span className="font-semibold">{fmtMoney(perSale.fees.grossTotal, brand.currency)}</span>
-                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => deleteSale(s.id)} aria-label="Delete sale">
+                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => deleteSale(s.id)} aria-label={copy.deleteSale}>
                           <Trash2 className="h-3.5 w-3.5 text-destructive" />
                         </Button>
                       </div>
@@ -706,22 +706,22 @@ export function ReceiptLabCard(props: { project: PatternProject }) {
           <CardHeader>
             <CardTitle className="font-serif flex items-center gap-2">
               <Users className="w-5 h-5 text-accent" />
-              Brand &amp; settings
+              {copy.brandTitle}
             </CardTitle>
-            <CardDescription>What appears at the top of every receipt. Honest branding only — never claim credentials you don't have.</CardDescription>
+            <CardDescription>{copy.brandDescription}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <Label className="text-xs font-medium">Business / studio name</Label>
-                <Input value={brand.businessName} onChange={(e) => setBrand((b) => ({ ...b, businessName: e.target.value }))} placeholder="e.g. Moss & Yarn Studio" />
+                <Label className="text-xs font-medium">{copy.businessStudioName}</Label>
+                <Input value={brand.businessName} onChange={(e) => setBrand((b) => ({ ...b, businessName: e.target.value }))} placeholder={copy.businessPlaceholder} />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-xs font-medium">Contact (IG handle, email, WhatsApp)</Label>
-                <Input value={brand.contact} onChange={(e) => setBrand((b) => ({ ...b, contact: e.target.value }))} placeholder="e.g. @mossandyarn · mossandyarn@gmail.com" />
+                <Label className="text-xs font-medium">{copy.contactLabel}</Label>
+                <Input value={brand.contact} onChange={(e) => setBrand((b) => ({ ...b, contact: e.target.value }))} placeholder={copy.contactPlaceholder} />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-xs font-medium">Default currency</Label>
+                <Label className="text-xs font-medium">{copy.defaultCurrency}</Label>
                 <NativeSelect
                   value={brand.currency}
                   onChange={(e) => setBrand((b) => ({ ...b, currency: e.target.value }))}
@@ -733,13 +733,12 @@ export function ReceiptLabCard(props: { project: PatternProject }) {
               </div>
             </div>
             <Button size="sm" onClick={saveBrand}>
-              <Check className="h-4 w-4 mr-1.5" /> Save brand
+              <Check className="h-4 w-4 mr-1.5" /> {copy.saveBrand}
             </Button>
             <div className="flex items-center gap-2 text-xs text-muted-foreground rounded-lg bg-muted/50 p-3">
               <HelpCircle className="h-3.5 w-3.5 shrink-0" />
               <span>
-                Default fee presets: Etsy listing + transaction ≈ 9.5%; Ravelry ≈ 5%; Stripe ≈ 2.9% + $0.30. Set them
-                once and they flow into every receipt's profit line.
+                {copy.fees} presets: Etsy listing + transaction ≈ 9.5%; Ravelry ≈ 5%; Stripe ≈ 2.9% + $0.30. Set them once and they flow into every receipt's profit line.
               </span>
             </div>
           </CardContent>

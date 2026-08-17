@@ -10,6 +10,8 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { ClipboardCopy, LineChart, Megaphone, CheckCircle2, XCircle, AlertTriangle, PackageOpen } from 'lucide-react';
 import { PatternProject } from '@/lib/grading-engine';
+import { useSettings } from '@/context/SettingsContext';
+import { KAL_ROI_COPY } from '@/lib/kal-roi-copy';
 import {
   analyzeKal,
   defaultKalEvent,
@@ -80,6 +82,8 @@ const fmt$ = (n: number) =>
   n.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
 
 export function KalRoiCard({ project }: { project: PatternProject }) {
+  const { language } = useSettings();
+  const copyText = KAL_ROI_COPY[language];
   // issue #4 project seam: one scoped store per project; the legacy flat key 'kskroi-v1' is folded in on first read, then removed.
   const handle = useMemo(() => projectStorage<{ event: KalEvent; rates: StoredRates }>('kalroi', project.id, ['kskroi-v1']), [project.id]);
   const { toast } = useToast();
@@ -143,7 +147,7 @@ export function KalRoiCard({ project }: { project: PatternProject }) {
 
   const copy = (text: string, label: string) => {
     navigator.clipboard.writeText(text).then(() => {
-      toast({ title: `${label} copied`, description: 'Paste it wherever you need it.' });
+      toast({ title: `${label} ${copyText.copied}`, description: copyText.paste });
     });
   };
 
@@ -162,21 +166,18 @@ export function KalRoiCard({ project }: { project: PatternProject }) {
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-lg flex items-center gap-2"><Megaphone className="h-5 w-5" />KAL &amp; Collab ROI</CardTitle>
+        <CardTitle className="text-lg flex items-center gap-2"><Megaphone className="h-5 w-5" />{copyText.title}</CardTitle>
         <CardDescription>
-          Knit-alongs, giveaways and brand collabs are usually run on vibes. Price yours: expected pattern sales,
-          cross-sell, affiliate income and list growth against fees, prize costs and your real hours — then check the
-          rights clause of any paid offer before you say yes. The cited benchmark floor is $12/hr; small paid designs
-          run $80–$140.
+          {copyText.description}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Format + basics */}
         <div className="border rounded-lg p-4 space-y-4">
-          <h4 className="font-semibold text-sm">The campaign</h4>
+          <h4 className="font-semibold text-sm">{copyText.campaign}</h4>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div className="space-y-1">
-              <Label className="text-xs">Format</Label>
+              <Label className="text-xs">{copyText.format}</Label>
               <Select value={stored.event.format} onValueChange={(v) => updateEvent({ format: v as KalFormat })}>
                 <SelectTrigger className="h-9 w-full"><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -187,35 +188,35 @@ export function KalRoiCard({ project }: { project: PatternProject }) {
               </Select>
             </div>
             <div className="space-y-1">
-              <Label className="text-xs">Pattern list price ($)</Label>
+              <Label className="text-xs">{copyText.price}</Label>
               <Input type="number" min={0} value={stored.event.patternPrice} onChange={(e) => updateEvent({ patternPrice: num(e.target.value, 8) })} />
             </div>
             <div className="space-y-1">
-              <Label className="text-xs">Event discount (%)</Label>
+              <Label className="text-xs">{copyText.discount}</Label>
               <Input type="number" min={0} max={100} value={stored.event.discountPct} onChange={(e) => updateEvent({ discountPct: num(e.target.value, 0) })} />
             </div>
             <div className="space-y-1">
-              <Label className="text-xs">Copies sold during event</Label>
+              <Label className="text-xs">{copyText.eventSales}</Label>
               <Input type="number" min={0} value={stored.event.eventSalesUnits} onChange={(e) => updateEvent({ eventSalesUnits: num(e.target.value, 0) })} />
             </div>
             <div className="space-y-1">
-              <Label className="text-xs">Visibility tail (copies/mo)</Label>
+              <Label className="text-xs">{copyText.tailSales}</Label>
               <Input type="number" min={0} value={stored.event.tailSalesPerMonth} onChange={(e) => updateEvent({ tailSalesPerMonth: num(e.target.value, 4) })} />
             </div>
             <div className="space-y-1">
-              <Label className="text-xs">Tail duration (months)</Label>
+              <Label className="text-xs">{copyText.tailMonths}</Label>
               <Input type="number" min={0} value={stored.event.tailMonths} onChange={(e) => updateEvent({ tailMonths: num(e.target.value, 3) })} />
             </div>
             <div className="space-y-1">
-              <Label className="text-xs">Other-pattern sales during event ($)</Label>
+              <Label className="text-xs">{copyText.crossSell}</Label>
               <Input type="number" min={0} value={stored.event.crossSellRevenue} onChange={(e) => updateEvent({ crossSellRevenue: num(e.target.value, 60) })} />
             </div>
             <div className="space-y-1">
-              <Label className="text-xs">New leads (subscribers/followers)</Label>
+              <Label className="text-xs">{copyText.leads}</Label>
               <Input type="number" min={0} value={stored.event.newLeads} onChange={(e) => updateEvent({ newLeads: num(e.target.value, 25) })} />
             </div>
             <div className="space-y-1">
-              <Label className="text-xs">Campaign length (weeks)</Label>
+              <Label className="text-xs">{copyText.duration}</Label>
               <Input type="number" min={1} value={stored.event.durationWeeks} onChange={(e) => updateEvent({ durationWeeks: num(e.target.value, 4) })} />
             </div>
           </div>
@@ -223,22 +224,21 @@ export function KalRoiCard({ project }: { project: PatternProject }) {
 
         {/* Affiliate */}
         <div className="border rounded-lg p-4 space-y-4">
-          <h4 className="font-semibold text-sm">Affiliate angle</h4>
+          <h4 className="font-semibold text-sm">{copyText.affiliate}</h4>
           <p className="text-xs text-muted-foreground">
-            Knit Picks pays 10% with no posting requirements; most yarn shops run programs via Awin/Share a Sale.
-            Every pattern page should carry a yarn affiliate link.
+            {copyText.affiliateNote}
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-1">
-              <Label className="text-xs">Knitters buying yarn via your links</Label>
+              <Label className="text-xs">{copyText.affiliateBuyers}</Label>
               <Input type="number" min={0} value={stored.event.affiliateBuyers} onChange={(e) => updateEvent({ affiliateBuyers: num(e.target.value, 5) })} />
             </div>
             <div className="space-y-1">
-              <Label className="text-xs">Average linked cart value ($)</Label>
+              <Label className="text-xs">{copyText.cartValue}</Label>
               <Input type="number" min={0} value={stored.event.affiliateCartValue} onChange={(e) => updateEvent({ affiliateCartValue: num(e.target.value, 45) })} />
             </div>
             <div className="space-y-1">
-              <Label className="text-xs">Commission rate (0–1, e.g. 0.10)</Label>
+              <Label className="text-xs">{copyText.commission}</Label>
               <Input type="number" min={0} max={1} step={0.01} value={stored.event.affiliateRate} onChange={(e) => updateEvent({ affiliateRate: num(e.target.value, 0.1) })} />
             </div>
           </div>
@@ -246,34 +246,34 @@ export function KalRoiCard({ project }: { project: PatternProject }) {
 
         {/* Costs + hours */}
         <div className="border rounded-lg p-4 space-y-4">
-          <h4 className="font-semibold text-sm">Costs &amp; your hours</h4>
+          <h4 className="font-semibold text-sm">{copyText.costsHours}</h4>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="space-y-1">
-              <Label className="text-xs">Sample yarn out of pocket ($)</Label>
+              <Label className="text-xs">{copyText.sampleCost}</Label>
               <Input type="number" min={0} value={stored.event.sampleYarnCost} onChange={(e) => updateEvent({ sampleYarnCost: num(e.target.value, 0) })} />
             </div>
             <div className="space-y-1">
-              <Label className="text-xs">Prizes / ads / shipping ($)</Label>
+              <Label className="text-xs">{copyText.otherCosts}</Label>
               <Input type="number" min={0} value={stored.event.otherCosts} onChange={(e) => updateEvent({ otherCosts: num(e.target.value, 0) })} />
             </div>
             <div className="space-y-1">
-              <Label className="text-xs">Design hours (new work)</Label>
+              <Label className="text-xs">{copyText.designHours}</Label>
               <Input type="number" min={0} value={stored.event.designHours} onChange={(e) => updateEvent({ designHours: num(e.target.value, 10) })} />
             </div>
             <div className="space-y-1">
-              <Label className="text-xs">Promo hours / week</Label>
+              <Label className="text-xs">{copyText.promoHours}</Label>
               <Input type="number" min={0} value={stored.event.promotionHours} onChange={(e) => updateEvent({ promotionHours: num(e.target.value, 3) })} />
             </div>
             <div className="space-y-1">
-              <Label className="text-xs">Support hours (all event Q&amp;A)</Label>
+              <Label className="text-xs">{copyText.supportHours}</Label>
               <Input type="number" min={0} value={stored.event.supportHours} onChange={(e) => updateEvent({ supportHours: num(e.target.value, 5) })} />
             </div>
             <div className="space-y-1">
-              <Label className="text-xs">Your hourly bar ($/hr)</Label>
+              <Label className="text-xs">{copyText.hourlyRate}</Label>
               <Input type="number" min={0} value={stored.event.hourlyRate} onChange={(e) => updateEvent({ hourlyRate: num(e.target.value, 12) })} />
             </div>
             <div className="space-y-1">
-              <Label className="text-xs">Platform fee rate (0–1)</Label>
+              <Label className="text-xs">{copyText.platformFee}</Label>
               <Input type="number" min={0} max={1} step={0.01} value={stored.event.platformFeeRate} onChange={(e) => updateEvent({ platformFeeRate: num(e.target.value, 0.05) })} />
             </div>
           </div>
@@ -283,30 +283,30 @@ export function KalRoiCard({ project }: { project: PatternProject }) {
         <div className="space-y-4">
           <div className={`border rounded-md px-4 py-3 flex items-center gap-3 ${verdictStyle}`}>
             {verdictIcon}
-            <div className="text-sm font-semibold capitalize">{result.verdict === 'go' ? 'Go — it pays' : result.verdict === 'maybe' ? 'Maybe — tighten the plan' : 'No — it costs you money'}</div>
+            <div className="text-sm font-semibold capitalize">{result.verdict === 'go' ? copyText.go : result.verdict === 'maybe' ? copyText.maybe : copyText.no}</div>
             <Badge variant="outline" className="ml-auto">{fmt$(result.netProfit)} net profit · {fmt$(result.effectiveHourly)}/hr effective</Badge>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <div className="border rounded-md p-3">
-              <p className="text-xs text-muted-foreground">Gross revenue</p>
+              <p className="text-xs text-muted-foreground">{copyText.grossRevenue}</p>
               <p className="text-lg font-semibold">{fmt$(result.grossRevenue)}</p>
-              <p className="text-xs text-muted-foreground">sales + cross-sell + affiliate + leads</p>
+              <p className="text-xs text-muted-foreground">{copyText.grossDetail}</p>
             </div>
             <div className="border rounded-md p-3">
-              <p className="text-xs text-muted-foreground">Fees + cash costs</p>
+              <p className="text-xs text-muted-foreground">{copyText.feesCash}</p>
               <p className="text-lg font-semibold">{fmt$(result.platformFees + result.cashCosts)}</p>
-              <p className="text-xs text-muted-foreground">platform {fmt$(result.platformFees)} · yarn/prizes {fmt$(result.cashCosts)}</p>
+              <p className="text-xs text-muted-foreground">{copyText.feesDetail}: {fmt$(result.platformFees)} · {fmt$(result.cashCosts)}</p>
             </div>
             <div className="border rounded-md p-3">
-              <p className="text-xs text-muted-foreground">Labour cost</p>
+              <p className="text-xs text-muted-foreground">{copyText.labourCost}</p>
               <p className="text-lg font-semibold">{fmt$(result.labourCost)}</p>
-              <p className="text-xs text-muted-foreground">design + promo + support hours</p>
+              <p className="text-xs text-muted-foreground">{copyText.labourDetail}</p>
             </div>
             <div className="border rounded-md p-3">
-              <p className="text-xs text-muted-foreground">Net profit</p>
+              <p className="text-xs text-muted-foreground">{copyText.netProfit}</p>
               <p className={`text-lg font-semibold ${result.netProfit >= 0 ? 'text-emerald-700' : 'text-destructive'}`}>{fmt$(result.netProfit)}</p>
-              <p className="text-xs text-muted-foreground">after cash and time</p>
+              <p className="text-xs text-muted-foreground">{copyText.netDetail}</p>
             </div>
           </div>
 
@@ -323,43 +323,43 @@ export function KalRoiCard({ project }: { project: PatternProject }) {
         {/* Rights checklist */}
         <div className="border rounded-lg p-4 space-y-4">
           <div className="flex items-center justify-between">
-            <h4 className="font-semibold text-sm">Brand-collab rights check</h4>
+            <h4 className="font-semibold text-sm">{copyText.rights}</h4>
             <Switch checked={stored.rates.showRights} onCheckedChange={(v) => updateRates({ showRights: v })} />
           </div>
           {stored.rates.showRights && (
             <>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 <div className="space-y-1">
-                  <Label className="text-xs">Upfront payment ($, 0 = yarn-only)</Label>
+                  <Label className="text-xs">{copyText.upfront}</Label>
                   <Input type="number" min={0} value={stored.rates.sponsorPayment} onChange={(e) => updateRates({ sponsorPayment: num(e.target.value, 0) })} />
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-xs">Exclusivity (months, 0 = none)</Label>
+                  <Label className="text-xs">{copyText.exclusivity}</Label>
                   <Input type="number" min={0} value={stored.rates.exclusivityMonths} onChange={(e) => updateRates({ exclusivityMonths: num(e.target.value, 0) })} />
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-xs">Sizing scope (e.g. XXS–5XL)</Label>
+                  <Label className="text-xs">{copyText.sizing}</Label>
                   <Input value={stored.rates.sizingScope} onChange={(e) => updateRates({ sizingScope: e.target.value })} />
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-xs">Deliverables (comma separated)</Label>
+                  <Label className="text-xs">{copyText.deliverables}</Label>
                   <Input value={stored.rates.deliverables} onChange={(e) => updateRates({ deliverables: e.target.value })} />
                 </div>
                 <div className="flex items-center gap-2 pt-5">
                   <Switch checked={stored.rates.yarnProvided} onCheckedChange={(v) => updateRates({ yarnProvided: v })} />
-                  <Label className="text-xs">Yarn provided</Label>
+                  <Label className="text-xs">{copyText.yarnProvided}</Label>
                 </div>
                 <div className="flex items-center gap-2 pt-5">
                   <Switch checked={stored.rates.selfResellRight} onCheckedChange={(v) => updateRates({ selfResellRight: v })} />
-                  <Label className="text-xs">You keep self-resell rights</Label>
+                  <Label className="text-xs">{copyText.selfResell}</Label>
                 </div>
                 <div className="flex items-center gap-2 pt-5">
                   <Switch checked={stored.rates.resalePriceFloor} onCheckedChange={(v) => updateRates({ resalePriceFloor: v })} />
-                  <Label className="text-xs">Resale price floor</Label>
+                  <Label className="text-xs">{copyText.resaleFloor}</Label>
                 </div>
                 <div className="flex items-center gap-2 pt-5">
                   <Switch checked={stored.rates.rightsTransferred} onCheckedChange={(v) => updateRates({ rightsTransferred: v })} />
-                  <Label className="text-xs">Rights transferred to brand</Label>
+                  <Label className="text-xs">{copyText.transferred}</Label>
                 </div>
               </div>
               <div className="border rounded-md divide-y">
@@ -374,7 +374,7 @@ export function KalRoiCard({ project }: { project: PatternProject }) {
                 ))}
               </div>
               <div className="bg-muted/40 rounded-md p-3 text-sm">
-                <p className="font-medium mb-1">Suggested fee range: {fmt$(fee.suggestedMin)} – {fmt$(fee.suggestedMax)}</p>
+                <p className="font-medium mb-1">{copyText.suggestedFee}: {fmt$(fee.suggestedMin)} – {fmt$(fee.suggestedMax)}</p>
                 {fee.notes.map((n, i) => <p key={i} className="text-xs text-muted-foreground">{n}</p>)}
               </div>
             </>
@@ -384,11 +384,11 @@ export function KalRoiCard({ project }: { project: PatternProject }) {
         {/* Collab pitch */}
         <div className="border rounded-lg p-4 space-y-4">
           <div className="flex items-center justify-between">
-            <h4 className="font-semibold text-sm">Paste-ready collab pitch</h4>
+            <h4 className="font-semibold text-sm">{copyText.pitch}</h4>
             <div className="flex items-center gap-3">
               <Switch checked={stored.rates.showPitch} onCheckedChange={(v) => updateRates({ showPitch: v })} />
-              <Button variant="outline" size="sm" disabled={!stored.rates.showPitch} onClick={() => copy(pitch, 'Pitch')}>
-                <ClipboardCopy className="h-4 w-4 mr-2" />Copy pitch
+              <Button variant="outline" size="sm" disabled={!stored.rates.showPitch} onClick={() => copy(pitch, copyText.pitch)}>
+                <ClipboardCopy className="h-4 w-4 mr-2" />{copyText.copyPitch}
               </Button>
             </div>
           </div>
@@ -396,24 +396,24 @@ export function KalRoiCard({ project }: { project: PatternProject }) {
             <>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="space-y-1">
-                  <Label className="text-xs">Followers</Label>
+                  <Label className="text-xs">{copyText.followers}</Label>
                   <Input type="number" min={0} value={stored.rates.followers} onChange={(e) => updateRates({ followers: num(e.target.value, 0) })} />
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-xs">Newsletter subscribers</Label>
+                  <Label className="text-xs">{copyText.newsletter}</Label>
                   <Input type="number" min={0} value={stored.rates.newsletter} onChange={(e) => updateRates({ newsletter: num(e.target.value, 0) })} />
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-xs">Patterns sold to date</Label>
+                  <Label className="text-xs">{copyText.patternsSold}</Label>
                   <Input type="number" min={0} value={stored.rates.patternsSold} onChange={(e) => updateRates({ patternsSold: num(e.target.value, 0) })} />
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-xs">Fee ask ($, 0 = yarn-only)</Label>
+                  <Label className="text-xs">{copyText.feeAsk}</Label>
                   <Input type="number" min={0} value={stored.rates.pitchFee} onChange={(e) => updateRates({ pitchFee: num(e.target.value, 0) })} />
                 </div>
               </div>
               <div className="space-y-1">
-                <Label className="text-xs">What you're asking for</Label>
+                <Label className="text-xs">{copyText.asking}</Label>
                 <Input value={stored.rates.pitchAsk} onChange={(e) => updateRates({ pitchAsk: e.target.value })} />
               </div>
               <pre className="whitespace-pre-wrap text-xs bg-muted/40 rounded-md p-3 font-sans">{pitch}</pre>
@@ -422,9 +422,7 @@ export function KalRoiCard({ project }: { project: PatternProject }) {
         </div>
 
         <p className="text-xs text-muted-foreground">
-          Sources: Ravelry Jan-2019 income distribution (mediaperuana.com), Working with Brands (emmaknitty.com),
-          Knit Picks partner program (10% affiliate), Who Pays Knitters $12/hr floor. Benchmarks are ranges — sanity-check
-          against your own list size before committing real money.
+          {copyText.sources}
         </p>
       </CardContent>
     </Card>

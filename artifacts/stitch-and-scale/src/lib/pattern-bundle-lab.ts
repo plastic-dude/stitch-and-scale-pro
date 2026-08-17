@@ -148,10 +148,15 @@ function scenario(label: string, sales: number, input: PatternBundleInput): Bund
     const fees = sales * (pool * share * input.processorCut + input.processorFixed * share) / Math.max(0.01, pool);
     const promoCost = input.promoHours * input.hourlyRate * share;
     const emailValue = input.emailGained * input.emailValue * share;
-    // Realistic solo: solo sales over the launch window (scaled by launch months).
+    // Realistic solo: use the pattern-specific sales input so partner
+    // patterns contribute their own baseline rather than inheriting yours.
+    // The shared field remains a compatibility fallback for older saved data.
+    const soloSales = i === 0
+      ? input.soloSalesPerPattern
+      : p.monthlySales > 0 ? p.monthlySales : input.soloSalesPerPattern;
     const soloWindow =
-      input.soloSalesPerPattern * input.launchMonths * p.price * (1 - input.processorCut) -
-      input.processorFixed * input.soloSalesPerPattern * input.launchMonths;
+      soloSales * input.launchMonths * p.price * (1 - input.processorCut) -
+      input.processorFixed * soloSales * input.launchMonths;
     const netTake = grossTake - fees - promoCost + emailValue;
     return {
       designerIndex: i,
@@ -198,6 +203,8 @@ export function analyzePatternBundle(input: PatternBundleInput): PatternBundleRe
   // Break-even: sales where my net (incl. email value, minus promo) = solo window.
   const share =
     input.splitMode === 'equal' ? 1 / n : firstPattern.price / standaloneSum;
+  // The first row is the current designer and keeps the legacy shared
+  // baseline used by saved projects and the existing controls.
   const mySoloWindow =
     input.soloSalesPerPattern * input.launchMonths * firstPattern.price * (1 - input.processorCut) -
     input.processorFixed * input.soloSalesPerPattern * input.launchMonths;

@@ -26,6 +26,8 @@ import {
   type TestVariable,
 } from '@/lib/listing-test-lab';
 import { PatternProject } from '@/lib/grading-engine';
+import { useSettings } from '@/context/SettingsContext';
+import { LISTING_TEST_COPY } from '@/lib/listing-test-copy';
 import {
   ListOrdered,
   BarChart3,
@@ -56,19 +58,6 @@ function numField(value: string): number {
   return isFinite(n) ? n : 0;
 }
 
-const PLATFORMS: { id: Platform; label: string; hint: string }[] = [
-  { id: 'ravelry', label: 'Ravelry', hint: '0% commission — ≈2.9% + $0.30 processing' },
-  { id: 'etsy', label: 'Etsy', hint: '$0.20 listing + ≈6.5% + 3% + $0.25' },
-  { id: 'lovecrafts', label: 'LoveCrafts', hint: '25% seller fee' },
-  { id: 'payhip', label: 'Payhip', hint: '5% platform' },
-];
-
-const VARIABLES: { id: TestVariable; label: string }[] = [
-  { id: 'photo', label: 'Main photo' },
-  { id: 'title', label: 'Title / keywords' },
-  { id: 'price', label: 'Price' },
-  { id: 'description', label: 'Description' },
-];
 
 function StatBox({ label, value, tone }: { label: string; value: string; tone?: 'good' | 'warn' | 'bad' }) {
   return (
@@ -89,6 +78,20 @@ function StatBox({ label, value, tone }: { label: string; value: string; tone?: 
 }
 
 export function ListingTestLabCard({ project }: { project: PatternProject }) {
+  const { language } = useSettings();
+  const copyText = LISTING_TEST_COPY[language];
+  const platforms: { id: Platform; label: string; hint: string }[] = [
+    { id: 'ravelry', label: 'Ravelry', hint: copyText.ravelryHint },
+    { id: 'etsy', label: 'Etsy', hint: copyText.etsyHint },
+    { id: 'lovecrafts', label: 'LoveCrafts', hint: copyText.loveCraftsHint },
+    { id: 'payhip', label: 'Payhip', hint: copyText.payhipHint },
+  ];
+  const variables: { id: TestVariable; label: string }[] = [
+    { id: 'photo', label: copyText.photo },
+    { id: 'title', label: copyText.titleVariable },
+    { id: 'price', label: copyText.priceVariable },
+    { id: 'description', label: copyText.descriptionVariable },
+  ];
   const handle = useMemo(() => projectStorage<StoredState>('listingtest', project.id), [project.id]);
   const { toast } = useToast();
   const [stored, setStored] = useState<StoredState>(() => loadStored(handle));
@@ -104,6 +107,7 @@ export function ListingTestLabCard({ project }: { project: PatternProject }) {
   };
 
   const analysis = useMemo(() => analyzeListingTest(current), [current]);
+  const verdictLabel = analysis.verdict === 'Rewire' ? copyText.rewire : analysis.verdict === 'Fix the test' ? copyText.fixTest : copyText.testIt;
   const queue = useMemo(() => rankListingQueue(listings), [listings]);
 
   const [qName, setQName] = useState('');
@@ -114,7 +118,7 @@ export function ListingTestLabCard({ project }: { project: PatternProject }) {
   const addToQueue = () => {
     const views = numField(qViews);
     if (!views || listings.length >= 8) {
-      toast({ title: 'Add at least monthly views (max 8 listings in queue).' });
+      toast({ title: copyText.addViews });
       return;
     }
     setStored(s => ({
@@ -122,7 +126,7 @@ export function ListingTestLabCard({ project }: { project: PatternProject }) {
         ...(s.listings ?? []),
         {
           ...DEFAULT_LISTING,
-          name: qName || `Listing ${listings.length + 1}`,
+          name: qName || `${copyText.listingName} ${listings.length + 1}`,
           monthlyViews: views,
           conversionRate: numField(qConv) || 0.02,
           price: numField(qPrice) || 6,
@@ -151,13 +155,10 @@ export function ListingTestLabCard({ project }: { project: PatternProject }) {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <ListOrdered className="size-5" />
-          Listing Test Lab
+          {copyText.title}
         </CardTitle>
         <CardDescription>
-          Competitors assume ~30,000 visitors per variant — impossible for one pattern listing.
-          This lab answers the question Alura never does: <em>is this rewrite worth my hours?</em>{' '}
-          Enter one listing's real numbers and get Miller's required sample, the smallest lift
-          your traffic can prove, break-even against re-list effort, and an honest verdict.
+          {copyText.description}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-8">
@@ -165,15 +166,15 @@ export function ListingTestLabCard({ project }: { project: PatternProject }) {
         <div>
           <div className="mb-3 flex items-center gap-2">
             <Users className="size-4" />
-            <Label className="text-base font-semibold">Listing queue — test the rich ones first</Label>
+            <Label className="text-base font-semibold">{copyText.queue}</Label>
           </div>
           <div className="mb-3 grid gap-2 sm:grid-cols-5">
-            <Input placeholder="Listing name" value={qName} onChange={e => setQName(e.target.value)} />
-            <Input type="number" placeholder="Views/mo" value={qViews} onChange={e => setQViews(e.target.value)} />
-            <Input type="number" step="0.01" placeholder="Conversion" value={qConv} onChange={e => setQConv(e.target.value)} />
-            <Input type="number" placeholder="Price $" value={qPrice} onChange={e => setQPrice(e.target.value)} />
+            <Input placeholder={copyText.listingName} value={qName} onChange={e => setQName(e.target.value)} />
+            <Input type="number" placeholder={copyText.viewsMonth} value={qViews} onChange={e => setQViews(e.target.value)} />
+            <Input type="number" step="0.01" placeholder={copyText.conversion} value={qConv} onChange={e => setQConv(e.target.value)} />
+            <Input type="number" placeholder={copyText.price} value={qPrice} onChange={e => setQPrice(e.target.value)} />
             <Button variant="outline" onClick={addToQueue}>
-              <Plus className="mr-1 size-4" /> Add
+              <Plus className="mr-1 size-4" /> {copyText.add}
             </Button>
           </div>
           <div className="space-y-1">
@@ -181,10 +182,10 @@ export function ListingTestLabCard({ project }: { project: PatternProject }) {
               <div key={`${q.listing.name}-${idx}`} className="flex items-center gap-2 text-sm">
                 <span className="w-5 text-muted-foreground">{idx + 1}.</span>
                 <span className="flex-1">{q.listing.name}</span>
-                <span className="text-muted-foreground">{fmtN(q.listing.monthlyViews)} views/mo</span>
+                <span className="text-muted-foreground">{fmtN(q.listing.monthlyViews)} {copyText.viewsSuffix}</span>
                 <Badge variant="outline">{q.verdict}</Badge>
                 <span className={cn('text-xs', q.expectedValue >= 0 ? 'text-emerald-600' : 'text-red-600')}>
-                  EV {fmt$(q.expectedValue)}/hr
+                  EV {fmt$(q.expectedValue)}{copyText.evSuffix}
                 </span>
                 {listings.length > 1 && (
                   <Button variant="ghost" size="sm" onClick={() => removeListing(listings.indexOf(q.listing))}>
@@ -195,8 +196,7 @@ export function ListingTestLabCard({ project }: { project: PatternProject }) {
             ))}
           </div>
           <p className="mt-2 text-[11px] text-muted-foreground">
-            Ranked by expected value per re-list hour. Listings at the bottom are catalog-refresh
-            candidates, not test candidates.
+            {copyText.queueHint}
           </p>
         </div>
 
@@ -204,11 +204,11 @@ export function ListingTestLabCard({ project }: { project: PatternProject }) {
         <div>
           <div className="mb-3 flex items-center gap-2">
             <BarChart3 className="size-4" />
-            <Label className="text-base font-semibold">Design the test</Label>
+            <Label className="text-base font-semibold">{copyText.design}</Label>
           </div>
           <div className="grid gap-3 sm:grid-cols-3">
             <div className="sm:col-span-2">
-              <Label htmlFor="lt-name">Listing name</Label>
+              <Label htmlFor="lt-name">{copyText.listingName}</Label>
               <Input
                 id="lt-name"
                 value={current.name}
@@ -216,9 +216,9 @@ export function ListingTestLabCard({ project }: { project: PatternProject }) {
               />
             </div>
             <div>
-              <Label>Platform</Label>
+              <Label>{copyText.platform}</Label>
               <div className="mt-1 flex flex-wrap gap-1">
-                {PLATFORMS.map(p => (
+                {platforms.map(p => (
                   <Button
                     key={p.id}
                     type="button"
@@ -231,11 +231,11 @@ export function ListingTestLabCard({ project }: { project: PatternProject }) {
                 ))}
               </div>
               <p className="mt-1 text-[11px] text-muted-foreground">
-                {PLATFORMS.find(p => p.id === current.platform)?.hint}
+                {platforms.find(p => p.id === current.platform)?.hint}
               </p>
             </div>
             <div>
-              <Label htmlFor="lt-views">Views / month</Label>
+              <Label htmlFor="lt-views">{copyText.viewsMonth}</Label>
               <Input
                 id="lt-views"
                 type="number"
@@ -245,7 +245,7 @@ export function ListingTestLabCard({ project }: { project: PatternProject }) {
               />
             </div>
             <div>
-              <Label htmlFor="lt-conv">Current conversion</Label>
+              <Label htmlFor="lt-conv">{copyText.currentConversion}</Label>
               <Input
                 id="lt-conv"
                 type="number"
@@ -255,10 +255,10 @@ export function ListingTestLabCard({ project }: { project: PatternProject }) {
                 value={current.conversionRate.toString()}
                 onChange={e => updateListing({ conversionRate: numField(e.target.value) })}
               />
-              <p className="mt-1 text-[11px] text-muted-foreground">Etsy avg 1–3%; above 3% is strong.</p>
+              <p className="mt-1 text-[11px] text-muted-foreground">{copyText.conversionHint}</p>
             </div>
             <div>
-              <Label htmlFor="lt-price">Price ($)</Label>
+              <Label htmlFor="lt-price">{copyText.price}</Label>
               <Input
                 id="lt-price"
                 type="number"
@@ -269,9 +269,9 @@ export function ListingTestLabCard({ project }: { project: PatternProject }) {
               />
             </div>
             <div>
-              <Label>What are you changing?</Label>
+              <Label>{copyText.change}</Label>
               <div className="mt-1 flex flex-wrap gap-1">
-                {VARIABLES.map(v => (
+                {variables.map(v => (
                   <Button
                     key={v.id}
                     type="button"
@@ -283,10 +283,10 @@ export function ListingTestLabCard({ project }: { project: PatternProject }) {
                   </Button>
                 ))}
               </div>
-              <p className="mt-1 text-[11px] text-muted-foreground">One variable per test — always.</p>
+              <p className="mt-1 text-[11px] text-muted-foreground">{copyText.oneVariable}</p>
             </div>
             <div>
-              <Label htmlFor="lt-lift">Hypothesized lift</Label>
+              <Label htmlFor="lt-lift">{copyText.lift}</Label>
               <Input
                 id="lt-lift"
                 type="number"
@@ -295,10 +295,10 @@ export function ListingTestLabCard({ project }: { project: PatternProject }) {
                 value={current.hypothesizedLift.toString()}
                 onChange={e => updateListing({ hypothesizedLift: numField(e.target.value) })}
               />
-              <p className="mt-1 text-[11px] text-muted-foreground">Absolute conversion lift, e.g. 0.01 = 2%→3%.</p>
+              <p className="mt-1 text-[11px] text-muted-foreground">{copyText.liftHint}</p>
             </div>
             <div>
-              <Label htmlFor="lt-hours">Re-list effort (hours)</Label>
+              <Label htmlFor="lt-hours">{copyText.effort}</Label>
               <Input
                 id="lt-hours"
                 type="number"
@@ -308,7 +308,7 @@ export function ListingTestLabCard({ project }: { project: PatternProject }) {
               />
             </div>
             <div>
-              <Label htmlFor="lt-rate">Your hourly rate ($)</Label>
+              <Label htmlFor="lt-rate">{copyText.hourlyRate}</Label>
               <Input
                 id="lt-rate"
                 type="number"
@@ -318,7 +318,7 @@ export function ListingTestLabCard({ project }: { project: PatternProject }) {
               />
             </div>
             <div>
-              <Label htmlFor="lt-duration">Planned duration (months)</Label>
+              <Label htmlFor="lt-duration">{copyText.duration}</Label>
               <Input
                 id="lt-duration"
                 type="number"
@@ -327,10 +327,10 @@ export function ListingTestLabCard({ project }: { project: PatternProject }) {
                 value={current.plannedDurationMonths.toString()}
                 onChange={e => updateListing({ plannedDurationMonths: numField(e.target.value) })}
               />
-              <p className="mt-1 text-[11px] text-muted-foreground">Run ≥1 full month — pattern sales swing with seasons.</p>
+              <p className="mt-1 text-[11px] text-muted-foreground">{copyText.durationHint}</p>
             </div>
             <div>
-              <Label htmlFor="lt-horizon">Credit the uplift for (months)</Label>
+              <Label htmlFor="lt-horizon">{copyText.horizon}</Label>
               <Input
                 id="lt-horizon"
                 type="number"
@@ -349,11 +349,11 @@ export function ListingTestLabCard({ project }: { project: PatternProject }) {
                 className="h-4 w-4"
               />
               <Label htmlFor="lt-multi" className="cursor-pointer">
-                Changing several things at once
+                {copyText.multi}
               </Label>
             </div>
             <div>
-              <Label htmlFor="lt-tags">Ravelry tags used (0–1)</Label>
+              <Label htmlFor="lt-tags">{copyText.tagsUsed}</Label>
               <Input
                 id="lt-tags"
                 type="number"
@@ -363,7 +363,7 @@ export function ListingTestLabCard({ project }: { project: PatternProject }) {
                 value={current.tagsUsedPct.toString()}
                 onChange={e => updateListing({ tagsUsedPct: numField(e.target.value) })}
               />
-              <p className="mt-1 text-[11px] text-muted-foreground">Ravelry allows 13 tags + attributes — search runs on them.</p>
+              <p className="mt-1 text-[11px] text-muted-foreground">{copyText.tagsHint}</p>
             </div>
           </div>
         </div>
@@ -372,26 +372,24 @@ export function ListingTestLabCard({ project }: { project: PatternProject }) {
         <div>
           <div className="mb-3 flex items-center gap-2">
             <TrendingUp className="size-4" />
-            <Label className="text-base font-semibold">The honest math</Label>
+            <Label className="text-base font-semibold">{copyText.honestMath}</Label>
           </div>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <StatBox label="Required sample / variant" value={`≈${fmtN(analysis.samplePerVariant)} visits`} tone="warn" />
-            <StatBox label="Months to reach power" value={`≈${fmtM(analysis.monthsToPower)} mo`} tone={analysis.monthsToPower <= 6 ? 'good' : 'warn'} />
+            <StatBox label={copyText.sample} value={`≈${fmtN(analysis.samplePerVariant)} ${copyText.visits}`} tone="warn" />
+            <StatBox label={copyText.powerMonths} value={`≈${fmtM(analysis.monthsToPower)} ${copyText.month}`} tone={analysis.monthsToPower <= 6 ? 'good' : 'warn'} />
             <StatBox
-              label="Smallest provable lift (your traffic, your plan)"
-              value={analysis.maxDetectableLift !== null ? `±${fmtPct(analysis.maxDetectableLift)}` : 'None — untestable'}
+              label={copyText.smallestLift}
+              value={analysis.maxDetectableLift !== null ? `±${fmtPct(analysis.maxDetectableLift)}` : copyText.untestable}
               tone={analysis.maxDetectableLift === null ? 'bad' : 'good'}
             />
-            <StatBox label="Net per sale on this platform" value={fmt$(analysis.netRevenuePerSale)} />
-            <StatBox label="Baseline net / month" value={fmt$(analysis.baselineMonthlyNet)} />
-            <StatBox label="Uplift gain / month if real" value={fmt$(analysis.upliftMonthlyGain)} tone="good" />
-            <StatBox label="Break-even vs your effort" value={isFinite(analysis.breakEvenMonths) ? `≈${fmtM(analysis.breakEvenMonths)} mo of uplift` : 'Beyond reach'} tone={isFinite(analysis.breakEvenMonths) ? 'good' : 'bad'} />
-            <StatBox label="Expected value (honest, incl. peeking penalty)" value={fmt$(analysis.expectedValue)} tone={analysis.expectedValue >= 0 ? 'good' : 'bad'} />
+            <StatBox label={copyText.netSale} value={fmt$(analysis.netRevenuePerSale)} />
+            <StatBox label={copyText.baseline} value={fmt$(analysis.baselineMonthlyNet)} />
+            <StatBox label={copyText.uplift} value={fmt$(analysis.upliftMonthlyGain)} tone="good" />
+            <StatBox label={copyText.breakEven} value={isFinite(analysis.breakEvenMonths) ? `≈${fmtM(analysis.breakEvenMonths)} ${copyText.upliftSuffix}` : copyText.beyond} tone={isFinite(analysis.breakEvenMonths) ? 'good' : 'bad'} />
+            <StatBox label={copyText.expectedValue} value={fmt$(analysis.expectedValue)} tone={analysis.expectedValue >= 0 ? 'good' : 'bad'} />
           </div>
           <p className="mt-2 text-[11px] text-muted-foreground">
-            Required sample from Evan Miller's two-proportion z-test (α=0.05, power 0.8). EV assumes
-            a 50% prior that the lift is real and penalizes early-peeking; expected-value ranking in the
-            queue divides by your re-list hours.
+            {copyText.mathNote}
           </p>
         </div>
 
@@ -400,7 +398,7 @@ export function ListingTestLabCard({ project }: { project: PatternProject }) {
           <div>
             <div className="mb-3 flex items-center gap-2">
               <Flag className="size-4" />
-              <Label className="text-base font-semibold">Warnings</Label>
+              <Label className="text-base font-semibold">{copyText.warnings}</Label>
             </div>
             <div className="space-y-2">
               {analysis.flags.map(f => (
@@ -425,7 +423,7 @@ export function ListingTestLabCard({ project }: { project: PatternProject }) {
             analysis.verdict === 'Test it' && 'border-emerald-200 bg-emerald-50',
           )}
         >
-          <p className="mb-2 text-sm font-semibold">Verdict</p>
+          <p className="mb-2 text-sm font-semibold">{copyText.verdict}</p>
           <div className="flex items-center gap-2">
             <Lightbulb className="size-4" />
             <Badge
@@ -436,7 +434,7 @@ export function ListingTestLabCard({ project }: { project: PatternProject }) {
                 analysis.verdict === 'Test it' && 'bg-emerald-600',
               )}
             >
-              {analysis.verdict}
+              {verdictLabel}
             </Badge>
           </div>
           <p className="mt-2 text-sm leading-relaxed">{analysis.verdictNote}</p>

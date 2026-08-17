@@ -20,6 +20,8 @@ import {
 } from '@/lib/consignment-reprice-lab';
 import { projectStorage } from '@/lib/storage-lib';
 import { PatternProject } from '@/lib/grading-engine';
+import { useSettings } from '@/context/SettingsContext';
+import { CONSIGNMENT_REPRICE_COPY, localizeConsignmentResult } from '@/lib/consignment-reprice-copy';
 
 const STORAGE_KEY = 'stitch-and-scale-reprice-v1';
 
@@ -63,6 +65,8 @@ const severityColor = {
 };
 
 export function ConsignmentRepriceLabCard({ project }: { project: PatternProject }) {
+  const { language } = useSettings();
+  const copyText = CONSIGNMENT_REPRICE_COPY[language];
   const handle = useMemo(
     () => projectStorage<StoredState>('reprice', project.id, [STORAGE_KEY]),
     [project.id],
@@ -80,7 +84,7 @@ export function ConsignmentRepriceLabCard({ project }: { project: PatternProject
     });
   };
 
-  const result = useMemo(() => analyzeReprice(stored as RepriceInput), [stored]);
+  const result = useMemo(() => localizeConsignmentResult(analyzeReprice(stored as RepriceInput), language), [stored, language]);
 
   const num = (
     v: string,
@@ -107,24 +111,16 @@ export function ConsignmentRepriceLabCard({ project }: { project: PatternProject
       <div className="flex items-start gap-3">
         <Store className="mt-1 h-5 w-5 shrink-0 text-primary" />
         <div className="space-y-1">
-          <h3 className="text-base font-semibold">Consignment Re-Price Lab</h3>
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            Print leaflets and kits age out of season just like garments do.
-            This prices what your stock sitting at yarn shops is actually
-            worth — including the Ravelry In-Store split (designer 60% / LYS
-            40%, with the shop keeping a flat $1.00 at $2.49 or below), direct
-            consignment takes, the 65–70% buyer-acceptance band, and the 50%
-            destash floor — and builds the re-price ladder before the shelf
-            life runs out.
-          </p>
+          <h3 className="text-base font-semibold">{copyText.title}</h3>
+          <p className="text-sm text-muted-foreground leading-relaxed">{copyText.description}</p>
         </div>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-3 rounded-lg border p-4">
-          <h4 className="text-sm font-medium">The print run</h4>
+          <h4 className="text-sm font-medium">{copyText.printRun}</h4>
           <div className="space-y-1">
-            <Label htmlFor="crp-retail">Retail price</Label>
+            <Label htmlFor="crp-retail">{copyText.retail}</Label>
             <div className="flex items-center gap-2">
               <span className="text-sm text-muted-foreground">$</span>
               <Input
@@ -137,7 +133,7 @@ export function ConsignmentRepriceLabCard({ project }: { project: PatternProject
             </div>
           </div>
           <div className="space-y-1">
-            <Label htmlFor="crp-channel">Channel the stock sits in</Label>
+            <Label htmlFor="crp-channel">{copyText.channel}</Label>
             <select
               id="crp-channel"
               className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm"
@@ -154,7 +150,7 @@ export function ConsignmentRepriceLabCard({ project }: { project: PatternProject
             </select>
           </div>
           <div className="space-y-1">
-            <Label htmlFor="crp-print">Print cost per copy</Label>
+            <Label htmlFor="crp-print">{copyText.printCost}</Label>
             <div className="flex items-center gap-2">
               <span className="text-sm text-muted-foreground">$</span>
               <Input
@@ -168,16 +164,15 @@ export function ConsignmentRepriceLabCard({ project }: { project: PatternProject
           </div>
           <div className="space-y-1">
             <Label>
-              Print cost share: {((stored.printCostPerUnit / stored.retailPrice) * 100).toFixed(0)}%
-              of retail
+              {copyText.printShare}: {((stored.printCostPerUnit / stored.retailPrice) * 100).toFixed(0)}% {copyText.ofRetail}
             </Label>
           </div>
         </div>
 
         <div className="space-y-3 rounded-lg border p-4">
-          <h4 className="text-sm font-medium">Shelf life &amp; sell-through</h4>
+          <h4 className="text-sm font-medium">{copyText.shelfLife}</h4>
           <div className="space-y-1">
-            <Label htmlFor="crp-units">Units at shop(s)</Label>
+            <Label htmlFor="crp-units">{copyText.units}</Label>
             <Input
               id="crp-units"
               type="number"
@@ -186,7 +181,7 @@ export function ConsignmentRepriceLabCard({ project }: { project: PatternProject
             />
           </div>
           <div className="space-y-1">
-            <Label htmlFor="crp-sold">Units sold per month (current price)</Label>
+            <Label htmlFor="crp-sold">{copyText.sold}</Label>
             <Input
               id="crp-sold"
               type="number"
@@ -199,7 +194,7 @@ export function ConsignmentRepriceLabCard({ project }: { project: PatternProject
           </div>
           <div className="space-y-2">
             <Label>
-              Months in shop: {stored.monthsInShop}
+              {copyText.months}: {stored.monthsInShop}
             </Label>
             <Slider
               value={[stored.monthsInShop]}
@@ -210,7 +205,7 @@ export function ConsignmentRepriceLabCard({ project }: { project: PatternProject
             />
           </div>
           <div className="space-y-1">
-            <Label htmlFor="crp-season">Season band</Label>
+            <Label htmlFor="crp-season">{copyText.season}</Label>
             <select
               id="crp-season"
               className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm"
@@ -229,10 +224,10 @@ export function ConsignmentRepriceLabCard({ project }: { project: PatternProject
         </div>
 
         <div className="space-y-3 rounded-lg border p-4 sm:col-span-2">
-          <h4 className="text-sm font-medium">Re-price cost</h4>
+          <h4 className="text-sm font-medium">{copyText.repriceCost}</h4>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1">
-              <Label htmlFor="crp-rate">Your hourly rate</Label>
+              <Label htmlFor="crp-rate">{copyText.hourly}</Label>
               <div className="flex items-center gap-2">
                 <span className="text-sm text-muted-foreground">$</span>
                 <Input
@@ -244,7 +239,7 @@ export function ConsignmentRepriceLabCard({ project }: { project: PatternProject
               </div>
             </div>
             <div className="space-y-1">
-              <Label htmlFor="crp-hours">Hours to re-price</Label>
+              <Label htmlFor="crp-hours">{copyText.hours}</Label>
               <Input
                 id="crp-hours"
                 type="number"
@@ -261,42 +256,42 @@ export function ConsignmentRepriceLabCard({ project }: { project: PatternProject
         <div className="rounded-lg border p-4">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Banknote className="h-4 w-4" />
-            Net per unit now
+            {copyText.netNow}
           </div>
           <div className="mt-1 text-2xl font-semibold">
             ${result.currentNetPerUnit.toFixed(2)}
           </div>
           <p className="mt-1 text-xs text-muted-foreground">
-            After split, fees &amp; print cost
+            {copyText.afterCosts}
           </p>
         </div>
         <div className="rounded-lg border p-4">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Package className="h-4 w-4" />
-            Stock on hand
+            {copyText.stock}
           </div>
           <div className="mt-1 text-2xl font-semibold">{monthsOfStock}</div>
           <p className="mt-1 text-xs text-muted-foreground">
-            At {stored.unitsAtShop} units &amp; {stored.unitsSoldPerMonth}/mo
+            {copyText.atUnits.replace('{units}', String(stored.unitsAtShop)).replace('{sold}', String(stored.unitsSoldPerMonth))}
           </p>
         </div>
         <div className="rounded-lg border p-4">
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <TrendingDown className="h-4 w-4" />
-            Dead-stock risk
+            {copyText.deadRisk}
           </div>
           <div className="mt-1 text-2xl font-semibold">
             ${result.deadStockRisk.toFixed(2)}
           </div>
           <p className="mt-1 text-xs text-muted-foreground">
-            Sunk print cost if it never moves
+            {copyText.sunkCost}
           </p>
         </div>
       </div>
 
       <div className="rounded-lg border">
         <div className="border-b px-4 py-2.5">
-          <h4 className="text-sm font-medium">Net per unit, by channel (at ${stored.retailPrice.toFixed(2)})</h4>
+          <h4 className="text-sm font-medium">{copyText.channelHeading.replace('{price}', `$${stored.retailPrice.toFixed(2)}`)}</h4>
         </div>
         <div className="divide-y">
           {result.channelNets.map(c => (
@@ -305,12 +300,12 @@ export function ConsignmentRepriceLabCard({ project }: { project: PatternProject
               className="flex items-center justify-between px-4 py-2 text-sm"
             >
               <span className="text-muted-foreground">
-                {c.channel} · {c.designerSharePct}% to you
+                {c.channel} · {c.designerSharePct}% {copyText.toYou}
               </span>
               <span className="font-medium">
                 ${c.netPerUnit.toFixed(2)}
                 <span className="ml-2 text-xs text-muted-foreground">
-                  (fees ${c.platformFeePerUnit.toFixed(2)})
+                  ({copyText.fees} ${c.platformFeePerUnit.toFixed(2)})
                 </span>
               </span>
             </div>
@@ -320,21 +315,20 @@ export function ConsignmentRepriceLabCard({ project }: { project: PatternProject
 
       <div className="rounded-lg border">
         <div className="border-b px-4 py-2.5">
-          <h4 className="text-sm font-medium">The re-price ladder</h4>
+          <h4 className="text-sm font-medium">{copyText.ladder}</h4>
           <p className="text-xs text-muted-foreground">
-            Each step: price, your net per unit, months to clear current stock,
-            total net on {stored.unitsAtShop} units.
+            {copyText.ladderDescription.replace('{units}', String(stored.unitsAtShop))}
           </p>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b text-left text-xs text-muted-foreground">
-                <th className="px-4 py-2">Step</th>
-                <th className="px-4 py-2">Price</th>
-                <th className="px-4 py-2">Net/unit</th>
-                <th className="px-4 py-2">Months to clear</th>
-                <th className="px-4 py-2">Total net</th>
+                <th className="px-4 py-2">{copyText.step}</th>
+                <th className="px-4 py-2">{copyText.price}</th>
+                <th className="px-4 py-2">{copyText.netUnit}</th>
+                <th className="px-4 py-2">{copyText.monthsClear}</th>
+                <th className="px-4 py-2">{copyText.totalNet}</th>
               </tr>
             </thead>
             <tbody className="divide-y">
@@ -353,17 +347,17 @@ export function ConsignmentRepriceLabCard({ project }: { project: PatternProject
                       {step.label}
                       {best && (
                         <span className="ml-2 rounded bg-primary px-1.5 py-0.5 text-[10px] font-semibold text-primary-foreground">
-                          BEST
+                          {copyText.best}
                         </span>
                       )}
                     </td>
                     <td className="px-4 py-2">
                       {step.pricePctOfRetail > 0
                         ? `$${step.price.toFixed(2)}`
-                        : `$${step.price.toFixed(2)} (online)`}
+                        : `$${step.price.toFixed(2)} (${copyText.online})`}
                     </td>
                     <td className="px-4 py-2">${step.netPerUnit.toFixed(2)}</td>
-                    <td className="px-4 py-2">{step.monthsToClear} mo</td>
+                    <td className="px-4 py-2">{step.monthsToClear} {copyText.mo}</td>
                     <td className="px-4 py-2">
                       ${step.totalNetOnCurrentStock.toFixed(2)}
                     </td>
@@ -382,7 +376,7 @@ export function ConsignmentRepriceLabCard({ project }: { project: PatternProject
         <div className="space-y-2">
           <h4 className="flex items-center gap-2 text-sm font-medium">
             <Tag className="h-4 w-4" />
-            Watch-outs
+            {copyText.watchOuts}
           </h4>
           {result.flags.map((f, i) => {
             const Icon = severityIcon[f.severity];
@@ -406,7 +400,7 @@ export function ConsignmentRepriceLabCard({ project }: { project: PatternProject
         <div className="flex items-start gap-3">
           <CalendarClock className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
           <div>
-            <p className="text-sm font-semibold">Verdict</p>
+            <p className="text-sm font-semibold">{copyText.verdict}</p>
             <p className="mt-1 text-sm leading-relaxed">{result.verdict}</p>
           </div>
         </div>
@@ -419,7 +413,7 @@ export function ConsignmentRepriceLabCard({ project }: { project: PatternProject
           setState({ ...defaultStored, ts: Date.now() });
         }}
       >
-        Reset to example
+        {copyText.reset}
       </Button>
     </div>
   );

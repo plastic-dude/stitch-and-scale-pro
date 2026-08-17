@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
+import { useSettings } from '@/context/SettingsContext';
+import { INCLUSIVE_SIZING_COPY } from '@/lib/inclusive-sizing-copy';
 import { ClipboardCopy, Plus, Ruler, AlertTriangle, Accessibility } from 'lucide-react';
 import { PatternProject } from '@/lib/grading-engine';
 import {
@@ -86,6 +88,8 @@ function Field(props: { label: string; value: number; onChange: (v: number) => v
 
 export function InclusiveSizingCard({ project }: Props) {
   const { toast } = useToast();
+  const { language } = useSettings();
+  const copy = INCLUSIVE_SIZING_COPY[language];
   // issue #4 project seam: one scoped store per project; the legacy flat key 'sncis-v1' is folded in on first read, then removed.
   const handle = useMemo(() => projectStorage<Stored>('incsizing', project.id, ['sncis-v1']), [project.id]);
   const [stored, setStored] = useState<Stored>(() => loadStored(handle));
@@ -122,21 +126,21 @@ export function InclusiveSizingCard({ project }: Props) {
 
   const update = (patch: Partial<Stored>) => setStored(s => ({ ...s, ...patch }));
 
-  const copy = (text: string) => {
+  const copyToClipboard = (text: string) => {
     navigator.clipboard
       .writeText(text)
-      .then(() => toast({ title: 'Copied to clipboard' }))
-      .catch(() => toast({ title: 'Select and copy manually' }));
+      .then(() => toast({ title: copy.copied }))
+      .catch(() => toast({ title: copy.copyManual }));
   };
 
   const verdictBadge = (verdict: string) => {
     if (verdict === 'genuinely-inclusive')
-      return <Badge variant="default" className="bg-emerald-700">Genuinely inclusive</Badge>;
+      return <Badge variant="default" className="bg-emerald-700">{copy.inclusive}</Badge>;
     if (verdict === 'partial')
-      return <Badge variant="outline" className="border-amber-500 text-amber-700">Partial — more to do</Badge>;
+      return <Badge variant="outline" className="border-amber-500 text-amber-700">{copy.partial}</Badge>;
     if (verdict === 'naive-scaling')
-      return <Badge variant="outline" className="border-rose-500 text-rose-700">Naive scaling — redo</Badge>;
-    return <Badge variant="outline" className="border-rose-500 text-rose-700">Not inclusive</Badge>;
+      return <Badge variant="outline" className="border-rose-500 text-rose-700">{copy.naive}</Badge>;
+    return <Badge variant="outline" className="border-rose-500 text-rose-700">{copy.notInclusive}</Badge>;
   };
 
   if (!project || !result || !pack) return null;
@@ -148,23 +152,20 @@ export function InclusiveSizingCard({ project }: Props) {
       <CardHeader className="pb-2">
         <CardTitle className="text-base flex items-center gap-2">
           <Accessibility className="h-4 w-4" />
-          Inclusive Sizing &amp; Adaptive Grading
+          {copy.title}
         </CardTitle>
         <CardDescription className="text-xs leading-relaxed">
-          Grading is not a checkbox. Each extra size multiplies grading passes, yardage work,
-          test-knit hours and tech-edit cost — Wolcott's own words: inclusive grading costs "exceed
-          their market price" — and buyers now litmus-test plus grading before they buy. This prices
-          the range honestly and quotes adaptive modifications as the consulting work they are.
+          {copy.description}
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col gap-4">
         <div className="grid grid-cols-2 gap-3">
-          <Field label="Pattern price ($)" value={stored.price} onChange={v => update({ price: v })} />
-          <Field label="Monthly sales (units)" value={stored.monthlySales} onChange={v => update({ monthlySales: v })} />
-          <Field label="Design rate ($/hr)" value={stored.designRate} onChange={v => update({ designRate: v })} />
-          <Field label="Grade rule (in between chest sizes)" value={stored.gradeRule} onChange={v => update({ gradeRule: v })} />
+          <Field label={copy.price} value={stored.price} onChange={v => update({ price: v })} />
+          <Field label={copy.monthlySales} value={stored.monthlySales} onChange={v => update({ monthlySales: v })} />
+          <Field label={copy.designRate} value={stored.designRate} onChange={v => update({ designRate: v })} />
+          <Field label={copy.gradeRule} value={stored.gradeRule} onChange={v => update({ gradeRule: v })} />
           <div className="flex flex-col gap-1">
-            <Label className="text-xs text-muted-foreground">Sale platform</Label>
+            <Label className="text-xs text-muted-foreground">{copy.salePlatform}</Label>
             <select
               className="h-8 rounded-md border bg-background px-2 text-sm"
               value={stored.platform}
@@ -183,20 +184,20 @@ export function InclusiveSizingCard({ project }: Props) {
                 checked={stored.includeCupOptions}
                 onCheckedChange={v => update({ includeCupOptions: v })}
               />
-              Cup-shape options
+              {copy.cupOptions}
             </label>
             <label className="flex items-center gap-2 text-xs">
               <Switch
                 checked={stored.includePetiteTall}
                 onCheckedChange={v => update({ includePetiteTall: v })}
               />
-              Petite / tall lengths
+              {copy.petiteTall}
             </label>
           </div>
         </div>
 
         <div>
-          <Label className="text-xs text-muted-foreground">Release size range</Label>
+          <Label className="text-xs text-muted-foreground">{copy.sizeRange}</Label>
           <div className="mt-1.5 flex flex-wrap gap-1.5">
             {sizeRows.map((s, i) => (
               <div key={i} className="flex items-center gap-1 rounded-md border bg-card px-1.5 py-0.5">
@@ -262,13 +263,13 @@ export function InclusiveSizingCard({ project }: Props) {
                 update({ sizes: [...sizeRows, { label: nextLabel, bust: max + 4, cup: '', broad: false }] });
               }}
             >
-              <Plus className="h-3 w-3" /> Add size
+              <Plus className="h-3 w-3" /> {copy.addSize}
             </Button>
           </div>
         </div>
 
         <div>
-          <Label className="text-xs text-muted-foreground">Adaptive modifications (quoted as consulting)</Label>
+          <Label className="text-xs text-muted-foreground">{copy.adaptiveMods}</Label>
           <div className="mt-1.5 flex flex-wrap gap-1.5">
             {ADAPTIVE_MODS.map(m => (
               <label
@@ -290,13 +291,13 @@ export function InclusiveSizingCard({ project }: Props) {
 
         <div className="grid grid-cols-2 gap-3 rounded-md border bg-muted/40 p-3 md:grid-cols-4">
           <div>
-            <div className="text-xs text-muted-foreground">Audit (score/6)</div>
+            <div className="text-xs text-muted-foreground">{copy.audit}</div>
             <div className="text-lg font-semibold">
               {result.audit.score}/6 {verdictBadge(result.audit.verdict)}
             </div>
           </div>
           <div>
-            <div className="text-xs text-muted-foreground">Total effort hours</div>
+            <div className="text-xs text-muted-foreground">{copy.effortHours}</div>
             <div className="text-lg font-semibold">{result.effort.totalEffortHours.toFixed(1)}hr</div>
             <div className="text-xs text-muted-foreground">
               {result.effort.gradingHours.toFixed(1)} grade · {result.effort.yardageReestimateHours.toFixed(1)} yardage ·{' '}
@@ -304,12 +305,12 @@ export function InclusiveSizingCard({ project }: Props) {
             </div>
           </div>
           <div>
-            <div className="text-xs text-muted-foreground">Effort cost + edit</div>
+            <div className="text-xs text-muted-foreground">{copy.effortCost}</div>
             <div className="text-lg font-semibold">${result.effort.effortCost.toFixed(0)}</div>
             <div className="text-xs text-muted-foreground">+ ${result.effort.techEditCost} tech edit</div>
           </div>
           <div>
-            <div className="text-xs text-muted-foreground">Launch-week net baseline</div>
+            <div className="text-xs text-muted-foreground">{copy.launchBaseline}</div>
             <div className="text-lg font-semibold">${result.pricing.marketPrice.toFixed(0)}</div>
             <div className={`text-xs ${result.pricing.shortfall > 0 ? 'text-rose-600' : 'text-emerald-700'}`}>
               {result.pricing.shortfall > 0 ? `Shortfall $${result.pricing.shortfall.toFixed(0)}` : 'Range effort covered'}
@@ -325,7 +326,7 @@ export function InclusiveSizingCard({ project }: Props) {
         )}
 
         <div>
-          <Label className="text-xs text-muted-foreground">Per-size yardage (shared yardage seam)</Label>
+          <Label className="text-xs text-muted-foreground">{copy.yardage}</Label>
           <div className="mt-1 flex flex-wrap gap-1.5">
             {result.effort.yardageBySize.map((y, i) => (
               <span key={i} className="rounded-md border bg-card px-2 py-1 text-xs">
@@ -342,7 +343,7 @@ export function InclusiveSizingCard({ project }: Props) {
         </div>
 
         <div>
-          <Label className="text-xs text-muted-foreground">Pricing strategy</Label>
+          <Label className="text-xs text-muted-foreground">{copy.pricing}</Label>
           <ul className="mt-1 flex flex-col gap-1">
             {result.pricing.strategy.map((s, i) => (
               <li key={i} className="flex items-start gap-2 text-xs text-muted-foreground">
@@ -360,7 +361,7 @@ export function InclusiveSizingCard({ project }: Props) {
         </div>
 
         <div>
-          <Label className="text-xs text-muted-foreground">Inclusivity audit</Label>
+          <Label className="text-xs text-muted-foreground">{copy.auditLabel}</Label>
           <ul className="mt-1 flex flex-col gap-1">
             {pack.items.map((item, i) => (
               <li key={i} className={`flex items-start gap-2 text-xs ${item.flag ? 'text-rose-600' : 'text-muted-foreground'}`}>
@@ -375,17 +376,17 @@ export function InclusiveSizingCard({ project }: Props) {
         </div>
 
         <div className="flex flex-col gap-1">
-          <Label className="text-xs text-muted-foreground">Launch copy (paste-ready)</Label>
+          <Label className="text-xs text-muted-foreground">{copy.launchCopy}</Label>
           <pre className="whitespace-pre-wrap rounded-md border bg-card p-2 text-xs text-foreground">
             {pack.launchCopy}
           </pre>
-          <Button variant="outline" size="sm" className="w-fit gap-1" onClick={() => copy(pack.launchCopy)}>
-            <ClipboardCopy className="h-3.5 w-3.5" /> Copy launch copy
+          <Button variant="outline" size="sm" className="w-fit gap-1" onClick={() => copyToClipboard(pack.launchCopy)}>
+            <ClipboardCopy className="h-3.5 w-3.5" /> {copy.copyLaunch}
           </Button>
         </div>
 
         <div className="flex flex-col gap-1">
-          <Label className="text-xs text-muted-foreground">Notes &amp; cited anchors</Label>
+          <Label className="text-xs text-muted-foreground">{copy.notes}</Label>
           <ul className="flex flex-col gap-0.5">
             {result.notes.map((n, i) => (
               <li key={i} className="text-[11px] leading-relaxed text-muted-foreground">— {n}</li>

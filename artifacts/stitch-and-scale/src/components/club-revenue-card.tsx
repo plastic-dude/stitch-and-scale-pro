@@ -9,6 +9,8 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { ClipboardCopy, CalendarDays, Layers, Receipt } from 'lucide-react';
 import { PatternProject } from '@/lib/grading-engine';
+import { useSettings } from '@/context/SettingsContext';
+import { CLUB_REVENUE_COPY } from '@/lib/club-revenue-copy';
 import {
   modelClub,
   defaultClubInput,
@@ -81,6 +83,8 @@ const fmt$ = (n: number) =>
 
 export function ClubRevenueCard({ project }: { project: PatternProject }) {
   // issue #4 project seam: one scoped store per project; the legacy flat key 'kskclubrev-v1' is folded in on first read, then removed.
+  const { language } = useSettings();
+  const copyText = CLUB_REVENUE_COPY[language];
   const handle = useMemo(() => projectStorage<StoredState>('clubrev', project.id, ['kskclubrev-v1']), [project.id]);
   const { toast } = useToast();
   const [stored, setStored] = useState(() => loadStored(handle));
@@ -117,9 +121,9 @@ export function ClubRevenueCard({ project }: { project: PatternProject }) {
   const copy = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      toast({ title: 'Copied to clipboard' });
+      toast({ title: copyText.copied });
     } catch {
-      toast({ title: 'Select and copy manually' });
+      toast({ title: copyText.copyManual });
     }
   };
 
@@ -134,23 +138,20 @@ export function ClubRevenueCard({ project }: { project: PatternProject }) {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Receipt className="h-5 w-5" /> Club Revenue Model
+          <Receipt className="h-5 w-5" /> {copyText.title}
         </CardTitle>
         <CardDescription>
-          A pattern club is a subscription business, not a price copied off a competitor's page. This models twelve
-          months of churn and signups against real costs, tells you how many members you need to breakeven, audits
-          your premium tier, and writes the founding-member launch email. Benchmarks: 65%–78% 3-month retention,
-          25–35% annual churn for small creators, the $12/hr professional floor.
+          {copyText.description}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* ---------------------------------------------------------------- */}
         <section className="space-y-4">
-          <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">Membership &amp; churn</h3>
+          <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">{copyText.membership}</h3>
           <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
             <div className="space-y-1.5">
               <Label className="text-xs" htmlFor="cr-mm">
-                Monthly members
+                {copyText.monthlyMembers}
               </Label>
               <Input
                 id="cr-mm"
@@ -162,7 +163,7 @@ export function ClubRevenueCard({ project }: { project: PatternProject }) {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs" htmlFor="cr-am">
-                Annual members
+                {copyText.annualMembers}
               </Label>
               <Input
                 id="cr-am"
@@ -174,7 +175,7 @@ export function ClubRevenueCard({ project }: { project: PatternProject }) {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs" htmlFor="cr-mp">
-                Monthly price ($)
+                {copyText.monthlyPrice}
               </Label>
               <Input
                 id="cr-mp"
@@ -186,7 +187,7 @@ export function ClubRevenueCard({ project }: { project: PatternProject }) {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs" htmlFor="cr-ap">
-                Annual price ($)
+                {copyText.annualPrice}
               </Label>
               <Input
                 id="cr-ap"
@@ -198,7 +199,7 @@ export function ClubRevenueCard({ project }: { project: PatternProject }) {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs" htmlFor="cr-new">
-                New signups/mo
+                {copyText.newSignups}
               </Label>
               <Input
                 id="cr-new"
@@ -210,7 +211,7 @@ export function ClubRevenueCard({ project }: { project: PatternProject }) {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs" htmlFor="cr-churn">
-                Monthly churn (%)
+                {copyText.churn}
               </Label>
               <Input
                 id="cr-churn"
@@ -506,7 +507,7 @@ export function ClubRevenueCard({ project }: { project: PatternProject }) {
                   size="sm"
                   className="absolute right-2 top-2"
                   onClick={() => copy(email)}
-                  aria-label="Copy email"
+                  aria-label={copyText.copyEmail}
                 >
                   <ClipboardCopy className="h-4 w-4" />
                 </Button>

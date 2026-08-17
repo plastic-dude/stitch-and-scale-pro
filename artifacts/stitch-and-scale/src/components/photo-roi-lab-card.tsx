@@ -14,6 +14,8 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { Camera, Banknote, Clock, Flag, Lightbulb, TrendingUp } from 'lucide-react';
 import { PatternProject } from '@/lib/grading-engine';
+import { useSettings } from '@/context/SettingsContext';
+import { PHOTO_ROI_COPY, type PhotoRoiCopy } from '@/lib/photo-roi-copy';
 import {
   PHOTO_STYLE_LABELS,
   analyzePhotoRoi,
@@ -80,25 +82,23 @@ const OPTION_META: Record<string, { icon: 'camera' | 'cash' | 'clock'; tone: str
   proLifestyle: { icon: 'clock', tone: 'border-violet-400/40' },
 };
 
-function OptionRow({
-  opt,
-  isBest,
-}: {
+function OptionRow({ opt, isBest, copy }: {
   opt: ReturnType<typeof analyzePhotoRoi>['options'][number];
   isBest: boolean;
+  copy: PhotoRoiCopy;
 }) {
   const meta = OPTION_META[opt.id];
   return (
     <div className={`border rounded-lg p-3 space-y-1.5 ${meta.tone} ${isBest ? 'ring-1 ring-emerald-500/50' : ''}`}>
       <div className="flex items-center justify-between gap-2 flex-wrap">
         <span className="font-medium text-sm">{opt.label}</span>
-        {isBest && <Badge variant="outline" className="text-xs border-emerald-500/40 bg-emerald-500/15 text-emerald-700">Best for this pattern</Badge>}
+        {isBest && <Badge variant="outline" className="text-xs border-emerald-500/40 bg-emerald-500/15 text-emerald-700">{copy.best}</Badge>}
       </div>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-1 text-xs text-muted-foreground">
-        <span>Total cost: <span className="text-foreground font-medium">{fmt$(opt.totalCost)}</span></span>
-        <span>Cash / time: <span className="text-foreground font-medium">{fmt$(opt.cashCost)} / {fmt$(opt.timeCost)}</span></span>
-        <span>Per pattern: <span className="text-foreground font-medium">{fmt$(opt.perPattern)}</span></span>
-        <span>Break-even: <span className="text-foreground font-medium">{opt.breakEvenUnits} copies</span></span>
+        <span>{copy.totalCost}: <span className="text-foreground font-medium">{fmt$(opt.totalCost)}</span></span>
+        <span>{copy.cashTime}: <span className="text-foreground font-medium">{fmt$(opt.cashCost)} / {fmt$(opt.timeCost)}</span></span>
+        <span>{copy.perPattern}: <span className="text-foreground font-medium">{fmt$(opt.perPattern)}</span></span>
+        <span>{copy.breakEven}: <span className="text-foreground font-medium">{opt.breakEvenUnits} {copy.copies}</span></span>
       </div>
       {opt.redFlags.length > 0 && (
         <ul className="space-y-0.5">
@@ -138,6 +138,8 @@ function NumField({ id, label, value, onChange, min = 0, max, step = 1, suffix, 
 }
 
 export function PhotoRoiLabCard({ project }: { project: PatternProject }) {
+  const { language } = useSettings();
+  const copy = PHOTO_ROI_COPY[language];
   const handle = useMemo(() => projectStorage<StoredPhotoLab>('photolab', project.id, [STORAGE_KEY]), [project.id]);
   const { toast } = useToast();
   const [stored, setStored] = useState<StoredPhotoLab>(() => loadStored(handle));
@@ -148,12 +150,12 @@ export function PhotoRoiLabCard({ project }: { project: PatternProject }) {
   const patchInput = (patch: Partial<PhotoRoiInput>) =>
     setStored((s) => ({ input: { ...s.input, ...patch } }));
 
-  const result = useMemo(() => analyzePhotoRoi(stored.input), [stored.input]);
+  const result = useMemo(() => analyzePhotoRoi(stored.input, language), [stored.input, language]);
   const i = stored.input;
 
   const copyStyle = (style: PhotoStyle) => {
     patchInput({ photoStyle: style });
-    toast({ title: 'Shoot style noted', description: `${PHOTO_STYLE_LABELS[style]} — both styles are still compared side by side.` });
+    toast({ title: copy.style[style], description: copy.selling });
   };
 
   return (
@@ -161,65 +163,64 @@ export function PhotoRoiLabCard({ project }: { project: PatternProject }) {
       <CardHeader className="pb-2">
         <CardTitle className="flex items-center gap-2 text-base">
           <Camera className="w-4 h-4" />
-          Pattern Photo ROI Lab
+          {copy.title}
         </CardTitle>
         <CardDescription>
-          DIY vs pro photography, priced honestly — break-even copies, batch economics, and what a
-          stronger first photo is worth. Session-53 research.
+          {copy.description}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <NumField id="ph-patterns" label="Patterns in this shoot" value={i.patterns}
+          <NumField id="ph-patterns" label={copy.patterns} value={i.patterns}
             onChange={(n) => patchInput({ patterns: n })} min={1} />
-          <NumField id="ph-images" label="Images per pattern" value={i.imagesPerPattern}
+          <NumField id="ph-images" label={copy.images} value={i.imagesPerPattern}
             onChange={(n) => patchInput({ imagesPerPattern: n })} min={1} max={12}
-            hint="Tiered per-image pricing rewards 5–6 strong shots over 10+." />
-          <NumField id="ph-rate" label="Your hourly rate" value={i.hourlyRate}
+            hint={copy.hints.images} />
+          <NumField id="ph-rate" label={copy.hourlyRate} value={i.hourlyRate}
             onChange={(n) => patchInput({ hourlyRate: n })} suffix="$/hr" />
-          <NumField id="ph-diyhours" label="DIY hours per pattern" value={i.diyHoursPerPattern}
+          <NumField id="ph-diyhours" label={copy.diyHours} value={i.diyHoursPerPattern}
             onChange={(n) => patchInput({ diyHoursPerPattern: n })} step={0.5}
-            hint="WKW average: ~2.5h (1–2h shoot + 1.5h editing) per pattern." />
-          <NumField id="ph-gear" label="Gear stack value" value={i.gearValue}
+            hint={copy.hints.diy} />
+          <NumField id="ph-gear" label={copy.gear} value={i.gearValue}
             onChange={(n) => patchInput({ gearValue: n })} step={100} suffix="$"
-            hint="WKW: camera alone £1,500+ — amortized over your library." />
-          <NumField id="ph-library" label="Library size to amortize" value={i.gearLibrarySize}
+            hint={copy.hints.gear} />
+          <NumField id="ph-library" label={copy.library} value={i.gearLibrarySize}
             onChange={(n) => patchInput({ gearLibrarySize: n })} min={1} />
-          <NumField id="ph-modelrate" label="Model pay" value={i.modelHourlyRate}
+          <NumField id="ph-modelrate" label={copy.modelPay} value={i.modelHourlyRate}
             onChange={(n) => patchInput({ modelHourlyRate: n })} suffix="$/hr"
-            hint="0 = modeling your own designs or a friend." />
-          <NumField id="ph-modelhours" label="Model hours per pattern" value={i.modelHoursPerPattern}
+            hint={copy.hints.model} />
+          <NumField id="ph-modelhours" label={copy.modelHours} value={i.modelHoursPerPattern}
             onChange={(n) => patchInput({ modelHoursPerPattern: n })} step={0.5} />
         </div>
         <div className="border-t pt-3">
-          <p className="text-xs font-medium mb-2">Pro shoot rates</p>
+          <p className="text-xs font-medium mb-2">{copy.proRates}</p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <NumField id="ph-perimage" label="Per-image rate (catalog)" value={i.proPerImageRate}
+            <NumField id="ph-perimage" label={copy.perImage} value={i.proPerImageRate}
               onChange={(n) => patchInput({ proPerImageRate: n })} suffix="$"
-              hint="Amateur $25–100/hr; experienced $200–500/hr; per-image is most common." />
-            <NumField id="ph-halfday" label="Half-day rate (lifestyle)" value={i.proHalfDayRate}
+              hint={copy.hints.perImage} />
+            <NumField id="ph-halfday" label={copy.halfDay} value={i.proHalfDayRate}
               onChange={(n) => patchInput({ proHalfDayRate: n })} suffix="$"
-              hint="Half-day batches beat day rates ($5–10k/day) for most indie designers." />
-            <NumField id="ph-batch" label="Patterns per half-day" value={i.patternsPerHalfDay}
+              hint={copy.hints.halfDay} />
+            <NumField id="ph-batch" label={copy.batch} value={i.patternsPerHalfDay}
               onChange={(n) => patchInput({ patternsPerHalfDay: n })} min={1} max={12} />
-            <NumField id="ph-extras" label="Extras per image (props/retouch)" value={i.proExtrasPerImage}
+            <NumField id="ph-extras" label={copy.extras} value={i.proExtrasPerImage}
               onChange={(n) => patchInput({ proExtrasPerImage: n })} suffix="$"
-              hint="Hands in frame, props, and advanced retouch add ~2× per image." />
+              hint={copy.hints.extras} />
           </div>
         </div>
         <div className="border-t pt-3">
-          <p className="text-xs font-medium mb-2">Selling economics</p>
+          <p className="text-xs font-medium mb-2">{copy.selling}</p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <NumField id="ph-price" label="Pattern price" value={i.patternPrice}
+            <NumField id="ph-price" label={copy.price} value={i.patternPrice}
               onChange={(n) => patchInput({ patternPrice: n })} step={0.5} suffix="$" />
-            <NumField id="ph-fee" label="Platform fee" value={Math.round(i.platformFeePct * 100)}
+            <NumField id="ph-fee" label={copy.fee} value={Math.round(i.platformFeePct * 100)}
               onChange={(n) => patchInput({ platformFeePct: n / 100 })} step={1} max={50} suffix="%" />
-            <NumField id="ph-sales" label="Current monthly sales" value={i.monthlySales}
+            <NumField id="ph-sales" label={copy.sales} value={i.monthlySales}
               onChange={(n) => patchInput({ monthlySales: n })} />
-            <NumField id="ph-lift" label="Thumbnail CTR lift" value={Math.round(i.thumbCtrLift * 100)}
+            <NumField id="ph-lift" label={copy.lift} value={Math.round(i.thumbCtrLift * 100)}
               onChange={(n) => patchInput({ thumbCtrLift: n / 100 })} step={1} max={50} suffix="%"
-              hint="First photo is the Ravelry search thumbnail; Etsy's top earners name photography their #1 driver." />
-            <NumField id="ph-runway" label="Lift runway" value={i.liftMonths}
+              hint={copy.hints.lift} />
+            <NumField id="ph-runway" label={copy.runway} value={i.liftMonths}
               onChange={(n) => patchInput({ liftMonths: n })} min={1} suffix="mo" />
           </div>
           <div className="mt-3 flex flex-wrap gap-2">
@@ -233,27 +234,27 @@ export function PhotoRoiLabCard({ project }: { project: PatternProject }) {
                     : 'bg-background hover:bg-accent/40'
                 }`}
               >
-                {PHOTO_STYLE_LABELS[style]}
+                {copy.style[style]}
               </button>
             ))}
           </div>
         </div>
 
         <div className="border-t pt-3 space-y-2">
-          <p className="text-xs font-medium">Shoot options — sorted by total cost per pattern</p>
+          <p className="text-xs font-medium">{copy.shootOptions}</p>
           {result.options.sort((a, b) => a.totalCost - b.totalCost).map((opt) => (
-            <OptionRow key={opt.id} opt={opt} isBest={opt.id === result.best} />
+            <OptionRow key={opt.id} opt={opt} isBest={opt.id === result.best} copy={copy} />
           ))}
         </div>
 
         <div className="border-t pt-3 space-y-2">
           <p className="text-xs font-medium flex items-center gap-1.5">
             <TrendingUp className="w-3.5 h-3.5" />
-            Thumbnail-lift economics ({i.liftMonths}mo runway)
+            {copy.thumbnail(i.liftMonths)}
           </p>
           <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-muted-foreground">
-            <span>Extra sales/mo: <span className="text-foreground font-medium">{result.extraSalesPerMonth.toFixed(2)}</span></span>
-            <span>Extra net revenue: <span className="text-foreground font-medium">{fmt$(result.liftRevenue)}</span></span>
+            <span>{copy.extraSales}: <span className="text-foreground font-medium">{result.extraSalesPerMonth.toFixed(2)}</span></span>
+            <span>{copy.extraRevenue}: <span className="text-foreground font-medium">{fmt$(result.liftRevenue)}</span></span>
           </div>
           <p className="text-xs text-muted-foreground leading-relaxed flex gap-1.5">
             <Lightbulb className="w-3.5 h-3.5 mt-0.5 shrink-0 text-amber-500" />

@@ -26,6 +26,8 @@ import {
 } from '@/components/ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
 import type { PatternProject } from '@/lib/grading-engine';
+import { useSettings } from '@/context/SettingsContext';
+import { DASHBOARD_COPY } from '@/lib/dashboard-copy';
 
 // A project is "Graded" once it has at least one real measurement to grade —
 // that's the point where the grading table actually produces output.
@@ -40,6 +42,8 @@ function isProjectGraded(project: { sections?: Array<{ measurements?: unknown[] 
 export default function Dashboard() {
   const { projects, duplicateProject, deleteProject, importProject } = useProjects();
   const { toast } = useToast();
+  const { language } = useSettings();
+  const copy = DASHBOARD_COPY[language];
   const [search, setSearch] = React.useState('');
   const [deleteTarget, setDeleteTarget] = React.useState<PatternProject | null>(null);
   const [isImporting, setIsImporting] = React.useState(false);
@@ -58,7 +62,7 @@ export default function Dashboard() {
     e.preventDefault();
     e.stopPropagation();
     duplicateProject(id);
-    toast({ title: 'Pattern duplicated', description: `"${name} (Copy)" was added to your patterns.` });
+    toast({ title: copy.duplicate, description: `"${name} (Copy)" was added to your patterns.` });
   };
 
   const handleExport = (e: React.MouseEvent, project: PatternProject) => {
@@ -73,13 +77,13 @@ export default function Dashboard() {
     a.click();
     a.remove();
     URL.revokeObjectURL(url);
-    toast({ title: 'Pattern exported', description: `${project.name}.json downloaded.` });
+    toast({ title: copy.exported, description: `${project.name}.json downloaded.` });
   };
 
   const handleDeleteConfirmed = () => {
     if (!deleteTarget) return;
     deleteProject(deleteTarget.id);
-    toast({ title: 'Pattern deleted', description: `"${deleteTarget.name}" was removed.` });
+    toast({ title: copy.deleted, description: `"${deleteTarget.name}" was removed.` });
     setDeleteTarget(null);
   };
 
@@ -100,10 +104,10 @@ export default function Dashboard() {
           throw new Error('This file doesn\'t look like a Stitch & Scale pattern export.');
         }
         importProject(parsed as PatternProject);
-        toast({ title: 'Pattern imported', description: `"${parsed.name}" was added to your patterns.` });
+        toast({ title: copy.imported, description: `"${parsed.name}" was added to your patterns.` });
       } catch (err) {
         toast({
-          title: 'Import failed',
+          title: copy.importFailed,
           description: err instanceof Error ? err.message : 'The file could not be read.',
           variant: 'destructive',
         });
@@ -112,7 +116,7 @@ export default function Dashboard() {
       }
     };
     reader.onerror = () => {
-      toast({ title: 'Import failed', description: 'The file could not be read.', variant: 'destructive' });
+      toast({ title: copy.importFailed, description: copy.backupRead, variant: 'destructive' });
       setIsImporting(false);
     };
     reader.readAsText(file);
@@ -146,16 +150,14 @@ export default function Dashboard() {
         >
           <Info className="w-5 h-5 text-accent shrink-0 mt-0.5" />
           <div className="flex-1 pr-6">
-            <h3 className="text-sm font-semibold text-accent-foreground mb-1">Local Storage Notice</h3>
+            <h3 className="text-sm font-semibold text-accent-foreground mb-1">{copy.notice}</h3>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Your patterns are saved right here on this device — no account needed.
-              <strong> Clearing your browser data will delete them, so back up anything you can't afford to lose. </strong>
-              Cloud sync is on the way, which will make this less of a worry.
+              {copy.noticeBody}
             </p>
           </div>
           <button 
             onClick={dismissWarning}
-            aria-label="Dismiss"
+            aria-label={copy.dismiss}
             className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors p-1"
           >
             <X className="w-4 h-4" />
@@ -175,16 +177,16 @@ export default function Dashboard() {
       {projects.length > 0 && (
         <div className="flex flex-col sm:flex-row gap-6 justify-between items-start sm:items-end">
           <div className="space-y-2">
-            <h1 className="text-4xl font-serif font-semibold text-foreground tracking-tight">Your Patterns</h1>
+            <h1 className="text-4xl font-serif font-semibold text-foreground tracking-tight">{copy.patterns}</h1>
             <p className="text-muted-foreground text-sm font-medium tracking-wide">
-              {projects.length} {projects.length === 1 ? 'project' : 'projects'} in your workspace
+              {projects.length} {projects.length === 1 ? copy.project : copy.projects} in your workspace
             </p>
           </div>
           <div className="flex items-center gap-3 w-full sm:w-auto">
             <div className="relative flex-1 sm:w-72 group">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground transition-colors group-focus-within:text-primary" />
               <Input 
-                placeholder="Search patterns..." 
+                placeholder={copy.search}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="pl-10 h-11 bg-card/50 border-border/60 focus-visible:bg-card focus-visible:ring-accent rounded-full transition-all text-ellipsis"
@@ -196,8 +198,8 @@ export default function Dashboard() {
               size="icon"
               className="h-11 w-11 rounded-full shrink-0"
               onClick={() => setLocation('/project/import-csv')}
-              title="Import from a spreadsheet"
-              aria-label="Import from a spreadsheet"
+              title={copy.spreadsheet}
+              aria-label={copy.spreadsheet}
               data-testid="button-import-csv"
             >
               <FileSpreadsheet className="h-4 w-4" />
@@ -208,8 +210,8 @@ export default function Dashboard() {
               className="h-11 w-11 rounded-full shrink-0"
               onClick={handleImportClick}
               disabled={isImporting}
-              title="Restore a backup from a .json file"
-              aria-label="Restore a backup from a .json file"
+              title={copy.restore}
+              aria-label={copy.restore}
               data-testid="button-import"
             >
               {isImporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
@@ -228,18 +230,18 @@ export default function Dashboard() {
           <div className="w-24 h-24 rounded-2xl bg-secondary/40 flex items-center justify-center mb-8 text-primary/80 ring-1 ring-border/50 shadow-sm rotate-3">
             <Layers className="w-10 h-10 -rotate-3" />
           </div>
-          <h2 className="text-3xl font-serif font-medium mb-4 text-foreground tracking-tight">A blank canvas awaits</h2>
+          <h2 className="text-3xl font-serif font-medium mb-4 text-foreground tracking-tight">{copy.blank}</h2>
           <p className="text-muted-foreground mb-10 leading-relaxed text-[15px]">
-            Set your gauge, add your measurements, and let Stitch & Scale handle the grading math. Built for designers who care about the details.
+            {copy.blankBody}
           </p>
           <div className="flex flex-col sm:flex-row items-center gap-3">
             <Button size="lg" className="rounded-full px-8 h-12 font-medium bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm" onClick={() => setLocation('/project/new')} data-testid="button-create-first">
               <Plus className="mr-2 h-5 w-5" />
-              Draft a New Pattern
+              {copy.newPattern}
             </Button>
             <Button size="lg" variant="outline" className="rounded-full px-8 h-12 font-medium" onClick={() => setLocation('/project/import-csv')} data-testid="button-import-csv-empty">
               <FileSpreadsheet className="mr-2 h-5 w-5" />
-              Import from a Spreadsheet
+              {copy.importSpreadsheet}
             </Button>
           </div>
           <button

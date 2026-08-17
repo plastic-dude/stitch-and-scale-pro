@@ -3,10 +3,12 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft, Plus } from 'lucide-react';
 import { motion, useReducedMotion } from 'framer-motion';
 import numeral404 from '@/assets/404/numeral-404.webp';
+import { useSettings } from '@/context/SettingsContext';
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
 export default function NotFound() {
+  const { t } = useSettings();
   const reduceMotion = useReducedMotion();
 
   const fadeUp = (delay: number) =>
@@ -33,15 +35,14 @@ export default function NotFound() {
         {...fadeUp(0.08)}
         className="font-serif font-medium text-foreground leading-[1.15] tracking-tight mb-3 text-[28px] sm:text-[32px]"
       >
-        Oh, we dropped a{' '}
-        <em className="italic font-medium text-accent">stitch.</em>
+        {t('route.notFound.title')}
       </motion.h1>
 
       <motion.p
         {...fadeUp(0.16)}
         className="text-muted-foreground max-w-[320px] mb-8 text-[15px] leading-relaxed"
       >
-        This page moved or the link was off — your patterns are safe right where you left them.
+        {t('route.notFound.description')}
       </motion.p>
 
       <motion.div
@@ -56,7 +57,7 @@ export default function NotFound() {
         >
           <Link href="/">
             <ArrowLeft className="mr-2 h-4 w-4" strokeWidth={1.5} />
-            Back to your Stitch
+            {t('route.notFound.back')}
           </Link>
         </Button>
         <Button
@@ -68,7 +69,7 @@ export default function NotFound() {
         >
           <Link href="/project/new">
             <Plus className="mr-2 h-4 w-4" strokeWidth={1.5} />
-            Draft a New Pattern
+            {t('route.notFound.newPattern')}
           </Link>
         </Button>
       </motion.div>
