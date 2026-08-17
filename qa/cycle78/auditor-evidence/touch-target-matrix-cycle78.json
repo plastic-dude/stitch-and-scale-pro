@@ -1,0 +1,219 @@
+{
+  "matrix": [
+    {
+      "label": "android-360",
+      "width": 360,
+      "triggerRect": {
+        "x": 16,
+        "y": 533,
+        "w": 328,
+        "h": 44
+      },
+      "deleteRect": {
+        "x": 291,
+        "y": 618,
+        "w": 36,
+        "h": 36
+      },
+      "closeRect": {
+        "x": 328,
+        "y": 178.56878662109375,
+        "w": 16,
+        "h": 16
+      },
+      "bragActive": [
+        "Brag Cards"
+      ],
+      "accentControls": [
+        {
+          "aria": "Card accent: Rose",
+          "rect": {
+            "x": 39.400001525878906,
+            "y": 382.0562438964844,
+            "w": 35.19999694824219,
+            "h": 35.199981689453125
+          },
+          "clicked": true
+        },
+        {
+          "aria": "Card accent: Honey",
+          "rect": {
+            "x": 81,
+            "y": 383.65625,
+            "w": 32,
+            "h": 32
+          },
+          "clicked": true
+        },
+        {
+          "aria": "Card accent: Moss",
+          "rect": {
+            "x": 121,
+            "y": 383.65625,
+            "w": 32,
+            "h": 32
+          },
+          "clicked": true
+        },
+        {
+          "aria": "Card accent: Denim",
+          "rect": {
+            "x": 161,
+            "y": 383.65625,
+            "w": 32,
+            "h": 32
+          },
+          "clicked": true
+        }
+      ],
+      "files": [
+        "screenshots/touch-target-matrix--android-360--workspace__360.png",
+        "screenshots/touch-target-matrix--android-360--brag-cards__360.png"
+      ]
+    },
+    {
+      "label": "iphone-390",
+      "width": 390,
+      "triggerRect": {
+        "x": 16,
+        "y": 453,
+        "w": 358,
+        "h": 44
+      },
+      "deleteRect": {
+        "x": 321,
+        "y": 538,
+        "w": 36,
+        "h": 36
+      },
+      "closeRect": {
+        "x": 358,
+        "y": 187.46755981445312,
+        "w": 16,
+        "h": 16
+      },
+      "bragActive": [
+        "Brag Cards"
+      ],
+      "accentControls": [
+        {
+          "aria": "Card accent: Rose",
+          "rect": {
+            "x": 39.400001525878906,
+            "y": 404.0562438964844,
+            "w": 35.19999694824219,
+            "h": 35.20001220703125
+          },
+          "clicked": true
+        },
+        {
+          "aria": "Card accent: Honey",
+          "rect": {
+            "x": 81,
+            "y": 405.65625,
+            "w": 32,
+            "h": 32
+          },
+          "clicked": true
+        },
+        {
+          "aria": "Card accent: Moss",
+          "rect": {
+            "x": 121,
+            "y": 405.65625,
+            "w": 32,
+            "h": 32
+          },
+          "clicked": true
+        },
+        {
+          "aria": "Card accent: Denim",
+          "rect": {
+            "x": 161,
+            "y": 405.65625,
+            "w": 32,
+            "h": 32
+          },
+          "clicked": true
+        }
+      ],
+      "files": [
+        "screenshots/touch-target-matrix--iphone-390--workspace__390.png",
+        "screenshots/touch-target-matrix--iphone-390--brag-cards__390.png"
+      ]
+    },
+    {
+      "label": "iphone-430",
+      "width": 430,
+      "triggerRect": {
+        "x": 16,
+        "y": 393,
+        "w": 398,
+        "h": 44
+      },
+      "deleteRect": {
+        "x": 361,
+        "y": 478,
+        "w": 36,
+        "h": 36
+      },
+      "closeRect": {
+        "x": 398,
+        "y": 205.22265625,
+        "w": 16,
+        "h": 16
+      },
+      "bragActive": [
+        "Brag Cards"
+      ],
+      "accentControls": [
+        {
+          "aria": "Card accent: Rose",
+          "rect": {
+            "x": 39.400001525878906,
+            "y": 448.0562438964844,
+            "w": 35.19999694824219,
+            "h": 35.20001220703125
+          },
+          "clicked": true
+        },
+        {
+          "aria": "Card accent: Honey",
+          "rect": {
+            "x": 81,
+            "y": 449.65625,
+            "w": 32,
+            "h": 32
+          },
+          "clicked": true
+        },
+        {
+          "aria": "Card accent: Moss",
+          "rect": {
+            "x": 121,
+            "y": 449.65625,
+            "w": 32,
+            "h": 32
+          },
+          "clicked": true
+        },
+        {
+          "aria": "Card accent: Denim",
+          "rect": {
+            "x": 161,
+            "y": 449.65625,
+            "w": 32,
+            "h": 32
+          },
+          "clicked": true
+        }
+      ],
+      "files": [
+        "screenshots/touch-target-matrix--iphone-430--workspace__430.png",
+        "screenshots/touch-target-matrix--iphone-430--brag-cards__430.png"
+      ]
+    }
+  ],
+  "errors": [],
+  "logs": []
+}
