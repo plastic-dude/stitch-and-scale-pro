@@ -989,7 +989,13 @@ export default function ProjectWorkspace() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <div className="flex flex-wrap gap-1 mb-1.5 px-0.5">
+        {/* CHK-125: the group-chip row was rendering at ALL widths — on
+            desktop it sat directly above the flat 79-tab strip and made it
+            look as if the individual tabs had vanished (user report). The
+            chips are the mobile/tablet substitute for the hidden strip, so
+            they must hide on desktop where the strip (accessibility) surface
+            is the primary navigation. */}
+        <div className="lg:hidden flex flex-wrap gap-1 mb-1.5 px-0.5">
           {[
             { g: 'design', label: t('workspace.group.design') },
             { g: 'fit', label: t('workspace.group.fit') },
@@ -999,7 +1005,11 @@ export default function ProjectWorkspace() {
             { g: 'business', label: t('workspace.group.business') },
           ].map(({ g, label }) => {
             const first = Object.keys(TAB_GROUPS).find((v) => TAB_GROUPS[v] === g);
-            const count = Object.values(TAB_GROUPS).filter((x) => x === g).length;
+            // CHK-125: chip count now derives from TAB_REGISTRY — the single
+            // source of truth for what the flat strip renders — instead of the
+            // TAB_GROUPS frequency count, so a drifted classification can
+            // never put the wrong number on a chip.
+            const count = TAB_REGISTRY.filter((x) => x.group === g).length;
             return (
               <button
                 key={g}
