@@ -1044,7 +1044,18 @@ export default function ProjectWorkspace() {
             copy={NAVIGATOR_COPY[language] ?? NAVIGATOR_COPY.en}
           />
         </div>
-        <TabsList className="hidden lg:flex lg:flex-nowrap w-full gap-1 bg-card border border-border p-1 h-auto overflow-x-auto">
+        {/* CHK-128 (QA #65, cycle 62): Radix's TabsList primitive styles the list
+            with inline-flex + justify-center, so inside an overflow-x-auto scroller
+            the 79-tab content was centered — at 1280px the first core tabs
+            (Sections, Preview, Yarn) sat at negative x and were clipped offscreen
+            behind a partial label. The Tailwind v4 arbitrary-value class
+            justify-[flex-start] is not emitted by v4's justify utility, so the
+            CSS-property-style arbitrary form justify-content-[flex-start] is used
+            instead — it generates a first-class utility that out-orders the
+            primitive's justify-center in the v4 cascade.
+            the strip opens at the first tab with scrollLeft=0; late tabs remain
+            reachable by horizontal scroll. */}
+        <TabsList className="hidden lg:flex lg:flex-nowrap w-full gap-1 bg-card border border-border p-1 h-auto overflow-x-auto" style={{ justifyContent: "flex-start" }}>
 
         {TAB_REGISTRY.map((tab) => {
               const localizedLabel = getWorkspaceTabLabel(language, tab.value, ({
