@@ -106,8 +106,9 @@ export function ListingTestLabCard({ project }: { project: PatternProject }) {
     setStored(s => ({ listings: [{ ...(s.listings?.[0] ?? DEFAULT_LISTING), ...patch }] }));
   };
 
-  const analysis = useMemo(() => analyzeListingTest(current), [current]);
+  const analysis = useMemo(() => analyzeListingTest(current, language), [current, language]);
   const verdictLabel = analysis.verdict === 'Rewire' ? copyText.rewire : analysis.verdict === 'Fix the test' ? copyText.fixTest : copyText.testIt;
+  const queueVerdictLabel = (verdict: string) => verdict === 'Rewire' ? copyText.rewire : verdict === 'Fix the test' ? copyText.fixTest : copyText.testIt;
   const queue = useMemo(() => rankListingQueue(listings), [listings]);
 
   const [qName, setQName] = useState('');
@@ -183,7 +184,7 @@ export function ListingTestLabCard({ project }: { project: PatternProject }) {
                 <span className="w-5 text-muted-foreground">{idx + 1}.</span>
                 <span className="flex-1">{q.listing.name}</span>
                 <span className="text-muted-foreground">{fmtN(q.listing.monthlyViews)} {copyText.viewsSuffix}</span>
-                <Badge variant="outline">{q.verdict}</Badge>
+                <Badge variant="outline">{queueVerdictLabel(q.verdict)}</Badge>
                 <span className={cn('text-xs', q.expectedValue >= 0 ? 'text-emerald-600' : 'text-red-600')}>
                   EV {fmt$(q.expectedValue)}{copyText.evSuffix}
                 </span>

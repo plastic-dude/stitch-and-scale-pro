@@ -19,6 +19,9 @@
  * crochetpreneur Ravelry tag/attribute discovery; printify CTR definition.
  */
 
+import type { LanguageCode } from '@/lib/i18n';
+import { LISTING_TEST_COPY } from '@/lib/listing-test-copy';
+
 export type Platform = 'ravelry' | 'etsy' | 'lovecrafts' | 'payhip';
 export type TestVariable = 'photo' | 'title' | 'price' | 'description';
 
@@ -147,7 +150,7 @@ export function maxDetectableLift(
  *   test    → powered, one variable, run it for ≥ the seasonality cycle
  *   scale   → the winner hypothesis is pre-committed (planner mode, no result yet)
  */
-export function analyzeListingTest(input: ListingInput): {
+export function analyzeListingTest(input: ListingInput, language: LanguageCode = 'en'): {
   viewsFromImpressions: number | null;
   effectiveMonthlyViews: number;
   samplePerVariant: number;
@@ -168,6 +171,7 @@ export function analyzeListingTest(input: ListingInput): {
   verdictNote: string;
   monthsToSeasonality: number;
 } {
+  const dynamicCopy = LISTING_TEST_COPY[language];
   const viewsFromImpressions =
     input.monthlyImpressions !== undefined && input.ctrPct !== undefined
       ? input.monthlyImpressions * Math.max(0, Math.min(1, input.ctrPct))
@@ -202,49 +206,51 @@ export function analyzeListingTest(input: ListingInput): {
   if (detect === null || !liftIsDetectable) {
     flags.push({
       code: 'LT-01',
-      title: 'Traffic too low to prove this lift',
-      detail:
-        detect === null
-          ? 'At this traffic, no realistic lift is statistically provable. Test the catalog, not this listing.'
-          : `Your traffic can only prove lifts of ${fmtPct(detect)} or bigger. A ${fmtPct(input.hypothesizedLift)} lift will never reach significance.`,
+      title: dynamicCopy.flagTitle('LT-01'),
+      detail: dynamicCopy.flagDetail('LT-01', {
+        detectable: fmtPct(detect ?? 0),
+        hypothesis: fmtPct(input.hypothesizedLift),
+      }),
     });
   }
   if (input.plannedDurationMonths < 1) {
     flags.push({
       code: 'LT-02',
-      title: 'Test shorter than one sales cycle',
-      detail:
-        'Pattern sales swing with seasons and releases. Run each test at least one full month — 60 days is better.',
+      title: dynamicCopy.flagTitle('LT-02'),
+      detail: dynamicCopy.flagDetail('LT-02', {}),
     });
   }
   if (input.isMultipleVariables) {
     flags.push({
       code: 'LT-03',
-      title: 'Multiple variables at once',
-      detail:
-        'Changing photo AND title AND price at once measures nothing. One variable per test, always.',
+      title: dynamicCopy.flagTitle('LT-03'),
+      detail: dynamicCopy.flagDetail('LT-03', {}),
     });
   }
   if (input.variable === 'price' && (input.platform === 'etsy' || input.platform === 'lovecrafts')) {
     flags.push({
       code: 'LT-04',
-      title: 'Platform fees eat small price tests',
-      detail:
-        'Fee structures differ per platform — at $6, Ravelry nets ≈$5.70, Etsy ≈$5.10, LoveCrafts ≈$4.50. Test price on the platform with the flattest fee curve first.',
+      title: dynamicCopy.flagTitle('LT-04'),
+      detail: dynamicCopy.flagDetail('LT-04', {}),
     });
   }
   if (input.plannedDurationMonths > 0 && monthsToPower > input.plannedDurationMonths * 2) {
     flags.push({
       code: 'LT-05',
-      title: 'Peeking risk — sample far beyond the plan',
-      detail: `Reaching significance needs ≈${fmtN(Math.ceil(n))} visits/variant (${fmtN(monthsToPower)} months at your traffic). Stopping early inflates false positives.`,
+      title: dynamicCopy.flagTitle('LT-05'),
+      detail: dynamicCopy.flagDetail('LT-05', {
+        sample: fmtN(Math.ceil(n)),
+        months: fmtN(monthsToPower),
+      }),
     });
   }
   if (input.tagsUsedPct < 1) {
     flags.push({
       code: 'LT-06',
-      title: 'Discovery slots not full before testing',
-      detail: `Ravelry allows 13 tags plus garment/stitch/construction attributes — search runs on them. You're using ~${Math.round(input.tagsUsedPct * 100)}%. Fill every slot before paying attention to conversion.`,
+      title: dynamicCopy.flagTitle('LT-06'),
+      detail: dynamicCopy.flagDetail('LT-06', {
+        tags: Math.round(input.tagsUsedPct * 100).toString(),
+      }),
     });
   }
 
@@ -254,12 +260,16 @@ export function analyzeListingTest(input: ListingInput): {
       : !liftIsDetectable
         ? 'Fix the test'
         : 'Test it';
-  const verdictNote =
-    verdict === 'Rewire'
-      ? 'At this traffic, no per-listing test is statistically possible — the winning move is a portfolio-level refresh (photo/title pass on every listing) plus Ravelry tag completion. The +23% organic bump cited for systematic converters compounds across the catalog.'
-      : verdict === 'Fix the test'
-        ? `Your traffic could prove a ${fmtPct(detect ?? 0)}+ lift in ${input.plannedDurationMonths} month(s), not the ${fmtPct(input.hypothesizedLift)} you hypothesized. Either widen the hypothesis to what your traffic can prove, or run the test long enough to power it (${fmtN(Math.ceil(monthsToPower))} months).`
-        : `Powered and honest: run it for ≥1 full month, one variable, and don't peek. Required sample is ≈${fmtN(Math.ceil(n))} visits/variant — reachable in ≈${fmtN(Math.ceil(monthsToPower))} months at your traffic. If the winner shows, roll the change out catalog-wide.`;
+  const verdictNote = dynamicCopy.verdictNote(
+    verdict === 'Rewire' ? 'rewire' : verdict === 'Fix the test' ? 'fix' : 'test',
+    {
+      detectable: fmtPct(detect ?? 0),
+      plan: input.plannedDurationMonths.toString(),
+      hypothesis: fmtPct(input.hypothesizedLift),
+      months: fmtN(Math.ceil(monthsToPower)),
+      sample: fmtN(Math.ceil(n)),
+    },
+  );
 
   return {
     viewsFromImpressions,

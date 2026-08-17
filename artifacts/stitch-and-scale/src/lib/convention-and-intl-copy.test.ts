@@ -213,6 +213,9 @@ describe('Listing Test Lab copy catalogue', () => {
       expect(LISTING_TEST_COPY[locale].honestMath).not.toBe('');
       expect(LISTING_TEST_COPY[locale].warnings).not.toBe('');
       expect(LISTING_TEST_COPY[locale].verdict).not.toBe('');
+      expect(LISTING_TEST_COPY[locale].flagTitle('LT-01')).not.toBe('');
+      expect(LISTING_TEST_COPY[locale].flagDetail('LT-05', { sample: '100', months: '2' })).not.toBe('');
+      expect(LISTING_TEST_COPY[locale].verdictNote('test', { sample: '100', months: '2', detectable: '5%', plan: '1', hypothesis: '2%' })).not.toBe('');
     }
   });
 });

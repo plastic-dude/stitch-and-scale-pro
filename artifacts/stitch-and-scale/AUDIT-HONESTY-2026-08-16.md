@@ -553,3 +553,14 @@ Boundaries: the new table is a reviewer-supported completion of the existing Bun
 Reviewer-gated scope: after fresh research on Salla, Big Cartel, and Ecwid (archived at `/home/ubuntu/research/competitors-session-102-digital-storefront-distribution.md`), the bounded reviewer-proposed record-room opportunity was the Submission Pipeline shell. Added `submission-pipeline-copy.ts` with EN, DE, FR, ES, and PT catalogue parity; wired the active Settings locale into the card; localized its highest-visibility shell, clipboard, and record-room labels; and added a shared parity regression.
 
 Evidence: strict TypeScript passed; focused locale-parity tests passed (30 tests); full Vitest passed (110 files, 1,758 tests); production build passed in 5.93s. The localhost sample project rendered without runtime or layout errors during visual verification. The browser viewport remained on the workspace shell because the horizontally overflowing lab strip did not expose the Pipeline panel in the captured viewport; therefore this is not claimed as a complete deep visual review of every Submission Pipeline control. Dynamic analyzer/source-derived prose and the remaining i18n inventory are still open and are not claimed closed.
+
+
+## CHK-103 — Listing Test dynamic diagnostics localization
+
+Reviewer-supported work completed: the Listing Test analyzer now accepts the active `LanguageCode` with an English-default API, while preserving all traffic, sample-size, expected-value, and verdict calculations. Dynamic warning titles/details (`LT-01` through `LT-06`) and the three verdict-note branches are localized in EN, DE, FR, ES, and PT. The card passes the active locale to analysis and localizes queue verdict badges. Added parity assertions exercise dynamic helpers in every supported locale.
+
+Fresh non-repeated market research for this cycle is archived at `research/competitors-session-103-creator-distribution.md` and covered ConvertKit/Kit, Klaviyo, and Fourthwall. The implementation remained limited to the reviewer-proposed Listing Test localization gap; no unsupported commerce scope was added.
+
+Evidence: `pnpm run typecheck` passed; focused Listing Test and shared parity tests passed (55 tests); full Vitest passed with 110 files and 1,758 tests; production build passed in 5.82s. Existing non-fatal Vite warning remains because the main chunk exceeds 500 kB. Visual verification passed in the local sample project: Listing Test Lab rendered its shell, queue, warnings, diagnostic details, and verdict without runtime or layout errors. Screenshot evidence: `docs/verification/chk-103-listing-test.webp`.
+
+Boundary: this checkpoint does not claim complete five-language coverage across the whole application. Remaining source-derived and dynamic prose outside Listing Test, plus inventory items not yet migrated, remain open and must follow later reviewer proposals.
