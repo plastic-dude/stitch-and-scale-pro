@@ -106,6 +106,7 @@ export function tabGroupsFromRegistry(): { group: TabGroup; entries: typeof TAB_
 
 export function TabNavigator({ activeTab, onTabChange, language, copy, className }: TabNavigatorProps) {
   const isDesktop = useViewportWidth();
+  const [isSheetOpen, setIsSheetOpen] = React.useState(false);
   const groups = tabGroupsFromRegistry();
 
   const localizedLabel = (value: string, fallback: string) =>
@@ -113,6 +114,9 @@ export function TabNavigator({ activeTab, onTabChange, language, copy, className
 
   const handlePick = (value: string) => {
     onTabChange(value);
+    // A lab selection is a completed mobile navigation action: close the
+    // controlled sheet so its modal overlay cannot block the selected panel.
+    setIsSheetOpen(false);
     // Return focus/scroll position predictably: the caller's tab switch
     // scrolls the new panel into view via the existing TabPanel autofocus.
   };
@@ -120,7 +124,7 @@ export function TabNavigator({ activeTab, onTabChange, language, copy, className
   if (!isDesktop) {
     return (
       <div className={className}>
-        <Sheet>
+        <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
           <SheetTrigger asChild>
             <Button
               variant="outline"
