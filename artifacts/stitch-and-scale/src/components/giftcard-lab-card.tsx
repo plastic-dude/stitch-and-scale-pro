@@ -9,7 +9,7 @@ import {
 } from "@/lib/giftcard-lab";
 import type { PatternProject } from "@/lib/grading-engine";
 import { useSettings } from "@/context/SettingsContext";
-import { GIFTCARD_COPY, giftCardFlagTitle, giftCardVerdictLabel } from "@/lib/giftcard-copy";
+import { GIFTCARD_COPY, giftCardFlagTitle, giftCardVerdictLabel, giftCardVerdictNote } from "@/lib/giftcard-copy";
 import { projectStorage } from "@/lib/storage-lib";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -455,7 +455,16 @@ export function GiftCardLabCard({ project }: { project: PatternProject }) {
           <p className={`text-sm font-medium ${verdictTone === "good" ? "text-emerald-700 dark:text-emerald-400" : verdictTone === "warn" ? "text-amber-700 dark:text-amber-400" : "text-destructive"}`}>
             {giftCardVerdictLabel(language, result.verdict)}
           </p>
-          <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">{result.verdictNote}</p>
+          <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
+            {giftCardVerdictNote(language, result.verdict, {
+              refunds: fmt$(input.refundCreditPerMonth),
+              sales: fmt$(input.cardSalesPerMonth),
+              netProfit: fmt$(result.netProgramProfit),
+              horizonMonths: String(input.horizonMonths),
+              upliftValue: fmt$(result.upliftValue),
+              hasRefundCredit: input.refundCreditPerMonth > 0,
+            }, result.verdictNote)}
+          </p>
           <Separator className="my-3" />
           <p className="text-[11px] leading-relaxed text-muted-foreground">
             Checklist the books don't print: codes longer than 12 characters, no gift-card refunds paid out as

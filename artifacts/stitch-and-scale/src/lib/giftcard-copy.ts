@@ -43,6 +43,68 @@ export function giftCardVerdictLabel(language: LanguageCode, verdict: string): s
   return labels[language][verdict] || verdict;
 }
 
+export interface GiftCardVerdictNoteValues {
+  refunds: string;
+  sales: string;
+  netProfit: string;
+  horizonMonths: string;
+  upliftValue: string;
+  hasRefundCredit: boolean;
+}
+
+export function giftCardVerdictNote(
+  language: LanguageCode,
+  verdict: string,
+  values: GiftCardVerdictNoteValues,
+  fallback: string,
+): string {
+  const { refunds, sales, netProfit, horizonMonths, upliftValue, hasRefundCredit } = values;
+  const notes: Record<LanguageCode, Record<string, string>> = {
+    en: {
+      'Do not sell cards — liability exceeds float': `With ${refunds}/mo of refund credit and no new card sales, the program is pure liability. Cap refunds to the original payment method before running any card program.`,
+      'Do not sell cards — liability exceeds float:no-sales': "No card sales means no float — issuing cards only adds a liability you can't offset. Start selling cards before issuing more credit.",
+      'Sell small — refund-credit loop dominates': `Refund credits (${refunds}/mo) are larger than new card sales (${sales}/mo). The credit loop inflates liability faster than the float grows — fix the refund policy before scaling the program.`,
+      'Treat as pure float — keep it small and simple': `On a recognized basis the program nets ${netProfit} over ${horizonMonths} months. The cash-in float is real, but breakage income is capped by escheat and cash-back law — run the program small, don't count on breakage.`,
+      'Strong program — uplift alone justifies it': `Redeemers spend ${upliftValue} extra above face value — the uplift alone covers admin and processing. The float and kept breakage are upside.`,
+      'Worth running — float + breakage beat the cost of the liability': `Recognized profit ${netProfit} over ${horizonMonths} months: float + uplift + kept breakage cover escheat, cash-back, admin and processing. Keep expiry law-compliant and never refund cards to cash.`,
+    },
+    de: {
+      'Do not sell cards — liability exceeds float': `Mit ${refunds}/Monat Rückerstattungsguthaben und ohne neue Kartenverkäufe ist das Programm eine reine Verbindlichkeit. Erstatte auf die ursprüngliche Zahlungsart, bevor du ein Kartenprogramm startest.`,
+      'Do not sell cards — liability exceeds float:no-sales': 'Ohne Kartenverkäufe gibt es keinen Zahlungsfluss — neue Karten schaffen nur eine nicht ausgleichbare Verbindlichkeit. Verkaufe Karten, bevor du weiteres Guthaben ausgibst.',
+      'Sell small — refund-credit loop dominates': `Rückerstattungsguthaben (${refunds}/Monat) übersteigt neue Kartenverkäufe (${sales}/Monat). Die Guthabenschleife lässt die Verbindlichkeit schneller wachsen als den Zahlungsfluss — korrigiere die Rückerstattungsregel vor der Skalierung.`,
+      'Treat as pure float — keep it small and simple': `Auf erkannter Basis erzielt das Programm über ${horizonMonths} Monate ${netProfit}. Der Zahlungsfluss ist real, aber Verfallserträge werden durch staatliche Einziehung und Auszahlungsregeln begrenzt — halte das Programm klein und zähle nicht auf Verfall.`,
+      'Strong program — uplift alone justifies it': `Einlösende geben ${upliftValue} über den Nennwert hinaus aus — der Mehrumsatz allein deckt Verwaltung und Zahlungsabwicklung. Zahlungsfluss und einbehaltener Verfall sind zusätzlicher Nutzen.`,
+      'Worth running — float + breakage beat the cost of the liability': `Erkannter Gewinn über ${horizonMonths} Monate: ${netProfit}. Zahlungsfluss, Mehrumsatz und einbehaltener Verfall decken Einziehung, Auszahlungen, Verwaltung und Zahlungsabwicklung. Halte das Programm gesetzeskonform und erstatte Karten nie bar.`,
+    },
+    fr: {
+      'Do not sell cards — liability exceeds float': `Avec ${refunds}/mois de crédits de remboursement et aucune nouvelle vente, le programme est un passif pur. Remboursez selon le mode de paiement initial avant de lancer un programme.`,
+      'Do not sell cards — liability exceeds float:no-sales': "Sans ventes de cartes, il n'y a pas de trésorerie — les cartes ajoutent seulement un passif impossible à compenser. Vendez des cartes avant d'émettre davantage de crédits.",
+      'Sell small — refund-credit loop dominates': `Les crédits de remboursement (${refunds}/mois) dépassent les ventes (${sales}/mois). La boucle de crédit accroît le passif plus vite que la trésorerie — corrigez la règle de remboursement avant de développer le programme.`,
+      'Treat as pure float — keep it small and simple': `Sur une base comptabilisée, le programme produit ${netProfit} sur ${horizonMonths} mois. La trésorerie est réelle, mais la rupture est limitée par la déshérence et les règles de remboursement — restez petit et ne comptez pas sur la rupture.`,
+      'Strong program — uplift alone justifies it': `Les clients dépensent ${upliftValue} au-delà du montant initial — ce surcroît suffit à couvrir l'administration et le traitement. La trésorerie et la rupture conservée sont un avantage supplémentaire.`,
+      'Worth running — float + breakage beat the cost of the liability': `Bénéfice comptabilisé de ${netProfit} sur ${horizonMonths} mois : la trésorerie, le surcroît et la rupture conservée couvrent déshérence, remboursements, administration et traitement. Respectez la loi et ne remboursez jamais les cartes en espèces.`,
+    },
+    es: {
+      'Do not sell cards — liability exceeds float': `Con ${refunds}/mes de crédito de reembolso y sin nuevas ventas, el programa es solo un pasivo. Reembolsa al método de pago original antes de iniciar cualquier programa.`,
+      'Do not sell cards — liability exceeds float:no-sales': 'Sin ventas de tarjetas no hay efectivo recibido; emitir tarjetas solo añade un pasivo que no puedes compensar. Vende tarjetas antes de emitir más crédito.',
+      'Sell small — refund-credit loop dominates': `Los créditos de reembolso (${refunds}/mes) superan las nuevas ventas (${sales}/mes). El ciclo de crédito aumenta el pasivo más rápido que el efectivo; corrige la política de reembolsos antes de escalar.`,
+      'Treat as pure float — keep it small and simple': `En base reconocida, el programa obtiene ${netProfit} durante ${horizonMonths} meses. El efectivo es real, pero la caducidad está limitada por el abandono estatal y la devolución en efectivo; mantén el programa pequeño y no dependas de la caducidad.`,
+      'Strong program — uplift alone justifies it': `Los clientes gastan ${upliftValue} por encima del valor nominal; ese aumento cubre por sí solo la administración y el procesamiento. El efectivo y la caducidad retenida son ventajas adicionales.`,
+      'Worth running — float + breakage beat the cost of the liability': `Beneficio reconocido de ${netProfit} durante ${horizonMonths} meses: el efectivo, el aumento y la caducidad retenida cubren abandono, devoluciones, administración y procesamiento. Cumple la ley y nunca reembolses tarjetas en efectivo.`,
+    },
+    pt: {
+      'Do not sell cards — liability exceeds float': `Com ${refunds}/mês de crédito de reembolso e sem novas vendas, o programa é apenas uma responsabilidade. Reembolse pelo método de pagamento original antes de iniciar um programa.`,
+      'Do not sell cards — liability exceeds float:no-sales': 'Sem vendas de cartões não há dinheiro recebido; emitir cartões apenas cria uma responsabilidade sem compensação. Venda cartões antes de emitir mais crédito.',
+      'Sell small — refund-credit loop dominates': `Os créditos de reembolso (${refunds}/mês) superam as novas vendas (${sales}/mês). O ciclo de crédito aumenta a responsabilidade mais depressa que o dinheiro recebido — corrija a política antes de escalar.`,
+      'Treat as pure float — keep it small and simple': `Numa base reconhecida, o programa rende ${netProfit} em ${horizonMonths} meses. O dinheiro recebido é real, mas o saldo não utilizado é limitado pelo abandono e pelas regras de reembolso — mantenha o programa pequeno e não conte com esse saldo.`,
+      'Strong program — uplift alone justifies it': `Os clientes gastam ${upliftValue} acima do valor nominal — esse aumento cobre sozinho a administração e o processamento. O dinheiro recebido e o saldo retido são vantagens adicionais.`,
+      'Worth running — float + breakage beat the cost of the liability': `Lucro reconhecido de ${netProfit} em ${horizonMonths} meses: dinheiro recebido, aumento e saldo retido cobrem abandono, pagamentos, administração e processamento. Cumpra a lei e nunca reembolse cartões em dinheiro.`,
+    },
+  };
+  const key = verdict === 'Do not sell cards — liability exceeds float' && !hasRefundCredit ? `${verdict}:no-sales` : verdict;
+  return notes[language][key] || fallback;
+}
+
 export function giftCardFlagTitle(language: LanguageCode, code: string, fallback: string): string {
   const titles: Record<LanguageCode, Record<string, string>> = {
     en: {},
