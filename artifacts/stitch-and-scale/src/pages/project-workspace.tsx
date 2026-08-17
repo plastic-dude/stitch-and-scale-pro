@@ -4,6 +4,8 @@ import { useProject } from '@/context/ProjectsContext';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { TAB_GROUPS } from '@/lib/workspace-tab-groups';
 import { TAB_REGISTRY } from '@/lib/tab-registry';
+import { TabNavigator } from '@/components/tab-navigator';
+import { NAVIGATOR_COPY } from '@/lib/tab-navigator-copy';
 import { getWorkspaceTabLabel } from '@/lib/workspace-tab-labels';
 import { GaugeFitTranslatorCard } from '@/components/gauge-fit-translator-card';
 import {
@@ -1010,8 +1012,19 @@ export default function ProjectWorkspace() {
             );
           })}
         </div>
-        <TabsList className="flex flex-wrap md:flex-nowrap w-full gap-1 bg-card border border-border p-1 h-auto overflow-x-auto">
-          {TAB_REGISTRY.map((tab) => {
+        {/* CHK-120: mobile/tablet use the grouped navigator; the flat strip stays
+            as the desktop (accessibility) surface, hidden below 1024px. */}
+        <TabsList className="hidden lg:flex lg:flex-nowrap w-full gap-1 bg-card border border-border p-1 h-auto overflow-x-auto">
+        <div className="lg:hidden mb-2">
+          <TabNavigator
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
+            language={language}
+            copy={NAVIGATOR_COPY[language] ?? NAVIGATOR_COPY.en}
+          />
+        </div>
+
+        {TAB_REGISTRY.map((tab) => {
               const localizedLabel = getWorkspaceTabLabel(language, tab.value, ({
                 sections: t('workspace.tab.sections'), preview: t('workspace.tab.preview'), yarn: t('workspace.tab.yarn'), notes: t('workspace.tab.notes'), income: t('workspace.tab.income'), draft: t('workspace.tab.draft'), pricing: t('workspace.tab.pricing'), publish: t('workspace.tab.publish'), testknit: t('workspace.tab.testKnit'), techedit: t('workspace.tab.techEdit'), finish: t('workspace.tab.finish'), launch: t('workspace.tab.launch'), channels: t('workspace.tab.channels'),
               }[tab.value] ?? tab.label));
