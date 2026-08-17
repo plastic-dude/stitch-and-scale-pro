@@ -43,6 +43,30 @@
   </head>
   <body>
     <div id="root"></div>
+    <!-- CHK-131: first-paint theme so the default-dark-first experience never
+        flashes light before React hydrates. Mirrors SettingsContext's logic:
+        stored preference wins; otherwise dark is the first mode. -->
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem('stitch-and-scale-settings-v1');
+          var theme = 'dark';
+          if (stored) {
+            var parsed = JSON.parse(stored);
+            if (parsed && parsed.theme) theme = parsed.theme;
+          }
+          var root = document.documentElement;
+          root.classList.remove('light', 'dark');
+          if (theme === 'system') {
+            root.classList.add(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+          } else {
+            root.classList.add(theme);
+          }
+        } catch (e) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

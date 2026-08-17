@@ -38,17 +38,43 @@ function read(rel: string): string {
 describe("CHK-125 — workspace tab strip discoverability contract", () => {
   it("group-chip row hides on desktop (lg+) so it never competes with the flat strip", () => {
     const source = read("src/pages/project-workspace.tsx");
-    const chipRow = source.match(/<div[^>]*flex flex-wrap gap-1 mb-1\.5 px-0\.5[^>]*>/);
+    // CHK-131: chips moved from a flex-wrap row to a deliberate two-column
+    // grid; the responsive contract (lg:hidden, never competing with the flat
+    // strip) is unchanged.
+    const chipRow = source.match(/<div[^>]*lg:hidden grid grid-cols-2 gap-1\.5 mb-1\.5 px-0\.5[^>]*>/);
     expect(chipRow, "group-chip row must exist").not.toBeNull();
     const cls = chipRow![0];
     expect(cls.includes("lg:hidden"), "chip row must carry lg:hidden: " + cls).toBe(true);
+    expect(cls.includes("grid-cols-2"), "chip row must be a two-column grid: " + cls).toBe(true);
   });
 
   it("group-chip row stays visible below lg (it is the small-viewport substitute)", () => {
     const source = read("src/pages/project-workspace.tsx");
-    const chipRow = source.match(/<div[^>]*flex flex-wrap gap-1 mb-1\.5 px-0\.5[^>]*>/)?.[0] ?? "";
+    const chipRow = source.match(/<div[^>]*lg:hidden grid grid-cols-2 gap-1\.5 mb-1\.5 px-0\.5[^>]*>/)?.[0] ?? "";
     // It must NOT also carry a class that would hide it on mobile:
     expect(chipRow.includes("hidden lg:flex"), "chip row must not be hidden by default: " + chipRow).toBe(false);
+  });
+
+  it("chip row order is count-descending (densest group leads, CHK-131)", () => {
+    // The chips were previously rendered in an accidental fixed order that
+    // read like an arbitrary ranking. Pin the deliberate weight-descending
+    // order so the densest group always leads the touch list.
+    const source = read("src/pages/project-workspace.tsx");
+    // The chip block starts at the first 'workspace.group.design' label key
+    // and ends at the closing </div> of the chip row (the wrapper itself
+    // carries the grid marker, so the anchor for the tail is a fixed token
+    // inside the last chip button).
+    // The chip block runs from the first group copy key to the chip's
+    // "labs" count tag (rendered as "{count} labs" in a template literal).
+    const labsAnchor = source.indexOf("} labs</span>");
+    const chipArea = source.slice(source.indexOf("workspace.group.design"), labsAnchor);
+    expect(
+      chipArea.includes(".sort((a, b) => b.count - a.count)"),
+      "chip row must sort groups count-descending: " + chipArea.slice(-200),
+    ).toBe(true);
+    // And the count must be rendered as an explicit "N labs" tag, not a bare
+    // suffix that reads like a ranking:
+    expect(labsAnchor > -1, "chip count must read as '{n} labs'").toBe(true);
   });
 
   it("flat strip (TabsList) renders at lg+ and hides below 1024px", () => {
@@ -99,10 +125,12 @@ describe("CHK-125 — workspace tab strip discoverability contract", () => {
     const counts: Record<string, number> = {};
     const regGroups = reg.match(/group:\s*"([^"]+)"/g) ?? [];
     for (const tok of regGroups) counts[tok.replace('group: "', "").slice(0, -1)] = (counts[tok.replace('group: "', "").slice(0, -1)] ?? 0) + 1;
-    // The workspace page must render "· {count}" using a dynamic count derived
-    // from the registry (filter length), not a hardcoded literal:
-    const chipArea = ws.slice(ws.indexOf('workspace.group.design'));
-    const countExpr = chipArea.match(/count\s*=\s*TAB_REGISTRY\.filter/);
+    // The workspace page must render "{count} labs" using a dynamic count derived
+    // from the registry (filter length), not a hardcoded literal. Anchor the
+    // chip area between the chip-row wrapper and the 'N labs' tag so the
+    // .map(({ g, label }) => ({ ... count: ... })) chain is captured.
+    const chipArea = ws.slice(ws.indexOf('lg:hidden grid grid-cols-2 gap-1.5'), ws.indexOf("} labs</span>"));
+    const countExpr = chipArea.match(/count:\s*TAB_REGISTRY\.filter/);
     expect(countExpr, "chip count must be computed from TAB_REGISTRY (the strip's source of truth)").not.toBeNull();
     // Sanity: registry groups all exist as workspace.group.* copy keys used in
     // the chip row

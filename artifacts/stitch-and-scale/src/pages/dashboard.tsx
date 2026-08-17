@@ -351,9 +351,14 @@ export default function Dashboard() {
                       <Layers className="w-3.5 h-3.5 opacity-70" />
                       <span>{project.sections?.length || 0} {(project.sections?.length || 0) === 1 ? copy.sectionsLabel : `${copy.sectionsLabel}s`}</span>
                     </div>
-                    <div className="flex items-center gap-1.5">
-                      <Calendar className="w-3.5 h-3.5 opacity-70" />
-                      <span>{formatDistanceToNow(new Date(project.updatedAt), { addSuffix: true, locale: dateLocale })}</span>
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <Calendar className="w-3.5 h-3.5 opacity-70 shrink-0" />
+                      <span className="line-clamp-1">
+                        {copy.created} {formatDistanceToNow(new Date(project.createdAt), { addSuffix: true, locale: dateLocale })}
+                        {project.updatedAt && new Date(project.updatedAt).getTime() - new Date(project.createdAt).getTime() > 24 * 3600_000
+                          ? ` · ${copy.lastEdited} ${formatDistanceToNow(new Date(project.updatedAt), { addSuffix: true, locale: dateLocale })}`
+                          : ''}
+                      </span>
                     </div>
                   </CardFooter>
                 </Card>

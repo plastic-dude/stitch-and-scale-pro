@@ -69,31 +69,64 @@ function readinessMeta(score: number, copy: PortfolioCopy) {
 
 function PortfolioLineRow({ line, copy }: { line: PortfolioLine; copy: PortfolioCopy }) {
   const meta = readinessMeta(line.readinessScore, copy);
+  const scoreLabel = `${Math.round(line.launchScore)} ${copy.mobileLaunchScore}`;
   return (
-    <div className="grid grid-cols-12 gap-2 items-center py-2.5 border-b border-border/60 last:border-b-0 text-sm">
-      <div className="col-span-4">
-        <Link href={`/project/${line.projectId}`} className="font-medium hover:underline underline-offset-2 block truncate">
-          {line.name}
-        </Link>
-        <div className="text-xs text-muted-foreground">{line.yarnWeightClass} · {line.listingReady ? 'listing material ready' : 'listing incomplete'}</div>
-      </div>
-      <div className="col-span-2 text-center">
-        <Badge variant="outline" className={meta.tone}>{meta.label}</Badge>
-        <div className="text-[11px] text-muted-foreground mt-1">{line.readinessScore}/100 readiness</div>
-      </div>
-      <div className="col-span-2 text-center">
-        <div className="font-mono font-semibold">{usd(line.pricing.recommendedPrice)}</div>
-        <div className="text-[11px] text-muted-foreground">recommended</div>
-      </div>
-      <div className="col-span-2 text-center">
-        <div className="font-mono text-xs">{usd(line.netPerUnitBest)} / {usd(line.netPerUnitWorst)}</div>
-        <div className="text-[11px] text-muted-foreground">net per unit (best/worst)</div>
-      </div>
-      <div className="col-span-2">
-        <div className="h-1.5 rounded-full bg-muted/60 overflow-hidden">
-          <div className="h-full bg-primary/80 rounded-full" style={{ width: `${line.launchScore}%` }} />
+    <div className="border-b border-border/60 last:border-b-0">
+      {/* Mobile layout: a stacked card with sr-only headers, so no value ever
+          fights its label for horizontal space at 360px widths. */}
+      <div className="md:hidden py-3 px-1 space-y-2.5">
+        <div className="flex items-start justify-between gap-2">
+          <div className="min-w-0">
+            <Link href={`/project/${line.projectId}`} className="font-medium hover:underline underline-offset-2 block truncate">
+              {line.name}
+            </Link>
+            <div className="text-xs text-muted-foreground">{line.yarnWeightClass} · {line.listingReady ? 'listing material ready' : 'listing incomplete'}</div>
+          </div>
+          <Badge variant="outline" className={meta.tone} aria-label="readiness">{meta.label}</Badge>
         </div>
-        <div className="text-[11px] text-muted-foreground mt-1 text-center">{Math.round(line.launchScore)} launch score</div>
+        <div className="grid grid-cols-2 gap-2">
+          <div className="rounded-lg border border-border/60 bg-muted/30 px-3 py-2">
+            <div className="text-[11px] text-muted-foreground">{copy.mobileRecommendedPrice}</div>
+            <div className="font-mono font-semibold">{usd(line.pricing.recommendedPrice)}</div>
+          </div>
+          <div className="rounded-lg border border-border/60 bg-muted/30 px-3 py-2">
+            <div className="text-[11px] text-muted-foreground">{copy.mobileNetPerUnit}</div>
+            <div className="font-mono text-xs truncate">{usd(line.netPerUnitBest)} – {usd(line.netPerUnitWorst)}</div>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="h-1.5 flex-1 rounded-full bg-muted/60 overflow-hidden">
+            <div className="h-full bg-primary/80 rounded-full" style={{ width: `${line.launchScore}%` }} />
+          </div>
+          <span className="text-[11px] text-muted-foreground whitespace-nowrap">{scoreLabel}</span>
+        </div>
+      </div>
+      {/* Desktop layout: the 12-column table — unchanged at md+ */}
+      <div className="hidden md:grid md:grid-cols-12 md:gap-2 md:items-center md:py-2.5 md:text-sm">
+        <div className="col-span-4">
+          <Link href={`/project/${line.projectId}`} className="font-medium hover:underline underline-offset-2 block truncate">
+            {line.name}
+          </Link>
+          <div className="text-xs text-muted-foreground">{line.yarnWeightClass} · {line.listingReady ? 'listing material ready' : 'listing incomplete'}</div>
+        </div>
+        <div className="col-span-2 text-center">
+          <Badge variant="outline" className={meta.tone}>{meta.label}</Badge>
+          <div className="text-[11px] text-muted-foreground mt-1">{line.readinessScore}/100 readiness</div>
+        </div>
+        <div className="col-span-2 text-center">
+          <div className="font-mono font-semibold">{usd(line.pricing.recommendedPrice)}</div>
+          <div className="text-[11px] text-muted-foreground">recommended</div>
+        </div>
+        <div className="col-span-2 text-center">
+          <div className="font-mono text-xs">{usd(line.netPerUnitBest)} / {usd(line.netPerUnitWorst)}</div>
+          <div className="text-[11px] text-muted-foreground">net per unit (best/worst)</div>
+        </div>
+        <div className="col-span-2">
+          <div className="h-1.5 rounded-full bg-muted/60 overflow-hidden">
+            <div className="h-full bg-primary/80 rounded-full" style={{ width: `${line.launchScore}%` }} />
+          </div>
+          <div className="text-[11px] text-muted-foreground mt-1 text-center">{scoreLabel}</div>
+        </div>
       </div>
     </div>
   );

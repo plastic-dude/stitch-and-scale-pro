@@ -995,7 +995,12 @@ export default function ProjectWorkspace() {
             chips are the mobile/tablet substitute for the hidden strip, so
             they must hide on desktop where the strip (accessibility) surface
             is the primary navigation. */}
-        <div className="lg:hidden flex flex-wrap gap-1 mb-1.5 px-0.5">
+        {/* CHK-131: chips now sit in a deliberate two-column grid, ordered by
+            group weight (densest first), with the count rendered as an
+            explicit "N labs" tag instead of a bare suffix that reads like a
+            ranking. No orphan tile on the last row, and the order no longer
+            looks accidental. */}
+        <div className="lg:hidden grid grid-cols-2 gap-1.5 mb-1.5 px-0.5">
           {[
             { g: 'design', label: t('workspace.group.design') },
             { g: 'fit', label: t('workspace.group.fit') },
@@ -1003,29 +1008,35 @@ export default function ProjectWorkspace() {
             { g: 'launch', label: t('workspace.group.launch') },
             { g: 'channels', label: t('workspace.group.channels') },
             { g: 'business', label: t('workspace.group.business') },
-          ].map(({ g, label }) => {
-            const first = Object.keys(TAB_GROUPS).find((v) => TAB_GROUPS[v] === g);
-            // CHK-125: chip count now derives from TAB_REGISTRY — the single
-            // source of truth for what the flat strip renders — instead of the
-            // TAB_GROUPS frequency count, so a drifted classification can
-            // never put the wrong number on a chip.
-            const count = TAB_REGISTRY.filter((x) => x.group === g).length;
-            return (
-              <button
-                key={g}
-                type="button"
-                onClick={() => first && setActiveTab(first)}
-                // CHK-123 (QA LIVE-004): chips were px-2 py-0.5 text-[10px] — a
-                // ~16px hit area, far below the 44×44px touch-target minimum.
-                // Now a full 44px touch target on every width; the chip stays
-                // visually compact (leading-none, text-xs) while the hit area
-                // does not.
-                className="rounded border border-border/60 bg-muted/40 px-3 py-2.5 text-xs leading-none font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors min-h-[44px]"
-              >
-                {label} · {count}
-              </button>
-            );
-          })}
+          ]
+            .map(({ g, label }) => ({
+              g,
+              label,
+              // CHK-125: chip count derives from TAB_REGISTRY — the single
+              // source of truth for what the flat strip renders — so a drifted
+              // classification can never put the wrong number on a chip.
+              count: TAB_REGISTRY.filter((x) => x.group === g).length,
+            }))
+            .sort((a, b) => b.count - a.count)
+            .map(({ g, label, count }) => {
+              const first = Object.keys(TAB_GROUPS).find((v) => TAB_GROUPS[v] === g);
+              return (
+                <button
+                  key={g}
+                  type="button"
+                  onClick={() => first && setActiveTab(first)}
+                  // CHK-123 (QA LIVE-004): chips were px-2 py-0.5 text-[10px] — a
+                  // ~16px hit area, far below the 44×44px touch-target minimum.
+                  // Now a full 44px touch target on every width; the chip stays
+                  // visually compact (leading-none, text-xs) while the hit area
+                  // does not.
+                  className="rounded-lg border border-border/60 bg-muted/40 px-3 py-2.5 text-xs leading-none font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors min-h-[44px] flex items-center justify-between gap-2"
+                >
+                  <span className="truncate">{label}</span>
+                  <span className="text-[11px] text-muted-foreground/80 whitespace-nowrap">{count} labs</span>
+                </button>
+              );
+            })}
         </div>
         {/* CHK-120 / CHK-127 (QA #64, cycles 60+61): the mobile grouped
             navigator must live OUTSIDE the desktop-only TabsList. It was

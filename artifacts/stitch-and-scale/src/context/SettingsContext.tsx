@@ -83,9 +83,12 @@ const DEFAULT_PDF_DEFAULTS: PdfDefaults = {
   includeNotes: true,
 };
 
+// CHK-131: dark is now the first mode for every new user. The theme
+// picker still offers light / dark / system, and existing users keep their
+// stored preference (deep-merge below wins over this default).
 const defaultSettings: SettingsState = {
   unit: 'in',
-  theme: 'system',
+  theme: 'dark',
   pdfDefaults: DEFAULT_PDF_DEFAULTS,
   sizingStandard: 'CYC',
   customStandard: JSON.parse(JSON.stringify(SIZE_STANDARDS)),
