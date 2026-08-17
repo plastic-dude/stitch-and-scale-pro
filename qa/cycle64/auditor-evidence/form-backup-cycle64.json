@@ -1,0 +1,33 @@
+{
+  "visibleInputs": [
+    {
+      "i": 0,
+      "placeholder": "Section Name (e.g., Sleeves)",
+      "value": "",
+      "aria": null,
+      "rect": {
+        "x": 33,
+        "y": 797,
+        "w": 152.1875,
+        "h": 36
+      }
+    }
+  ],
+  "autocomplete": {
+    "options": [],
+    "body": "Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Design & Pattern · 12 Sizing & Fit · 7 Pricing & Income · 15 Launch & Marketing · 13 Selling Channels · 10 Business & Community · 22 All Labs Body 3 measurements Sleeve 3 measurements Neckline 2 measurements Save Close A premium tool for independent knitwear designers",
+    "file": "screenshots/project-details-inline-form--autocomplete-open__iphone-390.png"
+  },
+  "download": {
+    "suggested": "stitch-and-scale-export-2026-08-17.json",
+    "file": "/home/ubuntu/qa-crawl/current-cycle-2026-08-17-cycle64/downloads/stitch-and-scale-export-2026-08-17.json"
+  },
+  "downloadButtonCount": 1,
+  "uploadButtonCount": 1,
+  "fileInputs": 1,
+  "backupText": "Data & Backups Your patterns live right here in this browser — nothing's uploaded unless you choose to. Back them up regularly, just in case. Export Workspace Download a JSON file containing all your patterns and settings. Download Backup Restore from Backup Merges with your workspace — your existing patterns are never deleted or overwritten. Upload File Storage Health Where your patterns live, whether both copies agree, and when you last backed up. Browser storage 1.7 KB 1 project Offline cache 1.7 KB 1 project Stores in sync Both locations hold the same projects. Reconcile Never backed up Exports are stored as JSON files — download one to be safe. Stitch & Scale keeps two independent copies of your work on this device — each can recover the other. A backup file is still your true insurance: it's the one copy you control outside the browser. Stitch & Scale v1.0.0 A premium tool for inde",
+  "formFile": "screenshots/project-details-inline-form--empty__iphone-390.png",
+  "backupFile": "screenshots/settings--download-backup-after-click__iphone-390.png",
+  "errors": [],
+  "consoleErrors": []
+}

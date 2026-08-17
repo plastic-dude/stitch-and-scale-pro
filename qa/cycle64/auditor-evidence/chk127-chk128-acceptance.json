@@ -1,0 +1,4339 @@
+{
+  "mobile": [
+    {
+      "label": "android-360",
+      "width": 360,
+      "overlayBefore": 1,
+      "skip": {
+        "x": 249.84375,
+        "y": 18,
+        "width": 94.15625,
+        "height": 24
+      },
+      "shell": [
+        {
+          "text": "Stitch & Scale",
+          "aria": null,
+          "rect": {
+            "x": 16,
+            "y": 16,
+            "w": 32,
+            "h": 32
+          }
+        },
+        {
+          "text": "Projects",
+          "aria": "Projects",
+          "rect": {
+            "x": 155,
+            "y": 14,
+            "w": 36,
+            "h": 36
+          }
+        },
+        {
+          "text": "Portfolio",
+          "aria": "Portfolio",
+          "rect": {
+            "x": 195,
+            "y": 14,
+            "w": 36,
+            "h": 36
+          }
+        },
+        {
+          "text": "Settings",
+          "aria": "Settings",
+          "rect": {
+            "x": 235,
+            "y": 14,
+            "w": 36,
+            "h": 36
+          }
+        },
+        {
+          "text": "New Project",
+          "aria": "New Project",
+          "rect": {
+            "x": 296,
+            "y": 14,
+            "w": 48,
+            "h": 36
+          }
+        }
+      ],
+      "afterUrl": "https://stitch-and-scale-pro-api-server.vercel.app/project/mss5osqd88j6fdyvtdu",
+      "deepLinkPreserved": true,
+      "trigger": {
+        "text": "All Labs",
+        "aria": "Open grouped list of all 79 workspace labs",
+        "box": {
+          "x": 16,
+          "y": 533,
+          "width": 328,
+          "height": 44
+        }
+      },
+      "sheet": {
+        "dialogs": 1,
+        "dialogText": "Close All 79 Labs Every tool for this pattern, grouped so nothing stays buried off-screen. DESIGN & PATTERN (12) Sections Preview Yarn Notes Draft Finish Grading Lab Chart Lab Test Knit Desk Lookbook Spec Sheet Yarn Licensing Lab SIZING & FIT (7) Test Knit Tech Edit Inclusive Submissions Box Inclusion Lab Test Knit Lab Gauge & Fit PRICING & INCOME (15) Income Pricing PriceWin Repeat Mix Ad Break-Even Collab Deal Math Re-Price Lab Bundle Lab Price Psych Lab Take-Rate Lab Gift & Credit Lab Intl Pricing Lab Receipt Lab Payback Lab LAUNCH & MARKETING (13) Launch Trans & Bundle Promo Listing SEO Sample & Launch Photo ROI Video & Social Pre-Order Lab Listing Test Lab Release Timing Lab Podcast Lab Magazine Lab Brag Cards SELLING CHANNELS (10) Publish Trunk Show Channels Wholesale & Book Distribution Wholesale Lab Booth Lab Channel Lab POD Patterns Lab Wholesale List Lab BUSINESS & COMMUNITY (22) Deals Pattern Club Kits Pipeline KAL & Collab Club Rev Hire vs Self Licence It Members Collab Book It Protect Teach Partners Yarn Buy KAL Planner Show ROI Yarn Pool Lab Membership Lab Workshop Lab Retreat Lab Design Ledger",
+        "buttonCount": 80,
+        "uniqueButtonTexts": [
+          "Close",
+          "Sections",
+          "Preview",
+          "Yarn",
+          "Notes",
+          "Draft",
+          "Finish",
+          "Grading Lab",
+          "Chart Lab",
+          "Test Knit Desk",
+          "Lookbook",
+          "Spec Sheet",
+          "Yarn Licensing Lab",
+          "Test Knit",
+          "Tech Edit",
+          "Inclusive",
+          "Submissions",
+          "Box Inclusion Lab",
+          "Test Knit Lab",
+          "Gauge & Fit",
+          "Income",
+          "Pricing",
+          "PriceWin",
+          "Repeat",
+          "Mix",
+          "Ad Break-Even",
+          "Collab Deal Math",
+          "Re-Price Lab",
+          "Bundle Lab",
+          "Price Psych Lab",
+          "Take-Rate Lab",
+          "Gift & Credit Lab",
+          "Intl Pricing Lab",
+          "Receipt Lab",
+          "Payback Lab",
+          "Launch",
+          "Trans & Bundle",
+          "Promo",
+          "Listing SEO",
+          "Sample & Launch",
+          "Photo ROI",
+          "Video & Social",
+          "Pre-Order Lab",
+          "Listing Test Lab",
+          "Release Timing Lab",
+          "Podcast Lab",
+          "Magazine Lab",
+          "Brag Cards",
+          "Publish",
+          "Trunk Show",
+          "Channels",
+          "Wholesale & Book",
+          "Distribution",
+          "Wholesale Lab",
+          "Booth Lab",
+          "Channel Lab",
+          "POD Patterns Lab",
+          "Wholesale List Lab",
+          "Deals",
+          "Pattern Club",
+          "Kits",
+          "Pipeline",
+          "KAL & Collab",
+          "Club Rev",
+          "Hire vs Self",
+          "Licence It",
+          "Members",
+          "Collab",
+          "Book It",
+          "Protect",
+          "Teach",
+          "Partners",
+          "Yarn Buy",
+          "KAL Planner",
+          "Show ROI",
+          "Yarn Pool Lab",
+          "Membership Lab",
+          "Workshop Lab",
+          "Retreat Lab",
+          "Design Ledger"
+        ],
+        "buttonTexts": [
+          {
+            "text": "Close",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 328,
+              "y": 177,
+              "w": 16,
+              "h": 16
+            }
+          },
+          {
+            "text": "Sections",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 291.5,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Preview",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 331.5,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Yarn",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 371.5,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Notes",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 411.5,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Draft",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 451.5,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Finish",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 491.5,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Grading Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 531.5,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Chart Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 571.5,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Test Knit Desk",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 611.5,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Lookbook",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 651.5,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Spec Sheet",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 691.5,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Yarn Licensing Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 731.5,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Test Knit",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 810,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Tech Edit",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 850,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Inclusive",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 890,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Submissions",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 930,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Box Inclusion Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 970,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Test Knit Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1010,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Gauge & Fit",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1050,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Income",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1128.5,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Pricing",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1168.5,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "PriceWin",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1208.5,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Repeat",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1248.5,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Mix",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1288.5,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Ad Break-Even",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1328.5,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Collab Deal Math",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1368.5,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Re-Price Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1408.5,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Bundle Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1448.5,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Price Psych Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1488.5,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Take-Rate Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1528.5,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Gift & Credit Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1568.5,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Intl Pricing Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1608.5,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Receipt Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1648.5,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Payback Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1688.5,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Launch",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1767,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Trans & Bundle",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1807,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Promo",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1847,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Listing SEO",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1887,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Sample & Launch",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1927,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Photo ROI",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1967,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Video & Social",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2007,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Pre-Order Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2047,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Listing Test Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2087,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Release Timing Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2127,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Podcast Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2167,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Magazine Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2207,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Brag Cards",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2247,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Publish",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2325.5,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Trunk Show",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2365.5,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Channels",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2405.5,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Wholesale & Book",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2445.5,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Distribution",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2485.5,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Wholesale Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2525.5,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Booth Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2565.5,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Channel Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2605.5,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "POD Patterns Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2645.5,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Wholesale List Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2685.5,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Deals",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2764,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Pattern Club",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2804,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Kits",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2844,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Pipeline",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2884,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "KAL & Collab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2924,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Club Rev",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2964,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Hire vs Self",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3004,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Licence It",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3044,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Members",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3084,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Collab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3124,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Book It",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3164,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Protect",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3204,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Teach",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3244,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Partners",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3284,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Yarn Buy",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3324,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "KAL Planner",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3364,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Show ROI",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3404,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Yarn Pool Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3444,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Membership Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3484,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Workshop Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3524,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Retreat Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3564,
+              "w": 312,
+              "h": 40
+            }
+          },
+          {
+            "text": "Design Ledger",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3604,
+              "w": 312,
+              "h": 40
+            }
+          }
+        ],
+        "selectedLab": [
+          "Payback Lab",
+          "All patterns (0)"
+        ],
+        "sheetFile": "screenshots/chk127--android-360--all-labs-open.png"
+      },
+      "beforeFile": "screenshots/chk127--android-360--overlay-before-skip.png",
+      "navFile": "screenshots/chk127--android-360--navigator-before-open.png"
+    },
+    {
+      "label": "iphone-390",
+      "width": 390,
+      "overlayBefore": 1,
+      "skip": {
+        "x": 279.84375,
+        "y": 18,
+        "width": 94.15625,
+        "height": 24
+      },
+      "shell": [
+        {
+          "text": "Stitch & Scale",
+          "aria": null,
+          "rect": {
+            "x": 16,
+            "y": 16,
+            "w": 32,
+            "h": 32
+          }
+        },
+        {
+          "text": "Projects",
+          "aria": "Projects",
+          "rect": {
+            "x": 185,
+            "y": 14,
+            "w": 36,
+            "h": 36
+          }
+        },
+        {
+          "text": "Portfolio",
+          "aria": "Portfolio",
+          "rect": {
+            "x": 225,
+            "y": 14,
+            "w": 36,
+            "h": 36
+          }
+        },
+        {
+          "text": "Settings",
+          "aria": "Settings",
+          "rect": {
+            "x": 265,
+            "y": 14,
+            "w": 36,
+            "h": 36
+          }
+        },
+        {
+          "text": "New Project",
+          "aria": "New Project",
+          "rect": {
+            "x": 326,
+            "y": 14,
+            "w": 48,
+            "h": 36
+          }
+        }
+      ],
+      "afterUrl": "https://stitch-and-scale-pro-api-server.vercel.app/project/mss5osqd88j6fdyvtdu",
+      "deepLinkPreserved": true,
+      "trigger": {
+        "text": "All Labs",
+        "aria": "Open grouped list of all 79 workspace labs",
+        "box": {
+          "x": 16,
+          "y": 453,
+          "width": 358,
+          "height": 44
+        }
+      },
+      "sheet": {
+        "dialogs": 1,
+        "dialogText": "Close All 79 Labs Every tool for this pattern, grouped so nothing stays buried off-screen. DESIGN & PATTERN (12) Sections Preview Yarn Notes Draft Finish Grading Lab Chart Lab Test Knit Desk Lookbook Spec Sheet Yarn Licensing Lab SIZING & FIT (7) Test Knit Tech Edit Inclusive Submissions Box Inclusion Lab Test Knit Lab Gauge & Fit PRICING & INCOME (15) Income Pricing PriceWin Repeat Mix Ad Break-Even Collab Deal Math Re-Price Lab Bundle Lab Price Psych Lab Take-Rate Lab Gift & Credit Lab Intl Pricing Lab Receipt Lab Payback Lab LAUNCH & MARKETING (13) Launch Trans & Bundle Promo Listing SEO Sample & Launch Photo ROI Video & Social Pre-Order Lab Listing Test Lab Release Timing Lab Podcast Lab Magazine Lab Brag Cards SELLING CHANNELS (10) Publish Trunk Show Channels Wholesale & Book Distribution Wholesale Lab Booth Lab Channel Lab POD Patterns Lab Wholesale List Lab BUSINESS & COMMUNITY (22) Deals Pattern Club Kits Pipeline KAL & Collab Club Rev Hire vs Self Licence It Members Collab Book It Protect Teach Partners Yarn Buy KAL Planner Show ROI Yarn Pool Lab Membership Lab Workshop Lab Retreat Lab Design Ledger",
+        "buttonCount": 80,
+        "uniqueButtonTexts": [
+          "Close",
+          "Sections",
+          "Preview",
+          "Yarn",
+          "Notes",
+          "Draft",
+          "Finish",
+          "Grading Lab",
+          "Chart Lab",
+          "Test Knit Desk",
+          "Lookbook",
+          "Spec Sheet",
+          "Yarn Licensing Lab",
+          "Test Knit",
+          "Tech Edit",
+          "Inclusive",
+          "Submissions",
+          "Box Inclusion Lab",
+          "Test Knit Lab",
+          "Gauge & Fit",
+          "Income",
+          "Pricing",
+          "PriceWin",
+          "Repeat",
+          "Mix",
+          "Ad Break-Even",
+          "Collab Deal Math",
+          "Re-Price Lab",
+          "Bundle Lab",
+          "Price Psych Lab",
+          "Take-Rate Lab",
+          "Gift & Credit Lab",
+          "Intl Pricing Lab",
+          "Receipt Lab",
+          "Payback Lab",
+          "Launch",
+          "Trans & Bundle",
+          "Promo",
+          "Listing SEO",
+          "Sample & Launch",
+          "Photo ROI",
+          "Video & Social",
+          "Pre-Order Lab",
+          "Listing Test Lab",
+          "Release Timing Lab",
+          "Podcast Lab",
+          "Magazine Lab",
+          "Brag Cards",
+          "Publish",
+          "Trunk Show",
+          "Channels",
+          "Wholesale & Book",
+          "Distribution",
+          "Wholesale Lab",
+          "Booth Lab",
+          "Channel Lab",
+          "POD Patterns Lab",
+          "Wholesale List Lab",
+          "Deals",
+          "Pattern Club",
+          "Kits",
+          "Pipeline",
+          "KAL & Collab",
+          "Club Rev",
+          "Hire vs Self",
+          "Licence It",
+          "Members",
+          "Collab",
+          "Book It",
+          "Protect",
+          "Teach",
+          "Partners",
+          "Yarn Buy",
+          "KAL Planner",
+          "Show ROI",
+          "Yarn Pool Lab",
+          "Membership Lab",
+          "Workshop Lab",
+          "Retreat Lab",
+          "Design Ledger"
+        ],
+        "buttonTexts": [
+          {
+            "text": "Close",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 358,
+              "y": 185.8125,
+              "w": 16,
+              "h": 16
+            }
+          },
+          {
+            "text": "Sections",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 300.3125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Preview",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 340.3125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Yarn",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 380.3125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Notes",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 420.3125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Draft",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 460.3125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Finish",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 500.3125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Grading Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 540.3125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Chart Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 580.3125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Test Knit Desk",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 620.3125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Lookbook",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 660.3125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Spec Sheet",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 700.3125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Yarn Licensing Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 740.3125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Test Knit",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 818.8125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Tech Edit",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 858.8125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Inclusive",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 898.8125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Submissions",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 938.8125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Box Inclusion Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 978.8125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Test Knit Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1018.8125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Gauge & Fit",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1058.8125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Income",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1137.3125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Pricing",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1177.3125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "PriceWin",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1217.3125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Repeat",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1257.3125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Mix",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1297.3125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Ad Break-Even",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1337.3125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Collab Deal Math",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1377.3125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Re-Price Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1417.3125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Bundle Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1457.3125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Price Psych Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1497.3125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Take-Rate Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1537.3125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Gift & Credit Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1577.3125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Intl Pricing Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1617.3125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Receipt Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1657.3125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Payback Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1697.3125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Launch",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1775.8125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Trans & Bundle",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1815.8125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Promo",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1855.8125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Listing SEO",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1895.8125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Sample & Launch",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1935.8125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Photo ROI",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1975.8125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Video & Social",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2015.8125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Pre-Order Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2055.8125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Listing Test Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2095.8125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Release Timing Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2135.8125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Podcast Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2175.8125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Magazine Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2215.8125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Brag Cards",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2255.8125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Publish",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2334.3125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Trunk Show",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2374.3125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Channels",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2414.3125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Wholesale & Book",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2454.3125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Distribution",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2494.3125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Wholesale Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2534.3125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Booth Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2574.3125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Channel Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2614.3125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "POD Patterns Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2654.3125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Wholesale List Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2694.3125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Deals",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2772.8125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Pattern Club",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2812.8125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Kits",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2852.8125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Pipeline",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2892.8125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "KAL & Collab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2932.8125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Club Rev",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2972.8125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Hire vs Self",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3012.8125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Licence It",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3052.8125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Members",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3092.8125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Collab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3132.8125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Book It",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3172.8125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Protect",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3212.8125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Teach",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3252.8125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Partners",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3292.8125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Yarn Buy",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3332.8125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "KAL Planner",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3372.8125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Show ROI",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3412.8125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Yarn Pool Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3452.8125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Membership Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3492.8125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Workshop Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3532.8125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Retreat Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3572.8125,
+              "w": 342,
+              "h": 40
+            }
+          },
+          {
+            "text": "Design Ledger",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3612.8125,
+              "w": 342,
+              "h": 40
+            }
+          }
+        ],
+        "selectedLab": [
+          "Payback Lab",
+          "All patterns (0)"
+        ],
+        "sheetFile": "screenshots/chk127--iphone-390--all-labs-open.png"
+      },
+      "beforeFile": "screenshots/chk127--iphone-390--overlay-before-skip.png",
+      "navFile": "screenshots/chk127--iphone-390--navigator-before-open.png"
+    },
+    {
+      "label": "iphone-430",
+      "width": 430,
+      "overlayBefore": 1,
+      "skip": {
+        "x": 319.84375,
+        "y": 18,
+        "width": 94.15625,
+        "height": 24
+      },
+      "shell": [
+        {
+          "text": "Stitch & Scale",
+          "aria": null,
+          "rect": {
+            "x": 16,
+            "y": 16,
+            "w": 32,
+            "h": 32
+          }
+        },
+        {
+          "text": "Projects",
+          "aria": "Projects",
+          "rect": {
+            "x": 225,
+            "y": 14,
+            "w": 36,
+            "h": 36
+          }
+        },
+        {
+          "text": "Portfolio",
+          "aria": "Portfolio",
+          "rect": {
+            "x": 265,
+            "y": 14,
+            "w": 36,
+            "h": 36
+          }
+        },
+        {
+          "text": "Settings",
+          "aria": "Settings",
+          "rect": {
+            "x": 305,
+            "y": 14,
+            "w": 36,
+            "h": 36
+          }
+        },
+        {
+          "text": "New Project",
+          "aria": "New Project",
+          "rect": {
+            "x": 366,
+            "y": 14,
+            "w": 48,
+            "h": 36
+          }
+        }
+      ],
+      "afterUrl": "https://stitch-and-scale-pro-api-server.vercel.app/project/mss5osqd88j6fdyvtdu",
+      "deepLinkPreserved": true,
+      "trigger": {
+        "text": "All Labs",
+        "aria": "Open grouped list of all 79 workspace labs",
+        "box": {
+          "x": 16,
+          "y": 393,
+          "width": 398,
+          "height": 44
+        }
+      },
+      "sheet": {
+        "dialogs": 1,
+        "dialogText": "Close All 79 Labs Every tool for this pattern, grouped so nothing stays buried off-screen. DESIGN & PATTERN (12) Sections Preview Yarn Notes Draft Finish Grading Lab Chart Lab Test Knit Desk Lookbook Spec Sheet Yarn Licensing Lab SIZING & FIT (7) Test Knit Tech Edit Inclusive Submissions Box Inclusion Lab Test Knit Lab Gauge & Fit PRICING & INCOME (15) Income Pricing PriceWin Repeat Mix Ad Break-Even Collab Deal Math Re-Price Lab Bundle Lab Price Psych Lab Take-Rate Lab Gift & Credit Lab Intl Pricing Lab Receipt Lab Payback Lab LAUNCH & MARKETING (13) Launch Trans & Bundle Promo Listing SEO Sample & Launch Photo ROI Video & Social Pre-Order Lab Listing Test Lab Release Timing Lab Podcast Lab Magazine Lab Brag Cards SELLING CHANNELS (10) Publish Trunk Show Channels Wholesale & Book Distribution Wholesale Lab Booth Lab Channel Lab POD Patterns Lab Wholesale List Lab BUSINESS & COMMUNITY (22) Deals Pattern Club Kits Pipeline KAL & Collab Club Rev Hire vs Self Licence It Members Collab Book It Protect Teach Partners Yarn Buy KAL Planner Show ROI Yarn Pool Lab Membership Lab Workshop Lab Retreat Lab Design Ledger",
+        "buttonCount": 80,
+        "uniqueButtonTexts": [
+          "Close",
+          "Sections",
+          "Preview",
+          "Yarn",
+          "Notes",
+          "Draft",
+          "Finish",
+          "Grading Lab",
+          "Chart Lab",
+          "Test Knit Desk",
+          "Lookbook",
+          "Spec Sheet",
+          "Yarn Licensing Lab",
+          "Test Knit",
+          "Tech Edit",
+          "Inclusive",
+          "Submissions",
+          "Box Inclusion Lab",
+          "Test Knit Lab",
+          "Gauge & Fit",
+          "Income",
+          "Pricing",
+          "PriceWin",
+          "Repeat",
+          "Mix",
+          "Ad Break-Even",
+          "Collab Deal Math",
+          "Re-Price Lab",
+          "Bundle Lab",
+          "Price Psych Lab",
+          "Take-Rate Lab",
+          "Gift & Credit Lab",
+          "Intl Pricing Lab",
+          "Receipt Lab",
+          "Payback Lab",
+          "Launch",
+          "Trans & Bundle",
+          "Promo",
+          "Listing SEO",
+          "Sample & Launch",
+          "Photo ROI",
+          "Video & Social",
+          "Pre-Order Lab",
+          "Listing Test Lab",
+          "Release Timing Lab",
+          "Podcast Lab",
+          "Magazine Lab",
+          "Brag Cards",
+          "Publish",
+          "Trunk Show",
+          "Channels",
+          "Wholesale & Book",
+          "Distribution",
+          "Wholesale Lab",
+          "Booth Lab",
+          "Channel Lab",
+          "POD Patterns Lab",
+          "Wholesale List Lab",
+          "Deals",
+          "Pattern Club",
+          "Kits",
+          "Pipeline",
+          "KAL & Collab",
+          "Club Rev",
+          "Hire vs Self",
+          "Licence It",
+          "Members",
+          "Collab",
+          "Book It",
+          "Protect",
+          "Teach",
+          "Partners",
+          "Yarn Buy",
+          "KAL Planner",
+          "Show ROI",
+          "Yarn Pool Lab",
+          "Membership Lab",
+          "Workshop Lab",
+          "Retreat Lab",
+          "Design Ledger"
+        ],
+        "buttonTexts": [
+          {
+            "text": "Close",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 398,
+              "y": 203.40625,
+              "w": 16,
+              "h": 16
+            }
+          },
+          {
+            "text": "Sections",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 317.90625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Preview",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 357.90625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Yarn",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 397.90625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Notes",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 437.90625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Draft",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 477.90625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Finish",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 517.90625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Grading Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 557.90625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Chart Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 597.90625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Test Knit Desk",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 637.90625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Lookbook",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 677.90625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Spec Sheet",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 717.90625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Yarn Licensing Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 757.90625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Test Knit",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 836.40625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Tech Edit",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 876.40625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Inclusive",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 916.40625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Submissions",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 956.40625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Box Inclusion Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 996.40625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Test Knit Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1036.40625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Gauge & Fit",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1076.40625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Income",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1154.90625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Pricing",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1194.90625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "PriceWin",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1234.90625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Repeat",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1274.90625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Mix",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1314.90625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Ad Break-Even",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1354.90625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Collab Deal Math",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1394.90625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Re-Price Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1434.90625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Bundle Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1474.90625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Price Psych Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1514.90625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Take-Rate Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1554.90625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Gift & Credit Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1594.90625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Intl Pricing Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1634.90625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Receipt Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1674.90625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Payback Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1714.90625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Launch",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1793.40625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Trans & Bundle",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1833.40625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Promo",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1873.40625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Listing SEO",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1913.40625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Sample & Launch",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1953.40625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Photo ROI",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1993.40625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Video & Social",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2033.40625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Pre-Order Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2073.40625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Listing Test Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2113.40625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Release Timing Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2153.40625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Podcast Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2193.40625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Magazine Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2233.40625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Brag Cards",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2273.40625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Publish",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2351.90625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Trunk Show",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2391.90625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Channels",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2431.90625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Wholesale & Book",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2471.90625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Distribution",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2511.90625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Wholesale Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2551.90625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Booth Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2591.90625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Channel Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2631.90625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "POD Patterns Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2671.90625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Wholesale List Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2711.90625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Deals",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2790.40625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Pattern Club",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2830.40625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Kits",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2870.40625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Pipeline",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2910.40625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "KAL & Collab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2950.40625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Club Rev",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2990.40625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Hire vs Self",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3030.40625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Licence It",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3070.40625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Members",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3110.40625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Collab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3150.40625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Book It",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3190.40625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Protect",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3230.40625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Teach",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3270.40625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Partners",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3310.40625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Yarn Buy",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3350.40625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "KAL Planner",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3390.40625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Show ROI",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3430.40625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Yarn Pool Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3470.40625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Membership Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3510.40625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Workshop Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3550.40625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Retreat Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3590.40625,
+              "w": 382,
+              "h": 40
+            }
+          },
+          {
+            "text": "Design Ledger",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3630.40625,
+              "w": 382,
+              "h": 40
+            }
+          }
+        ],
+        "selectedLab": [
+          "Payback Lab",
+          "All patterns (0)"
+        ],
+        "sheetFile": "screenshots/chk127--iphone-430--all-labs-open.png"
+      },
+      "beforeFile": "screenshots/chk127--iphone-430--overlay-before-skip.png",
+      "navFile": "screenshots/chk127--iphone-430--navigator-before-open.png"
+    },
+    {
+      "label": "tablet-768",
+      "width": 768,
+      "overlayBefore": 1,
+      "skip": {
+        "x": 561.84375,
+        "y": 18,
+        "width": 94.15625,
+        "height": 24
+      },
+      "shell": [
+        {
+          "text": "Stitch & Scale",
+          "aria": null,
+          "rect": {
+            "x": 16,
+            "y": -10,
+            "w": 78.625,
+            "h": 84
+          }
+        },
+        {
+          "text": "Local only",
+          "aria": "Local storage status and backup",
+          "rect": {
+            "x": 94.625,
+            "y": 9,
+            "w": 73.171875,
+            "h": 46
+          }
+        },
+        {
+          "text": "Projects",
+          "aria": "Projects",
+          "rect": {
+            "x": 229.828125,
+            "y": 14,
+            "w": 100.140625,
+            "h": 36
+          }
+        },
+        {
+          "text": "Portfolio",
+          "aria": "Portfolio",
+          "rect": {
+            "x": 345.96875,
+            "y": 14,
+            "w": 102.578125,
+            "h": 36
+          }
+        },
+        {
+          "text": "Settings",
+          "aria": "Settings",
+          "rect": {
+            "x": 464.546875,
+            "y": 14,
+            "w": 100.546875,
+            "h": 36
+          }
+        },
+        {
+          "text": "New Project",
+          "aria": "New Project",
+          "rect": {
+            "x": 614.09375,
+            "y": 14,
+            "w": 137.90625,
+            "h": 36
+          }
+        }
+      ],
+      "afterUrl": "https://stitch-and-scale-pro-api-server.vercel.app/project/mss5osqd88j6fdyvtdu",
+      "deepLinkPreserved": true,
+      "trigger": {
+        "text": "All Labs",
+        "aria": "Open grouped list of all 79 workspace labs",
+        "box": {
+          "x": 32,
+          "y": 401,
+          "width": 704,
+          "height": 44
+        }
+      },
+      "sheet": {
+        "dialogs": 1,
+        "dialogText": "Close All 79 Labs Every tool for this pattern, grouped so nothing stays buried off-screen. DESIGN & PATTERN (12) Sections Preview Yarn Notes Draft Finish Grading Lab Chart Lab Test Knit Desk Lookbook Spec Sheet Yarn Licensing Lab SIZING & FIT (7) Test Knit Tech Edit Inclusive Submissions Box Inclusion Lab Test Knit Lab Gauge & Fit PRICING & INCOME (15) Income Pricing PriceWin Repeat Mix Ad Break-Even Collab Deal Math Re-Price Lab Bundle Lab Price Psych Lab Take-Rate Lab Gift & Credit Lab Intl Pricing Lab Receipt Lab Payback Lab LAUNCH & MARKETING (13) Launch Trans & Bundle Promo Listing SEO Sample & Launch Photo ROI Video & Social Pre-Order Lab Listing Test Lab Release Timing Lab Podcast Lab Magazine Lab Brag Cards SELLING CHANNELS (10) Publish Trunk Show Channels Wholesale & Book Distribution Wholesale Lab Booth Lab Channel Lab POD Patterns Lab Wholesale List Lab BUSINESS & COMMUNITY (22) Deals Pattern Club Kits Pipeline KAL & Collab Club Rev Hire vs Self Licence It Members Collab Book It Protect Teach Partners Yarn Buy KAL Planner Show ROI Yarn Pool Lab Membership Lab Workshop Lab Retreat Lab Design Ledger",
+        "buttonCount": 80,
+        "uniqueButtonTexts": [
+          "Close",
+          "Sections",
+          "Preview",
+          "Yarn",
+          "Notes",
+          "Draft",
+          "Finish",
+          "Grading Lab",
+          "Chart Lab",
+          "Test Knit Desk",
+          "Lookbook",
+          "Spec Sheet",
+          "Yarn Licensing Lab",
+          "Test Knit",
+          "Tech Edit",
+          "Inclusive",
+          "Submissions",
+          "Box Inclusion Lab",
+          "Test Knit Lab",
+          "Gauge & Fit",
+          "Income",
+          "Pricing",
+          "PriceWin",
+          "Repeat",
+          "Mix",
+          "Ad Break-Even",
+          "Collab Deal Math",
+          "Re-Price Lab",
+          "Bundle Lab",
+          "Price Psych Lab",
+          "Take-Rate Lab",
+          "Gift & Credit Lab",
+          "Intl Pricing Lab",
+          "Receipt Lab",
+          "Payback Lab",
+          "Launch",
+          "Trans & Bundle",
+          "Promo",
+          "Listing SEO",
+          "Sample & Launch",
+          "Photo ROI",
+          "Video & Social",
+          "Pre-Order Lab",
+          "Listing Test Lab",
+          "Release Timing Lab",
+          "Podcast Lab",
+          "Magazine Lab",
+          "Brag Cards",
+          "Publish",
+          "Trunk Show",
+          "Channels",
+          "Wholesale & Book",
+          "Distribution",
+          "Wholesale Lab",
+          "Booth Lab",
+          "Channel Lab",
+          "POD Patterns Lab",
+          "Wholesale List Lab",
+          "Deals",
+          "Pattern Club",
+          "Kits",
+          "Pipeline",
+          "KAL & Collab",
+          "Club Rev",
+          "Hire vs Self",
+          "Licence It",
+          "Members",
+          "Collab",
+          "Book It",
+          "Protect",
+          "Teach",
+          "Partners",
+          "Yarn Buy",
+          "KAL Planner",
+          "Show ROI",
+          "Yarn Pool Lab",
+          "Membership Lab",
+          "Workshop Lab",
+          "Retreat Lab",
+          "Design Ledger"
+        ],
+        "buttonTexts": [
+          {
+            "text": "Close",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 736,
+              "y": 221.8125,
+              "w": 16,
+              "h": 16
+            }
+          },
+          {
+            "text": "Sections",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 316.3125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Preview",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 356.3125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Yarn",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 396.3125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Notes",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 436.3125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Draft",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 476.3125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Finish",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 516.3125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Grading Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 556.3125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Chart Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 596.3125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Test Knit Desk",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 636.3125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Lookbook",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 676.3125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Spec Sheet",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 716.3125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Yarn Licensing Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 756.3125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Test Knit",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 834.8125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Tech Edit",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 874.8125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Inclusive",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 914.8125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Submissions",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 954.8125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Box Inclusion Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 994.8125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Test Knit Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1034.8125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Gauge & Fit",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1074.8125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Income",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1153.3125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Pricing",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1193.3125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "PriceWin",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1233.3125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Repeat",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1273.3125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Mix",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1313.3125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Ad Break-Even",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1353.3125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Collab Deal Math",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1393.3125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Re-Price Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1433.3125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Bundle Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1473.3125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Price Psych Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1513.3125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Take-Rate Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1553.3125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Gift & Credit Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1593.3125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Intl Pricing Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1633.3125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Receipt Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1673.3125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Payback Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1713.3125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Launch",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1791.8125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Trans & Bundle",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1831.8125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Promo",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1871.8125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Listing SEO",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1911.8125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Sample & Launch",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1951.8125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Photo ROI",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 1991.8125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Video & Social",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2031.8125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Pre-Order Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2071.8125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Listing Test Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2111.8125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Release Timing Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2151.8125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Podcast Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2191.8125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Magazine Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2231.8125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Brag Cards",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2271.8125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Publish",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2350.3125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Trunk Show",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2390.3125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Channels",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2430.3125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Wholesale & Book",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2470.3125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Distribution",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2510.3125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Wholesale Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2550.3125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Booth Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2590.3125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Channel Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2630.3125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "POD Patterns Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2670.3125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Wholesale List Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2710.3125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Deals",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2788.8125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Pattern Club",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2828.8125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Kits",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2868.8125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Pipeline",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2908.8125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "KAL & Collab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2948.8125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Club Rev",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 2988.8125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Hire vs Self",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3028.8125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Licence It",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3068.8125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Members",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3108.8125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Collab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3148.8125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Book It",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3188.8125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Protect",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3228.8125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Teach",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3268.8125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Partners",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3308.8125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Yarn Buy",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3348.8125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "KAL Planner",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3388.8125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Show ROI",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3428.8125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Yarn Pool Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3468.8125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Membership Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3508.8125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Workshop Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3548.8125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Retreat Lab",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3588.8125,
+              "w": 720,
+              "h": 40
+            }
+          },
+          {
+            "text": "Design Ledger",
+            "aria": null,
+            "disabled": false,
+            "rect": {
+              "x": 24,
+              "y": 3628.8125,
+              "w": 720,
+              "h": 40
+            }
+          }
+        ],
+        "selectedLab": [
+          "Payback Lab",
+          "All patterns (0)"
+        ],
+        "sheetFile": "screenshots/chk127--tablet-768--all-labs-open.png"
+      },
+      "beforeFile": "screenshots/chk127--tablet-768--overlay-before-skip.png",
+      "navFile": "screenshots/chk127--tablet-768--navigator-before-open.png"
+    }
+  ],
+  "desktop": [
+    {
+      "label": "desktop-1280",
+      "width": 1280,
+      "count": 79,
+      "stripInfo": {
+        "scrollLeft": 0,
+        "scrollWidth": 8143,
+        "clientWidth": 1214,
+        "justifyContent": "flex-start",
+        "strip": {
+          "x": 32,
+          "y": 235,
+          "w": 1216,
+          "h": 54
+        },
+        "labels": {
+          "Sections": {
+            "x": 37,
+            "y": 240,
+            "w": 83.375,
+            "h": 44,
+            "visible": true
+          },
+          "Preview": {
+            "x": 124.375,
+            "y": 240,
+            "w": 77.328125,
+            "h": 44,
+            "visible": true
+          },
+          "Yarn": {
+            "x": 205.703125,
+            "y": 240,
+            "w": 52.984375,
+            "h": 44,
+            "visible": true
+          },
+          "Payback Lab": {
+            "x": 8062.625,
+            "y": 240,
+            "w": 109.296875,
+            "h": 44,
+            "visible": false
+          }
+        }
+      },
+      "activeAfterSections": [
+        "Sections"
+      ],
+      "endPayback": {
+        "x": 1133.625,
+        "y": 240,
+        "width": 109.296875,
+        "height": 44
+      },
+      "endPaybackVisible": true,
+      "startFile": "screenshots/chk128--desktop-1280--strip-start.png",
+      "endFile": "screenshots/chk128--desktop-1280--strip-end.png"
+    },
+    {
+      "label": "desktop-1024",
+      "width": 1024,
+      "count": 79,
+      "stripInfo": {
+        "scrollLeft": 0,
+        "scrollWidth": 8143,
+        "clientWidth": 958,
+        "justifyContent": "flex-start",
+        "strip": {
+          "x": 32,
+          "y": 235,
+          "w": 960,
+          "h": 54
+        },
+        "labels": {
+          "Sections": {
+            "x": 37,
+            "y": 240,
+            "w": 83.375,
+            "h": 44,
+            "visible": true
+          },
+          "Preview": {
+            "x": 124.375,
+            "y": 240,
+            "w": 77.328125,
+            "h": 44,
+            "visible": true
+          },
+          "Yarn": {
+            "x": 205.703125,
+            "y": 240,
+            "w": 52.984375,
+            "h": 44,
+            "visible": true
+          },
+          "Payback Lab": {
+            "x": 8062.625,
+            "y": 240,
+            "w": 109.296875,
+            "h": 44,
+            "visible": false
+          }
+        }
+      },
+      "activeAfterSections": [
+        "Sections"
+      ],
+      "endPayback": {
+        "x": 877.625,
+        "y": 240,
+        "width": 109.296875,
+        "height": 44
+      },
+      "endPaybackVisible": true,
+      "startFile": "screenshots/chk128--desktop-1024--strip-start.png",
+      "endFile": "screenshots/chk128--desktop-1024--strip-end.png"
+    }
+  ],
+  "consoleErrors": []
+}

@@ -1,0 +1,266 @@
+{
+  "projects": [
+    {
+      "id": "mss5osqd88j6fdyvtdu",
+      "name": "Classic Crew Neck Sweater",
+      "author": "Stitch & Scale",
+      "description": "A timeless crew neck pullover in worsted weight yarn. Worked flat in pieces and seamed. Great for first-time graders.",
+      "yarnWeight": "worsted",
+      "baseSize": "M",
+      "gauge": {
+        "stitchesPer4In": 20,
+        "rowsPer4In": 28,
+        "unit": "in"
+      },
+      "sections": [
+        {
+          "id": "sample-body",
+          "name": "Body",
+          "measurements": [
+            {
+              "id": "sample-body-bust",
+              "label": "Chest Circumference",
+              "measurementType": "circumference",
+              "gradingKey": "bust",
+              "baseValue": 38,
+              "stitchRepeat": 4
+            },
+            {
+              "id": "sample-body-waist",
+              "label": "Waist Circumference",
+              "measurementType": "circumference",
+              "gradingKey": "waist",
+              "baseValue": 34,
+              "stitchRepeat": 4
+            },
+            {
+              "id": "sample-body-length",
+              "label": "Back Length",
+              "measurementType": "length",
+              "gradingKey": "backLength",
+              "baseValue": 26.5,
+              "rowRepeat": 2
+            }
+          ]
+        },
+        {
+          "id": "sample-sleeve",
+          "name": "Sleeve",
+          "measurements": [
+            {
+              "id": "sample-sleeve-length",
+              "label": "Sleeve Length",
+              "measurementType": "length",
+              "gradingKey": "sleeveLength",
+              "baseValue": 17,
+              "rowRepeat": 2
+            },
+            {
+              "id": "sample-sleeve-upper-arm",
+              "label": "Upper Arm Circumference",
+              "measurementType": "circumference",
+              "gradingKey": "upperArm",
+              "baseValue": 15,
+              "stitchRepeat": 4
+            },
+            {
+              "id": "sample-sleeve-wrist",
+              "label": "Cuff Circumference",
+              "measurementType": "circumference",
+              "gradingKey": "wrist",
+              "baseValue": 8,
+              "stitchRepeat": 4
+            }
+          ]
+        },
+        {
+          "id": "sample-neckline",
+          "name": "Neckline",
+          "measurements": [
+            {
+              "id": "sample-neck-circ",
+              "label": "Neck Circumference",
+              "measurementType": "circumference",
+              "gradingKey": "neckCircumference",
+              "baseValue": 16,
+              "stitchRepeat": 2
+            },
+            {
+              "id": "sample-shoulder",
+              "label": "Shoulder Width",
+              "measurementType": "width",
+              "gradingKey": "shoulder",
+              "baseValue": 16,
+              "stitchRepeat": 2
+            }
+          ]
+        }
+      ],
+      "createdAt": "2026-08-17T10:35:10.524Z",
+      "updatedAt": "2026-08-17T10:35:10.524Z"
+    }
+  ],
+  "settings": {
+    "unit": "in",
+    "theme": "system",
+    "pdfDefaults": {
+      "themeId": "minimal",
+      "accentColor": "",
+      "lastNamingTemplate": null,
+      "brandSuffix": "never",
+      "firstExportTipSeen": false,
+      "includeCover": true,
+      "includeGaugeSummary": true,
+      "includeNotes": true
+    },
+    "sizingStandard": "CYC",
+    "customStandard": {
+      "XS": {
+        "bust": 29,
+        "waist": 23.5,
+        "hip": 33.5,
+        "upperArm": 9.75,
+        "lowerArm": 9,
+        "wrist": 5.5,
+        "shoulder": 14.25,
+        "neckCircumference": 13.5,
+        "backLength": 16.5,
+        "sleeveLength": 16.5,
+        "thigh": 21.5,
+        "calf": 13,
+        "ankle": 8.5,
+        "armholeDepth": 6.25
+      },
+      "S": {
+        "bust": 33,
+        "waist": 25.75,
+        "hip": 35.5,
+        "upperArm": 10.25,
+        "lowerArm": 9.5,
+        "wrist": 6,
+        "shoulder": 14.75,
+        "neckCircumference": 14,
+        "backLength": 17,
+        "sleeveLength": 17,
+        "thigh": 22.5,
+        "calf": 13.5,
+        "ankle": 9,
+        "armholeDepth": 6.75
+      },
+      "M": {
+        "bust": 37,
+        "waist": 29,
+        "hip": 39,
+        "upperArm": 11,
+        "lowerArm": 10,
+        "wrist": 6.5,
+        "shoulder": 15.75,
+        "neckCircumference": 14.5,
+        "backLength": 17.25,
+        "sleeveLength": 17,
+        "thigh": 23.5,
+        "calf": 14,
+        "ankle": 9.5,
+        "armholeDepth": 7.25
+      },
+      "L": {
+        "bust": 41,
+        "waist": 33,
+        "hip": 43,
+        "upperArm": 12,
+        "lowerArm": 11,
+        "wrist": 7,
+        "shoulder": 16.75,
+        "neckCircumference": 15,
+        "backLength": 17.5,
+        "sleeveLength": 17.5,
+        "thigh": 25.5,
+        "calf": 15,
+        "ankle": 10,
+        "armholeDepth": 7.75
+      },
+      "XL": {
+        "bust": 45,
+        "waist": 37,
+        "hip": 47,
+        "upperArm": 13.5,
+        "lowerArm": 12,
+        "wrist": 7.5,
+        "shoulder": 17.5,
+        "neckCircumference": 15.5,
+        "backLength": 17.75,
+        "sleeveLength": 17.5,
+        "thigh": 27.5,
+        "calf": 16,
+        "ankle": 10.5,
+        "armholeDepth": 8.25
+      },
+      "2XL": {
+        "bust": 49,
+        "waist": 41,
+        "hip": 52.5,
+        "upperArm": 15.5,
+        "lowerArm": 13,
+        "wrist": 8,
+        "shoulder": 18,
+        "neckCircumference": 16,
+        "backLength": 18,
+        "sleeveLength": 18,
+        "thigh": 29.5,
+        "calf": 17,
+        "ankle": 11,
+        "armholeDepth": 8.75
+      },
+      "3XL": {
+        "bust": 53,
+        "waist": 44.5,
+        "hip": 54.5,
+        "upperArm": 17,
+        "lowerArm": 14,
+        "wrist": 8.5,
+        "shoulder": 18,
+        "neckCircumference": 16.5,
+        "backLength": 18,
+        "sleeveLength": 18,
+        "thigh": 31.5,
+        "calf": 18,
+        "ankle": 11.5,
+        "armholeDepth": 9.25
+      },
+      "4XL": {
+        "bust": 57,
+        "waist": 46.5,
+        "hip": 56.5,
+        "upperArm": 18.5,
+        "lowerArm": 15,
+        "wrist": 9,
+        "shoulder": 18.5,
+        "neckCircumference": 17,
+        "backLength": 18.5,
+        "sleeveLength": 18.5,
+        "thigh": 33.5,
+        "calf": 19,
+        "ankle": 12,
+        "armholeDepth": 9.75
+      },
+      "5XL": {
+        "bust": 61,
+        "waist": 49.5,
+        "hip": 61.5,
+        "upperArm": 18.5,
+        "lowerArm": 16,
+        "wrist": 9.5,
+        "shoulder": 18.5,
+        "neckCircumference": 17.5,
+        "backLength": 18.5,
+        "sleeveLength": 18.5,
+        "thigh": 35.5,
+        "calf": 20,
+        "ankle": 12.5,
+        "armholeDepth": 10.25
+      }
+    },
+    "onboardingCompleted": true,
+    "language": "en"
+  }
+}

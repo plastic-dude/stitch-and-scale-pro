@@ -1,0 +1,140 @@
+{
+  "results": [
+    {
+      "label": "android-360",
+      "width": 360,
+      "target": "Projects",
+      "box": {
+        "x": 155,
+        "y": 14,
+        "width": 36,
+        "height": 36
+      },
+      "routeBefore": "https://stitch-and-scale-pro-api-server.vercel.app/project/mss5osqd88j6fdyvtdu",
+      "routeAfter": "https://stitch-and-scale-pro-api-server.vercel.app/",
+      "activated": true,
+      "file": "screenshots/shell-nav--android-360--projects-activated.png"
+    },
+    {
+      "label": "android-360",
+      "width": 360,
+      "target": "Portfolio",
+      "box": {
+        "x": 195,
+        "y": 14,
+        "width": 36,
+        "height": 36
+      },
+      "routeBefore": "https://stitch-and-scale-pro-api-server.vercel.app/project/mss5osqd88j6fdyvtdu",
+      "routeAfter": "https://stitch-and-scale-pro-api-server.vercel.app/portfolio",
+      "activated": true,
+      "file": "screenshots/shell-nav--android-360--portfolio-activated.png"
+    },
+    {
+      "label": "android-360",
+      "width": 360,
+      "target": "Settings",
+      "box": {
+        "x": 235,
+        "y": 14,
+        "width": 36,
+        "height": 36
+      },
+      "routeBefore": "https://stitch-and-scale-pro-api-server.vercel.app/project/mss5osqd88j6fdyvtdu",
+      "routeAfter": "https://stitch-and-scale-pro-api-server.vercel.app/settings",
+      "activated": true,
+      "file": "screenshots/shell-nav--android-360--settings-activated.png"
+    },
+    {
+      "label": "iphone-390",
+      "width": 390,
+      "target": "Projects",
+      "box": {
+        "x": 185,
+        "y": 14,
+        "width": 36,
+        "height": 36
+      },
+      "routeBefore": "https://stitch-and-scale-pro-api-server.vercel.app/project/mss5osqd88j6fdyvtdu",
+      "routeAfter": "https://stitch-and-scale-pro-api-server.vercel.app/",
+      "activated": true,
+      "file": "screenshots/shell-nav--iphone-390--projects-activated.png"
+    },
+    {
+      "label": "iphone-390",
+      "width": 390,
+      "target": "Portfolio",
+      "box": {
+        "x": 225,
+        "y": 14,
+        "width": 36,
+        "height": 36
+      },
+      "routeBefore": "https://stitch-and-scale-pro-api-server.vercel.app/project/mss5osqd88j6fdyvtdu",
+      "routeAfter": "https://stitch-and-scale-pro-api-server.vercel.app/portfolio",
+      "activated": true,
+      "file": "screenshots/shell-nav--iphone-390--portfolio-activated.png"
+    },
+    {
+      "label": "iphone-390",
+      "width": 390,
+      "target": "Settings",
+      "box": {
+        "x": 265,
+        "y": 14,
+        "width": 36,
+        "height": 36
+      },
+      "routeBefore": "https://stitch-and-scale-pro-api-server.vercel.app/project/mss5osqd88j6fdyvtdu",
+      "routeAfter": "https://stitch-and-scale-pro-api-server.vercel.app/settings",
+      "activated": true,
+      "file": "screenshots/shell-nav--iphone-390--settings-activated.png"
+    },
+    {
+      "label": "iphone-430",
+      "width": 430,
+      "target": "Projects",
+      "box": {
+        "x": 225,
+        "y": 14,
+        "width": 36,
+        "height": 36
+      },
+      "routeBefore": "https://stitch-and-scale-pro-api-server.vercel.app/project/mss5osqd88j6fdyvtdu",
+      "routeAfter": "https://stitch-and-scale-pro-api-server.vercel.app/",
+      "activated": true,
+      "file": "screenshots/shell-nav--iphone-430--projects-activated.png"
+    },
+    {
+      "label": "iphone-430",
+      "width": 430,
+      "target": "Portfolio",
+      "box": {
+        "x": 265,
+        "y": 14,
+        "width": 36,
+        "height": 36
+      },
+      "routeBefore": "https://stitch-and-scale-pro-api-server.vercel.app/project/mss5osqd88j6fdyvtdu",
+      "routeAfter": "https://stitch-and-scale-pro-api-server.vercel.app/portfolio",
+      "activated": true,
+      "file": "screenshots/shell-nav--iphone-430--portfolio-activated.png"
+    },
+    {
+      "label": "iphone-430",
+      "width": 430,
+      "target": "Settings",
+      "box": {
+        "x": 305,
+        "y": 14,
+        "width": 36,
+        "height": 36
+      },
+      "routeBefore": "https://stitch-and-scale-pro-api-server.vercel.app/project/mss5osqd88j6fdyvtdu",
+      "routeAfter": "https://stitch-and-scale-pro-api-server.vercel.app/settings",
+      "activated": true,
+      "file": "screenshots/shell-nav--iphone-430--settings-activated.png"
+    }
+  ],
+  "errors": []
+}
