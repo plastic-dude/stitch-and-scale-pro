@@ -269,7 +269,7 @@ export function BragCardCard(props: { project: PatternProject }) {
                     type="button"
                     aria-label={`${copy.accent}: ${a.label}`}
                     onClick={() => setAccent(a.id)}
-                    className="h-8 w-8 rounded-full border-2 transition-all"
+                    className="h-8 w-8 min-h-11 min-w-11 rounded-full border-2 transition-all"
                     style={{
                       background: a.id,
                       borderColor: accent === a.id ? "#0f172a" : "transparent",

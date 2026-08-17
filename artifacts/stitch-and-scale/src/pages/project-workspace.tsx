@@ -587,7 +587,7 @@ export default function ProjectWorkspace() {
                     </div>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
-                        <Button variant="ghost" size="icon" onClick={(e) => e.stopPropagation()} className="text-destructive hover:text-destructive hover:bg-destructive/10" aria-label={copy.deleteSectionNamed(section.name)}>
+                        <Button variant="ghost" size="icon" onClick={(e) => e.stopPropagation()} className="min-h-11 min-w-11 text-destructive hover:text-destructive hover:bg-destructive/10" aria-label={copy.deleteSectionNamed(section.name)}>
                           <Trash2 className="w-4 h-4" />
                         </Button>
                       </AlertDialogTrigger>
@@ -632,12 +632,12 @@ export default function ProjectWorkspace() {
                                   <td className="px-4 py-3 text-muted-foreground">{GRADING_KEY_LABELS[m.gradingKey]}</td>
                                   <td className="px-4 py-3 font-mono">{m.baseValue}</td>
                                   <td className="px-4 py-3 text-right">
-                                    <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity" onClick={() => handleEditMeasurement(section.id, m.id)} aria-label={copy.editMeasurement(m.label)}>
+                                    <Button variant="ghost" size="icon" className="min-h-11 min-w-11 h-10 w-10 text-muted-foreground opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity" onClick={() => handleEditMeasurement(section.id, m.id)} aria-label={copy.editMeasurement(m.label)}>
                                       <Edit2 className="w-4 h-4" />
                                     </Button>
                                     <AlertDialog>
                                       <AlertDialogTrigger asChild>
-                                        <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity" aria-label={copy.deleteMeasurement(m.label)}>
+                                        <Button variant="ghost" size="icon" className="min-h-11 min-w-11 h-10 w-10 text-muted-foreground opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity" aria-label={copy.deleteMeasurement(m.label)}>
                                           <Trash2 className="w-4 h-4" />
                                         </Button>
                                       </AlertDialogTrigger>
