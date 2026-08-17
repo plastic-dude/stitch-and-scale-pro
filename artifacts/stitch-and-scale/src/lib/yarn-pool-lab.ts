@@ -41,13 +41,12 @@
  * then verdicts: too small / pool it / split it / mill it.
  */
 
+import type { LanguageCode } from '@/lib/i18n';
+import { YARN_POOL_COPY, type YarnPoolFlagCode, type YarnPoolTierId, type YarnPoolVerdictId } from '@/lib/yarn-pool-copy';
+
 export type SourceTier = 'retail' | 'retailBulk' | 'wholesale' | 'millDirect';
-export const TIER_LABELS: Record<SourceTier, string> = {
-  retail: 'Retail',
-  retailBulk: 'Retail bulk program',
-  wholesale: 'Wholesale dealer',
-  millDirect: 'Mill direct',
-};
+/** Typed, locale-independent verdict discriminator — the card styles by this, never by string prefix. */
+export type VerdictId = YarnPoolVerdictId;
 
 export interface PoolMember {
   name: string;
@@ -117,7 +116,7 @@ export const DEFAULT_POOL: YarnPoolInput = {
 };
 
 export interface Flag {
-  code: string;
+  code: YarnPoolFlagCode;
   title: string;
   detail: string;
 }
@@ -153,6 +152,9 @@ export interface YarnPoolResult {
   /** Whether a group buy / split is the right move for any colorway. */
   needsGroupBuy: boolean;
   flags: Flag[];
+  /** Stable, locale-independent verdict discriminator. */
+  verdictId: VerdictId;
+  /** Localized verdict display string for the current locale. */
   verdict: string;
   verdictNote: string;
 }
@@ -178,7 +180,8 @@ function bestSource(c: YarnColorway, pooledGrams: number, remainingColorways: nu
   return { tier: 'retail', pricePerKg: c.retailPricePerKg, meetsConditions: false };
 }
 
-export function analyzeYarnPool(input: YarnPoolInput): YarnPoolResult {
+export function analyzeYarnPool(input: YarnPoolInput, language: LanguageCode = 'en'): YarnPoolResult {
+  const copy = YARN_POOL_COPY[language];
   const membersGrams = (input.members || []).reduce((s, m) => s + (m.gramsNeeded || 0), 0);
   const flags: Flag[] = [];
 
@@ -219,81 +222,85 @@ export function analyzeYarnPool(input: YarnPoolInput): YarnPoolResult {
   if (millMiss.length > 0) {
     flags.push({
       code: 'YP-01',
-      title: 'Colorway MOQ nearly reached',
-      detail: `${millMiss.map(c => c.name).join(', ')} ${millMiss.length === 1 ? 'is' : 'are'} within 70% of the mill's per-colorway minimum — pool one more pattern or one more designer and the tier opens (mill-direct is typically 25–47% under retail).`,
+      title: copy.flagTitle('YP-01'),
+      detail: copy.flagDetail('YP-01', { names: millMiss.map(c => c.name).join(', '), are: millMiss.length === 1 ? 'is' : 'are' }),
     });
   }
   const cashWarn = isFinite(cashLockedMonths) && cashLockedMonths > input.productionRunwayMonths * 0.75;
   if (cashWarn) {
     flags.push({
       code: 'YP-02',
-      title: 'Cash lock-up exceeds runway',
-      detail: `This pool ties up ≈${cashLockedMonths.toFixed(1)} months of your revenue against only ${input.productionRunwayMonths} months of expected production. Buy in stages or pool less per cycle — yarn is the easiest inventory to over-order.`,
+      title: copy.flagTitle('YP-02'),
+      detail: copy.flagDetail('YP-02', { months: cashLockedMonths.toFixed(1), runway: String(input.productionRunwayMonths) }),
     });
   }
   const noStashOffset = input.stashGrams > 0 && totalGrams > 0;
   if (noStashOffset) {
     flags.push({
       code: 'YP-03',
-      title: 'Stash not offsetting this pool',
-      detail: `${input.stashGrams} g on hand is not credited against this pool's needs. Even partial stash substitution shrinks the cash outlay at every tier.`,
+      title: copy.flagTitle('YP-03'),
+      detail: copy.flagDetail('YP-03', { stash: String(input.stashGrams) }),
     });
   }
   const retailOnly = colorways.filter(c => c.tierReached === 'retail' && c.gramsNeeded > 500);
   if (retailOnly.length > 0 && !input.groupBuyAvailable) {
     flags.push({
       code: 'YP-04',
-      title: 'Pooling still lands at retail',
-      detail: `${retailOnly.map(c => c.name).join(', ')} don't hit any tier's floor — split this colorway into a group buy, knitting co-op, or LYS order-share instead of buying alone.`,
+      title: copy.flagTitle('YP-04'),
+      detail: copy.flagDetail('YP-04', { names: retailOnly.map(c => c.name).join(', ') }),
     });
   }
   if (retailOnly.length > 0 && input.groupBuyAvailable) {
     flags.push({
       code: 'YP-05',
-      title: 'Group buy ready for these colorways',
-      detail: `${retailOnly.map(c => c.name).join(', ')} sit at retail because nothing else qualifies — a co-op or group buy aggregates the community's demand the way a pool aggregates your own.`,
+      title: copy.flagTitle('YP-05'),
+      detail: copy.flagDetail('YP-05', { names: retailOnly.map(c => c.name).join(', ') }),
     });
   }
   const dyeLot = colorways.length >= 2;
   if (dyeLot && totalGrams > 0) {
     flags.push({
       code: 'YP-06',
-      title: 'One order, all colorways at once',
-      detail: 'Dye lots never match later — order every colorway for these garments in a single purchase so bodies, sleeves, and accessories match forever.',
+      title: copy.flagTitle('YP-06'),
+      detail: copy.flagDetail('YP-06', {}),
     });
   }
   if (totalGrams > 0 && membersGrams > 0 && membersGrams > totalGrams * 1.15) {
     flags.push({
       code: 'YP-07',
-      title: 'Members ask for more than the pool plans',
-      detail: `Members total ${membersGrams.toLocaleString('en-US')} g but the colorways hold ${totalGrams.toLocaleString('en-US')} g. Either raise colorway grams or trim members — under-ordered dye lots can never be re-matched.`,
+      title: copy.flagTitle('YP-07'),
+      detail: copy.flagDetail('YP-07', { memberGrams: membersGrams.toLocaleString('en-US'), poolGrams: totalGrams.toLocaleString('en-US') }),
     });
   }
 
   // ---- Verdict ----
   const canMill = colorways.some(c => c.meetsMillMinq);
   const canBulk = colorways.some(c => c.tierReached === 'wholesale' || c.tierReached === 'retailBulk');
-  let verdict: string;
-  let verdictNote: string;
+  // The tier-ladder arithmetic (bestSource, savings, cash lock-up) is unchanged —
+  // only the displayed verdict strings and flag prose now flow through the locale catalogue.
+  let verdictId: VerdictId;
+  const verdictValues = (overrides: Record<string, string> = {}): Record<string, string> => ({
+    cost: totalCost.toFixed(0),
+    savings: totalSavings.toFixed(0),
+    savingsPct: (totalSavingsPct * 100).toFixed(0),
+    retailCost: totalRetailCost.toFixed(0),
+    millKg: (Math.max(...(input.colorways || []).map(c => c.millMinPerColorway)) / 1000).toFixed(0),
+    ...overrides,
+  });
   if (totalGrams === 0) {
-    verdict = 'Nothing to pool';
-    verdictNote = 'Add at least one colorway with a yarn need. The pool only finds tiers if there is demand to aggregate.';
+    verdictId = 'nothing';
   } else if (!canMill && !canBulk && needsGroupBuy) {
-    verdict = 'Too small to pool alone — split it';
-    verdictNote = `Your own catalog ($${totalCost.toFixed(0)} projected, ${totalSavings.toFixed(0)} under retail if a tier opened) still sits at retail because no floor is reached. Split these colorways into a group buy or co-op: every extra designer's grams move the pool closer to the 10–50 kg/colorway mill tier. Savings worth having: ≈${(totalSavingsPct * 100).toFixed(0)}%.`;
+    verdictId = 'tooSmall';
   } else if (canBulk && !canMill) {
     const onDealer = colorways.some(c => c.tierReached === 'wholesale');
-    verdict = onDealer ? 'Pool it — dealer/wholesale tier unlocked' : 'Pool it — retail bulk tier unlocked';
-    verdictNote = onDealer
-      ? `Pooling your own patterns passes the dealer's minimum order at ≈$${totalCost.toFixed(0)} — $${totalSavings.toFixed(0)} (${(totalSavingsPct * 100).toFixed(0)}%) under retail. You still don't clear the mill's per-colorway minimum (${(Math.max(...(input.colorways || []).map(c => c.millMinPerColorway)) / 1000).toFixed(0)} kg); one more partner or pattern gets you there.`
-      : `Pooling your own patterns hits the retail bulk-program floor at ≈$${totalCost.toFixed(0)} — $${totalSavings.toFixed(0)} (${(totalSavingsPct * 100).toFixed(0)}%) under retail. Getting to the dealer's minimum order (or the mill's ${(Math.max(...(input.colorways || []).map(c => c.millMinPerColorway)) / 1000).toFixed(0)} kg per-colorway MOQ) is the next unlock — one more pattern or partner's grams does it.`;
+    verdictId = onDealer ? 'bulkDealer' : 'bulkRetail';
   } else if (canMill) {
-    verdict = 'Mill it — best tier reached';
-    verdictNote = `Mill-direct opened for at least one colorway: ≈$${totalCost.toFixed(0)} total, $${totalSavings.toFixed(0)} (${(totalSavingsPct * 100).toFixed(0)}%) under retail. Mill orders mean EUR 8–12 per 100 g and fibers that never hit retail shelves — plus cone-stock consistency across the whole run. Order every colorway in one shipment.`;
+    verdictId = 'mill';
   } else {
-    verdict = 'Pool it — demand aggregated';
-    verdictNote = `Grouping your patterns moves the colorways to better pricing: $${totalCost.toFixed(0)} vs $${totalRetailCost.toFixed(0)} retail. Watch the cash lock-up — yarn bought today is cash that can't pay test-knitters next month.`;
+    verdictId = 'pooled';
   }
+  const verdict = copy.verdictLabel(verdictId);
+  const verdictNote = copy.verdictNote(verdictId, verdictValues());
 
   return {
     colorways,
@@ -306,7 +313,13 @@ export function analyzeYarnPool(input: YarnPoolInput): YarnPoolResult {
     stashGramsUsed: Math.min(input.stashGrams || 0, totalGrams),
     needsGroupBuy,
     flags,
+    verdictId,
     verdict,
     verdictNote,
   };
+}
+
+/** Typed tier label lookup for the active locale (replaces the hardcoded English TIER_LABELS). */
+export function tierLabel(tier: SourceTier, language: LanguageCode = 'en'): string {
+  return YARN_POOL_COPY[language].tierLabel(tier as YarnPoolTierId);
 }

@@ -23,7 +23,7 @@ import {
   analyzeYarnPool,
   DEFAULT_POOL,
   DEFAULT_COLORWAY,
-  TIER_LABELS,
+  tierLabel,
   type YarnPoolInput,
   type YarnColorway,
   type PoolMember,
@@ -134,7 +134,7 @@ export function YarnPoolLabCard({ project }: { project: PatternProject }) {
       },
     }));
 
-  const analysis = useMemo(() => analyzeYarnPool(input), [input]);
+  const analysis = useMemo(() => analyzeYarnPool(input, language), [input, language]);
 
   const [cwName, setCwName] = useState('');
   const [cwGrams, setCwGrams] = useState('');
@@ -450,8 +450,8 @@ export function YarnPoolLabCard({ project }: { project: PatternProject }) {
                     <td className="px-3 py-2">{c.name}</td>
                     <td className="px-3 py-2 text-right">{fmtKg(c.gramsNeeded)}</td>
                     <td className="px-3 py-2 text-right">
-                      <Badge variant="outline" className={cn(TIER_TONES[c.tierReached] === 'good' && 'border-emerald-300 text-emerald-700', TIER_TONES[c.tierReached] === 'warn' && 'border-amber-300 text-amber-700', TIER_TONES[c.tierReached] === 'bad' && 'border-red-300 text-red-700')}>
-                        {TIER_LABELS[c.tierReached]}
+                        <Badge variant="outline" className={cn(TIER_TONES[c.tierReached] === 'good' && 'border-emerald-300 text-emerald-700', TIER_TONES[c.tierReached] === 'warn' && 'border-amber-300 text-amber-700', TIER_TONES[c.tierReached] === 'bad' && 'border-red-300 text-red-700')}>
+                        {tierLabel(c.tierReached, language)}
                       </Badge>
                     </td>
                     <td className="px-3 py-2 text-right">{fmt$(c.pricePerKg)}</td>
@@ -489,16 +489,16 @@ export function YarnPoolLabCard({ project }: { project: PatternProject }) {
         <div
           className={cn(
             'rounded-lg border p-4',
-            analysis.verdict.startsWith('Mill it') && 'border-emerald-200 bg-emerald-50',
-            (analysis.verdict.includes('wholesale tier') || analysis.verdict.includes('dealer')) && 'border-emerald-200 bg-emerald-50',
-            analysis.verdict.startsWith('Pool it') && !analysis.verdict.includes('wholesale tier') && 'border-amber-200 bg-amber-50',
-            analysis.verdict.startsWith('Too small') && 'border-red-200 bg-red-50',
-            analysis.verdict.startsWith('Nothing') && 'border-gray-200 bg-gray-50',
+            analysis.verdictId === 'mill' && 'border-emerald-200 bg-emerald-50',
+            (analysis.verdictId === 'bulkDealer' || analysis.verdictId === 'bulkRetail') && 'border-emerald-200 bg-emerald-50',
+            analysis.verdictId === 'pooled' && 'border-amber-200 bg-amber-50',
+            analysis.verdictId === 'tooSmall' && 'border-red-200 bg-red-50',
+            analysis.verdictId === 'nothing' && 'border-gray-200 bg-gray-50',
           )}
         >
           <div className="flex items-center gap-2">
-            <Lightbulb className={cn('size-4', analysis.verdict.includes('Mill it') || analysis.verdict.includes('wholesale tier') || analysis.verdict.includes('dealer') ? 'text-emerald-600' : 'text-amber-600')} />
-            <span className={cn('text-lg font-semibold', analysis.verdict.includes('Mill it') || analysis.verdict.includes('wholesale tier') || analysis.verdict.includes('dealer') ? 'text-emerald-700' : analysis.verdict.startsWith('Too small') ? 'text-red-700' : 'text-amber-700')}>
+            <Lightbulb className={cn('size-4', analysis.verdictId === 'mill' || analysis.verdictId === 'bulkDealer' || analysis.verdictId === 'bulkRetail' ? 'text-emerald-600' : 'text-amber-600')} />
+            <span className={cn('text-lg font-semibold', analysis.verdictId === 'mill' || analysis.verdictId === 'bulkDealer' || analysis.verdictId === 'bulkRetail' ? 'text-emerald-700' : analysis.verdictId === 'tooSmall' ? 'text-red-700' : 'text-amber-700')}>
               {analysis.verdict}
             </span>
           </div>
