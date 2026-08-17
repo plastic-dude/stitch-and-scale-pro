@@ -6,6 +6,11 @@ import { Input } from '@/components/ui/input';
 import { Link, useLocation } from 'wouter';
 import { Search, Plus, Calendar, Scissors, Layers, ChevronRight, PenTool, Info, X, MoreVertical, Copy, Download, Upload, Trash2, CheckCircle2, Loader2, FileSpreadsheet } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+import { de } from 'date-fns/locale/de';
+import { es } from 'date-fns/locale/es';
+import { fr } from 'date-fns/locale/fr';
+import { pt } from 'date-fns/locale/pt';
+import { enUS } from 'date-fns/locale/en-US';
 import { motion, type Variants } from 'framer-motion';
 import {
   DropdownMenu,
@@ -44,6 +49,8 @@ export default function Dashboard() {
   const { toast } = useToast();
   const { language } = useSettings();
   const copy = DASHBOARD_COPY[language];
+  const dateLocaleMap = { de, es, fr, pt };
+  const dateLocale = (dateLocaleMap as Record<string, typeof enUS>)[language] ?? enUS;
   const [search, setSearch] = React.useState('');
   const [deleteTarget, setDeleteTarget] = React.useState<PatternProject | null>(null);
   const [isImporting, setIsImporting] = React.useState(false);
@@ -179,7 +186,7 @@ export default function Dashboard() {
           <div className="space-y-2">
             <h1 className="text-4xl font-serif font-semibold text-foreground tracking-tight">{copy.patterns}</h1>
             <p className="text-muted-foreground text-sm font-medium tracking-wide">
-              {projects.length} {projects.length === 1 ? copy.project : copy.projects} in your workspace
+              {projects.length} {projects.length === 1 ? copy.project : copy.projects} {copy.inWorkspace}
             </p>
           </div>
           <div className="flex items-center gap-3 w-full sm:w-auto">
@@ -251,7 +258,7 @@ export default function Dashboard() {
             data-testid="button-import-empty"
           >
             {isImporting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
-            {isImporting ? 'Restoring…' : 'or restore a backup from a .json file'}
+            {isImporting ? copy.restoring : copy.orRestore}
           </button>
         </motion.div>
       ) : (
@@ -273,7 +280,7 @@ export default function Dashboard() {
                         <button
                           onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
                           className="p-1.5 rounded-md text-muted-foreground/70 hover:text-foreground hover:bg-background/80 transition-colors opacity-100 [@media(pointer:fine)]:opacity-0 [@media(pointer:fine)]:group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                          aria-label={`More options for ${project.name}`}
+                          aria-label={`${copy.duplicateAction} ${project.name}`}
                           data-testid={`button-card-menu-${project.id}`}
                         >
                           <MoreVertical className="w-4 h-4" />
@@ -282,11 +289,11 @@ export default function Dashboard() {
                       <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
                         <DropdownMenuItem onClick={(e) => handleDuplicate(e, project.id, project.name)} data-testid={`menuitem-duplicate-${project.id}`}>
                           <Copy className="w-4 h-4 mr-2" />
-                          Duplicate
+                          {copy.duplicateAction}
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={(e) => handleExport(e, project)} data-testid={`menuitem-export-${project.id}`}>
                           <Download className="w-4 h-4 mr-2" />
-                          Export as JSON
+                          {copy.exportJson}
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
@@ -295,7 +302,7 @@ export default function Dashboard() {
                           data-testid={`menuitem-delete-${project.id}`}
                         >
                           <Trash2 className="w-4 h-4 mr-2" />
-                          Delete
+                          {copy.deleteAction}
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -312,7 +319,7 @@ export default function Dashboard() {
                           data-testid={`status-graded-${project.id}`}
                         >
                           <CheckCircle2 className="w-3 h-3" />
-                          Graded
+                          {copy.graded}
                         </span>
                       ) : (
                         <span
@@ -320,7 +327,7 @@ export default function Dashboard() {
                           data-testid={`status-draft-${project.id}`}
                         >
                           <PenTool className="w-3 h-3" />
-                          Draft
+                          {copy.draft}
                         </span>
                       )}
                     </div>
@@ -332,21 +339,21 @@ export default function Dashboard() {
                   <CardContent className="pb-4 px-6 flex-grow">
                     <div className="flex flex-wrap gap-2">
                       <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-primary/10 text-primary">
-                        Size {project.baseSize}
+                        {copy.sizeLabel.replace('{0}', String(project.baseSize))}
                       </span>
                       <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-muted/60 text-muted-foreground border border-border/50">
-                        {project.gauge?.stitchesPer4In ?? "—"}sts / {project.gauge?.rowsPer4In ?? "—"}r
+                        {project.gauge?.stitchesPer4In ?? "—"} m / {project.gauge?.rowsPer4In ?? "—"} r
                       </span>
                     </div>
                   </CardContent>
                   <CardFooter className="px-6 py-4 border-t border-border/40 bg-muted/10 flex justify-between items-center text-xs text-muted-foreground mt-auto">
                     <div className="flex items-center gap-1.5">
                       <Layers className="w-3.5 h-3.5 opacity-70" />
-                      <span>{project.sections?.length || 0} section{(project.sections?.length || 0) !== 1 ? 's' : ''}</span>
+                      <span>{project.sections?.length || 0} {(project.sections?.length || 0) === 1 ? copy.sectionsLabel : `${copy.sectionsLabel}s`}</span>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <Calendar className="w-3.5 h-3.5 opacity-70" />
-                      <span>{formatDistanceToNow(new Date(project.updatedAt), { addSuffix: true })}</span>
+                      <span>{formatDistanceToNow(new Date(project.updatedAt), { addSuffix: true, locale: dateLocale })}</span>
                     </div>
                   </CardFooter>
                 </Card>
@@ -363,9 +370,9 @@ export default function Dashboard() {
               <div className="w-14 h-14 rounded-full bg-background border border-border/50 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300 group-hover:shadow-sm">
                 <PenTool className="w-6 h-6 text-primary/70 group-hover:text-primary" />
               </div>
-              <p className="font-serif font-medium text-lg text-foreground group-hover:text-primary transition-colors">Start New Pattern</p>
+              <p className="font-serif font-medium text-lg text-foreground group-hover:text-primary transition-colors">{copy.startNewPattern}</p>
               <span className="text-sm mt-1 flex items-center opacity-0 group-hover:opacity-100 transition-opacity -translate-x-2 group-hover:translate-x-0 duration-300">
-                Set up base <ChevronRight className="w-3 h-3 ml-0.5" />
+                {copy.setUpBase} <ChevronRight className="w-3 h-3 ml-0.5" />
               </span>
             </Card>
           </motion.div>
@@ -375,19 +382,17 @@ export default function Dashboard() {
       <AlertDialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete "{deleteTarget?.name}"?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This permanently removes the pattern and all its sections and measurements. This can't be undone — if you might want it back, export it as JSON first.
-            </AlertDialogDescription>
+            <AlertDialogTitle>{copy.deleteTitle.replace('{0}', deleteTarget?.name ?? '')}</AlertDialogTitle>
+            <AlertDialogDescription>{copy.deleteDesc}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel data-testid="button-cancel-delete">Cancel</AlertDialogCancel>
+            <AlertDialogCancel data-testid="button-cancel-delete">{copy.cancel}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteConfirmed}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               data-testid="button-confirm-delete"
             >
-              Delete
+              {copy.deleteAction}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
