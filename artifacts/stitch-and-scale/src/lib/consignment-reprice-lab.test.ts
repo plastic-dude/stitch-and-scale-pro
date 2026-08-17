@@ -3,6 +3,8 @@ import {
   analyzeReprice,
   netPerUnit,
   type RepriceInput,
+  hydrateRepriceState,
+  applyRepricePatch,
 } from './consignment-reprice-lab';
 
 function mk(
@@ -298,5 +300,69 @@ describe('analyzeReprice — QA #45 (S255) zero sell-through', () => {
   it('zero units at shop is not zero sell-through', () => {
     const result = analyzeReprice(mk({ unitsSoldPerMonth: 0, unitsAtShop: 0 }));
     expect(result.zeroSellThrough).toBe(false); // nothing in the shop to crown or not crown
+  });
+});
+
+
+// ---- QA #60 (S260) regression: zero-sold scenario + input controlledness ----
+//
+// The reprice card must keep every input controlled for its lifetime. The card
+// itself has no component tests in this repo (no @testing-library), so the
+// normalization contract is pinned at the state layer it depends on:
+//
+// 1. analyzeReprice must behave with unitsSoldPerMonth = 0 (the zero-sold
+//    probe that triggered the console errors), so the card renders
+//    deterministically and never reads an undefined derived value.
+// 2. hydrateRepriceState is the exact hydration path the card uses on mount:
+//    a stale blob missing `unitsSoldPerMonth` must hydrate over the defaults
+//    instead of carrying undefined into an input.
+// 3. applyRepricePatch must strip undefined entries, so the card's setState
+//    merge can never replace a defined input value with undefined.
+
+describe('QA #60 — zero-sold probe and state normalization', () => {
+  it('analyzes the zero-sold scenario deterministically', () => {
+    const r = analyzeReprice({
+      retailPrice: 8,
+      channel: 'ravelry-instore',
+      printCostPerUnit: 1.5,
+      unitsAtShop: 60,
+      unitsSoldPerMonth: 0,
+      monthsInShop: 2,
+      seasonBand: 'winter',
+      opportunityRate: 25,
+      repriceHours: 2,
+    });
+    expect(r.zeroSellThrough).toBe(true);
+    for (const step of r.ladder) {
+      expect(step.totalNetOnCurrentStock).toBe(0);
+    }
+    expect(r.bestStep).toBeDefined();
+    expect(r.monthsOfStock).toBe(Infinity);
+    expect(r.deadStockRisk).toBe(60 * 1.5);
+  });
+
+  it('hydrates a stale blob missing unitsSoldPerMonth over the defaults', () => {
+    // A pre-v1 blob saved before unitsSoldPerMonth existed (or a seeded QA
+    // fixture) must never reach an input as undefined.
+    const stale = { retailPrice: 8, channel: 'ravelry-instore', printCostPerUnit: 1.5, unitsAtShop: 60, monthsInShop: 2, seasonBand: 'winter', opportunityRate: 25, repriceHours: 2 };
+    const hydrated = hydrateRepriceState(stale as RepriceInput);
+    expect(hydrated.unitsSoldPerMonth).toBe(3);
+    expect(hydrated.unitsAtShop).toBe(60);
+    expect(hydrated.channel).toBe('ravelry-instore');
+    for (const [k, v] of Object.entries(hydrated)) {
+      expect(v).not.toBeUndefined();
+    }
+  });
+
+  it('strips undefined entries from a patch', () => {
+    const prev: RepriceInput = {
+      retailPrice: 8, channel: 'ravelry-instore', printCostPerUnit: 1.5,
+      unitsAtShop: 60, unitsSoldPerMonth: 0, monthsInShop: 2,
+      seasonBand: 'winter', opportunityRate: 25, repriceHours: 2,
+    };
+    const next = applyRepricePatch(prev, { unitsSoldPerMonth: undefined } as Partial<RepriceInput>);
+    expect(next.unitsSoldPerMonth).toBe(0);
+    const next2 = applyRepricePatch(prev, { unitsSoldPerMonth: 4 });
+    expect(next2.unitsSoldPerMonth).toBe(4);
   });
 });

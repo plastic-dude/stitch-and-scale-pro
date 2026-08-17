@@ -414,3 +414,57 @@ function buildVerdict(
   }
   return `${bestStep.label} — it nets more on current stock than holding, without training your buyers to wait for destash pricing.`;
 }
+
+
+// ---- QA #60 (S260) state-normalization contract ----
+//
+// Every input on the Consignment Re-Price Lab card is controlled for the
+// lifetime of the component; its `value` comes from the stored state object.
+// A controlled input throwing "changing a controlled input to be uncontrolled"
+// means some value flipped from defined to undefined — the two ways that can
+// happen are (1) a stale storage blob missing a key hydrating as undefined,
+// and (2) a state patch carrying an undefined entry merging over a defined
+// value. Both paths are normalized here, pure and exported so the contract is
+// unit-testable:
+//
+// - `hydrateRepriceState(blob)` folds a stored blob over the defaults and then
+//   guarantees no key is undefined (a key absent from the blob, or explicitly
+//   `undefined` inside it, falls back to the default). This is exactly the
+//   initial-state expression the card evaluates on mount.
+// - `applyRepricePatch(prev, patch)` merges a patch but silently drops any
+//   entry whose value is undefined, so a merge can never clobber a defined
+//   field. This is exactly the reducer body the card's setState uses.
+
+export const REPRICE_DEFAULTS: RepriceInput = {
+  retailPrice: 8,
+  channel: 'ravelry-instore',
+  printCostPerUnit: 1.5,
+  unitsAtShop: 30,
+  unitsSoldPerMonth: 3,
+  monthsInShop: 2,
+  seasonBand: 'winter',
+  opportunityRate: 25,
+  repriceHours: 2,
+};
+
+export function hydrateRepriceState(
+  blob: Partial<RepriceInput> | null | undefined,
+): RepriceInput {
+  if (!blob) return { ...REPRICE_DEFAULTS };
+  const merged: Record<string, unknown> = { ...REPRICE_DEFAULTS, ...blob };
+  for (const key of Object.keys(merged)) {
+    if (merged[key] === undefined) delete merged[key];
+  }
+  return { ...REPRICE_DEFAULTS, ...merged } as RepriceInput;
+}
+
+export function applyRepricePatch(
+  prev: RepriceInput,
+  patch: Partial<RepriceInput>,
+): RepriceInput {
+  const clean: Record<string, RepriceInput[keyof RepriceInput]> = {};
+  for (const entry of Object.entries(patch)) {
+    if (entry[1] !== undefined) clean[entry[0]] = entry[1];
+  }
+  return { ...prev, ...clean };
+}

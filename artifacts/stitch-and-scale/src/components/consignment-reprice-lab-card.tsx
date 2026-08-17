@@ -17,6 +17,9 @@ import { Slider } from '@/components/ui/slider';
 import {
   analyzeReprice,
   type RepriceInput,
+  hydrateRepriceState,
+  applyRepricePatch,
+  REPRICE_DEFAULTS,
 } from '@/lib/consignment-reprice-lab';
 import { projectStorage } from '@/lib/storage-lib';
 import { PatternProject } from '@/lib/grading-engine';
@@ -40,17 +43,9 @@ const seasonOptions: { value: RepriceInput['seasonBand']; label: string }[] = [
   { value: 'yearround', label: 'Year-round' },
 ];
 
-const defaultStored: StoredState = {
-  retailPrice: 8,
-  channel: 'ravelry-instore',
-  printCostPerUnit: 1.5,
-  unitsAtShop: 30,
-  unitsSoldPerMonth: 3,
-  monthsInShop: 2,
-  seasonBand: 'winter',
-  opportunityRate: 25,
-  repriceHours: 2,
-};
+// QA #60 (S260): the reset path shares the canonical defaults exported by
+// the lib, so hydration and reset can never drift apart.
+const defaultStored: StoredState = { ...REPRICE_DEFAULTS };
 
 const severityIcon = {
   critical: AlertCircle,
@@ -72,13 +67,23 @@ export function ConsignmentRepriceLabCard({ project }: { project: PatternProject
     [project.id],
   );
   const [stored, setStored] = useState<StoredState>(() => {
-    const read = handle.read();
-    return read ?? { ...defaultStored, ts: Date.now() };
+    // QA #60 (S260): inputs must stay controlled for the lifetime of the
+    // component. An input's `value` coming from `stored.*` can only become
+    // undefined if a stale storage blob is missing a key, or a patch carried
+    // one. `hydrateRepriceState` folds the blob over the defaults and strips
+    // any undefined values (the card keeps `defaultStored` for the reset
+    // button; both carry the same defaults).
+    const normalized = hydrateRepriceState(handle.read());
+    handle.write({ ...normalized, ts: Date.now() });
+    return { ...normalized, ts: Date.now() };
   });
 
   const setState = (patch: Partial<StoredState>) => {
     setStored(prev => {
-      const next = { ...prev, ...patch, ts: Date.now() };
+      // QA #60 (S260): a controlled input's `value` must never flip to
+      // undefined. `applyRepricePatch` silently drops undefined entries so a
+      // merge can never clobber a defined field.
+      const next = { ...applyRepricePatch(prev, patch), ts: Date.now() };
       handle.write(next);
       return next;
     });
@@ -379,7 +384,7 @@ export function ConsignmentRepriceLabCard({ project }: { project: PatternProject
         </div>
         <div className="border-t px-4 py-3 text-xs text-muted-foreground">
           {result.zeroSellThrough
-            ? 'No step moves stock at zero sell-through — every row clears $0.00. Pull the unsold copies back to your own shop at a promo price, fold them into a bundle, or destash.'
+            ? copyText.zeroStockFooter
             : result.bestStep.rationale}
         </div>
       </div>
