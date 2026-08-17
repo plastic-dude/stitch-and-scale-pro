@@ -1,0 +1,86 @@
+# Exhaustive Cycle 62 desktop tab manifest
+
+Tabs discovered: 79
+Screenshots: 79
+Activation errors: 0
+Console/page errors: 0
+
+- 1. Sections
+- 2. Preview
+- 3. Yarn
+- 4. Notes
+- 5. Income
+- 6. Draft
+- 7. Pricing
+- 8. Publish
+- 9. Test Knit
+- 10. Tech Edit
+- 11. Finish
+- 12. Deals
+- 13. Launch
+- 14. Trunk Show
+- 15. Trans & Bundle
+- 16. Pattern Club
+- 17. Kits
+- 18. Pipeline
+- 19. KAL & Collab
+- 20. Channels
+- 21. Club Rev
+- 22. Wholesale & Book
+- 23. Hire vs Self
+- 24. Inclusive
+- 25. Licence It
+- 26. Members
+- 27. Promo
+- 28. PriceWin
+- 29. Repeat
+- 30. Mix
+- 31. Collab
+- 32. Book It
+- 33. Protect
+- 34. Teach
+- 35. Partners
+- 36. Yarn Buy
+- 37. KAL Planner
+- 38. Grading Lab
+- 39. Chart Lab
+- 40. Test Knit Desk
+- 41. Submissions
+- 42. Lookbook
+- 43. Spec Sheet
+- 44. Distribution
+- 45. Listing SEO
+- 46. Ad Break-Even
+- 47. Sample & Launch
+- 48. Collab Deal Math
+- 49. Photo ROI
+- 50. Video & Social
+- 51. Show ROI
+- 52. Wholesale Lab
+- 53. Pre-Order Lab
+- 54. Listing Test Lab
+- 55. Yarn Pool Lab
+- 56. Membership Lab
+- 57. Release Timing Lab
+- 58. Booth Lab
+- 59. Channel Lab
+- 60. Workshop Lab
+- 61. Re-Price Lab
+- 62. Bundle Lab
+- 63. Retreat Lab
+- 64. Podcast Lab
+- 65. Magazine Lab
+- 66. Price Psych Lab
+- 67. POD Patterns Lab
+- 68. Take-Rate Lab
+- 69. Box Inclusion Lab
+- 70. Yarn Licensing Lab
+- 71. Gift & Credit Lab
+- 72. Wholesale List Lab
+- 73. Intl Pricing Lab
+- 74. Test Knit Lab
+- 75. Gauge & Fit
+- 76. Receipt Lab
+- 77. Design Ledger
+- 78. Brag Cards
+- 79. Payback Lab

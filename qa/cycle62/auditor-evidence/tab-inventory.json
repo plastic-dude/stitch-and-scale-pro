@@ -1,0 +1,397 @@
+[
+  {
+    "i": 0,
+    "label": "Sections",
+    "value": null
+  },
+  {
+    "i": 1,
+    "label": "Preview",
+    "value": null
+  },
+  {
+    "i": 2,
+    "label": "Yarn",
+    "value": null
+  },
+  {
+    "i": 3,
+    "label": "Notes",
+    "value": null
+  },
+  {
+    "i": 4,
+    "label": "Income",
+    "value": null
+  },
+  {
+    "i": 5,
+    "label": "Draft",
+    "value": null
+  },
+  {
+    "i": 6,
+    "label": "Pricing",
+    "value": null
+  },
+  {
+    "i": 7,
+    "label": "Publish",
+    "value": null
+  },
+  {
+    "i": 8,
+    "label": "Test Knit",
+    "value": null
+  },
+  {
+    "i": 9,
+    "label": "Tech Edit",
+    "value": null
+  },
+  {
+    "i": 10,
+    "label": "Finish",
+    "value": null
+  },
+  {
+    "i": 11,
+    "label": "Deals",
+    "value": null
+  },
+  {
+    "i": 12,
+    "label": "Launch",
+    "value": null
+  },
+  {
+    "i": 13,
+    "label": "Trunk Show",
+    "value": null
+  },
+  {
+    "i": 14,
+    "label": "Trans & Bundle",
+    "value": null
+  },
+  {
+    "i": 15,
+    "label": "Pattern Club",
+    "value": null
+  },
+  {
+    "i": 16,
+    "label": "Kits",
+    "value": null
+  },
+  {
+    "i": 17,
+    "label": "Pipeline",
+    "value": null
+  },
+  {
+    "i": 18,
+    "label": "KAL & Collab",
+    "value": null
+  },
+  {
+    "i": 19,
+    "label": "Channels",
+    "value": null
+  },
+  {
+    "i": 20,
+    "label": "Club Rev",
+    "value": null
+  },
+  {
+    "i": 21,
+    "label": "Wholesale & Book",
+    "value": null
+  },
+  {
+    "i": 22,
+    "label": "Hire vs Self",
+    "value": null
+  },
+  {
+    "i": 23,
+    "label": "Inclusive",
+    "value": null
+  },
+  {
+    "i": 24,
+    "label": "Licence It",
+    "value": null
+  },
+  {
+    "i": 25,
+    "label": "Members",
+    "value": null
+  },
+  {
+    "i": 26,
+    "label": "Promo",
+    "value": null
+  },
+  {
+    "i": 27,
+    "label": "PriceWin",
+    "value": null
+  },
+  {
+    "i": 28,
+    "label": "Repeat",
+    "value": null
+  },
+  {
+    "i": 29,
+    "label": "Mix",
+    "value": null
+  },
+  {
+    "i": 30,
+    "label": "Collab",
+    "value": null
+  },
+  {
+    "i": 31,
+    "label": "Book It",
+    "value": null
+  },
+  {
+    "i": 32,
+    "label": "Protect",
+    "value": null
+  },
+  {
+    "i": 33,
+    "label": "Teach",
+    "value": null
+  },
+  {
+    "i": 34,
+    "label": "Partners",
+    "value": null
+  },
+  {
+    "i": 35,
+    "label": "Yarn Buy",
+    "value": null
+  },
+  {
+    "i": 36,
+    "label": "KAL Planner",
+    "value": null
+  },
+  {
+    "i": 37,
+    "label": "Grading Lab",
+    "value": null
+  },
+  {
+    "i": 38,
+    "label": "Chart Lab",
+    "value": null
+  },
+  {
+    "i": 39,
+    "label": "Test Knit Desk",
+    "value": null
+  },
+  {
+    "i": 40,
+    "label": "Submissions",
+    "value": null
+  },
+  {
+    "i": 41,
+    "label": "Lookbook",
+    "value": null
+  },
+  {
+    "i": 42,
+    "label": "Spec Sheet",
+    "value": null
+  },
+  {
+    "i": 43,
+    "label": "Distribution",
+    "value": null
+  },
+  {
+    "i": 44,
+    "label": "Listing SEO",
+    "value": null
+  },
+  {
+    "i": 45,
+    "label": "Ad Break-Even",
+    "value": null
+  },
+  {
+    "i": 46,
+    "label": "Sample & Launch",
+    "value": null
+  },
+  {
+    "i": 47,
+    "label": "Collab Deal Math",
+    "value": null
+  },
+  {
+    "i": 48,
+    "label": "Photo ROI",
+    "value": null
+  },
+  {
+    "i": 49,
+    "label": "Video & Social",
+    "value": null
+  },
+  {
+    "i": 50,
+    "label": "Show ROI",
+    "value": null
+  },
+  {
+    "i": 51,
+    "label": "Wholesale Lab",
+    "value": null
+  },
+  {
+    "i": 52,
+    "label": "Pre-Order Lab",
+    "value": null
+  },
+  {
+    "i": 53,
+    "label": "Listing Test Lab",
+    "value": null
+  },
+  {
+    "i": 54,
+    "label": "Yarn Pool Lab",
+    "value": null
+  },
+  {
+    "i": 55,
+    "label": "Membership Lab",
+    "value": null
+  },
+  {
+    "i": 56,
+    "label": "Release Timing Lab",
+    "value": null
+  },
+  {
+    "i": 57,
+    "label": "Booth Lab",
+    "value": null
+  },
+  {
+    "i": 58,
+    "label": "Channel Lab",
+    "value": null
+  },
+  {
+    "i": 59,
+    "label": "Workshop Lab",
+    "value": null
+  },
+  {
+    "i": 60,
+    "label": "Re-Price Lab",
+    "value": null
+  },
+  {
+    "i": 61,
+    "label": "Bundle Lab",
+    "value": null
+  },
+  {
+    "i": 62,
+    "label": "Retreat Lab",
+    "value": null
+  },
+  {
+    "i": 63,
+    "label": "Podcast Lab",
+    "value": null
+  },
+  {
+    "i": 64,
+    "label": "Magazine Lab",
+    "value": null
+  },
+  {
+    "i": 65,
+    "label": "Price Psych Lab",
+    "value": null
+  },
+  {
+    "i": 66,
+    "label": "POD Patterns Lab",
+    "value": null
+  },
+  {
+    "i": 67,
+    "label": "Take-Rate Lab",
+    "value": null
+  },
+  {
+    "i": 68,
+    "label": "Box Inclusion Lab",
+    "value": null
+  },
+  {
+    "i": 69,
+    "label": "Yarn Licensing Lab",
+    "value": null
+  },
+  {
+    "i": 70,
+    "label": "Gift & Credit Lab",
+    "value": null
+  },
+  {
+    "i": 71,
+    "label": "Wholesale List Lab",
+    "value": null
+  },
+  {
+    "i": 72,
+    "label": "Intl Pricing Lab",
+    "value": null
+  },
+  {
+    "i": 73,
+    "label": "Test Knit Lab",
+    "value": null
+  },
+  {
+    "i": 74,
+    "label": "Gauge & Fit",
+    "value": null
+  },
+  {
+    "i": 75,
+    "label": "Receipt Lab",
+    "value": null
+  },
+  {
+    "i": 76,
+    "label": "Design Ledger",
+    "value": null
+  },
+  {
+    "i": 77,
+    "label": "Brag Cards",
+    "value": null
+  },
+  {
+    "i": 78,
+    "label": "Payback Lab",
+    "value": null
+  }
+]
