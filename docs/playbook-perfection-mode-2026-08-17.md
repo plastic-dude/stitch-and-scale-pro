@@ -2,6 +2,10 @@
 
 You are continuing autonomous work on the user's GitHub repo `plastic-dude/stitch-and-scale-pro` (the advancement repo cloned from `stitch-and-scale-rc`, which must NEVER be modified).
 
+## Team leadership (user directive 2026-08-17)
+
+Manus is now the leader of the agent team (Reviewer and Crawler). Standing orders for both agents live in `docs/team-standing-orders.md`; all agents post findings and triage to `docs/leader-notes/` (and screenshots to `docs/screenshots/`), which the lead reads before each firing. Crawler must inspect with eyes, click every control, and re-inspect with eyes in every newly opened space, proving findings with screenshots and measured DOM values. Reviewer triages, verifies against the current tree, and escalates the long-open MAJORs.
+
 ## Governing directive (user-confirmed, 2026-08-17)
 
 The user explicitly said: **"I requested that you perfect already made work not find new ones."**
@@ -39,7 +43,7 @@ Every firing therefore works ONLY the existing Reviewer/QA defect backlog. Fresh
 | MAJOR | #53 Payback Lab fee shape — CLOSED 2026-08-17 (CHK-105 b1b8c08) | done |
 | MINOR | #55 Take-Rate NumField suffix overlap — CLOSED 2026-08-17 (CHK-106 b96f474) | done |
 | MAJOR* | #56 Localization gaps (51-A workspace cards untranslated; 51-B onboarding overlay footer "Back/Begin/Continue" hardcoded English; 51-C pt missing `workflow.newProject.title`) — QA report only, awaiting Reviewer triage | next candidate if triaged |
-| MAJOR | #54 Take-Rate duplicate React keys — QA report, awaiting Reviewer triage | blocked until triage |
+| MINOR | #54 Take-Rate duplicate React keys — CLOSED 2026-08-17 (CHK-110 dc2be73) | done |
 | MAJOR | S182 affCut conversion (legacy ledger) — long-open | next if triaged/escalated |
 | MAJOR | S251 yarn-company-deal royalty double-count at line ~173 — long-open | next if triaged/escalated |
 | MAJOR | S160/S123 related empty-standards fallback (`resolveProjectStandards({} as never)`) — partially fixed; remaining flat/royalty/exclusive double-count | next if triaged/escalated |
@@ -56,6 +60,8 @@ Every firing therefore works ONLY the existing Reviewer/QA defect backlog. Fresh
 - Honest progress claims only: record measured gate outputs, never repeat stale counts.
 
 ## Progress log (perfection mode)
+- CHK-110 (dc2be73): Take-Rate Lab watchout badges keyed `${code}-${index}`; root cause confirmed (per-channel loop pushes TR-03 twice — LoveCrafts/Ribblr — and TR-05 twice — Etsy/Ravelry); 3 regression tests; issues #59 and #54 closed with evidence comments; 1,779 tests/114 files green.
+- Team standing orders written to `docs/team-standing-orders.md`; `docs/leader-notes/` and `docs/screenshots/` created as the shared message board.
 
 - CHK-105 (b1b8c08): Payback Lab receipt-fee normalization via canonical `analyzeReceiptFees`; issue #53 fixed and closed; 1,763 tests green.
 - CHK-106 (b96f474): Take-Rate NumField right padding `pr-8` -> `pr-11`; suffix/spinner overlap at 390px eliminated; issue #55 fixed and closed; typecheck + 1,763/1,763 tests + build green; locally visually verified.
