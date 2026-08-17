@@ -124,6 +124,21 @@ describe('compareDeal', () => {
     expect(grossOutcome.netToDesigner - netOutcome.netToDesigner).toBeGreaterThan(0);
   });
 
+  it('applies a net royalty rate exactly once to company proceeds (reviewer MAJOR)', () => {
+    const offer: DealOffer = {
+      type: 'royalty_no_exclusivity',
+      royaltyPct: 0.25,
+      royaltyBase: 'net',
+      companySales: 200,
+    };
+    const outcome = compareDeal(realistic, offer);
+    const companyNet = platformNet('ravelry', realistic.price, offer.companySales).netRevenue;
+    const expectedRoyalty = companyNet * offer.royaltyPct;
+    const directNet = Math.max(selfPublishNet(realistic), 0);
+    expect(outcome.netToDesigner).toBeCloseTo(expectedRoyalty + directNet, 2);
+    expect(outcome.netToDesigner).not.toBeCloseTo(companyNet * offer.royaltyPct * offer.royaltyPct + directNet, 2);
+  });
+
   it('never subtracts the designer costs twice in a royalty deal (reviewer debt a)', () => {
     const offer: DealOffer = {
       type: 'royalty_no_exclusivity',

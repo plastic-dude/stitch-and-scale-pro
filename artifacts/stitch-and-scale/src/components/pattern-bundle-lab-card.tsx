@@ -215,6 +215,35 @@ export function PatternBundleLabCard({ project }: { project: PatternProject }) {
               </tbody>
             </table>
           </div>
+          {realistic && realistic.designers.length > 0 && (
+            <div className="space-y-2">
+              <h4 className="text-sm font-semibold">{copyText.partnerResults}</h4>
+              <div className="overflow-x-auto rounded-md border">
+                <table className="w-full text-xs">
+                  <thead className="bg-accent/60 text-muted-foreground">
+                    <tr>
+                      <th className="p-2 text-left">{copyText.patternStandalone.split(' — ')[0]}</th>
+                      <th className="p-2 text-right">{copyText.share}</th>
+                      <th className="p-2 text-right">{copyText.net}</th>
+                      <th className="p-2 text-right">{copyText.solo}</th>
+                      <th className="p-2 text-right">{copyText.gain}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {realistic.designers.map((designer, i) => (
+                      <tr key={`partner-${i}`} className="border-t">
+                        <td className="p-2 font-medium">{copyText.partnerPattern.replace('{n}', String(i + 1))}</td>
+                        <td className="p-2 text-right">{(designer.share * 100).toFixed(0)}%</td>
+                        <td className="p-2 text-right">{fmt$(designer.netTake)}</td>
+                        <td className="p-2 text-right">{fmt$(designer.soloBaseline)}</td>
+                        <td className={`p-2 text-right ${designer.incremental >= 0 ? 'text-emerald-700' : 'text-destructive'}`}>{designer.incremental >= 0 ? '+' : '−'}{fmt$(Math.abs(designer.incremental))}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
           {result.scenarios.length === 0 && (
             <p className="text-xs text-muted-foreground">{copyText.empty}</p>
           )}

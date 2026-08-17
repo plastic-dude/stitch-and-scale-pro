@@ -525,3 +525,25 @@ The reviewer-proposed Pattern Bundle correctness gap was addressed narrowly in `
 Evidence: focused Pattern Bundle tests passed 25/25; strict TypeScript passed; full Vitest passed 110 files / 1,756 tests; production build passed in 6.40 seconds. Visual verification opened the sample project at localhost, opened Bundle Lab, and confirmed the three pattern price/sales input rows, scenario table, verdict, and no visible runtime error. The build retains the existing non-fatal chunk-size warning. This checkpoint does not close unrelated reviewer findings or the broader five-language dynamic-prose inventory.
 
 Research for this cycle is recorded separately in `/home/ubuntu/research/competitors-session-86-finance-admin-and-cost-accuracy.md`; the fresh competitor set was Craftybase, Wave, and Invoice Ninja. The implementation selection remained the reviewer-gated Pattern Bundle correctness fix from the staff prompt.
+
+
+## CHK-100 — royalty exact-once regression evidence (2026-08-17)
+
+This cycle researched a fresh competitor set—NuORDER, HoneyBook, and the historical Tundra case—without repeating the prior competitor files. The research is saved at `/home/ubuntu/research/competitors-session-100-wholesale-client-ops.md`.
+
+The reviewer staff prompt identified the royalty double-count as a standing MAJOR. Inspection showed the production arithmetic was already corrected at HEAD: net-base royalties are computed as `companyNet * royaltyPct`, and the direct baseline is not cost-subtracted a second time. Rather than make an unnecessary behavioral change, a focused regression was added to `yarn-company-deal.test.ts` proving the royalty rate is applied exactly once and rejecting the double-rate result. This is evidence closure for the code path, not a claim that the live reviewer issue has been externally closed.
+
+Verification: focused Yarn Company Deal tests passed (16/16); strict TypeScript passed; full Vitest passed (110 files, 1,757 tests); production build passed in 6.14 seconds. The build retained the known non-fatal warning about the 879.56 kB main chunk. Visual verification passed in the sample project at the Yarn Licensing Lab: offer inputs, economics cards, negative-net watch-out, and existing tab layout rendered without runtime or layout errors. Screenshot: `chk-100-yarn-licensing.webp`.
+
+Boundaries: the cycle added regression evidence and did not alter royalty calculations because the reviewer-proposed implementation was already present. Remaining i18n dynamic prose, open reviewer findings, and live GitHub issue/PR status remain separate work.
+
+
+## CHK-101 — Pattern Bundle partner-outcome completion (2026-08-17)
+
+Fresh market research used a non-repeated competitor set: Airtable, Bonsai, and Sortly. The research is saved at `/home/ubuntu/research/competitors-session-101-record-room-and-operations.md`. It confirmed a differentiation opportunity around a knitwear-specific, local-first record room, but the reviewer-only rule prevented inventing a new tab without a reviewer proposal.
+
+The reviewer-proposed Pattern Bundle gap was already partially closed: the card collected partner patterns, persisted them through the project-scoped storage seam, and the analyzer used each partner’s monthly-sales input. This cycle completed the end-to-end surface by adding a localized five-language **pattern-by-pattern outcome table** at realistic sales. It exposes each collected pattern’s share, net take, solo baseline, and gain/loss, making the partner inputs visible and decision-useful without changing coalition calculations.
+
+Verification: strict TypeScript passed; focused Pattern Bundle and locale-parity tests passed (54/54); full Vitest passed (110 files, 1,757 tests); production build passed in 6.51 seconds. The existing non-fatal warnings remain: dynamic/static import overlap and a main chunk above 500 kB. Visual verification passed at the sample project’s Bundle Lab: three partner patterns rendered, the outcome table showed all three rows, and no runtime or layout errors appeared. Evidence screenshot: `docs/verification/chk-101-pattern-bundle.webp`.
+
+Boundaries: the new table is a reviewer-supported completion of the existing Bundle Lab path, not a new Design Ledger implementation. Remaining dynamic-prose i18n work, unresolved reviewer backlog, and live GitHub issue/PR status remain open.
