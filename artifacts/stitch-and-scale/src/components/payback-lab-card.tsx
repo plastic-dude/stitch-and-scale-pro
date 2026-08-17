@@ -36,8 +36,7 @@ import {
 import { projectStorage } from "@/lib/storage-lib";
 import type { PatternProject } from "@/lib/grading-engine";
 import { EXPENSE_CATEGORY_LABELS } from "@/lib/design-ledger";
-import { SALE_CHANNEL_LABELS } from "@/lib/receipt-lab";
-import { fmtMoney } from "@/lib/receipt-lab";
+import { analyzeReceiptFees, fmtMoney, SALE_CHANNEL_LABELS, type SavedSale } from "@/lib/receipt-lab";
 
 const DESIGN_LEDGER_LEGACY_KEY = "stitch-and-scale-designledger-v1";
 const RECEIPT_LEGACY_KEY = "stitch-and-scale-receipt-v1";
@@ -64,31 +63,70 @@ interface LedgerStored {
   }>;
 }
 
+export interface ReceiptStoredRow {
+  id?: string;
+  kind?: string;
+  date?: string;
+  createdAt?: string;
+  patternName?: string;
+  saleType?: string;
+  items?: Array<{ name?: string; qty?: number; unitPrice?: number }>;
+  fees?: {
+    platformCommissionPct?: number;
+    processingPct?: number;
+    processingFlat?: number;
+    taxPct?: number;
+    shippingCharged?: number;
+    shippingCost?: number;
+    platformFee?: number;
+    processingFee?: number;
+    taxAmount?: number;
+  };
+  grossTotal?: number;
+  profit?: number;
+}
+
 interface ReceiptStored {
   brand?: { businessName?: string; currency?: string };
-  ledger?: Array<{
-    id?: string;
-    kind?: string;
-    date?: string;
-    createdAt?: string;
-    patternName?: string;
-    saleType?: string;
-    items?: Array<{ name?: string; qty?: number; unitPrice?: number }>;
-    fees?: {
-      platformCommissionPct?: number;
-      processingPct?: number;
-      processingFlat?: number;
-      taxPct?: number;
-      shippingCharged?: number;
-      shippingCost?: number;
-      platformFee?: number;
-      processingFee?: number;
-      taxAmount?: number;
-    };
-    grossTotal?: number;
-    profit?: number;
-  }>;
+  ledger?: ReceiptStoredRow[];
   ts?: number;
+}
+
+/*
+  Keep the old output-shaped rows readable, but normalize the exact input shape
+  written by Receipt Lab through its canonical fee analyzer. This retires the
+  silent $0-fee path without changing stored data or the calculation contract.
+*/
+export function resolveStoredReceiptFees(row: ReceiptStoredRow): number {
+  const f = row.fees ?? {};
+  const hasResolvedOutputFees = typeof f.platformFee === "number" || typeof f.processingFee === "number" || typeof f.taxAmount === "number";
+  if (hasResolvedOutputFees) {
+    return (f.platformFee ?? 0) + (f.processingFee ?? 0) + (f.taxAmount ?? 0) + (f.shippingCost ?? 0);
+  }
+  const savedSale = {
+    id: row.id ?? "",
+    kind: (row.kind === "refund" ? "refund" : "receipt") as SavedSale["kind"],
+    docNumber: "",
+    customerName: "",
+    date: row.date ?? (row.createdAt ?? "").slice(0, 10),
+    channel: "other" as SavedSale["channel"],
+    saleType: (row.saleType === "custom-knit" || row.saleType === "item" ? row.saleType : "pattern") as SavedSale["saleType"],
+    patternName: row.patternName ?? "",
+    items: (row.items ?? []).map((item) => ({ name: item.name ?? "", qty: item.qty ?? 0, unitPrice: item.unitPrice ?? 0 })),
+    fees: {
+      platformCommissionPct: f.platformCommissionPct ?? 0,
+      processingPct: f.processingPct ?? 0,
+      processingFlat: f.processingFlat ?? 0,
+      taxPct: f.taxPct ?? 0,
+      shippingCharged: f.shippingCharged ?? 0,
+      shippingCost: f.shippingCost ?? 0,
+    },
+    depositReceived: 0,
+    note: "",
+    createdAt: row.createdAt ?? row.date ?? "",
+  } satisfies SavedSale;
+  const breakdown = analyzeReceiptFees(savedSale);
+  return Math.round((breakdown.grossTotal - breakdown.netAfterFees) * 100) / 100;
 }
 
 interface PaybackStored {
@@ -130,9 +168,7 @@ function readReceipts(project: PatternProject): { currency: string; sales: Desig
     for (const row of ledger) {
       const kind = row.kind;
       if (kind !== "receipt" && kind !== "refund") continue;
-      const f = row.fees ?? {};
-      const feesTotal =
-        (f.platformFee ?? 0) + (f.processingFee ?? 0) + (f.taxAmount ?? 0) + (f.shippingCost ?? 0);
+      const feesTotal = resolveStoredReceiptFees(row);
       const eff = kind === "refund" ? -1 : 1;
       const gross = typeof row.grossTotal === "number" ? row.grossTotal : eff * 0;
       sales.push({
