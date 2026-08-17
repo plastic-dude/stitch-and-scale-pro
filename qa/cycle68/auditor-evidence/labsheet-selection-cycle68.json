@@ -1,0 +1,226 @@
+{
+  "results": [
+    {
+      "label": "android-360",
+      "width": 360,
+      "lab": "Brag Cards",
+      "triggerRect": {
+        "x": 16,
+        "y": 533,
+        "width": 328,
+        "height": 44
+      },
+      "dialogCount": 1,
+      "dialogRect": {
+        "x": 0,
+        "y": 289,
+        "width": 418,
+        "height": 640
+      },
+      "active": [
+        "Brag Cards"
+      ],
+      "contentVisible": {
+        "top": 65,
+        "bottom": 1839.65625,
+        "height": 1774.65625
+      },
+      "file": "screenshots/labsheet-selection--android-360--brag-cards.png"
+    },
+    {
+      "label": "android-360",
+      "width": 360,
+      "lab": "Payback Lab",
+      "triggerRect": {
+        "x": 16,
+        "y": 533,
+        "width": 328,
+        "height": 44
+      },
+      "dialogCount": 1,
+      "dialogRect": {
+        "x": 0,
+        "y": 160,
+        "width": 360,
+        "height": 640
+      },
+      "active": [
+        "Payback Lab",
+        "All patterns (0)"
+      ],
+      "contentVisible": {
+        "top": 65,
+        "bottom": 1299,
+        "height": 1234
+      },
+      "file": "screenshots/labsheet-selection--android-360--payback-lab.png"
+    },
+    {
+      "label": "iphone-390",
+      "width": 390,
+      "lab": "Brag Cards",
+      "triggerRect": {
+        "x": 16,
+        "y": 453,
+        "width": 358,
+        "height": 44
+      },
+      "dialogCount": 1,
+      "dialogRect": {
+        "x": 0,
+        "y": 229.8125,
+        "width": 418,
+        "height": 675.1875
+      },
+      "active": [
+        "Brag Cards"
+      ],
+      "contentVisible": {
+        "top": 65,
+        "bottom": 1751.65625,
+        "height": 1686.65625
+      },
+      "file": "screenshots/labsheet-selection--iphone-390--brag-cards.png"
+    },
+    {
+      "label": "iphone-390",
+      "width": 390,
+      "lab": "Payback Lab",
+      "triggerRect": {
+        "x": 16,
+        "y": 453,
+        "width": 358,
+        "height": 44
+      },
+      "dialogCount": 1,
+      "dialogRect": {
+        "x": 0,
+        "y": 168.8125,
+        "width": 390,
+        "height": 675.1875
+      },
+      "active": [
+        "Payback Lab",
+        "All patterns (0)"
+      ],
+      "contentVisible": {
+        "top": 65,
+        "bottom": 1219,
+        "height": 1154
+      },
+      "file": "screenshots/labsheet-selection--iphone-390--payback-lab.png"
+    },
+    {
+      "label": "iphone-430",
+      "width": 430,
+      "lab": "Brag Cards",
+      "triggerRect": {
+        "x": 16,
+        "y": 393,
+        "width": 398,
+        "height": 44
+      },
+      "dialogCount": 1,
+      "dialogRect": {
+        "x": 0,
+        "y": 186.40625,
+        "width": 430,
+        "height": 745.59375
+      },
+      "active": [
+        "Brag Cards"
+      ],
+      "contentVisible": {
+        "top": 65,
+        "bottom": 1711.65625,
+        "height": 1646.65625
+      },
+      "file": "screenshots/labsheet-selection--iphone-430--brag-cards.png"
+    },
+    {
+      "label": "iphone-430",
+      "width": 430,
+      "lab": "Payback Lab",
+      "triggerRect": {
+        "x": 16,
+        "y": 393,
+        "width": 398,
+        "height": 44
+      },
+      "dialogCount": 1,
+      "dialogRect": {
+        "x": 0,
+        "y": 186.40625,
+        "width": 430,
+        "height": 745.59375
+      },
+      "active": [
+        "Payback Lab",
+        "All patterns (0)"
+      ],
+      "contentVisible": {
+        "top": 65,
+        "bottom": 1119,
+        "height": 1054
+      },
+      "file": "screenshots/labsheet-selection--iphone-430--payback-lab.png"
+    },
+    {
+      "label": "tablet-768",
+      "width": 768,
+      "lab": "Brag Cards",
+      "triggerRect": {
+        "x": 32,
+        "y": 401,
+        "width": 704,
+        "height": 44
+      },
+      "dialogCount": 1,
+      "dialogRect": {
+        "x": 0,
+        "y": 204.8125,
+        "width": 768,
+        "height": 819.1875
+      },
+      "active": [
+        "Brag Cards"
+      ],
+      "contentVisible": {
+        "top": 65,
+        "bottom": 1307.65625,
+        "height": 1242.65625
+      },
+      "file": "screenshots/labsheet-selection--tablet-768--brag-cards.png"
+    },
+    {
+      "label": "tablet-768",
+      "width": 768,
+      "lab": "Payback Lab",
+      "triggerRect": {
+        "x": 32,
+        "y": 401,
+        "width": 704,
+        "height": 44
+      },
+      "dialogCount": 1,
+      "dialogRect": {
+        "x": 0,
+        "y": 204.8125,
+        "width": 768,
+        "height": 819.1875
+      },
+      "active": [
+        "Payback Lab",
+        "All patterns (0)"
+      ],
+      "contentVisible": {
+        "top": 65,
+        "bottom": 960,
+        "height": 895
+      },
+      "file": "screenshots/labsheet-selection--tablet-768--payback-lab.png"
+    }
+  ],
+  "errors": [],
+  "logs": []
+}
