@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { analyzeYarnPool, DEFAULT_POOL, type YarnPoolInput, type YarnColorway } from './yarn-pool-lab';
+import { analyzeYarnPool, DEFAULT_POOL, DEFAULT_COLORWAY, type YarnPoolInput, type YarnColorway, type PoolMember } from './yarn-pool-lab';
 
 function colorway(overrides: Partial<YarnColorway> = {}): YarnColorway {
   return {
@@ -135,5 +135,57 @@ describe('Yarn Pool Lab — verdict ladder', () => {
     const r = analyzeYarnPool(pool({ colorways: [colorway({ gramsNeeded: 0 })] }));
     expect(r.totalCost).toBe(0);
     expect(r.totalSavings).toBe(0);
+  });
+});
+
+// CHK-117 regression — storage-seam hydration: a stale pool blob (missing
+// newer fields, or colorways missing per-field defaults) hydrates over the
+// canonical pool defaults so nothing reaches an input as undefined.
+describe('stored-pool hydration convention (CHK-117)', () => {
+  it('hydrates a partial colorway over DEFAULT_COLORWAY defaults', () => {
+    // Import path mirrors the card: loadStored folds DEFAULT_COLORWAY /
+    // DEFAULT_POOL into any colorway missing keys.
+    const colorways = [{ name: 'Dusty rose' }] as YarnColorway[];
+    const folded = colorways.map(cw => ({ ...DEFAULT_COLORWAY, ...cw }));
+    expect(folded[0].name).toBe('Dusty rose');
+    expect(folded[0].gramsNeeded).toBe(2500);
+    expect(folded[0].retailPricePerKg).toBe(45);
+    expect(folded[0].millMinPerColorway).toBe(20000);
+  });
+
+  it('backfills top-level pool fields missing from a stale blob', () => {
+    const stale = {
+      colorways: [DEFAULT_COLORWAY],
+      members: [{ name: 'Sweater', gramsNeeded: 900 }],
+    } as YarnPoolInput;
+    const folded: YarnPoolInput = {
+      ...DEFAULT_POOL,
+      ...stale,
+      colorways: (stale.colorways as YarnColorway[]).map(cw => ({ ...DEFAULT_COLORWAY, ...cw })),
+      members: (stale.members as PoolMember[]).map(m => ({ name: '', gramsNeeded: 0, ...m })),
+    };
+    expect(folded.productionRunwayMonths).toBe(6);
+    expect(folded.monthlyRevenue).toBe(1400);
+    expect(folded.stashGrams).toBe(400);
+    expect(folded.groupBuyAvailable).toBe(true);
+    expect(folded.members[0].name).toBe('Sweater');
+  });
+
+  it('carries the user override values from the blob', () => {
+    const stale = {
+      ...DEFAULT_POOL,
+      monthlyRevenue: 3000,
+      productionRunwayMonths: 12,
+      colorways: [{ ...DEFAULT_COLORWAY, retailPricePerKg: 60 }],
+    } as YarnPoolInput;
+    const folded: YarnPoolInput = {
+      ...DEFAULT_POOL,
+      ...stale,
+      colorways: (stale.colorways as YarnColorway[]).map(cw => ({ ...DEFAULT_COLORWAY, ...cw })),
+      members: [...stale.members],
+    };
+    expect(folded.monthlyRevenue).toBe(3000);
+    expect(folded.productionRunwayMonths).toBe(12);
+    expect(folded.colorways[0].retailPricePerKg).toBe(60);
   });
 });

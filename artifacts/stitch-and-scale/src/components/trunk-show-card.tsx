@@ -35,6 +35,7 @@ import {
   LicenseTierId,
   LicenseConfig,
   TrunkShowInput,
+  hydrateTrunkShowStored,
 } from '@/lib/trunk-show-planner';
 import { PatternProject } from '@/lib/grading-engine';
 import { Truck, DollarSign, Copy, CheckCircle2, ClipboardCopy, ListChecks, ScrollText, CalendarDays } from 'lucide-react';
@@ -46,13 +47,11 @@ interface StoredState {
 }
 
 function loadStored(handle: ProjectStorageHandle<StoredState>): StoredState {
-  try {
-    const parsed = handle.read();
-    if (parsed && typeof parsed === 'object') return parsed as StoredState;
-  } catch {
-    /* storage unreadable — start fresh */
-  }
-  return {};
+  // Storage-seam convention (CHK-117): defaults are folded in by the shared
+  // lib helper so the card and the planner never drift apart.
+  const raw = handle.read();
+  const h = hydrateTrunkShowStored(raw);
+  return { trunk: h.trunk, licensePrices: h.licensePrices, licenseConfig: h.licenseConfig };
 }
 
 function numField(value: string): number {

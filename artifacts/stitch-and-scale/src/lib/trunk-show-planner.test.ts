@@ -7,6 +7,7 @@ import {
   DEFAULT_LICENSE_PRICES,
   LICENSE_TIERS,
   TrunkShowInput,
+  hydrateTrunkShowStored,
 } from './trunk-show-planner';
 
 const baseInput: TrunkShowInput = {
@@ -215,5 +216,48 @@ describe('license terms & offer', () => {
     const letter = generateLicenseOffer({ designerName: 'Stitch & Scale', patternRequired: true, machineAllowed: false, resaleAllowed: true }, rows, 'Calyx Pullover');
     expect(letter).toMatch(/Calyx Pullover/);
     expect(letter).toMatch(/\$40/);
+  });
+});
+
+// CHK-117 regression — storage-seam hydration: a stale or partial stored blob
+// must fold the canonical defaults so no field reaches a controlled input as
+// undefined, and shape additions get backfilled.
+describe('stored-blob hydration convention (CHK-117)', () => {
+  it('hydrates an empty blob into full canonical defaults', () => {
+    const h = hydrateTrunkShowStored({});
+    expect(h.trunk?.visitorsPerDay).toBe(10);
+    expect(h.trunk?.tryOnRate).toBe(0.35);
+    expect(h.trunk?.attending).toBe(true);
+    expect(h.licensePrices.annual_limited).toBe(20);
+    expect(h.licenseConfig.designerName).toBe('');
+    expect(h.licenseConfig.resaleAllowed).toBe(true);
+  });
+
+  it('hydrates null/undefined input into full canonical defaults', () => {
+    expect(hydrateTrunkShowStored(null).trunk?.sampleYards).toBe(1800);
+    expect(hydrateTrunkShowStored(undefined).trunk?.trunkDays).toBe(14);
+  });
+
+  it('merges a partial blob over defaults instead of carrying dead keys', () => {
+    const h = hydrateTrunkShowStored({
+      trunk: { visitorsPerDay: 42, tryOnRate: 0.5 },
+    } as never);
+    expect(h.trunk?.visitorsPerDay).toBe(42);
+    expect(h.trunk?.tryOnRate).toBe(0.5);
+    // Fields the blob never knew about still get their defaults.
+    expect(h.trunk?.sampleYards).toBe(1800);
+    expect(h.trunk?.hourlyRate).toBe(25);
+    expect(h.trunk?.attending).toBe(true);
+  });
+
+  it('backfills license tiers and config missing from a stale blob', () => {
+    const h = hydrateTrunkShowStored({
+      licensePrices: { lifetime_single: 99 },
+      licenseConfig: { designerName: 'Anna' },
+    } as never);
+    expect(h.licensePrices.annual_limited).toBe(20);
+    expect(h.licensePrices.lifetime_single).toBe(99);
+    expect(h.licenseConfig.designerName).toBe('Anna');
+    expect(h.licenseConfig.machineAllowed).toBe(false);
   });
 });

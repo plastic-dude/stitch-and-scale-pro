@@ -50,7 +50,26 @@ interface StoredState {
 function loadStored(handle: ProjectStorageHandle<StoredState>): StoredState {
   try {
     const parsed = handle.read();
-    if (parsed?.input && Array.isArray((parsed as StoredState).input?.colorways)) return parsed as StoredState;
+    if (parsed?.input && Array.isArray((parsed as StoredState).input?.colorways)) {
+      // Storage-seam convention (CHK-117): fold the canonical defaults into a
+      // stale/partial pool blob — colorways and members carry full defaults for
+      // any key the blob is missing, and top-level pool fields are backfilled.
+      const colorways = (parsed.input.colorways as YarnColorway[]).map((cw) => ({
+        ...DEFAULT_COLORWAY,
+        ...cw,
+      }));
+      const members = Array.isArray(parsed.input.members)
+        ? (parsed.input.members as PoolMember[]).map((m) => ({ ...m }))
+        : [...DEFAULT_POOL.members];
+      return {
+        input: {
+          ...DEFAULT_POOL,
+          ...parsed.input,
+          colorways,
+          members,
+        },
+      };
+    }
   } catch {
     /* storage unreadable — start fresh */
   }

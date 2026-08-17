@@ -463,3 +463,64 @@ export function generateLicenseOffer(
     name,
   ].join('\n');
 }
+
+// Storage-seam hydration (CHK-117): fold canonical defaults into a stale or
+// partial stored blob so no field ever reaches a controlled input as
+// undefined, and fields added to the shape later are backfilled.
+export interface TrunkShowStoredState {
+  trunk?: Partial<TrunkShowInput>;
+  licensePrices?: Partial<Record<LicenseTierId, number>>;
+  licenseConfig?: Partial<LicenseConfig>;
+}
+export const DEFAULT_LICENSE_CONFIG: LicenseConfig = {
+  designerName: '',
+  patternRequired: true,
+  machineAllowed: false,
+  resaleAllowed: true,
+};
+export function hydrateTrunkShowStored(
+  raw: unknown,
+): TrunkShowStoredState {
+  if (raw && typeof raw === 'object') {
+    const r = raw as Record<string, unknown>;
+    const trunk = r.trunk && typeof r.trunk === 'object'
+      ? { ...TRUNK_SHOW_INPUT_DEFAULTS, ...(r.trunk as Partial<TrunkShowInput>) }
+      : { ...TRUNK_SHOW_INPUT_DEFAULTS };
+    const licensePrices = r.licensePrices && typeof r.licensePrices === 'object'
+      ? { ...DEFAULT_LICENSE_PRICES, ...(r.licensePrices as Partial<Record<LicenseTierId, number>>) }
+      : { ...DEFAULT_LICENSE_PRICES };
+    const licenseConfig = r.licenseConfig && typeof r.licenseConfig === 'object'
+      ? { ...DEFAULT_LICENSE_CONFIG, ...(r.licenseConfig as Partial<LicenseConfig>) }
+      : { ...DEFAULT_LICENSE_CONFIG };
+    return { trunk, licensePrices, licenseConfig };
+  }
+  return {
+    trunk: { ...TRUNK_SHOW_INPUT_DEFAULTS },
+    licensePrices: { ...DEFAULT_LICENSE_PRICES },
+    licenseConfig: { ...DEFAULT_LICENSE_CONFIG },
+  };
+}
+
+// Canonical defaults for every TrunkShowInput field — the values the card's
+// input states fall back to at render time.
+export const TRUNK_SHOW_INPUT_DEFAULTS: TrunkShowInput = {
+  eventDate: '',
+  visitorsPerDay: 10,
+  tryOnRate: 0.35,
+  conversionRate: 0.3,
+  shopSplit: 0.3,
+  copiesPerSale: 1,
+  sampleYards: 1800,
+  sampleCost: 105,
+  shippingCost: 30,
+  travelCost: 50,
+  eventCost: 90,
+  attending: true,
+  attendingHours: 8,
+  hourlyRate: 25,
+  patternPrice: 8,
+  channelFeeRate: 0,
+  trunkDays: 14,
+  yarnSales: 1200,
+  yarnShopSplit: 0.5,
+};
