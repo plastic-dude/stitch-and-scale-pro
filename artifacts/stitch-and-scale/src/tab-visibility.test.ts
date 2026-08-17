@@ -65,6 +65,29 @@ describe("CHK-125 — workspace tab strip discoverability contract", () => {
     expect(navWrap, "navigator wrapper must carry lg:hidden").not.toBeNull();
   });
 
+  it("mobile navigator must NOT be a descendant of the hidden desktop TabsList (QA #64)", () => {
+    // QA cycles 60+61: the mobile grouped navigator was nested INSIDE
+    // <TabsList className="hidden lg:flex">, so at 360/390/430/768px the
+    // entire navigator (including the All Labs 44px sheet trigger) was
+    // display:none and late labs were unreachable by touch. CHK-127 moved
+    // the navigator OUT of the TabsList; this guard pins that order so the
+    // defect class cannot regress silently.
+    // Strip JSX block comments first — the CHK-127 comment quotes the old
+    // TabsList markup and must not fake a span.
+    const source = read("src/pages/project-workspace.tsx").replace(/\/\*[\s\S]*?\*\//g, "");
+    const listOpen = source.indexOf('<TabsList className="hidden lg:flex');
+    const listClose = source.indexOf("</TabsList>", listOpen);
+    const navWrap = source.indexOf('<div className="lg:hidden mb-2">');
+    expect(listOpen, "desktop TabsList must exist").toBeGreaterThan(-1);
+    expect(listClose, "TabsList must close").toBeGreaterThan(listOpen);
+    expect(navWrap, "mobile navigator wrapper must exist").toBeGreaterThan(-1);
+    expect(
+      navWrap < listOpen || navWrap > listClose,
+      "navigator wrapper must be OUTSIDE the hidden lg:flex TabsList: navigator at " +
+        navWrap + ", list span [" + listOpen + ", " + listClose + "]",
+    ).toBe(true);
+  });
+
   it("chip count labels match the registry's real per-group entry counts", () => {
     // Cheap parity check: the workspace page derives chip labels from
     // TAB_GROUPS frequency, but the displayed number must equal the number of

@@ -436,7 +436,13 @@ function StepCompletion({ onFinish }: { onFinish: () => void }) {
 export default function OnboardingOverlay() {
   const { unit, setUnit, sizingStandard, setSizingStandard, setOnboardingCompleted, t, language } = useSettings();
   const { projects, createProject } = useProjects();
-  const [, setLocation] = useLocation();
+  const [location, setLocation] = useLocation();
+
+  // CHK-127 — remember the entry route the overlay mounted on. When the
+  // visitor skips setup from a deep link (e.g. the demo /project/:id),
+  // they must land back on the page they asked for instead of being
+  // rerouted to Draft a Pattern and losing the link entirely.
+  const [entryRoute] = useState(() => location);
 
   const [step, setStep] = useState(1);
   const stepKey: 'workflow.overlay.begin' | 'workflow.overlay.continue' = step === 1 ? 'workflow.overlay.begin' : 'workflow.overlay.continue';
@@ -464,9 +470,11 @@ export default function OnboardingOverlay() {
   // FIX #33 (QA, Aug 2026): skipping setup from a deep link (e.g. /project/:id with a
   // missing id) used to strand new users on "Project Not Found" with no escape, because
   // the overlay dismissed without changing location and without creating any project.
-  // Now skip always ends in a live destination: if the workspace is empty, seed the
-  // sample projects and open the sample sweater; otherwise hand the user to Draft a
-  // Pattern (/project/new), which can never show "Project Not Found".
+  // CHK-127 — skipping also used to DROP the requested deep link: on a fresh context the
+  // demo project seeds synchronously (ProjectsContext), so `hasProject` was already true
+  // and skip rerouted to /project/new. The visitor who opened the demo link never saw the
+  // demo — reproducible at every mobile width. Now skip preserves the entry route the
+  // overlay mounted on; only a plain root entry falls back to Draft a Pattern.
   const skipOnboarding = () => {
     setUnit(localUnit);
     setSizingStandard(localStandard);
@@ -476,10 +484,10 @@ export default function OnboardingOverlay() {
     if (!hasProject) {
       createProject({ ...SAMPLE_CREW_NECK_SWEATER, createdAt: now, updatedAt: now });
       createProject({ ...SAMPLE_BASIC_BEANIE, createdAt: now, updatedAt: now });
-      setLocation(`/project/${SAMPLE_CREW_NECK_SWEATER.id}`);
-    } else {
-      setLocation('/project/new');
     }
+    // Preserve the deep link the visitor opened: skip returns to the entry route
+    // unless it was the app root, which has no content without a project flow.
+    setLocation(/^\/project\//.test(entryRoute) ? entryRoute : '/project/new');
   };
 
   const goNext = () => {

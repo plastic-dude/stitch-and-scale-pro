@@ -1027,9 +1027,15 @@ export default function ProjectWorkspace() {
             );
           })}
         </div>
-        {/* CHK-120: mobile/tablet use the grouped navigator; the flat strip stays
-            as the desktop (accessibility) surface, hidden below 1024px. */}
-        <TabsList className="hidden lg:flex lg:flex-nowrap w-full gap-1 bg-card border border-border p-1 h-auto overflow-x-auto">
+        {/* CHK-120 / CHK-127 (QA #64, cycles 60+61): the mobile grouped
+            navigator must live OUTSIDE the desktop-only TabsList. It was
+            previously nested inside <TabsList className="hidden lg:flex">,
+            which made the entire navigator display:none below 1024px —
+            the All Labs trigger measured 0x0 at 360/390/430/768px and late
+            labs (Intl Pricing, Payback, Brag Cards) were unreachable by
+            touch. TabNavigator is self-contained (Sheet/Dropdown +
+            activeTab/onTabChange props), so the move has no semantic
+            side effect on the Radix Tabs primitives. */}
         <div className="lg:hidden mb-2">
           <TabNavigator
             activeTab={activeTab}
@@ -1038,6 +1044,7 @@ export default function ProjectWorkspace() {
             copy={NAVIGATOR_COPY[language] ?? NAVIGATOR_COPY.en}
           />
         </div>
+        <TabsList className="hidden lg:flex lg:flex-nowrap w-full gap-1 bg-card border border-border p-1 h-auto overflow-x-auto">
 
         {TAB_REGISTRY.map((tab) => {
               const localizedLabel = getWorkspaceTabLabel(language, tab.value, ({

@@ -33,6 +33,23 @@ function gateShowsOverlay(location: string, onboardingCompleted: boolean): boole
   return onPublicSurface ? false : true
 }
 
+/**
+ * CHK-127 — skipOnboarding deep-link preservation regression suite.
+ * Live acceptance at 360px (also reproducible at 390/430/768 in a fresh
+ * context with different timing) found that skipping the overlay from the
+ * demo /project/:id deep link rerouted to /project/new: the demo project
+ * seeds synchronously in ProjectsContext, so hasProject was already true
+ * and the visitor never saw the demo they requested. Skip now returns to
+ * the entry route the overlay mounted on.
+ */
+
+const ONBOARDING_SRC = readFileSync(join(__dirname, 'pages/onboarding.tsx'), 'utf8')
+
+function skipRoutesTo(entryRoute: string): string {
+  const isProjectEntry = /^\/project\//.test(entryRoute)
+  return isProjectEntry ? entryRoute : '/project/new'
+}
+
 describe('Onboarding overlay route gate (CHK-126)', () => {
   it('blocks the app root for a cold visitor (no completed onboarding)', () => {
     expect(gateShowsOverlay('/', false)).toBe(true)
@@ -79,5 +96,45 @@ describe('Onboarding overlay route gate (CHK-126)', () => {
     expect(APP_SRC).toContain("location === '/project/new'")
     expect(APP_SRC).toContain("location === '/project/import-csv'")
     expect(APP_SRC).toContain('/^\\/project\\/[\\w-]+$/.test(location)')
+  })
+})
+
+describe('Onboarding skip deep-link preservation (CHK-127)', () => {
+  it('skipping from the demo deep link lands back on the demo deep link', () => {
+    expect(skipRoutesTo('/project/mss5osqd88j6fdyvtdu')).toBe('/project/mss5osqd88j6fdyvtdu')
+  })
+
+  it('skipping from any /project/:id entry preserves that id', () => {
+    for (const id of ['some-new-pattern-id', 'user-2026-aug', 'abc123']) {
+      expect(skipRoutesTo(`/project/${id}`)).toBe(`/project/${id}`)
+    }
+  })
+
+  it('skipping from a plain app-root entry falls back to Draft a Pattern', () => {
+    expect(skipRoutesTo('/')).toBe('/project/new')
+  })
+
+  it('skipping from /project/import-csv preserves the import flow (it is a project entry route)', () => {
+    expect(skipRoutesTo('/project/import-csv')).toBe('/project/import-csv')
+  })
+
+  it('source: skipOnboarding resolves setLocation from the entry route, never from a stale branch (QA #64)', () => {
+    // The defect: skipOnboarding's else branch called setLocation('/project/new')
+    // even when the visitor opened a /project/:id deep link. Pin that the skip
+    // handler now routes through the captured entry route regex.
+    const skipBody = ONBOARDING_SRC.slice(
+      ONBOARDING_SRC.indexOf('const skipOnboarding'),
+      ONBOARDING_SRC.indexOf('const skipOnboarding') + 900,
+    )
+    expect(skipBody).toContain('/^\\/project\\//.test(entryRoute)')
+    // The empty-workspace seeding still guarantees a live destination — but
+    // the final setLocation must come from the entry route, not the sample id.
+    const finalSetLocation = skipBody.match(/setLocation\([^)]*entryRoute[^)]*\)/)
+    expect(finalSetLocation, 'skipOnboarding must call setLocation with the entry route').not.toBeNull()
+  })
+
+  it('source: the overlay still remembers the entry route it mounted on', () => {
+    expect(ONBOARDING_SRC).toContain('const [entryRoute]')
+    expect(ONBOARDING_SRC).toContain('useState(() => location)')
   })
 })
