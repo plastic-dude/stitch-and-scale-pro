@@ -10,7 +10,14 @@ export const LANGUAGE_OPTIONS: Array<{ code: LanguageCode; label: string; native
   { code: 'pt', label: 'Portuguese', nativeLabel: 'Português' },
 ];
 
-const SUPPORTED_CODES = new Set<LanguageCode>(LANGUAGE_OPTIONS.map(({ code }) => code));
+// CHK-118/122: exported so stateless output modules (PDF renderer) can clamp
+// external or stored locale values to a supported language before emitting
+// document metadata (e.g. <html lang="...">) or label lookups.
+export const SUPPORTED_CODES = new Set<LanguageCode>(LANGUAGE_OPTIONS.map(({ code }) => code));
+
+export function isValidLanguageCode(code: string): code is LanguageCode {
+  return SUPPORTED_CODES.has(code as LanguageCode);
+}
 
 export function detectBrowserLanguage(languages: readonly string[] = []): LanguageCode {
   for (const candidate of languages) {

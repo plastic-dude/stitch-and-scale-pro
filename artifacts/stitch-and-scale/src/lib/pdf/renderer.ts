@@ -11,6 +11,7 @@
 import type { ResolvedTheme } from './themes';
 import type { PatternProject, GradingResult, GradedSection, SizeKey } from '@/lib/grading-engine';
 import { ALL_SIZES } from '@/lib/grading-engine';
+import { isValidLanguageCode } from '@/lib/i18n';
 import { getPdfLabels } from './labels';
 
 export interface RenderContext {
@@ -33,8 +34,13 @@ export interface RenderContext {
 // ─── Document Entry Point ─────────────────────────────────────────────────────
 
 export function renderDocument(ctx: RenderContext): string {
-  const { theme, pattern, gradingResult, includeCover = true, includeGaugeSummary = true, includeNotes = true, customLogo, locale = 'en' } = ctx;
+  const { theme, pattern, gradingResult, includeCover = true, includeGaugeSummary = true, includeNotes = true, customLogo, locale = 'en', templateId } = ctx;
   const labels = getPdfLabels(locale);
+  // CHK-122: document language must follow the export locale — a German (or
+  // de/fr/es/pt) pattern export previously rendered <html lang="en">, which is
+  // a silent localization lie: screen readers and print pipelines would treat
+  // localized content as English. Labels already flow through getPdfLabels.
+  const safeLang = isValidLanguageCode(locale) ? locale : 'en';
 
   const coverHtml  = includeCover ? renderCover(theme, pattern, customLogo, labels) : '';
   const tocHtml    = gradingResult.length > 0 ? renderTOC(theme, gradingResult, includeGaugeSummary, labels) : '';
@@ -42,7 +48,7 @@ export function renderDocument(ctx: RenderContext): string {
   const sectionsHtml  = gradingResult.map((s, i) => renderSection(theme, s, pattern, i, labels)).join('');
 
   return `<!DOCTYPE html>
-<html lang="en">
+<html lang="${esc(safeLang)}">
 <head>
 <meta charset="utf-8">
 <title>${esc(pattern.name)}</title>
@@ -70,7 +76,7 @@ ${tocHtml ? `<div class="page">${tocHtml}</div>` : ''}
 ${materialsHtml ? `<div class="page">${materialsHtml}</div>` : ''}
 ${sectionsHtml}
 ${renderFixedFooter(theme, pattern)}
-${renderProvenanceFooter(theme, pattern, gradingResult)}
+${renderProvenanceFooter(theme, pattern, gradingResult, safeLang, templateId ?? 'stitch-and-scale-default')}
 </body>
 </html>`;
 }
