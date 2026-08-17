@@ -434,11 +434,12 @@ function StepCompletion({ onFinish }: { onFinish: () => void }) {
 // ─── Main Overlay ─────────────────────────────────────────────────────────────
 
 export default function OnboardingOverlay() {
-  const { unit, setUnit, sizingStandard, setSizingStandard, setOnboardingCompleted, t } = useSettings();
+  const { unit, setUnit, sizingStandard, setSizingStandard, setOnboardingCompleted, t, language } = useSettings();
   const { projects, createProject } = useProjects();
   const [, setLocation] = useLocation();
 
   const [step, setStep] = useState(1);
+  const stepKey: 'workflow.overlay.begin' | 'workflow.overlay.continue' = step === 1 ? 'workflow.overlay.begin' : 'workflow.overlay.continue';
   const [localUnit, setLocalUnit] = useState<'in' | 'cm'>(unit);
   const [localStandard, setLocalStandard] = useState<SizingStandard>(sizingStandard);
   const [direction, setDirection] = useState<'forward' | 'back'>('forward');
@@ -598,7 +599,7 @@ export default function OnboardingOverlay() {
             className="font-medium text-muted-foreground hover:text-foreground disabled:opacity-30"
           >
             <ChevronLeft className="w-4 h-4 mr-1" />
-            Back
+            {t('workflow.overlay.back')}
           </Button>
 
           <Button
@@ -606,7 +607,7 @@ export default function OnboardingOverlay() {
             onClick={goNext}
             className="rounded-full px-6 font-medium shadow-sm"
           >
-            {step === 1 ? 'Begin' : 'Continue'}
+            {t(stepKey)}
             <ChevronRight className="w-4 h-4 ml-1" />
           </Button>
         </div>
@@ -622,7 +623,7 @@ export default function OnboardingOverlay() {
             className="font-medium text-muted-foreground hover:text-foreground"
           >
             <ChevronLeft className="w-4 h-4 mr-1" />
-            Back
+            {t('workflow.overlay.back')}
           </Button>
         </div>
       )}
