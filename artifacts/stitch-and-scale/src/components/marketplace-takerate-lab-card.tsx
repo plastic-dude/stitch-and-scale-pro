@@ -56,7 +56,7 @@ function NumField({ id, label, value, onChange, min = 0, max, step = 1, suffix }
             const n = parseFloat(e.target.value);
             if (Number.isFinite(n)) onChange(n);
           }}
-          className="text-sm pr-8" />
+          className="text-sm pr-11" />
         {suffix ? <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">{suffix}</span> : null}
       </div>
     </div>
