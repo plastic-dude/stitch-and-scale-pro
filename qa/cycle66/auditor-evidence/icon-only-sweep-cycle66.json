@@ -1,0 +1,918 @@
+{
+  "headers": [
+    {
+      "label": "android-360",
+      "width": 360,
+      "items": [
+        {
+          "text": "Stitch & Scale",
+          "aria": null,
+          "title": null,
+          "rect": {
+            "x": 16,
+            "y": 16,
+            "w": 32,
+            "h": 32
+          },
+          "visible": true
+        },
+        {
+          "text": "Projects",
+          "aria": "Projects",
+          "title": null,
+          "rect": {
+            "x": 131,
+            "y": 10,
+            "w": 44,
+            "h": 44
+          },
+          "visible": true
+        },
+        {
+          "text": "Portfolio",
+          "aria": "Portfolio",
+          "title": null,
+          "rect": {
+            "x": 179,
+            "y": 10,
+            "w": 44,
+            "h": 44
+          },
+          "visible": true
+        },
+        {
+          "text": "Settings",
+          "aria": "Settings",
+          "title": null,
+          "rect": {
+            "x": 227,
+            "y": 10,
+            "w": 44,
+            "h": 44
+          },
+          "visible": true
+        },
+        {
+          "text": "New Project",
+          "aria": "New Project",
+          "title": null,
+          "rect": {
+            "x": 296,
+            "y": 10,
+            "w": 48,
+            "h": 44
+          },
+          "visible": true
+        }
+      ],
+      "overlaps": [],
+      "file": "screenshots/header--android-360__360.png"
+    },
+    {
+      "label": "iphone-390",
+      "width": 390,
+      "items": [
+        {
+          "text": "Stitch & Scale",
+          "aria": null,
+          "title": null,
+          "rect": {
+            "x": 16,
+            "y": 16,
+            "w": 32,
+            "h": 32
+          },
+          "visible": true
+        },
+        {
+          "text": "Projects",
+          "aria": "Projects",
+          "title": null,
+          "rect": {
+            "x": 161,
+            "y": 10,
+            "w": 44,
+            "h": 44
+          },
+          "visible": true
+        },
+        {
+          "text": "Portfolio",
+          "aria": "Portfolio",
+          "title": null,
+          "rect": {
+            "x": 209,
+            "y": 10,
+            "w": 44,
+            "h": 44
+          },
+          "visible": true
+        },
+        {
+          "text": "Settings",
+          "aria": "Settings",
+          "title": null,
+          "rect": {
+            "x": 257,
+            "y": 10,
+            "w": 44,
+            "h": 44
+          },
+          "visible": true
+        },
+        {
+          "text": "New Project",
+          "aria": "New Project",
+          "title": null,
+          "rect": {
+            "x": 326,
+            "y": 10,
+            "w": 48,
+            "h": 44
+          },
+          "visible": true
+        }
+      ],
+      "overlaps": [],
+      "file": "screenshots/header--iphone-390__390.png"
+    },
+    {
+      "label": "iphone-430",
+      "width": 430,
+      "items": [
+        {
+          "text": "Stitch & Scale",
+          "aria": null,
+          "title": null,
+          "rect": {
+            "x": 16,
+            "y": 16,
+            "w": 32,
+            "h": 32
+          },
+          "visible": true
+        },
+        {
+          "text": "Projects",
+          "aria": "Projects",
+          "title": null,
+          "rect": {
+            "x": 201,
+            "y": 10,
+            "w": 44,
+            "h": 44
+          },
+          "visible": true
+        },
+        {
+          "text": "Portfolio",
+          "aria": "Portfolio",
+          "title": null,
+          "rect": {
+            "x": 249,
+            "y": 10,
+            "w": 44,
+            "h": 44
+          },
+          "visible": true
+        },
+        {
+          "text": "Settings",
+          "aria": "Settings",
+          "title": null,
+          "rect": {
+            "x": 297,
+            "y": 10,
+            "w": 44,
+            "h": 44
+          },
+          "visible": true
+        },
+        {
+          "text": "New Project",
+          "aria": "New Project",
+          "title": null,
+          "rect": {
+            "x": 366,
+            "y": 10,
+            "w": 48,
+            "h": 44
+          },
+          "visible": true
+        }
+      ],
+      "overlaps": [],
+      "file": "screenshots/header--iphone-430__430.png"
+    },
+    {
+      "label": "narrow-tablet-640",
+      "width": 640,
+      "items": [
+        {
+          "text": "Stitch & Scale",
+          "aria": null,
+          "title": null,
+          "rect": {
+            "x": 16,
+            "y": 4,
+            "w": 121.890625,
+            "h": 56
+          },
+          "visible": true
+        },
+        {
+          "text": "Local only",
+          "aria": "Local storage status and backup",
+          "title": null,
+          "rect": {
+            "x": 137.890625,
+            "y": 9,
+            "w": 73.171875,
+            "h": 46
+          },
+          "visible": true
+        },
+        {
+          "text": "Projects",
+          "aria": "Projects",
+          "title": null,
+          "rect": {
+            "x": 273.09375,
+            "y": 10,
+            "w": 44,
+            "h": 44
+          },
+          "visible": true
+        },
+        {
+          "text": "Portfolio",
+          "aria": "Portfolio",
+          "title": null,
+          "rect": {
+            "x": 333.09375,
+            "y": 10,
+            "w": 44,
+            "h": 44
+          },
+          "visible": true
+        },
+        {
+          "text": "Settings",
+          "aria": "Settings",
+          "title": null,
+          "rect": {
+            "x": 393.09375,
+            "y": 10,
+            "w": 44,
+            "h": 44
+          },
+          "visible": true
+        },
+        {
+          "text": "New Project",
+          "aria": "New Project",
+          "title": null,
+          "rect": {
+            "x": 486.09375,
+            "y": 10,
+            "w": 137.90625,
+            "h": 44
+          },
+          "visible": true
+        }
+      ],
+      "overlaps": [],
+      "file": "screenshots/header--narrow-tablet-640__640.png"
+    },
+    {
+      "label": "narrow-tablet-767",
+      "width": 767,
+      "items": [
+        {
+          "text": "Stitch & Scale",
+          "aria": null,
+          "title": null,
+          "rect": {
+            "x": 79.5,
+            "y": 4,
+            "w": 121.890625,
+            "h": 56
+          },
+          "visible": true
+        },
+        {
+          "text": "Local only",
+          "aria": "Local storage status and backup",
+          "title": null,
+          "rect": {
+            "x": 201.390625,
+            "y": 9,
+            "w": 73.171875,
+            "h": 46
+          },
+          "visible": true
+        },
+        {
+          "text": "Projects",
+          "aria": "Projects",
+          "title": null,
+          "rect": {
+            "x": 336.59375,
+            "y": 10,
+            "w": 44,
+            "h": 44
+          },
+          "visible": true
+        },
+        {
+          "text": "Portfolio",
+          "aria": "Portfolio",
+          "title": null,
+          "rect": {
+            "x": 396.59375,
+            "y": 10,
+            "w": 44,
+            "h": 44
+          },
+          "visible": true
+        },
+        {
+          "text": "Settings",
+          "aria": "Settings",
+          "title": null,
+          "rect": {
+            "x": 456.59375,
+            "y": 10,
+            "w": 44,
+            "h": 44
+          },
+          "visible": true
+        },
+        {
+          "text": "New Project",
+          "aria": "New Project",
+          "title": null,
+          "rect": {
+            "x": 549.59375,
+            "y": 10,
+            "w": 137.90625,
+            "h": 44
+          },
+          "visible": true
+        }
+      ],
+      "overlaps": [],
+      "file": "screenshots/header--narrow-tablet-767__767.png"
+    },
+    {
+      "label": "tablet-768",
+      "width": 768,
+      "items": [
+        {
+          "text": "Stitch & Scale",
+          "aria": null,
+          "title": null,
+          "rect": {
+            "x": 16,
+            "y": -10,
+            "w": 78.625,
+            "h": 84
+          },
+          "visible": true
+        },
+        {
+          "text": "Local only",
+          "aria": "Local storage status and backup",
+          "title": null,
+          "rect": {
+            "x": 94.625,
+            "y": 9,
+            "w": 73.171875,
+            "h": 46
+          },
+          "visible": true
+        },
+        {
+          "text": "Projects",
+          "aria": "Projects",
+          "title": null,
+          "rect": {
+            "x": 229.828125,
+            "y": 10,
+            "w": 100.140625,
+            "h": 44
+          },
+          "visible": true
+        },
+        {
+          "text": "Portfolio",
+          "aria": "Portfolio",
+          "title": null,
+          "rect": {
+            "x": 345.96875,
+            "y": 10,
+            "w": 102.578125,
+            "h": 44
+          },
+          "visible": true
+        },
+        {
+          "text": "Settings",
+          "aria": "Settings",
+          "title": null,
+          "rect": {
+            "x": 464.546875,
+            "y": 10,
+            "w": 100.546875,
+            "h": 44
+          },
+          "visible": true
+        },
+        {
+          "text": "New Project",
+          "aria": "New Project",
+          "title": null,
+          "rect": {
+            "x": 614.09375,
+            "y": 10,
+            "w": 137.90625,
+            "h": 44
+          },
+          "visible": true
+        }
+      ],
+      "overlaps": [],
+      "file": "screenshots/header--tablet-768__768.png"
+    },
+    {
+      "label": "desktop-1280",
+      "width": 1280,
+      "items": [
+        {
+          "text": "Stitch & Scale",
+          "aria": null,
+          "title": null,
+          "rect": {
+            "x": 16,
+            "y": 16,
+            "w": 170.703125,
+            "h": 32
+          },
+          "visible": true
+        },
+        {
+          "text": "Local only",
+          "aria": "Local storage status and backup",
+          "title": null,
+          "rect": {
+            "x": 383.484375,
+            "y": 17,
+            "w": 99.53125,
+            "h": 30
+          },
+          "visible": true
+        },
+        {
+          "text": "Projects",
+          "aria": "Projects",
+          "title": null,
+          "rect": {
+            "x": 741.828125,
+            "y": 10,
+            "w": 100.140625,
+            "h": 44
+          },
+          "visible": true
+        },
+        {
+          "text": "Portfolio",
+          "aria": "Portfolio",
+          "title": null,
+          "rect": {
+            "x": 857.96875,
+            "y": 10,
+            "w": 102.578125,
+            "h": 44
+          },
+          "visible": true
+        },
+        {
+          "text": "Settings",
+          "aria": "Settings",
+          "title": null,
+          "rect": {
+            "x": 976.546875,
+            "y": 10,
+            "w": 100.546875,
+            "h": 44
+          },
+          "visible": true
+        },
+        {
+          "text": "New Project",
+          "aria": "New Project",
+          "title": null,
+          "rect": {
+            "x": 1126.09375,
+            "y": 10,
+            "w": 137.90625,
+            "h": 44
+          },
+          "visible": true
+        }
+      ],
+      "overlaps": [],
+      "file": "screenshots/header--desktop-1280__1280.png"
+    }
+  ],
+  "small": [
+    {
+      "routeSlug": "projects-root",
+      "items": [],
+      "under44": [],
+      "file": "screenshots/icon-sweep--projects-root__android-360.png"
+    },
+    {
+      "routeSlug": "settings",
+      "items": [],
+      "under44": [],
+      "file": "screenshots/icon-sweep--settings__android-360.png"
+    },
+    {
+      "routeSlug": "portfolio",
+      "items": [],
+      "under44": [],
+      "file": "screenshots/icon-sweep--portfolio__android-360.png"
+    },
+    {
+      "routeSlug": "workspace-sections",
+      "items": [
+        {
+          "i": 94,
+          "tag": "BUTTON",
+          "text": "",
+          "aria": "Delete section Body",
+          "title": null,
+          "role": null,
+          "rect": {
+            "x": 291,
+            "y": 618,
+            "w": 36,
+            "h": 36
+          },
+          "visible": true,
+          "iconOnly": true
+        },
+        {
+          "i": 95,
+          "tag": "BUTTON",
+          "text": "",
+          "aria": "Delete section Sleeve",
+          "title": null,
+          "role": null,
+          "rect": {
+            "x": 291,
+            "y": 704,
+            "w": 36,
+            "h": 36
+          },
+          "visible": true,
+          "iconOnly": true
+        },
+        {
+          "i": 96,
+          "tag": "BUTTON",
+          "text": "",
+          "aria": "Delete section Neckline",
+          "title": null,
+          "role": null,
+          "rect": {
+            "x": 291,
+            "y": 790,
+            "w": 36,
+            "h": 36
+          },
+          "visible": true,
+          "iconOnly": true
+        }
+      ],
+      "under44": [
+        {
+          "i": 94,
+          "tag": "BUTTON",
+          "text": "",
+          "aria": "Delete section Body",
+          "title": null,
+          "role": null,
+          "rect": {
+            "x": 291,
+            "y": 618,
+            "w": 36,
+            "h": 36
+          },
+          "visible": true,
+          "iconOnly": true
+        },
+        {
+          "i": 95,
+          "tag": "BUTTON",
+          "text": "",
+          "aria": "Delete section Sleeve",
+          "title": null,
+          "role": null,
+          "rect": {
+            "x": 291,
+            "y": 704,
+            "w": 36,
+            "h": 36
+          },
+          "visible": true,
+          "iconOnly": true
+        },
+        {
+          "i": 96,
+          "tag": "BUTTON",
+          "text": "",
+          "aria": "Delete section Neckline",
+          "title": null,
+          "role": null,
+          "rect": {
+            "x": 291,
+            "y": 790,
+            "w": 36,
+            "h": 36
+          },
+          "visible": true,
+          "iconOnly": true
+        }
+      ],
+      "file": "screenshots/icon-sweep--workspace-sections__android-360.png"
+    },
+    {
+      "routeSlug": "workspace-all-labs-open",
+      "items": [
+        {
+          "i": 94,
+          "tag": "BUTTON",
+          "text": "",
+          "aria": "Delete section Body",
+          "title": null,
+          "role": null,
+          "rect": {
+            "x": 291,
+            "y": 618,
+            "w": 36,
+            "h": 36
+          },
+          "visible": true,
+          "iconOnly": true
+        },
+        {
+          "i": 95,
+          "tag": "BUTTON",
+          "text": "",
+          "aria": "Delete section Sleeve",
+          "title": null,
+          "role": null,
+          "rect": {
+            "x": 291,
+            "y": 704,
+            "w": 36,
+            "h": 36
+          },
+          "visible": true,
+          "iconOnly": true
+        },
+        {
+          "i": 96,
+          "tag": "BUTTON",
+          "text": "",
+          "aria": "Delete section Neckline",
+          "title": null,
+          "role": null,
+          "rect": {
+            "x": 291,
+            "y": 790,
+            "w": 36,
+            "h": 36
+          },
+          "visible": true,
+          "iconOnly": true
+        }
+      ],
+      "under44": [
+        {
+          "i": 94,
+          "tag": "BUTTON",
+          "text": "",
+          "aria": "Delete section Body",
+          "title": null,
+          "role": null,
+          "rect": {
+            "x": 291,
+            "y": 618,
+            "w": 36,
+            "h": 36
+          },
+          "visible": true,
+          "iconOnly": true
+        },
+        {
+          "i": 95,
+          "tag": "BUTTON",
+          "text": "",
+          "aria": "Delete section Sleeve",
+          "title": null,
+          "role": null,
+          "rect": {
+            "x": 291,
+            "y": 704,
+            "w": 36,
+            "h": 36
+          },
+          "visible": true,
+          "iconOnly": true
+        },
+        {
+          "i": 96,
+          "tag": "BUTTON",
+          "text": "",
+          "aria": "Delete section Neckline",
+          "title": null,
+          "role": null,
+          "rect": {
+            "x": 291,
+            "y": 790,
+            "w": 36,
+            "h": 36
+          },
+          "visible": true,
+          "iconOnly": true
+        }
+      ],
+      "file": "screenshots/icon-sweep--workspace-all-labs-open__android-360.png"
+    },
+    {
+      "routeSlug": "workspace-receipt-lab",
+      "items": [],
+      "under44": [],
+      "file": "screenshots/icon-sweep--workspace-receipt-lab__android-360.png"
+    },
+    {
+      "routeSlug": "workspace-brag-cards",
+      "items": [
+        {
+          "i": 104,
+          "tag": "BUTTON",
+          "text": "",
+          "aria": "Card accent: Rose",
+          "title": null,
+          "role": null,
+          "rect": {
+            "x": 39.400001525878906,
+            "y": 1285.0562744140625,
+            "w": 35.19999694824219,
+            "h": 35.199951171875
+          },
+          "visible": true,
+          "iconOnly": true
+        },
+        {
+          "i": 105,
+          "tag": "BUTTON",
+          "text": "",
+          "aria": "Card accent: Honey",
+          "title": null,
+          "role": null,
+          "rect": {
+            "x": 81,
+            "y": 1286.65625,
+            "w": 32,
+            "h": 32
+          },
+          "visible": true,
+          "iconOnly": true
+        },
+        {
+          "i": 106,
+          "tag": "BUTTON",
+          "text": "",
+          "aria": "Card accent: Moss",
+          "title": null,
+          "role": null,
+          "rect": {
+            "x": 121,
+            "y": 1286.65625,
+            "w": 32,
+            "h": 32
+          },
+          "visible": true,
+          "iconOnly": true
+        },
+        {
+          "i": 107,
+          "tag": "BUTTON",
+          "text": "",
+          "aria": "Card accent: Denim",
+          "title": null,
+          "role": null,
+          "rect": {
+            "x": 161,
+            "y": 1286.65625,
+            "w": 32,
+            "h": 32
+          },
+          "visible": true,
+          "iconOnly": true
+        }
+      ],
+      "under44": [
+        {
+          "i": 104,
+          "tag": "BUTTON",
+          "text": "",
+          "aria": "Card accent: Rose",
+          "title": null,
+          "role": null,
+          "rect": {
+            "x": 39.400001525878906,
+            "y": 1285.0562744140625,
+            "w": 35.19999694824219,
+            "h": 35.199951171875
+          },
+          "visible": true,
+          "iconOnly": true
+        },
+        {
+          "i": 105,
+          "tag": "BUTTON",
+          "text": "",
+          "aria": "Card accent: Honey",
+          "title": null,
+          "role": null,
+          "rect": {
+            "x": 81,
+            "y": 1286.65625,
+            "w": 32,
+            "h": 32
+          },
+          "visible": true,
+          "iconOnly": true
+        },
+        {
+          "i": 106,
+          "tag": "BUTTON",
+          "text": "",
+          "aria": "Card accent: Moss",
+          "title": null,
+          "role": null,
+          "rect": {
+            "x": 121,
+            "y": 1286.65625,
+            "w": 32,
+            "h": 32
+          },
+          "visible": true,
+          "iconOnly": true
+        },
+        {
+          "i": 107,
+          "tag": "BUTTON",
+          "text": "",
+          "aria": "Card accent: Denim",
+          "title": null,
+          "role": null,
+          "rect": {
+            "x": 161,
+            "y": 1286.65625,
+            "w": 32,
+            "h": 32
+          },
+          "visible": true,
+          "iconOnly": true
+        }
+      ],
+      "file": "screenshots/icon-sweep--workspace-brag-cards__android-360.png"
+    },
+    {
+      "routeSlug": "workspace-payback-lab",
+      "items": [],
+      "under44": [],
+      "file": "screenshots/icon-sweep--workspace-payback-lab__android-360.png"
+    },
+    {
+      "routeSlug": "workspace-grading-lab",
+      "items": [],
+      "under44": [],
+      "file": "screenshots/icon-sweep--workspace-grading-lab__android-360.png"
+    },
+    {
+      "routeSlug": "workspace-chart-lab",
+      "items": [],
+      "under44": [],
+      "file": "screenshots/icon-sweep--workspace-chart-lab__android-360.png"
+    }
+  ],
+  "errors": [],
+  "consoleErrors": []
+}

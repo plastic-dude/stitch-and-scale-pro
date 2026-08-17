@@ -1,0 +1,47 @@
+[
+  {
+    "label": "deep-link",
+    "route": "/project/mss5osqd88j6fdyvtdu",
+    "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/mss5osqd88j6fdyvtdu",
+    "bad": [],
+    "failed": [],
+    "logs": [],
+    "file": "screenshots/network--deep-link__android-360.png"
+  },
+  {
+    "label": "root",
+    "route": "/",
+    "url": "https://stitch-and-scale-pro-api-server.vercel.app/project/new",
+    "bad": [],
+    "failed": [],
+    "logs": [],
+    "file": "screenshots/network--root__android-360.png"
+  },
+  {
+    "label": "settings",
+    "route": "/settings",
+    "url": "https://stitch-and-scale-pro-api-server.vercel.app/settings",
+    "bad": [],
+    "failed": [],
+    "logs": [],
+    "file": "screenshots/network--settings__android-360.png"
+  },
+  {
+    "label": "portfolio",
+    "route": "/portfolio",
+    "url": "https://stitch-and-scale-pro-api-server.vercel.app/portfolio",
+    "bad": [],
+    "failed": [],
+    "logs": [],
+    "file": "screenshots/network--portfolio__android-360.png"
+  },
+  {
+    "label": "not-found",
+    "route": "/not-a-real-route-cycle65",
+    "url": "https://stitch-and-scale-pro-api-server.vercel.app/not-a-real-route-cycle65",
+    "bad": [],
+    "failed": [],
+    "logs": [],
+    "file": "screenshots/network--not-found__android-360.png"
+  }
+]
