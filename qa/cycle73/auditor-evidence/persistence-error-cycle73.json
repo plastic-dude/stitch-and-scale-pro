@@ -1,0 +1,25 @@
+{
+  "results": [
+    {
+      "state": "new-project-persistence",
+      "createdUrl": "https://stitch-and-scale-pro-api-server.vercel.app/project/msxc5zo815vznmt8wya",
+      "createdTitleVisible": true,
+      "sectionSaved": true,
+      "sectionVisibleBeforeReload": true,
+      "titleVisibleAfterReload": true,
+      "sectionVisibleAfterReload": true,
+      "createdFile": "screenshots/persistence--new-project-created__iphone-390.png",
+      "reloadFile": "screenshots/persistence--after-reload__iphone-390.png"
+    },
+    {
+      "state": "404-clean-first-use",
+      "url": "https://stitch-and-scale-pro-api-server.vercel.app/not-a-real-route-cycle73",
+      "overlayVisible": false,
+      "hasNotFound": false,
+      "text": "Oh, we dropped a stitch. This page moved or the link was off — your patterns are safe right where you left them. Back to your Stitch Draft a New Pattern A premium tool for independent knitwear designers",
+      "file": "screenshots/error--404-clean-first-use__android-360.png"
+    }
+  ],
+  "errors": [],
+  "consoleErrors": []
+}
