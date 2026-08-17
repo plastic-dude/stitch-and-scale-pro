@@ -1,0 +1,122 @@
+[
+  {
+    "label": "360",
+    "width": 360,
+    "base": {
+      "innerWidth": 360,
+      "innerHeight": 800,
+      "docScrollWidth": 360,
+      "bodyScrollWidth": 360,
+      "scrollX": 0,
+      "overflowX": "visible",
+      "state": "sections",
+      "active": [
+        "Sections"
+      ]
+    },
+    "activeOpen": {
+      "innerWidth": 418,
+      "innerHeight": 929,
+      "docScrollWidth": 418,
+      "bodyScrollWidth": 418,
+      "scrollX": 0,
+      "overflowX": "visible",
+      "state": "brag-sheet-open",
+      "active": [
+        "Brag Cards"
+      ]
+    },
+    "activeClosed": {
+      "innerWidth": 418,
+      "innerHeight": 929,
+      "docScrollWidth": 418,
+      "bodyScrollWidth": 418,
+      "scrollX": 0,
+      "overflowX": "visible",
+      "state": "brag-sheet-closed",
+      "active": [
+        "Brag Cards"
+      ]
+    }
+  },
+  {
+    "label": "390",
+    "width": 390,
+    "base": {
+      "innerWidth": 390,
+      "innerHeight": 844,
+      "docScrollWidth": 390,
+      "bodyScrollWidth": 390,
+      "scrollX": 0,
+      "overflowX": "visible",
+      "state": "sections",
+      "active": [
+        "Sections"
+      ]
+    },
+    "activeOpen": {
+      "innerWidth": 418,
+      "innerHeight": 905,
+      "docScrollWidth": 418,
+      "bodyScrollWidth": 418,
+      "scrollX": 0,
+      "overflowX": "visible",
+      "state": "brag-sheet-open",
+      "active": [
+        "Brag Cards"
+      ]
+    },
+    "activeClosed": {
+      "innerWidth": 418,
+      "innerHeight": 905,
+      "docScrollWidth": 418,
+      "bodyScrollWidth": 418,
+      "scrollX": 0,
+      "overflowX": "visible",
+      "state": "brag-sheet-closed",
+      "active": [
+        "Brag Cards"
+      ]
+    }
+  },
+  {
+    "label": "430",
+    "width": 430,
+    "base": {
+      "innerWidth": 430,
+      "innerHeight": 932,
+      "docScrollWidth": 430,
+      "bodyScrollWidth": 430,
+      "scrollX": 0,
+      "overflowX": "visible",
+      "state": "sections",
+      "active": [
+        "Sections"
+      ]
+    },
+    "activeOpen": {
+      "innerWidth": 430,
+      "innerHeight": 932,
+      "docScrollWidth": 430,
+      "bodyScrollWidth": 430,
+      "scrollX": 0,
+      "overflowX": "visible",
+      "state": "brag-sheet-open",
+      "active": [
+        "Brag Cards"
+      ]
+    },
+    "activeClosed": {
+      "innerWidth": 430,
+      "innerHeight": 932,
+      "docScrollWidth": 430,
+      "bodyScrollWidth": 430,
+      "scrollX": 0,
+      "overflowX": "visible",
+      "state": "brag-sheet-closed",
+      "active": [
+        "Brag Cards"
+      ]
+    }
+  }
+]

@@ -1,0 +1,77 @@
+{
+  "out": [
+    {
+      "state": "delete-section-body",
+      "beforeRect": {
+        "x": 291,
+        "y": 618,
+        "w": 36,
+        "h": 36
+      },
+      "outcome": {
+        "clicked": true,
+        "bodyStillVisible": true,
+        "dialogText": []
+      },
+      "file": "screenshots/touch-confirm--delete-body-after-pointer__android-360.png"
+    },
+    {
+      "state": "all-labs-close",
+      "text": "Close",
+      "rect": {
+        "x": 328,
+        "y": 178.56802368164062,
+        "w": 16,
+        "h": 16
+      },
+      "closedAfterPointer": true,
+      "file": "screenshots/touch-confirm--all-labs-close-after-pointer__android-360.png"
+    },
+    {
+      "state": "brag-card-accent",
+      "label": "Honey",
+      "rect": {
+        "x": 81,
+        "y": 383.65625,
+        "w": 32,
+        "h": 32
+      },
+      "clicked": true,
+      "file": "screenshots/touch-confirm--brag-card-accent-honey__android-360.png"
+    },
+    {
+      "state": "brag-card-accent",
+      "label": "Moss",
+      "rect": {
+        "x": 121,
+        "y": 383.65625,
+        "w": 32,
+        "h": 32
+      },
+      "clicked": true,
+      "file": "screenshots/touch-confirm--brag-card-accent-moss__android-360.png"
+    },
+    {
+      "state": "brag-card-accent",
+      "label": "Denim",
+      "rect": {
+        "x": 161,
+        "y": 383.65625,
+        "w": 32,
+        "h": 32
+      },
+      "clicked": true,
+      "file": "screenshots/touch-confirm--brag-card-accent-denim__android-360.png"
+    }
+  ],
+  "errors": [
+    {
+      "label": "Rose",
+      "error": "accent button missing after panel activation",
+      "body": "22 All Labs Loading lab… A premium tool for independent knitwear designers Close All 79 Labs Every tool for this pattern, grouped so nothing stays buried off-screen. DESIGN & PATTERN (12) Sections Preview Yarn Notes Draft Finish Grading Lab Chart Lab Test Knit Desk Lookbook Spec Sheet Yarn Licensing Lab SIZING & FIT (7) Test Knit Tech Edit Inclusive Submissions Box Inclusion Lab Test Knit Lab Gauge & Fit PRICING & INCOME (15) Income Pricing PriceWin Repeat Mix Ad Break-Even Collab Deal Math Re-Price Lab Bundle Lab Price Psych Lab Take-Rate Lab Gift & Credit Lab Intl Pricing Lab Receipt Lab Payback Lab LAUNCH & MARKETING (13) Launch Trans & Bundle Promo Listing SEO Sample & Launch Photo ROI Video & Social Pre-Order Lab Listing Test Lab Release Timing Lab Podcast Lab Magazine Lab Brag Cards SELLING CHANNELS (10) Publish Trunk Show Channels Wholesale & Book Distribution Wholesale Lab Booth Lab Channel Lab POD Patterns Lab Wholesale List Lab BUSINESS & COMMUNITY (22) Deals Pattern Club Kits Pipeline KAL & Collab Club Rev Hire vs Self Licence It Members Collab Book It Protect Teach Partners Yarn Buy KAL Planner Show ROI Yarn Pool Lab Membership Lab Workshop Lab Retreat Lab Design Ledger"
+    }
+  ],
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 404 ()"
+  ]
+}

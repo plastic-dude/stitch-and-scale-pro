@@ -1,0 +1,66 @@
+{
+  "results": [
+    {
+      "label": "Rose",
+      "active": [
+        "Brag Cards"
+      ],
+      "dialogAfterClose": 0,
+      "rect": {
+        "x": 39.400001525878906,
+        "y": 382.0562438964844,
+        "w": 35.19999694824219,
+        "h": 35.199981689453125
+      },
+      "clicked": true,
+      "file": "screenshots/lab-control-confirm--brag-rose__android-360.png"
+    },
+    {
+      "label": "Honey",
+      "active": [
+        "Brag Cards"
+      ],
+      "dialogAfterClose": 0,
+      "rect": {
+        "x": 81,
+        "y": 383.65625,
+        "w": 32,
+        "h": 32
+      },
+      "clicked": true,
+      "file": "screenshots/lab-control-confirm--brag-honey__android-360.png"
+    },
+    {
+      "label": "Moss",
+      "active": [
+        "Brag Cards"
+      ],
+      "dialogAfterClose": 0,
+      "rect": {
+        "x": 121,
+        "y": 383.65625,
+        "w": 32,
+        "h": 32
+      },
+      "clicked": true,
+      "file": "screenshots/lab-control-confirm--brag-moss__android-360.png"
+    },
+    {
+      "label": "Denim",
+      "active": [
+        "Brag Cards"
+      ],
+      "dialogAfterClose": 0,
+      "rect": {
+        "x": 161,
+        "y": 383.65625,
+        "w": 32,
+        "h": 32
+      },
+      "clicked": true,
+      "file": "screenshots/lab-control-confirm--brag-denim__android-360.png"
+    }
+  ],
+  "errors": [],
+  "logs": []
+}

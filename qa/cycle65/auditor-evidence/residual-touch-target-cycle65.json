@@ -1,0 +1,113 @@
+{
+  "results": [
+    {
+      "state": "workspace-sections",
+      "controls": [
+        {
+          "aria": "Delete section Body",
+          "rect": {
+            "x": 291,
+            "y": 618,
+            "w": 36,
+            "h": 36
+          }
+        },
+        {
+          "aria": "Delete section Sleeve",
+          "rect": {
+            "x": 291,
+            "y": 704,
+            "w": 36,
+            "h": 36
+          }
+        },
+        {
+          "aria": "Delete section Neckline",
+          "rect": {
+            "x": 291,
+            "y": 790,
+            "w": 36,
+            "h": 36
+          }
+        }
+      ],
+      "file": "screenshots/residual--workspace-section-delete-controls__android-360.png"
+    },
+    {
+      "state": "all-labs-sheet",
+      "close": {
+        "text": "Close",
+        "rect": {
+          "x": 328,
+          "y": 178.57131958007812,
+          "w": 16,
+          "h": 16
+        }
+      },
+      "closedAfterPointer": true,
+      "file": "screenshots/residual--all-labs-close-control__android-360.png"
+    },
+    {
+      "state": "brag-cards",
+      "controls": [
+        {
+          "aria": "Card accent: Rose",
+          "rect": {
+            "x": 39.400001525878906,
+            "y": 1285.0562744140625,
+            "w": 35.19999694824219,
+            "h": 35.199951171875
+          }
+        },
+        {
+          "aria": "Card accent: Honey",
+          "rect": {
+            "x": 81,
+            "y": 1286.65625,
+            "w": 32,
+            "h": 32
+          }
+        },
+        {
+          "aria": "Card accent: Moss",
+          "rect": {
+            "x": 121,
+            "y": 1286.65625,
+            "w": 32,
+            "h": 32
+          }
+        },
+        {
+          "aria": "Card accent: Denim",
+          "rect": {
+            "x": 161,
+            "y": 1286.65625,
+            "w": 32,
+            "h": 32
+          }
+        }
+      ],
+      "clicked": [
+        {
+          "label": "Rose",
+          "active": null
+        },
+        {
+          "label": "Honey",
+          "active": null
+        },
+        {
+          "label": "Moss",
+          "active": null
+        },
+        {
+          "label": "Denim",
+          "active": null
+        }
+      ],
+      "file": "screenshots/residual--brag-card-accent-controls__android-360.png"
+    }
+  ],
+  "errors": [],
+  "consoleErrors": []
+}

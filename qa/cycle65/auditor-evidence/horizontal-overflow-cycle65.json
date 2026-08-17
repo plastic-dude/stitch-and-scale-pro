@@ -1,0 +1,133 @@
+{
+  "results": [
+    {
+      "label": "android-360",
+      "width": 360,
+      "open": {
+        "innerWidth": 418,
+        "innerHeight": 929,
+        "docScrollWidth": 418,
+        "bodyScrollWidth": 418,
+        "scrollX": 0,
+        "active": "Brag Cards",
+        "overflowX": "visible"
+      },
+      "dialogOpen": {
+        "x": 0,
+        "y": 289,
+        "width": 418,
+        "height": 640
+      },
+      "closed": {
+        "innerWidth": 418,
+        "docScrollWidth": 418,
+        "bodyScrollWidth": 418,
+        "scrollX": 0,
+        "active": "Brag Cards",
+        "overflowX": "visible"
+      },
+      "dialogClosed": 0,
+      "files": [
+        "screenshots/overflow--android-360--brag-sheet-open.png",
+        "screenshots/overflow--android-360--brag-sheet-closed.png"
+      ]
+    },
+    {
+      "label": "iphone-390",
+      "width": 390,
+      "open": {
+        "innerWidth": 418,
+        "innerHeight": 905,
+        "docScrollWidth": 418,
+        "bodyScrollWidth": 418,
+        "scrollX": 0,
+        "active": "Brag Cards",
+        "overflowX": "visible"
+      },
+      "dialogOpen": {
+        "x": 0,
+        "y": 229.8125,
+        "width": 418,
+        "height": 675.1875
+      },
+      "closed": {
+        "innerWidth": 418,
+        "docScrollWidth": 418,
+        "bodyScrollWidth": 418,
+        "scrollX": 0,
+        "active": "Brag Cards",
+        "overflowX": "visible"
+      },
+      "dialogClosed": 0,
+      "files": [
+        "screenshots/overflow--iphone-390--brag-sheet-open.png",
+        "screenshots/overflow--iphone-390--brag-sheet-closed.png"
+      ]
+    },
+    {
+      "label": "iphone-430",
+      "width": 430,
+      "open": {
+        "innerWidth": 430,
+        "innerHeight": 932,
+        "docScrollWidth": 430,
+        "bodyScrollWidth": 430,
+        "scrollX": 0,
+        "active": "Brag Cards",
+        "overflowX": "visible"
+      },
+      "dialogOpen": {
+        "x": 0,
+        "y": 186.40625,
+        "width": 430,
+        "height": 745.59375
+      },
+      "closed": {
+        "innerWidth": 430,
+        "docScrollWidth": 430,
+        "bodyScrollWidth": 430,
+        "scrollX": 0,
+        "active": "Brag Cards",
+        "overflowX": "visible"
+      },
+      "dialogClosed": 0,
+      "files": [
+        "screenshots/overflow--iphone-430--brag-sheet-open.png",
+        "screenshots/overflow--iphone-430--brag-sheet-closed.png"
+      ]
+    },
+    {
+      "label": "tablet-768",
+      "width": 768,
+      "open": {
+        "innerWidth": 768,
+        "innerHeight": 1024,
+        "docScrollWidth": 768,
+        "bodyScrollWidth": 768,
+        "scrollX": 0,
+        "active": "Brag Cards",
+        "overflowX": "visible"
+      },
+      "dialogOpen": {
+        "x": 0,
+        "y": 204.8125,
+        "width": 768,
+        "height": 819.1875
+      },
+      "closed": {
+        "innerWidth": 768,
+        "docScrollWidth": 768,
+        "bodyScrollWidth": 768,
+        "scrollX": 0,
+        "active": "Brag Cards",
+        "overflowX": "visible"
+      },
+      "dialogClosed": 0,
+      "files": [
+        "screenshots/overflow--tablet-768--brag-sheet-open.png",
+        "screenshots/overflow--tablet-768--brag-sheet-closed.png"
+      ]
+    }
+  ],
+  "errors": []
+}
