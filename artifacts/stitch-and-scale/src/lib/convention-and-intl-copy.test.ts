@@ -401,3 +401,18 @@ describe('Storage Badge copy catalogue', () => {
     }
   });
 });
+
+import { SUBMISSION_PIPELINE_COPY } from './submission-pipeline-copy';
+describe('Submission Pipeline copy catalogue', () => {
+  it('keeps all supported locale keys aligned and populated', () => {
+    const keys = Object.keys(SUBMISSION_PIPELINE_COPY.en).sort();
+    for (const locale of ['de', 'fr', 'es', 'pt'] as const) {
+      expect(Object.keys(SUBMISSION_PIPELINE_COPY[locale]).sort()).toEqual(keys);
+      expect(SUBMISSION_PIPELINE_COPY[locale].title).not.toBe('');
+      expect(SUBMISSION_PIPELINE_COPY[locale].description).not.toBe('');
+      expect(SUBMISSION_PIPELINE_COPY[locale].submissionPack).not.toBe('');
+      expect(SUBMISSION_PIPELINE_COPY[locale].copyCoverLetter).not.toBe('');
+    }
+  });
+});
+

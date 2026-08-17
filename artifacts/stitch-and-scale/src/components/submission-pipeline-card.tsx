@@ -11,6 +11,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Calendar, ClipboardCopy, PackageCheck, CheckCircle2, XCircle, AlertCircle, TrendingUp } from 'lucide-react';
 import { PatternProject } from '@/lib/grading-engine';
+import { useSettings } from '@/context/SettingsContext';
+import { SUBMISSION_PIPELINE_COPY } from '@/lib/submission-pipeline-copy';
 import { YarnWeight, YARN_WEIGHTS, YARN_WEIGHT_LABELS } from '@/lib/yarn-estimator';
 import { PLATFORMS, PLATFORM_LABELS } from '@/lib/pattern-income-calculator';
 import {
@@ -85,6 +87,8 @@ function dateInput(value: string | undefined, onChange: (v: string) => void) {
 }
 
 export function SubmissionPipelineCard({ project }: { project: PatternProject }) {
+  const { language } = useSettings();
+  const copy = SUBMISSION_PIPELINE_COPY[language];
   // issue #4 project seam: one scoped store per project; the legacy flat key 'snsp-v1' is folded in on first read, then removed.
   const handle = useMemo(() => projectStorage<{ calls: StoredCall[]; rates: StoredRates }>('submitpipe', project.id, ['snsp-v1']), [project.id]);
   const { toast } = useToast();
@@ -123,9 +127,9 @@ export function SubmissionPipelineCard({ project }: { project: PatternProject })
     [selected, project]
   );
 
-  const copy = (text: string, label: string) => {
+  const copyText = (text: string, label: string) => {
     navigator.clipboard.writeText(text).then(() => {
-      toast({ title: `${label} copied`, description: 'Paste it wherever you need it.' });
+      toast({ title: `${label} — ${copy.copied}`, description: copy.pasteHint });
     });
   };
 
@@ -151,37 +155,32 @@ export function SubmissionPipelineCard({ project }: { project: PatternProject })
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-lg flex items-center gap-2"><PackageCheck className="h-5 w-5" />Submission Pipeline</CardTitle>
-        <CardDescription>
-          Magazine and anthology calls die on deadlines. Track each call's submission, decision, pattern, sample and
-          launch dates against your real production hours, then score the accepted offer against what self-publishing
-          would earn during the exclusive window. The literary world tracks submissions in spreadsheets because no
-          tool does this for knitting — this is that tool.
-        </CardDescription>
+        <CardTitle className="text-lg flex items-center gap-2"><PackageCheck className="h-5 w-5" />{copy.title}</CardTitle>
+        <CardDescription>{copy.description}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Calls list */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label className="text-sm font-semibold">Calls you're tracking</Label>
+            <Label className="text-sm font-semibold">{copy.callsTracked}</Label>
             <Button variant="outline" size="sm" onClick={() => {
               const c = blankCall();
               setStored((s) => ({ ...s, calls: [...s.calls, c] }));
               setEditingId(c.id);
-            }}>+ Add call</Button>
+            }}>{copy.addCall}</Button>
           </div>
           {stored.calls.length === 0 && (
-            <p className="text-sm text-muted-foreground">No calls yet — add one from a publication's "Call for Submissions" page.</p>
+            <p className="text-sm text-muted-foreground">{copy.noCalls}</p>
           )}
           {stored.calls.map((c) => (
             <div key={c.id} className="flex items-center gap-2 border rounded-md px-3 py-2 bg-card/60">
               <span className="flex-1 text-sm truncate">
-                {c.publication ? `${c.publication}${c.issue ? ` — ${c.issue}` : ''}` : <span className="text-muted-foreground italic">Untitled call</span>}
+                {c.publication ? `${c.publication}${c.issue ? ` — ${c.issue}` : ''}` : <span className="text-muted-foreground italic">{copy.untitled}</span>}
               </span>
               {c.submissionDeadline && (
                 <span className="text-xs text-muted-foreground flex items-center gap-1"><Calendar className="h-3 w-3" />{c.submissionDeadline}</span>
               )}
-              <Button variant="ghost" size="sm" onClick={() => { setEditingId(c.id); setSelectedId(c.id); }}>Edit / View</Button>
+              <Button variant="ghost" size="sm" onClick={() => { setEditingId(c.id); setSelectedId(c.id); }}>{copy.editView}</Button>
               <Button variant="ghost" size="sm" className="text-destructive" onClick={() => {
                 setStored((s) => ({ ...s, calls: s.calls.filter((x) => x.id !== c.id) }));
                 if (editingId === c.id) setEditingId(null);
@@ -194,15 +193,15 @@ export function SubmissionPipelineCard({ project }: { project: PatternProject })
         {/* Edit form */}
         {editing && (
           <div className="border rounded-lg p-4 space-y-4">
-            <h4 className="font-semibold text-sm">Call details</h4>
+            <h4 className="font-semibold text-sm">{copy.callDetails}</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
                 <Label className="text-xs">Publication</Label>
-                <Input value={editing.publication} placeholder="Making Stories" onChange={(e) => updateCall({ publication: e.target.value })} />
+                <Input value={editing.publication} placeholder={copy.publicationPlaceholder} onChange={(e) => updateCall({ publication: e.target.value })} />
               </div>
               <div className="space-y-1">
                 <Label className="text-xs">Issue / theme</Label>
-                <Input value={editing.issue} placeholder="Issue 11 — Seashore" onChange={(e) => updateCall({ issue: e.target.value })} />
+                <Input value={editing.issue} placeholder={copy.issuePlaceholder} onChange={(e) => updateCall({ issue: e.target.value })} />
               </div>
               <div className="space-y-1">
                 <Label className="text-xs">Submission deadline</Label>
@@ -257,7 +256,7 @@ export function SubmissionPipelineCard({ project }: { project: PatternProject })
 
         {/* Production rates */}
         <div className="border rounded-lg p-4 space-y-4">
-          <h4 className="font-semibold text-sm">Your production rates</h4>
+          <h4 className="font-semibold text-sm">{copy.productionRates}</h4>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="space-y-1">
               <Label className="text-xs">Sample knitting (yd/hr)</Label>
@@ -315,7 +314,7 @@ export function SubmissionPipelineCard({ project }: { project: PatternProject })
                 <div key={m.name} className="flex items-center gap-3 px-3 py-2">
                   <Badge variant="outline" className={`${stateStyle(m.state)} text-xs`}>{m.state === 'unknown' ? '—' : m.state}</Badge>
                   <span className="text-sm flex-1">{m.name}</span>
-                  <span className="text-sm text-muted-foreground">{m.date ?? 'not set'}</span>
+                  <span className="text-sm text-muted-foreground">{m.date ?? copy.notSet}</span>
                   {m.daysFromNow !== null && (
                     <span className="text-xs text-muted-foreground">{m.daysFromNow >= 0 ? `in ${m.daysFromNow} days` : `${-m.daysFromNow} days ago`}</span>
                   )}
@@ -326,10 +325,10 @@ export function SubmissionPipelineCard({ project }: { project: PatternProject })
             {/* Offer score */}
             <div className="border rounded-lg p-4 space-y-4">
               <div className="flex items-center justify-between flex-wrap gap-2">
-                <h4 className="font-semibold text-sm flex items-center gap-2"><TrendingUp className="h-4 w-4" />Offer vs self-publishing</h4>
+                <h4 className="font-semibold text-sm flex items-center gap-2"><TrendingUp className="h-4 w-4" />{copy.offerComparison}</h4>
                 <div className="flex items-center gap-2">
                   <Switch checked={stored.rates.showScore} onCheckedChange={(v) => updateRates({ showScore: v })} />
-                  <Label className="text-xs">Compare against solo baseline</Label>
+                  <Label className="text-xs">{copy.compareBaseline}</Label>
                 </div>
               </div>
               {stored.rates.showScore && (
@@ -391,7 +390,7 @@ export function SubmissionPipelineCard({ project }: { project: PatternProject })
 
             {/* Submission pack */}
             <div className="border rounded-lg p-4 space-y-3">
-              <h4 className="font-semibold text-sm">Submission pack — the 6 parts editors expect</h4>
+              <h4 className="font-semibold text-sm">{copy.submissionPack}</h4>
               <ul className="space-y-1.5">
                 {checklist.map((item, i) => (
                   <li key={i} className="text-sm flex gap-2">
@@ -401,8 +400,8 @@ export function SubmissionPipelineCard({ project }: { project: PatternProject })
                 ))}
               </ul>
               <Textarea value={letter} readOnly rows={8} className="text-sm" />
-              <Button variant="outline" size="sm" onClick={() => copy(letter, 'Cover letter')}>
-                <ClipboardCopy className="h-4 w-4 mr-1" />Copy cover letter
+              <Button variant="outline" size="sm" onClick={() => copyText(letter, copy.coverLetter)}>
+                <ClipboardCopy className="h-4 w-4 mr-1" />{copy.copyCoverLetter}
               </Button>
             </div>
           </div>
