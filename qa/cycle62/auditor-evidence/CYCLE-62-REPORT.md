@@ -2,7 +2,7 @@
 
 ## Scope and method
 
-This cycle began from a clean first-use context and crawled the live Stitch & Scale app at the user’s Android-class baseline of 360 CSS pixels, plus 390px, 430px, tablet 768px, and desktop 1280px viewpoints. The state-driven crawler inventory discovered **79 project tabs**. A dedicated event-driven traversal then exercised the full desktop tab registry and recorded a named state for each tab, with zero tab-activation exceptions and zero browser console/page errors in that traversal.
+This cycle began from a clean first-use context and crawled the live Stitch & Scale app at the user’s Android-class baseline of 360 CSS pixels, plus 390px, 430px, tablet 768px, and desktop 1280px viewpoints. The state-driven crawler inventory discovered **79 project tabs**. A dedicated activation attempt reached every registry entry without a script exception, but the active-panel probe showed that the UI remained on Sections for the attempted offscreen triggers. Therefore, this cycle must not claim 79 unique panel renders: the full panel-by-panel desktop traversal was **blocked by the centered tab-strip defect itself**. The evidence records the complete inventory, the failed activation symptom, the strip geometry, and the initial/middle/end scroll states. Browser console/page errors remained at zero.
 
 The mobile run also reconfirmed the open mobile navigator issue #64. The desktop run surfaced a separate defect that the prior focused runs missed.
 
