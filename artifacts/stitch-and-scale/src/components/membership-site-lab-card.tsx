@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { AlertTriangle, Crown, Flag, Lightbulb, TrendingUp, Users } from 'lucide-react';
 import { PatternProject } from '@/lib/grading-engine';
 import { useSettings } from '@/context/SettingsContext';
-import { MEMBERSHIP_SITE_COPY } from '@/lib/membership-site-copy';
+import { MEMBERSHIP_SITE_COPY, getMembershipFeeStackLabel, getMembershipFlagTitle, getMembershipScenarioLabel, getMembershipVerdict, getMembershipVerdictNote } from '@/lib/membership-site-copy';
 import { projectStorage } from '@/lib/storage-lib';
 import {
   analyzeMembershipSite,
@@ -73,6 +73,7 @@ const verdictColor = (v: string) =>
   v.startsWith('Borderline') ? 'bg-amber-500/15 text-amber-700 border-amber-500/30' :
   'bg-sky-500/15 text-sky-700 border-sky-500/30';
 
+
 export function MembershipSiteLabCard({ project }: { project: PatternProject }) {
   const { language } = useSettings();
   const copyText = MEMBERSHIP_SITE_COPY[language];
@@ -90,6 +91,23 @@ export function MembershipSiteLabCard({ project }: { project: PatternProject }) 
 
   const result = useMemo(() => analyzeMembershipSite(input), [input]);
   const realistic = result.scenarios[1];
+  const monthlyCost = (input.contentHours + input.supportHours) * input.hourlyRate;
+  const feeShare = realistic.grossRevenue > 0 ? realistic.fees / realistic.grossRevenue : 0;
+  const localizedVerdict = getMembershipVerdict(language, result.verdict);
+  const localizedVerdictNote = getMembershipVerdictNote(language, result.verdict, {
+    audience: input.audienceSize,
+    realisticConversion: input.conversionRealistic,
+    members: realistic.members,
+    net: realistic.netRevenue,
+    monthlyCost,
+    hours: input.contentHours + input.supportHours,
+    rate: input.hourlyRate,
+    breakEven: result.breakEvenAudience,
+    treadmillGap: result.treadmillGap,
+    blended: input.annualPrice > 0 ? input.monthlyPrice * (1 - input.annualShare) + (input.annualPrice / 12) * input.annualShare : input.monthlyPrice,
+    feeShare,
+    ltv: realistic.ltvPerMember,
+  });
 
   const set = <K extends keyof MembershipSiteInput>(k: K, v: MembershipSiteInput[K]) => persist({ ...input, [k]: v });
 
@@ -128,7 +146,7 @@ export function MembershipSiteLabCard({ project }: { project: PatternProject }) 
               <select id="ms-stack" value={input.feeStackKey}
                 onChange={e => set('feeStackKey', e.target.value)}
                 className="flex h-9 w-full rounded-md border border-input bg-background px-2 text-sm shadow-sm">
-                {Object.entries(FEE_STACKS).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+                {Object.entries(FEE_STACKS).map(([k, v]) => <option key={k} value={k}>{getMembershipFeeStackLabel(language, k, v.label)}</option>)}
               </select>
             </div>
           </div>
@@ -151,7 +169,7 @@ export function MembershipSiteLabCard({ project }: { project: PatternProject }) 
               <tbody>
                 {result.scenarios.map(s => (
                   <tr key={s.label} className="border-t">
-                    <td className="p-2 capitalize">{s.label}</td>
+                    <td className="p-2 capitalize">{getMembershipScenarioLabel(language, s.label, s.label)}</td>
                     <td className="p-2 text-right">{s.members.toFixed(1)}</td>
                     <td className="p-2 text-right">{fmt$(s.grossRevenue)}</td>
                     <td className="p-2 text-right">{fmt$(s.fees)}</td>
@@ -177,7 +195,7 @@ export function MembershipSiteLabCard({ project }: { project: PatternProject }) 
               {result.flags.map(f => (
                 <Badge key={f.code} variant="outline" className="border-amber-500/40 bg-amber-500/10 text-amber-700 gap-1.5 py-1.5">
                   <AlertTriangle className="size-3" />
-                  <span className="font-medium">{f.code}</span> — {f.title}
+                  <span className="font-medium">{f.code}</span> — {getMembershipFlagTitle(language, f.code, f.title)}
                 </Badge>
               ))}
             </div>
@@ -185,8 +203,8 @@ export function MembershipSiteLabCard({ project }: { project: PatternProject }) 
         )}
 
         <section className={`rounded-md border p-4 ${verdictColor(result.verdict)}`}>
-          <div className="flex items-center gap-2 font-semibold"><Lightbulb className="size-4" />{copyText.verdict}: {result.verdict}</div>
-          <p className="mt-1.5 text-sm">{result.verdictNote}</p>
+          <div className="flex items-center gap-2 font-semibold"><Lightbulb className="size-4" />{copyText.verdict}: {localizedVerdict}</div>
+          <p className="mt-1.5 text-sm">{localizedVerdictNote}</p>
         </section>
       </CardContent>
     </Card>
