@@ -186,7 +186,7 @@ export function ListingTestLabCard({ project }: { project: PatternProject }) {
                 <span className="text-muted-foreground">{fmtN(q.listing.monthlyViews)} {copyText.viewsSuffix}</span>
                 <Badge variant="outline">{queueVerdictLabel(q.verdict)}</Badge>
                 <span className={cn('text-xs', q.expectedValue >= 0 ? 'text-emerald-600' : 'text-red-600')}>
-                  EV {fmt$(q.expectedValue)}{copyText.evSuffix}
+                  EV {fmt$(q.evPerHour)}{copyText.evSuffix}
                 </span>
                 {listings.length > 1 && (
                   <Button variant="ghost" size="sm" onClick={() => removeListing(listings.indexOf(q.listing))}>

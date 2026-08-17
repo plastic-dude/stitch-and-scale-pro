@@ -301,20 +301,27 @@ export function analyzeListingTest(input: ListingInput, language: LanguageCode =
 export function rankListingQueue(listings: ListingInput[]): {
   listing: ListingInput;
   expectedValue: number;
+  evPerHour: number;
   monthsToPower: number;
   verdict: string;
 }[] {
+  // QA #42 item 3: the queue claims to rank "by expected value per re-list
+  // hour", but it sorted and displayed the raw total EV. True EV per hour is
+  // expectedValue over the re-list effort hours; a total of $-23 spread over
+  // 4 h is $-5.75/hr, not $-23/hr.
   return listings
     .map(listing => {
       const a = analyzeListingTest(listing);
+      const evPerHour = listing.effortHours > 0 ? a.expectedValue / listing.effortHours : a.expectedValue;
       return {
         listing,
         expectedValue: a.expectedValue,
+        evPerHour,
         monthsToPower: a.monthsToPower,
         verdict: a.verdict,
       };
     })
-    .sort((x, y) => y.expectedValue - x.expectedValue);
+    .sort((x, y) => y.evPerHour - x.evPerHour);
 }
 
 function fmtPct(p: number): string {

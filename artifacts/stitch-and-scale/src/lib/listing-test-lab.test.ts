@@ -216,3 +216,37 @@ describe('rankListingQueue', () => {
     expect(rankListingQueue([])).toEqual([]);
   });
 });
+describe('rankListingQueue — QA #42 item 3: EV per hour, not raw EV', () => {
+  const base = {
+    name: 'A',
+    platform: 'etsy' as Platform,
+    monthlyViews: 2000,
+    conversionRate: 0.02,
+    hypothesizedLift: 0.01,
+    price: 7.99,
+    effortHours: 4,
+    hourlyRate: 25,
+    plannedDurationMonths: 3,
+    upliftHorizonMonths: 6,
+  };
+  // default effortHours is 4, hourlyRate $25 → effort cost $100.
+  // expectedValue is a TOTAL; the queue must display/rank per re-list hour.
+  it('returns evPerHour = expectedValue / effortHours', () => {
+    const rows = rankListingQueue([base]);
+    const a = analyzeListingTest(base);
+    expect(rows[0].evPerHour).toBeCloseTo(a.expectedValue / 4, 9);
+  });
+  it('sorts by evPerHour descending, so a small-total/high-effort listing ranks below a per-hour winner', () => {
+    const highEffort = { ...base, effortHours: 4 };
+    const lowEffort = { ...base, effortHours: 0.5 }; // same total EV, 1/8th the effort
+    const rows = rankListingQueue([highEffort, lowEffort]);
+    expect(rows[0].listing.effortHours).toBe(0.5);
+    expect(rows[1].listing.effortHours).toBe(4);
+  });
+  it('guards against division by zero when effortHours is 0', () => {
+    const zeroEffort = { ...base, effortHours: 0 };
+    const rows = rankListingQueue([zeroEffort]);
+    expect(rows[0].evPerHour).toBe(rows[0].expectedValue);
+  });
+});
+
