@@ -14,9 +14,20 @@ const queryClient = new QueryClient();
 // CHK-080 — the onboarding overlay must not greet cold visitors who land
 // on /landing or /project/:id (demo link). It only blocks the app root
 // surfaces where a project flow starts.
+// CHK-126 — live mobile audit (Android 360px / iPhone 390px) found the
+// overlay also rendered on /settings, /portfolio, /project/import-csv and
+// unknown routes (404). At 360px its "Skip setup" button sat directly on
+// top of the header Settings nav link (29x24 overlap), making the nav
+// unreachable on phones. The overlay now shows ONLY on surfaces where a
+// project flow starts: the app root, /project/new, /project/import-csv,
+// and /project/:id with no trailing segments.
 function LandingGate({ onboardingCompleted }: { onboardingCompleted: boolean }) {
   const [location] = useLocation();
-  const onPublicSurface = location === '/landing' || /^\/project\//.test(location);
+  const isEntryFlow = location === '/'
+    || location === '/project/new'
+    || location === '/project/import-csv'
+    || /^\/project\/[\w-]+$/.test(location);
+  const onPublicSurface = location === '/landing' || !isEntryFlow;
   if (onboardingCompleted || onPublicSurface) return null;
   return <OnboardingOverlay />;
 }

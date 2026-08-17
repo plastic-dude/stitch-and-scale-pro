@@ -523,13 +523,15 @@ export default function OnboardingOverlay() {
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-background/95 backdrop-blur-sm flex flex-col"
+      className="fixed inset-0 z-50 bg-background/95 backdrop-blur-sm flex flex-col overflow-hidden"
       role="dialog"
       aria-modal="true"
       aria-label={t('workflow.onboarding.dialogLabel')}
     >
-      {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-border/30">
+      {/* Header — right padding grows on phone widths so the Skip button
+          never shares x-space with the app shell's nav links beneath it
+          (mobile audit CHK-126: 29x24 overlap at 360px). */}
+      <div className="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-border/30 sm:pr-28">
         <div className="flex items-center gap-2.5">
           <img src="/favicon.png" alt="Stitch & Scale" className="w-7 h-7 rounded-md object-cover" />
           <span className="font-serif font-bold text-base tracking-tight hidden sm:inline">Stitch & Scale</span>
