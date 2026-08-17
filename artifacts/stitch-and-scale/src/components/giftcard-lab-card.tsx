@@ -9,7 +9,7 @@ import {
 } from "@/lib/giftcard-lab";
 import type { PatternProject } from "@/lib/grading-engine";
 import { useSettings } from "@/context/SettingsContext";
-import { GIFTCARD_COPY, giftCardFlagTitle, giftCardVerdictLabel, giftCardVerdictNote } from "@/lib/giftcard-copy";
+import { GIFTCARD_COPY, giftCardFlagNote, giftCardFlagTitle, giftCardVerdictLabel, giftCardVerdictNote } from "@/lib/giftcard-copy";
 import { projectStorage } from "@/lib/storage-lib";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -421,7 +421,23 @@ export function GiftCardLabCard({ project }: { project: PatternProject }) {
                     <HelpCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                   )}
                   <p className="text-xs leading-relaxed">
-                    <span className="font-semibold">{f.code} — {giftCardFlagTitle(language, f.code, f.title)}.</span> {f.note}
+                    <span className="font-semibold">{f.code} — {giftCardFlagTitle(language, f.code, f.title)}.</span>{" "}
+                    {giftCardFlagNote(language, f.code, {
+                      refunds: fmt$(input.refundCreditPerMonth),
+                      sales: fmt$(input.cardSalesPerMonth),
+                      refundSharePct: String(Math.round((input.refundCreditPerMonth / Math.max(input.cardSalesPerMonth, 1)) * 100)),
+                      escheatPct: String(Math.round(input.escheatTakePct * 100)),
+                      dormancyYears: String(Math.round(input.dormancyMonths / 12)),
+                      cashBackThreshold: fmt$(input.cashBackThreshold),
+                      netProfit: fmt$(result.netProgramProfit),
+                      horizonMonths: String(input.horizonMonths),
+                      redemptionPct: String(Math.round(input.redemptionRate * 100)),
+                      redeemedCostPct: String(Math.round(input.redeemedCostPct * 100)),
+                      peakLiability: fmt$(result.peakLiability),
+                      monthlySales: String(Math.round(result.peakLiability / Math.max(input.cardSalesPerMonth, 1))),
+                      breakagePct: String(Math.round(input.breakageAssumption * 100)),
+                      totalEscheat: fmt$(result.escheatSurrender),
+                    }, f.note)}
                   </p>
                 </div>
               ))}

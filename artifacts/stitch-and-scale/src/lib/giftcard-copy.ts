@@ -105,6 +105,115 @@ export function giftCardVerdictNote(
   return notes[language][key] || fallback;
 }
 
+export interface GiftCardFlagNoteValues {
+  refunds: string;
+  sales: string;
+  refundSharePct: string;
+  escheatPct: string;
+  dormancyYears: string;
+  cashBackThreshold: string;
+  netProfit: string;
+  horizonMonths: string;
+  redemptionPct: string;
+  redeemedCostPct: string;
+  peakLiability: string;
+  monthlySales: string;
+  breakagePct: string;
+  totalEscheat: string;
+}
+
+export function giftCardFlagNote(
+  language: LanguageCode,
+  code: string,
+  values: GiftCardFlagNoteValues,
+  fallback: string,
+): string {
+  const {
+    refunds,
+    sales,
+    refundSharePct,
+    escheatPct,
+    dormancyYears,
+    cashBackThreshold,
+    netProfit,
+    horizonMonths,
+    redemptionPct,
+    redeemedCostPct,
+    peakLiability,
+    monthlySales,
+    breakagePct,
+    totalEscheat,
+  } = values;
+  const notes: Record<LanguageCode, Record<string, string>> = {
+    en: {
+      'GC-01': `You issue ${refunds}/mo in refund credit but sell no gift cards — credit is pure liability with no float benefit. Cap refunds to original payment method.`,
+      'GC-02': `Refund credit (${refunds}/mo) is eating ${refundSharePct}% of your float. Refund to the original payment method instead of store credit.`,
+      'GC-03': `Your state takes ${escheatPct}% of unredeemed balances after ${dormancyYears} yr. Many states exempt merchandise-only retail credits — check your state's retail-credit exemption before counting breakage as profit.`,
+      'GC-04': `Balances under ${cashBackThreshold} must be paid out in cash (federal <$10; California <$15 from Apr 2026). This is a permanent liability no expiry date can remove.`,
+      'GC-05': `You plan dormancy-fee income but expiry/fees aren't allowed in your state. Remove the fee income or your program becomes a compliance liability.`,
+      'GC-06': `Recognized-program profit is ${netProfit} over ${horizonMonths} months — processing, COGS, escheat and admin outweigh the float.`,
+      'GC-07': `At ${redemptionPct}% redemption, your float balloons but so does escheat exposure; industry average is 80-90%. Customers who forget cards become complaints, not revenue.`,
+      'GC-08': `Physical goods redeem at ${redeemedCostPct}% cost — with 12% breakage the breakage cushion evaporates and every redeemed dollar costs you nearly a dollar.`,
+      'GC-09': `Peak outstanding liability ${peakLiability} is ${monthlySales}× monthly sales. If your shop closed tomorrow, that's what you owe back.`,
+      'GC-10': `Assuming ${breakagePct}% breakage is optimistic — measured breakage runs 10-19% and falls as tracking improves (7.5% by 2015 industry data).`,
+      'GC-11': `${totalEscheat} gets surrendered to the state — more than the program earns. Check whether your state exempts merchandise-only credits.`,
+    },
+    de: {
+      'GC-01': `Du gibst ${refunds}/Monat Rückerstattungsguthaben aus, verkaufst aber keine Gutscheine — das Guthaben ist eine reine Verbindlichkeit ohne Zahlungsfluss. Begrenze Erstattungen auf die ursprüngliche Zahlungsart.`,
+      'GC-02': `Rückerstattungsguthaben (${refunds}/Monat) verbraucht ${refundSharePct} % deines Zahlungsflusses. Erstatte über die ursprüngliche Zahlungsart statt als Ladenguthaben.`,
+      'GC-03': `Dein Staat nimmt ${escheatPct} % nicht eingelöster Guthaben nach ${dormancyYears} Jahren ein. Prüfe die Ausnahme für reine Warenguthaben, bevor du Verfall als Gewinn zählst.`,
+      'GC-04': `Guthaben unter ${cashBackThreshold} müssen bar ausgezahlt werden (Bundesgrenze unter 10 $, Kalifornien unter 15 $ ab April 2026). Diese Verbindlichkeit kann kein Ablaufdatum beseitigen.`,
+      'GC-05': `Du planst Einnahmen aus Inaktivitätsgebühren, aber Ablauf/Gebühren sind in deinem Staat nicht erlaubt. Entferne die Gebühreneinnahmen oder es entsteht eine Compliance-Verbindlichkeit.`,
+      'GC-06': `Der erkannte Programmgewinn beträgt ${netProfit} über ${horizonMonths} Monate — Zahlungsabwicklung, Kosten, Einziehung und Verwaltung übersteigen den Zahlungsfluss.`,
+      'GC-07': `Bei ${redemptionPct} % Einlösung wächst dein Zahlungsfluss, aber auch die Einziehungsgefahr; der Branchenwert liegt bei 80–90 %. Vergessene Karten führen zu Beschwerden, nicht zu Umsatz.`,
+      'GC-08': `Waren werden mit ${redeemedCostPct} % Kosten eingelöst — bei 12 % Verfall verschwindet der Puffer, und jeder eingelöste Euro kostet fast einen Euro.`,
+      'GC-09': `Die Spitzenverbindlichkeit ${peakLiability} beträgt das ${monthlySales}-Fache des Monatsumsatzes. Bei einer Schließung wäre dies deine Rückzahlungspflicht.`,
+      'GC-10': `Die Annahme von ${breakagePct} % Verfall ist optimistisch — gemessener Verfall liegt bei 10–19 % und sinkt mit besserer Nachverfolgung.`,
+      'GC-11': `${totalEscheat} werden an den Staat abgeführt — mehr als das Programm verdient. Prüfe, ob dein Staat reine Warenguthaben ausnimmt.`,
+    },
+    fr: {
+      'GC-01': `Vous émettez ${refunds}/mois de crédits de remboursement sans vendre de cartes — le crédit est un passif pur sans trésorerie. Limitez les remboursements au mode de paiement initial.`,
+      'GC-02': `Les crédits (${refunds}/mois) consomment ${refundSharePct} % de votre trésorerie. Remboursez selon le mode initial plutôt qu'en crédit boutique.`,
+      'GC-03': `Votre État prélève ${escheatPct} % des soldes non utilisés après ${dormancyYears} ans. Vérifiez l'exemption des crédits de marchandises avant de compter la rupture comme bénéfice.`,
+      'GC-04': `Les soldes inférieurs à ${cashBackThreshold} doivent être remboursés en espèces (seuil fédéral inférieur à 10 $, Californie inférieur à 15 $ dès avril 2026). Aucune expiration ne supprime ce passif.`,
+      'GC-05': `Vous prévoyez des frais d'inactivité, mais les frais ou l'expiration ne sont pas autorisés dans votre État. Supprimez ce revenu ou créez un passif de conformité.`,
+      'GC-06': `Le bénéfice comptabilisé est de ${netProfit} sur ${horizonMonths} mois — traitement, coûts, déshérence et administration dépassent la trésorerie.`,
+      'GC-07': `Avec ${redemptionPct} % d'utilisation, la trésorerie et l'exposition à la déshérence augmentent; la moyenne est de 80–90 %. Les cartes oubliées deviennent des plaintes, pas du revenu.`,
+      'GC-08': `Les produits physiques sont utilisés avec un coût de ${redeemedCostPct} % — avec 12 % de rupture, le coussin disparaît et chaque dollar coûte presque un dollar.`,
+      'GC-09': `Le passif maximal de ${peakLiability} représente ${monthlySales} fois les ventes mensuelles. Si la boutique fermait demain, c'est ce qui serait dû.`,
+      'GC-10': `Une rupture de ${breakagePct} % est optimiste — la rupture mesurée est de 10–19 % et baisse avec un meilleur suivi.`,
+      'GC-11': `${totalEscheat} sont versés à l'État — davantage que le bénéfice du programme. Vérifiez l'exemption des crédits de marchandises.`,
+    },
+    es: {
+      'GC-01': `Emites ${refunds}/mes de crédito de reembolso sin vender tarjetas — es un pasivo puro sin efectivo recibido. Limita los reembolsos al método de pago original.`,
+      'GC-02': `El crédito (${refunds}/mes) consume el ${refundSharePct} % de tu efectivo. Reembolsa al método original en vez de dar crédito de tienda.`,
+      'GC-03': `Tu estado se queda con el ${escheatPct} % de los saldos no canjeados después de ${dormancyYears} años. Comprueba la exención de créditos de mercancía antes de contar la caducidad como beneficio.`,
+      'GC-04': `Los saldos inferiores a ${cashBackThreshold} deben pagarse en efectivo (federal inferior a 10 $, California inferior a 15 $ desde abril de 2026). Ninguna caducidad elimina este pasivo.`,
+      'GC-05': `Planeas ingresos por inactividad, pero tu estado no permite esas comisiones o la caducidad. Elimina esos ingresos o crearás un pasivo de cumplimiento.`,
+      'GC-06': `El beneficio reconocido es ${netProfit} en ${horizonMonths} meses — procesamiento, costes, abandono y administración superan el efectivo recibido.`,
+      'GC-07': `Con un canje del ${redemptionPct} %, crecen el efectivo y la exposición al abandono; la media del sector es 80–90 %. Las tarjetas olvidadas generan quejas, no ingresos.`,
+      'GC-08': `Los bienes físicos se canjean con un coste del ${redeemedCostPct} % — con un 12 % de caducidad, el colchón desaparece y cada dólar canjeado cuesta casi un dólar.`,
+      'GC-09': `El pasivo máximo de ${peakLiability} equivale a ${monthlySales} veces las ventas mensuales. Si cerraras mañana, eso es lo que deberías devolver.`,
+      'GC-10': `Suponer un ${breakagePct} % de caducidad es optimista — la caducidad medida es del 10–19 % y baja con un mejor seguimiento.`,
+      'GC-11': `Se entregan ${totalEscheat} al estado — más de lo que gana el programa. Comprueba la exención de créditos de mercancía.`,
+    },
+    pt: {
+      'GC-01': `Emite ${refunds}/mês em créditos de reembolso sem vender cartões — é uma responsabilidade pura sem dinheiro recebido. Limite os reembolsos ao método de pagamento original.`,
+      'GC-02': `Os créditos (${refunds}/mês) consomem ${refundSharePct} % do dinheiro recebido. Reembolse pelo método original em vez de emitir crédito da loja.`,
+      'GC-03': `O seu estado retém ${escheatPct} % dos saldos não utilizados após ${dormancyYears} anos. Confirme a isenção de créditos de mercadoria antes de contar esse saldo como lucro.`,
+      'GC-04': `Saldos inferiores a ${cashBackThreshold} devem ser pagos em dinheiro (federal abaixo de 10 $, Califórnia abaixo de 15 $ desde abril de 2026). Nenhum prazo de validade elimina esta responsabilidade.`,
+      'GC-05': `Planeia receber taxas de inatividade, mas o seu estado não permite taxas ou validade. Remova essa receita ou criará uma responsabilidade de conformidade.`,
+      'GC-06': `O lucro reconhecido é ${netProfit} em ${horizonMonths} meses — processamento, custos, abandono e administração superam o dinheiro recebido.`,
+      'GC-07': `Com ${redemptionPct} % de utilização, crescem o dinheiro recebido e a exposição ao abandono; a média do setor é 80–90 %. Cartões esquecidos geram reclamações, não receita.`,
+      'GC-08': `Bens físicos são utilizados com custo de ${redeemedCostPct} % — com 12 % de saldo não utilizado, a margem desaparece e cada unidade custa quase uma unidade.`,
+      'GC-09': `A responsabilidade máxima de ${peakLiability} equivale a ${monthlySales} vezes as vendas mensais. Se a loja fechasse amanhã, esse seria o valor devido.`,
+      'GC-10': `Assumir ${breakagePct} % de saldo não utilizado é otimista — a taxa medida é de 10–19 % e diminui com melhor acompanhamento.`,
+      'GC-11': `${totalEscheat} são entregues ao estado — mais do que o programa ganha. Confirme a isenção de créditos de mercadoria.`,
+    },
+  };
+  return notes[language][code] || fallback;
+}
+
 export function giftCardFlagTitle(language: LanguageCode, code: string, fallback: string): string {
   const titles: Record<LanguageCode, Record<string, string>> = {
     en: {},

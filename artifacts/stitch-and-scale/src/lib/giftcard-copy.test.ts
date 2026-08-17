@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { GIFTCARD_COPY, giftCardFlagTitle, giftCardVerdictLabel, giftCardVerdictNote } from './giftcard-copy';
+import { GIFTCARD_COPY, giftCardFlagNote, giftCardFlagTitle, giftCardVerdictLabel, giftCardVerdictNote } from './giftcard-copy';
 
 describe('Gift Card copy catalogue', () => {
   it('contains the primary visible vocabulary in all supported locales', () => {
@@ -17,6 +17,34 @@ describe('Gift Card copy catalogue', () => {
       expect(giftCardVerdictLabel(language, verdict)).not.toBe(verdict);
       expect(giftCardFlagTitle(language, 'GC-01', 'fallback')).not.toBe('fallback');
     }
+  });
+
+  it('localizes flag notes while preserving dynamic accounting values', () => {
+    const values = {
+      refunds: '$30.00',
+      sales: '$100.00',
+      refundSharePct: '30',
+      escheatPct: '60',
+      dormancyYears: '3',
+      cashBackThreshold: '$10.00',
+      netProfit: '$420.00',
+      horizonMonths: '12',
+      redemptionPct: '65',
+      redeemedCostPct: '40',
+      peakLiability: '$900.00',
+      monthlySales: '9',
+      breakagePct: '30',
+      totalEscheat: '$500.00',
+    };
+    const fallback = 'Original analyzer note: $30.00';
+    for (const language of ['de', 'fr', 'es', 'pt'] as const) {
+      const note = giftCardFlagNote(language, 'GC-02', values, fallback);
+      expect(note).not.toBe(fallback);
+      expect(note).toContain('$30.00');
+      expect(note).toContain('30');
+    }
+    expect(giftCardFlagNote('en', 'GC-06', values, fallback)).toContain('$420.00');
+    expect(giftCardFlagNote('de', 'unknown-flag', values, fallback)).toBe(fallback);
   });
 
   it('localizes verdict detail while preserving dynamic accounting values', () => {
