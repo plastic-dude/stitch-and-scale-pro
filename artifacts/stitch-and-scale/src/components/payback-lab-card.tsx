@@ -525,10 +525,12 @@ export function PaybackLabCard(props: { project: PatternProject }) {
         )}
 
         <Tabs defaultValue="all">
+          {/* CHK-123 (QA LIVE-004): triggers were shadcn-default h-10 (40px) —
+              below the 44×44px touch-target minimum. min-h-11 fixes hit area. */}
           <TabsList className="flex-wrap">
-            <TabsTrigger value="all">{copy.all} ({designs.length})</TabsTrigger>
-            <TabsTrigger value="winners">{copy.winners} ({designs.filter((d) => d.paidBack).length})</TabsTrigger>
-            <TabsTrigger value="bleeders">
+            <TabsTrigger value="all" className="min-h-11">{copy.all} ({designs.length})</TabsTrigger>
+            <TabsTrigger value="winners" className="min-h-11">{copy.winners} ({designs.filter((d) => d.paidBack).length})</TabsTrigger>
+            <TabsTrigger value="bleeders" className="min-h-11">
               {copy.recouping} ({designs.filter((d) => !d.paidBack && (d.copiesSold > 0 || d.investment > 0)).length})
             </TabsTrigger>
           </TabsList>

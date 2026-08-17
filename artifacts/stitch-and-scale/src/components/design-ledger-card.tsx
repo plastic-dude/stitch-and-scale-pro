@@ -206,12 +206,14 @@ export function DesignLedgerCard(props: { project: PatternProject }) {
           </CardDescription>
         </CardHeader>
         <CardContent>
+          {/* CHK-123 (QA LIVE-004): triggers were shadcn-default h-10 (40px) —
+              below the 44×44px touch-target minimum. min-h-11 fixes hit area. */}
           <Tabs defaultValue="studio">
             <TabsList className="flex-wrap h-auto">
-              <TabsTrigger value="studio">{copy.studio}</TabsTrigger>
-              <TabsTrigger value="designs">{copy.designs} ({state.designs.length})</TabsTrigger>
-              <TabsTrigger value="costs">{copy.costs} ({state.expenses.length})</TabsTrigger>
-              <TabsTrigger value="export">{copy.export}</TabsTrigger>
+              <TabsTrigger value="studio" className="min-h-11">{copy.studio}</TabsTrigger>
+              <TabsTrigger value="designs" className="min-h-11">{copy.designs} ({state.designs.length})</TabsTrigger>
+              <TabsTrigger value="costs" className="min-h-11">{copy.costs} ({state.expenses.length})</TabsTrigger>
+              <TabsTrigger value="export" className="min-h-11">{copy.export}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="studio" className="space-y-4 pt-4">

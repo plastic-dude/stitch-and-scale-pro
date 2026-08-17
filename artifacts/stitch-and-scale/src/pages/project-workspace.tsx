@@ -1005,7 +1005,12 @@ export default function ProjectWorkspace() {
                 key={g}
                 type="button"
                 onClick={() => first && setActiveTab(first)}
-                className="rounded border border-border/60 bg-muted/40 px-2 py-0.5 text-[10px] font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+                // CHK-123 (QA LIVE-004): chips were px-2 py-0.5 text-[10px] — a
+                // ~16px hit area, far below the 44×44px touch-target minimum.
+                // Now a full 44px touch target on every width; the chip stays
+                // visually compact (leading-none, text-xs) while the hit area
+                // does not.
+                className="rounded border border-border/60 bg-muted/40 px-3 py-2.5 text-xs leading-none font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors min-h-[44px]"
               >
                 {label} · {count}
               </button>
@@ -1032,7 +1037,11 @@ export default function ProjectWorkspace() {
             <TabsTrigger
               key={tab.value}
               value={tab.value}
-              className="font-medium text-sm whitespace-nowrap shrink-0 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded"
+              // CHK-123 (QA LIVE-004): shadcn's default h-10 (40px) is below the
+              // 44×44px touch-target minimum even on the desktop-only strip.
+              // min-h-11 raises the effective hit area to 44px with no layout
+              // impact below lg (the strip is hidden there anyway).
+              className="font-medium text-sm whitespace-nowrap shrink-0 min-h-11 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded"
             >
               <TriggerChildren value={tab.value} label={localizedLabel ?? tab.label} />
             </TabsTrigger>

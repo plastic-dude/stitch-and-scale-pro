@@ -180,11 +180,13 @@ export function TabNavigator({ activeTab, onTabChange, language, copy, className
 
   return (
     <DropdownMenu>
+      {/* CHK-123 (QA LIVE-004): the desktop "All Labs" trigger was h-9
+          (36px) — below the 44×44px touch-target minimum. */}
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
           size="sm"
-          className="gap-2 bg-card border-border h-9 shrink-0"
+          className="gap-2 bg-card border-border h-11 shrink-0"
           aria-label={copy.allLabsAriaLabel}
           data-testid="tab-navigator-trigger"
         >
@@ -200,15 +202,21 @@ export function TabNavigator({ activeTab, onTabChange, language, copy, className
                 <React.Fragment key={group}>
                   <DropdownMenuSeparator className="first:hidden" />
                   <DropdownMenuSub>
-                    <DropdownMenuSubTrigger className="text-xs">
+                    {/* CHK-123 (QA LIVE-004): group SubTriggers measured 28px live —
+                        below the 44×44px touch-target minimum. min-h-[44px] fixes it. */}
+                    <DropdownMenuSubTrigger className="text-xs min-h-[44px]">
                       {TAB_GROUP_LABELS[group]} ({entries.length})
                     </DropdownMenuSubTrigger>
                     <DropdownMenuSubContent className="w-56">
                       {entries.map((tab) => (
+                        // CHK-123 (QA LIVE-004): shadcn dropdown items are h-9
+                        // (36px) — below the 44×44px touch-target minimum.
+                        // min-h-[44px] raises the hit area without adding visible
+                        // density (the desktop menu is pointer-first anyway).
                         <DropdownMenuItem
                           key={tab.value}
                           onSelect={() => handlePick(tab.value)}
-                          className="text-sm"
+                          className="text-sm min-h-[44px]"
                           data-testid={`tab-navigator-item-${tab.value}`}
                         >
                           {localizedLabel(tab.value, tab.label)}

@@ -336,14 +336,16 @@ export function ReceiptLabCard(props: { project: PatternProject }) {
 
   return (
     <Tabs defaultValue="new">
+      {/* CHK-123 (QA LIVE-004): triggers were shadcn-default h-10 (40px) —
+          below the 44×44px touch-target minimum. min-h-11 fixes hit area. */}
       <TabsList className="mb-4 flex-wrap h-auto">
-        <TabsTrigger value="new" className="font-medium text-sm whitespace-nowrap data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+        <TabsTrigger value="new" className="font-medium text-sm whitespace-nowrap min-h-11 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
           <ReceiptText className="h-3.5 w-3.5 mr-1.5" /> {copy.newReceipt}
         </TabsTrigger>
-        <TabsTrigger value="ledger" className="font-medium text-sm whitespace-nowrap data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+        <TabsTrigger value="ledger" className="font-medium text-sm whitespace-nowrap min-h-11 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
           <CalendarDays className="h-3.5 w-3.5 mr-1.5" /> {copy.ledger} ({ledger.length})
         </TabsTrigger>
-        <TabsTrigger value="brand" className="font-medium text-sm whitespace-nowrap data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
+        <TabsTrigger value="brand" className="font-medium text-sm whitespace-nowrap min-h-11 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded">
           <Users className="h-3.5 w-3.5 mr-1.5" /> {copy.brandSettings}
         </TabsTrigger>
       </TabsList>

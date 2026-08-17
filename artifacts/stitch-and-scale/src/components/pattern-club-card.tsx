@@ -268,11 +268,13 @@ export function PatternClubCard({ project }: { project: PatternProject }) {
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="club" className="w-full">
+          {/* CHK-123 (QA LIVE-004): sub-tabs were text-xs with the shadcn
+              default h-10 (40px) — below the 44×44px touch-target minimum. */}
           <TabsList className="w-full">
-            <TabsTrigger value="club" className="flex-1 text-xs">
+            <TabsTrigger value="club" className="flex-1 text-xs min-h-11">
               {copy.club}
             </TabsTrigger>
-            <TabsTrigger value="magazine" className="flex-1 text-xs">
+            <TabsTrigger value="magazine" className="flex-1 text-xs min-h-11">
               {copy.magazine}
             </TabsTrigger>
           </TabsList>
