@@ -288,7 +288,7 @@ export default function NewProjectWizard() {
           <Button 
             variant="ghost" 
             onClick={step === 1 ? () => setLocation('/') : handleBack}
-            className="font-medium text-muted-foreground hover:text-foreground"
+            className="font-medium min-h-11 min-w-11 text-muted-foreground hover:text-foreground"
             data-testid="button-back"
           >
             {step === 1 ? t('workflow.newProject.cancel') : (
