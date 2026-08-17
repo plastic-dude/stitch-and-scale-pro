@@ -245,8 +245,8 @@ export function MarketplaceTakeRateLabCard({ project }: { project: PatternProjec
           <section className="space-y-2">
             <h3 className="text-sm font-semibold flex items-center gap-1.5"><Flag className="size-4" />{copyText.watchouts}</h3>
             <div className="flex flex-wrap gap-2">
-              {result.flags.map(f => (
-                <Badge key={f.code} variant="outline" className="border-amber-500/40 bg-amber-500/10 text-amber-700 gap-1.5 py-1.5 max-w-sm">
+              {result.flags.map((f, i) => (
+                <Badge key={`${f.code}-${i}`} variant="outline" className="border-amber-500/40 bg-amber-500/10 text-amber-700 gap-1.5 py-1.5 max-w-sm">
                   <AlertTriangle className="size-3 shrink-0" />
                   <span className="font-medium">{f.code}</span> — {f.title}
                 </Badge>

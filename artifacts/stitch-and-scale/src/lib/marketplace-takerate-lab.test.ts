@@ -149,3 +149,27 @@ describe('marketplace-takerate-lab — fmt$', () => {
     expect(fmt$(-3.7)).toBe('−$3.70');
   });
 });
+
+describe('marketplace-takerate-lab — repeated flag codes (QA #54 / #59)', () => {
+  it('default portfolio emits TR-03 for both LoveCrafts and Ribblr payout lags', () => {
+    const r = analyzeTakeRate(input());
+    const tr03 = r.flags.filter(f => f.code === 'TR-03');
+    expect(tr03.length).toBe(2);
+    expect(tr03.some(f => f.title.startsWith('LoveCrafts:'))).toBe(true);
+    expect(tr03.some(f => f.title.startsWith('Ribblr:'))).toBe(true);
+  });
+  it('default portfolio emits TR-05 for both Etsy and Ravelry fee-inflation exposure', () => {
+    const r = analyzeTakeRate(input());
+    const tr05 = r.flags.filter(f => f.code === 'TR-05');
+    expect(tr05.length).toBe(2);
+    expect(tr05.some(f => f.title.startsWith('Etsy:'))).toBe(true);
+    expect(tr05.some(f => f.title.startsWith('Ravelry:'))).toBe(true);
+  });
+  it('every watchout flag carries a distinct per-flag key so React children never collide', () => {
+    // Regression lock for QA #54/#59: the card keys badges by `${code}-${index}`;
+    // with position-stable indexes, any number of repeated codes stays unique.
+    const r = analyzeTakeRate(input());
+    const keys = new Set(r.flags.map((f, i) => `${f.code}-${i}`));
+    expect(keys.size).toBe(r.flags.length);
+  });
+});
