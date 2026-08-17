@@ -271,3 +271,35 @@ describe('suggested minimum formula', () => {
     expect(result.suggestedMinimum).toBe(100);
   });
 });
+
+// QA #40 regression — the two keystone suggestion branches previously rendered
+// a literal double-dollar ("($$112)") because `$${x}` inside a template literal
+// interpolates `x` while the leading `$` is kept verbatim.
+describe('verdict and suggestion copy (QA #40)', () => {
+  it('never renders a double-dollar sign anywhere in verdict or suggestion', () => {
+    // 1) the 8–15 $/hour tier suggestion interpolates avgKeystoneWholesale
+    // inside parentheses — the site that previously rendered "($$112)".
+    const skus = WHOLESALE_SKU_DEFAULTS.map((s) => ({
+      ...s,
+      wholesalePrice: Math.round(s.wholesalePrice * 0.9 * 100) / 100,
+    }));
+    const mid = analyzeWholesale({ skus, terms: { firstOrderMinimum: 50 } });
+    expect(mid.suggestion).toContain('keystone');
+    expect(mid.suggestion).not.toContain('$$');
+    expect(mid.suggestion).toMatch(/\(\$112\)/);
+    // 2) the 15–29 $/hour verdict interpolates two dollar figures and must
+    // keep each single — "($${x}/year)" was the twin defect site.
+    const steady = analyzeWholesale({});
+    expect(steady.netPerWholesaleHour).toBeGreaterThanOrEqual(15);
+    expect(steady.verdict).toMatch(/\(\$5549\/year\)/);
+    expect(steady.verdict).not.toMatch(/\$\$[0-9]/);
+    expect(steady.suggestion).not.toMatch(/\$\$[0-9]/);
+    // 3) the "can't pay" losing-SKU branch concatenates the fix number — keep
+    // the copy free of double dollars regardless of branch choice.
+    const loser = analyzeWholesale({
+      skus: [{ ...WHOLESALE_SKU_DEFAULTS[0], wholesalePrice: 10 }],
+    });
+    expect(loser.verdict.toLowerCase()).toContain("can't pay");
+    expect(loser.verdict).not.toMatch(/\$\$[0-9]/);
+  });
+});

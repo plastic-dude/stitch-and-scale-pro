@@ -396,13 +396,13 @@ export function analyzeWholesale(input: {
     verdict = `Wholesale scales the business: $${netPerWholesaleHour.toFixed(0)}/wholesale-hour ($${annualWholesaleNet.toFixed(0)}/year) clears the $30/hour floor — a healthy program that pays real money while stockists carry your reach.`;
     suggestion = t.firstOrderMinimum >= suggestedMinimum && avgWholesaleMarginPct >= 0.4
       ? 'Terms and margins both clear the market standard — invest the line-sheet rewrite; for makers under 200 stockists the sheet is the entire sales pitch.'
-      : `Tighten the terms first: raise the first-order minimum toward $${suggestedMinimum.toFixed(0)} and push wholesale prices toward keystone ($${avgKeystoneWholesale.toFixed(0)}).`;
+      : `Tighten the terms first: raise the first-order minimum toward $${suggestedMinimum.toFixed(0)} and push wholesale prices toward keystone (${`$${avgKeystoneWholesale.toFixed(0)}`}).`;
   } else if (netPerWholesaleHour >= 15) {
     verdict = `Wholesale is steady work at $${netPerWholesaleHour.toFixed(0)}/hour ($${annualWholesaleNet.toFixed(0)}/year) — below the $30/hour floor but above piece-rate territory; it earns its keep through reorders, not first orders.`;
     suggestion = 'A typical stockist needs 2–3 reorders a year at $400+ to make the program hum; pitch the seasonal refresh (fall capsule, holiday bestsellers) as the reorder hook, and take only accounts that commit to the repeat minimum.';
   } else if (netPerWholesaleHour >= 8) {
     verdict = `Wholesale pays $${netPerWholesaleHour.toFixed(0)}/hour ($${annualWholesaleNet.toFixed(0)}/year) — underpaid for knitting labor; keep it selective unless every account reorders $${Math.max(t.repeatMinimum, suggestedMinimum).toFixed(0)}+ twice a year.`;
-    suggestion = `Take only accounts that commit to the repeat minimum, skip one-off 6-unit test orders, and push prices toward keystone ($${avgKeystoneWholesale.toFixed(0)}) — the sheet itself filters for serious buyers.`;
+    suggestion = `Take only accounts that commit to the repeat minimum, skip one-off 6-unit test orders, and push prices toward keystone (${`$${avgKeystoneWholesale.toFixed(0)}`}) — the sheet itself filters for serious buyers.`;
   } else {
     verdict = `Wholesale pays $${netPerWholesaleHour.toFixed(0)}/hour ($${annualWholesaleNet.toFixed(0)}/year) — below piece-rate wages; the program loses to a test-knit commission before it earns a single reorder.`;
     suggestion = 'Reprice the line toward keystone (COGS x 2) or cut the slow SKUs; a boutique will pay keystone for a sell-through design, and selling direct at full retail pays far better for the same knit hours.';
