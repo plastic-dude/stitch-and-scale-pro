@@ -1,0 +1,1437 @@
+{
+  "base": "https://stitch-and-scale-pro-api-server.vercel.app",
+  "viewport": "1280x900",
+  "inventoryCount": 79,
+  "records": [
+    {
+      "index": 0,
+      "label": "Sections",
+      "box": {
+        "x": 37,
+        "y": 240,
+        "width": 83.375,
+        "height": 44
+      },
+      "active": [
+        "Sections"
+      ],
+      "activeLabel": "Sections",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Saved Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Orde",
+      "bodyHeight": 900,
+      "file": "screenshots/project-tab--01-sections__desktop-1280.png"
+    },
+    {
+      "index": 1,
+      "label": "Preview",
+      "box": {
+        "x": 124.375,
+        "y": 240,
+        "width": 77.328125,
+        "height": 44
+      },
+      "active": [
+        "Preview"
+      ],
+      "activeLabel": "Preview",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1276,
+      "file": "screenshots/project-tab--02-preview__desktop-1280.png"
+    },
+    {
+      "index": 2,
+      "label": "Yarn",
+      "box": {
+        "x": 205.703125,
+        "y": 240,
+        "width": 52.984375,
+        "height": 44
+      },
+      "active": [
+        "Yarn"
+      ],
+      "activeLabel": "Yarn",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1120,
+      "file": "screenshots/project-tab--03-yarn__desktop-1280.png"
+    },
+    {
+      "index": 3,
+      "label": "Notes",
+      "box": {
+        "x": 262.6875,
+        "y": 240,
+        "width": 64.4375,
+        "height": 44
+      },
+      "active": [
+        "Notes"
+      ],
+      "activeLabel": "Notes",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 900,
+      "file": "screenshots/project-tab--04-notes__desktop-1280.png"
+    },
+    {
+      "index": 4,
+      "label": "Income",
+      "box": {
+        "x": 331.125,
+        "y": 240,
+        "width": 74.796875,
+        "height": 44
+      },
+      "active": [
+        "Income"
+      ],
+      "activeLabel": "Income",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1083,
+      "file": "screenshots/project-tab--05-income__desktop-1280.png"
+    },
+    {
+      "index": 5,
+      "label": "Draft",
+      "box": {
+        "x": 409.921875,
+        "y": 240,
+        "width": 58.609375,
+        "height": 44
+      },
+      "active": [
+        "Draft"
+      ],
+      "activeLabel": "Draft",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 900,
+      "file": "screenshots/project-tab--06-draft__desktop-1280.png"
+    },
+    {
+      "index": 6,
+      "label": "Pricing",
+      "box": {
+        "x": 472.53125,
+        "y": 240,
+        "width": 70.359375,
+        "height": 44
+      },
+      "active": [
+        "Pricing"
+      ],
+      "activeLabel": "Pricing",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1429,
+      "file": "screenshots/project-tab--07-pricing__desktop-1280.png"
+    },
+    {
+      "index": 7,
+      "label": "Publish",
+      "box": {
+        "x": 546.890625,
+        "y": 240,
+        "width": 72.4375,
+        "height": 44
+      },
+      "active": [
+        "Publish"
+      ],
+      "activeLabel": "Publish",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 2702,
+      "file": "screenshots/project-tab--08-publish__desktop-1280.png"
+    },
+    {
+      "index": 8,
+      "label": "Test Knit",
+      "box": {
+        "x": 600.328125,
+        "y": 240,
+        "width": 80.296875,
+        "height": 44
+      },
+      "active": [
+        "Test Knit"
+      ],
+      "activeLabel": "Test Knit",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 2606,
+      "file": "screenshots/project-tab--09-test-knit__desktop-1280.png"
+    },
+    {
+      "index": 9,
+      "label": "Tech Edit",
+      "box": {
+        "x": 597.625,
+        "y": 240,
+        "width": 84.625,
+        "height": 44
+      },
+      "active": [
+        "Tech Edit"
+      ],
+      "activeLabel": "Tech Edit",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1414,
+      "file": "screenshots/project-tab--10-tech-edit__desktop-1280.png"
+    },
+    {
+      "index": 10,
+      "label": "Finish",
+      "box": {
+        "x": 609.25,
+        "y": 240,
+        "width": 62.203125,
+        "height": 44
+      },
+      "active": [
+        "Finish"
+      ],
+      "activeLabel": "Finish",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1177,
+      "file": "screenshots/project-tab--11-finish__desktop-1280.png"
+    },
+    {
+      "index": 11,
+      "label": "Deals",
+      "box": {
+        "x": 609.453125,
+        "y": 240,
+        "width": 61.390625,
+        "height": 44
+      },
+      "active": [
+        "Deals"
+      ],
+      "activeLabel": "Deals",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1978,
+      "file": "screenshots/project-tab--12-deals__desktop-1280.png"
+    },
+    {
+      "index": 12,
+      "label": "Launch",
+      "box": {
+        "x": 603.84375,
+        "y": 240,
+        "width": 72.34375,
+        "height": 44
+      },
+      "active": [
+        "Launch"
+      ],
+      "activeLabel": "Launch",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 4339,
+      "file": "screenshots/project-tab--13-launch__desktop-1280.png"
+    },
+    {
+      "index": 13,
+      "label": "Trunk Show",
+      "box": {
+        "x": 590.1875,
+        "y": 240,
+        "width": 99.59375,
+        "height": 44
+      },
+      "active": [
+        "Trunk Show"
+      ],
+      "activeLabel": "Trunk Show",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 3987,
+      "file": "screenshots/project-tab--14-trunk-show__desktop-1280.png"
+    },
+    {
+      "index": 14,
+      "label": "Trans & Bundle",
+      "box": {
+        "x": 579.78125,
+        "y": 240,
+        "width": 121.3125,
+        "height": 44
+      },
+      "active": [
+        "Trans & Bundle"
+      ],
+      "activeLabel": "Trans & Bundle",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 2380,
+      "file": "screenshots/project-tab--15-trans-bundle__desktop-1280.png"
+    },
+    {
+      "index": 15,
+      "label": "Pattern Club",
+      "box": {
+        "x": 586.09375,
+        "y": 240,
+        "width": 107.046875,
+        "height": 44
+      },
+      "active": [
+        "Pattern Club",
+        "Pattern Club"
+      ],
+      "activeLabel": "Pattern Club",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1618,
+      "file": "screenshots/project-tab--16-pattern-club__desktop-1280.png"
+    },
+    {
+      "index": 16,
+      "label": "Kits",
+      "box": {
+        "x": 615.140625,
+        "y": 240,
+        "width": 49.296875,
+        "height": 44
+      },
+      "active": [
+        "Kits"
+      ],
+      "activeLabel": "Kits",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 2317,
+      "file": "screenshots/project-tab--17-kits__desktop-1280.png"
+    },
+    {
+      "index": 17,
+      "label": "Pipeline",
+      "box": {
+        "x": 601.4375,
+        "y": 240,
+        "width": 77.671875,
+        "height": 44
+      },
+      "active": [
+        "Pipeline"
+      ],
+      "activeLabel": "Pipeline",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 900,
+      "file": "screenshots/project-tab--18-pipeline__desktop-1280.png"
+    },
+    {
+      "index": 18,
+      "label": "KAL & Collab",
+      "box": {
+        "x": 585.109375,
+        "y": 240,
+        "width": 109.546875,
+        "height": 44
+      },
+      "active": [
+        "KAL & Collab"
+      ],
+      "activeLabel": "KAL & Collab",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1659,
+      "file": "screenshots/project-tab--19-kal-collab__desktop-1280.png"
+    },
+    {
+      "index": 19,
+      "label": "Channels",
+      "box": {
+        "x": 596.65625,
+        "y": 240,
+        "width": 86.390625,
+        "height": 44
+      },
+      "active": [
+        "Channels"
+      ],
+      "activeLabel": "Channels",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1563,
+      "file": "screenshots/project-tab--20-channels__desktop-1280.png"
+    },
+    {
+      "index": 20,
+      "label": "Club Rev",
+      "box": {
+        "x": 599.046875,
+        "y": 240,
+        "width": 82.703125,
+        "height": 44
+      },
+      "active": [
+        "Club Rev"
+      ],
+      "activeLabel": "Club Rev",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1800,
+      "file": "screenshots/project-tab--21-club-rev__desktop-1280.png"
+    },
+    {
+      "index": 21,
+      "label": "Wholesale & Book",
+      "box": {
+        "x": 567.75,
+        "y": 240,
+        "width": 145.46875,
+        "height": 44
+      },
+      "active": [
+        "Wholesale & Book"
+      ],
+      "activeLabel": "Wholesale & Book",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1747,
+      "file": "screenshots/project-tab--22-wholesale-book__desktop-1280.png"
+    },
+    {
+      "index": 22,
+      "label": "Hire vs Self",
+      "box": {
+        "x": 591.21875,
+        "y": 240,
+        "width": 97.09375,
+        "height": 44
+      },
+      "active": [
+        "Hire vs Self"
+      ],
+      "activeLabel": "Hire vs Self",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 2057,
+      "file": "screenshots/project-tab--23-hire-vs-self__desktop-1280.png"
+    },
+    {
+      "index": 23,
+      "label": "Inclusive",
+      "box": {
+        "x": 599.3125,
+        "y": 240,
+        "width": 82.09375,
+        "height": 44
+      },
+      "active": [
+        "Inclusive"
+      ],
+      "activeLabel": "Inclusive",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1849,
+      "file": "screenshots/project-tab--24-inclusive__desktop-1280.png"
+    },
+    {
+      "index": 24,
+      "label": "Licence It",
+      "box": {
+        "x": 595.40625,
+        "y": 240,
+        "width": 88.671875,
+        "height": 44
+      },
+      "active": [
+        "Licence It"
+      ],
+      "activeLabel": "Licence It",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 2075,
+      "file": "screenshots/project-tab--25-licence-it__desktop-1280.png"
+    },
+    {
+      "index": 25,
+      "label": "Members",
+      "box": {
+        "x": 596.078125,
+        "y": 240,
+        "width": 87.375,
+        "height": 44
+      },
+      "active": [
+        "Members"
+      ],
+      "activeLabel": "Members",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 2093,
+      "file": "screenshots/project-tab--26-members__desktop-1280.png"
+    },
+    {
+      "index": 26,
+      "label": "Promo",
+      "box": {
+        "x": 605.453125,
+        "y": 240,
+        "width": 69.03125,
+        "height": 44
+      },
+      "active": [
+        "Promo"
+      ],
+      "activeLabel": "Promo",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 2379,
+      "file": "screenshots/project-tab--27-promo__desktop-1280.png"
+    },
+    {
+      "index": 27,
+      "label": "PriceWin",
+      "box": {
+        "x": 598.484375,
+        "y": 240,
+        "width": 83.671875,
+        "height": 44
+      },
+      "active": [
+        "PriceWin"
+      ],
+      "activeLabel": "PriceWin",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1637,
+      "file": "screenshots/project-tab--28-pricewin__desktop-1280.png"
+    },
+    {
+      "index": 28,
+      "label": "Repeat",
+      "box": {
+        "x": 604.15625,
+        "y": 240,
+        "width": 72.5625,
+        "height": 44
+      },
+      "active": [
+        "Repeat"
+      ],
+      "activeLabel": "Repeat",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1869,
+      "file": "screenshots/project-tab--29-repeat__desktop-1280.png"
+    },
+    {
+      "index": 29,
+      "label": "Mix",
+      "box": {
+        "x": 616.71875,
+        "y": 240,
+        "width": 46.453125,
+        "height": 44
+      },
+      "active": [
+        "Mix"
+      ],
+      "activeLabel": "Mix",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1498,
+      "file": "screenshots/project-tab--30-mix__desktop-1280.png"
+    },
+    {
+      "index": 30,
+      "label": "Collab",
+      "box": {
+        "x": 606.171875,
+        "y": 240,
+        "width": 67.984375,
+        "height": 44
+      },
+      "active": [
+        "Collab"
+      ],
+      "activeLabel": "Collab",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1860,
+      "file": "screenshots/project-tab--31-collab__desktop-1280.png"
+    },
+    {
+      "index": 31,
+      "label": "Book It",
+      "box": {
+        "x": 604.15625,
+        "y": 240,
+        "width": 71.484375,
+        "height": 44
+      },
+      "active": [
+        "Book It"
+      ],
+      "activeLabel": "Book It",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1848,
+      "file": "screenshots/project-tab--32-book-it__desktop-1280.png"
+    },
+    {
+      "index": 32,
+      "label": "Protect",
+      "box": {
+        "x": 602.640625,
+        "y": 240,
+        "width": 74.875,
+        "height": 44
+      },
+      "active": [
+        "Protect"
+      ],
+      "activeLabel": "Protect",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 2582,
+      "file": "screenshots/project-tab--33-protect__desktop-1280.png"
+    },
+    {
+      "index": 33,
+      "label": "Teach",
+      "box": {
+        "x": 608.515625,
+        "y": 240,
+        "width": 63.4375,
+        "height": 44
+      },
+      "active": [
+        "Teach"
+      ],
+      "activeLabel": "Teach",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 2723,
+      "file": "screenshots/project-tab--34-teach__desktop-1280.png"
+    },
+    {
+      "index": 34,
+      "label": "Partners",
+      "box": {
+        "x": 599.953125,
+        "y": 240,
+        "width": 79.84375,
+        "height": 44
+      },
+      "active": [
+        "Partners"
+      ],
+      "activeLabel": "Partners",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1730,
+      "file": "screenshots/project-tab--35-partners__desktop-1280.png"
+    },
+    {
+      "index": 35,
+      "label": "Yarn Buy",
+      "box": {
+        "x": 599.796875,
+        "y": 240,
+        "width": 80.953125,
+        "height": 44
+      },
+      "active": [
+        "Yarn Buy"
+      ],
+      "activeLabel": "Yarn Buy",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 900,
+      "file": "screenshots/project-tab--36-yarn-buy__desktop-1280.png"
+    },
+    {
+      "index": 36,
+      "label": "KAL Planner",
+      "box": {
+        "x": 588.75,
+        "y": 240,
+        "width": 102.734375,
+        "height": 44
+      },
+      "active": [
+        "KAL Planner"
+      ],
+      "activeLabel": "KAL Planner",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1300,
+      "file": "screenshots/project-tab--37-kal-planner__desktop-1280.png"
+    },
+    {
+      "index": 37,
+      "label": "Grading Lab",
+      "box": {
+        "x": 587.484375,
+        "y": 240,
+        "width": 105.75,
+        "height": 44
+      },
+      "active": [
+        "Grading Lab"
+      ],
+      "activeLabel": "Grading Lab",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1293,
+      "file": "screenshots/project-tab--38-grading-lab__desktop-1280.png"
+    },
+    {
+      "index": 38,
+      "label": "Chart Lab",
+      "box": {
+        "x": 595.234375,
+        "y": 240,
+        "width": 88.921875,
+        "height": 44
+      },
+      "active": [
+        "Chart Lab"
+      ],
+      "activeLabel": "Chart Lab",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1577,
+      "file": "screenshots/project-tab--39-chart-lab__desktop-1280.png"
+    },
+    {
+      "index": 39,
+      "label": "Test Knit Desk",
+      "box": {
+        "x": 582.15625,
+        "y": 240,
+        "width": 116.65625,
+        "height": 44
+      },
+      "active": [
+        "Test Knit Desk"
+      ],
+      "activeLabel": "Test Knit Desk",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1306,
+      "file": "screenshots/project-tab--40-test-knit-desk__desktop-1280.png"
+    },
+    {
+      "index": 40,
+      "label": "Submissions",
+      "box": {
+        "x": 585.8125,
+        "y": 240,
+        "width": 108.6875,
+        "height": 44
+      },
+      "active": [
+        "Submissions"
+      ],
+      "activeLabel": "Submissions",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1536,
+      "file": "screenshots/project-tab--41-submissions__desktop-1280.png"
+    },
+    {
+      "index": 41,
+      "label": "Lookbook",
+      "box": {
+        "x": 593.5,
+        "y": 240,
+        "width": 93.109375,
+        "height": 44
+      },
+      "active": [
+        "Lookbook"
+      ],
+      "activeLabel": "Lookbook",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1879,
+      "file": "screenshots/project-tab--42-lookbook__desktop-1280.png"
+    },
+    {
+      "index": 42,
+      "label": "Spec Sheet",
+      "box": {
+        "x": 588.609375,
+        "y": 240,
+        "width": 101.78125,
+        "height": 44
+      },
+      "active": [
+        "Spec Sheet"
+      ],
+      "activeLabel": "Spec Sheet",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 2158,
+      "file": "screenshots/project-tab--43-spec-sheet__desktop-1280.png"
+    },
+    {
+      "index": 43,
+      "label": "Distribution",
+      "box": {
+        "x": 588.390625,
+        "y": 240,
+        "width": 102.234375,
+        "height": 44
+      },
+      "active": [
+        "Distribution"
+      ],
+      "activeLabel": "Distribution",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1803,
+      "file": "screenshots/project-tab--44-distribution__desktop-1280.png"
+    },
+    {
+      "index": 44,
+      "label": "Listing SEO",
+      "box": {
+        "x": 589.625,
+        "y": 240,
+        "width": 100.421875,
+        "height": 44
+      },
+      "active": [
+        "Listing SEO"
+      ],
+      "activeLabel": "Listing SEO",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 2057,
+      "file": "screenshots/project-tab--45-listing-seo__desktop-1280.png"
+    },
+    {
+      "index": 45,
+      "label": "Ad Break-Even",
+      "box": {
+        "x": 578.046875,
+        "y": 240,
+        "width": 123.828125,
+        "height": 44
+      },
+      "active": [
+        "Ad Break-Even"
+      ],
+      "activeLabel": "Ad Break-Even",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1793,
+      "file": "screenshots/project-tab--46-ad-break-even__desktop-1280.png"
+    },
+    {
+      "index": 46,
+      "label": "Sample & Launch",
+      "box": {
+        "x": 570.875,
+        "y": 240,
+        "width": 138.703125,
+        "height": 44
+      },
+      "active": [
+        "Sample & Launch"
+      ],
+      "activeLabel": "Sample & Launch",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1552,
+      "file": "screenshots/project-tab--47-sample-launch__desktop-1280.png"
+    },
+    {
+      "index": 47,
+      "label": "Collab Deal Math",
+      "box": {
+        "x": 571.578125,
+        "y": 240,
+        "width": 136.609375,
+        "height": 44
+      },
+      "active": [
+        "Collab Deal Math"
+      ],
+      "activeLabel": "Collab Deal Math",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1709,
+      "file": "screenshots/project-tab--48-collab-deal-math__desktop-1280.png"
+    },
+    {
+      "index": 48,
+      "label": "Photo ROI",
+      "box": {
+        "x": 594.1875,
+        "y": 240,
+        "width": 92.140625,
+        "height": 44
+      },
+      "active": [
+        "Photo ROI"
+      ],
+      "activeLabel": "Photo ROI",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1574,
+      "file": "screenshots/project-tab--49-photo-roi__desktop-1280.png"
+    },
+    {
+      "index": 49,
+      "label": "Video & Social",
+      "box": {
+        "x": 579.328125,
+        "y": 240,
+        "width": 120.515625,
+        "height": 44
+      },
+      "active": [
+        "Video & Social"
+      ],
+      "activeLabel": "Video & Social",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1833,
+      "file": "screenshots/project-tab--50-video-social__desktop-1280.png"
+    },
+    {
+      "index": 50,
+      "label": "Show ROI",
+      "box": {
+        "x": 595.84375,
+        "y": 240,
+        "width": 89.234375,
+        "height": 44
+      },
+      "active": [
+        "Show ROI"
+      ],
+      "activeLabel": "Show ROI",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 2122,
+      "file": "screenshots/project-tab--51-show-roi__desktop-1280.png"
+    },
+    {
+      "index": 51,
+      "label": "Wholesale Lab",
+      "box": {
+        "x": 579.078125,
+        "y": 240,
+        "width": 121.59375,
+        "height": 44
+      },
+      "active": [
+        "Wholesale Lab"
+      ],
+      "activeLabel": "Wholesale Lab",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1307,
+      "file": "screenshots/project-tab--52-wholesale-lab__desktop-1280.png"
+    },
+    {
+      "index": 52,
+      "label": "Pre-Order Lab",
+      "box": {
+        "x": 579.671875,
+        "y": 240,
+        "width": 121.359375,
+        "height": 44
+      },
+      "active": [
+        "Pre-Order Lab"
+      ],
+      "activeLabel": "Pre-Order Lab",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 2044,
+      "file": "screenshots/project-tab--53-pre-order-lab__desktop-1280.png"
+    },
+    {
+      "index": 53,
+      "label": "Listing Test Lab",
+      "box": {
+        "x": 577.03125,
+        "y": 240,
+        "width": 125.546875,
+        "height": 44
+      },
+      "active": [
+        "Listing Test Lab"
+      ],
+      "activeLabel": "Listing Test Lab",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1865,
+      "file": "screenshots/project-tab--54-listing-test-lab__desktop-1280.png"
+    },
+    {
+      "index": 54,
+      "label": "Yarn Pool Lab",
+      "box": {
+        "x": 583.578125,
+        "y": 240,
+        "width": 113.125,
+        "height": 44
+      },
+      "active": [
+        "Yarn Pool Lab"
+      ],
+      "activeLabel": "Yarn Pool Lab",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1881,
+      "file": "screenshots/project-tab--55-yarn-pool-lab__desktop-1280.png"
+    },
+    {
+      "index": 55,
+      "label": "Membership Lab",
+      "box": {
+        "x": 572.703125,
+        "y": 240,
+        "width": 135.5,
+        "height": 44
+      },
+      "active": [
+        "Membership Lab"
+      ],
+      "activeLabel": "Membership Lab",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1342,
+      "file": "screenshots/project-tab--56-membership-lab__desktop-1280.png"
+    },
+    {
+      "index": 56,
+      "label": "Release Timing Lab",
+      "box": {
+        "x": 564.203125,
+        "y": 240,
+        "width": 150.6875,
+        "height": 44
+      },
+      "active": [
+        "Release Timing Lab"
+      ],
+      "activeLabel": "Release Timing Lab",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1781,
+      "file": "screenshots/project-tab--57-release-timing-lab__desktop-1280.png"
+    },
+    {
+      "index": 57,
+      "label": "Booth Lab",
+      "box": {
+        "x": 593.890625,
+        "y": 240,
+        "width": 92.859375,
+        "height": 44
+      },
+      "active": [
+        "Booth Lab"
+      ],
+      "activeLabel": "Booth Lab",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1668,
+      "file": "screenshots/project-tab--58-booth-lab__desktop-1280.png"
+    },
+    {
+      "index": 58,
+      "label": "Channel Lab",
+      "box": {
+        "x": 586.75,
+        "y": 240,
+        "width": 106.5625,
+        "height": 44
+      },
+      "active": [
+        "Channel Lab"
+      ],
+      "activeLabel": "Channel Lab",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1424,
+      "file": "screenshots/project-tab--59-channel-lab__desktop-1280.png"
+    },
+    {
+      "index": 59,
+      "label": "Workshop Lab",
+      "box": {
+        "x": 579.3125,
+        "y": 240,
+        "width": 120.421875,
+        "height": 44
+      },
+      "active": [
+        "Workshop Lab"
+      ],
+      "activeLabel": "Workshop Lab",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1542,
+      "file": "screenshots/project-tab--60-workshop-lab__desktop-1280.png"
+    },
+    {
+      "index": 60,
+      "label": "Re-Price Lab",
+      "box": {
+        "x": 584.734375,
+        "y": 240,
+        "width": 110.3125,
+        "height": 44
+      },
+      "active": [
+        "Re-Price Lab"
+      ],
+      "activeLabel": "Re-Price Lab",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 2024,
+      "file": "screenshots/project-tab--61-re-price-lab__desktop-1280.png"
+    },
+    {
+      "index": 61,
+      "label": "Bundle Lab",
+      "box": {
+        "x": 591.046875,
+        "y": 240,
+        "width": 98.546875,
+        "height": 44
+      },
+      "active": [
+        "Bundle Lab"
+      ],
+      "activeLabel": "Bundle Lab",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1653,
+      "file": "screenshots/project-tab--62-bundle-lab__desktop-1280.png"
+    },
+    {
+      "index": 62,
+      "label": "Retreat Lab",
+      "box": {
+        "x": 589.59375,
+        "y": 240,
+        "width": 100.96875,
+        "height": 44
+      },
+      "active": [
+        "Retreat Lab"
+      ],
+      "activeLabel": "Retreat Lab",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1632,
+      "file": "screenshots/project-tab--63-retreat-lab__desktop-1280.png"
+    },
+    {
+      "index": 63,
+      "label": "Podcast Lab",
+      "box": {
+        "x": 586.5625,
+        "y": 240,
+        "width": 107.6875,
+        "height": 44
+      },
+      "active": [
+        "Podcast Lab"
+      ],
+      "activeLabel": "Podcast Lab",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1856,
+      "file": "screenshots/project-tab--64-podcast-lab__desktop-1280.png"
+    },
+    {
+      "index": 64,
+      "label": "Magazine Lab",
+      "box": {
+        "x": 582.25,
+        "y": 240,
+        "width": 115.109375,
+        "height": 44
+      },
+      "active": [
+        "Magazine Lab"
+      ],
+      "activeLabel": "Magazine Lab",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1385,
+      "file": "screenshots/project-tab--65-magazine-lab__desktop-1280.png"
+    },
+    {
+      "index": 65,
+      "label": "Price Psych Lab",
+      "box": {
+        "x": 576.359375,
+        "y": 240,
+        "width": 127.96875,
+        "height": 44
+      },
+      "active": [
+        "Price Psych Lab"
+      ],
+      "activeLabel": "Price Psych Lab",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1703,
+      "file": "screenshots/project-tab--66-price-psych-lab__desktop-1280.png"
+    },
+    {
+      "index": 66,
+      "label": "POD Patterns Lab",
+      "box": {
+        "x": 569.328125,
+        "y": 240,
+        "width": 141.515625,
+        "height": 44
+      },
+      "active": [
+        "POD Patterns Lab"
+      ],
+      "activeLabel": "POD Patterns Lab",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1513,
+      "file": "screenshots/project-tab--67-pod-patterns-lab__desktop-1280.png"
+    },
+    {
+      "index": 67,
+      "label": "Take-Rate Lab",
+      "box": {
+        "x": 579.84375,
+        "y": 240,
+        "width": 120.484375,
+        "height": 44
+      },
+      "active": [
+        "Take-Rate Lab"
+      ],
+      "activeLabel": "Take-Rate Lab",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 2012,
+      "file": "screenshots/project-tab--68-take-rate-lab__desktop-1280.png"
+    },
+    {
+      "index": 68,
+      "label": "Box Inclusion Lab",
+      "box": {
+        "x": 570.328125,
+        "y": 240,
+        "width": 138.921875,
+        "height": 44
+      },
+      "active": [
+        "Box Inclusion Lab"
+      ],
+      "activeLabel": "Box Inclusion Lab",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1387,
+      "file": "screenshots/project-tab--69-box-inclusion-lab__desktop-1280.png"
+    },
+    {
+      "index": 69,
+      "label": "Yarn Licensing Lab",
+      "box": {
+        "x": 566.25,
+        "y": 240,
+        "width": 146.515625,
+        "height": 44
+      },
+      "active": [
+        "Yarn Licensing Lab"
+      ],
+      "activeLabel": "Yarn Licensing Lab",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1573,
+      "file": "screenshots/project-tab--70-yarn-licensing-lab__desktop-1280.png"
+    },
+    {
+      "index": 70,
+      "label": "Gift & Credit Lab",
+      "box": {
+        "x": 572.765625,
+        "y": 240,
+        "width": 135.4375,
+        "height": 44
+      },
+      "active": [
+        "Gift & Credit Lab"
+      ],
+      "activeLabel": "Gift & Credit Lab",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1715,
+      "file": "screenshots/project-tab--71-gift-credit-lab__desktop-1280.png"
+    },
+    {
+      "index": 71,
+      "label": "Wholesale List Lab",
+      "box": {
+        "x": 566.203125,
+        "y": 240,
+        "width": 147.515625,
+        "height": 44
+      },
+      "active": [
+        "Wholesale List Lab"
+      ],
+      "activeLabel": "Wholesale List Lab",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 2376,
+      "file": "screenshots/project-tab--72-wholesale-list-lab__desktop-1280.png"
+    },
+    {
+      "index": 72,
+      "label": "Intl Pricing Lab",
+      "box": {
+        "x": 579.71875,
+        "y": 240,
+        "width": 120.796875,
+        "height": 44
+      },
+      "active": [
+        "Intl Pricing Lab"
+      ],
+      "activeLabel": "Intl Pricing Lab",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1739,
+      "file": "screenshots/project-tab--73-intl-pricing-lab__desktop-1280.png"
+    },
+    {
+      "index": 73,
+      "label": "Test Knit Lab",
+      "box": {
+        "x": 586.515625,
+        "y": 240,
+        "width": 107.625,
+        "height": 44
+      },
+      "active": [
+        "Test Knit Lab"
+      ],
+      "activeLabel": "Test Knit Lab",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 2259,
+      "file": "screenshots/project-tab--74-test-knit-lab__desktop-1280.png"
+    },
+    {
+      "index": 74,
+      "label": "Gauge & Fit",
+      "box": {
+        "x": 692.140625,
+        "y": 240,
+        "width": 101.859375,
+        "height": 44
+      },
+      "active": [
+        "Gauge & Fit"
+      ],
+      "activeLabel": "Gauge & Fit",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1197,
+      "file": "screenshots/project-tab--75-gauge-fit__desktop-1280.png"
+    },
+    {
+      "index": 75,
+      "label": "Receipt Lab",
+      "box": {
+        "x": 798,
+        "y": 240,
+        "width": 103.703125,
+        "height": 44
+      },
+      "active": [
+        "Receipt Lab",
+        " New Receipt"
+      ],
+      "activeLabel": "Receipt Lab",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1712,
+      "file": "screenshots/project-tab--76-receipt-lab__desktop-1280.png"
+    },
+    {
+      "index": 76,
+      "label": "Design Ledger",
+      "box": {
+        "x": 905.703125,
+        "y": 240,
+        "width": 121.390625,
+        "height": 44
+      },
+      "active": [
+        "Design Ledger",
+        "Studio"
+      ],
+      "activeLabel": "Design Ledger",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 900,
+      "file": "screenshots/project-tab--77-design-ledger__desktop-1280.png"
+    },
+    {
+      "index": 77,
+      "label": "Brag Cards",
+      "box": {
+        "x": 1031.09375,
+        "y": 240,
+        "width": 98.53125,
+        "height": 44
+      },
+      "active": [
+        "Brag Cards"
+      ],
+      "activeLabel": "Brag Cards",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 1240,
+      "file": "screenshots/project-tab--78-brag-cards__desktop-1280.png"
+    },
+    {
+      "index": 78,
+      "label": "Payback Lab",
+      "box": {
+        "x": 1133.625,
+        "y": 240,
+        "width": 109.296875,
+        "height": 44
+      },
+      "active": [
+        "Payback Lab",
+        "All patterns (0)"
+      ],
+      "activeLabel": "Payback Lab",
+      "identityMatches": true,
+      "body": "Stitch & Scale Local only Projects Portfolio Settings New Project Classic Crew Neck Sweater M By Stitch & Scale • Gauge: 20sts × 28rows / 4in Full Grading Table Export PDF Sections Preview Yarn Notes Income Draft Pricing Publish Test Knit Tech Edit Finish Deals Launch Trunk Show Trans & Bundle Pattern Club Kits Pipeline KAL & Collab Channels Club Rev Wholesale & Book Hire vs Self Inclusive Licence It Members Promo PriceWin Repeat Mix Collab Book It Protect Teach Partners Yarn Buy KAL Planner Grading Lab Chart Lab Test Knit Desk Submissions Lookbook Spec Sheet Distribution Listing SEO Ad Break-Even Sample & Launch Collab Deal Math Photo ROI Video & Social Show ROI Wholesale Lab Pre-Order Lab ",
+      "bodyHeight": 900,
+      "file": "screenshots/project-tab--79-payback-lab__desktop-1280.png"
+    }
+  ],
+  "reachedCount": 79,
+  "identityMismatch": [],
+  "errors": [],
+  "consoleErrors": []
+}
