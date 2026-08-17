@@ -38,6 +38,27 @@ import type { PatternProject } from "@/lib/grading-engine";
 import { EXPENSE_CATEGORY_LABELS } from "@/lib/design-ledger";
 import { analyzeReceiptFees, fmtMoney, SALE_CHANNEL_LABELS, type SavedSale } from "@/lib/receipt-lab";
 
+function paybackTwoDec(n: number): number {
+  return Math.round(n * 100) / 100;
+}
+function paybackClamp(v: number, lo: number, hi: number): number {
+  return Math.min(hi, Math.max(lo, v));
+}
+
+/*
+  Resolve the gross total of a stored Receipt Lab row, covering both shapes:
+  rows carrying an explicit grossTotal, and Receipt Lab's actual SavedSale
+  rows (which have no grossTotal at all — see issue #57 / ledger S273).
+  For the missing case, gross is derived the same way the canonical analyzer
+  does: items subtotal + tax + shipping charged.
+*/
+export function resolveStoredReceiptGross(row: ReceiptStoredRow): number {
+  if (typeof row.grossTotal === "number") return row.grossTotal;
+  const f = row.fees ?? {};
+  const subtotal = (row.items ?? []).reduce((s, it) => s + ((it.qty ?? 0) * (it.unitPrice ?? 0)), 0);
+  const taxAmount = paybackTwoDec(subtotal * paybackClamp(f.taxPct ?? 0, 0, 1));
+  return paybackTwoDec(subtotal + taxAmount + paybackClamp(f.shippingCharged ?? 0, 0, 1e9));
+}
 const DESIGN_LEDGER_LEGACY_KEY = "stitch-and-scale-designledger-v1";
 const RECEIPT_LEGACY_KEY = "stitch-and-scale-receipt-v1";
 const PAYBACK_LEGACY_KEY = "stitch-and-scale-payback-v1";
@@ -170,7 +191,7 @@ function readReceipts(project: PatternProject): { currency: string; sales: Desig
       if (kind !== "receipt" && kind !== "refund") continue;
       const feesTotal = resolveStoredReceiptFees(row);
       const eff = kind === "refund" ? -1 : 1;
-      const gross = typeof row.grossTotal === "number" ? row.grossTotal : eff * 0;
+      const gross = resolveStoredReceiptGross(row);
       sales.push({
         id: row.id ?? "",
         kind: kind as "receipt" | "refund",
