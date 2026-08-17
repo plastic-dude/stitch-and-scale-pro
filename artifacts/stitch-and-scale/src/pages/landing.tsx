@@ -159,13 +159,18 @@ export default function Landing() {
         <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {copy.capabilities.map((c, i) => {
             const Icon = CAPABILITY_ICONS[i];
+            // CHK-121: capability cards must be visible on first paint — never
+            // depend on a scroll gesture (whileInView left them opacity:0 until
+            // scrolled into view, and permanently invisible under
+            // prefers-reduced-motion, where framer-motion freezes at the
+            // initial state). `animate` plays once on mount and framer-motion
+            // automatically renders the final state instantly under reduced
+            // motion, so content is always deterministically visible.
             return (
             <motion.div
               key={c.title}
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.06 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: i * 0.04 }}
             >
               <Card className="h-full">
                 <CardContent className="space-y-2.5 p-5">
