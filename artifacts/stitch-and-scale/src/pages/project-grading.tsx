@@ -85,7 +85,7 @@ export default function ProjectGrading() {
   const handlePrint = () => window.print();
 
   return (
-    <div className="animate-in fade-in duration-500 mx-auto pb-24 print:pb-0 print:m-0 print:p-0">
+    <div id="sas-print-sheet" className="animate-in fade-in duration-500 mx-auto pb-24 print:pb-0 print:m-0 print:p-0">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-8 print:hidden">
         <Button variant="ghost" className="pl-0 text-muted-foreground hover:text-foreground self-start" onClick={() => setLocation(`/project/${project.id}`)} data-testid="button-back-to-project">
           <ArrowLeft className="w-4 h-4 mr-2" /> Back to Project
@@ -219,11 +219,18 @@ export default function ProjectGrading() {
       <style dangerouslySetInnerHTML={{__html: `
         @media print {
           @page { size: landscape; margin: 1cm; }
-          body { background: white !important; color: black !important; }
           .min-h-[100dvh] { min-height: auto; }
           header, nav, footer { display: none !important; }
-          * { text-shadow: none !important; }
-          td, th { break-inside: avoid; }
+          #sas-print-sheet, #sas-print-sheet * {
+            background: white !important;
+            color: black !important;
+            border-color: #d1d5db !important;
+            text-shadow: none !important;
+            box-shadow: none !important;
+          }
+            #sas-print-sheet td, #sas-print-sheet th { break-inside: avoid; }
+            #sas-print-sheet [data-testid="button-print"] { display: none; }
+            #sas-print-sheet th.print\\3a bg-black { background: #000 !important; color: #fff !important; }
         }
       `}} />
     </div>
