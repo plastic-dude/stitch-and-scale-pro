@@ -34,9 +34,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useSettings } from "@/context/SettingsContext";
+// CHK-119: the demo id is single-sourced — the workspace seeds the populated
+// demo on first request for exactly this id. Never redeclare it here.
+import { DEMO_PROJECT_ID } from "@/context/ProjectsContext";
 import { getLandingCopy } from "@/lib/landing-copy";
-
-const DEMO_PROJECT_ID = "mss5osqd88j6fdyvtdu";
 
 const CAPABILITY_ICONS = [Layers, Scissors, Calculator, Store, Globe2, Ruler];
 const STAT_VALUES = ["79", "1,694+", "13", "100%"];

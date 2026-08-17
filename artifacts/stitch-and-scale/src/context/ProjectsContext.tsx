@@ -1,6 +1,13 @@
 import React, { createContext, useContext, useEffect, useReducer, useRef, useState } from 'react';
 import { get, set } from 'idb-keyval';
 import { PatternProject, generateId } from '@/lib/grading-engine';
+import { SAMPLE_CREW_NECK_SWEATER } from '@/lib/sample-projects';
+// CHK-119: landing CTAs link to /project/{DEMO_PROJECT_ID} promising a no-signup
+// live demo — but nothing ever created that project, so a clean profile saw
+// "Project Not Found" (QA #61). The demo now seeds lazily on first request for
+// the demo id: a landing CTA click counts as the explicit request (nothing is
+// seeded on launch). The sample crew neck is re-id'd to the canonical demo id
+// so every demo entry point (workspace, grading table, PDF) resolves.
 // S001 fix (fix applied by review agent, verified Aug 14 2026): the reducer used
 // to write localStorage directly ('stitch-and-scale-v1'), making the seam's
 // writeProjects (IndexedDB + localStorage, audit-aware) a second, unsynchronized
@@ -190,16 +197,37 @@ export function useProjects() {
   return context;
 }
 
+// Canonical demo project id shared with the landing page CTAs.
+export const DEMO_PROJECT_ID = 'mss5osqd88j6fdyvtdu';
+
+// Build the populated demo project (sample crew neck re-id'd) — exported so the
+// seed logic and its regression tests share one definition. Timestamps are
+// injected at seed time, not baked into the module, so tests can freeze time.
+export function makeDemoProject(now: string = new Date().toISOString()): PatternProject {
+  return { ...SAMPLE_CREW_NECK_SWEATER, id: DEMO_PROJECT_ID, createdAt: now, updatedAt: now };
+}
+
 export function useProject(id?: string) {
-  const { projects, updateProject, deleteProject } = useProjects();
+  const { projects, createProject, updateProject, deleteProject } = useProjects();
   if (!id) return null;
-  const project = projects.find(p => p.id === id);
-  
-  if (!project) return null;
-  
+  const existing = projects.find(p => p.id === id);
+
+  // CHK-119: first visit to the demo id with no stored project seeds the demo.
+  if (!existing && id === DEMO_PROJECT_ID) {
+    const demo = makeDemoProject();
+    createProject(demo);
+    return {
+      project: demo,
+      updateProject: (p: PatternProject) => updateProject(p),
+      deleteProject: () => deleteProject(DEMO_PROJECT_ID),
+    };
+  }
+
+  if (!existing) return null;
+
   return {
-    project,
+    project: existing,
     updateProject: (p: PatternProject) => updateProject(p),
-    deleteProject: () => deleteProject(project.id)
+    deleteProject: () => deleteProject(existing.id),
   };
 }
