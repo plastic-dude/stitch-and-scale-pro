@@ -69,7 +69,7 @@ async function metrics(call, name) {
     htmlWidth: document.documentElement.scrollWidth,
     htmlClientWidth: document.documentElement.clientWidth,
     overflowNodes: [...document.querySelectorAll('body *')].map((el) => { const rect = el.getBoundingClientRect(); const parents = []; let node = el.parentElement; for (let i = 0; i < 4 && node; i += 1, node = node.parentElement) { const parentRect = node.getBoundingClientRect(); parents.push({ tag: node.tagName, id: node.id, cls: String(node.className).slice(0, 80), left: Math.round(parentRect.left), right: Math.round(parentRect.right), width: Math.round(parentRect.width) }); } return { tag: el.tagName, id: el.id, cls: String(el.className).slice(0, 80), left: Math.round(rect.left), right: Math.round(rect.right), width: Math.round(rect.width), parents }; }).filter((item) => item.right > document.documentElement.clientWidth + 1).slice(0, 12),
-    text: document.body.innerText.slice(0, 1200),
+    text: document.body.innerText.slice(0, 5000),
     controls: [...document.querySelectorAll('button,a,input,select,textarea')].slice(0, 120).map((el) => {
       const rect = el.getBoundingClientRect();
       return { text: (el.innerText || el.getAttribute('aria-label') || el.getAttribute('placeholder') || '').trim().slice(0, 80), height: rect.height, width: rect.width, disabled: Boolean(el.disabled) };
@@ -176,6 +176,9 @@ try {
   const ledger = await metrics(call, 'design-ledger');
   assert(ledger.text.includes('Design Ledger'), 'Design Ledger did not open');
   assert(ledger.text.includes('Operational records'), 'operational records card is missing from Design Ledger');
+  assert(ledger.text.includes('Backup and restore'), 'operational backup panel is missing from Design Ledger');
+  assert(ledger.controls.some((control) => control.text === 'Download JSON backup'), 'JSON backup download action is missing');
+  assert(ledger.controls.some((control) => control.text === 'Restore JSON backup'), 'JSON backup restore action is missing');
   assert(!ledger.bodyOverflow && !ledger.htmlOverflow, `Design Ledger horizontal overflow: ${JSON.stringify({ body: [ledger.bodyWidth, ledger.bodyClientWidth], html: [ledger.htmlWidth, ledger.htmlClientWidth], nodes: ledger.overflowNodes })}`);
   const recordResult = await evaluate(call, `(() => {
     const name = document.querySelector('#op-sample-name');
@@ -203,7 +206,7 @@ try {
   assert(recoveredLedger.text.includes('Smoke Sample'), 'operational sample did not recover after reload');
   await capture(call, 'design-ledger-390');
 
-  console.log(JSON.stringify({ ok: true, outDir, checks: ['onboarding 320/360/390/430', 'dashboard', 'new project', 'sample workspace', 'export preflight + artifact evidence', 'grading lab QA + defect ledger', 'mobile lab search + recent history', 'design ledger + operational records'] }, null, 2));
+  console.log(JSON.stringify({ ok: true, outDir, checks: ['onboarding 320/360/390/430', 'dashboard', 'new project', 'sample workspace', 'export preflight + artifact evidence', 'grading lab QA + defect ledger', 'mobile lab search + recent history', 'design ledger + operational records backup/recovery'] }, null, 2));
 } finally {
   socket.close();
 }

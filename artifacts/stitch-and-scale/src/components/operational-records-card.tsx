@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -14,6 +14,8 @@ import {
   addTestKnit,
   addWholesaleOrder,
   exportOperationalRecordsCsv,
+  restoreOperationalRecords,
+  serializeOperationalRecords,
   removeOperationalRecord,
   updateOperationalRecord,
   type OperationalRecords,
@@ -57,8 +59,44 @@ export function OperationalRecordsCard({ project }: { project: PatternProject })
   const [orderCurrency, setOrderCurrency] = useState('USD');
   const [dueAt, setDueAt] = useState('');
   const [wholesaleStatus, setWholesaleStatus] = useState<WholesaleStatus>('draft');
+  const [backupStatus, setBackupStatus] = useState<'exported' | 'restored' | 'error' | null>(null);
+  const [pendingRestore, setPendingRestore] = useState<OperationalRecords | null>(null);
+  const backupInputRef = useRef<HTMLInputElement>(null);
 
   const persist = (next: OperationalRecords) => { setRecords(next); handle.write(next); };
+  const exportBackup = () => {
+    const blob = new Blob([serializeOperationalRecords(records)], { type: 'application/json;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${project.name.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'project'}-operational-records.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+    setBackupStatus('exported');
+  };
+  const restoreBackup = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    try {
+      const restored = restoreOperationalRecords(await file.text(), project.id);
+      event.currentTarget.value = '';
+      if (!restored) {
+        setBackupStatus('error');
+        return;
+      }
+      setBackupStatus(null);
+      setPendingRestore(restored);
+    } catch {
+      event.currentTarget.value = '';
+      setBackupStatus('error');
+    }
+  };
+  const confirmRestore = () => {
+    if (!pendingRestore) return;
+    persist(pendingRestore);
+    setPendingRestore(null);
+    setBackupStatus('restored');
+  };
   const exportRecords = () => {
     const blob = new Blob([exportOperationalRecordsCsv(records)], { type: 'text/csv;charset=utf-8' });
     const url = URL.createObjectURL(blob);
@@ -80,6 +118,24 @@ export function OperationalRecordsCard({ project }: { project: PatternProject })
         <CardTitle className="text-lg">{copy.title}</CardTitle>
         <CardDescription>{copy.description}</CardDescription>
         <Button type="button" variant="secondary" className="min-h-11 w-full sm:w-auto" onClick={exportRecords}>{copy.exportCsv}</Button>
+        <div className="rounded-lg border p-3 space-y-2">
+          <h3 className="text-sm font-semibold">{copy.backupTitle}</h3>
+          <p className="text-xs text-muted-foreground">{copy.backupDescription}</p>
+          <div className="grid gap-2 sm:grid-cols-2">
+            <Button type="button" variant="outline" className="min-h-11 w-full" onClick={exportBackup}>{copy.exportBackup}</Button>
+            <Button type="button" variant="outline" className="min-h-11 w-full" onClick={() => backupInputRef.current?.click()}>{copy.importBackup}</Button>
+          </div>
+          <input ref={backupInputRef} className="sr-only" type="file" accept="application/json,.json" onChange={restoreBackup} aria-label={copy.importBackup} />
+          <p className="text-[11px] text-muted-foreground">{copy.backupHelp}</p>
+          {pendingRestore && <div className="rounded-md border border-amber-500/40 bg-amber-500/5 p-2 space-y-2" role="alert">
+            <p className="text-xs text-amber-900 dark:text-amber-100">{copy.backupConfirm}</p>
+            <div className="grid gap-2 sm:grid-cols-2">
+              <Button type="button" variant="outline" className="min-h-11 w-full" onClick={() => setPendingRestore(null)}>{copy.backupCancel}</Button>
+              <Button type="button" className="min-h-11 w-full" onClick={confirmRestore}>{copy.backupConfirmAction}</Button>
+            </div>
+          </div>}
+          {backupStatus && <p role="status" aria-live="polite" className={`text-xs ${backupStatus === 'error' ? 'text-destructive' : 'text-emerald-600'}`}>{backupStatus === 'exported' ? copy.backupExported : backupStatus === 'restored' ? copy.backupSuccess : copy.backupError}</p>}
+        </div>
       </CardHeader>
       <CardContent className="grid min-w-0 gap-4 md:grid-cols-2">
         <section className="min-w-0 rounded-lg border p-3 space-y-3">
