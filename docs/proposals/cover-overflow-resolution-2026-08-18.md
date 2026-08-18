@@ -73,3 +73,11 @@ This is still not a pagination fix. The budget model reduces context-free warnin
 The export preflight panel now surfaces the structured A-007 budget breakdown when the cover guard blocks. The message includes the selected theme, normalized locale, title characters versus title limit, and cover characters versus cover limit. The detail is formatted through the existing five-locale PDF label registry rather than exposing the inspector’s English diagnostic directly. It is rendered as an alert-adjacent, readable detail line beside the existing cover guidance and does not alter the export gate.
 
 The localization contract now passes for all supported locales. The complete branch gate remains green at **146 test files / 2,033 tests**, typecheck, production build in 8.87 seconds, `git diff --check`, and all nine mobile-smoke checks. The normal sample does not trigger the panel, while a blocked artifact receives actionable context about which budget was exceeded.
+
+## Actual-renderer regression matrix
+
+The branch now tests the production `renderDocument` output rather than only synthetic HTML. For every supported locale (`en`, `de`, `fr`, `es`, `pt`) and every current theme (`minimal`, `luxury`, `craft`, `technical`), the test renders the actual cover HTML and passes it through the A-007 inspector.
+
+The representative production sample remains `safe` and `readyForReview` across all 20 cells. A production-rendered long-title and long-note fixture is `blocked` with an A-007 error across all 20 cells. This closes the most important evidence gap in the heuristic branch: the matrix now exercises the real cover markup while leaving the renderer source untouched.
+
+The complete branch gate passed with **147 test files / 2,035 tests**, typecheck, production build in 9.22 seconds, `git diff --check`, and all nine mobile-smoke checks.

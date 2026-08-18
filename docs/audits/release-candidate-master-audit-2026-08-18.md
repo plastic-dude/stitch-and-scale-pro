@@ -257,3 +257,9 @@ The export preflight panel on the separate cover-overflow branch now surfaces th
 The detail remains supplementary to the blocking warning and does not alter the export gate or the protected renderer. It is intended to make the existing guard actionable: a designer can see whether title length, overall cover content, or both exceeded the conservative context-aware budget.
 
 The branch gate passed with **146 test files / 2,033 tests**, typecheck, production build in 8.87 seconds, `git diff --check`, and all nine mobile-smoke checks. The normal sample remains unblocked. This improves designer feedback but does not resolve the underlying pagination policy decision.
+
+## 18. Actual-renderer A-007 matrix
+
+The cover-overflow branch now tests production `renderDocument` output through the A-007 inspector rather than relying only on synthetic HTML fixtures. The matrix covers all five supported locales and all four themes, for 20 real-rendered cells. The representative production sample remains safe and ready for review in every cell. A production-rendered long-title and long-note fixture blocks with A-007 in every cell.
+
+This closes the most important evidence gap in the context-aware heuristic branch: the regression exercises the actual cover markup while leaving `renderer.ts` unchanged. The branch gate passed with **147 test files / 2,035 tests**, typecheck, production build in 9.22 seconds, `git diff --check`, and all nine mobile-smoke checks. A-007 remains a guardrail rather than a pagination fix, so the owner’s policy decision is still required.
