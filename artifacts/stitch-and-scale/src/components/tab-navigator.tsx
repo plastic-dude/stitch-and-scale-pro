@@ -1,4 +1,4 @@
-// CHK-120 — Responsive lab navigator for the 79-lab workspace (QA #62).
+// CHK-120 — Responsive lab navigator for the registry-sized workspace (QA #62).
 //
 // QA cycle 59 found the single flat tab strip unscannable on mobile/tablet:
 // offscreen triggers are hard to discover and activate, and the strip is
@@ -7,7 +7,7 @@
 // (desktop keeps every tab as a real TabsTrigger for accessibility) and
 // WITHOUT any calculation changes.
 //
-// Desktop (>=1024px): a compact "Labs" dropdown menu listing all 80 tabs
+// Desktop (>=1024px): a compact "Labs" dropdown menu listing every registered lab
 // grouped by their classification group (dropdown-menu with submenus).
 // Mobile/tablet (<1024px): the dense strip is replaced by the existing
 // 6-chip group row (promoted to touch-friendly targets) plus a single
@@ -42,6 +42,7 @@ import { ListTree } from 'lucide-react';
 import { TAB_REGISTRY } from '@/lib/tab-registry';
 import { TAB_GROUP_LABELS, groupFor, type TabGroup } from '@/lib/workspace-tab-groups';
 import { getWorkspaceTabLabel } from '@/lib/workspace-tab-labels';
+import { formatTabNavigatorCopy } from '@/lib/tab-navigator-copy';
 
 // Group display order — keeps the strip's established visual order.
 const GROUP_ORDER: TabGroup[] = ['design', 'fit', 'pricing', 'launch', 'channels', 'business'];
@@ -71,11 +72,11 @@ export interface TabNavigatorProps {
   copy: {
     /** Button/trigger label, e.g. "Labs". */
     allLabs: string;
-    /** Grouped sheet title, e.g. "All 79 labs". */
+    /** Grouped sheet title with a runtime {count} token. */
     labsTitle: string;
     /** Grouped sheet description. */
     labsDescription: string;
-    /** ARIA label for the desktop dropdown trigger. */
+    /** ARIA label for the desktop dropdown trigger with a runtime {count} token. */
     allLabsAriaLabel: string;
   };
   className?: string;
@@ -108,6 +109,8 @@ export function TabNavigator({ activeTab, onTabChange, language, copy, className
   const isDesktop = useViewportWidth();
   const [isSheetOpen, setIsSheetOpen] = React.useState(false);
   const groups = tabGroupsFromRegistry();
+  const labCount = TAB_REGISTRY.length;
+  const copyWithCount = formatTabNavigatorCopy(copy, labCount);
 
   const localizedLabel = (value: string, fallback: string) =>
     getWorkspaceTabLabel(language, value, fallback);
@@ -130,7 +133,7 @@ export function TabNavigator({ activeTab, onTabChange, language, copy, className
               variant="outline"
               size="sm"
               className="w-full gap-2 bg-card border-border text-sm h-11"
-              aria-label={copy.allLabsAriaLabel}
+              aria-label={copyWithCount.allLabsAriaLabel}
               data-testid="tab-navigator-trigger"
             >
               <ListTree className="h-4 w-4" />
@@ -139,7 +142,7 @@ export function TabNavigator({ activeTab, onTabChange, language, copy, className
           </SheetTrigger>
           <SheetContent side="bottom" className="max-h-[80vh] overflow-y-auto rounded-t-xl">
             <SheetHeader>
-              <SheetTitle>{copy.labsTitle}</SheetTitle>
+              <SheetTitle>{copyWithCount.labsTitle}</SheetTitle>
               <SheetDescription>{copy.labsDescription}</SheetDescription>
             </SheetHeader>
             <div className="mt-2 space-y-4 pb-6">
@@ -159,12 +162,12 @@ export function TabNavigator({ activeTab, onTabChange, language, copy, className
                                 type="button"
                                 onClick={() => handlePick(tab.value)}
                                 className={
-                                  'block w-full rounded-md px-3 py-2.5 text-left text-sm transition-colors ' +
+                                  'block w-full min-h-11 rounded-md px-3 py-2.5 text-left text-sm transition-colors ' +
                                   (isActive
                                     ? 'bg-primary text-primary-foreground font-medium'
                                     : 'text-foreground hover:bg-muted')
                                 }
-                                aria-current={isActive ? 'true' : undefined}
+                                aria-current={isActive ? 'page' : undefined}
                               >
                                 {localizedLabel(tab.value, tab.label)}
                               </button>

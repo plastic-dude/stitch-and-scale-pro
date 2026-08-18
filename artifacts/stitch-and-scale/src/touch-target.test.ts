@@ -159,15 +159,11 @@ describe("QA LIVE-004 — 44×44px touch-target invariant", () => {
 
   it("workspace group chips carry the 44px token on every width", () => {
     const source = read("src/pages/project-workspace.tsx");
-    // Group chips are plain <button> elements in the chip row; the row is the
-    // only place a button carries the `border-border/60` chip styling.
-    const chips = source.match(/<button[\s\S]*?className="([^"]*border-border\/60[^"]*)"/g) || [];
-    expect(chips.length).toBeGreaterThanOrEqual(1);
-    const missing = chips.filter((c) => !MIN_HIT(c));
-    expect(
-      missing,
-      `workspace group chip declarations lack the 44px token:\n${missing.join("\n")}`,
-    ).toEqual([]);
+    // Group chips use conditional classes so active and inactive states can
+    // differ without changing the effective touch target.
+    const chipBlock = source.match(/const isActive = activeGroup === g;[\s\S]*?className=\{cn\(([\s\S]*?)\)\}/)?.[1] ?? '';
+    expect(chipBlock).toContain('border-border/60');
+    expect(chipBlock).toContain('min-h-[44px]');
   });
 
   it("tab-navigator desktop dropdown items carry the 44px token", () => {

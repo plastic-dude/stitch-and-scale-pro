@@ -26,7 +26,7 @@ function RecoveryBanner() {
         </p>
         <button
           onClick={dismissRecovery}
-          className="p-1 rounded text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="inline-flex min-h-11 min-w-11 items-center justify-center rounded text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           aria-label={t('nav.dismiss')}
         >
           <X className="w-3.5 h-3.5" />
@@ -75,15 +75,15 @@ export function Shell({ children }: { children: React.ReactNode }) {
                 link's p-2 hit area is 36×36px — below the 44×44px touch-target
                 minimum (QA LIVE-004). min-h-11/min-w-11 raise the hit area
                 without widening the visible icon (same pattern as CHK-123). */}
-            <Link href="/" aria-label={projectsLabel} className={`min-h-11 min-w-11 p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors flex items-center gap-2 ${location === '/' ? 'bg-secondary/50' : ''}`}>
+            <Link href="/" aria-label={projectsLabel} title={projectsLabel} aria-current={location === '/' ? 'page' : undefined} className={`min-h-11 min-w-11 p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors flex items-center gap-2 ${location === '/' ? 'bg-secondary/50' : ''}`}>
               <BookOpen className="w-5 h-5" />
               <span className="hidden md:inline text-sm font-medium">{projectsLabel}</span>
             </Link>
-            <Link href="/portfolio" aria-label={t('nav.portfolio')} className={`min-h-11 min-w-11 p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors flex items-center gap-2 ${location === '/portfolio' ? 'bg-secondary/50' : ''}`}>
+            <Link href="/portfolio" aria-label={t('nav.portfolio')} title={t('nav.portfolio')} aria-current={location === '/portfolio' ? 'page' : undefined} className={`min-h-11 min-w-11 p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors flex items-center gap-2 ${location === '/portfolio' ? 'bg-secondary/50' : ''}`}>
               <Package className="w-5 h-5" />
               <span className="hidden md:inline text-sm font-medium">{t('nav.portfolio')}</span>
             </Link>
-            <Link href="/settings" aria-label={settingsLabel} className={`min-h-11 min-w-11 p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors flex items-center gap-2 ${location === '/settings' ? 'bg-secondary/50' : ''}`}>
+            <Link href="/settings" aria-label={settingsLabel} title={settingsLabel} aria-current={location === '/settings' ? 'page' : undefined} className={`min-h-11 min-w-11 p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors flex items-center gap-2 ${location === '/settings' ? 'bg-secondary/50' : ''}`}>
               <Settings className="w-5 h-5" />
               <span className="hidden md:inline text-sm font-medium">{settingsLabel}</span>
             </Link>
@@ -92,7 +92,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
             
             {/* CHK-129: at phone widths this is icon-only (label hidden <sm) —
                 h-9 is 36px, below the 44×44px minimum. min-h-11 raises it. */}
-            <Link href="/project/new" aria-label={t('nav.newProject')} className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring bg-primary text-primary-foreground shadow hover:bg-primary/90 min-h-11 px-4 py-2 gap-2">
+            <Link href="/project/new" aria-label={t('nav.newProject')} title={t('nav.newProject')} className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring bg-primary text-primary-foreground shadow hover:bg-primary/90 min-h-11 px-4 py-2 gap-2">
               <Plus className="w-4 h-4" />
               <span className="hidden sm:inline">{t('nav.newProject')}</span>
             </Link>

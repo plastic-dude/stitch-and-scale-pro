@@ -304,6 +304,7 @@ export default function ProjectWorkspace() {
   const copy = getWorkspaceCopy(language);
 
   const [activeTab, setActiveTab] = React.useState('sections');
+  const activeGroup = TAB_GROUPS[activeTab] ?? 'business';
   const [expandedSection, setExpandedSection] = React.useState<string | null>(null);
 
   // Form states for new section
@@ -983,7 +984,7 @@ export default function ProjectWorkspace() {
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         {/* CHK-125: the group-chip row was rendering at ALL widths — on
-            desktop it sat directly above the flat 79-tab strip and made it
+            desktop it sat directly above the flat lab strip and made it
             look as if the individual tabs had vanished (user report). The
             chips are the mobile/tablet substitute for the hidden strip, so
             they must hide on desktop where the strip (accessibility) surface
@@ -1013,17 +1014,25 @@ export default function ProjectWorkspace() {
             .sort((a, b) => b.count - a.count)
             .map(({ g, label, count }) => {
               const first = Object.keys(TAB_GROUPS).find((v) => TAB_GROUPS[v] === g);
+              const isActive = activeGroup === g;
               return (
                 <button
                   key={g}
                   type="button"
                   onClick={() => first && setActiveTab(first)}
+                  aria-pressed={isActive}
+                  aria-label={`${label}, ${count}`}
                   // CHK-123 (QA LIVE-004): chips were px-2 py-0.5 text-[10px] — a
                   // ~16px hit area, far below the 44×44px touch-target minimum.
                   // Now a full 44px touch target on every width; the chip stays
                   // visually compact (leading-none, text-xs) while the hit area
                   // does not.
-                  className="rounded-lg border border-border/60 bg-muted/40 px-3 py-2.5 text-xs leading-none font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors min-h-[44px] flex items-center justify-between gap-2"
+                  className={cn(
+                    'rounded-lg border px-3 py-2.5 text-xs leading-none font-medium transition-colors min-h-[44px] flex items-center justify-between gap-2',
+                    isActive
+                      ? 'border-primary bg-primary/10 text-foreground'
+                      : 'border-border/60 bg-muted/40 text-muted-foreground hover:bg-muted hover:text-foreground',
+                  )}
                 >
                   <span className="truncate">{label}</span>
                   <span className="text-[11px] text-muted-foreground/80 whitespace-nowrap">{count} labs</span>
@@ -1050,7 +1059,7 @@ export default function ProjectWorkspace() {
         </div>
         {/* CHK-128 (QA #65, cycle 62): Radix's TabsList primitive styles the list
             with inline-flex + justify-center, so inside an overflow-x-auto scroller
-            the 79-tab content was centered — at 1280px the first core tabs
+            the lab content was centered — at 1280px the first core tabs
             (Sections, Preview, Yarn) sat at negative x and were clipped offscreen
             behind a partial label. The Tailwind v4 arbitrary-value class
             justify-[flex-start] is not emitted by v4's justify utility, so the

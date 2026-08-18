@@ -145,6 +145,7 @@ export default function ImportCSV() {
                 'w-full border-2 border-dashed rounded-xl py-10 flex flex-col items-center gap-3 transition-colors',
                 result?.rows.length ? 'border-primary/40 bg-primary/5' : 'border-border/60 hover:border-primary/40 hover:bg-secondary/10'
               )}
+              aria-describedby={result?.errors.length ? 'csv-import-error' : undefined}
               data-testid="button-choose-csv"
             >
               {isReading ? (
@@ -163,7 +164,13 @@ export default function ImportCSV() {
 
           {/* Errors */}
           {result && result.errors.length > 0 && (
-            <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-4">
+            <div
+              id="csv-import-error"
+              role="alert"
+              aria-live="assertive"
+              aria-atomic="true"
+              className="rounded-xl border border-destructive/30 bg-destructive/5 p-4"
+            >
               <div className="flex items-center gap-2 text-sm font-medium text-destructive mb-2">
                 <AlertCircle className="w-4 h-4" />
                 {result.rows.length > 0
@@ -185,7 +192,7 @@ export default function ImportCSV() {
                 exit={{ opacity: 0, height: 0 }}
                 className="space-y-8 overflow-hidden"
               >
-                <div className="flex items-center gap-2 text-sm font-medium text-primary">
+                <div className="flex items-center gap-2 text-sm font-medium text-primary" role="status" aria-live="polite">
                   <CheckCircle2 className="w-4 h-4" />
                   {interpolate(copy.foundMeasurements, { measurements: sections.reduce((n, s) => n + s.measurements.length, 0), sections: sections.length })}
                 </div>

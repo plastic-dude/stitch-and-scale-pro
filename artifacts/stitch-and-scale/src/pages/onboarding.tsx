@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { InstallBanner } from '@/components/install-banner';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { useLocation } from 'wouter';
 import { useSettings, SizingStandard } from '@/context/SettingsContext';
 import { useProjects } from '@/context/ProjectsContext';
@@ -435,6 +435,7 @@ function StepCompletion({ onFinish }: { onFinish: () => void }) {
 
 export default function OnboardingOverlay() {
   const { unit, setUnit, sizingStandard, setSizingStandard, setOnboardingCompleted, t, language } = useSettings();
+  const reduceMotion = useReducedMotion();
   const { projects, createProject } = useProjects();
   const [location, setLocation] = useLocation();
 
@@ -449,6 +450,8 @@ export default function OnboardingOverlay() {
   const [localUnit, setLocalUnit] = useState<'in' | 'cm'>(unit);
   const [localStandard, setLocalStandard] = useState<SizingStandard>(sizingStandard);
   const [direction, setDirection] = useState<'forward' | 'back'>('forward');
+  const dialogRef = React.useRef<HTMLDivElement>(null);
+  const previousFocusRef = React.useRef<HTMLElement | null>(null);
 
   // Detect browser locale for unit default on first open
   useEffect(() => {
@@ -529,8 +532,86 @@ export default function OnboardingOverlay() {
   const isLastStep = step === TOTAL_STEPS;
   const canGoBack = step > 1;
 
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+
+    previousFocusRef.current = document.activeElement instanceof HTMLElement
+      ? document.activeElement
+      : null;
+
+    const focusableSelector = [
+      'a[href]',
+      'button:not([disabled])',
+      'input:not([disabled])',
+      'select:not([disabled])',
+      'textarea:not([disabled])',
+      '[tabindex]:not([tabindex="-1"])',
+    ].join(',');
+
+    const getFocusable = () => Array.from(dialog.querySelectorAll<HTMLElement>(focusableSelector))
+      .filter((element) => element.getClientRects().length > 0);
+
+    const focusFirst = () => getFocusable()[0]?.focus();
+    const frame = window.requestAnimationFrame(focusFirst);
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Tab') return;
+      const focusable = getFocusable();
+      if (focusable.length === 0) {
+        event.preventDefault();
+        return;
+      }
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    const onFocusIn = (event: FocusEvent) => {
+      if (!dialog.contains(event.target as Node)) focusFirst();
+    };
+
+    const appRoot = dialog.parentElement;
+    const siblings = appRoot
+      ? Array.from(appRoot.children).filter((child): child is HTMLElement => child !== dialog)
+      : [];
+    const siblingState = siblings.map((sibling) => ({
+      sibling,
+      inert: sibling.getAttribute('inert'),
+      ariaHidden: sibling.getAttribute('aria-hidden'),
+    }));
+    siblings.forEach((sibling) => {
+      sibling.setAttribute('inert', '');
+      sibling.setAttribute('aria-hidden', 'true');
+    });
+
+    dialog.addEventListener('keydown', onKeyDown);
+    document.addEventListener('focusin', onFocusIn);
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      dialog.removeEventListener('keydown', onKeyDown);
+      document.removeEventListener('focusin', onFocusIn);
+      siblingState.forEach(({ sibling, inert, ariaHidden }) => {
+        if (inert === null) sibling.removeAttribute('inert');
+        else sibling.setAttribute('inert', inert);
+        if (ariaHidden === null) sibling.removeAttribute('aria-hidden');
+        else sibling.setAttribute('aria-hidden', ariaHidden);
+      });
+      if (previousFocusRef.current?.isConnected) previousFocusRef.current.focus();
+    };
+  }, []);
+
   return (
     <div
+      ref={dialogRef}
+      data-onboarding-dialog="true"
       className="fixed inset-0 z-50 bg-background/95 backdrop-blur-sm flex flex-col overflow-hidden"
       role="dialog"
       aria-modal="true"
@@ -577,7 +658,7 @@ export default function OnboardingOverlay() {
               initial="enter"
               animate="center"
               exit="exit"
-              transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+              transition={reduceMotion ? { duration: 0 } : { duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
             >
               {step === 1 && <StepWelcome />}
               {step === 2 && <StepPhilosophy />}

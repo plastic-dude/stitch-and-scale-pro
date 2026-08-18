@@ -165,7 +165,7 @@ export default function Dashboard() {
           <button 
             onClick={dismissWarning}
             aria-label={copy.dismiss}
-            className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors p-1"
+            className="absolute top-4 right-4 inline-flex min-h-11 min-w-11 items-center justify-center rounded text-muted-foreground hover:text-foreground transition-colors p-2"
           >
             <X className="w-4 h-4" />
           </button>
@@ -279,7 +279,7 @@ export default function Dashboard() {
                       <DropdownMenuTrigger asChild>
                         <button
                           onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
-                          className="p-1.5 rounded-md text-muted-foreground/70 hover:text-foreground hover:bg-background/80 transition-colors opacity-100 [@media(pointer:fine)]:opacity-0 [@media(pointer:fine)]:group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                          className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md p-2 text-muted-foreground/70 hover:text-foreground hover:bg-background/80 transition-colors opacity-100 [@media(pointer:fine)]:opacity-0 [@media(pointer:fine)]:group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                           aria-label={`${copy.duplicateAction} ${project.name}`}
                           data-testid={`button-card-menu-${project.id}`}
                         >

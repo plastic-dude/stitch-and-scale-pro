@@ -1,6 +1,6 @@
 // CHK-120 — Regression suite for the responsive tab navigator (QA #62).
 //
-// QA found the flat 79-tab strip unscannable on mobile/tablet. The navigator
+// QA found the flat tab strip unscannable on mobile/tablet. The navigator
 // must never itself become a source of drift, so this suite pins the
 // navigator's group coverage to the tab registry (the single source of truth):
 //
@@ -92,10 +92,19 @@ describe('tab-navigator copy (localized strings)', () => {
     for (const code of ['en', 'de', 'fr', 'es', 'pt'] as const) {
       const copy = mod.NAVIGATOR_COPY[code];
       expect(copy.allLabs, `locale ${code}`).toBeTruthy();
-      expect(copy.labsTitle, `locale ${code}`).toContain('79');
+      expect(copy.labsTitle, `locale ${code}`).toContain('{count}');
       expect(copy.labsDescription, `locale ${code}`).toBeTruthy();
-      expect(copy.allLabsAriaLabel, `locale ${code}`).toContain('79');
+      expect(copy.allLabsAriaLabel, `locale ${code}`).toContain('{count}');
     }
+  });
+
+  it('replaces the runtime count token for visible and ARIA copy', async () => {
+    const mod = await import('@/lib/tab-navigator-copy');
+    const formatted = mod.formatTabNavigatorCopy(mod.NAVIGATOR_COPY.en, TAB_REGISTRY.length);
+    expect(formatted.labsTitle).toBe(`All ${TAB_REGISTRY.length} Labs`);
+    expect(formatted.allLabsAriaLabel).toContain(`all ${TAB_REGISTRY.length} workspace labs`);
+    expect(formatted.labsTitle).not.toContain('{count}');
+    expect(formatted.allLabsAriaLabel).not.toContain('{count}');
   });
 
   it('copy shape matches TabNavigator copy prop expectations', () => {
