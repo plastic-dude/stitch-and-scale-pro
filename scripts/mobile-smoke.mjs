@@ -5,6 +5,8 @@ const baseUrl = process.env.SMOKE_BASE_URL ?? 'http://127.0.0.1:5000';
 const cdpUrl = process.env.CDP_URL ?? 'http://127.0.0.1:9222';
 const outDir = process.env.SMOKE_OUT_DIR ?? '/tmp/stitch-and-scale-smoke';
 const widths = [320, 360, 390, 430];
+const PROJECTS_KEY = 'stitch-and-scale-v1';
+const LONG_COVER_PROJECT_ID = 'smoke-long-cover-fixture';
 
 async function json(url, options) {
   const response = await fetch(url, options);
@@ -87,6 +89,8 @@ const { socket, call } = await connect();
 await call('Page.enable');
 await call('Runtime.enable');
 
+let longCoverFixtureSeeded = false;
+
 try {
   for (const width of widths) {
     await navigate(call, '/', width, 844);
@@ -138,6 +142,46 @@ try {
   const exportButton = exportPage.controls.find((control) => control.text === 'Export PDF');
   assert((exportButton?.height ?? 0) >= 44, `Export PDF hit area is ${exportButton?.height ?? 0}px`);
   await capture(call, 'export-390');
+
+  const seededLongCover = await evaluate(call, `(async () => {
+    const key = ${JSON.stringify(PROJECTS_KEY)};
+    const existing = JSON.parse(localStorage.getItem(key) || '[]');
+    const source = existing.find((project) => project.id === 'sample-crew-neck-sweater');
+    if (!source) return false;
+    const longProject = {
+      ...source,
+      id: ${JSON.stringify(LONG_COVER_PROJECT_ID)},
+      name: 'A deliberately long translated pattern title that should not fit safely on one fixed-height cover page'.padEnd(130, 'x'),
+      description: 'A long designer-authored cover note. '.repeat(35),
+    };
+    const next = [...existing.filter((project) => project.id !== longProject.id), longProject];
+    localStorage.setItem(key, JSON.stringify(next));
+    return await new Promise((resolve, reject) => {
+      const request = indexedDB.open('keyval-store');
+      request.onerror = () => reject(request.error || new Error('IndexedDB open failed'));
+      request.onupgradeneeded = () => {
+        if (!request.result.objectStoreNames.contains('keyval')) request.result.createObjectStore('keyval');
+      };
+      request.onsuccess = () => {
+        const db = request.result;
+        const transaction = db.transaction('keyval', 'readwrite');
+        transaction.objectStore('keyval').put(next, key);
+        transaction.oncomplete = () => { db.close(); resolve(true); };
+        transaction.onerror = () => { db.close(); reject(transaction.error || new Error('IndexedDB write failed')); };
+      };
+    });
+  })()`);
+  assert(seededLongCover, 'long-cover browser fixture could not be seeded');
+  longCoverFixtureSeeded = true;
+  await navigate(call, `/project/${LONG_COVER_PROJECT_ID}/pdf`, 390, 844);
+  const longCoverExport = await metrics(call, 'export-long-cover');
+  assert(longCoverExport.text.includes('Fix before printing'), 'long-cover export did not block before printing');
+  assert(longCoverExport.text.includes('The cover title or notes are too long'), 'live A-007 cover guidance is missing');
+  assert(longCoverExport.text.includes('Cover budget'), 'live A-007 budget detail is missing');
+  const blockedExportButton = longCoverExport.controls.find((control) => control.text === 'Export PDF');
+  assert(blockedExportButton?.disabled === true, 'Export PDF should be disabled for live A-007 cover overflow');
+  assert(!longCoverExport.bodyOverflow && !longCoverExport.htmlOverflow, 'long-cover export horizontal overflow');
+  await capture(call, 'export-long-cover-390');
 
   await navigate(call, '/project/sample-crew-neck-sweater', 390, 844);
   const clickVisible = (label) => evaluate(call, `(() => { const node = [...document.querySelectorAll('button,[role=tab],a')].find((el) => { const r = el.getBoundingClientRect(); return r.width > 0 && r.height > 0 && (el.innerText || el.getAttribute('aria-label') || '').trim() === ${JSON.stringify(label)}; }); if (!node) return false; node.click(); return true; })()`);
@@ -218,7 +262,30 @@ try {
   assert(!settings.bodyOverflow && !settings.htmlOverflow, 'Settings backup card horizontal overflow');
   await capture(call, 'settings-backup-390');
 
-  console.log(JSON.stringify({ ok: true, outDir, checks: ['onboarding 320/360/390/430', 'dashboard', 'new project', 'sample workspace', 'export preflight + artifact evidence', 'grading lab QA + defect ledger', 'mobile lab search + recent history', 'design ledger + operational records backup/recovery', 'settings project-wide backup controls'] }, null, 2));
+  console.log(JSON.stringify({ ok: true, outDir, checks: ['onboarding 320/360/390/430', 'dashboard', 'new project', 'sample workspace', 'export preflight + artifact evidence + live long-cover A-007 block', 'grading lab QA + defect ledger', 'mobile lab search + recent history', 'design ledger + operational records backup/recovery', 'settings project-wide backup controls'] }, null, 2));
 } finally {
+  if (longCoverFixtureSeeded) {
+    try {
+      await evaluate(call, `(async () => {
+        const key = ${JSON.stringify(PROJECTS_KEY)};
+        const existing = JSON.parse(localStorage.getItem(key) || '[]');
+        const next = existing.filter((project) => project.id !== ${JSON.stringify(LONG_COVER_PROJECT_ID)});
+        localStorage.setItem(key, JSON.stringify(next));
+        await new Promise((resolve, reject) => {
+          const request = indexedDB.open('keyval-store');
+          request.onerror = () => reject(request.error || new Error('IndexedDB open failed'));
+          request.onsuccess = () => {
+            const db = request.result;
+            const transaction = db.transaction('keyval', 'readwrite');
+            transaction.objectStore('keyval').put(next, key);
+            transaction.oncomplete = () => { db.close(); resolve(true); };
+            transaction.onerror = () => { db.close(); reject(transaction.error || new Error('IndexedDB cleanup failed')); };
+          };
+        });
+      })()`);
+    } catch (cleanupError) {
+      console.error(`long-cover fixture cleanup failed: ${cleanupError.message}`);
+    }
+  }
   socket.close();
 }

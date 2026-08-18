@@ -81,3 +81,9 @@ The branch now tests the production `renderDocument` output rather than only syn
 The representative production sample remains `safe` and `readyForReview` across all 20 cells. A production-rendered long-title and long-note fixture is `blocked` with an A-007 error across all 20 cells. This closes the most important evidence gap in the heuristic branch: the matrix now exercises the real cover markup while leaving the renderer source untouched.
 
 The complete branch gate passed with **147 test files / 2,035 tests**, typecheck, production build in 9.22 seconds, `git diff --check`, and all nine mobile-smoke checks.
+
+## Live browser stress evidence
+
+The mobile smoke suite now creates a temporary long-cover project through the same browser-local stores used by the app, opens the real 390×844 export route, and verifies the visible A-007 blocking state. The check asserts the localized cover guidance, budget detail, disabled export control, and no horizontal overflow, then removes the fixture from both localStorage and IndexedDB. This is evidence of the live guardrail and export UX, not evidence that the underlying pagination policy has been resolved.
+
+The full branch gate passed with **147 test files / 2,035 tests**, typecheck, production build in 9.30 seconds, `git diff --check`, and all nine mobile-smoke checks.

@@ -263,3 +263,9 @@ The branch gate passed with **146 test files / 2,033 tests**, typecheck, product
 The cover-overflow branch now tests production `renderDocument` output through the A-007 inspector rather than relying only on synthetic HTML fixtures. The matrix covers all five supported locales and all four themes, for 20 real-rendered cells. The representative production sample remains safe and ready for review in every cell. A production-rendered long-title and long-note fixture blocks with A-007 in every cell.
 
 This closes the most important evidence gap in the context-aware heuristic branch: the regression exercises the actual cover markup while leaving `renderer.ts` unchanged. The branch gate passed with **147 test files / 2,035 tests**, typecheck, production build in 9.22 seconds, `git diff --check`, and all nine mobile-smoke checks. A-007 remains a guardrail rather than a pagination fix, so the owner’s policy decision is still required.
+
+## 19. Live browser A-007 stress path
+
+The mobile smoke suite now seeds a reversible long-cover project through the browser’s existing local-first stores, opens its real export route at 390×844, and verifies the live UI blocks before printing. It asserts the localized blocking guidance, the context-aware cover-budget detail, the disabled Export PDF action, and absence of horizontal overflow. The fixture is removed from both localStorage and IndexedDB in the smoke-suite cleanup path.
+
+This closes the remaining evidence gap between pure preflight/renderer tests and the user-visible export flow. The complete branch gate passed with **147 test files / 2,035 tests**, typecheck, production build in 9.30 seconds, `git diff --check`, and all nine mobile-smoke checks. The smoke output now explicitly includes `export preflight + artifact evidence + live long-cover A-007 block`.
