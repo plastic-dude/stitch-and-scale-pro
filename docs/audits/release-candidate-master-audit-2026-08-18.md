@@ -227,3 +227,17 @@ The restore inspector validates the new maps before preview. Technical-defect le
 The Settings preview now shows project count, operational-record count, technical-defect count, release-evidence item count, settings inclusion, creation timestamp, and legacy status before confirmation. All new labels are localized across the five supported locales. Storage regression coverage verifies export, merge collision preservation, new-project restore, replace cleanup, and the expanded preview counts.
 
 The updated release gate passed with **146 test files / 2,029 tests**, typecheck, production build in 8.79 seconds, `git diff --check`, and all nine mobile-smoke checks. The Vite large-chunk advisory remains informational. No protected renderer, grading engine, PDF export hook, or tab-registry file was modified.
+
+## 15. Separate A-007 resolution branch
+
+A separate branch, `milestone/cover-overflow-resolution`, was created from the clean audited release-candidate commit `2e40c94` so A-007 work does not destabilize the release-candidate branch. This is the next most important workstream because A-007 is the only confirmed blocking publication defect; the remaining gaps are human or physical evidence rather than missing deterministic application capability.
+
+The branch currently contains a decision proposal at [`docs/proposals/cover-overflow-resolution-2026-08-18.md`](../proposals/cover-overflow-resolution-2026-08-18.md). It compares cover pagination, optional-note relocation, explicit content limits, dynamic copy fitting, and silent clipping. The proposal recommends cover pagination as the long-term policy, keeps the current A-007 guard as a safety net, and rejects silent clipping or overlap tolerance. It also defines the future acceptance matrix across four themes, five locales, short and long content, PDF page structure, metadata, mobile preview, physical print, and test-knit review.
+
+This branch is intentionally a decision and implementation-contract branch. It does not modify the protected PDF renderer or grading engine. The owner must select a policy before a future implementation branch is allowed to change cover layout behavior.
+
+| Next workstream | Importance | Why it matters now | Current disposition |
+|---|---|---|---|
+| A-007 cover policy and pagination | **P0 / blocking** | Long cover content can make a published pattern collide with its footer. | Decision proposal pushed on a separate branch; owner decision required. |
+| Physical print and test knit | **P0 / certification** | These cannot be proven by source tests or HTML/PDF rendering alone. | Requires human evidence. |
+| Further feature expansion | **P2 / deferred** | The app already has the necessary local-first QA, records, backup, and evidence seams for review. | Do not prioritize ahead of A-007 and physical certification. |
