@@ -14,6 +14,8 @@ describe('PDF localization contract', () => {
       expect(labels.preflightReadyDescription, locale).toBeTruthy();
       expect(labels.preflightReviewDescription(1), locale).toContain('1');
       expect(labels.preflightBlockedDescription(1), locale).toContain('1');
+      expect(labels.coverBudgetDetail('craft', locale, 95, 90, 980, 950), locale).toContain('95');
+      expect(labels.coverBudgetDetail('craft', locale, 95, 90, 980, 950), locale).toContain('980');
     }
   });
 

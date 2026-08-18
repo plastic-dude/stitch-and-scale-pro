@@ -249,3 +249,11 @@ The separate cover-overflow branch now carries a pure, renderer-independent impr
 The model remains deliberately conservative and explicitly heuristic. It does not measure rendered CSS height and does not alter the protected renderer. It exists to make the current designer-facing guard more context-aware while the owner decides whether the eventual policy is cover pagination, optional-note relocation, or an explicit content limit.
 
 The branch regression matrix covers all **20 locale-theme combinations**. The normal `Classic Crew Neck Sweater` fixture remains safe in all combinations, while a 130-character stress title blocks in all combinations. The branch gate passed with **146 test files / 2,033 tests**, typecheck, production build in 9.64 seconds, `git diff --check`, and all nine mobile-smoke checks. The branch does not yet claim that A-007 is fixed; it improves evidence and false-positive control while retaining the blocking safeguard.
+
+## 17. Localized A-007 budget detail
+
+The export preflight panel on the separate cover-overflow branch now surfaces the structured A-007 budget breakdown when the cover guard blocks. It shows the selected theme, normalized locale, title characters against the effective title limit, and cover characters against the effective cover-text limit. The detail is formatted through the five-locale PDF label registry, so the inspector’s internal English diagnostic is not exposed directly to designers.
+
+The detail remains supplementary to the blocking warning and does not alter the export gate or the protected renderer. It is intended to make the existing guard actionable: a designer can see whether title length, overall cover content, or both exceeded the conservative context-aware budget.
+
+The branch gate passed with **146 test files / 2,033 tests**, typecheck, production build in 8.87 seconds, `git diff --check`, and all nine mobile-smoke checks. The normal sample remains unblocked. This improves designer feedback but does not resolve the underlying pagination policy decision.

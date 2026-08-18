@@ -67,3 +67,9 @@ The current thresholds are intentionally asymmetric: craft remains at the observ
 The regression matrix covers all 20 locale-theme combinations. The representative short title `Classic Crew Neck Sweater` remains safe in every combination; a 130-character stress title blocks in every combination. Focused artifact/publication tests pass with **17 tests**, and the complete branch gate passes with **146 test files / 2,033 tests**, typecheck, production build in 9.64 seconds, `git diff --check`, and all nine mobile-smoke checks.
 
 This is still not a pagination fix. The budget model reduces context-free warnings and creates traceable evidence for the eventual cover-pagination or note-relocation implementation, but the owner’s policy decision remains required.
+
+## Localized designer-facing budget detail
+
+The export preflight panel now surfaces the structured A-007 budget breakdown when the cover guard blocks. The message includes the selected theme, normalized locale, title characters versus title limit, and cover characters versus cover limit. The detail is formatted through the existing five-locale PDF label registry rather than exposing the inspector’s English diagnostic directly. It is rendered as an alert-adjacent, readable detail line beside the existing cover guidance and does not alter the export gate.
+
+The localization contract now passes for all supported locales. The complete branch gate remains green at **146 test files / 2,033 tests**, typecheck, production build in 8.87 seconds, `git diff --check`, and all nine mobile-smoke checks. The normal sample does not trigger the panel, while a blocked artifact receives actionable context about which budget was exceeded.

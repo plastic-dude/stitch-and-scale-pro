@@ -392,7 +392,7 @@ export default function ProjectPdf() {
                   ? labels.preflightReviewDescription(reviewPreflightCount)
                   : labels.preflightReadyDescription}
             </p>
-            {hasCoverBudgetIssue && <p className="text-xs text-destructive mt-1" data-testid="cover-budget-guidance">{labels.preflightCoverBudgetDescription}</p>}
+            {hasCoverBudgetIssue && preflight?.artifactInspection && <div className="mt-1 space-y-0.5 text-xs text-destructive" data-testid="cover-budget-guidance"><p>{labels.preflightCoverBudgetDescription}</p><p className="font-mono text-[11px]">{labels.coverBudgetDetail(preflight.artifactInspection.coverBudget.themeId, preflight.artifactInspection.coverBudget.locale, preflight.artifactInspection.coverBudget.titleCharacters, preflight.artifactInspection.coverBudget.titleLimit, preflight.artifactInspection.coverBudget.coverTextCharacters, preflight.artifactInspection.coverBudget.coverTextLimit)}</p></div>}
             {preflight?.artifactInspection && (
               <p className="text-[11px] text-muted-foreground mt-2" data-testid="publication-artifact-evidence">
                 {labels.artifactEvidence(
