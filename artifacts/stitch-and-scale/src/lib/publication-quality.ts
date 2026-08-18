@@ -1,4 +1,4 @@
-import { ALL_SIZES, type GradingResult, type PatternProject } from '@/lib/grading-engine';
+import { ALL_SIZES, type GradingResult, type PatternProject, type StandardsTable } from '@/lib/grading-engine';
 import { isValidLanguageCode } from '@/lib/i18n';
 import { PATTERN_QUALITY_VERSION, validatePatternQuality, type PatternQualityFlag } from '@/lib/pattern-quality';
 import { RENDERER_VERSION } from '@/lib/pdf/renderer';
@@ -13,7 +13,8 @@ export type PublicationPreflightCode =
   | 'X-004' // missing template identity
   | 'X-005' // missing renderer provenance
   | 'X-006' // oversized logo
-  | 'X-007'; // quality review required
+  | 'X-007' // quality review required
+  | 'X-008'; // incomplete grading output
 
 export interface PublicationPreflightFlag {
   code: PublicationPreflightCode;
@@ -28,6 +29,7 @@ export interface PublicationPreflightInput {
   locale?: string;
   templateId?: string;
   customLogo?: string;
+  liveCustomStandard?: StandardsTable;
 }
 
 export interface PublicationPreflightResult {
@@ -42,13 +44,26 @@ function hasGradedMeasurements(result: GradingResult): boolean {
   return result.some((section) => section.measurements.some((measurement) => measurement.gradedValues.length > 0));
 }
 
+function hasCompleteGradingResult(project: PatternProject, result: GradingResult): boolean {
+  if (result.length !== project.sections.length) return false;
+  return project.sections.every((section) => {
+    const gradedSection = result.find((candidate) => candidate.sectionId === section.id);
+    if (!gradedSection || gradedSection.measurements.length !== section.measurements.length) return false;
+    return section.measurements.every((measurement) => {
+      const gradedMeasurement = gradedSection.measurements.find((candidate) => candidate.measurementId === measurement.id);
+      if (!gradedMeasurement || gradedMeasurement.gradedValues.length !== ALL_SIZES.length) return false;
+      return new Set(gradedMeasurement.gradedValues.map((value) => value.size)).size === ALL_SIZES.length;
+    });
+  });
+}
+
 function mapQualityFlags(flags: PatternQualityFlag[]): PublicationPreflightFlag[] {
   return flags
-    .filter((flag) => flag.severity === 'error')
+    .filter((flag) => flag.code !== 'P-001' && flag.code !== 'P-002')
     .map((flag) => ({
       code: 'X-007',
-      severity: 'error' as const,
-      title: 'Pattern quality review is blocked',
+      severity: flag.severity,
+      title: flag.severity === 'error' ? 'Pattern quality review is blocked' : 'Pattern quality review needs attention',
       detail: `${flag.code}: ${flag.detail}`,
     }));
 }
@@ -56,8 +71,9 @@ function mapQualityFlags(flags: PatternQualityFlag[]): PublicationPreflightFlag[
 export function validatePublicationPreflight(input: PublicationPreflightInput): PublicationPreflightResult {
   const { project, gradingResult } = input;
   const locale = input.locale ?? 'en';
+  const normalizedLocale = locale.toLowerCase().split('-')[0];
   const flags: PublicationPreflightFlag[] = [];
-  const quality = validatePatternQuality(project);
+  const quality = validatePatternQuality(project, input.liveCustomStandard);
 
   if (!project.name?.trim() || !project.author?.trim()) {
     flags.push({
@@ -74,8 +90,15 @@ export function validatePublicationPreflight(input: PublicationPreflightInput): 
       title: 'No graded measurements are available',
       detail: 'Add at least one valid section and measurement before exporting a pattern.',
     });
+  } else if (!hasCompleteGradingResult(project, gradingResult)) {
+    flags.push({
+      code: 'X-008',
+      severity: 'error',
+      title: 'Grading output is incomplete',
+      detail: 'Re-run grading so every project measurement has one result for each supported size before exporting.',
+    });
   }
-  if (!isValidLanguageCode(locale)) {
+  if (!isValidLanguageCode(normalizedLocale)) {
     flags.push({
       code: 'X-003',
       severity: 'error',

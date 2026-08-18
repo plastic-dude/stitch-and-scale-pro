@@ -113,10 +113,24 @@ describe("rollup", () => {
     expect(ds.profitAttributed).toBe(50);
   });
 
-  it("matches sales to designs case-insensitively and handles substring", () => {
+  it("matches sales to designs case-insensitively and handles a unique substring", () => {
     const d = design("Mossy Yoke Sweater");
     const r = rollup({ designs: [d], expenses: [], sales: [sale("mossy yoke", 30, 3, 27)] });
     expect(r.designs[0].revenueTotal).toBe(30);
+  });
+
+  it("does not guess when a sale matches multiple designs", () => {
+    const designs = [design("Mossy Yoke"), design("Mossy Yoke Sweater")];
+    const r = rollup({ designs, expenses: [], sales: [sale("mossy", 30, 3, 27)] });
+    expect(r.designs[0].revenueTotal).toBe(0);
+    expect(r.designs[1].revenueTotal).toBe(0);
+    expect(r.totalRevenue).toBe(30);
+  });
+
+  it("does not attribute a sale to a malformed empty design name", () => {
+    const r = rollup({ designs: [design("   ")], expenses: [], sales: [sale("Any Pattern", 30, 3, 27)] });
+    expect(r.designs[0].revenueTotal).toBe(0);
+    expect(r.totalRevenue).toBe(30);
   });
 
   it("subtracts refunds and drops quotes from sales counts", () => {

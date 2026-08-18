@@ -70,6 +70,65 @@ describe('publication-quality', () => {
     expect(result.readyToPrint).toBe(false);
   });
 
+  it('accepts normalized browser locales used by the rest of the app', () => {
+    const project = makeProject();
+    const result = validatePublicationPreflight({
+      project,
+      gradingResult: gradePattern(project, SIZE_STANDARDS),
+      locale: 'en-US',
+      templateId: 'technical',
+    });
+
+    expect(result.flags.some((flag) => flag.code === 'X-003')).toBe(false);
+    expect(result.readyToPrint).toBe(true);
+  });
+
+  it('surfaces Pattern QA warnings without blocking export', () => {
+    const project = makeProject({
+      sections: [{
+        id: 'body',
+        name: 'Body',
+        measurements: [{
+          id: 'bust',
+          label: '',
+          measurementType: 'circumference',
+          gradingKey: 'bust',
+          baseValue: 45,
+        }],
+      }],
+    });
+    const result = validatePublicationPreflight({
+      project,
+      gradingResult: gradePattern(project, SIZE_STANDARDS),
+      locale: 'en',
+      templateId: 'technical',
+    });
+
+    expect(result.flags.some((flag) => flag.code === 'X-007' && flag.severity === 'warn')).toBe(true);
+    expect(result.readyToPrint).toBe(true);
+  });
+
+  it('blocks incomplete grading output even when some values are present', () => {
+    const project = makeProject();
+    const graded = gradePattern(project, SIZE_STANDARDS);
+    const incomplete = graded.map((section) => ({
+      ...section,
+      measurements: section.measurements.map((measurement) => ({
+        ...measurement,
+        gradedValues: measurement.gradedValues.slice(0, 1),
+      })),
+    }));
+    const result = validatePublicationPreflight({
+      project,
+      gradingResult: incomplete,
+      locale: 'en',
+      templateId: 'technical',
+    });
+
+    expect(result.flags.some((flag) => flag.code === 'X-008')).toBe(true);
+    expect(result.readyToPrint).toBe(false);
+  });
+
   it('propagates blocking Pattern QA evidence instead of trusting a non-empty render', () => {
     const project = makeProject({ gauge: { stitchesPer4In: 0, rowsPer4In: 24, unit: 'in' } });
     const result = validatePublicationPreflight({
