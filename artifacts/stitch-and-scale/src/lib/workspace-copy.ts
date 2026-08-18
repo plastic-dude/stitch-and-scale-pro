@@ -19,3 +19,31 @@ export function getWorkspaceCopy(locale: string): WorkspaceCopy {
   const code = locale.toLowerCase().split('-')[0] as LanguageCode;
   return COPY[code] ?? COPY.en;
 }
+
+/** Locale-aware suffix for stitch counts in a gauge string (e.g. "20 stitches"). */
+export const STS_UNIT: Record<LanguageCode, string> = {
+  en: 'sts',
+  de: 'M',
+  fr: 'M',
+  es: 'p',
+  pt: 'p',
+};
+
+/** Locale-aware suffix for row counts in a gauge string (e.g. "28 rows"). */
+export const ROWS_UNIT: Record<LanguageCode, string> = {
+  en: 'rows',
+  de: 'R',
+  fr: 'rg',
+  es: 'h',
+  pt: 'c',
+};
+
+/** Render the gauge byline fragment "20sts × 28rows / 4in" localized for the active language. */
+export function workspaceGaugeByline(locale: LanguageCode, gauge: { stitchesPer4In: number | null | undefined; rowsPer4In: number | null | undefined; unit?: string } | null | undefined): string {
+  const code = locale ?? 'en';
+  if (!gauge) return `${STS_UNIT.en} × ${ROWS_UNIT.en}`;
+  const stitches = gauge.stitchesPer4In ?? '—';
+  const rows = gauge.rowsPer4In ?? '—';
+  const unitSuffix = gauge.unit === 'cm' ? 'cm' : 'in';
+  return `${stitches}${STS_UNIT[code] ?? STS_UNIT.en} × ${rows}${ROWS_UNIT[code] ?? ROWS_UNIT.en} / 4${unitSuffix}`;
+}

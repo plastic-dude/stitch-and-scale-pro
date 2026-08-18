@@ -30,7 +30,7 @@ import { Plus, Edit2, Trash2, ArrowRight, Table as TableIcon, Copy, Settings, Ch
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useSettings } from '@/context/SettingsContext';
-import { getWorkspaceCopy } from '@/lib/workspace-copy';
+import { getWorkspaceCopy, workspaceGaugeByline, STS_UNIT, ROWS_UNIT } from '@/lib/workspace-copy';
 // CHK-094 bundle fix: lab cards are lazy-loaded on first tab activation.
 // LAB maps each tab value to a dynamic import (each card is a named export,
 // so the import is remapped to { default } for React.lazy). LazyPanel wraps
@@ -826,9 +826,9 @@ export default function ProjectWorkspace() {
                                   return (
                                     <td key={size} className={cn("px-3 py-3 text-center", size === project.baseSize ? "bg-primary/5" : "")}>
                                       <div className="flex flex-col items-center">
-                                        <span className="font-mono font-bold text-foreground">{val?.stitchCount} <span className="text-[10px] font-sans font-normal text-muted-foreground">sts</span></span>
+                                        <span className="font-mono font-bold text-foreground">{val?.stitchCount} <span className="text-[10px] font-sans font-normal text-muted-foreground">{STS_UNIT[language]}</span></span>
                                         {val?.rowCount !== undefined && (
-                                          <span className="font-mono font-semibold text-accent mt-0.5">{val.rowCount} <span className="text-[10px] font-sans font-normal text-muted-foreground">rows</span></span>
+                                          <span className="font-mono font-semibold text-accent mt-0.5">{val.rowCount} <span className="text-[10px] font-sans font-normal text-muted-foreground">{ROWS_UNIT[language]}</span></span>
                                         )}
                                       </div>
                                     </td>
@@ -971,7 +971,7 @@ export default function ProjectWorkspace() {
           </div>
           <p className="text-muted-foreground flex flex-wrap items-center gap-x-2 gap-y-1">
             {copy.by} {project.author} <span className="text-border">•</span>
-            {copy.gauge}: {project.gauge?.stitchesPer4In ?? "—"}sts × {project.gauge?.rowsPer4In ?? "—"}rows / 4{project.gauge?.unit ?? "in"}
+            {copy.gauge}: {workspaceGaugeByline(language, project.gauge)}
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
