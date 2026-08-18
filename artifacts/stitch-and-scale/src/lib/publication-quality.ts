@@ -33,6 +33,7 @@ export interface PublicationPreflightInput {
   customLogo?: string;
   liveCustomStandard?: StandardsTable;
   renderedHtml?: string;
+  themeId?: string;
 }
 
 export interface PublicationPreflightResult {
@@ -139,7 +140,7 @@ export function validatePublicationPreflight(input: PublicationPreflightInput): 
 
   let artifactInspection: PublicationArtifactInspection | undefined;
   if (input.renderedHtml !== undefined) {
-    artifactInspection = inspectPublicationArtifact(input.renderedHtml);
+    artifactInspection = inspectPublicationArtifact(input.renderedHtml, { themeId: input.themeId ?? input.templateId, locale: normalizedLocale });
     for (const issue of artifactInspection.issues) {
       flags.push({
         code: 'X-009',

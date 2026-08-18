@@ -256,6 +256,7 @@ export default function ProjectPdf() {
       gradingResult,
       locale: language,
       templateId: selectedTheme,
+      themeId: selectedTheme,
       customLogo,
       liveCustomStandard: customStandard,
       renderedHtml: previewHtml,

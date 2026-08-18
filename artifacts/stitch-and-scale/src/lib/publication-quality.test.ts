@@ -160,6 +160,22 @@ describe('publication-quality', () => {
     expect(result.readyToPrint).toBe(true);
   });
 
+  it('preserves theme and locale context in cover-budget evidence', () => {
+    const project = makeProject();
+    const longTitle = 'A long translated-ready pattern title that intentionally exceeds the craft cover budget for a one-page layout';
+    const result = validatePublicationPreflight({
+      project,
+      gradingResult: gradePattern(project, SIZE_STANDARDS),
+      locale: 'de-DE',
+      templateId: 'craft',
+      themeId: 'craft',
+      renderedHtml: `<html lang="de"><title>${longTitle}</title><h1>${longTitle}</h1><h2>Notizen</h2>`,
+    });
+    expect(result.artifactInspection?.coverBudget).toMatchObject({ themeId: 'craft', locale: 'de', status: 'blocked' });
+    expect(result.flags.some((flag) => flag.code === 'X-009' && flag.detail.includes('craft/de'))).toBe(true);
+    expect(result.readyToPrint).toBe(false);
+  });
+
   it('propagates blocking Pattern QA evidence instead of trusting a non-empty render', () => {
     const project = makeProject({ gauge: { stitchesPer4In: 0, rowsPer4In: 24, unit: 'in' } });
     const result = validatePublicationPreflight({

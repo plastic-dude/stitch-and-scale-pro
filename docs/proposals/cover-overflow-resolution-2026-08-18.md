@@ -57,3 +57,13 @@ This branch is intentionally a **decision and implementation-contract branch**, 
 [1]: https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/break-before "MDN Web Docs — break-before CSS property"
 
 [2]: https://www.w3.org/Style/2013/paged-media-tasks "W3C — Paged Media Tasks"
+
+## Conservative budget-analysis implementation on this branch
+
+This branch now carries a pure, renderer-independent A-007 budget analysis. The inspector accepts optional theme and locale context from publication preflight and reports the normalized theme, locale, title count, cover-text count, effective title limit, effective cover limit, individual risk flags, and final `safe` or `blocked` status. The model uses conservative theme tiers and applies a small expansion factor for supported locales; it is a guardrail, not a measurement of rendered CSS height.
+
+The current thresholds are intentionally asymmetric: craft remains at the observed 90-character title / 950-character cover budget, luxury is stricter because its title treatment is larger and more vertically spaced, and minimal/technical have slightly wider title allowances but conservative cover-text caps. The A-007 error now identifies the theme/locale and the exceeded budget component, which makes the designer decision more actionable while preserving the existing blocking behavior.
+
+The regression matrix covers all 20 locale-theme combinations. The representative short title `Classic Crew Neck Sweater` remains safe in every combination; a 130-character stress title blocks in every combination. Focused artifact/publication tests pass with **17 tests**, and the complete branch gate passes with **146 test files / 2,033 tests**, typecheck, production build in 9.64 seconds, `git diff --check`, and all nine mobile-smoke checks.
+
+This is still not a pagination fix. The budget model reduces context-free warnings and creates traceable evidence for the eventual cover-pagination or note-relocation implementation, but the owner’s policy decision remains required.

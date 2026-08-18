@@ -24,6 +24,32 @@ describe('publication artifact inspection', () => {
     expect(result.issues.some((issue) => issue.code === 'A-007' && issue.severity === 'error')).toBe(true);
   });
 
+  it('applies theme and locale context to the cover budget', () => {
+    const title = 'A deliberately long but still plausible title that reaches ninety-five characters for review';
+    const craft = inspectPublicationArtifact(`<html lang="en"><title>${title}</title><h1>${title}</h1><h2>Notes</h2>`, { themeId: 'craft', locale: 'en' });
+    const minimal = inspectPublicationArtifact(`<html lang="en"><title>${title}</title><h1>${title}</h1><h2>Notes</h2>`, { themeId: 'minimal', locale: 'en' });
+    expect(craft.coverBudget).toMatchObject({ themeId: 'craft', locale: 'en', titleRisk: true, status: 'blocked' });
+    expect(minimal.coverBudget).toMatchObject({ themeId: 'minimal', locale: 'en', titleRisk: false, status: 'safe' });
+  });
+
+  it('tightens the budget for expansion-heavy locales', () => {
+    const title = 'A title that is intentionally long enough to expose locale expansion risk';
+    const result = inspectPublicationArtifact(`<html lang="de"><title>${title}</title><h1>${title}</h1><h2>Notizen</h2>`, { themeId: 'craft', locale: 'de' });
+    expect(result.coverBudget.locale).toBe('de');
+    expect(result.coverBudget.titleLimit).toBeLessThan(90);
+  });
+
+  it('covers every supported locale and theme in the conservative matrix', () => {
+    const short = '<html lang="en"><title>Classic Crew Neck Sweater</title><h1>Classic Crew Neck Sweater</h1><h2>Gauge</h2>';
+    const longTitle = 'A deliberately long translated pattern title that should not fit safely on one fixed-height cover page'.padEnd(130, 'x');
+    for (const locale of ['en', 'de', 'fr', 'es', 'pt']) {
+      for (const themeId of ['minimal', 'luxury', 'craft', 'technical'] as const) {
+        expect(inspectPublicationArtifact(short, { themeId, locale }).coverBudget.status, `${locale}/${themeId} short`).toBe('safe');
+        expect(inspectPublicationArtifact(`<html lang="${locale}"><title>${longTitle}</title><h1>${longTitle}</h1><h2>Notes</h2>`, { themeId, locale }).coverBudget.status, `${locale}/${themeId} long`).toBe('blocked');
+      }
+    }
+  });
+
   it('keeps image-alt and pagination findings visible as review issues', () => {
     const result = inspectPublicationArtifact('<h1>Pattern</h1><h2>Notes</h2><img src="logo.png">');
     expect(result.readyForReview).toBe(true);

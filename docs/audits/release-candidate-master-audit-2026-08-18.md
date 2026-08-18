@@ -241,3 +241,11 @@ This branch is intentionally a decision and implementation-contract branch. It d
 | A-007 cover policy and pagination | **P0 / blocking** | Long cover content can make a published pattern collide with its footer. | Decision proposal pushed on a separate branch; owner decision required. |
 | Physical print and test knit | **P0 / certification** | These cannot be proven by source tests or HTML/PDF rendering alone. | Requires human evidence. |
 | Further feature expansion | **P2 / deferred** | The app already has the necessary local-first QA, records, backup, and evidence seams for review. | Do not prioritize ahead of A-007 and physical certification. |
+
+## 16. A-007 theme-and-locale budget analysis
+
+The separate cover-overflow branch now carries a pure, renderer-independent improvement to A-007. Publication preflight passes the selected theme and normalized locale into the artifact inspector. The inspector reports the effective title and cover-text limits, title and cover risk flags, normalized context, and a `safe` or `blocked` status. The error detail identifies the theme, locale, and exceeded component rather than presenting only a generic character warning.
+
+The model remains deliberately conservative and explicitly heuristic. It does not measure rendered CSS height and does not alter the protected renderer. It exists to make the current designer-facing guard more context-aware while the owner decides whether the eventual policy is cover pagination, optional-note relocation, or an explicit content limit.
+
+The branch regression matrix covers all **20 locale-theme combinations**. The normal `Classic Crew Neck Sweater` fixture remains safe in all combinations, while a 130-character stress title blocks in all combinations. The branch gate passed with **146 test files / 2,033 tests**, typecheck, production build in 9.64 seconds, `git diff --check`, and all nine mobile-smoke checks. The branch does not yet claim that A-007 is fixed; it improves evidence and false-positive control while retaining the blocking safeguard.
