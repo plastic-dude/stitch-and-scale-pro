@@ -1,5 +1,6 @@
 import { ALL_SIZES, type GradingResult, type PatternProject, type StandardsTable } from '@/lib/grading-engine';
 import { isValidLanguageCode } from '@/lib/i18n';
+import { inspectPublicationArtifact, type PublicationArtifactInspection } from '@/lib/pdf/artifact-inspection';
 import { PATTERN_QUALITY_VERSION, validatePatternQuality, type PatternQualityFlag } from '@/lib/pattern-quality';
 import { RENDERER_VERSION } from '@/lib/pdf/renderer';
 
@@ -14,7 +15,8 @@ export type PublicationPreflightCode =
   | 'X-005' // missing renderer provenance
   | 'X-006' // oversized logo
   | 'X-007' // quality review required
-  | 'X-008'; // incomplete grading output
+  | 'X-008' // incomplete grading output
+  | 'X-009'; // rendered artifact inspection
 
 export interface PublicationPreflightFlag {
   code: PublicationPreflightCode;
@@ -30,6 +32,7 @@ export interface PublicationPreflightInput {
   templateId?: string;
   customLogo?: string;
   liveCustomStandard?: StandardsTable;
+  renderedHtml?: string;
 }
 
 export interface PublicationPreflightResult {
@@ -38,6 +41,7 @@ export interface PublicationPreflightResult {
   patternQualityVersion: number;
   readyToPrint: boolean;
   flags: PublicationPreflightFlag[];
+  artifactInspection?: PublicationArtifactInspection;
 }
 
 function hasGradedMeasurements(result: GradingResult): boolean {
@@ -133,6 +137,19 @@ export function validatePublicationPreflight(input: PublicationPreflightInput): 
 
   flags.push(...mapQualityFlags(quality.flags));
 
+  let artifactInspection: PublicationArtifactInspection | undefined;
+  if (input.renderedHtml !== undefined) {
+    artifactInspection = inspectPublicationArtifact(input.renderedHtml);
+    for (const issue of artifactInspection.issues) {
+      flags.push({
+        code: 'X-009',
+        severity: issue.severity,
+        title: issue.severity === 'error' ? 'Rendered artifact cannot be printed' : 'Rendered artifact needs review',
+        detail: `${issue.code}: ${issue.detail}`,
+      });
+    }
+  }
+
   // The export route can still offer a preview when warnings exist, but a
   // blocking quality or publication error must stop the print action.
   return {
@@ -141,6 +158,7 @@ export function validatePublicationPreflight(input: PublicationPreflightInput): 
     patternQualityVersion: PATTERN_QUALITY_VERSION,
     readyToPrint: flags.every((flag) => flag.severity !== 'error'),
     flags,
+    artifactInspection,
   };
 }
 

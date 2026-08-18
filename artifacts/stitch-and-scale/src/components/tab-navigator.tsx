@@ -38,7 +38,9 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { ListTree } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { ListTree, Search } from 'lucide-react';
+import { projectStorage } from '@/lib/storage-lib';
 import { TAB_REGISTRY } from '@/lib/tab-registry';
 import { TAB_GROUP_LABELS, groupFor, type TabGroup } from '@/lib/workspace-tab-groups';
 import { getWorkspaceTabLabel } from '@/lib/workspace-tab-labels';
@@ -77,7 +79,11 @@ export interface TabNavigatorProps {
     labsDescription: string;
     /** ARIA label for the desktop dropdown trigger. */
     allLabsAriaLabel: string;
+    searchPlaceholder: string;
+    recentLabs: string;
+    noResults: string;
   };
+  projectId?: string;
   className?: string;
 }
 
@@ -104,9 +110,27 @@ export function tabGroupsFromRegistry(): { group: TabGroup; entries: typeof TAB_
   }));
 }
 
-export function TabNavigator({ activeTab, onTabChange, language, copy, className }: TabNavigatorProps) {
+export function filterTabGroups(
+  groups: { group: TabGroup; entries: typeof TAB_REGISTRY }[],
+  query: string,
+  labeler: (value: string, fallback: string) => string,
+) {
+  const normalizedQuery = query.trim().toLocaleLowerCase();
+  return groups
+    .map(({ group, entries }) => ({ group, entries: entries.filter((tab) => labeler(tab.value, tab.label).toLocaleLowerCase().includes(normalizedQuery)) }))
+    .filter(({ entries }) => entries.length > 0);
+}
+
+export function TabNavigator({ activeTab, onTabChange, language, copy, projectId, className }: TabNavigatorProps) {
   const isDesktop = useViewportWidth();
   const [isSheetOpen, setIsSheetOpen] = React.useState(false);
+  const [query, setQuery] = React.useState('');
+  const [recentTabs, setRecentTabs] = React.useState<string[]>([]);
+  const historyHandle = React.useMemo(
+    () => projectId && typeof window !== 'undefined' ? projectStorage<string[]>('lab-history', projectId) : null,
+    [projectId],
+  );
+  React.useEffect(() => setRecentTabs(historyHandle?.read() ?? []), [historyHandle]);
   const groups = tabGroupsFromRegistry();
 
   const localizedLabel = (value: string, fallback: string) =>
@@ -114,12 +138,21 @@ export function TabNavigator({ activeTab, onTabChange, language, copy, className
 
   const handlePick = (value: string) => {
     onTabChange(value);
+    const nextRecent = [value, ...recentTabs.filter((entry) => entry !== value)].slice(0, 6);
+    setRecentTabs(nextRecent);
+    historyHandle?.write(nextRecent);
     // A lab selection is a completed mobile navigation action: close the
     // controlled sheet so its modal overlay cannot block the selected panel.
     setIsSheetOpen(false);
     // Return focus/scroll position predictably: the caller's tab switch
     // scrolls the new panel into view via the existing TabPanel autofocus.
   };
+
+  const normalizedQuery = query.trim().toLocaleLowerCase();
+  const filteredGroups = filterTabGroups(groups, query, localizedLabel);
+  const recentEntries = recentTabs
+    .map((value) => TAB_REGISTRY.find((tab) => tab.value === value))
+    .filter((tab): tab is typeof TAB_REGISTRY[number] => Boolean(tab));
 
   if (!isDesktop) {
     return (
@@ -143,7 +176,19 @@ export function TabNavigator({ activeTab, onTabChange, language, copy, className
               <SheetDescription>{copy.labsDescription}</SheetDescription>
             </SheetHeader>
             <div className="mt-2 space-y-4 pb-6">
-              {groups.map(
+              <label className="relative block">
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={copy.searchPlaceholder} aria-label={copy.searchPlaceholder} className="min-h-11 pl-9" />
+              </label>
+              {!normalizedQuery && recentEntries.length > 0 && (
+                <div>
+                  <h3 className="px-1 pt-2 text-[11px] font-bold uppercase tracking-wide text-primary border-b border-border/60 mb-2 pb-1">{copy.recentLabs}</h3>
+                  <div className="grid gap-1.5">
+                    {recentEntries.map((tab) => <button key={tab.value} type="button" className="min-h-11 rounded-md px-3 text-left text-sm hover:bg-muted" onClick={() => handlePick(tab.value)}>{localizedLabel(tab.value, tab.label)}</button>)}
+                  </div>
+                </div>
+              )}
+              {filteredGroups.length === 0 ? <p className="text-sm text-muted-foreground px-1">{copy.noResults}</p> : filteredGroups.map(
                 ({ group, entries }) =>
                   entries.length > 0 && (
                     <div key={group}>

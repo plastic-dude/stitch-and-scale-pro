@@ -128,6 +128,7 @@ try {
   await navigate(call, '/project/sample-crew-neck-sweater/pdf', 390, 844);
   const exportPage = await metrics(call, 'export');
   assert(exportPage.text.includes('Ready to print') || exportPage.text.includes('Review before printing') || exportPage.text.includes('Fix before printing'), 'export preflight panel is missing');
+  assert(exportPage.text.includes('Rendered artifact:'), 'rendered artifact evidence is missing');
   assert(!exportPage.bodyOverflow && !exportPage.htmlOverflow, 'export horizontal overflow');
   const exportButton = exportPage.controls.find((control) => control.text === 'Export PDF');
   assert((exportButton?.height ?? 0) >= 44, `Export PDF hit area is ${exportButton?.height ?? 0}px`);
@@ -141,20 +142,39 @@ try {
   await sleep(700);
   const grading = await metrics(call, 'grading-lab');
   assert(grading.text.includes('Pattern QA preflight'), 'Pattern QA summary is missing from Grading Lab');
+  assert(grading.text.includes('Technical-editor defect ledger'), 'technical-editor defect ledger is missing from Grading Lab');
+  assert(await clickVisible('Record current QA findings'), 'defect-ledger record action was not found');
+  await sleep(300);
   assert(!grading.bodyOverflow && !grading.htmlOverflow, 'Grading Lab horizontal overflow');
   await capture(call, 'grading-lab-390');
 
   await navigate(call, '/project/sample-crew-neck-sweater', 390, 844);
+  assert(await clickVisible('All Labs'), 'All Labs control was not found for search');
+  await sleep(400);
+  const labsWithSearch = await metrics(call, 'all-labs-search');
+  assert(labsWithSearch.controls.some((control) => control.text === 'Search labs…'), 'lab search input is missing');
+  const searchResult = await evaluate(call, `(() => { const input = [...document.querySelectorAll('input')].find((el) => el.getAttribute('placeholder') === 'Search labs…'); if (!input) return false; const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')?.set; setter?.call(input, 'Receipt'); input.dispatchEvent(new Event('input', { bubbles: true })); return true; })()`);
+  assert(searchResult, 'lab search input could not be populated');
+  await sleep(300);
+  const filteredLabs = await metrics(call, 'filtered-labs');
+  assert(filteredLabs.text.includes('Receipt Lab'), 'lab search did not reveal Receipt Lab');
+  assert(await clickVisible('Receipt Lab'), 'Receipt Lab search result was not found');
+  await sleep(500);
+  await navigate(call, '/project/sample-crew-neck-sweater', 390, 844);
   assert(await clickVisible('All Labs'), 'All Labs control was not found for ledger');
   await sleep(400);
+  const recentLabs = await metrics(call, 'recent-labs');
+  const recentHistory = await evaluate(call, `localStorage.getItem('stitch-and-scale-lab-history-sample-crew-neck-sweater') || ''`);
+  assert(recentHistory.includes('receiptlab'), 'recent lab history was not persisted');
   assert(await clickVisible('Design Ledger'), 'visible Design Ledger entry was not found');
   await sleep(700);
   const ledger = await metrics(call, 'design-ledger');
   assert(ledger.text.includes('Design Ledger'), 'Design Ledger did not open');
+  assert(ledger.text.includes('Operational records'), 'operational records card is missing from Design Ledger');
   assert(!ledger.bodyOverflow && !ledger.htmlOverflow, 'Design Ledger horizontal overflow');
   await capture(call, 'design-ledger-390');
 
-  console.log(JSON.stringify({ ok: true, outDir, checks: ['onboarding 320/360/390/430', 'dashboard', 'new project', 'sample workspace', 'export preflight', 'grading lab QA', 'design ledger'] }, null, 2));
+  console.log(JSON.stringify({ ok: true, outDir, checks: ['onboarding 320/360/390/430', 'dashboard', 'new project', 'sample workspace', 'export preflight + artifact evidence', 'grading lab QA + defect ledger', 'mobile lab search + recent history', 'design ledger + operational records'] }, null, 2));
 } finally {
   socket.close();
 }

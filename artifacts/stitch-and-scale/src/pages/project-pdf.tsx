@@ -258,8 +258,9 @@ export default function ProjectPdf() {
       templateId: selectedTheme,
       customLogo,
       liveCustomStandard: customStandard,
+      renderedHtml: previewHtml,
     });
-  }, [projectHook?.project, gradingResult, language, selectedTheme, customLogo, customStandard]);
+  }, [projectHook?.project, gradingResult, language, selectedTheme, customLogo, customStandard, previewHtml]);
 
   const blockingPreflightCount = preflight?.flags.filter((flag) => flag.severity === 'error').length ?? 0;
   const reviewPreflightCount = preflight?.flags.filter((flag) => flag.severity === 'warn').length ?? 0;
@@ -389,6 +390,15 @@ export default function ProjectPdf() {
                   ? labels.preflightReviewDescription(reviewPreflightCount)
                   : labels.preflightReadyDescription}
             </p>
+            {preflight?.artifactInspection && (
+              <p className="text-[11px] text-muted-foreground mt-2" data-testid="publication-artifact-evidence">
+                {labels.artifactEvidence(
+                  preflight.artifactInspection.htmlBytes,
+                  preflight.artifactInspection.headingCount,
+                  preflight.artifactInspection.tableCount,
+                )}
+              </p>
+            )}
           </div>
 
           {/* ── Template Picker ── */}

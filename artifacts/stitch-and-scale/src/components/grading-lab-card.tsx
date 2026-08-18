@@ -8,6 +8,7 @@ import { useSettings } from '@/context/SettingsContext';
 import { getGradingCopy, getGradingFlagDetail } from '@/lib/grading-copy';
 import { analyzeGrading, EASE_BANDS, type LabResult } from '@/lib/grading-lab';
 import { validatePatternQuality } from '@/lib/pattern-quality';
+import { TechnicalEditorLedgerCard } from '@/components/technical-editor-ledger-card';
 
 const fmtCm = (n: number) => `${n.toFixed(1)}cm`;
 
@@ -78,6 +79,8 @@ export function GradingLabCard({ project }: { project: PatternProject }) {
             </div>
           )}
         </div>
+
+        <TechnicalEditorLedgerCard project={project} quality={quality} />
 
         {/* KPI tiles */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

@@ -1044,6 +1044,7 @@ export default function ProjectWorkspace() {
           <TabNavigator
             activeTab={activeTab}
             onTabChange={setActiveTab}
+            projectId={project.id}
             language={language}
             copy={NAVIGATOR_COPY[language] ?? NAVIGATOR_COPY.en}
           />

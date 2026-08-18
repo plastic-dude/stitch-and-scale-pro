@@ -43,6 +43,7 @@ import { useToast } from "@/hooks/use-toast";
 import { BookMarked, Copy, Download, FileSpreadsheet, Plus, Trash2 } from "lucide-react";
 import { useSettings } from "@/context/SettingsContext";
 import { DESIGN_LEDGER_COPY, type DesignLedgerCopy } from "@/lib/design-ledger-copy";
+import { OperationalRecordsCard } from "@/components/operational-records-card";
 // CHK-132 (ledger S272): reuse the same stored-row resolvers payback uses so
 // Receipt Lab's actual SavedSale shape (no grossTotal, fees never persisted)
 // no longer silently resolves to $0 gross and $0 fees.
@@ -519,6 +520,7 @@ export function DesignLedgerCard(props: { project: PatternProject }) {
           </Tabs>
         </CardContent>
       </Card>
+      <OperationalRecordsCard project={project} />
     </div>
   );
 }

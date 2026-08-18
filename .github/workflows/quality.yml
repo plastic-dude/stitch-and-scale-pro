@@ -1,0 +1,77 @@
+name: Stitch & Scale quality
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  static-and-unit:
+    name: Typecheck, tests, and build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: artifacts/stitch-and-scale
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+      - name: Enable pnpm
+        run: corepack enable
+        working-directory: .
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        working-directory: .
+      - name: Typecheck
+        run: pnpm typecheck
+      - name: Unit and component tests
+        run: pnpm exec vitest run
+      - name: Production build
+        run: pnpm build
+
+  mobile-smoke:
+    name: Mobile workflow smoke
+    runs-on: ubuntu-latest
+    needs: static-and-unit
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+      - name: Enable pnpm
+        run: corepack enable
+      - name: Install Chromium and dependencies
+        run: sudo apt-get update && sudo apt-get install -y chromium
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Start Vite preview
+        working-directory: artifacts/stitch-and-scale
+        run: pnpm dev -- --host 127.0.0.1 > /tmp/stitch-and-scale-vite.log 2>&1 &
+      - name: Wait for Vite
+        run: for i in {1..30}; do curl --fail http://127.0.0.1:5000/ && exit 0; sleep 1; done; cat /tmp/stitch-and-scale-vite.log; exit 1
+      - name: Start isolated Chromium CDP
+        run: chromium --headless --no-sandbox --disable-gpu --remote-debugging-port=9222 --remote-allow-origins=http://localhost:9222 --user-data-dir=/tmp/stitch-and-scale-chrome about:blank > /tmp/stitch-and-scale-chrome.log 2>&1 &
+      - name: Run mobile smoke
+        run: node scripts/mobile-smoke.mjs
+      - name: Upload mobile evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stitch-and-scale-mobile-smoke
+          path: |
+            /tmp/stitch-and-scale-smoke
+            /tmp/stitch-and-scale-vite.log
+            /tmp/stitch-and-scale-chrome.log
