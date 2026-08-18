@@ -10,6 +10,13 @@ describe('settings backup copy', () => {
       expect(copy.backupDownloaded(2)).toBeTruthy();
       expect(copy.restoreSuccessful(1, 2)).toBeTruthy();
       expect(copy.restoreFailed).toBeTruthy();
+      expect(copy.restorePreviewTitle).toBeTruthy();
+      expect(copy.restorePreviewProjects).toBeTruthy();
+      expect(copy.restorePreviewRecords).toBeTruthy();
+      expect(copy.restorePreviewSettings).toBeTruthy();
+      expect(copy.restorePreviewWarning).toBeTruthy();
+      expect(copy.restorePreviewCancel).toBeTruthy();
+      expect(copy.restorePreviewConfirm).toBeTruthy();
     }
   });
 });

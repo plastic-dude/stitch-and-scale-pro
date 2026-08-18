@@ -99,3 +99,21 @@ Storage regression coverage now includes **26 storage tests**, including live sn
 ## Final project-wide snapshot gate
 
 The canonical snapshot extension passed the complete release gate: **144 test files / 2,018 tests**, TypeScript typecheck, production build in 8.52 seconds, `git diff --check`, and all eight mobile-smoke journeys. The branch remained free of protected-file changes, and the working tree was clean before staging this milestone.
+
+## Project-wide restore preview update
+
+Settings restore now parses and inspects a snapshot before any storage mutation. The mobile-safe preview shows the number of projects in the file, the total operational-record count, and whether workspace settings are included. It explains that the default action is a non-destructive merge: new projects and their records are added, while existing projects and records remain preserved. The designer must choose either **Cancel restore** or **Merge backup**.
+
+The preview fails closed for malformed top-level data and malformed operational-record partitions instead of silently presenting partial counts. The actual merge remains delegated to `importSnapshot`, preserving the canonical storage seam and the established project-ID collision policy.
+
+The Settings smoke checkpoint confirms at 390px that the Data & Backups card, Download Backup action, Upload File action, accessible restore input, and no-overflow layout are present. The updated release gate passed with **144 test files / 2,020 tests**, typecheck, production build in 9.22 seconds, `git diff --check`, and all nine mobile-smoke checks.
+
+| Restore preview property | Result |
+|---|---|
+| Mutation on file selection | None; selection only creates pending preview state. |
+| Project count | Shown before merge. |
+| Operational-record count | Shown before merge. |
+| Settings inclusion | Shown when present. |
+| Existing workspace data | Preserved by the default merge policy. |
+| Malformed partitions | Rejected before preview. |
+| Mobile layout | Verified at 390px with no horizontal overflow. |

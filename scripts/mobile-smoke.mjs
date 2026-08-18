@@ -207,7 +207,16 @@ try {
   assert(recoveredLedger.text.includes('Smoke Sample'), 'operational sample did not recover after reload');
   await capture(call, 'design-ledger-390');
 
-  console.log(JSON.stringify({ ok: true, outDir, checks: ['onboarding 320/360/390/430', 'dashboard', 'new project', 'sample workspace', 'export preflight + artifact evidence', 'grading lab QA + defect ledger', 'mobile lab search + recent history', 'design ledger + operational records backup/recovery'] }, null, 2));
+  await navigate(call, '/settings', 390, 844);
+  const settings = await metrics(call, 'settings-backup');
+  assert(settings.text.includes('Data & Backups'), 'Settings backup card is missing');
+  assert(settings.controls.some((control) => control.text === 'Download Backup'), 'project-wide backup action is missing');
+  assert(settings.controls.some((control) => control.text === 'Upload File'), 'project-wide restore action is missing');
+  assert(await evaluate(call, `Boolean(document.querySelector('input[type=file][aria-label="Restore from Backup"]'))`), 'project-wide restore file input is not accessible');
+  assert(!settings.bodyOverflow && !settings.htmlOverflow, 'Settings backup card horizontal overflow');
+  await capture(call, 'settings-backup-390');
+
+  console.log(JSON.stringify({ ok: true, outDir, checks: ['onboarding 320/360/390/430', 'dashboard', 'new project', 'sample workspace', 'export preflight + artifact evidence', 'grading lab QA + defect ledger', 'mobile lab search + recent history', 'design ledger + operational records backup/recovery', 'settings project-wide backup controls'] }, null, 2));
 } finally {
   socket.close();
 }

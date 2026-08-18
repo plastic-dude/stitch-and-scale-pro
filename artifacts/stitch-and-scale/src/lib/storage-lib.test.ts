@@ -14,7 +14,7 @@ vi.mock('idb-keyval', () => ({
 // idb-keyval, localStorage, and grading-engine types (no DOM-side effects).
 
 import {
-  readProjects, writeProjects, exportSnapshot, importSnapshot,
+  readProjects, writeProjects, exportSnapshot, importSnapshot, inspectSnapshot,
   auditStores, reconcileStores, recordBackupEvent, readBackupLedger,
   projectStorage,
   PROJECTS_KEY, SETTINGS_KEY, BACKUPS_KEY,
@@ -77,6 +77,18 @@ describe('exportSnapshot', () => {
     expect(snap.projects[0].name).toBe('Live');
     expect(snap.settings).toEqual({});
     expect(snap.operationalRecords.p1.samples[0].name).toBe('Sample');
+  });
+});
+
+describe('inspectSnapshot', () => {
+  it('summarizes project-wide contents without mutating storage', () => {
+    const records = addSample(EMPTY_OPERATIONAL_RECORDS('p1'), { name: 'Sample', status: 'in-studio', location: '', notes: '' });
+    expect(inspectSnapshot({ projects: [project('p1', 'One')], settings: { theme: 'dark' }, operationalRecords: { p1: records } })).toEqual({ projectCount: 1, operationalProjectCount: 1, operationalRecordCount: 1, hasSettings: true });
+  });
+
+  it('rejects malformed operational partitions instead of previewing partial data', () => {
+    expect(inspectSnapshot({ projects: [project('p1', 'One')], operationalRecords: { p1: { version: 1, projectId: 'other', samples: [], testKnits: [], submissions: [], wholesaleOrders: [] } } })).toBeNull();
+    expect(inspectSnapshot({ random: true })).toBeNull();
   });
 });
 

@@ -10,6 +10,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { GradingKey, GRADING_KEY_LABELS, ALL_SIZES, SIZE_STANDARDS } from '@/lib/grading-engine';
 import { getInitialLanguage, LANGUAGE_OPTIONS, languageLabel, translate, type LanguageCode } from '@/lib/i18n';
 import { getSettingsCopy } from '@/lib/settings-copy';
+import { inspectSnapshot, importSnapshot, type StoreSnapshot, type StoreSnapshotPreview } from '@/lib/storage-lib';
 
 export default function SettingsPage() {
   const {
@@ -20,6 +21,7 @@ export default function SettingsPage() {
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const [editingKey, setEditingKey] = React.useState<GradingKey>('bust');
+  const [pendingSnapshot, setPendingSnapshot] = React.useState<{ data: StoreSnapshot; preview: StoreSnapshotPreview } | null>(null);
   const t = (key: Parameters<typeof translate>[1]) => translate(language, key);
   const copy = getSettingsCopy(language);
 
@@ -32,19 +34,26 @@ export default function SettingsPage() {
       const content = event.target?.result as string;
       try {
         const data = JSON.parse(content);
-        if (!data || (!data.projects && !data.settings)) throw new Error('not a backup');
-        const { importSnapshot } = await import('@/lib/storage-lib');
-        const result = await importSnapshot(data);
-        toast({
-          title: copy.restoreSuccessful(result.imported, result.existingKept),
-          description: copy.restoreDescription,
-        });
+        const preview = inspectSnapshot(data);
+        if (!preview) throw new Error('not a backup');
+        setPendingSnapshot({ data: data as StoreSnapshot, preview });
       } catch {
         toast({ title: copy.restoreFailed, description: copy.restoreDescription, variant: 'destructive' });
       }
       if (fileInputRef.current) fileInputRef.current.value = '';
     };
     reader.readAsText(file);
+  };
+
+  const confirmSnapshotRestore = async () => {
+    if (!pendingSnapshot) return;
+    try {
+      const result = await importSnapshot(pendingSnapshot.data);
+      setPendingSnapshot(null);
+      toast({ title: copy.restoreSuccessful(result.imported, result.existingKept), description: copy.restoreDescription });
+    } catch {
+      toast({ title: copy.restoreFailed, description: copy.restoreDescription, variant: 'destructive' });
+    }
   };
 
   const handleExport = async () => {
@@ -396,13 +405,29 @@ export default function SettingsPage() {
                   <p className="text-sm text-muted-foreground mt-1">{copy.restoreDescription}</p>
                 </div>
                 <div>
-                  <input type="file" accept=".json" className="hidden" ref={fileInputRef} onChange={handleFileChange} />
-                  <Button onClick={() => fileInputRef.current?.click()} variant="outline" className="shrink-0 rounded-full border-2 hover:bg-secondary/20" data-testid="button-import-data">
+                  <input type="file" accept=".json" className="hidden" ref={fileInputRef} onChange={handleFileChange} aria-label={copy.restoreBackup} />
+                  <Button onClick={() => fileInputRef.current?.click()} variant="outline" className="shrink-0 rounded-full border-2 hover:bg-secondary/20 min-h-11" data-testid="button-import-data">
                     <Upload className="w-4 h-4 mr-2" />
                     Upload File
                   </Button>
                 </div>
               </div>
+
+              {pendingSnapshot && (
+                <div className="rounded-xl border border-amber-500/40 bg-amber-500/5 p-4 space-y-3" role="alert" data-testid="snapshot-restore-preview">
+                  <h4 className="font-medium text-foreground">{copy.restorePreviewTitle}</h4>
+                  <dl className="grid grid-cols-2 gap-3 text-sm">
+                    <div><dt className="text-xs text-muted-foreground">{copy.restorePreviewProjects}</dt><dd className="font-medium">{pendingSnapshot.preview.projectCount}</dd></div>
+                    <div><dt className="text-xs text-muted-foreground">{copy.restorePreviewRecords}</dt><dd className="font-medium">{pendingSnapshot.preview.operationalRecordCount}</dd></div>
+                    {pendingSnapshot.preview.hasSettings && <div className="col-span-2"><dd className="font-medium">{copy.restorePreviewSettings}</dd></div>}
+                  </dl>
+                  <p className="text-xs text-amber-900 dark:text-amber-100">{copy.restorePreviewWarning}</p>
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    <Button type="button" variant="outline" className="min-h-11 w-full" onClick={() => setPendingSnapshot(null)}>{copy.restorePreviewCancel}</Button>
+                    <Button type="button" className="min-h-11 w-full" onClick={confirmSnapshotRestore}>{copy.restorePreviewConfirm}</Button>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         </motion.div>

@@ -35,6 +35,34 @@ export interface StoreSnapshot {
   operationalRecords: Record<string, OperationalRecords>;
 }
 
+export interface StoreSnapshotPreview {
+  projectCount: number;
+  operationalProjectCount: number;
+  operationalRecordCount: number;
+  hasSettings: boolean;
+}
+
+export function inspectSnapshot(data: unknown): StoreSnapshotPreview | null {
+  if (!data || typeof data !== 'object') return null;
+  const parsed = data as { projects?: unknown; settings?: unknown; operationalRecords?: unknown };
+  if (parsed.projects !== undefined && !Array.isArray(parsed.projects)) return null;
+  if (parsed.operationalRecords !== undefined && (!parsed.operationalRecords || typeof parsed.operationalRecords !== 'object' || Array.isArray(parsed.operationalRecords))) return null;
+  if (parsed.projects === undefined && parsed.settings === undefined && parsed.operationalRecords === undefined) return null;
+  const projectCount = Array.isArray(parsed.projects) ? parsed.projects.length : 0;
+  const entries = parsed.operationalRecords && typeof parsed.operationalRecords === 'object' ? Object.entries(parsed.operationalRecords as Record<string, unknown>) : [];
+  const validEntries = entries.filter(([projectId, value]) => {
+    if (!value || typeof value !== 'object') return false;
+    const records = value as Partial<OperationalRecords>;
+    return records.projectId === projectId && records.version === 1 && Array.isArray(records.samples) && Array.isArray(records.testKnits) && Array.isArray(records.submissions) && Array.isArray(records.wholesaleOrders);
+  });
+  if (validEntries.length !== entries.length) return null;
+  const operationalRecordCount = validEntries.reduce((total, [, value]) => {
+    const records = value as OperationalRecords;
+    return total + records.samples.length + records.testKnits.length + records.submissions.length + records.wholesaleOrders.length;
+  }, 0);
+  return { projectCount, operationalProjectCount: validEntries.length, operationalRecordCount, hasSettings: parsed.settings !== undefined && !!parsed.settings && typeof parsed.settings === 'object' };
+}
+
 export interface AuditReport {
   idbBytes: number;
   localStorageBytes: number;
