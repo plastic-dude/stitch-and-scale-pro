@@ -142,6 +142,20 @@ export function operationalRecordCounts(records: OperationalRecords) {
   };
 }
 
+export function serializeOperationalRecords(records: OperationalRecords): string {
+  return JSON.stringify(records);
+}
+
+export function restoreOperationalRecords(payload: string, projectId: string): OperationalRecords | null {
+  try {
+    const parsed = JSON.parse(payload) as Partial<OperationalRecords>;
+    if (parsed.version !== 1 || parsed.projectId !== projectId || !Array.isArray(parsed.samples) || !Array.isArray(parsed.testKnits) || !Array.isArray(parsed.submissions) || !Array.isArray(parsed.wholesaleOrders)) return null;
+    return { ...parsed, version: 1, projectId, samples: parsed.samples, testKnits: parsed.testKnits, submissions: parsed.submissions, wholesaleOrders: parsed.wholesaleOrders, updatedAt: new Date().toISOString() } as OperationalRecords;
+  } catch {
+    return null;
+  }
+}
+
 export function exportOperationalRecordsCsv(records: OperationalRecords): string {
   const escape = (value: unknown) => {
     const text = value == null ? '' : String(value);

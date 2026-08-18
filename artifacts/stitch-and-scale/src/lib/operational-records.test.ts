@@ -6,6 +6,8 @@ import {
   addTestKnit,
   addWholesaleOrder,
   exportOperationalRecordsCsv,
+  restoreOperationalRecords,
+  serializeOperationalRecords,
   operationalRecordCounts,
   removeOperationalRecord,
   updateOperationalRecord,
@@ -45,6 +47,14 @@ describe('operational records', () => {
     expect(csv).toContain('test-knit,');
     expect(csv).toContain('submission,');
     expect(csv).toContain('wholesale,');
+  });
+
+  it('round-trips a versioned JSON backup and rejects foreign or corrupt data', () => {
+    const records = addSample(EMPTY_OPERATIONAL_RECORDS('project-1'), { name: 'Sample', status: 'in-studio', location: 'Studio', notes: '' });
+    const restored = restoreOperationalRecords(serializeOperationalRecords(records), 'project-1');
+    expect(restored?.samples[0].name).toBe('Sample');
+    expect(restoreOperationalRecords(serializeOperationalRecords(records), 'project-2')).toBeNull();
+    expect(restoreOperationalRecords('{not-json', 'project-1')).toBeNull();
   });
 
   it('updates and removes a record without changing unrelated collections', () => {

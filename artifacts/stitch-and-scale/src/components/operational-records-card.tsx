@@ -81,8 +81,8 @@ export function OperationalRecordsCard({ project }: { project: PatternProject })
         <CardDescription>{copy.description}</CardDescription>
         <Button type="button" variant="secondary" className="min-h-11 w-full sm:w-auto" onClick={exportRecords}>{copy.exportCsv}</Button>
       </CardHeader>
-      <CardContent className="grid gap-4 md:grid-cols-2">
-        <section className="rounded-lg border p-3 space-y-3">
+      <CardContent className="grid min-w-0 gap-4 md:grid-cols-2">
+        <section className="min-w-0 rounded-lg border p-3 space-y-3">
           <h3 className="font-semibold text-sm">{copy.samples} ({records.samples.length})</h3>
           <div className="grid gap-2 sm:grid-cols-2">
             <div><Label htmlFor="op-sample-name">{copy.name}</Label><Input id="op-sample-name" value={sampleName} onChange={(event) => setSampleName(event.target.value)} /></div>
@@ -93,7 +93,7 @@ export function OperationalRecordsCard({ project }: { project: PatternProject })
           {records.samples.length === 0 ? <p className="text-xs text-muted-foreground">{copy.empty}</p> : records.samples.map((record) => <div key={record.id} className="flex items-center gap-2 rounded border p-2"><span className="min-w-0 flex-1 text-xs truncate">{record.name} · {record.location || '—'}</span><NativeSelect aria-label={`${record.name} ${copy.status}`} className="min-h-11 w-auto text-xs" value={record.status} onChange={(event) => persist(updateOperationalRecord(records, 'samples', record.id, { status: event.target.value as SampleStatus }))}>{sampleStatuses.map((status) => <option key={status} value={status}>{statusLabel(status)}</option>)}</NativeSelect><button type="button" aria-label={`${copy.remove}: ${record.name}`} className="min-h-11 min-w-11" onClick={() => persist(removeOperationalRecord(records, 'samples', record.id))}>×</button></div>)}
         </section>
 
-        <section className="rounded-lg border p-3 space-y-3">
+        <section className="min-w-0 rounded-lg border p-3 space-y-3">
           <h3 className="font-semibold text-sm">{copy.testKnits} ({records.testKnits.length})</h3>
           <div className="grid gap-2 sm:grid-cols-3">
             <div><Label htmlFor="op-tester">{copy.tester}</Label><Input id="op-tester" value={tester} onChange={(event) => setTester(event.target.value)} /></div>
@@ -105,7 +105,7 @@ export function OperationalRecordsCard({ project }: { project: PatternProject })
           {records.testKnits.length === 0 ? <p className="text-xs text-muted-foreground">{copy.empty}</p> : records.testKnits.map((record) => <div key={record.id} className="flex items-center gap-2 rounded border p-2"><span className="min-w-0 flex-1 text-xs truncate">{record.tester} · {record.size} · {record.yarn || '—'}</span><NativeSelect aria-label={`${record.tester} ${copy.status}`} className="min-h-11 w-auto text-xs" value={record.status} onChange={(event) => persist(updateOperationalRecord(records, 'testKnits', record.id, { status: event.target.value as TestKnitStatus }))}>{testStatuses.map((status) => <option key={status} value={status}>{statusLabel(status)}</option>)}</NativeSelect><button type="button" aria-label={`${copy.remove}: ${record.tester}`} className="min-h-11 min-w-11" onClick={() => persist(removeOperationalRecord(records, 'testKnits', record.id))}>×</button></div>)}
         </section>
 
-        <section className="rounded-lg border p-3 space-y-3">
+        <section className="min-w-0 rounded-lg border p-3 space-y-3">
           <h3 className="font-semibold text-sm">{copy.submissions} ({records.submissions.length})</h3>
           <div className="grid gap-2 sm:grid-cols-2">
             <div><Label htmlFor="op-outlet">{copy.outlet}</Label><Input id="op-outlet" value={outlet} onChange={(event) => setOutlet(event.target.value)} /></div>
@@ -116,7 +116,7 @@ export function OperationalRecordsCard({ project }: { project: PatternProject })
           {records.submissions.length === 0 ? <p className="text-xs text-muted-foreground">{copy.empty}</p> : records.submissions.map((record) => <div key={record.id} className="flex items-center gap-2 rounded border p-2"><span className="min-w-0 flex-1 text-xs truncate">{record.outlet} · {record.deadline || '—'}</span><NativeSelect aria-label={`${record.outlet} ${copy.status}`} className="min-h-11 w-auto text-xs" value={record.status} onChange={(event) => persist(updateOperationalRecord(records, 'submissions', record.id, { status: event.target.value as SubmissionStatus }))}>{submissionStatuses.map((status) => <option key={status} value={status}>{statusLabel(status)}</option>)}</NativeSelect><button type="button" aria-label={`${copy.remove}: ${record.outlet}`} className="min-h-11 min-w-11" onClick={() => persist(removeOperationalRecord(records, 'submissions', record.id))}>×</button></div>)}
         </section>
 
-        <section className="rounded-lg border p-3 space-y-3">
+        <section className="min-w-0 rounded-lg border p-3 space-y-3">
           <h3 className="font-semibold text-sm">{copy.wholesale} ({records.wholesaleOrders.length})</h3>
           <div className="grid gap-2 sm:grid-cols-2">
             <div><Label htmlFor="op-account">{copy.account}</Label><Input id="op-account" value={account} onChange={(event) => setAccount(event.target.value)} /></div>

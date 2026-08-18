@@ -17,6 +17,13 @@ describe('publication artifact inspection', () => {
     expect(result.imagesMissingAlt).toBe(0);
   });
 
+  it('blocks a cover whose title exceeds the conservative text budget', () => {
+    const longTitle = 'An exceptionally long translated-ready pattern title that exceeds the safe cover budget for a single page';
+    const result = inspectPublicationArtifact(`<title>${longTitle}</title><h1>${longTitle}</h1><h2>Notes</h2>`);
+    expect(result.readyForReview).toBe(false);
+    expect(result.issues.some((issue) => issue.code === 'A-007' && issue.severity === 'error')).toBe(true);
+  });
+
   it('keeps image-alt and pagination findings visible as review issues', () => {
     const result = inspectPublicationArtifact('<h1>Pattern</h1><h2>Notes</h2><img src="logo.png">');
     expect(result.readyForReview).toBe(true);

@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "projectId": "sample-crew-neck-sweater",
+  "sourceRevision": "0cb1091",
+  "updatedAt": "2026-08-18T18:28:00.000Z",
+  "defects": [
+    {
+      "id": "defect-sample-crew-neck-sweater-A-007-rc1",
+      "projectId": "sample-crew-neck-sweater",
+      "qaRunId": "release-candidate-artifact-audit-2026-08-18",
+      "code": "A-007",
+      "source": "publication-preflight",
+      "severity": "error",
+      "title": "Cover content exceeds the safe footer budget",
+      "detail": "A long title and long designer-authored note visibly cross into the fixed footer region on the craft cover.",
+      "evidence": "/tmp/stitch-and-scale-release-images/long/en-craft-long-1.png; /tmp/stitch-and-scale-release-pdfs/en-craft-long.pdf",
+      "affectedSizes": ["all"],
+      "location": "craft-cover/footer-safe-area",
+      "reproduction": "Render the sample artifact with a title longer than 90 characters and a long description, then convert the HTML preview to a letter PDF with Chromium.",
+      "status": "open",
+      "disposition": "needs-designer-decision",
+      "owner": "designer/editor",
+      "createdAt": "2026-08-18T18:28:00.000Z",
+      "updatedAt": "2026-08-18T18:28:00.000Z"
+    }
+  ]
+}

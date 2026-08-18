@@ -1,7 +1,7 @@
 export const PUBLICATION_ARTIFACT_VERSION = 1;
 
 export type PublicationArtifactSeverity = 'error' | 'warn' | 'info';
-export type PublicationArtifactCode = 'A-001' | 'A-002' | 'A-003' | 'A-004' | 'A-005' | 'A-006';
+export type PublicationArtifactCode = 'A-001' | 'A-002' | 'A-003' | 'A-004' | 'A-005' | 'A-006' | 'A-007';
 
 export interface PublicationArtifactIssue {
   code: PublicationArtifactCode;
@@ -18,6 +18,7 @@ export interface PublicationArtifactInspection {
   imageCount: number;
   imagesMissingAlt: number;
   pageMarkerCount: number;
+  coverTextCharacters: number;
   readyForReview: boolean;
   issues: PublicationArtifactIssue[];
 }
@@ -45,6 +46,10 @@ export function inspectPublicationArtifact(html: string): PublicationArtifactIns
   const imageTags = source.match(/<img\b[^>]*>/gi) ?? [];
   const imagesMissingAlt = imageTags.filter((tag) => !/\balt\s*=\s*["'][^"']*["']/i.test(tag)).length;
   const pageMarkerCount = countMatches(source, /(?:page-break|page-break-after|class\s*=\s*["'][^"']*\bpage\b)/gi);
+  const coverMarkup = source.split('<div class="page">', 1)[0] ?? source;
+  const coverTextCharacters = stripMarkup(coverMarkup).length;
+  const titleMatch = source.match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/i);
+  const titleCharacters = titleMatch ? stripMarkup(titleMatch[1]).length : 0;
   const hasTitle = /<title\b[^>]*>\s*[^<]+\s*<\/title>|<h1\b[^>]*>\s*[^<]+\s*<\/h1>/i.test(source);
   const issues: PublicationArtifactIssue[] = [];
 
@@ -66,6 +71,9 @@ export function inspectPublicationArtifact(html: string): PublicationArtifactIns
   if (pageMarkerCount === 0) {
     issues.push({ code: 'A-006', severity: 'info', detail: 'No explicit page-break marker was detected; review pagination in the print artifact.' });
   }
+  if (titleCharacters > 90 || coverTextCharacters > 950) {
+    issues.push({ code: 'A-007', severity: 'error', detail: 'Cover content exceeds the conservative text budget; review title and optional notes before printing to prevent footer collision.' });
+  }
 
   return {
     version: PUBLICATION_ARTIFACT_VERSION,
@@ -76,6 +84,7 @@ export function inspectPublicationArtifact(html: string): PublicationArtifactIns
     imageCount: imageTags.length,
     imagesMissingAlt,
     pageMarkerCount,
+    coverTextCharacters,
     readyForReview: !issues.some((issue) => issue.severity === 'error'),
     issues,
   };

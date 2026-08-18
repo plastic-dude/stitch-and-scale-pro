@@ -64,6 +64,11 @@ async function metrics(call, name) {
     url: location.href,
     bodyOverflow: document.body.scrollWidth > document.body.clientWidth,
     htmlOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth,
+    bodyWidth: document.body.scrollWidth,
+    bodyClientWidth: document.body.clientWidth,
+    htmlWidth: document.documentElement.scrollWidth,
+    htmlClientWidth: document.documentElement.clientWidth,
+    overflowNodes: [...document.querySelectorAll('body *')].map((el) => { const rect = el.getBoundingClientRect(); const parents = []; let node = el.parentElement; for (let i = 0; i < 4 && node; i += 1, node = node.parentElement) { const parentRect = node.getBoundingClientRect(); parents.push({ tag: node.tagName, id: node.id, cls: String(node.className).slice(0, 80), left: Math.round(parentRect.left), right: Math.round(parentRect.right), width: Math.round(parentRect.width) }); } return { tag: el.tagName, id: el.id, cls: String(el.className).slice(0, 80), left: Math.round(rect.left), right: Math.round(rect.right), width: Math.round(rect.width), parents }; }).filter((item) => item.right > document.documentElement.clientWidth + 1).slice(0, 12),
     text: document.body.innerText.slice(0, 1200),
     controls: [...document.querySelectorAll('button,a,input,select,textarea')].slice(0, 120).map((el) => {
       const rect = el.getBoundingClientRect();
@@ -171,7 +176,31 @@ try {
   const ledger = await metrics(call, 'design-ledger');
   assert(ledger.text.includes('Design Ledger'), 'Design Ledger did not open');
   assert(ledger.text.includes('Operational records'), 'operational records card is missing from Design Ledger');
-  assert(!ledger.bodyOverflow && !ledger.htmlOverflow, 'Design Ledger horizontal overflow');
+  assert(!ledger.bodyOverflow && !ledger.htmlOverflow, `Design Ledger horizontal overflow: ${JSON.stringify({ body: [ledger.bodyWidth, ledger.bodyClientWidth], html: [ledger.htmlWidth, ledger.htmlClientWidth], nodes: ledger.overflowNodes })}`);
+  const recordResult = await evaluate(call, `(() => {
+    const name = document.querySelector('#op-sample-name');
+    const location = document.querySelector('#op-sample-location');
+    const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')?.set;
+    if (!name || !location || !setter) return false;
+    setter.call(name, 'Smoke Sample'); name.dispatchEvent(new Event('input', { bubbles: true }));
+    setter.call(location, 'Audit shelf'); location.dispatchEvent(new Event('input', { bubbles: true }));
+    const add = [...document.querySelectorAll('button')].find((el) => el.innerText.trim() === 'Add record');
+    if (!add) return false; add.click(); return true;
+  })()`);
+  assert(recordResult, 'operational sample record action was not found');
+  await sleep(300);
+  const recordPayload = await evaluate(call, `localStorage.getItem('stitch-and-scale-operations-sample-crew-neck-sweater') || ''`);
+  assert(recordPayload.includes('Smoke Sample'), 'operational sample was not persisted');
+  await call('Page.reload', { ignoreCache: true });
+  await sleep(900);
+  const postReload = await metrics(call, 'post-reload');
+  assert(await clickVisible('All Labs'), 'All Labs could not be reopened after reload');
+  await sleep(300);
+  const reopened = await clickVisible('Design Ledger');
+  assert(reopened, `Design Ledger could not be reopened after reload: ${JSON.stringify({ url: postReload.url, text: postReload.text.slice(0, 500), controls: postReload.controls.slice(0, 30).map((control) => control.text) })}`);
+  await sleep(500);
+  const recoveredLedger = await metrics(call, 'design-ledger-recovered');
+  assert(recoveredLedger.text.includes('Smoke Sample'), 'operational sample did not recover after reload');
   await capture(call, 'design-ledger-390');
 
   console.log(JSON.stringify({ ok: true, outDir, checks: ['onboarding 320/360/390/430', 'dashboard', 'new project', 'sample workspace', 'export preflight + artifact evidence', 'grading lab QA + defect ledger', 'mobile lab search + recent history', 'design ledger + operational records'] }, null, 2));

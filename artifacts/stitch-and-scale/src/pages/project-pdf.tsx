@@ -264,6 +264,7 @@ export default function ProjectPdf() {
 
   const blockingPreflightCount = preflight?.flags.filter((flag) => flag.severity === 'error').length ?? 0;
   const reviewPreflightCount = preflight?.flags.filter((flag) => flag.severity === 'warn').length ?? 0;
+  const hasCoverBudgetIssue = preflight?.artifactInspection?.issues.some((issue) => issue.code === 'A-007') ?? false;
 
   // Initialize filename from project + saved template
   useEffect(() => {
@@ -390,6 +391,7 @@ export default function ProjectPdf() {
                   ? labels.preflightReviewDescription(reviewPreflightCount)
                   : labels.preflightReadyDescription}
             </p>
+            {hasCoverBudgetIssue && <p className="text-xs text-destructive mt-1" data-testid="cover-budget-guidance">{labels.preflightCoverBudgetDescription}</p>}
             {preflight?.artifactInspection && (
               <p className="text-[11px] text-muted-foreground mt-2" data-testid="publication-artifact-evidence">
                 {labels.artifactEvidence(
