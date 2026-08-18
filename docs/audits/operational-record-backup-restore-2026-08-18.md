@@ -117,3 +117,20 @@ The Settings smoke checkpoint confirms at 390px that the Data & Backups card, Do
 | Existing workspace data | Preserved by the default merge policy. |
 | Malformed partitions | Rejected before preview. |
 | Mobile layout | Verified at 390px with no horizontal overflow. |
+
+## Versioned workspace-backup contract update
+
+Project-wide exports now emit the explicit envelope `{ kind: "stitch-and-scale-workspace-backup", version: 1, createdAt, projects, settings, operationalRecords }`. The `createdAt` value is generated at export time and is shown in the Settings restore preview. This makes the file’s ownership and point-in-time nature visible without implying synchronization.
+
+The importer and preview inspector fail closed for the wrong kind, unsupported version, invalid timestamp, malformed top-level sections, or malformed operational-record partitions. Legacy JSON files from the prior unwrapped shape remain readable and are marked as legacy in the preview; new exports always use the versioned envelope. This is a deliberate compatibility boundary: old files can be recovered, but the application does not silently treat an unrelated JSON document as a workspace backup.
+
+The final versioned-contract gate passed with **144 test files / 2,021 tests**, typecheck, production build in 9.44 seconds, `git diff --check`, and all nine mobile-smoke checks. The mobile smoke still verifies Settings backup controls, the accessible restore input, and no horizontal overflow. The existing informational Vite large-chunk advisory remains unchanged and does not block the build.
+
+| Contract case | Result |
+|---|---|
+| New export | Explicit kind, version 1, and ISO creation timestamp. |
+| Legacy unwrapped backup | Accepted for recovery and labeled legacy in preview. |
+| Wrong backup kind | Rejected before preview or mutation. |
+| Unsupported version | Rejected before preview or mutation. |
+| Invalid timestamp | Rejected before preview or mutation. |
+| Malformed operational partition | Rejected before preview or mutation. |

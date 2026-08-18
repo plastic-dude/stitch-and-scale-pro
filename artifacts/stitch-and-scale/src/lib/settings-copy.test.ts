@@ -11,9 +11,11 @@ describe('settings backup copy', () => {
       expect(copy.restoreSuccessful(1, 2)).toBeTruthy();
       expect(copy.restoreFailed).toBeTruthy();
       expect(copy.restorePreviewTitle).toBeTruthy();
+      expect(copy.restorePreviewCreated).toBeTruthy();
       expect(copy.restorePreviewProjects).toBeTruthy();
       expect(copy.restorePreviewRecords).toBeTruthy();
       expect(copy.restorePreviewSettings).toBeTruthy();
+      expect(copy.restorePreviewLegacy).toBeTruthy();
       expect(copy.restorePreviewWarning).toBeTruthy();
       expect(copy.restorePreviewCancel).toBeTruthy();
       expect(copy.restorePreviewConfirm).toBeTruthy();

@@ -417,10 +417,12 @@ export default function SettingsPage() {
                 <div className="rounded-xl border border-amber-500/40 bg-amber-500/5 p-4 space-y-3" role="alert" data-testid="snapshot-restore-preview">
                   <h4 className="font-medium text-foreground">{copy.restorePreviewTitle}</h4>
                   <dl className="grid grid-cols-2 gap-3 text-sm">
+                    {pendingSnapshot.preview.createdAt && <div><dt className="text-xs text-muted-foreground">{copy.restorePreviewCreated}</dt><dd className="font-medium">{new Date(pendingSnapshot.preview.createdAt).toLocaleString(language, { dateStyle: 'medium', timeStyle: 'short' })}</dd></div>}
                     <div><dt className="text-xs text-muted-foreground">{copy.restorePreviewProjects}</dt><dd className="font-medium">{pendingSnapshot.preview.projectCount}</dd></div>
                     <div><dt className="text-xs text-muted-foreground">{copy.restorePreviewRecords}</dt><dd className="font-medium">{pendingSnapshot.preview.operationalRecordCount}</dd></div>
                     {pendingSnapshot.preview.hasSettings && <div className="col-span-2"><dd className="font-medium">{copy.restorePreviewSettings}</dd></div>}
                   </dl>
+                  {pendingSnapshot.preview.legacy && <p className="text-xs text-muted-foreground">{copy.restorePreviewLegacy}</p>}
                   <p className="text-xs text-amber-900 dark:text-amber-100">{copy.restorePreviewWarning}</p>
                   <div className="grid gap-2 sm:grid-cols-2">
                     <Button type="button" variant="outline" className="min-h-11 w-full" onClick={() => setPendingSnapshot(null)}>{copy.restorePreviewCancel}</Button>

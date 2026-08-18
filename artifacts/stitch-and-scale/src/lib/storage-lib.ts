@@ -29,10 +29,25 @@ export const BACKUPS_KEY = 'stitch-and-scale-backups-v1';
 
 export const OPERATIONAL_RECORDS_PREFIX = 'stitch-and-scale-operations-';
 
+export const WORKSPACE_BACKUP_KIND = 'stitch-and-scale-workspace-backup';
+export const WORKSPACE_BACKUP_VERSION = 1;
+
 export interface StoreSnapshot {
+  kind: typeof WORKSPACE_BACKUP_KIND;
+  version: typeof WORKSPACE_BACKUP_VERSION;
+  createdAt: string;
   projects: PatternProject[];
   settings: Record<string, unknown>;
   operationalRecords: Record<string, OperationalRecords>;
+}
+
+export interface StoreSnapshotInput {
+  kind?: unknown;
+  version?: unknown;
+  createdAt?: unknown;
+  projects?: PatternProject[];
+  settings?: Record<string, unknown>;
+  operationalRecords?: Record<string, OperationalRecords>;
 }
 
 export interface StoreSnapshotPreview {
@@ -40,27 +55,53 @@ export interface StoreSnapshotPreview {
   operationalProjectCount: number;
   operationalRecordCount: number;
   hasSettings: boolean;
+  createdAt: string | null;
+  version: number;
+  legacy: boolean;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
+}
+
+function normalizeSnapshot(data: unknown): { snapshot: StoreSnapshotInput; legacy: boolean } | null {
+  if (!isRecord(data)) return null;
+  const parsed = data as StoreSnapshotInput;
+  const hasEnvelope = parsed.kind !== undefined || parsed.version !== undefined || parsed.createdAt !== undefined;
+  const legacy = !hasEnvelope;
+  if (!legacy && (parsed.kind !== WORKSPACE_BACKUP_KIND || parsed.version !== WORKSPACE_BACKUP_VERSION || typeof parsed.createdAt !== 'string' || Number.isNaN(Date.parse(parsed.createdAt)))) return null;
+  if (parsed.projects !== undefined && !Array.isArray(parsed.projects)) return null;
+  if (parsed.settings !== undefined && !isRecord(parsed.settings)) return null;
+  if (parsed.operationalRecords !== undefined && !isRecord(parsed.operationalRecords)) return null;
+  if (parsed.projects === undefined && parsed.settings === undefined && parsed.operationalRecords === undefined) return null;
+  const operationalRecords = parsed.operationalRecords ?? {};
+  const entries = Object.entries(operationalRecords);
+  for (const [projectId, value] of entries) {
+    if (!isRecord(value)) return null;
+    const records = value as Partial<OperationalRecords>;
+    if (records.projectId !== projectId || records.version !== 1 || !Array.isArray(records.samples) || !Array.isArray(records.testKnits) || !Array.isArray(records.submissions) || !Array.isArray(records.wholesaleOrders)) return null;
+  }
+  return { snapshot: parsed, legacy };
 }
 
 export function inspectSnapshot(data: unknown): StoreSnapshotPreview | null {
-  if (!data || typeof data !== 'object') return null;
-  const parsed = data as { projects?: unknown; settings?: unknown; operationalRecords?: unknown };
-  if (parsed.projects !== undefined && !Array.isArray(parsed.projects)) return null;
-  if (parsed.operationalRecords !== undefined && (!parsed.operationalRecords || typeof parsed.operationalRecords !== 'object' || Array.isArray(parsed.operationalRecords))) return null;
-  if (parsed.projects === undefined && parsed.settings === undefined && parsed.operationalRecords === undefined) return null;
-  const projectCount = Array.isArray(parsed.projects) ? parsed.projects.length : 0;
-  const entries = parsed.operationalRecords && typeof parsed.operationalRecords === 'object' ? Object.entries(parsed.operationalRecords as Record<string, unknown>) : [];
-  const validEntries = entries.filter(([projectId, value]) => {
-    if (!value || typeof value !== 'object') return false;
-    const records = value as Partial<OperationalRecords>;
-    return records.projectId === projectId && records.version === 1 && Array.isArray(records.samples) && Array.isArray(records.testKnits) && Array.isArray(records.submissions) && Array.isArray(records.wholesaleOrders);
-  });
-  if (validEntries.length !== entries.length) return null;
-  const operationalRecordCount = validEntries.reduce((total, [, value]) => {
+  const normalized = normalizeSnapshot(data);
+  if (!normalized) return null;
+  const snapshot = normalized.snapshot;
+  const entries = Object.entries(snapshot.operationalRecords ?? {});
+  const operationalRecordCount = entries.reduce((total, [, value]) => {
     const records = value as OperationalRecords;
     return total + records.samples.length + records.testKnits.length + records.submissions.length + records.wholesaleOrders.length;
   }, 0);
-  return { projectCount, operationalProjectCount: validEntries.length, operationalRecordCount, hasSettings: parsed.settings !== undefined && !!parsed.settings && typeof parsed.settings === 'object' };
+  return {
+    projectCount: snapshot.projects?.length ?? 0,
+    operationalProjectCount: entries.length,
+    operationalRecordCount,
+    hasSettings: isRecord(snapshot.settings),
+    createdAt: typeof snapshot.createdAt === 'string' ? snapshot.createdAt : null,
+    version: typeof snapshot.version === 'number' ? snapshot.version : 0,
+    legacy: normalized.legacy,
+  };
 }
 
 export interface AuditReport {
@@ -136,20 +177,23 @@ export async function exportSnapshot(): Promise<StoreSnapshot> {
       return value ? [[project.id, value] as const] : [];
     }),
   );
-  return { projects, settings, operationalRecords };
+  return { kind: WORKSPACE_BACKUP_KIND, version: WORKSPACE_BACKUP_VERSION, createdAt: new Date().toISOString(), projects, settings, operationalRecords };
 }
 
 /** Import into both stores, merging with existing data rather than
  *  clobbering — restore can never accidentally erase projects that were
  *  never part of the backup file (self-audit W3). */
 export async function importSnapshot(
-  data: { projects?: PatternProject[]; settings?: Record<string, unknown>; operationalRecords?: Record<string, OperationalRecords> },
+  data: StoreSnapshotInput,
   opts: { mode: 'merge' | 'replace' } = { mode: 'merge' },
 ): Promise<{ imported: number; existingKept: number }> {
+  const normalized = normalizeSnapshot(data);
+  if (!normalized) throw new Error('Invalid Stitch & Scale workspace backup');
+  const snapshot = normalized.snapshot;
   const existing = await readProjects();
   const existingById = new Set(existing.map(p => p.id));
 
-  const incoming = Array.isArray(data.projects) ? data.projects : [];
+  const incoming = Array.isArray(snapshot.projects) ? snapshot.projects : [];
   const incomingById = new Map(incoming.map(p => [p.id, p]));
 
   const merged =
@@ -180,18 +224,18 @@ export async function importSnapshot(
       if (key?.startsWith(OPERATIONAL_RECORDS_PREFIX) && !landedProjectIds.has(key.slice(OPERATIONAL_RECORDS_PREFIX.length))) localStorage.removeItem(key);
     }
   }
-  for (const [projectId, records] of Object.entries(data.operationalRecords ?? {})) {
+  for (const [projectId, records] of Object.entries(snapshot.operationalRecords ?? {})) {
     if (landedProjectIds.has(projectId) && records.projectId === projectId && records.version === 1) projectStorage<OperationalRecords>('operations', projectId).write(records);
   }
 
-  if (data.settings && typeof data.settings === 'object') {
+  if (snapshot.settings && typeof snapshot.settings === 'object') {
     const current = (await readSettings()) ?? {};
-    const mergedSettings = { ...current, ...data.settings };
+    const mergedSettings = { ...current, ...snapshot.settings };
     await idbSet(SETTINGS_KEY, mergedSettings);
     writeLocal(SETTINGS_KEY, mergedSettings);
   }
 
-  recordBackupEvent(bytesOf({ projects: data.projects ?? [], operationalRecords: data.operationalRecords ?? {} }), imported);
+  recordBackupEvent(bytesOf(snapshot), imported);
   return { imported, existingKept };
 }
 

@@ -74,6 +74,9 @@ describe('exportSnapshot', () => {
     const records = addSample(EMPTY_OPERATIONAL_RECORDS('p1'), { name: 'Sample', status: 'in-studio', location: 'Studio', notes: '' });
     projectStorage('operations', 'p1').write(records);
     const snap = await exportSnapshot();
+    expect(snap.kind).toBe('stitch-and-scale-workspace-backup');
+    expect(snap.version).toBe(1);
+    expect(Date.parse(snap.createdAt)).not.toBeNaN();
     expect(snap.projects[0].name).toBe('Live');
     expect(snap.settings).toEqual({});
     expect(snap.operationalRecords.p1.samples[0].name).toBe('Sample');
@@ -83,7 +86,14 @@ describe('exportSnapshot', () => {
 describe('inspectSnapshot', () => {
   it('summarizes project-wide contents without mutating storage', () => {
     const records = addSample(EMPTY_OPERATIONAL_RECORDS('p1'), { name: 'Sample', status: 'in-studio', location: '', notes: '' });
-    expect(inspectSnapshot({ projects: [project('p1', 'One')], settings: { theme: 'dark' }, operationalRecords: { p1: records } })).toEqual({ projectCount: 1, operationalProjectCount: 1, operationalRecordCount: 1, hasSettings: true });
+    expect(inspectSnapshot({ projects: [project('p1', 'One')], settings: { theme: 'dark' }, operationalRecords: { p1: records } })).toEqual({ projectCount: 1, operationalProjectCount: 1, operationalRecordCount: 1, hasSettings: true, createdAt: null, version: 0, legacy: true });
+    expect(inspectSnapshot({ kind: 'stitch-and-scale-workspace-backup', version: 1, createdAt: '2026-08-18T20:00:00.000Z', projects: [project('p1', 'One')], settings: { theme: 'dark' }, operationalRecords: { p1: records } })?.legacy).toBe(false);
+  });
+
+  it('rejects wrong or partially specified envelopes before preview', () => {
+    expect(inspectSnapshot({ kind: 'other-backup', version: 1, createdAt: '2026-08-18T20:00:00.000Z', projects: [] })).toBeNull();
+    expect(inspectSnapshot({ kind: 'stitch-and-scale-workspace-backup', version: 2, createdAt: '2026-08-18T20:00:00.000Z', projects: [] })).toBeNull();
+    expect(inspectSnapshot({ kind: 'stitch-and-scale-workspace-backup', version: 1, createdAt: 'not-a-date', projects: [] })).toBeNull();
   });
 
   it('rejects malformed operational partitions instead of previewing partial data', () => {
