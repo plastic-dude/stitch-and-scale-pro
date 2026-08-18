@@ -77,3 +77,25 @@ The updated acceptance evidence is **143 test files / 2,015 tests passed**, type
 | Counts and identity | Shown before confirmation. |
 | Replacement semantics | Explicit warning plus separate cancel and confirm actions. |
 | Current records on cancel | Not mutated. |
+
+## Project-wide snapshot coverage update
+
+The canonical `exportSnapshot` and `importSnapshot` seam now includes an `operationalRecords` map keyed by project ID. Settings-page exports and the always-visible quick-backup path both use this canonical snapshot, so a project-wide JSON backup contains patterns, settings, and project-scoped operational records rather than only the project list.
+
+Merge semantics remain conservative. In merge mode, an incoming project ID that already exists remains the workspace truth and its current operational records are not overwritten. Operational records are restored only for genuinely new projects. Replace mode installs the incoming project list, removes orphaned `stitch-and-scale-operations-*` keys, and restores valid records for the incoming project IDs. Settings remain additive as before.
+
+The dormant Settings `importData` API now delegates to the same canonical importer, preventing a future caller from silently restoring projects while omitting operational records. Backup and restore status messages on the Settings page are localized in all five supported locales.
+
+| Snapshot surface | Operational-record behavior |
+|---|---|
+| Settings-page export | Includes `operationalRecords` keyed by project ID. |
+| Header quick backup | Uses `exportSnapshot`, so it includes the same record map. |
+| Settings-page merge restore | Adds records only alongside newly landed projects; existing project records remain untouched. |
+| Replace restore | Removes orphaned operational keys and restores incoming project records. |
+| Backup ledger | Records the snapshot payload size including operational records. |
+
+Storage regression coverage now includes **26 storage tests**, including live snapshot export, new-project merge restore, collision preservation, replace cleanup, and operational-record recovery. The localized Settings backup-copy test adds one test across all five locales.
+
+## Final project-wide snapshot gate
+
+The canonical snapshot extension passed the complete release gate: **144 test files / 2,018 tests**, TypeScript typecheck, production build in 8.52 seconds, `git diff --check`, and all eight mobile-smoke journeys. The branch remained free of protected-file changes, and the working tree was clean before staging this milestone.

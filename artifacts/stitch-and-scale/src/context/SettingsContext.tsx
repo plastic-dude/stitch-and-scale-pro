@@ -7,8 +7,7 @@ import {
 // 'stitch-and-scale-v1' directly, racing the seam's writeProjects. One writer:
 // both the reducer (ProjectsContext) and import land through the seam helper,
 // which persists to IndexedDB AND localStorage atomically.
-import { writeProjects } from '@/lib/storage-lib';
-import type { PatternProject } from '@/lib/grading-engine';
+import { exportSnapshot, importSnapshot, recordBackupEvent } from '@/lib/storage-lib';
 import { getInitialLanguage, translate, type LanguageCode, type TranslationKey, type TranslationVariables } from '@/lib/i18n';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -63,8 +62,8 @@ interface SettingsContextType extends SettingsState {
   setSizingStandard:      (standard: SizingStandard) => void;
   setCustomStandardValue: (size: SizeKey, key: GradingKey, value: number) => void;
   resetCustomStandard:    () => void;
-  exportData:             () => void;
-  importData:             (jsonData: string) => boolean;
+  exportData:             () => Promise<void>;
+  importData:             (jsonData: string) => Promise<boolean>;
   setOnboardingCompleted: (completed: boolean) => void;
   setLanguage:           (language: LanguageCode) => void;
   t:                     (key: TranslationKey, variables?: TranslationVariables) => string;
@@ -155,49 +154,30 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const setLanguage = (language: LanguageCode) => setSettings(s => ({ ...s, language }));
   const t = (key: TranslationKey, variables?: TranslationVariables) => translate(settings.language, key, variables);
 
-  const exportData = () => {
+  const exportData = async (): Promise<void> => {
     try {
-      const projects = localStorage.getItem('stitch-and-scale-v1') || '[]';
-      const exportObj = { projects: JSON.parse(projects), settings };
-      const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(exportObj, null, 2));
+      const snapshot = await exportSnapshot();
+      const payload = JSON.stringify(snapshot, null, 2);
+      const blob = new Blob([payload], { type: 'application/json;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
-      a.setAttribute('href', dataStr);
+      a.setAttribute('href', url);
       a.setAttribute('download', `stitch-and-scale-export-${new Date().toISOString().split('T')[0]}.json`);
       document.body.appendChild(a);
       a.click();
       a.remove();
+      URL.revokeObjectURL(url);
+      recordBackupEvent(blob.size, snapshot.projects.length);
     } catch (e) {
       console.error('Failed to export data', e);
     }
   };
 
-  const importData = (jsonData: string): boolean => {
+  const importData = async (jsonData: string): Promise<boolean> => {
     try {
       const parsed = JSON.parse(jsonData);
-      if (parsed.projects && Array.isArray(parsed.projects)) {
-        writeProjects(parsed.projects as PatternProject[]).catch(err =>
-          console.error('[SettingsContext] import persistence failed', err)
-        );
-      }
-      if (parsed.settings) {
-        setSettings(s => {
-          const mergedCustomStandard = { ...s.customStandard };
-          if (parsed.settings.customStandard) {
-            for (const size of ALL_SIZES) {
-              mergedCustomStandard[size] = {
-                ...s.customStandard[size],
-                ...(parsed.settings.customStandard[size] ?? {}),
-              };
-            }
-          }
-          return {
-            ...s,
-            ...parsed.settings,
-            pdfDefaults: { ...DEFAULT_PDF_DEFAULTS, ...(parsed.settings.pdfDefaults ?? {}) },
-            customStandard: mergedCustomStandard,
-          };
-        });
-      }
+      if (!parsed || (!parsed.projects && !parsed.settings && !parsed.operationalRecords)) return false;
+      await importSnapshot(parsed);
       return true;
     } catch {
       return false;

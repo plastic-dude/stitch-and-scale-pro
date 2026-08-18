@@ -20,6 +20,7 @@ import {
   PROJECTS_KEY, SETTINGS_KEY, BACKUPS_KEY,
 } from './storage-lib';
 import { PatternProject } from './grading-engine';
+import { EMPTY_OPERATIONAL_RECORDS, addSample } from './operational-records';
 
 function project(id: string, name: string): PatternProject {
   return {
@@ -70,9 +71,12 @@ describe('writeProjects dual-store', () => {
 describe('exportSnapshot', () => {
   it('exports from live stores, not stale sources', async () => {
     await writeProjects([project('p1', 'Live')]);
+    const records = addSample(EMPTY_OPERATIONAL_RECORDS('p1'), { name: 'Sample', status: 'in-studio', location: 'Studio', notes: '' });
+    projectStorage('operations', 'p1').write(records);
     const snap = await exportSnapshot();
     expect(snap.projects[0].name).toBe('Live');
     expect(snap.settings).toEqual({});
+    expect(snap.operationalRecords.p1.samples[0].name).toBe('Sample');
   });
 });
 
@@ -104,6 +108,26 @@ describe('importSnapshot merge semantics', () => {
     const settings = (await idbKeyval.get(SETTINGS_KEY)) as Record<string, unknown>;
     expect(settings.unit).toBe('in');
     expect(settings.theme).toBe('dark');
+  });
+
+  it('restores operational records only for newly landed projects in merge mode', async () => {
+    await writeProjects([project('existing-1', 'Keep')]);
+    const existingRecords = addSample(EMPTY_OPERATIONAL_RECORDS('existing-1'), { name: 'Current', status: 'in-studio', location: '', notes: '' });
+    projectStorage('operations', 'existing-1').write(existingRecords);
+    const incomingRecords = addSample(EMPTY_OPERATIONAL_RECORDS('existing-1'), { name: 'Incoming collision', status: 'sold', location: '', notes: '' });
+    const newRecords = addSample(EMPTY_OPERATIONAL_RECORDS('new-1'), { name: 'New backup', status: 'planned', location: '', notes: '' });
+    await importSnapshot({ projects: [project('existing-1', 'Incoming'), project('new-1', 'New')], operationalRecords: { 'existing-1': incomingRecords, 'new-1': newRecords } });
+    expect(projectStorage('operations', 'existing-1').read()?.samples[0].name).toBe('Current');
+    expect(projectStorage('operations', 'new-1').read()?.samples[0].name).toBe('New backup');
+  });
+
+  it('restores incoming operational records and removes orphaned keys in replace mode', async () => {
+    await writeProjects([project('old-1', 'Old')]);
+    projectStorage('operations', 'old-1').write(addSample(EMPTY_OPERATIONAL_RECORDS('old-1'), { name: 'Orphan', status: 'missing', location: '', notes: '' }));
+    const incoming = addSample(EMPTY_OPERATIONAL_RECORDS('new-1'), { name: 'Restored', status: 'complete', location: '', notes: '' });
+    await importSnapshot({ projects: [project('new-1', 'New')], operationalRecords: { 'new-1': incoming } }, { mode: 'replace' });
+    expect(projectStorage('operations', 'old-1').read()).toBeNull();
+    expect(projectStorage('operations', 'new-1').read()?.samples[0].name).toBe('Restored');
   });
 
   it('records the backup event in the ledger', async () => {

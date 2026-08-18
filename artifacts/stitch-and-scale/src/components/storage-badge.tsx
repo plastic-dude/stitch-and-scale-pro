@@ -17,8 +17,8 @@ export function StorageBadge() {
   const copyText = STORAGE_COPY[language];
   const [open, setOpen] = React.useState(false);
 
-  const handleBackup = () => {
-    exportData();
+  const handleBackup = async () => {
+    await exportData();
     setOpen(false);
   };
 

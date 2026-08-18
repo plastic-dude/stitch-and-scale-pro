@@ -21,14 +21,18 @@
  */
 import { get as idbGet, set as idbSet, keys as idbKeys } from 'idb-keyval';
 import { PatternProject } from '@/lib/grading-engine';
+import type { OperationalRecords } from '@/lib/operational-records';
 
 export const PROJECTS_KEY = 'stitch-and-scale-v1';
 export const SETTINGS_KEY = 'stitch-and-scale-settings-v1';
 export const BACKUPS_KEY = 'stitch-and-scale-backups-v1';
 
+export const OPERATIONAL_RECORDS_PREFIX = 'stitch-and-scale-operations-';
+
 export interface StoreSnapshot {
   projects: PatternProject[];
   settings: Record<string, unknown>;
+  operationalRecords: Record<string, OperationalRecords>;
 }
 
 export interface AuditReport {
@@ -98,14 +102,20 @@ export async function readSettings(): Promise<Record<string, unknown> | null> {
 export async function exportSnapshot(): Promise<StoreSnapshot> {
   const projects = await readProjects();
   const settings = (await readSettings()) ?? {};
-  return { projects, settings };
+  const operationalRecords = Object.fromEntries(
+    projects.flatMap((project) => {
+      const value = projectStorage<OperationalRecords>('operations', project.id).read();
+      return value ? [[project.id, value] as const] : [];
+    }),
+  );
+  return { projects, settings, operationalRecords };
 }
 
 /** Import into both stores, merging with existing data rather than
  *  clobbering — restore can never accidentally erase projects that were
  *  never part of the backup file (self-audit W3). */
 export async function importSnapshot(
-  data: { projects?: PatternProject[]; settings?: Record<string, unknown> },
+  data: { projects?: PatternProject[]; settings?: Record<string, unknown>; operationalRecords?: Record<string, OperationalRecords> },
   opts: { mode: 'merge' | 'replace' } = { mode: 'merge' },
 ): Promise<{ imported: number; existingKept: number }> {
   const existing = await readProjects();
@@ -135,6 +145,17 @@ export async function importSnapshot(
 
   await writeProjects(merged);
 
+  const landedProjectIds = new Set(opts.mode === 'replace' ? incoming.map((project) => project.id) : incoming.filter((project) => !existingById.has(project.id)).map((project) => project.id));
+  if (opts.mode === 'replace') {
+    for (let index = localStorage.length - 1; index >= 0; index -= 1) {
+      const key = localStorage.key(index);
+      if (key?.startsWith(OPERATIONAL_RECORDS_PREFIX) && !landedProjectIds.has(key.slice(OPERATIONAL_RECORDS_PREFIX.length))) localStorage.removeItem(key);
+    }
+  }
+  for (const [projectId, records] of Object.entries(data.operationalRecords ?? {})) {
+    if (landedProjectIds.has(projectId) && records.projectId === projectId && records.version === 1) projectStorage<OperationalRecords>('operations', projectId).write(records);
+  }
+
   if (data.settings && typeof data.settings === 'object') {
     const current = (await readSettings()) ?? {};
     const mergedSettings = { ...current, ...data.settings };
@@ -142,7 +163,7 @@ export async function importSnapshot(
     writeLocal(SETTINGS_KEY, mergedSettings);
   }
 
-  recordBackupEvent(bytesOf(data.projects ?? []), imported);
+  recordBackupEvent(bytesOf({ projects: data.projects ?? [], operationalRecords: data.operationalRecords ?? {} }), imported);
   return { imported, existingKept };
 }
 

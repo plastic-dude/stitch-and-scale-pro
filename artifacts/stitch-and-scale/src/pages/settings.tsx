@@ -36,11 +36,11 @@ export default function SettingsPage() {
         const { importSnapshot } = await import('@/lib/storage-lib');
         const result = await importSnapshot(data);
         toast({
-          title: `Import successful — ${result.imported} project${result.imported === 1 ? '' : 's'} restored`,
-          description: `Merged with your workspace; ${result.existingKept} existing project${result.existingKept === 1 ? '' : 's'} preserved untouched.`,
+          title: copy.restoreSuccessful(result.imported, result.existingKept),
+          description: copy.restoreDescription,
         });
       } catch {
-        toast({ title: 'Import failed', description: 'The file could not be parsed correctly.', variant: 'destructive' });
+        toast({ title: copy.restoreFailed, description: copy.restoreDescription, variant: 'destructive' });
       }
       if (fileInputRef.current) fileInputRef.current.value = '';
     };
@@ -58,7 +58,7 @@ export default function SettingsPage() {
     a.click();
     a.remove();
     recordBackupEvent(new Blob([JSON.stringify(snapshot)]).size, snapshot.projects.length);
-    toast({ title: 'Backup downloaded', description: `${snapshot.projects.length} project${snapshot.projects.length === 1 ? '' : 's'} saved to the file.` });
+    toast({ title: copy.backupDownloaded(snapshot.projects.length), description: copy.exportDescription });
   };
 
   const handleRestartOnboarding = () => {
