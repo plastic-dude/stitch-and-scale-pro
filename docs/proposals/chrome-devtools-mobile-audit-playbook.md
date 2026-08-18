@@ -15,10 +15,10 @@ Launch the public deployment in an isolated Chrome session with a **390×844 CSS
 The recommended Chrome DevTools MCP configuration for this audit is equivalent to the following session-only command:
 
 ```text
-npx -y chrome-devtools-mcp@latest --headless --isolated --viewport=390x844 --no-usage-statistics --no-update-checks --experimental-devtools
+npx -y chrome-devtools-mcp@latest --headless --isolated --executable-path=/usr/bin/chromium --viewport=390x844 --no-usage-statistics --no-update-checks --experimental-devtools
 ```
 
-Do not add this command, its package, or any MCP configuration to the application’s `package.json`. It is an audit connector, not a product dependency. Keep usage statistics and update checks disabled for this audit session when the environment supports those flags.
+Do not add this command, its package, or any MCP configuration to the application’s `package.json`. It is an audit connector, not a product dependency. Keep usage statistics and update checks disabled for this audit session when the environment supports those flags. In this workspace, the connector is personalized to `/usr/bin/chromium` because the default `/opt/google/chrome/chrome` path is unavailable. The connector definition saves successfully with that path; if the MCP registry does not expose the custom connector name, use the saved connector configuration rather than claiming that a live MCP run succeeded.
 
 ## Inspection sequence
 
