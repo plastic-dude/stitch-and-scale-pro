@@ -7,6 +7,7 @@ import { ArrowLeft, Copy, Download, Printer } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useSettings } from '@/context/SettingsContext';
+import { getGradingCopy } from '@/lib/grading-copy';
 import { BodySchematic } from '@/components/body-schematic';
 
 export default function ProjectGrading() {
@@ -15,7 +16,8 @@ export default function ProjectGrading() {
   const projectHook = useProject(id);
   const [, setLocation] = useLocation();
   const { toast } = useToast();
-  const { customStandard } = useSettings();
+  const { customStandard, language } = useSettings();
+  const gradingCopy = getGradingCopy(language);
 
   if (!projectHook) {
     return (
@@ -130,7 +132,7 @@ export default function ProjectGrading() {
 
         {!hasData ? (
           <div className="text-center py-20 text-muted-foreground">
-            No grading data available yet. Return to the project workspace to add sections and measurements.
+            {gradingCopy.gradingEmptyState}
           </div>
         ) : (
           <div className="p-0">

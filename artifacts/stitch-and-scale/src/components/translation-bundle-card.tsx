@@ -25,6 +25,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
+import { useSettings } from '@/context/SettingsContext';
+import { translationBundlePartnersEmptyState } from '@/lib/translation-bundle-copy';
 import {
   planTranslations,
   planBundle,
@@ -110,6 +112,7 @@ export function TranslationBundleCard({ project }: { project: PatternProject }) 
   // this project's partition into the scoped key, then removes the flat key.
   const handle = useMemo(() => projectStorage<StoredState>('translate', project.id, ['stitch-and-scale-translation-bundle'], { partition: true }), [project.id]);
   const { toast } = useToast();
+  const { language } = useSettings();
   const stored = React.useMemo(() => loadStored(handle), [handle]);
 
   const [wordCount, setWordCount] = React.useState(stored.translation?.wordCount ?? 2000);
@@ -446,8 +449,7 @@ export function TranslationBundleCard({ project }: { project: PatternProject }) 
             </div>
             {partners.length === 0 && (
               <p className="text-[11px] text-muted-foreground">
-                No partners added yet — the bundle is modeled with your pattern alone. Add the patterns your coalition
-                organiser or fellow designers bring, and the split math becomes the coalition math instead of a guess.
+                {translationBundlePartnersEmptyState(language)}
               </p>
             )}
             {partners.map((p, i) => (

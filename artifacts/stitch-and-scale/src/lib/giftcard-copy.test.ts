@@ -106,6 +106,17 @@ describe('Gift Card copy catalogue', () => {
     }
   });
 
+  it('localizes the expiry-and-dormancy checkbox label and the margin suffix (CHK-139)', () => {
+    expect(GIFTCARD_COPY.en.expiryLabel).toBe('Expiry dates & dormancy fees legal in your state');
+    expect(GIFTCARD_COPY.en.marginSuffix).toBe('of face value');
+    for (const language of ['de', 'fr', 'es', 'pt'] as const) {
+      expect(GIFTCARD_COPY[language].expiryLabel).not.toBe(GIFTCARD_COPY.en.expiryLabel);
+      expect(GIFTCARD_COPY[language].marginSuffix).not.toBe(GIFTCARD_COPY.en.marginSuffix);
+      expect(GIFTCARD_COPY[language].expiryLabel.trim().length).toBeGreaterThan(15);
+      expect(GIFTCARD_COPY[language].marginSuffix.trim().length).toBeGreaterThan(3);
+    }
+  });
+
   it('localizes the compliance checklist note and keeps English intact', () => {
     const fallback = 'Checklist the books do not print in any language.';
     for (const language of ['de', 'fr', 'es', 'pt'] as const) {

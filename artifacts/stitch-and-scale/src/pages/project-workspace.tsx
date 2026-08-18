@@ -561,11 +561,9 @@ export default function ProjectWorkspace() {
                   <Calculator className="w-8 h-8" />
                 </div>
                 <h3 className="text-xl font-serif font-medium mb-2">{copy.noSections}</h3>
-                <p className="text-muted-foreground max-w-sm mb-6">
-                  Divide your pattern into logical sections (e.g. Back, Front, Sleeves) to start adding measurements.
-                </p>
+                <p className="text-muted-foreground max-w-sm mb-6">{copy.emptySectionDesc}</p>
                 <Button onClick={() => setIsAddingSection(true)}>
-                  <Plus className="w-4 h-4 mr-2" /> Add First Section
+                  <Plus className="w-4 h-4 mr-2" /> {copy.addFirstSection}
                 </Button>
               </CardContent>
             </Card>
@@ -595,17 +593,13 @@ export default function ProjectWorkspace() {
                       </AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
-                          <AlertDialogTitle>Delete "{section.name}"?</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            This removes the section and all {section.measurements.length} of its
-                            measurements. This cannot be undone — make sure nothing downstream
-                            (PDF, test-knit notes) still refers to them.
-                          </AlertDialogDescription>
+                          <AlertDialogTitle>{copy.confirmDeleteSectionNamed(section.name)}</AlertDialogTitle>
+                          <AlertDialogDescription>{copy.confirmDeleteSectionBody(section.measurements.length)}</AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                           <AlertDialogCancel>{copy.keepIt}</AlertDialogCancel>
                           <AlertDialogAction onClick={() => handleDeleteSection(section.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                            Delete Section
+                            {copy.confirmDeleteSectionAction}
                           </AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>
@@ -645,16 +639,13 @@ export default function ProjectWorkspace() {
                                       </AlertDialogTrigger>
                                       <AlertDialogContent>
                                         <AlertDialogHeader>
-                                          <AlertDialogTitle>Delete "{m.label}"?</AlertDialogTitle>
-                                          <AlertDialogDescription>
-                                            The measurement goes away instantly, but an Undo button
-                                            sits in the toast for 8 seconds if it was a misclick.
-                                          </AlertDialogDescription>
+                                          <AlertDialogTitle>{copy.confirmDeleteMeasurementNamed(m.label)}</AlertDialogTitle>
+                                          <AlertDialogDescription>{copy.confirmDeleteMeasurementBody}</AlertDialogDescription>
                                         </AlertDialogHeader>
                                         <AlertDialogFooter>
                                           <AlertDialogCancel>{copy.keepIt}</AlertDialogCancel>
                                           <AlertDialogAction onClick={() => handleDeleteMeasurement(section.id, m.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                                            Delete Measurement
+                                            {copy.confirmDeleteMeasurementAction}
                                           </AlertDialogAction>
                                         </AlertDialogFooter>
                                       </AlertDialogContent>

@@ -12,6 +12,8 @@ import {
   analyzeTestKnit, DEFAULT_TESTKNIT, formatUsd,
   type TestKnitInputs, type TesterInput, type SizeCoverage,
 } from '@/lib/testknit-desk';
+import { useSettings } from '@/context/SettingsContext';
+import { testknitDeskTestersEmptyState } from '@/lib/testknit-desk-copy';
 
 function defaultStored(): TestKnitInputs {
   return {
@@ -74,6 +76,7 @@ function BoolField({ id, label, value, onChange }: {
 }
 
 export function TestKnitDeskCard({ project }: { project: PatternProject }) {
+  const { language } = useSettings();
   const handle = useMemo(
     () => projectStorage<TestKnitInputs>('testknit', project.id || '', []),
     [project.id],
@@ -168,7 +171,7 @@ export function TestKnitDeskCard({ project }: { project: PatternProject }) {
           <div className="font-semibold text-sm">Tester roster</div>
           {stored.testers.length === 0 && (
             <p className="text-xs text-muted-foreground">
-              No testers yet — tap a size button above to add one.
+              {testknitDeskTestersEmptyState(language)}
             </p>
           )}
           <div className="space-y-2">

@@ -331,7 +331,7 @@ export function GiftCardLabCard({ project }: { project: PatternProject }) {
                 checked={input.expiryAndFeesAllowed}
                 onCheckedChange={(v) => set("expiryAndFeesAllowed", v)}
               />
-              Expiry dates & dormancy fees legal in your state
+              {copy.expiryLabel}
             </label>
             <Button
               variant="ghost"
@@ -368,7 +368,7 @@ export function GiftCardLabCard({ project }: { project: PatternProject }) {
           label={copy.profit}
           value={fmt$(result.netProgramProfit)}
           tone={result.netProgramProfit >= 0 ? "good" : "bad"}
-          hint={`${giftCardInputHint(language, "stat-margin", "Margin ")}${result.effectiveMarginPct.toFixed(1)}% of face value`}
+          hint={`${giftCardInputHint(language, "stat-margin", "Margin ")}${result.effectiveMarginPct.toFixed(1)}% ${copy.marginSuffix}`}
         />
       </div>
 
