@@ -18,6 +18,11 @@ describe('operational records copy', () => {
       expect(copy.backupConfirm).toBeTruthy();
       expect(copy.backupCancel).toBeTruthy();
       expect(copy.backupConfirmAction).toBeTruthy();
+      expect(copy.previewTitle).toBeTruthy();
+      expect(copy.previewProject).toBeTruthy();
+      expect(copy.previewUpdated).toBeTruthy();
+      expect(copy.previewRecords).toBeTruthy();
+      expect(copy.previewWarning).toBeTruthy();
       expect(copy.backupError).toBeTruthy();
     }
     expect(new Set(exported).size).toBe(5);

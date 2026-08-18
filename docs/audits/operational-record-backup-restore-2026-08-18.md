@@ -60,3 +60,20 @@ The workflow does not certify physical print quality, test-knit correctness, tax
 [2]: https://developer.mozilla.org/en-US/docs/Web/API/FileReader/readAsText "MDN Web Docs — FileReader: readAsText() method"
 
 [3]: https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API "MDN Web Docs — IndexedDB API"
+
+## Pre-restore preview update
+
+The restore flow now parses a valid backup into a non-mutating candidate before presenting replacement actions. The compact preview shows the active project name, the backup timestamp from the file, total record count, and counts for samples, test knits, submissions, and wholesale orders. It also states that confirmation will replace the current operational records for this project. Cancel leaves the current records untouched.
+
+The parser rejects invalid JSON, the wrong envelope kind, unsupported version, wrong project ID, missing record collections, and invalid backup timestamps. The normalized records used after confirmation receive a fresh `updatedAt`, while the preview preserves the source backup timestamp so the designer can distinguish the artifact being reviewed from the time of local restoration.
+
+The updated acceptance evidence is **143 test files / 2,015 tests passed**, typecheck passed, the production build completed in 8.48 seconds, `git diff --check` passed, and the eight-journey mobile smoke suite passed. The smoke suite confirms the backup panel, visible JSON actions, accessible restore file input, 390px overflow safety, and local record recovery after reload. No protected renderer or grading-engine file was modified.
+
+| Preview concern | Result |
+|---|---|
+| Wrong project | Rejected before preview. |
+| Malformed or incomplete envelope | Rejected before preview. |
+| Invalid timestamp | Rejected before preview. |
+| Counts and identity | Shown before confirmation. |
+| Replacement semantics | Explicit warning plus separate cancel and confirm actions. |
+| Current records on cancel | Not mutated. |

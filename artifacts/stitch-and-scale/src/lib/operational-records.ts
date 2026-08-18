@@ -144,19 +144,39 @@ export function operationalRecordCounts(records: OperationalRecords) {
 
 const OPERATIONAL_BACKUP_KIND = 'stitch-and-scale-operational-records';
 
+export interface OperationalRecordsBackupPreview {
+  projectId: string;
+  updatedAt: string;
+  counts: ReturnType<typeof operationalRecordCounts>;
+}
+
+export interface OperationalRecordsBackupCandidate {
+  records: OperationalRecords;
+  preview: OperationalRecordsBackupPreview;
+}
+
+function parseOperationalRecordsBackup(payload: string, projectId: string): OperationalRecordsBackupCandidate | null {
+  try {
+    const parsed = JSON.parse(payload) as { kind?: string; version?: number; projectId?: string; records?: Partial<OperationalRecords> };
+    const records = parsed.records;
+    if (parsed.kind !== OPERATIONAL_BACKUP_KIND || parsed.version !== 1 || parsed.projectId !== projectId || !records || records.version !== 1 || records.projectId !== projectId || !Array.isArray(records.samples) || !Array.isArray(records.testKnits) || !Array.isArray(records.submissions) || !Array.isArray(records.wholesaleOrders) || typeof records.updatedAt !== 'string' || Number.isNaN(Date.parse(records.updatedAt))) return null;
+    const normalized = { ...records, version: 1, projectId, samples: records.samples, testKnits: records.testKnits, submissions: records.submissions, wholesaleOrders: records.wholesaleOrders, updatedAt: new Date().toISOString() } as OperationalRecords;
+    return { records: normalized, preview: { projectId, updatedAt: records.updatedAt, counts: operationalRecordCounts(records as OperationalRecords) } };
+  } catch {
+    return null;
+  }
+}
+
 export function serializeOperationalRecords(records: OperationalRecords): string {
   return JSON.stringify({ kind: OPERATIONAL_BACKUP_KIND, version: 1, projectId: records.projectId, records });
 }
 
+export function inspectOperationalRecordsBackup(payload: string, projectId: string): OperationalRecordsBackupCandidate | null {
+  return parseOperationalRecordsBackup(payload, projectId);
+}
+
 export function restoreOperationalRecords(payload: string, projectId: string): OperationalRecords | null {
-  try {
-    const parsed = JSON.parse(payload) as { kind?: string; version?: number; projectId?: string; records?: Partial<OperationalRecords> };
-    const records = parsed.records;
-    if (parsed.kind !== OPERATIONAL_BACKUP_KIND || parsed.version !== 1 || parsed.projectId !== projectId || !records || records.version !== 1 || records.projectId !== projectId || !Array.isArray(records.samples) || !Array.isArray(records.testKnits) || !Array.isArray(records.submissions) || !Array.isArray(records.wholesaleOrders)) return null;
-    return { ...records, version: 1, projectId, samples: records.samples, testKnits: records.testKnits, submissions: records.submissions, wholesaleOrders: records.wholesaleOrders, updatedAt: new Date().toISOString() } as OperationalRecords;
-  } catch {
-    return null;
-  }
+  return parseOperationalRecordsBackup(payload, projectId)?.records ?? null;
 }
 
 export function exportOperationalRecordsCsv(records: OperationalRecords): string {

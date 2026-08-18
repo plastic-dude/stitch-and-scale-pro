@@ -179,6 +179,7 @@ try {
   assert(ledger.text.includes('Backup and restore'), 'operational backup panel is missing from Design Ledger');
   assert(ledger.controls.some((control) => control.text === 'Download JSON backup'), 'JSON backup download action is missing');
   assert(ledger.controls.some((control) => control.text === 'Restore JSON backup'), 'JSON backup restore action is missing');
+  assert(await evaluate(call, `Boolean(document.querySelector('input[type=file][aria-label="Restore JSON backup"]'))`), 'JSON backup file input is not available as an accessible control');
   assert(!ledger.bodyOverflow && !ledger.htmlOverflow, `Design Ledger horizontal overflow: ${JSON.stringify({ body: [ledger.bodyWidth, ledger.bodyClientWidth], html: [ledger.htmlWidth, ledger.htmlClientWidth], nodes: ledger.overflowNodes })}`);
   const recordResult = await evaluate(call, `(() => {
     const name = document.querySelector('#op-sample-name');

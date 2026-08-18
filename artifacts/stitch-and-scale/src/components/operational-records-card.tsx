@@ -14,11 +14,12 @@ import {
   addTestKnit,
   addWholesaleOrder,
   exportOperationalRecordsCsv,
-  restoreOperationalRecords,
+  inspectOperationalRecordsBackup,
   serializeOperationalRecords,
   removeOperationalRecord,
   updateOperationalRecord,
   type OperationalRecords,
+  type OperationalRecordsBackupCandidate,
   type SampleStatus,
   type SubmissionStatus,
   type TestKnitStatus,
@@ -60,7 +61,7 @@ export function OperationalRecordsCard({ project }: { project: PatternProject })
   const [dueAt, setDueAt] = useState('');
   const [wholesaleStatus, setWholesaleStatus] = useState<WholesaleStatus>('draft');
   const [backupStatus, setBackupStatus] = useState<'exported' | 'restored' | 'error' | null>(null);
-  const [pendingRestore, setPendingRestore] = useState<OperationalRecords | null>(null);
+  const [pendingRestore, setPendingRestore] = useState<OperationalRecordsBackupCandidate | null>(null);
   const backupInputRef = useRef<HTMLInputElement>(null);
 
   const persist = (next: OperationalRecords) => { setRecords(next); handle.write(next); };
@@ -78,14 +79,14 @@ export function OperationalRecordsCard({ project }: { project: PatternProject })
     const file = event.target.files?.[0];
     if (!file) return;
     try {
-      const restored = restoreOperationalRecords(await file.text(), project.id);
+      const candidate = inspectOperationalRecordsBackup(await file.text(), project.id);
       event.currentTarget.value = '';
-      if (!restored) {
+      if (!candidate) {
         setBackupStatus('error');
         return;
       }
       setBackupStatus(null);
-      setPendingRestore(restored);
+      setPendingRestore(candidate);
     } catch {
       event.currentTarget.value = '';
       setBackupStatus('error');
@@ -93,7 +94,7 @@ export function OperationalRecordsCard({ project }: { project: PatternProject })
   };
   const confirmRestore = () => {
     if (!pendingRestore) return;
-    persist(pendingRestore);
+    persist(pendingRestore.records);
     setPendingRestore(null);
     setBackupStatus('restored');
   };
@@ -127,8 +128,14 @@ export function OperationalRecordsCard({ project }: { project: PatternProject })
           </div>
           <input ref={backupInputRef} className="sr-only" type="file" accept="application/json,.json" onChange={restoreBackup} aria-label={copy.importBackup} />
           <p className="text-[11px] text-muted-foreground">{copy.backupHelp}</p>
-          {pendingRestore && <div className="rounded-md border border-amber-500/40 bg-amber-500/5 p-2 space-y-2" role="alert">
-            <p className="text-xs text-amber-900 dark:text-amber-100">{copy.backupConfirm}</p>
+          {pendingRestore && <div className="rounded-md border border-amber-500/40 bg-amber-500/5 p-3 space-y-3" role="alert" data-testid="operational-backup-preview">
+            <h4 className="text-sm font-semibold">{copy.previewTitle}</h4>
+            <dl className="grid grid-cols-2 gap-x-3 gap-y-2 text-xs">
+              <div><dt className="text-muted-foreground">{copy.previewProject}</dt><dd className="font-medium truncate">{project.name}</dd></div>
+              <div><dt className="text-muted-foreground">{copy.previewUpdated}</dt><dd className="font-medium">{new Date(pendingRestore.preview.updatedAt).toLocaleString(language, { dateStyle: 'medium', timeStyle: 'short' })}</dd></div>
+              <div className="col-span-2"><dt className="text-muted-foreground">{copy.previewRecords}</dt><dd className="font-medium">{Object.values(pendingRestore.preview.counts).reduce((total, count) => total + count, 0)} · {copy.samples} {pendingRestore.preview.counts.samples} · {copy.testKnits} {pendingRestore.preview.counts.testKnits} · {copy.submissions} {pendingRestore.preview.counts.submissions} · {copy.wholesale} {pendingRestore.preview.counts.wholesaleOrders}</dd></div>
+            </dl>
+            <p className="text-xs text-amber-900 dark:text-amber-100">{copy.previewWarning} {copy.backupConfirm}</p>
             <div className="grid gap-2 sm:grid-cols-2">
               <Button type="button" variant="outline" className="min-h-11 w-full" onClick={() => setPendingRestore(null)}>{copy.backupCancel}</Button>
               <Button type="button" className="min-h-11 w-full" onClick={confirmRestore}>{copy.backupConfirmAction}</Button>

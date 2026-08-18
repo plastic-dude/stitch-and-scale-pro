@@ -6,6 +6,7 @@ import {
   addTestKnit,
   addWholesaleOrder,
   exportOperationalRecordsCsv,
+  inspectOperationalRecordsBackup,
   restoreOperationalRecords,
   serializeOperationalRecords,
   operationalRecordCounts,
@@ -55,6 +56,18 @@ describe('operational records', () => {
     expect(restored?.samples[0].name).toBe('Sample');
     expect(restoreOperationalRecords(serializeOperationalRecords(records), 'project-2')).toBeNull();
     expect(restoreOperationalRecords('{not-json', 'project-1')).toBeNull();
+  });
+
+  it('previews the backup without mutating records and preserves source metadata', () => {
+    let records = EMPTY_OPERATIONAL_RECORDS('project-1');
+    records = addSample(records, { name: 'Sample', status: 'in-studio', location: 'Studio', notes: '' });
+    const candidate = inspectOperationalRecordsBackup(serializeOperationalRecords(records), 'project-1');
+    expect(candidate?.preview.projectId).toBe('project-1');
+    expect(candidate?.preview.counts).toEqual({ samples: 1, testKnits: 0, submissions: 0, wholesaleOrders: 0 });
+    expect(candidate?.preview.updatedAt).toBe(records.updatedAt);
+    expect(candidate?.records.samples[0].name).toBe('Sample');
+    const malformedTimestamp = serializeOperationalRecords({ ...records, updatedAt: 'not-a-date' });
+    expect(inspectOperationalRecordsBackup(malformedTimestamp, 'project-1')).toBeNull();
   });
 
   it('updates and removes a record without changing unrelated collections', () => {
