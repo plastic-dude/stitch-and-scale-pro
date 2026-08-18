@@ -21,6 +21,8 @@ import {
 } from './storage-lib';
 import { PatternProject } from './grading-engine';
 import { EMPTY_OPERATIONAL_RECORDS, addSample } from './operational-records';
+import { createDefectLedger } from './technical-editor-ledger';
+import { createReleaseEvidenceChecklist } from './release-evidence';
 
 function project(id: string, name: string): PatternProject {
   return {
@@ -80,13 +82,25 @@ describe('exportSnapshot', () => {
     expect(snap.projects[0].name).toBe('Live');
     expect(snap.settings).toEqual({});
     expect(snap.operationalRecords.p1.samples[0].name).toBe('Sample');
+    expect(snap.technicalDefects).toEqual({});
+    expect(snap.releaseEvidence).toEqual({});
+  });
+
+  it('exports technical defects and release evidence for each project', async () => {
+    await writeProjects([project('p1', 'Live')]);
+    projectStorage('technical-defects', 'p1').write(createDefectLedger('p1', 'rev-1'));
+    projectStorage('release-evidence', 'p1').write(createReleaseEvidenceChecklist('p1', 'rev-1'));
+    const snap = await exportSnapshot();
+    expect(snap.technicalDefects.p1.projectId).toBe('p1');
+    expect(snap.releaseEvidence.p1.items['test-knit'].status).toBe('not-started');
+    expect(inspectSnapshot(snap)).toMatchObject({ technicalDefectCount: 0, releaseEvidenceItemCount: 4 });
   });
 });
 
 describe('inspectSnapshot', () => {
   it('summarizes project-wide contents without mutating storage', () => {
     const records = addSample(EMPTY_OPERATIONAL_RECORDS('p1'), { name: 'Sample', status: 'in-studio', location: '', notes: '' });
-    expect(inspectSnapshot({ projects: [project('p1', 'One')], settings: { theme: 'dark' }, operationalRecords: { p1: records } })).toEqual({ projectCount: 1, operationalProjectCount: 1, operationalRecordCount: 1, hasSettings: true, createdAt: null, version: 0, legacy: true });
+    expect(inspectSnapshot({ projects: [project('p1', 'One')], settings: { theme: 'dark' }, operationalRecords: { p1: records } })).toEqual({ projectCount: 1, operationalProjectCount: 1, operationalRecordCount: 1, technicalDefectCount: 0, releaseEvidenceItemCount: 0, hasSettings: true, createdAt: null, version: 0, legacy: true });
     expect(inspectSnapshot({ kind: 'stitch-and-scale-workspace-backup', version: 1, createdAt: '2026-08-18T20:00:00.000Z', projects: [project('p1', 'One')], settings: { theme: 'dark' }, operationalRecords: { p1: records } })?.legacy).toBe(false);
   });
 
@@ -150,6 +164,30 @@ describe('importSnapshot merge semantics', () => {
     await importSnapshot({ projects: [project('new-1', 'New')], operationalRecords: { 'new-1': incoming } }, { mode: 'replace' });
     expect(projectStorage('operations', 'old-1').read()).toBeNull();
     expect(projectStorage('operations', 'new-1').read()?.samples[0].name).toBe('Restored');
+  });
+
+  it('restores technical defects and release evidence only for newly landed projects in merge mode', async () => {
+    await writeProjects([project('existing-1', 'Keep')]);
+    projectStorage('technical-defects', 'existing-1').write(createDefectLedger('existing-1', 'current'));
+    projectStorage('release-evidence', 'existing-1').write(createReleaseEvidenceChecklist('existing-1', 'current'));
+    const incomingDefects = createDefectLedger('new-1', 'backup');
+    const incomingEvidence = createReleaseEvidenceChecklist('new-1', 'backup');
+    await importSnapshot({ projects: [project('existing-1', 'Incoming'), project('new-1', 'New')], technicalDefects: { 'new-1': incomingDefects }, releaseEvidence: { 'new-1': incomingEvidence } });
+    expect(projectStorage('technical-defects', 'existing-1').read()?.sourceRevision).toBe('current');
+    expect(projectStorage('release-evidence', 'existing-1').read()?.sourceRevision).toBe('current');
+    expect(projectStorage('technical-defects', 'new-1').read()?.sourceRevision).toBe('backup');
+    expect(projectStorage('release-evidence', 'new-1').read()?.sourceRevision).toBe('backup');
+  });
+
+  it('removes orphaned technical and evidence partitions in replace mode', async () => {
+    await writeProjects([project('old-1', 'Old')]);
+    projectStorage('technical-defects', 'old-1').write(createDefectLedger('old-1'));
+    projectStorage('release-evidence', 'old-1').write(createReleaseEvidenceChecklist('old-1'));
+    await importSnapshot({ projects: [project('new-1', 'New')], technicalDefects: { 'new-1': createDefectLedger('new-1') }, releaseEvidence: { 'new-1': createReleaseEvidenceChecklist('new-1') } }, { mode: 'replace' });
+    expect(projectStorage('technical-defects', 'old-1').read()).toBeNull();
+    expect(projectStorage('release-evidence', 'old-1').read()).toBeNull();
+    expect(projectStorage('technical-defects', 'new-1').read()?.projectId).toBe('new-1');
+    expect(projectStorage('release-evidence', 'new-1').read()?.projectId).toBe('new-1');
   });
 
   it('records the backup event in the ledger', async () => {

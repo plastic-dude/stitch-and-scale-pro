@@ -22,12 +22,16 @@
 import { get as idbGet, set as idbSet, keys as idbKeys } from 'idb-keyval';
 import { PatternProject } from '@/lib/grading-engine';
 import type { OperationalRecords } from '@/lib/operational-records';
+import type { TechnicalDefectLedger } from '@/lib/technical-editor-ledger';
+import type { ReleaseEvidenceChecklist } from '@/lib/release-evidence';
 
 export const PROJECTS_KEY = 'stitch-and-scale-v1';
 export const SETTINGS_KEY = 'stitch-and-scale-settings-v1';
 export const BACKUPS_KEY = 'stitch-and-scale-backups-v1';
 
 export const OPERATIONAL_RECORDS_PREFIX = 'stitch-and-scale-operations-';
+export const TECHNICAL_DEFECTS_PREFIX = 'stitch-and-scale-technical-defects-';
+export const RELEASE_EVIDENCE_PREFIX = 'stitch-and-scale-release-evidence-';
 
 export const WORKSPACE_BACKUP_KIND = 'stitch-and-scale-workspace-backup';
 export const WORKSPACE_BACKUP_VERSION = 1;
@@ -39,6 +43,8 @@ export interface StoreSnapshot {
   projects: PatternProject[];
   settings: Record<string, unknown>;
   operationalRecords: Record<string, OperationalRecords>;
+  technicalDefects: Record<string, TechnicalDefectLedger>;
+  releaseEvidence: Record<string, ReleaseEvidenceChecklist>;
 }
 
 export interface StoreSnapshotInput {
@@ -48,12 +54,16 @@ export interface StoreSnapshotInput {
   projects?: PatternProject[];
   settings?: Record<string, unknown>;
   operationalRecords?: Record<string, OperationalRecords>;
+  technicalDefects?: Record<string, TechnicalDefectLedger>;
+  releaseEvidence?: Record<string, ReleaseEvidenceChecklist>;
 }
 
 export interface StoreSnapshotPreview {
   projectCount: number;
   operationalProjectCount: number;
   operationalRecordCount: number;
+  technicalDefectCount: number;
+  releaseEvidenceItemCount: number;
   hasSettings: boolean;
   createdAt: string | null;
   version: number;
@@ -73,13 +83,24 @@ function normalizeSnapshot(data: unknown): { snapshot: StoreSnapshotInput; legac
   if (parsed.projects !== undefined && !Array.isArray(parsed.projects)) return null;
   if (parsed.settings !== undefined && !isRecord(parsed.settings)) return null;
   if (parsed.operationalRecords !== undefined && !isRecord(parsed.operationalRecords)) return null;
-  if (parsed.projects === undefined && parsed.settings === undefined && parsed.operationalRecords === undefined) return null;
+  if (parsed.technicalDefects !== undefined && !isRecord(parsed.technicalDefects)) return null;
+  if (parsed.releaseEvidence !== undefined && !isRecord(parsed.releaseEvidence)) return null;
+  if (parsed.projects === undefined && parsed.settings === undefined && parsed.operationalRecords === undefined && parsed.technicalDefects === undefined && parsed.releaseEvidence === undefined) return null;
   const operationalRecords = parsed.operationalRecords ?? {};
-  const entries = Object.entries(operationalRecords);
-  for (const [projectId, value] of entries) {
+  for (const [projectId, value] of Object.entries(operationalRecords)) {
     if (!isRecord(value)) return null;
     const records = value as Partial<OperationalRecords>;
     if (records.projectId !== projectId || records.version !== 1 || !Array.isArray(records.samples) || !Array.isArray(records.testKnits) || !Array.isArray(records.submissions) || !Array.isArray(records.wholesaleOrders)) return null;
+  }
+  for (const [projectId, value] of Object.entries(parsed.technicalDefects ?? {})) {
+    if (!isRecord(value)) return null;
+    const ledger = value as Partial<TechnicalDefectLedger>;
+    if (ledger.projectId !== projectId || ledger.version !== 1 || !Array.isArray(ledger.defects) || typeof ledger.updatedAt !== 'string') return null;
+  }
+  for (const [projectId, value] of Object.entries(parsed.releaseEvidence ?? {})) {
+    if (!isRecord(value)) return null;
+    const checklist = value as Partial<ReleaseEvidenceChecklist>;
+    if (checklist.projectId !== projectId || checklist.version !== 1 || !checklist.items || !isRecord(checklist.items) || typeof checklist.updatedAt !== 'string') return null;
   }
   return { snapshot: parsed, legacy };
 }
@@ -93,10 +114,16 @@ export function inspectSnapshot(data: unknown): StoreSnapshotPreview | null {
     const records = value as OperationalRecords;
     return total + records.samples.length + records.testKnits.length + records.submissions.length + records.wholesaleOrders.length;
   }, 0);
+  const technicalDefectEntries = Object.entries(snapshot.technicalDefects ?? {});
+  const releaseEvidenceEntries = Object.entries(snapshot.releaseEvidence ?? {});
+  const technicalDefectCount = technicalDefectEntries.reduce((total, [, value]) => total + (value as TechnicalDefectLedger).defects.length, 0);
+  const releaseEvidenceItemCount = releaseEvidenceEntries.reduce((total, [, value]) => total + Object.keys((value as ReleaseEvidenceChecklist).items).length, 0);
   return {
     projectCount: snapshot.projects?.length ?? 0,
     operationalProjectCount: entries.length,
     operationalRecordCount,
+    technicalDefectCount,
+    releaseEvidenceItemCount,
     hasSettings: isRecord(snapshot.settings),
     createdAt: typeof snapshot.createdAt === 'string' ? snapshot.createdAt : null,
     version: typeof snapshot.version === 'number' ? snapshot.version : 0,
@@ -177,7 +204,15 @@ export async function exportSnapshot(): Promise<StoreSnapshot> {
       return value ? [[project.id, value] as const] : [];
     }),
   );
-  return { kind: WORKSPACE_BACKUP_KIND, version: WORKSPACE_BACKUP_VERSION, createdAt: new Date().toISOString(), projects, settings, operationalRecords };
+  const technicalDefects = Object.fromEntries(projects.flatMap((project) => {
+    const value = projectStorage<TechnicalDefectLedger>('technical-defects', project.id).read();
+    return value ? [[project.id, value] as const] : [];
+  }));
+  const releaseEvidence = Object.fromEntries(projects.flatMap((project) => {
+    const value = projectStorage<ReleaseEvidenceChecklist>('release-evidence', project.id).read();
+    return value ? [[project.id, value] as const] : [];
+  }));
+  return { kind: WORKSPACE_BACKUP_KIND, version: WORKSPACE_BACKUP_VERSION, createdAt: new Date().toISOString(), projects, settings, operationalRecords, technicalDefects, releaseEvidence };
 }
 
 /** Import into both stores, merging with existing data rather than
@@ -221,11 +256,17 @@ export async function importSnapshot(
   if (opts.mode === 'replace') {
     for (let index = localStorage.length - 1; index >= 0; index -= 1) {
       const key = localStorage.key(index);
-      if (key?.startsWith(OPERATIONAL_RECORDS_PREFIX) && !landedProjectIds.has(key.slice(OPERATIONAL_RECORDS_PREFIX.length))) localStorage.removeItem(key);
+      if ((key?.startsWith(OPERATIONAL_RECORDS_PREFIX) && !landedProjectIds.has(key.slice(OPERATIONAL_RECORDS_PREFIX.length))) || (key?.startsWith(TECHNICAL_DEFECTS_PREFIX) && !landedProjectIds.has(key.slice(TECHNICAL_DEFECTS_PREFIX.length))) || (key?.startsWith(RELEASE_EVIDENCE_PREFIX) && !landedProjectIds.has(key.slice(RELEASE_EVIDENCE_PREFIX.length)))) localStorage.removeItem(key);
     }
   }
   for (const [projectId, records] of Object.entries(snapshot.operationalRecords ?? {})) {
     if (landedProjectIds.has(projectId) && records.projectId === projectId && records.version === 1) projectStorage<OperationalRecords>('operations', projectId).write(records);
+  }
+  for (const [projectId, ledger] of Object.entries(snapshot.technicalDefects ?? {})) {
+    if (landedProjectIds.has(projectId) && ledger.projectId === projectId && ledger.version === 1) projectStorage<TechnicalDefectLedger>('technical-defects', projectId).write(ledger);
+  }
+  for (const [projectId, checklist] of Object.entries(snapshot.releaseEvidence ?? {})) {
+    if (landedProjectIds.has(projectId) && checklist.projectId === projectId && checklist.version === 1) projectStorage<ReleaseEvidenceChecklist>('release-evidence', projectId).write(checklist);
   }
 
   if (snapshot.settings && typeof snapshot.settings === 'object') {

@@ -420,6 +420,8 @@ export default function SettingsPage() {
                     {pendingSnapshot.preview.createdAt && <div><dt className="text-xs text-muted-foreground">{copy.restorePreviewCreated}</dt><dd className="font-medium">{new Date(pendingSnapshot.preview.createdAt).toLocaleString(language, { dateStyle: 'medium', timeStyle: 'short' })}</dd></div>}
                     <div><dt className="text-xs text-muted-foreground">{copy.restorePreviewProjects}</dt><dd className="font-medium">{pendingSnapshot.preview.projectCount}</dd></div>
                     <div><dt className="text-xs text-muted-foreground">{copy.restorePreviewRecords}</dt><dd className="font-medium">{pendingSnapshot.preview.operationalRecordCount}</dd></div>
+                    <div><dt className="text-xs text-muted-foreground">{copy.restorePreviewDefects}</dt><dd className="font-medium">{pendingSnapshot.preview.technicalDefectCount}</dd></div>
+                    <div><dt className="text-xs text-muted-foreground">{copy.restorePreviewEvidence}</dt><dd className="font-medium">{pendingSnapshot.preview.releaseEvidenceItemCount}</dd></div>
                     {pendingSnapshot.preview.hasSettings && <div className="col-span-2"><dd className="font-medium">{copy.restorePreviewSettings}</dd></div>}
                   </dl>
                   {pendingSnapshot.preview.legacy && <p className="text-xs text-muted-foreground">{copy.restorePreviewLegacy}</p>}

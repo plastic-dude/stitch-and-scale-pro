@@ -217,3 +217,13 @@ All new checklist copy exists in `en`, `de`, `fr`, `es`, and `pt`. The mobile sm
 | Test knit | Knitter, note, and evidence reference recorded as a separate handoff. | That every size or edge case has been tested. |
 
 The updated release gate passed with **146 test files / 2,026 tests**, typecheck, production build in 9.37 seconds, `git diff --check`, and all nine mobile-smoke checks. The Vite large-chunk warning remains informational. No protected renderer, grading engine, PDF export hook, or tab-registry file was modified.
+
+## 14. Full project-scoped record snapshot milestone
+
+The project-wide workspace backup now includes all release-relevant project-scoped records, not only operational records. New exports capture `operationalRecords`, `technicalDefects`, and `releaseEvidence` maps keyed by project ID, alongside projects and settings. This closes the previous portability gap in which a workspace backup could restore the pattern and business records while omitting technical-editor findings or human release-evidence status.
+
+The restore inspector validates the new maps before preview. Technical-defect ledgers must carry the matching project ID, version `1`, a defects array, and an update timestamp. Release-evidence checklists must carry the matching project ID, version `1`, an items object, and an update timestamp. In merge mode, these records restore only for genuinely new projects; an existing project remains workspace truth, including its current defects and release-evidence checklist. Replace mode removes orphaned operational, technical-defect, and release-evidence partitions before restoring incoming records for landed projects.
+
+The Settings preview now shows project count, operational-record count, technical-defect count, release-evidence item count, settings inclusion, creation timestamp, and legacy status before confirmation. All new labels are localized across the five supported locales. Storage regression coverage verifies export, merge collision preservation, new-project restore, replace cleanup, and the expanded preview counts.
+
+The updated release gate passed with **146 test files / 2,029 tests**, typecheck, production build in 8.79 seconds, `git diff --check`, and all nine mobile-smoke checks. The Vite large-chunk advisory remains informational. No protected renderer, grading engine, PDF export hook, or tab-registry file was modified.
