@@ -6,7 +6,7 @@
 
 ## Why this discussion exists
 
-The product already contains a substantial knitwear grading workflow, but the current experience risks presenting too much capability at once. The audit should therefore focus on the distance between “all features exist” and “a designer can confidently complete the next important task with one hand, without losing context.” The desired outcome is not visual decoration. It is a system that feels deliberate, legible, forgiving, and fast under real mobile conditions.
+The product already contains a substantial knitwear grading workflow, but the current experience risks presenting too much capability at once. The audit should therefore focus on the distance between “all features exist” and “a designer can confidently complete the next important task with one hand, without losing context.” The product should not only be “perfected” by adding more polish to every screen. The desired outcome is a system that feels deliberate, legible, forgiving, and fast under real mobile conditions, with stronger navigation, accessibility, feedback, resilience, and task completion underneath the visual layer.
 
 This document is intentionally a discussion anchor for the audit and for future coding-agent work. It does not authorize implementation, dependency changes, data migrations, or changes to the PDF system.
 
