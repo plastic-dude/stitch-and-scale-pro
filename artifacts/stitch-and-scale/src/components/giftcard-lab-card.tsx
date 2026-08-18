@@ -9,7 +9,7 @@ import {
 } from "@/lib/giftcard-lab";
 import type { PatternProject } from "@/lib/grading-engine";
 import { useSettings } from "@/context/SettingsContext";
-import { GIFTCARD_COPY, giftCardFlagNote, giftCardFlagTitle, giftCardVerdictLabel, giftCardVerdictNote } from "@/lib/giftcard-copy";
+import { giftCardComplianceNote, giftCardEscheatOption, giftCardFlagNote, giftCardFlagTitle, giftCardInputHint, giftCardInputLabel, giftCardVerdictLabel, giftCardVerdictNote, GIFTCARD_COPY } from '@/lib/giftcard-copy';
 import { projectStorage } from "@/lib/storage-lib";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -147,9 +147,9 @@ export function GiftCardLabCard({ project }: { project: PatternProject }) {
     persist({ ...input, [key]: value });
 
   const escheatOptions = [
-    { value: "none", label: "Exempt (merchandise-credit state)" },
-    { value: "partial60", label: "60% of face value" },
-    { value: "full", label: "100% of face value" },
+    { value: "none", label: giftCardEscheatOption(language, "none", "Exempt (merchandise-credit state)") },
+    { value: "partial60", label: giftCardEscheatOption(language, "partial60", "60% of face value") },
+    { value: "full", label: giftCardEscheatOption(language, "full", "100% of face value") },
   ];
 
   const verdictTone = (() => {
@@ -186,7 +186,7 @@ export function GiftCardLabCard({ project }: { project: PatternProject }) {
               label={copy.cardSales}
               value={input.cardSalesPerMonth}
               step={25}
-              hint="New gift cards sold — this is your float."
+              hint={giftCardInputHint(language, "card-sales", "New gift cards sold — this is your float.")}
               prefix="$"
               onChange={(v) => set("cardSalesPerMonth", v)}
             />
@@ -194,7 +194,7 @@ export function GiftCardLabCard({ project }: { project: PatternProject }) {
               label={copy.refundCredit}
               value={input.refundCreditPerMonth}
               step={10}
-              hint="Store credit given for returns — pure liability, no new cash."
+              hint={giftCardInputHint(language, "refund-credit", "Store credit given for returns — pure liability, no new cash.")}
               prefix="$"
               onChange={(v) => set("refundCreditPerMonth", v)}
             />
@@ -203,7 +203,7 @@ export function GiftCardLabCard({ project }: { project: PatternProject }) {
               value={input.redemptionRate}
               step={0.01}
               max={1}
-              hint="Share of balances that come back to the shop; industry average 80-90%."
+              hint={giftCardInputHint(language, "redemption", "Share of balances that come back to the shop; industry average 80-90%.")}
               suffix="pct"
               onChange={(v) => set("redemptionRate", Math.min(1, v))}
             />
@@ -212,7 +212,7 @@ export function GiftCardLabCard({ project }: { project: PatternProject }) {
               value={input.spendUpliftPct}
               step={0.01}
               max={1}
-              hint="Extra spend beyond face value — measured 20-30% of basket."
+              hint={giftCardInputHint(language, "uplift", "Extra spend beyond face value — measured 20-30% of basket.")}
               suffix="pct"
               onChange={(v) => set("spendUpliftPct", Math.min(1, v))}
             />
@@ -220,7 +220,7 @@ export function GiftCardLabCard({ project }: { project: PatternProject }) {
               label={copy.lag}
               value={input.redemptionLagMonths}
               step={1}
-              hint="Average months between a card sale and its redemption."
+              hint={giftCardInputHint(language, "lag", "Average months between a card sale and its redemption.")}
               suffix="mo"
               onChange={(v) => set("redemptionLagMonths", v)}
             />
@@ -228,7 +228,7 @@ export function GiftCardLabCard({ project }: { project: PatternProject }) {
               label={copy.dormancy}
               value={input.dormancyMonths}
               step={1}
-              hint="Months of inactivity before the balance escheats or expires — typically 3-5 years."
+              hint={giftCardInputHint(language, "dormancy", "Months of inactivity before the balance escheats or expires — typically 3-5 years.")}
               suffix="mo"
               onChange={(v) => set("dormancyMonths", v)}
             />
@@ -252,23 +252,23 @@ export function GiftCardLabCard({ project }: { project: PatternProject }) {
                 </SelectContent>
               </Select>
               <p className="text-[11px] leading-tight text-muted-foreground">
-                Share of unredeemed balances the state takes: {Math.round(effectiveEscheatTake(input) * 100)}%.
+                {giftCardInputHint(language, "escheat-explain", "Share of unredeemed balances the state takes: ")}{Math.round(effectiveEscheatTake(input) * 100)}%.
               </p>
             </div>
             <NumField
-              label="Cash-back threshold"
+              label={giftCardInputLabel(language, "cash-back", "Cash-back threshold")}
               value={input.cashBackThreshold}
               step={1}
-              hint="Balances under this must be paid out in cash (federal <$10; California <$15 from Apr 2026)."
+              hint={giftCardInputHint(language, "cash-back", "Balances under this must be paid out in cash (federal <$10; California <$15 from Apr 2026).")}
               prefix="$"
               onChange={(v) => set("cashBackThreshold", v)}
             />
             <NumField
-              label="Processing cost on sales"
+              label={giftCardInputLabel(language, "processing", "Processing cost on sales")}
               value={input.processingPct * 100}
               step={0.1}
               suffix="%"
-              hint="Issuing-platform or payment processing fee on card sales."
+              hint={giftCardInputHint(language, "processing", "Issuing-platform or payment processing fee on card sales.")}
               onChange={(v) => set("processingPct", v / 100)}
             />
           </div>
@@ -277,50 +277,50 @@ export function GiftCardLabCard({ project }: { project: PatternProject }) {
 
           <div className="grid gap-4 sm:grid-cols-3">
             <NumField
-              label="Redemption cost share"
+              label={giftCardInputLabel(language, "redeemed-cost", "Redemption cost share")}
               value={input.redeemedCostPct * 100}
               step={1}
               suffix="%"
-              hint="Cost of each redeemed dollar — 0% for digital-only pattern shops."
+              hint={giftCardInputHint(language, "redeemed-cost", "Cost of each redeemed dollar — 0% for digital-only pattern shops.")}
               onChange={(v) => set("redeemedCostPct", v / 100)}
             />
             <NumField
-              label="Breakage assumption"
+              label={giftCardInputLabel(language, "breakage-assumption", "Breakage assumption")}
               value={input.breakageAssumption * 100}
               step={1}
               suffix="%"
-              hint="Expected share of balances never redeemed; measured 10-19%."
+              hint={giftCardInputHint(language, "breakage", "Expected share of balances never redeemed; measured 10-19%.")}
               onChange={(v) => set("breakageAssumption", v / 100)}
             />
             <NumField
-              label="Program admin hours per month"
+              label={giftCardInputLabel(language, "admin-hours", "Program admin hours per month")}
               value={input.adminHoursPerMonth}
               step={0.5}
-              hint="Codes, disputes, fraud checks."
+              hint={giftCardInputHint(language, "admin-hours", "Codes, disputes, fraud checks.")}
               suffix="hr"
               onChange={(v) => set("adminHoursPerMonth", v)}
             />
             <NumField
-              label="Your hourly rate"
+              label={giftCardInputLabel(language, "hourly-rate", "Your hourly rate")}
               value={input.hourlyRate}
               step={5}
               prefix="$"
               onChange={(v) => set("hourlyRate", v)}
             />
             <NumField
-              label="Fees income per month (if allowed)"
+              label={giftCardInputLabel(language, "fee-income", "Fees income per month (if allowed)")}
               value={input.feeIncomePerMonth}
               step={5}
               prefix="$"
-              hint="Only legal where expiry/dormancy fees are permitted."
+              hint={giftCardInputHint(language, "fee-income", "Only legal where expiry/dormancy fees are permitted.")}
               onChange={(v) => set("feeIncomePerMonth", v)}
             />
             <NumField
-              label="View horizon"
+              label={giftCardInputLabel(language, "horizon", "View horizon")}
               value={input.horizonMonths}
               step={1}
               suffix="mo"
-              hint="Months of the program plan being priced."
+              hint={giftCardInputHint(language, "horizon", "Months of the program plan being priced.")}
               onChange={(v) => set("horizonMonths", v)}
             />
           </div>
@@ -346,49 +346,49 @@ export function GiftCardLabCard({ project }: { project: PatternProject }) {
       </Card>
 
       <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-5">
-        <StatBox label={copy.cash} value={fmt$(result.totalCashIn)} hint="Card sales minus processing" />
+        <StatBox label={copy.cash} value={fmt$(result.totalCashIn)} hint={giftCardInputHint(language, "stat-cash", "Card sales minus processing")} />
         <StatBox
           label={copy.redemptions}
           value={fmt$(result.expectedRedemptions)}
-          hint={`Uplift value ${fmt$(result.upliftValue)}`}
+          hint={`${giftCardInputHint(language, "stat-uplift", "Uplift value ")}${fmt$(result.upliftValue)}`}
         />
         <StatBox
           label={copy.breakage}
           value={fmt$(result.keptBreakage)}
           tone={result.escheatSurrender > 0 ? "warn" : "good"}
-          hint={`Escheat surrender ${fmt$(result.escheatSurrender)}`}
+          hint={`${giftCardInputHint(language, "stat-escheat", "Escheat surrender ")}${fmt$(result.escheatSurrender)}`}
         />
         <StatBox
           label={copy.liability}
           value={fmt$(result.endingLiability)}
           tone={result.endingLiability > input.cardSalesPerMonth * 4 ? "bad" : "warn"}
-          hint={`Peak ${fmt$(result.peakLiability)}`}
+          hint={`${giftCardInputHint(language, "stat-peak", "Peak ")}${fmt$(result.peakLiability)}`}
         />
         <StatBox
           label={copy.profit}
           value={fmt$(result.netProgramProfit)}
           tone={result.netProgramProfit >= 0 ? "good" : "bad"}
-          hint={`Margin ${result.effectiveMarginPct.toFixed(1)}% of face value`}
+          hint={`${giftCardInputHint(language, "stat-margin", "Margin ")}${result.effectiveMarginPct.toFixed(1)}% of face value`}
         />
       </div>
 
       <div className="grid gap-3 sm:grid-cols-3">
         <StatBox
-          label="Refund-credit liability"
+          label={giftCardInputLabel(language, "refund-credit-liability", "Refund-credit liability")}
           value={fmt$(result.refundCreditLiability)}
           tone={result.refundCreditLiability > 0 ? "warn" : "good"}
-          hint="Pure liability — no cash ever arrives for this"
+          hint={giftCardInputHint(language, "stat-pure-liability", "Pure liability — no cash ever arrives for this")}
         />
         <StatBox
-          label="Cash-back payouts owed"
+          label={giftCardInputLabel(language, "cash-back-payouts", "Cash-back payouts owed")}
           value={fmt$(result.cashBackPayouts)}
           tone={result.cashBackPayouts > 0 ? "warn" : "good"}
-          hint="Small-balance legal cash redemptions"
+          hint={giftCardInputHint(language, "stat-cash-back", "Small-balance legal cash redemptions")}
         />
         <StatBox
-          label="Stabilization"
+          label={giftCardInputLabel(language, "stabilization", "Stabilization")}
           value={`${result.stabilizationMonths} mo`}
-          hint="Until new cash-in ≈ monthly redemptions"
+          hint={giftCardInputHint(language, "stat-stabilize", "Until new cash-in ≈ monthly redemptions")}
         />
       </div>
 
@@ -483,11 +483,7 @@ export function GiftCardLabCard({ project }: { project: PatternProject }) {
           </p>
           <Separator className="my-3" />
           <p className="text-[11px] leading-relaxed text-muted-foreground">
-            Checklist the books don't print: codes longer than 12 characters, no gift-card refunds paid out as
-            cash (that's how the refund-to-cash loop happens), keep small balances visible in reporting so
-            cash-back liability doesn't surprise you, and confirm your state's merchandise-credit exemption
-            before counting breakage as profit — H&M paid New York $36M for holding onto unused card funds it
-            thought were breakage.
+            {giftCardComplianceNote(language, "Checklist the books don't print: codes longer than 12 characters, no gift-card refunds paid out as cash (that's how the refund-to-cash loop happens), keep small balances visible in reporting so cash-back liability doesn't surprise you, and confirm your state's merchandise-credit exemption before counting breakage as profit — H&M paid New York $36M for holding onto unused card funds it thought were breakage.")}
           </p>
         </CardContent>
       </Card>
