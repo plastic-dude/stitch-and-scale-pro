@@ -148,9 +148,11 @@ try {
   const grading = await metrics(call, 'grading-lab');
   assert(grading.text.includes('Pattern QA preflight'), 'Pattern QA summary is missing from Grading Lab');
   assert(grading.text.includes('Technical-editor defect ledger'), 'technical-editor defect ledger is missing from Grading Lab');
+  assert(grading.text.includes('Release evidence'), 'release-evidence checklist is missing from Grading Lab');
+  assert(grading.text.includes('Physical print review'), 'physical-print evidence item is missing from Grading Lab');
   assert(await clickVisible('Record current QA findings'), 'defect-ledger record action was not found');
   await sleep(300);
-  assert(!grading.bodyOverflow && !grading.htmlOverflow, 'Grading Lab horizontal overflow');
+  assert(!grading.bodyOverflow && !grading.htmlOverflow, `Grading Lab horizontal overflow: ${JSON.stringify({ body: [grading.bodyWidth, grading.bodyClientWidth], html: [grading.htmlWidth, grading.htmlClientWidth], nodes: grading.overflowNodes })}`);
   await capture(call, 'grading-lab-390');
 
   await navigate(call, '/project/sample-crew-neck-sweater', 390, 844);

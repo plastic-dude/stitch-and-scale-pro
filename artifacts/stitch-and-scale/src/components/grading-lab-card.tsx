@@ -9,6 +9,7 @@ import { getGradingCopy, getGradingFlagDetail } from '@/lib/grading-copy';
 import { analyzeGrading, EASE_BANDS, type LabResult } from '@/lib/grading-lab';
 import { validatePatternQuality } from '@/lib/pattern-quality';
 import { TechnicalEditorLedgerCard } from '@/components/technical-editor-ledger-card';
+import { ReleaseEvidenceCard } from '@/components/release-evidence-card';
 
 const fmtCm = (n: number) => `${n.toFixed(1)}cm`;
 
@@ -81,6 +82,7 @@ export function GradingLabCard({ project }: { project: PatternProject }) {
         </div>
 
         <TechnicalEditorLedgerCard project={project} quality={quality} />
+        <ReleaseEvidenceCard project={project} />
 
         {/* KPI tiles */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

@@ -200,3 +200,20 @@ Unrelated leader notes, proposals, research memos, skill-source files, and roadm
 [7]: https://www.midnightpurl.com/pricing-services "Midnight Purl — Technical Editing and Grading Services"
 
 [8]: ../record-keeping-gap-map.md "Stitch & Scale record-keeping gap map and cited research"
+
+## 13. Release-evidence checklist milestone
+
+The Grading Lab now includes a project-scoped **Release evidence** checklist immediately after the Pattern QA summary and technical-editor defect ledger. It records four evidence categories separately from deterministic QA: physical print review, chart readability, schematic scale, and test knit. Each category has an explicit status—`not-started`, `in-review`, `passed`, or `blocked`—plus a note and evidence reference. The checklist persists through `projectStorage<T>` and is validated against the active project ID before hydration.
+
+The checklist deliberately does not change the automated publication-preflight gate. It instead makes the remaining human and physical evidence boundary visible, actionable, and durable. Certification readiness is reported only when all four categories are marked `passed`; any `in-review`, `blocked`, or `not-started` item keeps the checklist visibly not ready. This prevents a rendered PDF or mathematically valid grade from being mistaken for physical print or test-knit proof.
+
+All new checklist copy exists in `en`, `de`, `fr`, `es`, and `pt`. The mobile smoke suite verifies the checklist appears in Grading Lab at 390px, includes the physical-print evidence item, and does not introduce horizontal overflow. The readiness badge was corrected after diagnostic smoke found a 416px unwrapped localized badge; it now wraps within the card width.
+
+| Evidence category | What the checklist records | What it cannot claim by itself |
+|---|---|---|
+| Physical print review | Printed-page observation and evidence reference. | Universal print contrast or every paper/printer combination. |
+| Chart readability | Human review of charts at intended reading scale. | That every chart instruction is technically correct without editing. |
+| Schematic scale | Human review of schematic dimensions and usable scale. | That the garment fits a real body. |
+| Test knit | Knitter, note, and evidence reference recorded as a separate handoff. | That every size or edge case has been tested. |
+
+The updated release gate passed with **146 test files / 2,026 tests**, typecheck, production build in 9.37 seconds, `git diff --check`, and all nine mobile-smoke checks. The Vite large-chunk warning remains informational. No protected renderer, grading engine, PDF export hook, or tab-registry file was modified.
