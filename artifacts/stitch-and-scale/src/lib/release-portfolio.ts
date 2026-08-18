@@ -165,8 +165,36 @@ export interface BundleCandidate {
   why: string;
 }
 
+/** Slider snapshot: bundle math at an arbitrary discount factor for one
+ *  candidate. Computed on demand — the UI slides without re-ranking the
+ *  catalogue (ranking stays anchored to the documented 71% position). */
+export interface BundleSliderSnapshot {
+  discount: number;
+  bundlePrice: number;
+  bundleNet: number;
+  /** Net delta vs selling the same patterns separately. */
+  deltaVsSeparate: number;
+}
+
 const BUNDLE_DISCOUNT = 0.71;
 const MIN_BUNDLE_SIZE = 2;
+
+// --- Bundle premium slider (CHK-134, S284) ---
+// Documented bundle-discount positioning across indie knitting pattern
+// shops ranges from ~20% (Fit for Art's observed $36 vs $51) to deeper
+// promos; the slider lets the designer explore the full defensible range
+// 65–80% of the sum of parts with live per-platform net deltas.
+export const BUNDLE_DISCOUNT_RANGE = { min: 0.65, max: 0.80, step: 0.01 } as const;
+
+/** Bundle price at an arbitrary discount factor (pure math, no caching). */
+export function bundlePriceAt(sumOfParts: number, discount: number): number {
+  return Math.round(sumOfParts * Math.min(BUNDLE_DISCOUNT_RANGE.max, Math.max(BUNDLE_DISCOUNT_RANGE.min, discount)) * 100) / 100;
+}
+
+/** Best-platform net revenue for the bundle at the given discount factor. */
+export function bundleNetAt(sumOfParts: number, discount: number): number {
+  return Math.max(...PLATFORMS.map(p => platformNet(p, bundlePriceAt(sumOfParts, discount), 1).netRevenue));
+}
 
 /** Find bundle candidates across the catalogue: groups sharing a yarn
  *  weight class (the "matching set" logic) plus a portfolio-wide garment

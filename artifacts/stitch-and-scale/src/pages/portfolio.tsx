@@ -26,12 +26,16 @@ import {
   buildPortfolio,
   type PortfolioLine,
   type PortfolioInputs,
+  BUNDLE_DISCOUNT_RANGE,
+  bundlePriceAt,
+  bundleNetAt,
 } from '@/lib/release-portfolio';
 import {
   ITEM_TYPE_LIST, ITEM_TYPE_LABELS, SKILL_LEVEL_LIST, SKILL_LEVEL_LABELS,
   PRICING_MARKET_TARGET_LABELS,
 } from '@/lib/pattern-pricing-advisor';
 import { PLATFORMS } from '@/lib/pattern-income-calculator';
+import { Slider } from '@/components/ui/slider';
 import { Coins, ListChecks, Package, Rocket, Target, TrendingUp } from 'lucide-react';
 import { useSettings } from '@/context/SettingsContext';
 import { PORTFOLIO_COPY, type PortfolioCopy } from '@/lib/portfolio-copy';
@@ -142,6 +146,15 @@ export default function PortfolioPage() {
 
   const portfolio = buildPortfolio(projects, inputs);
   const bestPlatform = PLATFORMS[0];
+  // Bundle premium slider (CHK-134, S284): per-bundle discount factor.
+  // Defaults to the documented 71% anchor — the UI lets the designer slide
+  // the full defensible range (65–80%) with live net deltas. Ranking stays
+  // anchored at the 71% position so what-if exploration can't distort the
+  // launch order.
+  const [bundleDiscounts, setBundleDiscounts] = React.useState<Record<string, number>>({});
+  const discountFor = (bundleId: string) => bundleDiscounts[bundleId] ?? 0.71;
+  const setDiscountFor = (bundleId: string, discount: number) =>
+    setBundleDiscounts(p => ({ ...p, [bundleId]: discount }));
 
   return (
     <div className="max-w-5xl mx-auto p-4 md:p-6 space-y-5">
@@ -279,21 +292,43 @@ export default function PortfolioPage() {
             </div>
           ) : (
             <div className="space-y-3">
-              {portfolio.bundles.map(bundle => (
-                <div key={bundle.id} className="rounded-lg border border-border/70 bg-muted/30 p-3">
-                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
-                    <span className="font-medium">{bundle.patterns.map(p => p.name).join(' + ')}</span>
-                    <Badge variant="outline" className="text-xs">
-                      {usd(bundle.sumOfParts)} individually → <span className="font-semibold ml-1">{usd(bundle.bundlePrice)} bundle</span>
-                    </Badge>
+              {portfolio.bundles.map(bundle => {
+                const discount = discountFor(bundle.id);
+                const livePrice = bundlePriceAt(bundle.sumOfParts, discount);
+                const liveNet = bundleNetAt(bundle.sumOfParts, discount);
+                const delta = Math.round((liveNet - bundle.separateNet) * 100) / 100;
+                const atAnchor = Math.abs(discount - 0.71) < 0.005;
+                return (
+                  <div key={bundle.id} className="rounded-lg border border-border/70 bg-muted/30 p-3">
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
+                      <span className="font-medium">{bundle.patterns.map(p => p.name).join(' + ')}</span>
+                      <Badge variant="outline" className="text-xs">
+                        {usd(bundle.sumOfParts)} individually → <span className="font-semibold ml-1">{usd(livePrice)} bundle</span>
+                        {!atAnchor && <span className="ml-1 text-muted-foreground">({Math.round(discount * 100)}%)</span>}
+                      </Badge>
+                    </div>
+                    <div className="text-xs text-muted-foreground mt-2">{bundle.why}</div>
+                    <div className="mt-3">
+                      <div className="flex items-center justify-between text-[11px] text-muted-foreground mb-1.5">
+                        <span>{copy.bundleDiscount}</span>
+                        <span className="font-mono font-semibold text-foreground">{Math.round(discount * 100)}%</span>
+                      </div>
+                      <Slider min={BUNDLE_DISCOUNT_RANGE.min * 100} max={BUNDLE_DISCOUNT_RANGE.max * 100} step={BUNDLE_DISCOUNT_RANGE.step * 100}
+                        value={[discount * 100]}
+                        onValueChange={v => setDiscountFor(bundle.id, v[0] / 100)}
+                        aria-label={`${copy.bundleDiscount} (${Math.round(discount * 100)}%)`}
+                        data-testid={`bundle-discount-${bundle.id}`} />
+                      <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1 mt-2 text-[11px] text-muted-foreground">
+                        <span>{interpolate(copy.bundleNetBundle, { platform: bestPlatform, amount: usd(liveNet) })}</span>
+                        <span>{interpolate(copy.bundleNetSeparate, { amount: usd(bundle.separateNet) })}</span>
+                        <span className={delta >= 0 ? 'text-emerald-600 font-medium' : 'text-destructive font-medium'}>
+                          {delta >= 0 ? '+' : ''}{usd(delta)} {copy.bundleNetDelta}
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                  <div className="text-xs text-muted-foreground mt-2">{bundle.why}</div>
-                  <div className="text-[11px] text-muted-foreground mt-1">
-                    {interpolate(copy.bundleNetBundle, { platform: bestPlatform, amount: usd(bundle.bundleNet) })}{' '}
-                    {interpolate(copy.bundleNetSeparate, { amount: usd(bundle.separateNet) })}
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </CardContent>
