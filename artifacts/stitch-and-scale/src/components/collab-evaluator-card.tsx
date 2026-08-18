@@ -299,7 +299,7 @@ export function CollabEvaluatorCard({ project }: { project: PatternProject }) {
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium">{copyText.reply}</span>
-            <Button variant="outline" size="sm" className="gap-2 h-8" onClick={() => copy(result.replyLetter)}>
+            <Button variant="outline" size="sm" className="gap-2 h-8 min-h-11" onClick={() => copy(result.replyLetter)}>
               <ClipboardCopy className="w-3.5 h-3.5" /> {copyText.copyLetter}
             </Button>
           </div>

@@ -332,7 +332,7 @@ export function WholesaleLabCard({ project }: { project: PatternProject }) {
                   }))
                 }
               >
-                <SelectTrigger className="h-8 text-sm">
+                <SelectTrigger className="h-8 min-h-11 text-sm">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>

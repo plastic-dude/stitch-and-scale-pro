@@ -5,7 +5,10 @@ import path from "node:path";
 const source = (relativePath: string) =>
   fs.readFileSync(path.resolve(__dirname, relativePath), "utf8");
 
-describe("CHK-131 residual mobile touch-target guards", () => {
+// CHK-132 — guard that interactive h-8 controls keep a 44px (min-h-11) hit
+// area; a regression to h-8-only re-opens the S275/#68 defect class.
+
+describe("residual mobile touch-target guards", () => {
   it("keeps section and measurement actions at least 44px", () => {
     const workspace = source("../pages/project-workspace.tsx");
 
@@ -41,3 +44,35 @@ describe("CHK-131 residual mobile touch-target guards", () => {
   });
 });
 
+
+  it("keeps lab-card SelectTrigger/Button controls at least 44px", () => {
+    // CHK-132 (S275): interactive h-8 controls must pair h-8 with min-h-11
+    // across the lab cards and PDF control panel.
+    expect(source("../components/collab-deal-math-card.tsx")).toContain(
+      'className="h-8 min-h-11 text-sm"',
+    );
+    expect(source("../components/collab-evaluator-card.tsx")).toContain(
+      'className="gap-2 h-8 min-h-11"',
+    );
+    expect(source("../components/partner-economics-card.tsx")).toContain(
+      'className="h-8 min-h-11 w-36 text-sm"',
+    );
+    expect(source("../components/partner-economics-card.tsx")).toContain(
+      'className="h-8 min-h-11 w-8 text-muted-foreground hover:text-destructive"',
+    );
+    expect(source("../components/wholesale-lab-card.tsx")).toContain(
+      'className="h-8 min-h-11 text-sm"',
+    );
+    expect(source("../components/giftcard-lab-card.tsx")).toContain(
+      'className="h-8 min-h-11 bg-background"',
+    );
+    expect(source("../components/convention-booth-lab-card.tsx")).toContain(
+      'className="text-sm h-8 min-h-11"',
+    );
+    expect(source("../pages/project-pdf.tsx")).toContain(
+      'className="gap-1.5 -ml-1.5 h-8 min-h-11 px-2"',
+    );
+    expect(source("../pages/project-pdf.tsx")).toContain(
+      'className="h-8 min-h-11 w-8 shrink-0 text-muted-foreground hover:text-destructive"',
+    );
+  });

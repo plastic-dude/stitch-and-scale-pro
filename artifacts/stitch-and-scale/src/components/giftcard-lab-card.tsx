@@ -240,7 +240,7 @@ export function GiftCardLabCard({ project }: { project: PatternProject }) {
                   set("escheatMode", v as GiftCardInput["escheatMode"])
                 }
               >
-                <SelectTrigger className="h-8 bg-background">
+                <SelectTrigger className="h-8 min-h-11 bg-background">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>

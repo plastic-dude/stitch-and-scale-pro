@@ -43,6 +43,13 @@ import { useToast } from "@/hooks/use-toast";
 import { BookMarked, Copy, Download, FileSpreadsheet, Plus, Trash2 } from "lucide-react";
 import { useSettings } from "@/context/SettingsContext";
 import { DESIGN_LEDGER_COPY, type DesignLedgerCopy } from "@/lib/design-ledger-copy";
+// CHK-132 (ledger S272): reuse the same stored-row resolvers payback uses so
+// Receipt Lab's actual SavedSale shape (no grossTotal, fees never persisted)
+// no longer silently resolves to $0 gross and $0 fees.
+import {
+  resolveStoredReceiptFees,
+  resolveStoredReceiptGross,
+} from "@/components/payback-lab-card";
 
 const LEGACY_STORAGE_KEY = "stitch-and-scale-designledger-v1";
 
@@ -104,9 +111,8 @@ function receiptSaleRows(receiptStored: ReceiptStoredState, currency: string): D
     .filter((row) => row && typeof row.kind === "string" && (row.kind === "receipt" || row.kind === "refund"))
     .map((row) => {
       const qtyTotal = (row.items ?? []).reduce((s, it) => s + (it.qty ?? 0), 0);
-      const feesTotal =
-        (row.fees?.platformFee ?? 0) + (row.fees?.processingFee ?? 0) + (row.fees?.taxAmount ?? 0) + (row.fees?.shippingCost ?? 0);
-      const gross = typeof row.grossTotal === "number" ? row.grossTotal : 0;
+      const feesTotal = resolveStoredReceiptFees(row);
+      const gross = resolveStoredReceiptGross(row);
       const profit = typeof row.profit === "number" ? row.profit : gross - feesTotal;
       return {
         id: row.id ?? "",

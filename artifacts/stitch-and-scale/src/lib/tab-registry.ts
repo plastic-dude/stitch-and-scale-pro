@@ -107,7 +107,9 @@ export const TAB_REGISTRY: TabRegistryEntry[] = [
   { value: "box-inclusion", label: "Box Inclusion Lab", group: "fit", icon: "Package" },
   { value: "yarn-licensing", label: "Yarn Licensing Lab", group: "design", icon: "Scale" },
   { value: "giftcard", label: "Gift & Credit Lab", group: "pricing", icon: "Gift" },
-  { value: "wholesale-pricelist", label: "Wholesale List Lab", group: "channels", icon: "ClipboardList" },
+  // CHK-132 (S241): canonical name is 'Wholesale Price List Lab' (engine, docs,
+  // tests, card header all use it) — the chip label dropped 'Price'.
+  { value: "wholesale-pricelist", label: "Wholesale Price List Lab", group: "channels", icon: "ClipboardList" },
   { value: "intl-pricing", label: "Intl Pricing Lab", group: "pricing", icon: "Globe" },
   { value: "testknitlab", label: "Test Knit Lab", group: "fit", icon: "Users" },
   { value: "gaugefit", label: "Gauge & Fit", group: "fit", icon: "Ruler" },

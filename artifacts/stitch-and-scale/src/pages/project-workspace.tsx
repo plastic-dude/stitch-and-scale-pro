@@ -202,7 +202,9 @@ function TriggerChildren({ value, label }: { value: string; label?: string }): R
         case 'box-inclusion': return <><Package className="h-3.5 w-3.5 mr-1.5" /> Box Inclusion Lab</>;
         case 'yarn-licensing': return <><Scale className="h-3.5 w-3.5 mr-1.5" /> Yarn Licensing Lab</>;
         case 'giftcard': return <><Gift className="h-3.5 w-3.5 mr-1.5" /> Gift & Credit Lab</>;
-        case 'wholesale-pricelist': return <><ClipboardList className="h-3.5 w-3.5 mr-1.5" /> Wholesale List Lab</>;
+        // CHK-132 (S241): canonical name 'Wholesale Price List Lab' matches the
+        // engine, docs, tests, and card header — the old label dropped 'Price'.
+        case 'wholesale-pricelist': return <><ClipboardList className="h-3.5 w-3.5 mr-1.5" /> Wholesale Price List Lab</>;
         case 'intl-pricing': return <><Globe className="h-3.5 w-3.5 mr-1.5" /> Intl Pricing Lab</>;
         case 'testknitlab': return <><Users className="h-3.5 w-3.5 mr-1.5" /> Test Knit Lab</>;
         case 'gaugefit': return <><Ruler className="h-3.5 w-3.5 mr-1.5" /> Gauge &amp; Fit</>;
@@ -1066,7 +1068,11 @@ export default function ProjectWorkspace() {
             primitive's justify-center in the v4 cascade.
             the strip opens at the first tab with scrollLeft=0; late tabs remain
             reachable by horizontal scroll. */}
-        <TabsList className="hidden lg:flex lg:flex-nowrap w-full gap-1 bg-card border border-border p-1 h-auto overflow-x-auto" style={{ justifyContent: "flex-start" }}>
+        {/* CHK-132 (S277): overflow-x-auto scrolls but nothing says so — a right
+            inner-edge fade cues that more tabs exist off-screen. Mask-based so
+            it stays inside the card border and never blocks the tabs. */}
+        <div className="hidden lg:block relative">
+          <TabsList className="lg:flex lg:flex-nowrap w-full gap-1 bg-card border border-border p-1 h-auto overflow-x-auto" style={{ justifyContent: "flex-start" }}>
 
         {TAB_REGISTRY.map((tab) => {
               const localizedLabel = getWorkspaceTabLabel(language, tab.value, ({
@@ -1087,6 +1093,15 @@ export default function ProjectWorkspace() {
             );
           })}
         </TabsList>
+          {/* Right-edge scroll cue: fades the last visible tabs into view. */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-y-1 right-1 w-12"
+            style={{
+              background: "linear-gradient(to right, transparent, hsl(var(--card)))",
+            }}
+          />
+        </div>
 
         {TAB_REGISTRY.map((t) => (
   <TabsContent key={t.value} value={t.value} className="mt-6">

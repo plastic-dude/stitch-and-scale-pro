@@ -405,16 +405,16 @@ export function PartnerEconomicsCard({ project }: { project: PatternProject }) {
                   <div className="flex items-center gap-2">
                     <Input value={p.company}
                       onChange={(e) => updatePitch(p.id, { company: e.target.value })}
-                      placeholder="Yarn company / dyer / shop" className="h-8 text-sm" />
+                      placeholder="Yarn company / dyer / shop" className="h-8 min-h-11 text-sm" />
                     <Select value={p.status} onValueChange={(v) => updatePitch(p.id, { status: v as PitchStatus })}>
-                      <SelectTrigger className="h-8 w-36 text-sm"><SelectValue /></SelectTrigger>
+                      <SelectTrigger className="h-8 min-h-11 w-36 text-sm"><SelectValue /></SelectTrigger>
                       <SelectContent>
                         {(Object.keys(PITCH_STATUS_LABELS) as PitchStatus[]).map((s) => (
                           <SelectItem key={s} value={s}>{PITCH_STATUS_LABELS[s]}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                    <Button variant="ghost" size="icon" className="h-8 min-h-11 w-8 text-muted-foreground hover:text-destructive"
                       onClick={() => removePitch(p.id)} aria-label="Remove pitch">
                       <Trash2 className="h-3.5 w-3.5" />
                     </Button>

@@ -119,7 +119,7 @@ export function CollabDealMathCard({ project }: { project: PatternProject }) {
           <Select
             value={input.structure}
             onValueChange={(v) => patchInput({ structure: v as RightsStructure })}>
-            <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
+            <SelectTrigger className="h-8 min-h-11 text-sm"><SelectValue /></SelectTrigger>
             <SelectContent>
               {(Object.keys(structureLabels) as RightsStructure[]).map((s) => (
                 <SelectItem key={s} value={s}>{structureLabels[s]}</SelectItem>
@@ -178,7 +178,7 @@ export function CollabDealMathCard({ project }: { project: PatternProject }) {
         <div className="space-y-2">
           <Label className="text-xs font-medium">{copyText.platform}</Label>
           <Select value={input.platform} onValueChange={(v) => patchInput({ platform: v as PlatformId })}>
-            <SelectTrigger className="h-8 text-sm"><SelectValue /></SelectTrigger>
+            <SelectTrigger className="h-8 min-h-11 text-sm"><SelectValue /></SelectTrigger>
             <SelectContent>
               {PLATFORMS.map((p) => (
                 <SelectItem key={p} value={p}>{PLATFORM_LABELS[p]}</SelectItem>

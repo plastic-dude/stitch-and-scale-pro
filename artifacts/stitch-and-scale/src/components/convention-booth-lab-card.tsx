@@ -134,28 +134,28 @@ export function ConventionBoothLabCard({ project }: { project: PatternProject })
               <div key={idx} className="grid grid-cols-1 gap-2 md:grid-cols-12 items-end border rounded-md p-2">
                 <div className="md:col-span-3">
                   <Label className="text-xs">{copyText.item}</Label>
-                  <Input value={m.label} onChange={e => updateMix(idx, { label: e.target.value })} className="text-sm h-8" />
+                  <Input value={m.label} onChange={e => updateMix(idx, { label: e.target.value })} className="text-sm h-8 min-h-11" />
                 </div>
                 <div className="md:col-span-2">
                   <Label className="text-xs">{copyText.price}</Label>
                   <Input type="number" min={0} value={m.price} onChange={e => {
                     const n = parseFloat(e.target.value);
                     if (Number.isFinite(n)) updateMix(idx, { price: n });
-                  }} className="text-sm h-8" />
+                  }} className="text-sm h-8 min-h-11" />
                 </div>
                 <div className="md:col-span-2">
                   <Label className="text-xs">{copyText.share}</Label>
                   <Input type="number" min={0} max={100} step={1} value={m.share} onChange={e => {
                     const n = parseFloat(e.target.value);
                     if (Number.isFinite(n)) updateMix(idx, { share: n });
-                  }} className="text-sm h-8" />
+                  }} className="text-sm h-8 min-h-11" />
                 </div>
                 <div className="md:col-span-2">
                   <Label className="text-xs">{copyText.hoursUnit}</Label>
                   <Input type="number" min={0} step={0.5} value={m.hoursPerUnit} onChange={e => {
                     const n = parseFloat(e.target.value);
                     if (Number.isFinite(n)) updateMix(idx, { hoursPerUnit: n });
-                  }} className="text-sm h-8" />
+                  }} className="text-sm h-8 min-h-11" />
                 </div>
                 <div className="md:col-span-2 flex gap-1 items-center">
                   {idx === 0 ? null : (

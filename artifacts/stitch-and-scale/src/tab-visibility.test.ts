@@ -81,8 +81,12 @@ describe("CHK-125 — workspace tab strip discoverability contract", () => {
     const source = read("src/pages/project-workspace.tsx");
     const list = source.match(/<TabsList[^>]*>/g);
     expect(list, "TabsList must exist").not.toBeNull();
+    // CHK-132 (S277): the desktop-hide utility moved onto the cue-wrapper div
+    // ("hidden lg:block relative") holding the right-edge scroll fade; the
+    // strip mounts as lg:flex inside it.
+    expect(source.includes('className="hidden lg:block relative"'), "strip wrapper must be hidden lg:block relative").toBe(true);
     const cls = list![0];
-    expect(cls.includes("hidden lg:flex"), "flat strip must be hidden lg:flex: " + cls).toBe(true);
+    expect(cls.includes("lg:flex"), "flat strip must render lg:flex: " + cls).toBe(true);
   });
 
   it("grouped navigator (sheet/dropdown) hides on desktop", () => {
@@ -100,8 +104,13 @@ describe("CHK-125 — workspace tab strip discoverability contract", () => {
     // defect class cannot regress silently.
     // Strip JSX block comments first — the CHK-127 comment quotes the old
     // TabsList markup and must not fake a span.
+    // CHK-132 (S277): the desktop-hide utility moved onto the cue-wrapper div
+    // ("hidden lg:block relative") holding the right-edge scroll fade; the
+    // TabsList mounts inside that wrapper. The guard therefore pins: (a) the
+    // wrapper exists and contains the navigator-OUTSIDE-strip order, and
+    // (b) the navigator wrapper is outside the TabsList span.
     const source = read("src/pages/project-workspace.tsx").replace(/\/\*[\s\S]*?\*\//g, "");
-    const listOpen = source.indexOf('<TabsList className="hidden lg:flex');
+    const listOpen = source.indexOf('<TabsList className="lg:flex lg:flex-nowrap');
     const listClose = source.indexOf("</TabsList>", listOpen);
     const navWrap = source.indexOf('<div className="lg:hidden mb-2">');
     expect(listOpen, "desktop TabsList must exist").toBeGreaterThan(-1);
@@ -109,8 +118,16 @@ describe("CHK-125 — workspace tab strip discoverability contract", () => {
     expect(navWrap, "mobile navigator wrapper must exist").toBeGreaterThan(-1);
     expect(
       navWrap < listOpen || navWrap > listClose,
-      "navigator wrapper must be OUTSIDE the hidden lg:flex TabsList: navigator at " +
+      "navigator wrapper must be OUTSIDE the flat TabsList: navigator at " +
         navWrap + ", list span [" + listOpen + ", " + listClose + "]",
+    ).toBe(true);
+    // The cue-wrapper (strip + scroll fade) must still render only at lg+ so
+    // the entire strip surface stays hidden below 1024px.
+    const cueWrap = source.indexOf('className="hidden lg:block relative"');
+    expect(cueWrap, "strip cue-wrapper must be hidden lg:block relative").toBeGreaterThan(-1);
+    expect(
+      navWrap < cueWrap || navWrap > listClose,
+      "mobile navigator must be outside the lg-only strip surface: navigator at " + navWrap + ", wrapper at " + cueWrap,
     ).toBe(true);
   });
 

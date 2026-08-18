@@ -312,7 +312,7 @@ export default function ProjectPdf() {
       <div className="w-full sm:w-[380px] lg:w-[420px] flex-shrink-0 flex flex-col overflow-y-auto border-b sm:border-b-0 sm:border-r border-border/40 bg-background">
         {/* Header */}
         <div className="sticky top-0 z-10 bg-background border-b border-border/40 px-5 py-3.5 flex items-center gap-3">
-          <Button variant="ghost" size="sm" className="gap-1.5 -ml-1.5 h-8 px-2" onClick={() => setLocation(`/project/${project.id}`)}>
+          <Button variant="ghost" size="sm" className="gap-1.5 -ml-1.5 h-8 min-h-11 px-2" onClick={() => setLocation(`/project/${project.id}`)}>
             <ArrowLeft className="w-4 h-4" />
             <span className="text-sm">{labels.back}</span>
           </Button>
@@ -381,7 +381,7 @@ export default function ProjectPdf() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 shrink-0 text-muted-foreground hover:text-destructive"
+                  className="h-8 min-h-11 w-8 shrink-0 text-muted-foreground hover:text-destructive"
                   onClick={() => setCustomLogo(undefined)}
                   aria-label={labels.removeLogo}
                   data-testid="button-remove-logo"

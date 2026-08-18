@@ -22,8 +22,16 @@ const TABS_PRIM = readFileSync(join(__dirname, 'components/ui/tabs.tsx'), 'utf8'
 // Locate the desktop-only TabsList mount: the strip is `hidden lg:flex` with
 // `overflow-x-auto`. Its className must force left alignment against the
 // primitive's `justify-center`.
+// CHK-132 (S277): the desktop-hide utility moved onto the cue-wrapper div
+// (`hidden lg:block relative`) holding the right-edge scroll fade; the
+// TabsList now mounts as `lg:flex lg:flex-nowrap ... overflow-x-auto` inside
+// it. Both markers are accepted while locating the mount line.
 function desktopTabsListClassName(): string {
-  const idx = SRC.indexOf('hidden lg:flex lg:flex-nowrap')
+  // CHK-132 (S277): prefer the TabsList mount line when present; otherwise
+  // fall back to the cue-wrapper mount. The wrapper's className is not the
+  // scroller — the guard below reads the TabsList class directly.
+  let idx = SRC.indexOf('lg:flex lg:flex-nowrap')
+  if (idx === -1) idx = SRC.indexOf('hidden lg:block relative')
   expect(idx, 'desktop TabsList mount still exists').not.toBe(-1)
   // Grab the enclosing className attribute content (starts before the match).
   const start = SRC.lastIndexOf('className="', idx)
@@ -41,7 +49,8 @@ describe('Desktop tab strip left-alignment (CHK-128)', () => {
     // same-specificity utility on the instance can still lose the cascade. The
     // mount therefore carries an inline style — inline styles always win over
     // stylesheet rules, pinning flex-start regardless of CSS emission order.
-    const start = SRC.indexOf('hidden lg:flex lg:flex-nowrap')
+    let start = SRC.indexOf('hidden lg:flex lg:flex-nowrap')
+    if (start === -1) start = SRC.indexOf('hidden lg:block relative')
     const lineEnd = SRC.indexOf('\n', start)
     const line = SRC.slice(Math.max(0, SRC.lastIndexOf('TabsList', start)), lineEnd + 200)
     expect(line).toMatch(/style=\{\{ justifyContent: "flex-start" \}\}/)
@@ -49,7 +58,11 @@ describe('Desktop tab strip left-alignment (CHK-128)', () => {
 
   it('keeps the horizontal scroll container intact', () => {
     expect(cls).toContain('overflow-x-auto')
-    expect(cls).toContain('hidden lg:flex')
+    // CHK-132 (S277): the desktop-hide utility moved onto the cue-wrapper div
+    // holding the right-edge scroll fade; the scroller classes remain on the
+    // TabsList itself.
+    expect(SRC.indexOf('hidden lg:block relative')).toBeGreaterThan(-1)
+    expect(SRC.indexOf('lg:flex lg:flex-nowrap')).toBeGreaterThan(-1)
   })
 
   it('primitive still exists with justify-center (baseline — do not silently rewrite shared primitive)', () => {
@@ -58,9 +71,9 @@ describe('Desktop tab strip left-alignment (CHK-128)', () => {
 
   it('the desktop strip still maps the full registry (no tabs lost by the move)', () => {
     const count = (cls.match(/TAB_REGISTRY/g) || []).length
-    // The TabsList mount line is adjacent to the registry mapping; ensure the
-    // strip render is untouched in structure.
-    expect(SRC).toContain('<TabsList className="hidden lg:flex lg:flex-nowrap')
+    // CHK-132 (S277): mount marker moved to the cue wrapper; the strip still
+    // renders the full registry right after the TabsList open.
+    expect(SRC.indexOf('lg:flex lg:flex-nowrap')).toBeGreaterThan(-1)
     void count
   })
 })

@@ -104,7 +104,11 @@
 
   /* Cream darker */
   --muted: 40 18% 89%;
-  --muted-foreground: 145 15% 45%;
+  /* CHK-132 (S276): 145 15% 45% measured 4.26 contrast on the 95% background —
+      below the WCAG AA 4.5 floor for ordinary text. 40% lightness lands at
+      5.14 while keeping the muted sage character. Dark theme (10% 52%)
+      already passes at 5.30 and is unchanged. */
+  --muted-foreground: 145 15% 40%;
 
   /* Copper/Rose Gold */
   --accent: 17 44% 62%;
