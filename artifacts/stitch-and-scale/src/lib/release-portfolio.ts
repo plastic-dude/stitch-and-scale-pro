@@ -157,6 +157,11 @@ export interface BundleCandidate {
   /** Extra net per bundle vs selling separately at the discounted price
    *  the designer would otherwise leave on the table. */
   bundleNetExtra: number;
+  /** Best-platform net revenue from selling the bundle at bundlePrice. */
+  bundleNet: number;
+  /** Best-platform net revenue from selling the member patterns separately
+   *  (at their individual recommended prices, no bundle discount). */
+  separateNet: number;
   why: string;
 }
 
@@ -183,7 +188,15 @@ export function findBundles(
   let index = 0;
   const add = (group: PortfolioLine[], why: string) => {
     if (group.length < MIN_BUNDLE_SIZE) return;
-    const members = group.map(l => ({ projectId: l.projectId, name: l.name, price: l.pricing.recommendedPrice }));
+    // Qualify duplicate pattern names (same name on different projects) so a
+    // bundle never reads "Sweater + Sweater". e.g. "Classic Crew Neck Sweater x2".
+    const nameCounts = new Map<string, number>();
+    for (const l of group) nameCounts.set(l.name, (nameCounts.get(l.name) ?? 0) + 1);
+    const renderName = (l: { name: string }) => {
+      const count = nameCounts.get(l.name) ?? 1;
+      return count > 1 ? `${l.name} \u00d7${count}` : l.name;
+    };
+    const members = group.map(l => ({ projectId: l.projectId, name: renderName(l), price: l.pricing.recommendedPrice }));
     const sumOfParts = members.reduce((s, m) => s + m.price, 0);
     const bundlePrice = Math.round(sumOfParts * BUNDLE_DISCOUNT * 2) / 2;
     // Extra net unlocked: bundle vs each pattern selling individually at
@@ -196,15 +209,22 @@ export function findBundles(
       bundlePrice,
       sumOfParts,
       bundleNetExtra: Math.max(0, bundleNet - separateNet * BUNDLE_DISCOUNT),
+      bundleNet: Math.round(bundleNet * 100) / 100,
+      separateNet: Math.round(separateNet * 100) / 100,
       why,
     });
   };
 
-  byWeight.forEach((group, weight) => add(group, `Matching set in the same yarn weight (${weight}) — the classic hat + socks + mitts collection logic buyers reach for.`));
+  const weightGroupKeys = new Set<string>();
+  byWeight.forEach((group, weight) => {
+    add(group, `Matching set in the same yarn weight (${weight}) — pieces buyers reach for in one order.`);
+    weightGroupKeys.add([...group].map(l => l.projectId).sort().join('|'));
+  });
 
-  // Portfolio garment bundle: 2+ graded garments make a "wardrobe release" bundle.
+  // Portfolio garment bundle: 2+ graded garments make a "wardrobe release" bundle —
+  // but only when it isn't the same member set a yarn-weight group already covers.
   const garments = ready.filter(l => l.yarnWeightClass !== 'unknown');
-  if (garments.length >= 2) {
+  if (garments.length >= 2 && !weightGroupKeys.has([...garments].map(l => l.projectId).sort().join('|'))) {
     add(garments, 'Wardrobe release — launch multiple graded garments together and cross-sell at the bundle price.');
   }
 

@@ -147,7 +147,7 @@ export function TabNavigator({ activeTab, onTabChange, language, copy, className
                 ({ group, entries }) =>
                   entries.length > 0 && (
                     <div key={group}>
-                      <h3 className="px-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                      <h3 className="px-1 pt-2 first:pt-0 text-[11px] font-bold uppercase tracking-wide text-primary border-b border-border/60 mb-2 pb-1">
                         {TAB_GROUP_LABELS[group]} ({entries.length})
                       </h3>
                       <ul className="mt-1.5">

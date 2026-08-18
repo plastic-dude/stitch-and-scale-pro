@@ -297,4 +297,4 @@ export function sizeCountForProject(project: PatternProject): number {
   return ALL_SIZES.length; // CYC range XS–5XL = 10 sizes when garment grades are present
 }
 
-export const PRICING_MARKET_TARGET_LABELS = { standard: 'Standard band ($5–10)', premium: 'Premium band ($12–18)' } as const;
+export const PRICING_MARKET_TARGET_LABELS = { standard: 'Standard ($5–10)', premium: 'Premium ($12–18)' } as const;

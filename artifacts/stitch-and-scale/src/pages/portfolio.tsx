@@ -163,32 +163,32 @@ export default function PortfolioPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
-          <div className="flex flex-wrap gap-3">
-            <div className="flex-1 min-w-[9rem]">
+          <div className="grid grid-cols-2 gap-3">
+            <div className="min-w-0">
               <Label htmlFor="port-item" className="text-xs text-muted-foreground mb-1 block">{copy.itemType}</Label>
               <NativeSelect id="port-item" value={inputs.itemType}
                 onChange={(e) => setInputs((p) => ({ ...p, itemType: e.target.value }))}
-                className="h-9" data-testid="portfolio-item-type">
+                className="w-full h-9" data-testid="portfolio-item-type">
                 {ITEM_TYPE_LIST.map(t => (
                   <option key={t} value={t}>{ITEM_TYPE_LABELS[t]}</option>
                 ))}
               </NativeSelect>
             </div>
-            <div className="flex-1 min-w-[9rem]">
+            <div className="min-w-0">
               <Label htmlFor="port-skill" className="text-xs text-muted-foreground mb-1 block">{copy.skill}</Label>
               <NativeSelect id="port-skill" value={inputs.skillLevel}
                 onChange={(e) => setInputs((p) => ({ ...p, skillLevel: e.target.value }))}
-                className="h-9" data-testid="portfolio-skill">
+                className="w-full h-9" data-testid="portfolio-skill">
                 {SKILL_LEVEL_LIST.map(t => (
                   <option key={t} value={t}>{SKILL_LEVEL_LABELS[t]}</option>
                 ))}
               </NativeSelect>
             </div>
-            <div className="flex-1 min-w-[9rem]">
+            <div className="min-w-0">
               <Label htmlFor="port-target" className="text-xs text-muted-foreground mb-1 block">{copy.market}</Label>
               <NativeSelect id="port-target" value={inputs.marketTarget}
                 onChange={(e) => setInputs((p) => ({ ...p, marketTarget: e.target.value as 'standard' | 'premium' }))}
-                className="h-9" data-testid="portfolio-target">
+                className="w-full h-9" data-testid="portfolio-target">
                 {(Object.keys(PRICING_MARKET_TARGET_LABELS) as ('standard' | 'premium')[]).map(t => (
                   <option key={t} value={t}>{PRICING_MARKET_TARGET_LABELS[t]}</option>
                 ))}
@@ -289,7 +289,8 @@ export default function PortfolioPage() {
                   </div>
                   <div className="text-xs text-muted-foreground mt-2">{bundle.why}</div>
                   <div className="text-[11px] text-muted-foreground mt-1">
-                    {interpolate(copy.bundleNet, { platform: bestPlatform, amount: usd(bundle.bundleNetExtra) })}
+                    {interpolate(copy.bundleNetBundle, { platform: bestPlatform, amount: usd(bundle.bundleNet) })}{' '}
+                    {interpolate(copy.bundleNetSeparate, { amount: usd(bundle.separateNet) })}
                   </div>
                 </div>
               ))}
