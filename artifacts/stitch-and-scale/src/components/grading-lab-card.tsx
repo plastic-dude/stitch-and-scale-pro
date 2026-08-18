@@ -7,6 +7,7 @@ import { PatternProject } from '@/lib/grading-engine';
 import { useSettings } from '@/context/SettingsContext';
 import { getGradingCopy, getGradingFlagDetail } from '@/lib/grading-copy';
 import { analyzeGrading, EASE_BANDS, type LabResult } from '@/lib/grading-lab';
+import { validatePatternQuality } from '@/lib/pattern-quality';
 
 const fmtCm = (n: number) => `${n.toFixed(1)}cm`;
 
@@ -29,6 +30,9 @@ export function GradingLabCard({ project }: { project: PatternProject }) {
   const { language } = useSettings();
   const copy = getGradingCopy(language);
   const result = useMemo(() => analyzeGrading(project), [project]);
+  const quality = useMemo(() => validatePatternQuality(project), [project]);
+  const structuralFlags = quality.flags.filter((flag) => flag.source === 'structure');
+  const structuralErrors = structuralFlags.filter((flag) => flag.severity === 'error').length;
 
   return (
     <Card>
@@ -45,6 +49,34 @@ export function GradingLabCard({ project }: { project: PatternProject }) {
         <div className={`rounded-lg border p-4 ${verdictColor(result.verdict)}`}>
           <Badge className={`${verdictColor(result.verdict)} border uppercase`}>{copy.verdictLabels[result.verdict]}</Badge>
           <p className="text-sm mt-2">{result.verdict === 'blocked' ? (result.gradedSizeCount === 0 ? copy.verdictEmpty : copy.verdictBlocked(result.flags.filter(f => f.severity === 'error').length)) : result.verdict === 'review' ? copy.verdictReview(result.flags.filter(f => f.severity === 'warn').length) : copy.verdictReady(result.gradedSizeCount, result.freelanceCost.min, result.freelanceCost.max)}</p>
+        </div>
+
+        {/* Structural Pattern QA — a read-through beside grading, not a second grading engine */}
+        <div
+          className={`rounded-lg border p-3 ${structuralErrors > 0 ? 'border-destructive/30 bg-destructive/5' : structuralFlags.length > 0 ? 'border-amber-500/30 bg-amber-500/5' : 'border-emerald-500/30 bg-emerald-500/5'}`}
+          role={structuralErrors > 0 ? 'alert' : 'status'}
+          aria-live={structuralErrors > 0 ? 'assertive' : 'polite'}
+          data-testid="pattern-quality-summary"
+        >
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <div className="font-semibold text-sm">{copy.qualityTitle}</div>
+              <p className="text-xs text-muted-foreground mt-1">{copy.qualityDescription}</p>
+            </div>
+            <Badge variant="outline" className="shrink-0 text-[10px] uppercase">
+              {structuralFlags.length > 0 ? copy.qualityStructureIssues(structuralFlags.length) : copy.qualityStructureReady}
+            </Badge>
+          </div>
+          {structuralFlags.length > 0 && (
+            <div className="mt-2 flex flex-wrap gap-1.5" aria-label={copy.qualityStructureIssues(structuralFlags.length)}>
+              {structuralFlags.slice(0, 6).map((flag) => (
+                <Badge key={`${flag.code}-${flag.sectionId ?? ''}-${flag.measurementId ?? ''}`} variant="secondary" className="text-[10px]">
+                  {flag.code}
+                </Badge>
+              ))}
+              {structuralFlags.length > 6 && <span className="text-xs text-muted-foreground self-center">+{structuralFlags.length - 6}</span>}
+            </div>
+          )}
         </div>
 
         {/* KPI tiles */}

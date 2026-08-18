@@ -5,6 +5,7 @@ import { useSettings } from '@/context/SettingsContext';
 import { gradePattern, resolveProjectStandards } from '@/lib/grading-engine';
 import { THEMES, resolveTheme, type ThemeId } from '@/lib/pdf/themes';
 import { renderDocument } from '@/lib/pdf/renderer';
+import { validatePublicationPreflight } from '@/lib/publication-quality';
 import { openPrintWindow, getDefaultFilename, detectNamingStyle, applyNamingTemplate } from '@/lib/pdf/print-utils';
 import { compressImageToDataUrl } from '@/lib/image-utils';
 import { getPdfLabels } from '@/lib/pdf/labels';
@@ -42,7 +43,15 @@ function ThemeCard({
     <div
       role="radio"
       aria-checked={selected}
+      aria-label={theme.name}
+      tabIndex={selected ? 0 : -1}
       onClick={onSelect}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          onSelect();
+        }
+      }}
       className={cn(
         'relative cursor-pointer rounded-xl border-2 p-3 transition-all duration-200 group',
         selected
@@ -237,6 +246,20 @@ export default function ProjectPdf() {
     });
   }, [selectedTheme, accentColor, includeCover, includeGauge, includeNotes, customLogo, language, projectHook?.project, gradingResult]);
 
+  const preflight = useMemo(() => {
+    if (!projectHook?.project) return null;
+    return validatePublicationPreflight({
+      project: projectHook.project,
+      gradingResult,
+      locale: language,
+      templateId: selectedTheme,
+      customLogo,
+    });
+  }, [projectHook?.project, gradingResult, language, selectedTheme, customLogo]);
+
+  const blockingPreflightCount = preflight?.flags.filter((flag) => flag.severity === 'error').length ?? 0;
+  const reviewPreflightCount = preflight?.flags.filter((flag) => flag.severity === 'warn').length ?? 0;
+
   // Initialize filename from project + saved template
   useEffect(() => {
     if (!projectHook?.project || userEditedFilename) return;
@@ -263,7 +286,12 @@ export default function ProjectPdf() {
   }, []);
 
   const handleExport = useCallback(() => {
-    if (!previewHtml || !projectHook?.project) return;
+    if (!previewHtml || !projectHook?.project || !preflight?.readyToPrint) {
+      if (preflight && !preflight.readyToPrint) {
+        toast({ title: labels.preflightBlocked, description: labels.preflightBlockedDescription(blockingPreflightCount), variant: 'destructive' });
+      }
+      return;
+    }
     setIsExporting(true);
 
     const safeName = filename.trim() || getDefaultFilename(projectHook.project.name || 'Untitled Pattern');
@@ -292,7 +320,7 @@ export default function ProjectPdf() {
 
     // Reset exporting state after a moment
     setTimeout(() => setIsExporting(false), 1500);
-  }, [previewHtml, filename, selectedTheme, accentColor, includeCover, includeGauge, includeNotes, customLogo, pdfDefaults, setPdfDefaults, projectHook?.project]);
+  }, [previewHtml, preflight, blockingPreflightCount, filename, selectedTheme, accentColor, includeCover, includeGauge, includeNotes, customLogo, pdfDefaults, setPdfDefaults, projectHook?.project, toast, labels]);
 
   if (!projectHook) {
     return (
@@ -382,6 +410,7 @@ export default function ProjectPdf() {
                   variant="ghost"
                   size="icon"
                   className="h-8 min-h-11 w-8 shrink-0 text-muted-foreground hover:text-destructive"
+                  style={{ minWidth: 44 }}
                   onClick={() => setCustomLogo(undefined)}
                   aria-label={labels.removeLogo}
                   data-testid="button-remove-logo"
@@ -394,7 +423,7 @@ export default function ProjectPdf() {
                 type="button"
                 onClick={() => logoInputRef.current?.click()}
                 disabled={isProcessingLogo}
-                className="w-full flex items-center gap-3 rounded-xl border border-dashed border-border/60 p-3 text-left hover:border-primary/40 hover:bg-secondary/10 transition-colors disabled:opacity-70"
+                className="w-full min-h-11 flex items-center gap-3 rounded-xl border border-dashed border-border/60 p-3 text-left hover:border-primary/40 hover:bg-secondary/10 transition-colors disabled:opacity-70"
                 data-testid="button-upload-logo"
               >
                 <div className="w-10 h-10 rounded-md bg-muted/40 flex items-center justify-center shrink-0">
@@ -457,14 +486,42 @@ export default function ProjectPdf() {
                 : labels.namingRemembered}
             </p>
           </section>
+          <div
+            className={cn(
+              'rounded-lg border p-3 text-sm',
+              blockingPreflightCount > 0
+                ? 'border-destructive/30 bg-destructive/5'
+                : reviewPreflightCount > 0
+                  ? 'border-amber-500/30 bg-amber-500/5'
+                  : 'border-emerald-500/30 bg-emerald-500/5',
+            )}
+            role={blockingPreflightCount > 0 ? 'alert' : 'status'}
+            aria-live={blockingPreflightCount > 0 ? 'assertive' : 'polite'}
+            data-testid="publication-preflight"
+          >
+            <div className="font-medium">
+              {blockingPreflightCount > 0
+                ? labels.preflightBlocked
+                : reviewPreflightCount > 0
+                  ? labels.preflightReview
+                  : labels.preflightReady}
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              {blockingPreflightCount > 0
+                ? labels.preflightBlockedDescription(blockingPreflightCount)
+                : reviewPreflightCount > 0
+                  ? labels.preflightReviewDescription(reviewPreflightCount)
+                  : labels.preflightTitle}
+            </p>
+          </div>
         </div>
 
         {/* ── Export Button (sticky bottom) ── */}
         <div className="sticky bottom-0 bg-background border-t border-border/40 px-5 py-4">
           <Button
-            className="w-full gap-2 h-10 font-semibold"
+            className="w-full gap-2 h-11 min-h-11 font-semibold"
             onClick={handleExport}
-            disabled={isExporting || !previewHtml}
+            disabled={isExporting || !previewHtml || Boolean(preflight && !preflight.readyToPrint)}
           >
             {isExporting ? (
               <>
