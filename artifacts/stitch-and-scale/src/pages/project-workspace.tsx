@@ -582,7 +582,7 @@ export default function ProjectWorkspace() {
                       {expandedSection === section.id ? <ChevronDown className="w-5 h-5 text-muted-foreground" /> : <ChevronRight className="w-5 h-5 text-muted-foreground" />}
                       <h3 className="font-serif text-lg font-medium">{section.name}</h3>
                       <span className="text-xs bg-secondary/50 text-secondary-foreground px-2 py-0.5 rounded-full">
-                        {section.measurements.length} measurements
+                        {copy.measurementsChip(section.measurements.length)}
                       </span>
                     </div>
                     <AlertDialog>

@@ -85,8 +85,43 @@ describe('workspace copy — sections empty state & delete dialogs (CHK-139)', (
     }
   });
 
+  it('renders the measurements chip for all locales', () => {
+    for (const locale of locales) {
+      const chip = getWorkspaceCopy(locale).measurementsChip;
+      expect(chip(0).trim()).toBeTruthy();
+      expect(chip(1).trim()).toBeTruthy();
+      expect(chip(5).trim()).toBeTruthy();
+    }
+  });
+
+  it('keeps the measurements chip singular for exactly one measurement', () => {
+    const de = getWorkspaceCopy('de');
+    expect(de.measurementsChip(1)).toBe('1 Maß');
+    expect(de.measurementsChip(0)).toBe('0 Maße');
+    expect(de.measurementsChip(3)).toBe('3 Maße');
+    expect(getWorkspaceCopy('en').measurementsChip(1)).toBe('1 measurement');
+    expect(getWorkspaceCopy('en').measurementsChip(0)).toBe('0 measurements');
+    expect(getWorkspaceCopy('en').measurementsChip(4)).toBe('4 measurements');
+    expect(getWorkspaceCopy('fr').measurementsChip(1)).toBe('1 mesure');
+    expect(getWorkspaceCopy('fr').measurementsChip(2)).toBe('2 mesures');
+    expect(getWorkspaceCopy('es').measurementsChip(1)).toBe('1 medida');
+    expect(getWorkspaceCopy('es').measurementsChip(7)).toBe('7 medidas');
+    expect(getWorkspaceCopy('pt').measurementsChip(1)).toBe('1 medida');
+    expect(getWorkspaceCopy('pt').measurementsChip(7)).toBe('7 medidas');
+  });
+
+  it('has no English leftovers in the non-English measurements chip', () => {
+    for (const locale of locales) {
+      if (locale === 'en') continue;
+      expect(getWorkspaceCopy(locale).measurementsChip(0)).not.toContain('measurement');
+      expect(getWorkspaceCopy(locale).measurementsChip(1)).not.toContain('measurement');
+      expect(getWorkspaceCopy(locale).measurementsChip(4)).not.toContain('measurement');
+    }
+  });
+
   it('falls back to English for unknown codes', () => {
     expect(getWorkspaceCopy('xx' as never).emptySectionDesc).toBe(getWorkspaceCopy('en').emptySectionDesc);
     expect(getWorkspaceCopy('xx' as never).addFirstSection).toBe(getWorkspaceCopy('en').addFirstSection);
+    expect(getWorkspaceCopy('xx' as never).measurementsChip(3)).toBe(getWorkspaceCopy('en').measurementsChip(3));
   });
 });
