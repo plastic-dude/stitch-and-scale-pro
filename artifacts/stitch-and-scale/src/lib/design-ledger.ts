@@ -225,9 +225,18 @@ export function removeExpense(expenses: ExpenseEntry[], id: string): ExpenseEntr
  */
 function matchDesign(name: string, row: DesignLedgerSaleRow): string | null {
   const key = row.patternName.trim().toLowerCase();
+  const candidate = name.trim().toLowerCase();
+  if (!key || !candidate) return null;
+  return candidate.includes(key) || key.includes(candidate) ? name : null;
+}
+
+function findMatchingDesign(designs: DesignEntry[], row: DesignLedgerSaleRow): DesignEntry | null {
+  const key = row.patternName.trim().toLowerCase();
   if (!key) return null;
-  const candidate = name.toLowerCase();
-  return candidate.includes(key) || key.includes(candidate) || candidate === key ? name : null;
+  const exact = designs.filter((design) => design.name.trim().toLowerCase() === key);
+  if (exact.length === 1) return exact[0];
+  const partial = designs.filter((design) => matchDesign(design.name, row) !== null);
+  return partial.length === 1 ? partial[0] : null;
 }
 
 export function rollup(input: DesignLedgerInput): DesignLedgerRollup {
@@ -265,16 +274,12 @@ export function rollup(input: DesignLedgerInput): DesignLedgerRollup {
     if (s.kind === "quote") continue;
     const isRefund = s.kind === "refund";
     const eff = isRefund ? -1 : 1;
-    let attributed = false;
-    for (const d of designs) {
-      if (matchDesign(d.name, s)) {
-        const entry = byDesign.get(d.id)!;
-        entry.revenue += eff * s.grossTotal;
-        if (!isRefund) entry.sales += 1;
-        entry.profit += eff * (s.grossTotal - s.feesTotal);
-        attributed = true;
-        break;
-      }
+    const matchedDesign = findMatchingDesign(designs, s);
+    if (matchedDesign) {
+      const entry = byDesign.get(matchedDesign.id)!;
+      entry.revenue += eff * s.grossTotal;
+      if (!isRefund) entry.sales += 1;
+      entry.profit += eff * (s.grossTotal - s.feesTotal);
     }
     // monthly P&L sees every real sale, attributed or not.
     const m = s.date.slice(0, 7);
@@ -354,7 +359,7 @@ export function exportLedgerCsv(input: DesignLedgerInput, studioName: string): s
     lines.push(["expense", esc(d?.name ?? ""), e.date, esc(EXPENSE_CATEGORY_LABELS[e.category]), esc(e.description), String(twoDec(e.amount)), esc(e.currency)].join(","));
   }
   for (const s of input.sales) {
-    const d = input.designs.find((x) => matchDesign(x.name, s));
+    const d = findMatchingDesign(input.designs, s);
     lines.push(["sale", esc(s.kind === "refund" ? "REFUND " + (d?.name ?? s.patternName) : (d?.name ?? s.patternName)), s.date, esc(s.kind), "", String(twoDec(s.grossTotal)), ""].join(","));
   }
   const header = studioName ? "# " + studioName + " — design ledger export" : "# design ledger export";

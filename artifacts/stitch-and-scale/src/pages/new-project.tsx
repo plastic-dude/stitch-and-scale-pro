@@ -302,7 +302,7 @@ export default function NewProjectWizard() {
             <Button 
               onClick={handleNext} 
               disabled={step === 1 && (!name.trim() || !author.trim())} 
-              className="font-medium px-8 rounded-full shadow-sm"
+              className="font-medium px-8 rounded-full shadow-sm min-h-11"
               data-testid="button-next"
             >
               {t('workflow.newProject.next')} <ChevronRight className="w-4 h-4 ml-1.5" />

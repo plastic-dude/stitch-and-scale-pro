@@ -165,7 +165,7 @@ export default function Dashboard() {
           <button 
             onClick={dismissWarning}
             aria-label={copy.dismiss}
-            className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors p-1"
+            className="absolute top-2 right-2 min-h-11 min-w-11 flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
           >
             <X className="w-4 h-4" />
           </button>

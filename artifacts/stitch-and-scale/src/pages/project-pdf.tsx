@@ -5,9 +5,11 @@ import { useSettings } from '@/context/SettingsContext';
 import { gradePattern, resolveProjectStandards } from '@/lib/grading-engine';
 import { THEMES, resolveTheme, type ThemeId } from '@/lib/pdf/themes';
 import { renderDocument } from '@/lib/pdf/renderer';
+import { validatePublicationPreflight } from '@/lib/publication-quality';
 import { openPrintWindow, getDefaultFilename, detectNamingStyle, applyNamingTemplate } from '@/lib/pdf/print-utils';
 import { compressImageToDataUrl } from '@/lib/image-utils';
 import { getPdfLabels } from '@/lib/pdf/labels';
+import { getPdfThemeCopy } from '@/lib/pdf/theme-copy';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -27,8 +29,10 @@ function ThemeCard({
   onSelect,
   onAccentChange,
   labels,
+  themeCopy,
 }: {
   labels: ReturnType<typeof getPdfLabels>;
+  themeCopy: ReturnType<typeof getPdfThemeCopy>;
   theme: typeof THEMES[0];
   selected: boolean;
   accentColor: string;
@@ -42,7 +46,15 @@ function ThemeCard({
     <div
       role="radio"
       aria-checked={selected}
+      aria-label={themeCopy.name}
+      tabIndex={selected ? 0 : -1}
       onClick={onSelect}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          onSelect();
+        }
+      }}
       className={cn(
         'relative cursor-pointer rounded-xl border-2 p-3 transition-all duration-200 group',
         selected
@@ -120,7 +132,7 @@ function ThemeCard({
           <button
             type="button"
             title={labels.changeAccent}
-            className="ml-auto flex items-center gap-1 text-[10px] text-muted-foreground hover:text-foreground transition-colors"
+            className="ml-auto min-h-11 min-w-11 flex items-center justify-center gap-1 text-[10px] text-muted-foreground hover:text-foreground transition-colors"
             onClick={e => { e.stopPropagation(); colorInputRef.current?.click(); }}
           >
             <div style={{ width: 14, height: 14, borderRadius: '50%', background: displayAccent, border: '1.5px solid rgba(0,0,0,0.15)', cursor: 'pointer' }} />
@@ -138,15 +150,15 @@ function ThemeCard({
       </div>
 
       {/* Name + tagline */}
-      <div className="text-[11px] font-semibold text-foreground leading-tight">{theme.name}</div>
-      <div className="text-[10px] text-muted-foreground mt-0.5 leading-tight line-clamp-2">{theme.description}</div>
+      <div className="text-[11px] font-semibold text-foreground leading-tight">{themeCopy.name}</div>
+      <div className="text-[10px] text-muted-foreground mt-0.5 leading-tight line-clamp-2">{themeCopy.description}</div>
     </div>
   );
 }
 
 // ─── First-Time Tip ───────────────────────────────────────────────────────────
 
-function FirstTimeTip({ onDismiss }: { onDismiss: () => void }) {
+function FirstTimeTip({ onDismiss, labels }: { onDismiss: () => void; labels: ReturnType<typeof getPdfLabels> }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: -4 }}
@@ -156,9 +168,9 @@ function FirstTimeTip({ onDismiss }: { onDismiss: () => void }) {
     >
       <Info className="w-3.5 h-3.5 shrink-0 mt-0.5 text-primary" />
       <span className="flex-1">
-        The filename is a suggestion — you can rename it before every export, and your preferred naming style will be remembered.
+          {labels.namingTip}
       </span>
-      <button type="button" onClick={onDismiss} className="text-muted-foreground/60 hover:text-muted-foreground ml-1">
+      <button type="button" onClick={onDismiss} className="ml-1 min-h-11 min-w-11 inline-flex items-center justify-center text-muted-foreground/60 hover:text-muted-foreground">
         <X className="w-3.5 h-3.5" />
       </button>
     </motion.div>
@@ -194,7 +206,7 @@ export default function ProjectPdf() {
     setIsProcessingLogo(false);
 
     if (error || !dataUrl) {
-      toast({ title: 'Could not use this image', description: error ?? 'Unknown error.', variant: 'destructive' });
+      toast({ title: labels.imageErrorTitle, description: error ?? labels.imageErrorFallback, variant: 'destructive' });
       return;
     }
     setCustomLogo(dataUrl);
@@ -237,6 +249,21 @@ export default function ProjectPdf() {
     });
   }, [selectedTheme, accentColor, includeCover, includeGauge, includeNotes, customLogo, language, projectHook?.project, gradingResult]);
 
+  const preflight = useMemo(() => {
+    if (!projectHook?.project) return null;
+    return validatePublicationPreflight({
+      project: projectHook.project,
+      gradingResult,
+      locale: language,
+      templateId: selectedTheme,
+      customLogo,
+      liveCustomStandard: customStandard,
+    });
+  }, [projectHook?.project, gradingResult, language, selectedTheme, customLogo, customStandard]);
+
+  const blockingPreflightCount = preflight?.flags.filter((flag) => flag.severity === 'error').length ?? 0;
+  const reviewPreflightCount = preflight?.flags.filter((flag) => flag.severity === 'warn').length ?? 0;
+
   // Initialize filename from project + saved template
   useEffect(() => {
     if (!projectHook?.project || userEditedFilename) return;
@@ -263,7 +290,12 @@ export default function ProjectPdf() {
   }, []);
 
   const handleExport = useCallback(() => {
-    if (!previewHtml || !projectHook?.project) return;
+    if (!previewHtml || !projectHook?.project || !preflight?.readyToPrint) {
+      if (preflight && !preflight.readyToPrint) {
+        toast({ title: labels.preflightBlocked, description: labels.preflightBlockedDescription(blockingPreflightCount), variant: 'destructive' });
+      }
+      return;
+    }
     setIsExporting(true);
 
     const safeName = filename.trim() || getDefaultFilename(projectHook.project.name || 'Untitled Pattern');
@@ -292,7 +324,7 @@ export default function ProjectPdf() {
 
     // Reset exporting state after a moment
     setTimeout(() => setIsExporting(false), 1500);
-  }, [previewHtml, filename, selectedTheme, accentColor, includeCover, includeGauge, includeNotes, customLogo, pdfDefaults, setPdfDefaults, projectHook?.project]);
+  }, [previewHtml, preflight, blockingPreflightCount, filename, selectedTheme, accentColor, includeCover, includeGauge, includeNotes, customLogo, pdfDefaults, setPdfDefaults, projectHook?.project, toast, labels]);
 
   if (!projectHook) {
     return (
@@ -326,8 +358,38 @@ export default function ProjectPdf() {
 
           {/* First-time tip */}
           <AnimatePresence>
-            {showTip && <FirstTimeTip onDismiss={handleDismissTip} />}
+            {showTip && <FirstTimeTip onDismiss={handleDismissTip} labels={labels} />}
           </AnimatePresence>
+
+          {/* ── Publication preflight ── */}
+          <div
+            className={cn(
+              'rounded-lg border p-3 text-sm',
+              blockingPreflightCount > 0
+                ? 'border-destructive/30 bg-destructive/5'
+                : reviewPreflightCount > 0
+                  ? 'border-amber-500/30 bg-amber-500/5'
+                  : 'border-emerald-500/30 bg-emerald-500/5',
+            )}
+            role={blockingPreflightCount > 0 ? 'alert' : 'status'}
+            aria-live={blockingPreflightCount > 0 ? 'assertive' : 'polite'}
+            data-testid="publication-preflight"
+          >
+            <div className="font-medium">
+              {blockingPreflightCount > 0
+                ? labels.preflightBlocked
+                : reviewPreflightCount > 0
+                  ? labels.preflightReview
+                  : labels.preflightReady}
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              {blockingPreflightCount > 0
+                ? labels.preflightBlockedDescription(blockingPreflightCount)
+                : reviewPreflightCount > 0
+                  ? labels.preflightReviewDescription(reviewPreflightCount)
+                  : labels.preflightReadyDescription}
+            </p>
+          </div>
 
           {/* ── Template Picker ── */}
           <section>
@@ -337,6 +399,7 @@ export default function ProjectPdf() {
                 <ThemeCard
                   key={theme.id}
                   theme={theme}
+                  themeCopy={getPdfThemeCopy(language, theme.id)}
                   selected={selectedTheme === theme.id}
                   accentColor={accentColor}
                   onSelect={() => handleThemeSelect(theme.id)}
@@ -382,6 +445,7 @@ export default function ProjectPdf() {
                   variant="ghost"
                   size="icon"
                   className="h-8 min-h-11 w-8 shrink-0 text-muted-foreground hover:text-destructive"
+                  style={{ minWidth: 44 }}
                   onClick={() => setCustomLogo(undefined)}
                   aria-label={labels.removeLogo}
                   data-testid="button-remove-logo"
@@ -394,7 +458,7 @@ export default function ProjectPdf() {
                 type="button"
                 onClick={() => logoInputRef.current?.click()}
                 disabled={isProcessingLogo}
-                className="w-full flex items-center gap-3 rounded-xl border border-dashed border-border/60 p-3 text-left hover:border-primary/40 hover:bg-secondary/10 transition-colors disabled:opacity-70"
+                className="w-full min-h-11 flex items-center gap-3 rounded-xl border border-dashed border-border/60 p-3 text-left hover:border-primary/40 hover:bg-secondary/10 transition-colors disabled:opacity-70"
                 data-testid="button-upload-logo"
               >
                 <div className="w-10 h-10 rounded-md bg-muted/40 flex items-center justify-center shrink-0">
@@ -417,7 +481,7 @@ export default function ProjectPdf() {
               {[
                 { label: labels.coverPage, value: includeCover, set: setIncludeCover, id: 'cover' },
                 { label: labels.gaugeSummary, value: includeGauge, set: setIncludeGauge, id: 'gauge' },
-                { label: 'Pattern Notes', value: includeNotes, set: setIncludeNotes, id: 'notes', disabled: !project.description },
+                { label: labels.patternNotes, value: includeNotes, set: setIncludeNotes, id: 'notes', disabled: !project.description },
               ].map(({ label, value, set, id, disabled }) => (
                 <div key={id} className="flex items-center justify-between">
                   <Label htmlFor={`opt-${id}`} className={cn("text-sm cursor-pointer", disabled && "text-muted-foreground")}>
@@ -446,7 +510,7 @@ export default function ProjectPdf() {
                 value={filename}
                 onChange={e => handleFilenameChange(e.target.value)}
                 placeholder={labels.filenamePlaceholder}
-                className="flex-1 text-sm h-9"
+                className="flex-1 text-sm h-11 min-h-11"
                 aria-label={labels.exportFilename}
               />
               <span className="text-xs text-muted-foreground shrink-0">.pdf</span>
@@ -462,9 +526,9 @@ export default function ProjectPdf() {
         {/* ── Export Button (sticky bottom) ── */}
         <div className="sticky bottom-0 bg-background border-t border-border/40 px-5 py-4">
           <Button
-            className="w-full gap-2 h-10 font-semibold"
+            className="w-full gap-2 h-11 min-h-11 font-semibold"
             onClick={handleExport}
-            disabled={isExporting || !previewHtml}
+            disabled={isExporting || !previewHtml || Boolean(preflight && !preflight.readyToPrint)}
           >
             {isExporting ? (
               <>

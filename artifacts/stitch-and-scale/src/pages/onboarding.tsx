@@ -444,6 +444,20 @@ export default function OnboardingOverlay() {
   // rerouted to Draft a Pattern and losing the link entirely.
   const [entryRoute] = useState(() => location);
 
+  // Keep the overlay as the sole scroll owner. Without this lock, the app shell
+  // remains scrollable underneath the fixed dialog and Chromium shows two
+  // competing scrollbars on compact phones and in landscape.
+  useEffect(() => {
+    const previousBodyOverflow = document.body.style.overflow;
+    const previousDocumentOverflow = document.documentElement.style.overflow;
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = previousBodyOverflow;
+      document.documentElement.style.overflow = previousDocumentOverflow;
+    };
+  }, []);
+
   const [step, setStep] = useState(1);
   const stepKey: 'workflow.overlay.begin' | 'workflow.overlay.continue' = step === 1 ? 'workflow.overlay.begin' : 'workflow.overlay.continue';
   const [localUnit, setLocalUnit] = useState<'in' | 'cm'>(unit);
@@ -567,7 +581,7 @@ export default function OnboardingOverlay() {
       {step === 1 && <InstallBanner trigger="onboarding" />}
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto px-4 sm:px-8 py-10 flex items-start justify-center">
+      <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-4 sm:px-8 pt-6 sm:pt-10 pb-[calc(6rem+env(safe-area-inset-bottom))] flex items-start justify-center">
         <div className="w-full max-w-xl">
           <AnimatePresence mode="wait" custom={direction}>
             <motion.div
@@ -600,7 +614,7 @@ export default function OnboardingOverlay() {
 
       {/* Footer nav — hidden on steps that have their own CTAs */}
       {step !== 6 && step !== 7 && (
-        <div className="px-6 py-4 border-t border-border/30 flex items-center justify-between bg-background/80">
+        <div className="shrink-0 px-6 pt-3 pb-[calc(1rem+env(safe-area-inset-bottom))] border-t border-border/30 flex items-center justify-between bg-background/95">
           <Button
             variant="ghost"
             size="sm"

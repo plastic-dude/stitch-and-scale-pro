@@ -105,6 +105,15 @@ interface ReceiptStoredState {
   ts?: number;
 }
 
+function loadReceiptStored(project: PatternProject): ReceiptStoredState {
+  try {
+    const handle = projectStorage<ReceiptStoredState>("receipt", project.id, [`stitch-and-scale-receipt-${project.id}`]);
+    return handle.read() ?? {};
+  } catch {
+    return {};
+  }
+}
+
 function receiptSaleRows(receiptStored: ReceiptStoredState, currency: string): DesignLedgerSaleRow[] {
   const ledger = receiptStored.ledger ?? [];
   return ledger
@@ -137,14 +146,7 @@ export function DesignLedgerCard(props: { project: PatternProject }) {
     [project.id],
   );
   const [state, setState] = useState<StoredState>(() => loadStored(project));
-  const [receiptStored, setReceiptStored] = useState<ReceiptStoredState>(() => {
-    try {
-      const r = localStorage.getItem(`stitch-and-scale-receipt-${project.id}`);
-      return r ? (JSON.parse(r) as ReceiptStoredState) : {};
-    } catch {
-      return {};
-    }
-  });
+  const [receiptStored, setReceiptStored] = useState<ReceiptStoredState>(() => loadReceiptStored(project));
   const [designName, setDesignName] = useState("");
   const [designNotes, setDesignNotes] = useState("");
   const [expDesign, setExpDesign] = useState("");
@@ -319,6 +321,7 @@ export function DesignLedgerCard(props: { project: PatternProject }) {
                 />
                 <Button
                   size="sm"
+                  className="min-h-11"
                   onClick={() => {
                     if (!designName.trim()) {
                       toast({ title: copy.nameRequired, description: copy.nameRequiredDescription });
@@ -417,10 +420,11 @@ export function DesignLedgerCard(props: { project: PatternProject }) {
                   <Label htmlFor="dl-cost-date">{copy.date}</Label>
                   <Input id="dl-cost-date" type="date" value={expDate} onChange={(e) => setExpDate(e.target.value)} />
                 </div>
-                <Button
-                  size="sm"
-                  onClick={() => {
-                    const amount = parseFloat(expAmount);
+                  <Button
+                    size="sm"
+                    className="min-h-11"
+                    onClick={() => {
+                      const amount = parseFloat(expAmount);
                     if (!(amount > 0)) {
                       toast({ title: copy.amountRequired, description: copy.amountRequiredDescription });
                       return;
@@ -476,7 +480,7 @@ export function DesignLedgerCard(props: { project: PatternProject }) {
                           <td className="py-1.5">
                             <button
                               aria-label={copy.removeCost}
-                              className="text-muted-foreground hover:text-destructive"
+                              className="min-h-11 min-w-11 inline-flex items-center justify-center text-muted-foreground hover:text-destructive"
                               onClick={() => persist({ ...state, expenses: removeExpense(state.expenses, e.id) })}
                             >
                               <Trash2 className="h-3.5 w-3.5" />
@@ -495,10 +499,10 @@ export function DesignLedgerCard(props: { project: PatternProject }) {
                 {copy.exportDescription}
               </p>
               <div className="flex flex-wrap gap-2">
-                <Button size="sm" variant="secondary" onClick={exportCsv}>
+                <Button size="sm" variant="secondary" className="min-h-11" onClick={exportCsv}>
                   <FileSpreadsheet className="h-4 w-4 mr-1" /> {copy.downloadCsv}
                 </Button>
-                <Button size="sm" variant="secondary" onClick={copySummary}>
+                <Button size="sm" variant="secondary" className="min-h-11" onClick={copySummary}>
                   <Copy className="h-4 w-4 mr-1" /> {copy.copySummary}
                 </Button>
               </div>
@@ -564,7 +568,7 @@ function DesignRow(props: {
         )}
         <button
           aria-label={copy.removeDesign}
-          className="ml-auto text-muted-foreground hover:text-destructive"
+          className="ml-auto min-h-11 min-w-11 inline-flex items-center justify-center text-muted-foreground hover:text-destructive"
           onClick={onRemove}
         >
           <Trash2 className="h-3.5 w-3.5" />
@@ -582,7 +586,7 @@ function DesignRow(props: {
           onBlur={commitNotes}
         />
         {!noteSet && notes !== design.notes && (
-          <Button size="sm" variant="ghost" onClick={commitNotes}>
+          <Button size="sm" variant="ghost" className="min-h-11" onClick={commitNotes}>
             {copy.saveNotes}
           </Button>
         )}
@@ -616,12 +620,12 @@ function BreakEvenPanel(props: {
           placeholder={copy.pricePerCopy}
           value={props.price}
           onChange={(e) => props.onPrice(e.target.value)}
-          className="max-w-[200px]"
+          className="max-w-[200px] min-h-11"
         />
         <span className="text-sm text-muted-foreground">
           {be.reachable
-            ? `You need ${be.copies} sale${be.copies === 1 ? "" : "s"} at this price to cover every cost in this ledger.`
-            : "Set a price first — the ledger is waiting."}
+            ? copy.breakEvenNeed.replace('{copies}', String(be.copies))
+            : copy.breakEvenSetPrice}
         </span>
       </div>
     </div>
