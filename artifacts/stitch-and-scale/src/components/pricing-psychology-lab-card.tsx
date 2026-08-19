@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
+import { useSettings } from '@/context/SettingsContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -6,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { AlertTriangle, Flag, Tag, Layers, Lightbulb } from 'lucide-react';
 import { PatternProject } from '@/lib/grading-engine';
+import { PRICING_PSYCHOLOGY_COPY } from '@/lib/pricing-psychology-copy';
 import { projectStorage } from '@/lib/storage-lib';
 import {
   analyzePricingPsychology,
@@ -100,6 +102,8 @@ const verdictColor = (v: string) =>
 export function PricingPsychologyLabCard({ project }: { project: PatternProject }) {
   const handle = useMemo(() => projectStorage<StoredState>('price-psych', project.id, [STORAGE_KEY]), [project.id]);
   const [input, setInput] = useState<PricingPsychologyInput>(() => loadStored(handle));
+  const { language } = useSettings();
+  const copyText = PRICING_PSYCHOLOGY_COPY[language];
   const [tiersRaw, setTiersRaw] = useState<string>(() => tiersToString(loadStored(handle).shopTiers));
 
   useEffect(() => {
@@ -139,10 +143,10 @@ export function PricingPsychologyLabCard({ project }: { project: PatternProject 
                 onChange={e => set('patternName', e.target.value)}
                 className="text-sm" />
             </div>
-            <NumField id="pp-current" label="Current price" value={input.currentPrice} onChange={n => set('currentPrice', Math.max(0.5, n))} min={0.5} step={0.01} suffix="$" />
-            <NumField id="pp-candidate" label="Candidate price" value={input.candidatePrice} onChange={n => set('candidatePrice', Math.max(0.5, n))} min={0.5} step={0.01} suffix="$" />
-            <NumField id="pp-units" label="Units sold / month" value={input.unitsPerMonth} onChange={n => set('unitsPerMonth', Math.max(0, n))} min={0} suffix="units/mo" />
-            <NumField id="pp-take" label="Marketplace take rate" value={input.platformTakeRate * 100} onChange={n => set('platformTakeRate', Math.max(0, Math.min(1, n / 100)))} min={0} max={100} step={1} suffix="%" />
+            <NumField id="pp-current" label={copyText.currentPrice} value={input.currentPrice} onChange={n => set('currentPrice', Math.max(0.5, n))} min={0.5} step={0.01} suffix="$" />
+            <NumField id="pp-candidate" label={copyText.candidatePrice} value={input.candidatePrice} onChange={n => set('candidatePrice', Math.max(0.5, n))} min={0.5} step={0.01} suffix="$" />
+            <NumField id="pp-units" label={copyText.unitsSoldMonth} value={input.unitsPerMonth} onChange={n => set('unitsPerMonth', Math.max(0, n))} min={0} suffix="units/mo" />
+            <NumField id="pp-take" label={copyText.marketplaceTakeRate} value={input.platformTakeRate * 100} onChange={n => set('platformTakeRate', Math.max(0, Math.min(1, n / 100)))} min={0} max={100} step={1} suffix="%" />
             <div className="space-y-1.5">
               <Label htmlFor="pp-position" className="text-xs">Design positioning</Label>
               <select
@@ -181,11 +185,11 @@ export function PricingPsychologyLabCard({ project }: { project: PatternProject 
         <section className="space-y-3">
           <h3 className="text-sm font-semibold flex items-center gap-1.5"><Layers className="size-4" />Bundle endings (optional)</h3>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            <NumField id="pp-component" label="Component price (0 = no bundle)" value={input.componentPrice} onChange={n => set('componentPrice', Math.max(0, n))} step={0.01} suffix="$" />
-            <NumField id="pp-btotal" label="Bundle candidate total" value={input.bundleCandidateTotal} onChange={n => set('bundleCandidateTotal', Math.max(0, n))} step={0.01} suffix="$" />
-            <NumField id="pp-bsize" label="Patterns in bundle" value={input.bundleSize} onChange={n => set('bundleSize', Math.max(0, Math.min(12, n)))} min={0} max={12} suffix="pcs" />
-            <NumField id="pp-bunits" label="Bundle units / month" value={input.bundleUnitsPerMonth} onChange={n => set('bundleUnitsPerMonth', Math.max(0, n))} min={0} suffix="units/mo" />
-            <NumField id="pp-cunits" label="Component units / month each" value={input.componentUnitsPerMonth} onChange={n => set('componentUnitsPerMonth', Math.max(0, n))} min={0} suffix="units/mo" />
+            <NumField id="pp-component" label={copyText.componentPrice0No} value={input.componentPrice} onChange={n => set('componentPrice', Math.max(0, n))} step={0.01} suffix="$" />
+            <NumField id="pp-btotal" label={copyText.bundleCandidateTotal} value={input.bundleCandidateTotal} onChange={n => set('bundleCandidateTotal', Math.max(0, n))} step={0.01} suffix="$" />
+            <NumField id="pp-bsize" label={copyText.patternsInBundle} value={input.bundleSize} onChange={n => set('bundleSize', Math.max(0, Math.min(12, n)))} min={0} max={12} suffix="pcs" />
+            <NumField id="pp-bunits" label={copyText.bundleUnitsMonth} value={input.bundleUnitsPerMonth} onChange={n => set('bundleUnitsPerMonth', Math.max(0, n))} min={0} suffix="units/mo" />
+            <NumField id="pp-cunits" label={copyText.componentUnitsMonthEach} value={input.componentUnitsPerMonth} onChange={n => set('componentUnitsPerMonth', Math.max(0, n))} min={0} suffix="units/mo" />
           </div>
         </section>
 

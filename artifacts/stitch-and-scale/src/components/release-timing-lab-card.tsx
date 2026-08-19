@@ -1,10 +1,12 @@
 import { useMemo, useState, useEffect } from 'react';
+import { useSettings } from '@/context/SettingsContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { AlertTriangle, CalendarDays, Flag, Lightbulb, TrendingUp } from 'lucide-react';
 import { PatternProject } from '@/lib/grading-engine';
+import { RELEASE_TIMING_COPY } from '@/lib/release-timing-copy';
 import { projectStorage } from '@/lib/storage-lib';
 import {
   analyzeReleaseTiming,
@@ -95,6 +97,8 @@ const categoryOptions = Object.entries(CATEGORY_AFFINITY).map(([k, v]) => ({ val
 export function ReleaseTimingLabCard({ project }: { project: PatternProject }) {
   const handle = useMemo(() => projectStorage<StoredState>('release-timing', project.id, [STORAGE_KEY]), [project.id]);
   const [input, setInput] = useState<ReleaseTimingInput>(() => loadStored(handle));
+  const { language } = useSettings();
+  const copyText = RELEASE_TIMING_COPY[language];
 
   useEffect(() => {
     setInput(loadStored(handle));
@@ -123,16 +127,16 @@ export function ReleaseTimingLabCard({ project }: { project: PatternProject }) {
           <h3 className="text-sm font-semibold flex items-center gap-1.5"><TrendingUp className="size-4" />Design & calendar</h3>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
             <SelectField id="rt-month" label="Earliest launch (this month)" value={String(input.currentMonth)} options={MONTH_NAMES.map((n, i) => ({ value: String(i), label: n }))} onChange={v => set('currentMonth', parseInt(v, 10))} />
-            <NumField id="rt-lead" label="Design lead time" value={input.designLeadMonths} onChange={n => set('designLeadMonths', Math.max(0, n))} suffix="mo" />
+            <NumField id="rt-lead" label={copyText.designLeadTime} value={input.designLeadMonths} onChange={n => set('designLeadMonths', Math.max(0, n))} suffix="mo" />
             <SelectField id="rt-cat" label="Design category" value={input.categoryKey} options={categoryOptions} onChange={v => set('categoryKey', v)} />
-            <NumField id="rt-price" label="Pattern price" value={input.price} onChange={n => set('price', n)} min={0.5} step={0.5} suffix="$" />
-            <NumField id="rt-base" label="Baseline sales / month (flat season)" value={input.baseMonthlySales} onChange={n => set('baseMonthlySales', n)} min={0} />
+            <NumField id="rt-price" label={copyText.patternPrice} value={input.price} onChange={n => set('price', n)} min={0.5} step={0.5} suffix="$" />
+            <NumField id="rt-base" label={copyText.baselineSalesMonthFlat} value={input.baseMonthlySales} onChange={n => set('baseMonthlySales', n)} min={0} />
           </div>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            <NumField id="rt-sunk" label="Hours sunk so far" value={input.sunkHours} onChange={n => set('sunkHours', Math.max(0, n))} />
+            <NumField id="rt-sunk" label={copyText.hoursSunkSoFar} value={input.sunkHours} onChange={n => set('sunkHours', Math.max(0, n))} />
             <NumField id="rt-rate" label="Opportunity rate" value={input.hourlyRate} onChange={n => set('hourlyRate', n)} suffix="$/hr" />
-            <NumField id="rt-comp" label="Competing-drop exposure (0-1)" value={input.competingDropExposure} onChange={n => set('competingDropExposure', Math.min(1, Math.max(0, n)))} min={0} max={1} step={0.05} />
-            <NumField id="rt-horizon" label="Look-ahead horizon" value={input.horizonMonths} onChange={n => set('horizonMonths', Math.min(12, Math.max(1, n)))} min={1} max={12} suffix="mo" />
+            <NumField id="rt-comp" label={copyText.competingDropExposure01} value={input.competingDropExposure} onChange={n => set('competingDropExposure', Math.min(1, Math.max(0, n)))} min={0} max={1} step={0.05} />
+            <NumField id="rt-horizon" label={copyText.lookAheadHorizon} value={input.horizonMonths} onChange={n => set('horizonMonths', Math.min(12, Math.max(1, n)))} min={1} max={12} suffix="mo" />
           </div>
           <p className="text-xs text-muted-foreground italic">Season rhythm: fall minds shift in August, the holiday push (Oct–Dec) peaks at roughly +40% demand, spring surges again in Jan–Mar, and Jun–Aug is the lull (−15–25%). Designers plan backward — a holiday sweater should be live by September, which means it needs 3–4 months of lead time minimum.</p>
         </section>
@@ -140,10 +144,10 @@ export function ReleaseTimingLabCard({ project }: { project: PatternProject }) {
         <section className="space-y-3">
           <h3 className="text-sm font-semibold flex items-center gap-1.5"><CalendarDays className="size-4" />Launch promo mechanics</h3>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
-            <NumField id="rt-disc" label="Launch discount" value={input.promo.discountShare * 100} onChange={n => setPromo('discountShare', Math.min(1, Math.max(0, n / 100)))} min={0} max={100} step={1} suffix="%" />
-            <NumField id="rt-days" label="Discount duration" value={input.promo.discountDays} onChange={n => setPromo('discountDays', Math.max(1, n))} suffix="days" />
-            <NumField id="rt-wkend" label="Weekend coverage" value={input.promo.weekendShare * 100} onChange={n => setPromo('weekendShare', Math.min(1, Math.max(0, n / 100)))} min={0} max={100} step={5} suffix="%" />
-            <NumField id="rt-lift" label="Expected volume lift" value={input.promo.volumeLift} onChange={n => setPromo('volumeLift', Math.max(0.5, n))} step={0.05} suffix="×" />
+            <NumField id="rt-disc" label={copyText.launchDiscount} value={input.promo.discountShare * 100} onChange={n => setPromo('discountShare', Math.min(1, Math.max(0, n / 100)))} min={0} max={100} step={1} suffix="%" />
+            <NumField id="rt-days" label={copyText.discountDuration} value={input.promo.discountDays} onChange={n => setPromo('discountDays', Math.max(1, n))} suffix="days" />
+            <NumField id="rt-wkend" label={copyText.weekendCoverage} value={input.promo.weekendShare * 100} onChange={n => setPromo('weekendShare', Math.min(1, Math.max(0, n / 100)))} min={0} max={100} step={5} suffix="%" />
+            <NumField id="rt-lift" label={copyText.expectedVolumeLift} value={input.promo.volumeLift} onChange={n => setPromo('volumeLift', Math.max(0.5, n))} step={0.05} suffix="×" />
             <div className="flex items-end">
               <p className="text-xs text-muted-foreground leading-4">Consensus: ≤15% off, ≤1 week, and always include a weekend — discounts farm queue momentum, not launch-week profit.</p>
             </div>

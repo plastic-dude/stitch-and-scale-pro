@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
+import { useSettings } from '@/context/SettingsContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -6,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { AlertTriangle, Flag, Layers, Lightbulb, Minus, Plus, Radio } from 'lucide-react';
 import { PatternProject } from '@/lib/grading-engine';
+import { PODCAST_AFFILIATE_COPY } from '@/lib/podcast-affiliate-copy';
 import { projectStorage } from '@/lib/storage-lib';
 import {
   analyzePodcastAffiliate,
@@ -91,6 +93,8 @@ function programLaneTone(net: number): 'good' | 'bad' {
 export function PodcastAffiliateLabCard({ project }: { project: PatternProject }) {
   const handle = useMemo(() => projectStorage<StoredState>('podcast-affiliate', project.id, [STORAGE_KEY]), [project.id]);
   const [input, setInput] = useState<PodcastInput>(() => loadStored(handle));
+  const { language } = useSettings();
+  const copyText = PODCAST_AFFILIATE_COPY[language];
 
   useEffect(() => {
     setInput(loadStored(handle));
@@ -125,30 +129,30 @@ export function PodcastAffiliateLabCard({ project }: { project: PatternProject }
         <section className="space-y-3">
           <h3 className="text-sm font-semibold flex items-center gap-1.5"><Layers className="size-4" />Your show & audience</h3>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            <NumField id="pa-downloads" label="Downloads per episode" value={input.downloadsPerEpisode} onChange={n => set('downloadsPerEpisode', Math.max(0, n))} min={0} />
-            <NumField id="pa-eps" label="Episodes per month" value={input.episodesPerMonth} onChange={n => set('episodesPerMonth', Math.max(1, Math.min(30, n)))} min={1} max={30} />
-            <NumField id="pa-hours" label="Production hours per episode" value={input.productionHoursPerEpisode} onChange={n => set('productionHoursPerEpisode', Math.max(0.5, n))} min={0.5} step={0.5} suffix="hrs" />
+            <NumField id="pa-downloads" label={copyText.downloadsPerEpisode} value={input.downloadsPerEpisode} onChange={n => set('downloadsPerEpisode', Math.max(0, n))} min={0} />
+            <NumField id="pa-eps" label={copyText.episodesPerMonth} value={input.episodesPerMonth} onChange={n => set('episodesPerMonth', Math.max(1, Math.min(30, n)))} min={1} max={30} />
+            <NumField id="pa-hours" label={copyText.productionHoursPerEpisode} value={input.productionHoursPerEpisode} onChange={n => set('productionHoursPerEpisode', Math.max(0.5, n))} min={0.5} step={0.5} suffix="hrs" />
             <NumField id="pa-rate" label="Opportunity rate" value={input.hourlyRate} onChange={n => set('hourlyRate', Math.max(1, n))} suffix="$/hr" />
-            <NumField id="pa-setup" label="One-off setup costs (mic, software)" value={input.setupCosts} onChange={n => set('setupCosts', Math.max(0, n))} suffix="$" />
-            <NumField id="pa-monthly" label="Recurring monthly costs (hosting, editing)" value={input.monthlyCosts} onChange={n => set('monthlyCosts', Math.max(0, n))} suffix="$/mo" />
+            <NumField id="pa-setup" label={copyText.oneOffSetupCostsMic} value={input.setupCosts} onChange={n => set('setupCosts', Math.max(0, n))} suffix="$" />
+            <NumField id="pa-monthly" label={copyText.recurringMonthlyCostsHosting} value={input.monthlyCosts} onChange={n => set('monthlyCosts', Math.max(0, n))} suffix="$/mo" />
           </div>
         </section>
 
         <section className="space-y-3">
           <h3 className="text-sm font-semibold flex items-center gap-1.5"><Radio className="size-4" />CPM sponsorship lane</h3>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            <NumField id="pa-cpm" label="Your quoted CPM" value={input.cpmRate} onChange={n => set('cpmRate', Math.max(0, n))} suffix="$/1,000 listens" />
-            <NumField id="pa-slots" label="Ad slots per episode" value={input.adSlotsPerEpisode} onChange={n => set('adSlotsPerEpisode', Math.max(0, Math.min(4, n)))} min={0} max={4} />
-            <NumField id="pa-network" label="Network / marketplace cut" value={input.networkCut * 100} onChange={n => set('networkCut', Math.max(0, Math.min(1, n / 100)))} min={0} max={100} step={5} suffix="%" />
-            <NumField id="pa-fill" label="Fill rate (share of episodes sold)" value={input.fillRate * 100} onChange={n => set('fillRate', Math.max(0, Math.min(1, n / 100)))} min={0} max={100} step={5} suffix="%" />
+            <NumField id="pa-cpm" label={copyText.yourQuotedCpm} value={input.cpmRate} onChange={n => set('cpmRate', Math.max(0, n))} suffix="$/1,000 listens" />
+            <NumField id="pa-slots" label={copyText.adSlotsPerEpisode} value={input.adSlotsPerEpisode} onChange={n => set('adSlotsPerEpisode', Math.max(0, Math.min(4, n)))} min={0} max={4} />
+            <NumField id="pa-network" label={copyText.networkMarketplaceCut} value={input.networkCut * 100} onChange={n => set('networkCut', Math.max(0, Math.min(1, n / 100)))} min={0} max={100} step={5} suffix="%" />
+            <NumField id="pa-fill" label={copyText.fillRateShareOf} value={input.fillRate * 100} onChange={n => set('fillRate', Math.max(0, Math.min(1, n / 100)))} min={0} max={100} step={5} suffix="%" />
           </div>
         </section>
 
         <section className="space-y-3">
           <h3 className="text-sm font-semibold flex items-center gap-1.5"><Radio className="size-4" />Flat-fee reads lane</h3>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            <NumField id="pa-flat" label="Flat fee per read" value={input.flatFeePerRead} onChange={n => set('flatFeePerRead', Math.max(0, n))} suffix="$" />
-            <NumField id="pa-reads" label="Sponsored reads per month" value={input.readsPerMonth} onChange={n => set('readsPerMonth', Math.max(0, Math.min(12, n)))} min={0} max={12} />
+            <NumField id="pa-flat" label={copyText.flatFeePerRead} value={input.flatFeePerRead} onChange={n => set('flatFeePerRead', Math.max(0, n))} suffix="$" />
+            <NumField id="pa-reads" label={copyText.sponsoredReadsPerMonth} value={input.readsPerMonth} onChange={n => set('readsPerMonth', Math.max(0, Math.min(12, n)))} min={0} max={12} />
           </div>
         </section>
 
@@ -163,11 +167,11 @@ export function PodcastAffiliateLabCard({ project }: { project: PatternProject }
                     onChange={e => setProgram(i, { name: e.target.value })}
                     className="text-sm" placeholder="e.g. LoveCrafts (15%)" />
                 </div>
-                <NumField id={`pa-com-${i}`} label="Commission" value={p.commission * 100} onChange={n => setProgram(i, { commission: Math.max(0, Math.min(1, n / 100)) })} min={0} max={100} step={1} suffix="%" />
-                <NumField id={`pa-clicks-${i}`} label="Clicks per episode" value={p.clicksPerEpisode} onChange={n => setProgram(i, { clicksPerEpisode: Math.max(0, n) })} min={0} />
-                <NumField id={`pa-conv-${i}`} label="Conversion" value={p.conversionRate * 100} onChange={n => setProgram(i, { conversionRate: Math.max(0, Math.min(1, n / 100)) })} min={0} max={100} step={0.5} suffix="%" />
-                <NumField id={`pa-aov-${i}`} label="Avg order value" value={p.aov} onChange={n => setProgram(i, { aov: Math.max(0, n) })} suffix="$" />
-                <NumField id={`pa-cut-${i}`} label="Platform cut" value={p.platformCut * 100} onChange={n => setProgram(i, { platformCut: Math.max(0, Math.min(1, n / 100)) })} min={0} max={100} step={5} suffix="%" />
+                <NumField id={`pa-com-${i}`} label={copyText.commission} value={p.commission * 100} onChange={n => setProgram(i, { commission: Math.max(0, Math.min(1, n / 100)) })} min={0} max={100} step={1} suffix="%" />
+                <NumField id={`pa-clicks-${i}`} label={copyText.clicksPerEpisode} value={p.clicksPerEpisode} onChange={n => setProgram(i, { clicksPerEpisode: Math.max(0, n) })} min={0} />
+                <NumField id={`pa-conv-${i}`} label={copyText.conversion} value={p.conversionRate * 100} onChange={n => setProgram(i, { conversionRate: Math.max(0, Math.min(1, n / 100)) })} min={0} max={100} step={0.5} suffix="%" />
+                <NumField id={`pa-aov-${i}`} label={copyText.avgOrderValue} value={p.aov} onChange={n => setProgram(i, { aov: Math.max(0, n) })} suffix="$" />
+                <NumField id={`pa-cut-${i}`} label={copyText.platformCut} value={p.platformCut * 100} onChange={n => setProgram(i, { platformCut: Math.max(0, Math.min(1, n / 100)) })} min={0} max={100} step={5} suffix="%" />
                 {input.programs.length > 1 ? (
                   <Button type="button" variant="ghost" size="icon" className="mb-0.5 h-9 w-9" onClick={() => removeProgram(i)} aria-label={`Remove program ${i + 1}`}>
                     <Minus className="size-4" />

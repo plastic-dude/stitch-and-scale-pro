@@ -1,10 +1,12 @@
 import { useMemo, useState, useEffect } from 'react';
+import { useSettings } from '@/context/SettingsContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { AlertTriangle, Flag, BookOpen, Layers, Lightbulb } from 'lucide-react';
 import { PatternProject } from '@/lib/grading-engine';
+import { POD_PATTERNS_COPY } from '@/lib/pod-patterns-copy';
 import { projectStorage } from '@/lib/storage-lib';
 import {
   analyzePODPatterns,
@@ -84,6 +86,8 @@ const verdictColor = (v: string) =>
 export function PodPatternsLabCard({ project }: { project: PatternProject }) {
   const handle = useMemo(() => projectStorage<StoredState>('pod-patterns', project.id, [STORAGE_KEY]), [project.id]);
   const [input, setInput] = useState<PodPatternsInput>(() => loadStored(handle));
+  const { language } = useSettings();
+  const copyText = POD_PATTERNS_COPY[language];
 
   useEffect(() => {
     setInput(loadStored(handle));
@@ -107,9 +111,9 @@ export function PodPatternsLabCard({ project }: { project: PatternProject }) {
         <section className="space-y-3">
           <h3 className="text-sm font-semibold flex items-center gap-1.5"><Layers className="size-4" />The physical spec</h3>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            <NumField id="pod-pages" label="Total pages" value={input.pageCount} onChange={n => set('pageCount', Math.max(1, Math.min(828, n)))} min={1} max={828} suffix="pg" />
-            <NumField id="pod-colorpages" label="Color pages" value={input.colorPages} onChange={n => set('colorPages', Math.max(0, Math.min(n, input.pageCount)))} min={0} suffix="pg" />
-            <NumField id="pod-list" label="List price" value={input.listPrice} onChange={n => set('listPrice', Math.max(0.5, n))} min={0.5} step={0.5} suffix="$" />
+            <NumField id="pod-pages" label={copyText.totalPages} value={input.pageCount} onChange={n => set('pageCount', Math.max(1, Math.min(828, n)))} min={1} max={828} suffix="pg" />
+            <NumField id="pod-colorpages" label={copyText.colorPages} value={input.colorPages} onChange={n => set('colorPages', Math.max(0, Math.min(n, input.pageCount)))} min={0} suffix="pg" />
+            <NumField id="pod-list" label={copyText.listPrice} value={input.listPrice} onChange={n => set('listPrice', Math.max(0.5, n))} min={0.5} step={0.5} suffix="$" />
             <div className="space-y-1.5">
               <Label htmlFor="pod-platform" className="text-xs">Channel</Label>
               <select
@@ -138,13 +142,13 @@ export function PodPatternsLabCard({ project }: { project: PatternProject }) {
         <section className="space-y-3">
           <h3 className="text-sm font-semibold flex items-center gap-1.5"><Layers className="size-4" />Production & sales expectations</h3>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            <NumField id="pod-cover" label="Cover/layout cost (0 = sunk)" value={input.coverLayoutCost} onChange={n => set('coverLayoutCost', Math.max(0, n))} suffix="$" />
-            <NumField id="pod-prodhrs" label="Cover/layout hours" value={input.productionHours} onChange={n => set('productionHours', Math.max(0.5, n))} min={0.5} step={0.5} suffix="hrs" />
-            <NumField id="pod-physunits" label="Expected physical units/mo" value={input.expectedUnitsPerMonth} onChange={n => set('expectedUnitsPerMonth', Math.max(0, n))} min={0} suffix="units/mo" />
-            <NumField id="pod-digunits" label="Current digital units/mo" value={input.digitalUnitsPerMonth} onChange={n => set('digitalUnitsPerMonth', Math.max(0, n))} min={0} suffix="units/mo" />
-            <NumField id="pod-digprice" label="Digital PDF price" value={input.digitalPdfPrice} onChange={n => set('digitalPdfPrice', Math.max(0.5, n))} min={0.5} step={0.5} suffix="$" />
-            <NumField id="pod-cannibal" label="Cannibal share" value={input.cannibalShare} onChange={n => set('cannibalShare', Math.max(0, Math.min(1, n)))} step={0.05} suffix="%" />
-            <NumField id="pod-rate" label="Opportunity rate" value={input.hourlyRate} onChange={n => set('hourlyRate', Math.max(1, n))} suffix="$/hr" />
+            <NumField id="pod-cover" label={copyText.coverLayoutCost0} value={input.coverLayoutCost} onChange={n => set('coverLayoutCost', Math.max(0, n))} suffix="$" />
+            <NumField id="pod-prodhrs" label={copyText.coverLayoutHours} value={input.productionHours} onChange={n => set('productionHours', Math.max(0.5, n))} min={0.5} step={0.5} suffix="hrs" />
+            <NumField id="pod-physunits" label={copyText.expectedPhysicalUnitsMo} value={input.expectedUnitsPerMonth} onChange={n => set('expectedUnitsPerMonth', Math.max(0, n))} min={0} suffix="units/mo" />
+            <NumField id="pod-digunits" label={copyText.currentDigitalUnitsMo} value={input.digitalUnitsPerMonth} onChange={n => set('digitalUnitsPerMonth', Math.max(0, n))} min={0} suffix="units/mo" />
+            <NumField id="pod-digprice" label={copyText.digitalPdfPrice} value={input.digitalPdfPrice} onChange={n => set('digitalPdfPrice', Math.max(0.5, n))} min={0.5} step={0.5} suffix="$" />
+            <NumField id="pod-cannibal" label={copyText.cannibalShare} value={input.cannibalShare} onChange={n => set('cannibalShare', Math.max(0, Math.min(1, n)))} step={0.05} suffix="%" />
+            <NumField id="pod-rate" label={copyText.opportunityRate} value={input.hourlyRate} onChange={n => set('hourlyRate', Math.max(1, n))} suffix="$/hr" />
           </div>
         </section>
 

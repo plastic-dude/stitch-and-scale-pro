@@ -1,4 +1,6 @@
+import { TESTKNIT_SLOT_COPY } from '@/lib/testknit-slot-copy';
 import { useMemo, useState } from "react";
+import { useSettings } from '@/context/SettingsContext';
 import { AlertTriangle, BadgeCheck, BadgeX, HelpCircle, Info, Lightbulb, RefreshCw } from "lucide-react";
 import {
   analyzeTestKnit,
@@ -128,6 +130,8 @@ function StatBox(props: { label: string; value: string; tone?: "good" | "warn" |
 
 export function TestKnitSlotLabCard({ project }: { project: PatternProject }) {
   const [input, setInput] = useState<TestKnitInput>(() => loadStored(project));
+  const { language } = useSettings();
+  const copyText = TESTKNIT_SLOT_COPY[language];
 
   const result: TestKnitResult = useMemo(() => analyzeTestKnit(input), [input]);
 
@@ -183,109 +187,109 @@ export function TestKnitSlotLabCard({ project }: { project: PatternProject }) {
 
           <div className="grid gap-4 sm:grid-cols-3">
             <NumField
-              label="Pattern yardage"
+              label={copyText.patternYardage}
               value={input.patternYardage}
               step={50}
-              hint="Total yardage across one finished garment — feed from the yarn estimator."
+              hint={copyText.totalYardageAcrossOne}
               suffix="yd"
               onChange={(v) => set("patternYardage", v)}
             />
             <NumField
-              label="Graded sizes"
+              label={copyText.gradedSizes}
               value={input.sizeCount}
               step={1}
               min={1}
               max={40}
-              hint="Sizes this pattern ships in — each needs at least one verified slot."
+              hint={copyText.sizesThisPatternShips}
               onChange={(v) => set("sizeCount", Math.round(v))}
             />
             <NumField
-              label="Tester slots per size"
+              label={copyText.testerSlotsPerSize}
               value={input.slotsPerSize}
               step={1}
               min={1}
               max={6}
-              hint="Testers recruited per size — 1-2 is the indie norm."
+              hint={copyText.testersRecruitedPerSize}
               onChange={(v) => set("slotsPerSize", Math.round(v))}
             />
             <NumField
-              label="Test duration"
+              label={copyText.testDuration}
               value={input.testWeeks}
               step={1}
               min={1}
               max={52}
-              hint="Garment tests run 8-12 weeks; ~1 week per 200 yd is the tester norm."
+              hint={copyText.garmentTestsRun812}
               suffix="wk"
               onChange={(v) => set("testWeeks", Math.round(v))}
             />
             <NumField
-              label="Share of slots to pay"
+              label={copyText.shareOfSlotsTo}
               value={input.paidSlotShare * 100}
               step={5}
               max={100}
               suffix="%"
-              hint="Which share of the roster gets compensated — 20-30% on launch-critical sizes is the sweet spot."
+              hint={copyText.whichShareOfThe}
               onChange={(v) => set("paidSlotShare", Math.min(1, v / 100))}
             />
             <NumField
-              label="Flat cash fee per tester"
+              label={copyText.flatCashFeePer}
               value={input.flatFeeUsd}
               step={5}
               prefix="$"
-              hint="Paid benchmarks cluster £35-70/pattern (~$40-90) with 1-2 testers."
+              hint={copyText.paidBenchmarksCluster3570}
               onChange={(v) => set("flatFeeUsd", v)}
             />
             <NumField
-              label="Per-yard sample rate"
+              label={copyText.perYardSampleRate}
               value={input.perYardRateUsd}
               step={0.01}
               prefix="$"
               suffix="/yd"
-              hint="Fair sample-knit range $0.15-0.30/yd; TenDyke quotes $0.12 knit / $0.10 crochet."
+              hint={copyText.fairSampleKnitRangeDollar0}
               onChange={(v) => set("perYardRateUsd", v)}
             />
             <NumField
-              label="Yarn cost per skein"
+              label={copyText.yarnCostPerSkein}
               value={input.yarnCostPerSkein}
               step={1}
               prefix="$"
               suffix="/skein"
-              hint="Retail price of the yarn this pattern uses."
+              hint={copyText.retailPriceOfThe}
               onChange={(v) => set("yarnCostPerSkein", v)}
             />
             <NumField
-              label="Yards per skein"
+              label={copyText.yardsPerSkein}
               value={input.yardsPerSkein}
               step={25}
               suffix="yd"
-              hint="Skein size — used to price yarn-support slots in whole skeins."
+              hint={copyText.skeinSizeUsedTo}
               onChange={(v) => set("yardsPerSkein", v)}
             />
             <NumField
-              label="Partial support discount"
+              label={copyText.partialSupportDiscount}
               value={input.partialSupportDiscount * 100}
               step={5}
               max={100}
               suffix="%"
-              hint="Wholesale discount for partial yarn support — 30% off retail is typical."
+              hint={copyText.wholesaleDiscountForPartial}
               onChange={(v) => set("partialSupportDiscount", Math.min(1, v / 100))}
             />
             <NumField
-              label="Free-pool ghost rate"
+              label={copyText.freePoolGhostRate}
               value={input.ghostRate * 100}
               step={1}
               max={100}
               suffix="%"
-              hint="Share of unpaid slots that never finish — 15-25% is the documented norm."
+              hint={copyText.shareOfUnpaidSlots}
               onChange={(v) => set("ghostRate", Math.min(1, v / 100))}
             />
             <NumField
-              label="Paid-slot retention"
+              label={copyText.paidSlotRetention}
               value={input.paidRetention * 100}
               step={1}
               max={100}
               suffix="%"
-              hint="Share of paid slots that finish — typically 90-98%."
+              hint={copyText.shareOfPaidSlots}
               onChange={(v) => set("paidRetention", Math.min(1, v / 100))}
             />
           </div>
@@ -294,11 +298,11 @@ export function TestKnitSlotLabCard({ project }: { project: PatternProject }) {
 
           <div className="grid gap-4 sm:grid-cols-3">
             <NumField
-              label="Management hours per week"
+              label={copyText.managementHoursPerWeek}
               value={input.designerMgmtHoursPerWeek}
               step={0.5}
               suffix="hr"
-              hint="Check-ins, fitting Q&A, feedback collection — ~1-2h/week is the norm."
+              hint={copyText.checkInsFittingQA}
               onChange={(v) => set("designerMgmtHoursPerWeek", v)}
             />
             <NumField
@@ -306,24 +310,24 @@ export function TestKnitSlotLabCard({ project }: { project: PatternProject }) {
               value={input.designerHourlyRate}
               step={5}
               prefix="$"
-              hint="What your design time is worth — the test program spends this."
+              hint={copyText.whatYourDesignTime}
               onChange={(v) => set("designerHourlyRate", v)}
             />
             <NumField
-              label="Launch revenue baseline"
+              label={copyText.launchRevenueBaseline}
               value={input.launchRevenueBaseline}
               step={50}
               prefix="$"
-              hint="Expected launch-period pattern sales without the paid tier's extra proof."
+              hint={copyText.expectedLaunchPeriodPatternSales}
               onChange={(v) => set("launchRevenueBaseline", v)}
             />
             <NumField
-              label="Social-proof lift from tester FOs"
+              label={copyText.socialProofLiftFromTester}
               value={input.socialProofLiftPct}
               step={1}
               max={50}
               suffix="%"
-              hint="Revenue lift tester photos + launch reviews add — typically 5-15%."
+              hint={copyText.revenueLiftTesterPhotos}
               onChange={(v) => set("socialProofLiftPct", Math.min(50, v))}
             />
             <NumField
@@ -331,11 +335,11 @@ export function TestKnitSlotLabCard({ project }: { project: PatternProject }) {
               value={input.launchPrice}
               step={1}
               prefix="$"
-              hint="Retail price per copy — drives the extra-pattern copy model and skein math."
+              hint={copyText.retailPricePerCopy}
               onChange={(v) => set("launchPrice", v)}
             />
             <NumField
-              label="Platform take"
+              label={copyText.platformTake}
               value={input.platformFeePct}
               step={0.5}
               max={30}
@@ -344,21 +348,21 @@ export function TestKnitSlotLabCard({ project }: { project: PatternProject }) {
               onChange={(v) => set("platformFeePct", v)}
             />
             <NumField
-              label="Tech-edit quality score"
+              label={copyText.techEditQualityScore}
               value={input.techEditScore}
               step={5}
               min={0}
               max={100}
               suffix="/100"
-              hint="From the Tech Edit audit — drives how much the test can catch."
+              hint={copyText.fromTheTechEdit}
               onChange={(v) => set("techEditScore", Math.round(v))}
             />
             <NumField
-              label="Value of one caught error"
+              label={copyText.valueOfOneCaught}
               value={input.errorCatchValueUsd}
               step={10}
               prefix="$"
-              hint="Support/reputation cost a pre-launch error would have caused."
+              hint={copyText.supportReputationCostA}
               onChange={(v) => set("errorCatchValueUsd", v)}
             />
           </div>
@@ -398,7 +402,7 @@ export function TestKnitSlotLabCard({ project }: { project: PatternProject }) {
           label="Size coverage (free)"
           value={`${Math.round(result.baseFreeRow.sizeCoverage * 100)}%`}
           tone={result.baseFreeRow.sizeCoverage >= 0.9 ? "good" : "warn"}
-          hint="Share of sizes with ≥1 reliable slot"
+          hint={copyText.shareOfSizesWith}
         />
         <StatBox
           label="Errors caught"

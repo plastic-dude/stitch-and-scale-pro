@@ -204,7 +204,7 @@ export function IntlPricingLabCard({ project }: { project: PatternProject }) {
               value={input.platformFeePct}
               step={0.5}
               suffix="%"
-              hint="Ravelry 5%, Etsy 6.5%, LoveCrafts 15%, Gumroad/Payhip 10%."
+              hint={copyText['ravelry5%Etsy6']}
               onChange={(v) => set("platformFeePct", v)}
             />
             <div className="space-y-1.5">
@@ -237,7 +237,7 @@ export function IntlPricingLabCard({ project }: { project: PatternProject }) {
               value={input.abuseRate}
               step={0.5}
               suffix="%"
-              hint="Discount on parity revenue from coupon-abuse in weak-PPP markets."
+              hint={copyText['discountOnParityRevenue']}
               onChange={(v) => set("abuseRate", v)}
             />
           </div>

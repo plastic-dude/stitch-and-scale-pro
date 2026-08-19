@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useSettings } from '@/context/SettingsContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { AlertTriangle, Flag, Handshake, Layers, Lightbulb, Package } from 'lucide-react';
 import { PatternProject } from '@/lib/grading-engine';
+import { YARN_LICENSING_COPY } from '@/lib/yarn-licensing-copy';
 import { projectStorage } from '@/lib/storage-lib';
 import {
   analyzeYarnLicensing,
@@ -91,6 +93,8 @@ const verdictColor = (v: string) =>
 export function YarnLicensingLabCard({ project }: { project: PatternProject }) {
   const handle = useMemo(() => projectStorage<StoredState>('yarn-licensing', project.id, [STORAGE_KEY]), [project.id]);
   const [input, setInput] = useState<YarnLicensingInput>(() => loadStored(handle));
+  const { language } = useSettings();
+  const copyText = YARN_LICENSING_COPY[language];
 
   useEffect(() => {
     setInput(loadStored(handle));
@@ -142,14 +146,14 @@ export function YarnLicensingLabCard({ project }: { project: PatternProject }) {
                 ))}
               </select>
             </div>
-            <NumField id="yl-flat" label="Flat fee (0 = none)" value={input.flatFee} onChange={n => set('flatFee', Math.max(0, n))} suffix="$" />
-            <NumField id="yl-royalty" label="Royalty %" value={input.royaltyPct} onChange={n => set('royaltyPct', Math.max(0, Math.min(100, n)))} step={0.5} suffix="%" />
-            <NumField id="yl-units" label="Brand sales / month" value={input.expectedUnitsPerMonth} onChange={n => set('expectedUnitsPerMonth', Math.max(0, n))} min={0} suffix="units/mo" />
-            <NumField id="yl-price" label="Brand unit price" value={input.unitPrice} onChange={n => set('unitPrice', Math.max(0, n))} step={0.5} suffix="$" />
-            <NumField id="yl-term" label="Term (0 = perpetual)" value={input.termMonths} onChange={n => set('termMonths', Math.max(0, n))} min={0} suffix="mo" />
-            <NumField id="yl-excl" label="Exclusivity months" value={input.exclusivityMonths} onChange={n => set('exclusivityMonths', Math.max(0, Math.min(n, input.termMonths || 120)))} min={0} suffix="mo" />
-            <NumField id="yl-yarn" label="Free yarn / goods value" value={input.yarnGoodsValue} onChange={n => set('yarnGoodsValue', Math.max(0, n))} suffix="$" />
-            <NumField id="yl-services" label="Brand-paid services (tech edit, photo, layout)" value={input.brandPaidServices} onChange={n => set('brandPaidServices', Math.max(0, n))} suffix="$" />
+            <NumField id="yl-flat" label={copyText.flatFee0None} value={input.flatFee} onChange={n => set('flatFee', Math.max(0, n))} suffix="$" />
+            <NumField id="yl-royalty" label={copyText.royaltyPct} value={input.royaltyPct} onChange={n => set('royaltyPct', Math.max(0, Math.min(100, n)))} step={0.5} suffix="%" />
+            <NumField id="yl-units" label={copyText.brandSalesMonth} value={input.expectedUnitsPerMonth} onChange={n => set('expectedUnitsPerMonth', Math.max(0, n))} min={0} suffix="units/mo" />
+            <NumField id="yl-price" label={copyText.brandUnitPrice} value={input.unitPrice} onChange={n => set('unitPrice', Math.max(0, n))} step={0.5} suffix="$" />
+            <NumField id="yl-term" label={copyText.term0Perpetual} value={input.termMonths} onChange={n => set('termMonths', Math.max(0, n))} min={0} suffix="mo" />
+            <NumField id="yl-excl" label={copyText.exclusivityMonths} value={input.exclusivityMonths} onChange={n => set('exclusivityMonths', Math.max(0, Math.min(n, input.termMonths || 120)))} min={0} suffix="mo" />
+            <NumField id="yl-yarn" label={copyText.freeYarnGoodsValue} value={input.yarnGoodsValue} onChange={n => set('yarnGoodsValue', Math.max(0, n))} suffix="$" />
+            <NumField id="yl-services" label={copyText.brandPaidServicesTechEdit} value={input.brandPaidServices} onChange={n => set('brandPaidServices', Math.max(0, n))} suffix="$" />
             <div className="flex flex-col justify-end gap-3 pb-1">
               <label className="flex items-center gap-2 text-xs">
                 <input type="checkbox" checked={input.attribution} onChange={e => set('attribution', e.target.checked)} />
@@ -166,9 +170,9 @@ export function YarnLicensingLabCard({ project }: { project: PatternProject }) {
         <section className="space-y-3">
           <h3 className="text-sm font-semibold flex items-center gap-1.5"><Layers className="size-4" />Your costs &amp; baseline</h3>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            <NumField id="yl-hours" label="Your design + sample hours" value={input.designHours} onChange={n => set('designHours', Math.max(1, n))} min={1} step={0.5} suffix="hrs" />
+            <NumField id="yl-hours" label={copyText.yourDesignSampleHours} value={input.designHours} onChange={n => set('designHours', Math.max(1, n))} min={1} step={0.5} suffix="hrs" />
             <NumField id="yl-rate" label="Your hourly rate" value={input.hourlyRate} onChange={n => set('hourlyRate', Math.max(1, n))} min={1} suffix="$/hr" />
-            <NumField id="yl-baseline" label="Self-publish baseline / month (from this design)" value={input.ownMonthlyRevenue} onChange={n => set('ownMonthlyRevenue', Math.max(0, n))} min={0} suffix="$" />
+            <NumField id="yl-baseline" label={copyText.selfPublishBaselineMonthFrom} value={input.ownMonthlyRevenue} onChange={n => set('ownMonthlyRevenue', Math.max(0, n))} min={0} suffix="$" />
           </div>
         </section>
 

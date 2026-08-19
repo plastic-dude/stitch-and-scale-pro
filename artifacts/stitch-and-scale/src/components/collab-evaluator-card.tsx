@@ -140,17 +140,17 @@ export function CollabEvaluatorCard({ project }: { project: PatternProject }) {
             </div>
             <NumField id="ce-offered" label={copyText.offered} value={input.offeredValue}
               onChange={(v) => patchInput({ offeredValue: v })} step={25}
-              hint="The cash offer, or the lump sum for the license." />
+              hint={copyText['theCashOfferOr']} />
             <NumField id="ce-hours" label={copyText.hours} value={input.requiredHours}
-              onChange={(v) => patchInput({ requiredHours: v })} hint="Design + grading + sampling + tech doc." />
+              onChange={(v) => patchInput({ requiredHours: v })} hint={copyText['designGradingSamplingTech']} />
             <NumField id="ce-rate" label={copyText.rate} value={input.hourlyRate}
-              onChange={(v) => patchInput({ hourlyRate: v })} hint="From your income math." />
+              onChange={(v) => patchInput({ hourlyRate: v })} hint={copyText['fromYourIncomeMath']} />
             <NumField id="ce-sample" label={copyText.sample} value={input.sampleCost}
-              onChange={(v) => patchInput({ sampleCost: v })} hint="Yarn + swatching + photos if not provided." />
+              onChange={(v) => patchInput({ sampleCost: v })} hint={copyText['yarnSwatchingPhotosIf']} />
             <NumField id="ce-posts" label={copyText.posts} value={input.postingRequirements}
-              onChange={(v) => patchInput({ postingRequirements: v })} hint="Each demanded post is ~1.5h at your rate." />
+              onChange={(v) => patchInput({ postingRequirements: v })} hint={copyText['eachDemandedPostIs']} />
             <NumField id="ce-excl" label={copyText.exclusivity} value={input.exclusivityMonths}
-              onChange={(v) => patchInput({ exclusivityMonths: v })} hint="What your own channel loses while locked out." />
+              onChange={(v) => patchInput({ exclusivityMonths: v })} hint={copyText['whatYourOwnChannel']} />
             <div className="flex items-center gap-2 pt-6">
               <Checkbox id="ce-yarn" checked={input.yarnProvided}
                 onCheckedChange={(v) => patchInput({ yarnProvided: v === true })} />
@@ -174,7 +174,7 @@ export function CollabEvaluatorCard({ project }: { project: PatternProject }) {
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
               <NumField id="ce-royaltypct" label={copyText.royalty} value={input.royaltyPct * 100}
                 onChange={(v) => patchInput({ royaltyPct: Math.min(Math.max(v, 0) / 100, 1) })} step={5}
-                hint="30% of net is the cited precedent (Making Stories)." />
+                hint={copyText['30%OfNetIs']} />
               <div className="space-y-1.5">
                 <Label className="text-xs">{copyText.royaltyBase}</Label>
                 <Select value={input.royaltyBase}
@@ -218,10 +218,10 @@ export function CollabEvaluatorCard({ project }: { project: PatternProject }) {
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             <NumField id="ce-ownsales" label={copyText.ownSales} value={input.ownMonthlySales}
               onChange={(v) => patchInput({ ownMonthlySales: v })} step={5}
-              hint="Sales through your channel — what exclusivity locks out." />
+              hint={copyText['salesThroughYourChannel']} />
             <NumField id="ce-followers" label={copyText.followers} value={input.brandFollowers}
               onChange={(v) => patchInput({ brandFollowers: v })} step={1000}
-              hint="The ceiling of the 'reach' claim — 0.5% conversion cap." />
+              hint={copyText['theCeilingOfThe']} />
             <div className="space-y-1.5">
               <Label className="text-xs">{copyText.channel}</Label>
               <Select value={input.platform}

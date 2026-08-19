@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
+import { useSettings } from '@/context/SettingsContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -6,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { AlertTriangle, Flag, Layers, Lightbulb, Minus, Plus, Tent } from 'lucide-react';
 import { PatternProject } from '@/lib/grading-engine';
+import { RETREAT_TEACHING_COPY } from '@/lib/retreat-teaching-copy';
 import { projectStorage } from '@/lib/storage-lib';
 import {
   analyzeRetreatTeaching,
@@ -105,6 +107,8 @@ const verdictColor = (v: string) =>
 export function RetreatTeachingLabCard({ project }: { project: PatternProject }) {
   const handle = useMemo(() => projectStorage<StoredState>('retreat-teaching', project.id, [STORAGE_KEY]), [project.id]);
   const [input, setInput] = useState<RetreatInput>(() => loadStored(handle));
+  const { language } = useSettings();
+  const copyText = RETREAT_TEACHING_COPY[language];
 
   useEffect(() => {
     setInput(loadStored(handle));
@@ -144,13 +148,13 @@ export function RetreatTeachingLabCard({ project }: { project: PatternProject })
                 { value: 'host', label: 'Hosting my own retreat' },
               ]}
               onChange={v => set('role', v as RetreatRole)} />
-            <NumField id="rt-days" label="Trip length" value={input.days} onChange={n => set('days', Math.max(1, Math.min(14, n)))} min={1} max={14} suffix="days" />
-            <NumField id="rt-min" label="Students (minimum / cancel line)" value={input.studentsMin} onChange={n => set('studentsMin', Math.max(1, n))} min={1} suffix="ppl" />
-            <NumField id="rt-real" label="Realistic students" value={input.studentsReal} onChange={n => set('studentsReal', Math.max(1, n))} min={1} suffix="ppl" />
-            <NumField id="rt-best" label="Best-case students" value={input.studentsBest} onChange={n => set('studentsBest', Math.max(1, n))} min={1} suffix="ppl" />
+            <NumField id="rt-days" label={copyText.tripLength} value={input.days} onChange={n => set('days', Math.max(1, Math.min(14, n)))} min={1} max={14} suffix="days" />
+            <NumField id="rt-min" label={copyText.studentsMinimumCancelLine} value={input.studentsMin} onChange={n => set('studentsMin', Math.max(1, n))} min={1} suffix="ppl" />
+            <NumField id="rt-real" label={copyText.realisticStudents} value={input.studentsReal} onChange={n => set('studentsReal', Math.max(1, n))} min={1} suffix="ppl" />
+            <NumField id="rt-best" label={copyText.bestCaseStudents} value={input.studentsBest} onChange={n => set('studentsBest', Math.max(1, n))} min={1} suffix="ppl" />
             <NumField id="rt-rate" label="Opportunity rate" value={input.hourlyRate} onChange={n => set('hourlyRate', Math.max(1, n))} suffix="$/hr" />
-            <NumField id="rt-travel" label="Travel hours (round trip)" value={input.travelHours} onChange={n => set('travelHours', Math.max(0, n))} suffix="hrs" />
-            <NumField id="rt-extra" label="Extra working hrs at retreat" value={input.extraWorkingHours} onChange={n => set('extraWorkingHours', Math.max(0, n))} suffix="hrs" />
+            <NumField id="rt-travel" label={copyText.travelHoursRoundTrip} value={input.travelHours} onChange={n => set('travelHours', Math.max(0, n))} suffix="hrs" />
+            <NumField id="rt-extra" label={copyText.extraWorkingHrsAt} value={input.extraWorkingHours} onChange={n => set('extraWorkingHours', Math.max(0, n))} suffix="hrs" />
           </div>
         </section>
 
@@ -165,8 +169,8 @@ export function RetreatTeachingLabCard({ project }: { project: PatternProject })
                     onChange={e => setClass(i, { title: e.target.value })}
                     className="text-sm" placeholder="e.g. Seamless yoke sweater construction" />
                 </div>
-                <NumField id={`rt-hours-${i}`} label="Contact hours" value={c.hours} onChange={n => setClass(i, { hours: Math.max(0.5, n) })} min={0.5} step={0.5} suffix="hrs" />
-                <NumField id={`rt-dev-${i}`} label="Development hours" value={c.developmentHours} onChange={n => setClass(i, { developmentHours: Math.max(0, n) })} suffix="hrs" />
+                <NumField id={`rt-hours-${i}`} label={copyText.contactHours} value={c.hours} onChange={n => setClass(i, { hours: Math.max(0.5, n) })} min={0.5} step={0.5} suffix="hrs" />
+                <NumField id={`rt-dev-${i}`} label={copyText.developmentHours} value={c.developmentHours} onChange={n => setClass(i, { developmentHours: Math.max(0, n) })} suffix="hrs" />
                 {input.classes.length > 1 ? (
                   <Button type="button" variant="ghost" size="icon" className="mb-0.5 h-9 w-9" onClick={() => removeClass(i)} aria-label={`Remove class ${i + 1}`}>
                     <Minus className="size-4" />
@@ -185,25 +189,25 @@ export function RetreatTeachingLabCard({ project }: { project: PatternProject })
             {isHost ? 'Host economics' : 'Compensation & comp package'}</h3>
           {isHost ? (
             <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-              <NumField id="rt-tuition" label="Tuition per student" value={input.tuitionPerStudent} onChange={n => set('tuitionPerStudent', Math.max(0, n))} suffix="$" />
-              <NumField id="rt-matfee" label="Materials fee per student" value={input.materialsFeePerStudent} onChange={n => set('materialsFeePerStudent', Math.max(0, n))} suffix="$" />
-              <NumField id="rt-matcost" label="Materials cost per student" value={input.materialsCostPerStudent} onChange={n => set('materialsCostPerStudent', Math.max(0, n))} suffix="$" />
-              <NumField id="rt-var" label="Your variable cost per student (meals, lodging share, kits)" value={input.hostVariablePerStudent} onChange={n => set('hostVariablePerStudent', Math.max(0, n))} suffix="$" />
-              <NumField id="rt-fixed" label="Fixed costs (venue minimum, marketing, insurance)" value={input.fixedCosts} onChange={n => set('fixedCosts', Math.max(0, n))} suffix="$" />
-              <NumField id="rt-prep" label="Prep hours per class hour" value={input.prepRatio} onChange={n => set('prepRatio', Math.max(0, Math.min(4, n)))} step={0.25} suffix="hrs/hr" />
-              <NumField id="rt-design" label="Cruise-design pattern units sold" value={input.cruiseDesignUnits} onChange={n => set('cruiseDesignUnits', Math.max(0, n))} />
-              <NumField id="rt-designp" label="Cruise-design price" value={input.cruiseDesignPrice} onChange={n => set('cruiseDesignPrice', Math.max(0, n))} suffix="$" />
+              <NumField id="rt-tuition" label={copyText.tuitionPerStudent} value={input.tuitionPerStudent} onChange={n => set('tuitionPerStudent', Math.max(0, n))} suffix="$" />
+              <NumField id="rt-matfee" label={copyText.materialsFeePerStudent} value={input.materialsFeePerStudent} onChange={n => set('materialsFeePerStudent', Math.max(0, n))} suffix="$" />
+              <NumField id="rt-matcost" label={copyText.materialsCostPerStudent} value={input.materialsCostPerStudent} onChange={n => set('materialsCostPerStudent', Math.max(0, n))} suffix="$" />
+              <NumField id="rt-var" label={copyText.yourVariableCostPer} value={input.hostVariablePerStudent} onChange={n => set('hostVariablePerStudent', Math.max(0, n))} suffix="$" />
+              <NumField id="rt-fixed" label={copyText.fixedCostsVenueMinimum} value={input.fixedCosts} onChange={n => set('fixedCosts', Math.max(0, n))} suffix="$" />
+              <NumField id="rt-prep" label={copyText.prepHoursPerClass} value={input.prepRatio} onChange={n => set('prepRatio', Math.max(0, Math.min(4, n)))} step={0.25} suffix="hrs/hr" />
+              <NumField id="rt-design" label={copyText.cruiseDesignPatternUnitsSold} value={input.cruiseDesignUnits} onChange={n => set('cruiseDesignUnits', Math.max(0, n))} />
+              <NumField id="rt-designp" label={copyText.cruiseDesignPrice} value={input.cruiseDesignPrice} onChange={n => set('cruiseDesignPrice', Math.max(0, n))} suffix="$" />
             </div>
           ) : (
             <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-              <NumField id="rt-fee" label="Cash fee per class hour" value={input.feePerClassHour} onChange={n => set('feePerClassHour', Math.max(0, n))} suffix="$/hr" />
-              <NumField id="rt-reimb" label="Travel reimbursement" value={input.travelReimbursement} onChange={n => set('travelReimbursement', Math.max(0, n))} suffix="$" />
-              <NumField id="rt-comp" label="Value of comped lodging + meals" value={input.lodgingMealComp} onChange={n => set('lodgingMealComp', Math.max(0, n))} suffix="$" />
-              <NumField id="rt-design" label="Cruise-design pattern units sold" value={input.cruiseDesignUnits} onChange={n => set('cruiseDesignUnits', Math.max(0, n))} />
-              <NumField id="rt-designp" label="Cruise-design price" value={input.cruiseDesignPrice} onChange={n => set('cruiseDesignPrice', Math.max(0, n))} suffix="$" />
-              <NumField id="rt-prep" label="Prep hours per class hour" value={input.prepRatio} onChange={n => set('prepRatio', Math.max(0, Math.min(4, n)))} step={0.25} suffix="hrs/hr" />
-              <NumField id="rt-leads" label="Alumni leads per student (patterns/club)" value={input.leadsPerStudent} onChange={n => set('leadsPerStudent', Math.max(0, Math.min(1, n)))} step={0.05} />
-              <NumField id="rt-leadv" label="Value per lead (1st year)" value={input.leadValue} onChange={n => set('leadValue', Math.max(0, n))} suffix="$" />
+              <NumField id="rt-fee" label={copyText.cashFeePerClass} value={input.feePerClassHour} onChange={n => set('feePerClassHour', Math.max(0, n))} suffix="$/hr" />
+              <NumField id="rt-reimb" label={copyText.travelReimbursement} value={input.travelReimbursement} onChange={n => set('travelReimbursement', Math.max(0, n))} suffix="$" />
+              <NumField id="rt-comp" label={copyText.valueOfCompedLodging} value={input.lodgingMealComp} onChange={n => set('lodgingMealComp', Math.max(0, n))} suffix="$" />
+              <NumField id="rt-design" label={copyText.cruiseDesignPatternUnitsSold} value={input.cruiseDesignUnits} onChange={n => set('cruiseDesignUnits', Math.max(0, n))} />
+              <NumField id="rt-designp" label={copyText.cruiseDesignPrice} value={input.cruiseDesignPrice} onChange={n => set('cruiseDesignPrice', Math.max(0, n))} suffix="$" />
+              <NumField id="rt-prep" label={copyText.prepHoursPerClass} value={input.prepRatio} onChange={n => set('prepRatio', Math.max(0, Math.min(4, n)))} step={0.25} suffix="hrs/hr" />
+              <NumField id="rt-leads" label={copyText.alumniLeadsPerStudent} value={input.leadsPerStudent} onChange={n => set('leadsPerStudent', Math.max(0, Math.min(1, n)))} step={0.05} />
+              <NumField id="rt-leadv" label={copyText.valuePerLead1st} value={input.leadValue} onChange={n => set('leadValue', Math.max(0, n))} suffix="$" />
             </div>
           )}
         </section>

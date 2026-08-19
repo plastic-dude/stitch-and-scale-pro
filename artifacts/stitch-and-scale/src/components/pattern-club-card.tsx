@@ -281,25 +281,25 @@ export function PatternClubCard({ project }: { project: PatternProject }) {
 
           <TabsContent value="club" className="mt-4 space-y-6">
             <div className="grid grid-cols-2 gap-x-4 gap-y-4 md:grid-cols-3">
-              <Field label="Member price / month ($)" hint="Market band: $5–$19/mo (Double The Stitches $7, Crochet Spot $10)." value={draft.monthlyPrice} onChange={v => setDraft(d => ({ ...d, monthlyPrice: v }))} step="1" />
-              <Field label="Annual price ($)" hint="$0 = monthly only. Annual ≈ 2× monthly is the market norm ($77/yr on $7/mo)." value={draft.annualPrice} onChange={v => setDraft(d => ({ ...d, annualPrice: v }))} step="1" />
-              <Field label="Trial length (months)" hint="0 = none; Nicki's runs 7-day trials, clubs often offer one free month." value={draft.trialMonths} onChange={v => setDraft(d => ({ ...d, trialMonths: v }))} step="1" />
-              <Field label="Trial price / month ($)" hint="$0 = free trial." value={draft.trialPrice} onChange={v => setDraft(d => ({ ...d, trialPrice: v }))} step="1" />
-              <Field label="Starting members" hint="Founding cohort — your launch list, realistically." value={draft.startMembers} onChange={v => setDraft(d => ({ ...d, startMembers: v }))} step="1" />
-              <Field label="New members / month" hint="After launch, at your current marketing effort." value={draft.monthlyNewMembers} onChange={v => setDraft(d => ({ ...d, monthlyNewMembers: v }))} step="1" />
-              <Field label="Monthly churn (%)" hint="Membership clubs typically churn 5–15%/mo." value={draft.churnPct} onChange={v => setDraft(d => ({ ...d, churnPct: v }))} />
-              <Field label="Gift-code fulfilment ($)" hint="Ravelry gift codes + email copy per member per pattern." value={draft.giftCodeCost} onChange={v => setDraft(d => ({ ...d, giftCodeCost: v }))} />
-              <Field label="Pattern production ($)" hint="Tech edit + layout + photography, outsourced or your valued time." value={draft.patternCost} onChange={v => setDraft(d => ({ ...d, patternCost: v }))} step="1" />
-              <Field label="Community labour ($/mo)" hint="Live sessions, support, group moderation — $0 if none." value={draft.labourCost} onChange={v => setDraft(d => ({ ...d, labourCost: v }))} step="1" />
-              <Field label="Channel fee (%)" hint="5 = 5% for Patreon/Payhip-style billing." value={draft.channelFee} onChange={v => setDraft(d => ({ ...d, channelFee: v }))} />
-              <Field label="Patterns per month" hint="1 = standard club cadence." value={draft.patternsPerMonth} onChange={v => setDraft(d => ({ ...d, patternsPerMonth: v }))} step="1" />
+              <Field label="Member price / month ($)" hint={copy['marketBand$5–$19Mo']} value={draft.monthlyPrice} onChange={v => setDraft(d => ({ ...d, monthlyPrice: v }))} step="1" />
+              <Field label="Annual price ($)" hint={copy['$0MonthlyOnlyAnnual']} value={draft.annualPrice} onChange={v => setDraft(d => ({ ...d, annualPrice: v }))} step="1" />
+              <Field label="Trial length (months)" hint={copy['0NoneNickiS']} value={draft.trialMonths} onChange={v => setDraft(d => ({ ...d, trialMonths: v }))} step="1" />
+              <Field label="Trial price / month ($)" hint={copy['$0FreeTrial']} value={draft.trialPrice} onChange={v => setDraft(d => ({ ...d, trialPrice: v }))} step="1" />
+              <Field label="Starting members" hint={copy['foundingCohortYourLaunch']} value={draft.startMembers} onChange={v => setDraft(d => ({ ...d, startMembers: v }))} step="1" />
+              <Field label="New members / month" hint={copy['afterLaunchAtYour']} value={draft.monthlyNewMembers} onChange={v => setDraft(d => ({ ...d, monthlyNewMembers: v }))} step="1" />
+              <Field label="Monthly churn (%)" hint={copy['membershipClubsTypicallyChurn']} value={draft.churnPct} onChange={v => setDraft(d => ({ ...d, churnPct: v }))} />
+              <Field label="Gift-code fulfilment ($)" hint={copy['ravelryGiftCodesEmail']} value={draft.giftCodeCost} onChange={v => setDraft(d => ({ ...d, giftCodeCost: v }))} />
+              <Field label="Pattern production ($)" hint={copy['techEditLayoutPhotography']} value={draft.patternCost} onChange={v => setDraft(d => ({ ...d, patternCost: v }))} step="1" />
+              <Field label="Community labour ($/mo)" hint={copy['liveSessionsSupportGroup']} value={draft.labourCost} onChange={v => setDraft(d => ({ ...d, labourCost: v }))} step="1" />
+              <Field label="Channel fee (%)" hint={copy['55%ForPatreon']} value={draft.channelFee} onChange={v => setDraft(d => ({ ...d, channelFee: v }))} />
+              <Field label="Patterns per month" hint={copy['1StandardClubCadence']} value={draft.patternsPerMonth} onChange={v => setDraft(d => ({ ...d, patternsPerMonth: v }))} step="1" />
             </div>
 
             <Separator />
 
             <div className="grid grid-cols-1 gap-x-4 gap-y-4 md:grid-cols-3">
-              <Field label="Solo copies / month (baseline)" hint="What this pattern sells per month if you don't put it in the club." value={draft.soloCopiesPerMonth} onChange={v => setDraft(d => ({ ...d, soloCopiesPerMonth: v }))} step="1" />
-              <Field label="{copy.soloPrice}" hint="Same price in all languages." value={draft.soloPrice} onChange={v => setDraft(d => ({ ...d, soloPrice: v }))} step="0.01" />
+              <Field label="Solo copies / month (baseline)" hint={copy['whatThisPatternSells']} value={draft.soloCopiesPerMonth} onChange={v => setDraft(d => ({ ...d, soloCopiesPerMonth: v }))} step="1" />
+              <Field label={copy.soloPrice} hint={copy['samePriceInAll']} value={draft.soloPrice} onChange={v => setDraft(d => ({ ...d, soloPrice: v }))} step="0.01" />
               <div className="space-y-1.5">
                 <Label className="text-xs font-medium">{copy.soloPlatform}</Label>
                 <select
@@ -357,11 +357,11 @@ export function PatternClubCard({ project }: { project: PatternProject }) {
 
           <TabsContent value="magazine" className="mt-4 space-y-6">
             <div className="grid grid-cols-2 gap-x-4 gap-y-4 md:grid-cols-3">
-              <Field label="{copy.offeredFee}" hint="Cited band: Knitty $200–$300, Farm & Fiber $200–$750 by garment size." value={mag.fee} onChange={v => setMag(m => ({ ...m, fee: v }))} step="1" />
-              <Field label="{copy.exclusivity}" hint="Cited: Knitty ~3, Laine 5, I Like Knitting 6, Farm & Fiber 12." value={mag.exclusiveMonths} onChange={v => setMag(m => ({ ...m, exclusiveMonths: v }))} step="1" />
-              <Field label="{copy.production}" hint="Tech edit + media if the publisher doesn't cover them." value={mag.mediaCost} onChange={v => setMag(m => ({ ...m, mediaCost: v }))} step="1" />
-              <Field label="{copy.soloCopies}" hint="Your realistic steady state after the window ends." value={mag.soloCopiesPerMonth} onChange={v => setMag(m => ({ ...m, soloCopiesPerMonth: v }))} step="1" />
-              <Field label="{copy.soloPrice}" value={mag.soloPrice} onChange={v => setMag(m => ({ ...m, soloPrice: v }))} step="0.01" />
+              <Field label={copy.offeredFee} hint={copy['citedBandKnitty$200–$300']} value={mag.fee} onChange={v => setMag(m => ({ ...m, fee: v }))} step="1" />
+              <Field label={copy.exclusivity} hint={copy['citedKnitty3Laine']} value={mag.exclusiveMonths} onChange={v => setMag(m => ({ ...m, exclusiveMonths: v }))} step="1" />
+              <Field label={copy.production} hint={copy['techEditMediaIf']} value={mag.mediaCost} onChange={v => setMag(m => ({ ...m, mediaCost: v }))} step="1" />
+              <Field label={copy.soloCopies} hint={copy['yourRealisticSteadyState']} value={mag.soloCopiesPerMonth} onChange={v => setMag(m => ({ ...m, soloCopiesPerMonth: v }))} step="1" />
+              <Field label={copy.soloPrice} value={mag.soloPrice} onChange={v => setMag(m => ({ ...m, soloPrice: v }))} step="0.01" />
               <div className="space-y-1.5">
                 <Label className="text-xs font-medium">{copy.soloPlatform}</Label>
                 <select
@@ -389,9 +389,9 @@ export function PatternClubCard({ project }: { project: PatternProject }) {
                   {copy.techCovered}
                 </Label>
               </div>
-              <Field label="{copy.techCost}" value={mag.techEditCost} onChange={v => setMag(m => ({ ...m, techEditCost: v }))} step="1" />
-              <Field label="{copy.designHours}" value={mag.designHours} onChange={v => setMag(m => ({ ...m, designHours: v }))} step="1" />
-              <Field label="{copy.hourlyRate}" hint="Used for the effective rate check." value={mag.hourlyRate} onChange={v => setMag(m => ({ ...m, hourlyRate: v }))} step="1" />
+              <Field label={copy.techCost} value={mag.techEditCost} onChange={v => setMag(m => ({ ...m, techEditCost: v }))} step="1" />
+              <Field label={copy.designHours} value={mag.designHours} onChange={v => setMag(m => ({ ...m, designHours: v }))} step="1" />
+              <Field label={copy.hourlyRate} hint={copy['usedForTheEffective']} value={mag.hourlyRate} onChange={v => setMag(m => ({ ...m, hourlyRate: v }))} step="1" />
             </div>
 
             <div className="grid grid-cols-2 gap-3 md:grid-cols-4">

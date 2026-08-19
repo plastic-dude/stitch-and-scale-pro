@@ -1,10 +1,12 @@
 import { useMemo, useState, useEffect } from 'react';
+import { useSettings } from '@/context/SettingsContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { AlertTriangle, Flag, Lightbulb, Presentation, Scale, TrendingUp } from 'lucide-react';
 import { PatternProject } from '@/lib/grading-engine';
+import { WORKSHOP_TEACHING_COPY } from '@/lib/workshop-teaching-copy';
 import { projectStorage } from '@/lib/storage-lib';
 import {
   analyzeWorkshopTeaching,
@@ -75,6 +77,8 @@ const verdictColor = (v: string) =>
 export function WorkshopTeachingLabCard({ project }: { project: PatternProject }) {
   const handle = useMemo(() => projectStorage<StoredState>('workshop', project.id, [STORAGE_KEY]), [project.id]);
   const [input, setInput] = useState<WorkshopTeachingInput>(() => loadStored(handle));
+  const { language } = useSettings();
+  const copyText = WORKSHOP_TEACHING_COPY[language];
 
   useEffect(() => {
     setInput(loadStored(handle));
@@ -103,11 +107,11 @@ export function WorkshopTeachingLabCard({ project }: { project: PatternProject }
         <section className="space-y-3">
           <h3 className="text-sm font-semibold flex items-center gap-1.5"><Scale className="size-4" />The deal on the table</h3>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
-            <NumField id="wt-fee" label="Fee per student" value={input.deal.feePerStudent} onChange={n => setDeal('feePerStudent', n)} min={0} suffix="$" />
-            <NumField id="wt-cut" label="Venue / organizer cut" value={input.deal.venueCut * 100} onChange={n => setDeal('venueCut', Math.min(1, Math.max(0, n / 100)))} min={0} max={100} step={1} suffix="%" />
-            <NumField id="wt-guarantee" label="Guaranteed minimum payout" value={input.deal.guarantee} onChange={n => setDeal('guarantee', Math.max(0, n))} min={0} suffix="$" />
-            <NumField id="wt-travel" label="Travel + lodging total" value={input.deal.travelCost} onChange={n => setDeal('travelCost', Math.max(0, n))} suffix="$" />
-            <NumField id="wt-mats" label="Materials you cover / student" value={input.deal.materialsPerStudent} onChange={n => setDeal('materialsPerStudent', Math.max(0, n))} suffix="$" />
+            <NumField id="wt-fee" label={copyText.feePerStudent} value={input.deal.feePerStudent} onChange={n => setDeal('feePerStudent', n)} min={0} suffix="$" />
+            <NumField id="wt-cut" label={copyText.venueOrganizerCut} value={input.deal.venueCut * 100} onChange={n => setDeal('venueCut', Math.min(1, Math.max(0, n / 100)))} min={0} max={100} step={1} suffix="%" />
+            <NumField id="wt-guarantee" label={copyText.guaranteedMinimumPayout} value={input.deal.guarantee} onChange={n => setDeal('guarantee', Math.max(0, n))} min={0} suffix="$" />
+            <NumField id="wt-travel" label={copyText.travelLodgingTotal} value={input.deal.travelCost} onChange={n => setDeal('travelCost', Math.max(0, n))} suffix="$" />
+            <NumField id="wt-mats" label={copyText.materialsYouCoverStudent} value={input.deal.materialsPerStudent} onChange={n => setDeal('materialsPerStudent', Math.max(0, n))} suffix="$" />
           </div>
           <p className="text-xs text-muted-foreground italic">Net per student at these terms: {fmt$(perStudentNet)}. Festival benchmarks: $22–45/student half-days, $60–90/student full-days after typical 20–40% cuts. Deals without a floor are standard post-#FairFiberWage — that floor is what protects you at travel-day slots.</p>
         </section>
@@ -115,16 +119,16 @@ export function WorkshopTeachingLabCard({ project }: { project: PatternProject }
         <section className="space-y-3">
           <h3 className="text-sm font-semibold flex items-center gap-1.5"><Presentation className="size-4" />Class & your hours</h3>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            <NumField id="wt-min" label="Confirmed minimum students" value={input.studentsMin} onChange={n => set('studentsMin', Math.max(1, n))} min={1} />
-            <NumField id="wt-real" label="Realistic expected students" value={input.studentsRealistic} onChange={n => set('studentsRealistic', Math.max(1, n))} min={1} />
-            <NumField id="wt-max" label="Venue max capacity" value={input.studentsMax} onChange={n => set('studentsMax', Math.max(1, n))} min={1} />
-            <NumField id="wt-class" label="Class hours" value={input.classHours} onChange={n => set('classHours', Math.max(0.5, n))} step={0.5} suffix="hr" />
+            <NumField id="wt-min" label={copyText.confirmedMinimumStudents} value={input.studentsMin} onChange={n => set('studentsMin', Math.max(1, n))} min={1} />
+            <NumField id="wt-real" label={copyText.realisticExpectedStudents} value={input.studentsRealistic} onChange={n => set('studentsRealistic', Math.max(1, n))} min={1} />
+            <NumField id="wt-max" label={copyText.venueMaxCapacity} value={input.studentsMax} onChange={n => set('studentsMax', Math.max(1, n))} min={1} />
+            <NumField id="wt-class" label={copyText.classHours} value={input.classHours} onChange={n => set('classHours', Math.max(0.5, n))} step={0.5} suffix="hr" />
           </div>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            <NumField id="wt-prep" label="Prep hours (new content)" value={input.prepHours} onChange={n => set('prepHours', Math.max(0, n))} />
+            <NumField id="wt-prep" label={copyText.prepHoursNewContent} value={input.prepHours} onChange={n => set('prepHours', Math.max(0, n))} />
             <NumField id="wt-rate" label="Opportunity rate" value={input.hourlyRate} onChange={n => set('hourlyRate', n)} suffix="$/hr" />
-            <NumField id="wt-attach" label="Follow-up pattern attach" value={input.followUpAttach * 100} onChange={n => set('followUpAttach', Math.min(1, Math.max(0, n / 100)))} min={0} max={100} step={1} suffix="%" />
-            <NumField id="wt-attachp" label="Follow-up pattern price" value={input.followUpPrice} onChange={n => set('followUpPrice', Math.max(0, n))} suffix="$" />
+            <NumField id="wt-attach" label={copyText.followUpPatternAttach} value={input.followUpAttach * 100} onChange={n => set('followUpAttach', Math.min(1, Math.max(0, n / 100)))} min={0} max={100} step={1} suffix="%" />
+            <NumField id="wt-attachp" label={copyText.followUpPatternPrice} value={input.followUpPrice} onChange={n => set('followUpPrice', Math.max(0, n))} suffix="$" />
           </div>
           <p className="text-xs text-muted-foreground italic">Prep for new content typically runs 2–4× the class hours; repeats run 1–2×. Attendees are warm buyers — 10–30% attach to the class pattern at full price is a normal follow-up, and LYS classes add immediate project-yarn sales on top.</p>
         </section>

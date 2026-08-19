@@ -1,8 +1,10 @@
+import { WHOLESALE_PRICELIST_COPY } from '@/lib/wholesale-pricelist-copy';
 // CHK-078 — Wholesale Price List Lab card
 // Builds and stress-tests a wholesale line sheet for an indie knitwear
 // designer: pattern cards, POD books, mini zines, and accessory SKUs sold to
 // LYS/boutiques. Mirrors the giftcard-lab-card structure and conventions.
 import { useMemo, useState } from "react";
+import { useSettings } from '@/context/SettingsContext';
 import {
   AlertTriangle,
   BadgeCheck,
@@ -144,6 +146,8 @@ function StatBox(props: { label: string; value: string; tone?: "good" | "warn" |
 
 export function WholesalePricelistLabCard({ project }: { project: PatternProject }) {
   const [input, setInput] = useState<WholesaleInput>(() => loadStored(project));
+  const { language } = useSettings();
+  const copyText = WHOLESALE_PRICELIST_COPY[language];
 
   const result: WholesaleResult = useMemo(() => analyzeWholesale(input), [input]);
 
@@ -197,78 +201,78 @@ export function WholesalePricelistLabCard({ project }: { project: PatternProject
 
           <div className="grid gap-4 sm:grid-cols-3">
             <NumField
-              label="Retail price"
+              label={copyText.retailPrice}
               value={input.retailPrice}
               step={0.5}
-              hint="What the shop sells it for."
+              hint={copyText.whatTheShopSells}
               prefix="$"
               onChange={(v) => set("retailPrice", v)}
             />
             <NumField
-              label="Fully-loaded cost per unit"
+              label={copyText.fullyLoadedCostPerUnit}
               value={input.unitCost}
               step={0.1}
-              hint="Materials + labor + packaging + overhead share. Must stay under retail ÷ 4."
+              hint={copyText.materialsLaborPackagingOverhead}
               prefix="$"
               onChange={(v) => set("unitCost", v)}
             />
             <NumField
-              label="Retailer keystone"
+              label={copyText.retailerKeystone}
               value={input.keystone}
               step={0.1}
               min={1.5}
               max={4}
-              hint="Shop markup: 2.0 = they sell at 2× what they paid."
+              hint={copyText.shopMarkup20}
               suffix="×"
               onChange={(v) => set("keystone", v)}
             />
             <NumField
-              label="Keystone floor share"
+              label={copyText.keystoneFloorShare}
               value={input.keystoneFloorShare * 100}
               step={5}
               max={80}
               suffix="%"
-              hint="Wholesale can't exceed this share of retail — protects the shop's margin. 50% = keystone."
+              hint={copyText.wholesaleCanTExceed}
               onChange={(v) => set("keystoneFloorShare", v / 100)}
             />
             <NumField
-              label="Min order value"
+              label={copyText.minOrderValue}
               value={input.minOrderValue}
               step={25}
-              hint="Smallest order you'll accept — must still net positive after admin."
+              hint={copyText.smallestOrderYouLl}
               prefix="$"
               onChange={(v) => set("minOrderValue", v)}
             />
             <NumField
-              label="Average order value"
+              label={copyText.averageOrderValue}
               value={input.avgOrderValue}
               step={25}
-              hint="What your pipeline realistically spends per order."
+              hint={copyText.whatYourPipelineRealistically}
               prefix="$"
               onChange={(v) => set("avgOrderValue", v)}
             />
             <NumField
-              label="Units per typical order"
+              label={copyText.unitsPerTypicalOrder}
               value={input.avgOrderUnits}
               step={1}
-              hint="For per-unit economics and freight allocation."
+              hint={copyText.forPerUnitEconomicsAnd}
               suffix="units"
               onChange={(v) => set("avgOrderUnits", v)}
             />
             <NumField
-              label="Per-order cost"
+              label={copyText.perOrderCost}
               value={input.perOrderCost}
               step={1}
-              hint="Packaging + freight + invoicing per order, every order."
+              hint={copyText.packagingFreightInvoicingPer}
               prefix="$"
               onChange={(v) => set("perOrderCost", v)}
             />
             <NumField
-              label="Processing on received funds"
+              label={copyText.processingOnReceivedFunds}
               value={input.processingPct * 100}
               step={0.1}
               suffix="%"
-              hint="Card/payment processing on incoming wholesale payments."
+              hint={copyText.cardPaymentProcessingOn}
               onChange={(v) => set("processingPct", v / 100)}
             />
           </div>
@@ -366,62 +370,62 @@ export function WholesalePricelistLabCard({ project }: { project: PatternProject
 
           <div className="grid gap-4 sm:grid-cols-3">
             <NumField
-              label="Channel commission"
+              label={copyText.channelCommission}
               value={input.channelCommissionPct}
               step={1}
               max={50}
               suffix="%"
-              hint="Marketplace cut (Faire: 15% new, 15% reorders). 0 for your own line sheet."
+              hint={copyText.marketplaceCutFaire15Pct}
               onChange={(v) => set("channelCommissionPct", v)}
             />
             <NumField
-              label="New-customer marketplace fee"
+              label={copyText.newCustomerMarketplaceFee}
               value={input.channelNewCustomerFee}
               step={1}
-              hint="Faire charges $10 per first-time customer."
+              hint={copyText.faireChargesDollar10Per}
               prefix="$"
               onChange={(v) => set("channelNewCustomerFee", v)}
             />
             <NumField
-              label="Orders on Net terms"
+              label={copyText.ordersOnNetTerms}
               value={input.termsShare * 100}
               step={10}
               max={100}
               suffix="%"
-              hint="Share of orders paid later instead of upfront."
+              hint={copyText.shareOfOrdersPaid}
               onChange={(v) => set("termsShare", v / 100)}
             />
             <NumField
-              label="Terms length"
+              label={copyText.termsLength}
               value={input.termsDays}
               step={15}
               max={180}
               suffix="days"
-              hint="Net 30 / Net 60 — each day of float costs working capital."
+              hint={copyText.net30Net60}
               onChange={(v) => set("termsDays", v)}
             />
             <NumField
-              label="Working-capital cost"
+              label={copyText.workingCapitalCost}
               value={input.dailyCashCostPct * 1000}
               step={0.1}
-              hint="~10% APR ≈ 0.027%/day. What your floating receivables cost you daily."
+              hint={copyText.k10PctApr0027Pct}
               suffix="¢/day"
               onChange={(v) => set("dailyCashCostPct", v / 1000)}
             />
             <NumField
-              label="Shop orders per month"
+              label={copyText.shopOrdersPerMonth}
               value={input.ordersPerMonth}
               step={1}
               suffix="/mo"
-              hint="Your realistic wholesale order volume right now."
+              hint={copyText.yourRealisticWholesaleOrder}
               onChange={(v) => set("ordersPerMonth", v)}
             />
             <NumField
-              label="Hours per shop order"
+              label={copyText.hoursPerShopOrder}
               value={input.hoursPerOrder}
               step={0.5}
               suffix="hr"
-              hint="Quoting, packing, invoicing — the admin nobody prices."
+              hint={copyText.quotingPackingInvoicingThe}
               onChange={(v) => set("hoursPerOrder", v)}
             />
             <NumField
@@ -429,7 +433,7 @@ export function WholesalePricelistLabCard({ project }: { project: PatternProject
               value={input.hourlyRate}
               step={5}
               prefix="$"
-              hint="What your time is actually worth."
+              hint={copyText.whatYourTimeIs}
               onChange={(v) => set("hourlyRate", v)}
             />
             <div className="flex items-end pb-1">
@@ -457,7 +461,7 @@ export function WholesalePricelistLabCard({ project }: { project: PatternProject
           label="Net per unit (base)"
           value={fmt$(result.baseNetPerUnit)}
           tone={result.baseNetPerUnit > 0 ? "good" : "bad"}
-          hint="Base wholesale minus fully-loaded cost"
+          hint={copyText.baseWholesaleMinusFullyLoaded}
         />
         <StatBox
           label="Monthly net (wholesale)"
@@ -469,7 +473,7 @@ export function WholesalePricelistLabCard({ project }: { project: PatternProject
           label="Break-even orders"
           value={isFinite(result.breakEvenOrdersPerMonth) ? `${result.breakEvenOrdersPerMonth}/mo` : "∞"}
           tone={result.breakEvenOrdersPerMonth <= Math.max(input.ordersPerMonth, 1) ? "good" : "warn"}
-          hint="Orders/month needed to cover wholesale admin labor"
+          hint={copyText.ordersMonthNeededTo}
         />
       </div>
 
@@ -478,7 +482,7 @@ export function WholesalePricelistLabCard({ project }: { project: PatternProject
           label="Annual wholesale net"
           value={fmt$(result.annualNet)}
           tone={result.annualNet >= 0 ? "good" : "bad"}
-          hint="12 × current monthly, at current effort"
+          hint={copyText.k12CurrentMonthlyAt}
         />
         <StatBox
           label="Minimum order gate"

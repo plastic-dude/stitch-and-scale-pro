@@ -132,25 +132,25 @@ export function CollabDealMathCard({ project }: { project: PatternProject }) {
         <div className="grid grid-cols-2 gap-3">
           <NumField id="dm-fee" label={copyText.fixedFee} value={input.fixedFee} min={0}
             onChange={(v) => patchInput({ fixedFee: v })}
-            hint="Buyout price, exclusivity fee, or advance. WPK avg accessory rate: $246." />
+            hint={copyText['buyoutPriceExclusivityFee']} />
           <NumField id="dm-royalty" label={copyText.royalty} value={Math.round(input.royaltyPct * 100)} min={0} max={100}
             onChange={(v) => patchInput({ royaltyPct: v / 100 })}
-            hint="Share of the company's channel sales paid to you." />
+            hint={copyText['shareOfTheCompany']} />
           <NumField id="dm-company-sales" label={copyText.companySales} value={input.companySales} min={0}
             onChange={(v) => patchInput({ companySales: v })} />
           <NumField id="dm-yarn" label={copyText.yarnValue} value={input.yarnSupportValue} min={0}
             onChange={(v) => patchInput({ yarnSupportValue: v })}
-            hint="Cost offset, never revenue — counted against your costs, not added as income." />
+            hint={copyText['costOffsetNeverRevenue']} />
         </div>
 
         {/* Rights terms */}
         <div className="grid grid-cols-2 gap-3">
           <NumField id="dm-excl" label={copyText.exclusivity} value={input.exclusivityMonths} min={0} max={60}
             onChange={(v) => patchInput({ exclusivityMonths: v })}
-            hint="Months locked out of your own channel — WPK norms: 6–12 months for flat-fee exclusivity." />
+            hint={copyText['monthsLockedOutOf']} />
           <NumField id="dm-tail" label={copyText.tail} value={input.tailMonths} min={0} max={120}
             onChange={(v) => patchInput({ tailMonths: v })}
-            hint="How long the pattern stays sellable on your own channel after the window." />
+            hint={copyText['howLongThePattern']} />
           <div className="col-span-2 flex items-start gap-2 pt-1">
             <Checkbox id="dm-sole" checked={input.soleYarnClause}
               onCheckedChange={(c) => patchInput({ soleYarnClause: c === true })} />
@@ -166,13 +166,13 @@ export function CollabDealMathCard({ project }: { project: PatternProject }) {
             onChange={(v) => patchInput({ requiredHours: v })} />
           <NumField id="dm-rate" label={copyText.hourlyRate} value={input.hourlyRate} min={0} max={500}
             onChange={(v) => patchInput({ hourlyRate: v })}
-            hint="From your own income math — not the industry's number." />
+            hint={copyText['fromYourOwnIncome']} />
           <NumField id="dm-costs" label={copyText.uncoveredCosts} value={input.uncoveredCosts} min={0}
             onChange={(v) => patchInput({ uncoveredCosts: v })}
-            hint="Tech edit, photography, layout the brand doesn't pay for (WPK: $30–$500+)." />
+            hint={copyText['techEditPhotographyLayout']} />
           <NumField id="dm-own-sales" label={copyText.ownSales} value={input.ownMonthlySales} min={0}
             onChange={(v) => patchInput({ ownMonthlySales: v })}
-            hint="Census reality: 72% of designers sell ≤$50/mo in Ravelry's best month." />
+            hint={copyText['censusReality72%Of']} />
         </div>
 
         <div className="space-y-2">

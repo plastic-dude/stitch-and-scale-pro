@@ -6,7 +6,9 @@
  * Session-54 research — sources in lib/video-social-lab.ts header.
  */
 import { useMemo, useState, useEffect } from 'react';
+import { useSettings } from '@/context/SettingsContext';
 import { projectStorage, type ProjectStorageHandle } from '@/lib/storage-lib';
+import { VIDEO_SOCIAL_COPY } from '@/lib/video-social-copy';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -127,6 +129,8 @@ export function VideoSocialLabCard({ project }: { project: PatternProject }) {
   const handle = useMemo(() => projectStorage<StoredVideoLab>('videosocial', project.id, [STORAGE_KEY]), [project.id]);
   const { toast } = useToast();
   const [stored, setStored] = useState<StoredVideoLab>(() => loadStored(handle));
+  const { language } = useSettings();
+  const copyText = VIDEO_SOCIAL_COPY[language];
   useEffect(() => {
     handle.write(stored);
   }, [stored]);
@@ -174,25 +178,25 @@ export function VideoSocialLabCard({ project }: { project: PatternProject }) {
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <NumField id="vs-posts" label="Posts per month (all platforms)" value={i.postsPerMonth}
-            onChange={(n) => patchInput({ postsPerMonth: n })} min={0} max={60} hint="3-4/week per platform is the benchmark" />
+            onChange={(n) => patchInput({ postsPerMonth: n })} min={0} max={60} hint={copyText.k34WeekPerPlatform} />
           <NumField id="vs-min" label="Minutes per post" value={i.minutesPerPost}
             onChange={(n) => patchInput({ minutesPerPost: n })} min={0} max={300} step={5}
-            hint="Filming + editing, batched or solo" />
+            hint={copyText.filmingEditingBatchedOr} />
           <NumField id="vs-len" label="Video length" value={i.videoLengthSec}
             onChange={(n) => patchInput({ videoLengthSec: n })} min={5} max={180} step={5} suffix="sec"
-            hint="~26s is IG's engagement sweet spot; <60s outconverts" />
+            hint={copyText.k26sIsIgS} />
           <NumField id="vs-price" label="Pattern price" value={i.patternPrice}
             onChange={(n) => patchInput({ patternPrice: n })} min={0} max={100} step={0.5} suffix="$" />
           <NumField id="vs-fee" label="Platform fee" value={Math.round(i.platformFeePct * 100)}
             onChange={(n) => patchInput({ platformFeePct: n / 100 })} min={0} max={50} suffix="%"
-            hint="15% typical (Etsy+listing)" />
+            hint={copyText.k15PctTypicalEtsyListing} />
           <NumField id="vs-sales" label="Monthly pattern sales" value={i.monthlyPatternSales}
             onChange={(n) => patchInput({ monthlyPatternSales: n })} min={0} step={1} />
           <NumField id="vs-listsize" label="Email list size" value={i.listSize}
             onChange={(n) => patchInput({ listSize: n })} min={0} step={25} />
           <NumField id="vs-emailsales" label="Email sales per month" value={i.emailSalesPerMonth}
             onChange={(n) => patchInput({ emailSalesPerMonth: n })} min={0} step={1}
-            hint="DM/email-adjacent audiences buy first" />
+            hint={copyText.dmEmailAdjacentAudiencesBuy} />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">

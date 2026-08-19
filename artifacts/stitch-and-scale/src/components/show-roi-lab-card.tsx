@@ -7,6 +7,7 @@
  */
 import { useMemo, useState, useEffect } from 'react';
 import { projectStorage, type ProjectStorageHandle } from '@/lib/storage-lib';
+import { SHOW_ROI_COPY, type ShowRoiCopy } from '@/lib/show-roi-copy';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -82,10 +83,11 @@ function NumField({ id, label, value, onChange, min = 0, max, step = 1, suffix, 
     </div>
   );
 }
-function ProductRowEditor({ product, index, onChange }: {
+function ProductRowEditor({ product, index, onChange, copyText }: {
   product: ShowRoiInput['products'][number];
   index: number;
   onChange: (patch: ShowRoiInput['products'][number]) => void;
+  copyText: ShowRoiCopy;
 }) {
   return (
     <div className="border rounded-lg p-3 space-y-2 border-slate-300/60">
@@ -99,11 +101,11 @@ function ProductRowEditor({ product, index, onChange }: {
         </div>
       </div>
       <div className="grid grid-cols-3 gap-2">
-        <NumField id={`sh-knit-${product.type}`} label="Knit hrs/unit" value={product.knitHoursPerUnit}
+        <NumField id={`sh-knit-${product.type}`} label={copyText.knitHrsUnit} value={product.knitHoursPerUnit}
           step={0.5} onChange={(n) => onChange({ ...product, knitHoursPerUnit: n })} />
-        <NumField id={`sh-mat-${product.type}`} label="Materials" value={product.materialCostPerUnit}
+        <NumField id={`sh-mat-${product.type}`} label={copyText.materials} value={product.materialCostPerUnit}
           onChange={(n) => onChange({ ...product, materialCostPerUnit: n })} suffix="$" />
-        <NumField id={`sh-price-${product.type}`} label="Show price" value={product.pricePerUnit}
+        <NumField id={`sh-price-${product.type}`} label={copyText.showPrice} value={product.pricePerUnit}
           onChange={(n) => onChange({ ...product, pricePerUnit: n })} suffix="$" />
       </div>
     </div>
@@ -113,6 +115,7 @@ export function ShowRoiLabCard({ project }: { project: PatternProject }) {
   const handle = useMemo(() => projectStorage<StoredShowLab>('showroi', project.id, [STORAGE_KEY]), [project.id]);
   const { toast } = useToast();
   const { language } = useSettings();
+  const copyText = SHOW_ROI_COPY[language];
   const tc = getToastCopy(language);
 
   const [stored, setStored] = useState<StoredShowLab>(() => loadStored(handle));
@@ -159,36 +162,36 @@ export function ShowRoiLabCard({ project }: { project: PatternProject }) {
             ))}
           </div>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-            <NumField id="sh-attendance" label="Expected foot traffic" value={i.attendance}
-              step={100} onChange={(n) => patchInput({ attendance: n })} hint="The event's advertised attendance" />
+            <NumField id="sh-attendance" label={copyText.expectedFootTraffic} value={i.attendance}
+              step={100} onChange={(n) => patchInput({ attendance: n })} hint={copyText.theEventSAdvertised} />
             <NumField id="sh-conversion" label="Conversion" value={i.conversionPct}
-              step={0.001} max={1} onChange={(n) => patchInput({ conversionPct: n })} hint="1–3% browse markets, 3–8% high-intent" />
-            <NumField id="sh-ticket" label="Average ticket" value={i.avgTicket}
-              onChange={(n) => patchInput({ avgTicket: n })} suffix="$" hint="What a buyer spends" />
-            <NumField id="sh-booth" label="Booth fee" value={i.boothFee}
+              step={0.001} max={1} onChange={(n) => patchInput({ conversionPct: n })} hint={copyText.k13PctBrowseMarkets38Pct} />
+            <NumField id="sh-ticket" label={copyText.averageTicket} value={i.avgTicket}
+              onChange={(n) => patchInput({ avgTicket: n })} suffix="$" hint={copyText.whatABuyerSpends} />
+            <NumField id="sh-booth" label={copyText.boothFee} value={i.boothFee}
               onChange={(n) => patchInput({ boothFee: n })} suffix="$" />
-            <NumField id="sh-signups" label="List signups expected" value={i.listSignups}
-              step={1} onChange={(n) => patchInput({ listSignups: n })} hint="Buyers live in email/DMs, not feed impressions" />
+            <NumField id="sh-signups" label={copyText.listSignupsExpected} value={i.listSignups}
+              step={1} onChange={(n) => patchInput({ listSignups: n })} hint={copyText.buyersLiveInEmail} />
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <NumField id="sh-appfee" label="Application fee" value={i.appFee}
-              onChange={(n) => patchInput({ appFee: n })} suffix="$" hint="Non-refundable" />
-            <NumField id="sh-travel" label="Travel & supplies" value={i.travelSupplies}
+            <NumField id="sh-appfee" label={copyText.applicationFee} value={i.appFee}
+              onChange={(n) => patchInput({ appFee: n })} suffix="$" hint={copyText.nonRefundable} />
+            <NumField id="sh-travel" label={copyText.travelSupplies} value={i.travelSupplies}
               onChange={(n) => patchInput({ travelSupplies: n })} suffix="$" />
-            <NumField id="sh-power" label="Power / extras" value={i.powerExtras}
+            <NumField id="sh-power" label={copyText.powerExtras} value={i.powerExtras}
               onChange={(n) => patchInput({ powerExtras: n })} suffix="$" />
-            <NumField id="sh-setup" label="Setup + teardown hrs" value={i.setupTeardownHours}
+            <NumField id="sh-setup" label={copyText.setupTeardownHrs} value={i.setupTeardownHours}
               step={0.5} onChange={(n) => patchInput({ setupTeardownHours: n })} />
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <NumField id="sh-onsite" label="On-site hours" value={i.onsiteHours}
-              step={0.5} onChange={(n) => patchInput({ onsiteHours: n })} hint="Full show days at the booth" />
-            <NumField id="sh-cardfee" label="Card fee" value={i.cardFeePct}
-              step={0.001} max={0.15} onChange={(n) => patchInput({ cardFeePct: n })} hint="Square 2.75%, Shopify 2.7%" />
-            <NumField id="sh-tax" label="Effective tax" value={i.taxPct}
-              step={0.001} max={0.15} onChange={(n) => patchInput({ taxPct: n })} hint="Share of gross going to sales tax" />
-            <NumField id="sh-followup" label="Follow-up buy rate" value={i.followupBuyRate}
-              step={0.01} max={1} onChange={(n) => patchInput({ followupBuyRate: n })} hint="Share of signups who buy online in 6 months (~12%)" />
+            <NumField id="sh-onsite" label={copyText.onSiteHours} value={i.onsiteHours}
+              step={0.5} onChange={(n) => patchInput({ onsiteHours: n })} hint={copyText.fullShowDaysAt} />
+            <NumField id="sh-cardfee" label={copyText.cardFee} value={i.cardFeePct}
+              step={0.001} max={0.15} onChange={(n) => patchInput({ cardFeePct: n })} hint={copyText.square275PctShopify} />
+            <NumField id="sh-tax" label={copyText.effectiveTax} value={i.taxPct}
+              step={0.001} max={0.15} onChange={(n) => patchInput({ taxPct: n })} hint={copyText.shareOfGrossGoing} />
+            <NumField id="sh-followup" label={copyText.followUpBuyRate} value={i.followupBuyRate}
+              step={0.01} max={1} onChange={(n) => patchInput({ followupBuyRate: n })} hint={copyText.shareOfSignupsWho} />
           </div>
         </div>
         {/* --- What to bring --- */}
@@ -196,14 +199,14 @@ export function ShowRoiLabCard({ project }: { project: PatternProject }) {
           <div className="flex items-center gap-2 text-sm font-medium"><Banknote className="w-4 h-4" />What to bring</div>
           <div className="grid md:grid-cols-2 gap-3">
             {i.products.map((p, idx) => (
-              <ProductRowEditor key={p.type} product={p} index={idx} onChange={(patch) => patchProduct(idx, patch)} />
+              <ProductRowEditor key={p.type} product={p} index={idx} onChange={(patch) => patchProduct(idx, patch)} copyText={copyText} />
             ))}
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-            <NumField id="sh-online" label="Online net / unit" value={i.onlineNetPerUnit}
-              onChange={(n) => patchInput({ onlineNetPerUnit: n })} suffix="$" hint="Same item sold via your own channels" />
-            <NumField id="sh-floor" label="Your hourly floor" value={i.hourlyFloor}
-              onChange={(n) => patchInput({ hourlyFloor: n })} suffix="$" hint="What a knit hour must earn at home" />
+            <NumField id="sh-online" label={copyText.onlineNetUnit} value={i.onlineNetPerUnit}
+              onChange={(n) => patchInput({ onlineNetPerUnit: n })} suffix="$" hint={copyText.sameItemSoldVia} />
+            <NumField id="sh-floor" label={copyText.yourHourlyFloor} value={i.hourlyFloor}
+              onChange={(n) => patchInput({ hourlyFloor: n })} suffix="$" hint={copyText.whatAKnitHour} />
           </div>
         </div>
         {/* --- Headline numbers --- */}
