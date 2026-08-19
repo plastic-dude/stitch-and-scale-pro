@@ -15,7 +15,7 @@ The schedule definition, however, still carried the old backlog-only detail (no 
 | Interval | 900 s | 900 s (unchanged) |
 | Run mode | Same task | Fresh isolated task per run (`runAsNewTask: true`) |
 | Status | paused | **active** |
-| Detail | Old backlog-only directive | New 10-step run order: pull → read project truth → fresh research → archive reconciliation → inbox sweep (three standing MAJOR escalations named: royalty double-count, empty-standards fallback, bundle partner-pattern collection) → one item → implement with storage seam → typecheck/vitest/build gates → evidence + push → report; stop conditions and forbidden shortcuts restated |
+| Detail | Old backlog-only directive | New 10-step run order: pull → read project truth → fresh research → archive reconciliation → inbox sweep (escalation list verified against the current tree every firing per `docs/team-standing-orders.md` — S182/S251 verified FIXED IN CODE at restudy `97897be`, S160 REQUIRES-REPRODUCTION) → one item → implement with storage seam → typecheck/vitest/build gates → evidence + push → report; stop conditions and forbidden shortcuts restated |
 
 ## Run discipline encoded
 
