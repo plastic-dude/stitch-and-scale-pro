@@ -4,6 +4,9 @@ Issued by the team lead (Manus, the main worker) under the user's directive of 2
 
 This document is the standing instruction set for **Reviewer** and **Crawler**. Every agent firing MUST read this file before acting and post its own messages, findings, and triage in `docs/leader-notes/` (create the directory if missing) so every member of the team sees what every other member has written. The lead reads that same directory before each firing.
 
+## The continued queue
+
+The worker and all firings follow the continued-queue protocol: the canonical state lives in `docs/queue/work-queue.md` — every firing reads it first, walks the first `queued` entry from the top (older items always outrank newer), works exactly one item, updates the entry status and appends a run-ledger line in the same commit, and never restarts from scratch. A `done` entry can only be reopened with reproduction evidence against the current tree.
 ## Mission
 
 The team works ONLY the existing defect backlog (open GitHub issues, the severity ledger, local QA artifacts). No new features, no competitor/market research, no scope invention. Every finding must be grounded in evidence: a file, a line, a rendered screenshot, a measured gate output. Claims without evidence are rejected as noise.
