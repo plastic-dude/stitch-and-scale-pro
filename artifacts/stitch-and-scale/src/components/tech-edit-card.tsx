@@ -24,6 +24,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
+import { useSettings } from '@/context/SettingsContext';
+import { getToastCopy } from '@/lib/toast-copy';
 import { cn } from '@/lib/utils';
 import { runTechEditAudit, estimateEditorSavings, estimateMarketBill, generatePreEditSummary, AuditFinding, AuditSummary } from '@/lib/tech-edit-audit';
 import { PatternProject } from '@/lib/grading-engine';
@@ -65,6 +67,9 @@ export function TechEditCard({ project }: { project: PatternProject }) {
   const handle = useMemo(() => projectStorage<PersistedState>('techedit', project.id, ['stitch-and-scale-techedit']), [project.id]);
 
   const { toast } = useToast();
+  const { language } = useSettings();
+  const tc = getToastCopy(language);
+
 
   const [ratePerHour, setRatePerHour] = React.useState(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
@@ -90,9 +95,9 @@ export function TechEditCard({ project }: { project: PatternProject }) {
     const text = generatePreEditSummary(project, summary);
     try {
       await navigator.clipboard.writeText(text);
-      toast({ title: 'Pre-edit summary copied', description: 'Paste it into your tech editor brief or your own to-do list.' });
+      toast({ title: tc.preEditSummaryCopied, description: tc.preEditSummaryPaste });
     } catch {
-      toast({ title: 'Could not copy', description: 'Select and copy the text manually.' });
+      toast({ title: tc.copyFailed, description: tc.selectManuallyFromBox });
     }
   }
 

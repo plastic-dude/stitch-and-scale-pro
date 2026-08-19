@@ -8,6 +8,8 @@ import { Badge } from '@/components/ui/badge';
 import { Slider } from '@/components/ui/slider';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
+import { useSettings } from '@/context/SettingsContext';
+import { getToastCopy } from '@/lib/toast-copy';
 import { GraduationCap, ClipboardCopy, AlertTriangle, Scale, BarChart3 } from 'lucide-react';
 import { PatternProject } from '@/lib/grading-engine';
 import {
@@ -87,6 +89,9 @@ export function TeachEconomicsCard({ project: _project }: { project: PatternProj
   const handle = useMemo(() => projectStorage<StoredTeach>('teach', _project.id, ['stitch-and-scale-teach-v1']), [_project.id]);
 
   const { toast } = useToast();
+  const { language } = useSettings();
+  const tc = getToastCopy(language);
+
   const [stored, setStored] = useState<StoredTeach>(() => loadStored(handle));
   const [hostedMode, setHostedMode] = useState(false);
   const [gradStudents, setGradStudents] = useState(10);
@@ -151,9 +156,9 @@ export function TeachEconomicsCard({ project: _project }: { project: PatternProj
   const copy = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      toast({ title: 'Copied — paste it into your course page or pitch email.' });
+      toast({ title: tc.courseCopied, description: tc.courseCopiedPaste });
     } catch {
-      toast({ title: 'Copy failed — select the text manually.' });
+      toast({ title: tc.copyFailed, description: tc.copyFailedDescription });
     }
   };
 

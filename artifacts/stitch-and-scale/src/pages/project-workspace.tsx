@@ -31,6 +31,7 @@ import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useSettings } from '@/context/SettingsContext';
 import { getWorkspaceCopy, workspaceGaugeByline, STS_UNIT, ROWS_UNIT } from '@/lib/workspace-copy';
+import { getToastCopy } from '@/lib/toast-copy';
 // CHK-094 bundle fix: lab cards are lazy-loaded on first tab activation.
 // LAB maps each tab value to a dynamic import (each card is a named export,
 // so the import is remapped to { default } for React.lazy). LazyPanel wraps
@@ -302,6 +303,7 @@ export default function ProjectWorkspace() {
   const { toast } = useToast();
   const { customStandard, t, language } = useSettings();
   const copy = getWorkspaceCopy(language);
+  const tc = getToastCopy(language);
 
   const [activeTab, setActiveTab] = React.useState('sections');
   const [expandedSection, setExpandedSection] = React.useState<string | null>(null);
@@ -377,7 +379,8 @@ export default function ProjectWorkspace() {
           : s,
       ),
     });
-    toast({ title: `"${measurement.label}" restored`, description: 'Back in the section, nothing else changed.' });
+    const restored = tc.measurementRestored(measurement.label);
+    toast({ title: restored.title, description: restored.description });
   };
 
   if (!projectHook) {
@@ -396,7 +399,7 @@ export default function ProjectWorkspace() {
 
   const handleSaveNotes = () => {
     updateProject({ ...project, description: notesDraft.trim() || undefined });
-    toast({ title: 'Notes saved' });
+    toast({ title: tc.notesSaved });
   };
 
   const handleAddSection = () => {
@@ -420,7 +423,7 @@ export default function ProjectWorkspace() {
       ...project,
       sections: project.sections.filter(s => s.id !== sectionId)
     });
-    toast({ title: 'Section deleted', description: 'If that was a misclick, it is saved in your last export.' });
+    toast({ title: tc.sectionDeletedTitle, description: tc.sectionDeletedDescription });
   };
 
   const handleAddMeasurement = (sectionId: string) => {
@@ -453,12 +456,8 @@ export default function ProjectWorkspace() {
     // 3 separate re-opens of the same form. Type and Grading Key are left
     // untouched on purpose too, since consecutive measurements in one
     // section usually share both.
-    toast({
-      title: isEditingThisSection ? `"${measurement.label}" updated` : `"${measurement.label}" added`,
-      description: isEditingThisSection
-        ? 'Saved with its original id intact - nothing downstream breaks.'
-        : 'Add another, or hit Close when done.',
-    });
+    const addedOrUpdated = tc.measurementUpdatedAdded(measurement.label, isEditingThisSection);
+    toast({ title: addedOrUpdated.title, description: addedOrUpdated.description });
     resetMeasurementForm();
   };
 
@@ -499,9 +498,10 @@ export default function ProjectWorkspace() {
         },
       ];
     });
+    const deleted = tc.measurementDeleted(measurement.label);
     toast({
-      title: `"${measurement.label}" deleted`,
-      description: 'One click is never final: hit Undo within 8s to get it back.',
+      title: deleted.title,
+      description: deleted.description,
       action: (
         <button onClick={() => handleUndoDelete(stashKey)} className="text-sm font-medium text-primary underline underline-offset-2 px-2">{copy.undo}</button>
       ),

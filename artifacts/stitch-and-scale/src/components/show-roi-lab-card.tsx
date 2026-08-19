@@ -12,6 +12,8 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
+import { useSettings } from '@/context/SettingsContext';
+import { getToastCopy } from '@/lib/toast-copy';
 import { TrendingUp, Flag, Lightbulb, Banknote, Tent } from 'lucide-react';
 import { PatternProject } from '@/lib/grading-engine';
 import {
@@ -110,6 +112,9 @@ function ProductRowEditor({ product, index, onChange }: {
 export function ShowRoiLabCard({ project }: { project: PatternProject }) {
   const handle = useMemo(() => projectStorage<StoredShowLab>('showroi', project.id, [STORAGE_KEY]), [project.id]);
   const { toast } = useToast();
+  const { language } = useSettings();
+  const tc = getToastCopy(language);
+
   const [stored, setStored] = useState<StoredShowLab>(() => loadStored(handle));
   useEffect(() => {
     handle.write(stored);
@@ -126,7 +131,7 @@ export function ShowRoiLabCard({ project }: { project: PatternProject }) {
   const i = stored.input;
   const pickTier = (tier: ShowTier) => {
     patchInput({ showTier: tier });
-    toast({ title: 'Show tier noted', description: `${SHOW_TIER_LABELS[tier]} — defaults are starting points, tune attendance and fees to the actual event.`, });
+    toast({ title: tc.showTierNoted, description: tc.showTierNotedDescription(SHOW_TIER_LABELS[tier]), });
   };
   const bestRow = [...result.productRows].sort((a, b) => b.net - a.net)[0];
   return (

@@ -24,6 +24,8 @@ import { NativeSelect } from '@/components/ui/native-select';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
+import { useSettings } from '@/context/SettingsContext';
+import { getToastCopy } from '@/lib/toast-copy';
 import { cn } from '@/lib/utils';
 import {
   buildRoster,
@@ -65,6 +67,9 @@ export function TestKnitCard({ project }: { project: PatternProject }) {
   const handle = useMemo(() => projectStorage<TesterSlot[]>('testknit', project.id, ['stitch-and-scale-testknit']), [project.id]);
 
   const { toast } = useToast();
+  const { language } = useSettings();
+  const tc = getToastCopy(language);
+
   const sizes = gradedSizes(project);
 
   const [slotsPerSize, setSlotsPerSize] = React.useState(2);
@@ -107,7 +112,7 @@ export function TestKnitCard({ project }: { project: PatternProject }) {
 
   const resetRoster = () => {
     persist(buildRoster(project, { slotsPerSize }));
-    toast({ title: 'Roster rebuilt', description: `${sizes.length} sizes × ${slotsPerSize} slot${slotsPerSize > 1 ? 's' : ''}.` });
+    toast({ title: tc.rosterRebuilt, description: tc.rosterRebuiltDescription(sizes.length, slotsPerSize) });
   };
 
   const copyCall = async () => {
@@ -115,9 +120,9 @@ export function TestKnitCard({ project }: { project: PatternProject }) {
       await navigator.clipboard.writeText(callText);
       setCopied(true);
       setTimeout(() => setCopied(false), 2500);
-      toast({ title: 'Tester call copied', description: 'Paste it into the Ravelry Testing Pool, Yarnpond, or your newsletter.' });
+      toast({ title: tc.testerCallCopied, description: tc.testerCallPaste });
     } catch {
-      toast({ title: 'Copy failed', description: 'Select the text manually from the box below.' });
+      toast({ title: tc.copyFailed, description: tc.selectManuallyFromBox });
     }
   };
 

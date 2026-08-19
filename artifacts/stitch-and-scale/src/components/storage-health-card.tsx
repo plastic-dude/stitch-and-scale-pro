@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ShieldCheck, AlertTriangle, RefreshCcw, Download, History, Database } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useSettings } from '@/context/SettingsContext';
+import { getToastCopy } from '@/lib/toast-copy';
 import { cn } from '@/lib/utils';
 import { auditStores, reconcileStores, type AuditReport } from '@/lib/storage-lib';
 
@@ -13,6 +15,9 @@ function formatKB(bytes: number): string {
 
 export default function StorageHealthCard() {
   const { toast } = useToast();
+  const { language } = useSettings();
+  const tc = getToastCopy(language);
+
   const [report, setReport] = React.useState<AuditReport | null>(null);
   const [busy, setBusy] = React.useState(false);
 
@@ -32,13 +37,13 @@ export default function StorageHealthCard() {
       await reconcileStores();
       const r = await refresh();
       toast({
-        title: r.inSync ? 'Stores reconciled' : 'Reconcile complete — re-export recommended',
+        title: r.inSync ? tc.storesReconciled : tc.reconcileComplete,
         description: r.inSync
-          ? 'Both storage locations now hold identical copies of every project.'
-          : 'Your projects were unified. A fresh backup guarantees both stores match your latest work.',
+          ? tc.reconciledDescription
+          : tc.unifiedDescription,
       });
     } catch {
-      toast({ title: 'Reconcile failed', description: 'Something went wrong while unifying storage.', variant: 'destructive' });
+      toast({ title: tc.reconcileFailed, description: tc.reconcileFailedDescription, variant: 'destructive' });
     } finally {
       setBusy(false);
     }

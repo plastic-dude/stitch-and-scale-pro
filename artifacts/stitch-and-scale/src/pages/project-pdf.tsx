@@ -16,6 +16,7 @@ import { Separator } from '@/components/ui/separator';
 import { ArrowLeft, Download, FileText, Eye, Info, X, Loader2, ImagePlus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { getToastCopy } from '@/lib/toast-copy';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // ─── Theme Card ───────────────────────────────────────────────────────────────
@@ -183,6 +184,7 @@ export default function ProjectPdf() {
   const [isProcessingLogo, setIsProcessingLogo] = useState(false);
   const logoInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+  const tc = getToastCopy(language);
 
   const handleLogoFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -194,7 +196,7 @@ export default function ProjectPdf() {
     setIsProcessingLogo(false);
 
     if (error || !dataUrl) {
-      toast({ title: 'Could not use this image', description: error ?? 'Unknown error.', variant: 'destructive' });
+      toast({ title: 'Could not use this image', description: error ?? tc.unknownError, variant: 'destructive' });
       return;
     }
     setCustomLogo(dataUrl);

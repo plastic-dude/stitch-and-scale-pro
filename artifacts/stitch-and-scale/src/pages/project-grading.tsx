@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useSettings } from '@/context/SettingsContext';
 import { getGradingCopy } from '@/lib/grading-copy';
+import { getToastCopy } from '@/lib/toast-copy';
 import { BodySchematic } from '@/components/body-schematic';
 
 export default function ProjectGrading() {
@@ -18,6 +19,7 @@ export default function ProjectGrading() {
   const { toast } = useToast();
   const { customStandard, language } = useSettings();
   const gradingCopy = getGradingCopy(language);
+  const tc = getToastCopy(language);
 
   if (!projectHook) {
     return (
@@ -52,7 +54,7 @@ export default function ProjectGrading() {
     });
 
     navigator.clipboard.writeText(tsv).then(() => {
-      toast({ title: "Table Copied", description: "Grading table copied to clipboard." });
+      toast({ title: tc.tableCopied, description: tc.tableCopiedDescription });
     });
   };
 

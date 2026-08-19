@@ -25,6 +25,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
+import { getToastCopy, type ToastCopy } from '@/lib/toast-copy';
 import { useSettings } from '@/context/SettingsContext';
 import { translationBundlePartnersEmptyState } from '@/lib/translation-bundle-copy';
 import {
@@ -71,7 +72,7 @@ function loadStored(handle: ProjectStorageHandle<StoredState>): StoredState {
   return {};
 }
 
-function CopyLine({ text }: { text: string }) {
+function CopyLine({ text, tc }: { text: string; tc: ToastCopy }) {
   const { toast } = useToast();
   const [copied, setCopied] = React.useState(false);
   const copy = async () => {
@@ -79,9 +80,9 @@ function CopyLine({ text }: { text: string }) {
       await navigator.clipboard.writeText(text);
       setCopied(true);
       setTimeout(() => setCopied(false), 2500);
-      toast({ title: 'Copied', description: 'Paste it wherever the campaign runs.' });
+      toast({ title: tc.copied, description: tc.copiedDescription });
     } catch {
-      toast({ title: 'Copy failed', description: 'Select the text manually.' });
+      toast({ title: tc.copyFailed, description: tc.selectManually });
     }
   };
   return (
@@ -113,6 +114,8 @@ export function TranslationBundleCard({ project }: { project: PatternProject }) 
   const handle = useMemo(() => projectStorage<StoredState>('translate', project.id, ['stitch-and-scale-translation-bundle'], { partition: true }), [project.id]);
   const { toast } = useToast();
   const { language } = useSettings();
+  const tc = getToastCopy(language);
+
   const stored = React.useMemo(() => loadStored(handle), [handle]);
 
   const [wordCount, setWordCount] = React.useState(stored.translation?.wordCount ?? 2000);
@@ -213,7 +216,7 @@ export function TranslationBundleCard({ project }: { project: PatternProject }) 
       onChange={e => {
         const n = parseFloat(e.target.value);
         set(Number.isFinite(n) ? n : 0);
-        toast({ title: label + ' updated' });
+        toast({ title: `${label} ${tc.updated}` });
       }}
       data-testid={`tb-${label.toLowerCase().replace(/[^a-z]/g, '-')}`}
     />
@@ -526,7 +529,7 @@ export function TranslationBundleCard({ project }: { project: PatternProject }) 
             <pre className="text-xs whitespace-pre-wrap rounded-lg bg-secondary/30 p-3 border border-border max-h-64 overflow-y-auto">
               {pitch}
             </pre>
-            <CopyLine text={pitch} />
+            <CopyLine text={pitch} tc={tc} />
           </div>
         </div>
       </CardContent>

@@ -12,6 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Handshake, ClipboardCopy, AlertTriangle, ShieldCheck, CalendarClock, Plus, Trash2, Package } from 'lucide-react';
 import { PatternProject } from '@/lib/grading-engine';
 import { useSettings } from '@/context/SettingsContext';
+import { getToastCopy } from '@/lib/toast-copy';
 import { PARTNER_COPY } from '@/lib/partner-copy';
 import {
   analyzePartnerDeal,
@@ -124,7 +125,7 @@ export function PartnerEconomicsCard({ project }: { project: PatternProject }) {
       await navigator.clipboard.writeText(text);
       toast({ title: partnerCopy.copied });
     } catch {
-      toast({ title: 'Copy failed — select the text manually.' });
+      toast({ title: getToastCopy(language).copyFailedSelectManually });
     }
   };
 

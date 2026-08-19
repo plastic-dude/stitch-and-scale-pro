@@ -7,6 +7,8 @@ import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
+import { useSettings } from '@/context/SettingsContext';
+import { getToastCopy } from '@/lib/toast-copy';
 import { ShoppingBasket, AlertTriangle, ShieldCheck, Package, CircleDollarSign } from 'lucide-react';
 import { PatternProject } from '@/lib/grading-engine';
 
@@ -46,6 +48,9 @@ const DEFAULT_STORED: StoredBuyCalc = {
 
 export function YarnBuyCalculatorCard({ project }: { project: PatternProject }) {
   const { toast } = useToast();
+  const { language } = useSettings();
+  const tc = getToastCopy(language);
+
   const projectId = project.id || '';
   const STORAGE_KEY = 'stitch-and-scale-yarnbuy-';
   const [stored, setStored] = useState<StoredBuyCalc>(() => {
@@ -105,7 +110,7 @@ export function YarnBuyCalculatorCard({ project }: { project: PatternProject }) 
       skeinPrice: String(y.price),
       skeinGrams: String(y.grams),
     }));
-    toast({ title: `Loaded ${y.name} — verify the yardage against your ball band.`, duration: 3500 });
+    toast({ title: tc.yarnLoadedTitle(y.name), duration: 3500 });
   };
 
   return (

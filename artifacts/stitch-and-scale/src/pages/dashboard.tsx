@@ -33,6 +33,7 @@ import { useToast } from '@/hooks/use-toast';
 import type { PatternProject } from '@/lib/grading-engine';
 import { useSettings } from '@/context/SettingsContext';
 import { DASHBOARD_COPY } from '@/lib/dashboard-copy';
+import { getToastCopy } from '@/lib/toast-copy';
 
 // A project is "Graded" once it has at least one real measurement to grade —
 // that's the point where the grading table actually produces output.
@@ -49,6 +50,7 @@ export default function Dashboard() {
   const { toast } = useToast();
   const { language } = useSettings();
   const copy = DASHBOARD_COPY[language];
+  const tc = getToastCopy(language);
   const dateLocaleMap = { de, es, fr, pt };
   const dateLocale = (dateLocaleMap as Record<string, typeof enUS>)[language] ?? enUS;
   const [search, setSearch] = React.useState('');
@@ -69,7 +71,7 @@ export default function Dashboard() {
     e.preventDefault();
     e.stopPropagation();
     duplicateProject(id);
-    toast({ title: copy.duplicate, description: `"${name} (Copy)" was added to your patterns.` });
+    toast({ title: copy.duplicate, description: tc.projectDuplicateDescription(name) });
   };
 
   const handleExport = (e: React.MouseEvent, project: PatternProject) => {
@@ -84,13 +86,13 @@ export default function Dashboard() {
     a.click();
     a.remove();
     URL.revokeObjectURL(url);
-    toast({ title: copy.exported, description: `${project.name}.json downloaded.` });
+    toast({ title: copy.exported, description: tc.projectExportedDescription(project.name) });
   };
 
   const handleDeleteConfirmed = () => {
     if (!deleteTarget) return;
     deleteProject(deleteTarget.id);
-    toast({ title: copy.deleted, description: `"${deleteTarget.name}" was removed.` });
+    toast({ title: copy.deleted, description: tc.projectDeletedDescription(deleteTarget.name) });
     setDeleteTarget(null);
   };
 
@@ -111,11 +113,11 @@ export default function Dashboard() {
           throw new Error('This file doesn\'t look like a Stitch & Scale pattern export.');
         }
         importProject(parsed as PatternProject);
-        toast({ title: copy.imported, description: `"${parsed.name}" was added to your patterns.` });
+        toast({ title: copy.imported, description: tc.projectImportedDescription(parsed.name) });
       } catch (err) {
         toast({
           title: copy.importFailed,
-          description: err instanceof Error ? err.message : 'The file could not be read.',
+          description: err instanceof Error ? err.message : tc.fileCouldNotBeRead,
           variant: 'destructive',
         });
       } finally {

@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
+import { useSettings } from '@/context/SettingsContext';
+import { getToastCopy } from '@/lib/toast-copy';
 import { ClipboardCopy, BookOpen, Package } from 'lucide-react';
 import { PatternProject } from '@/lib/grading-engine';
 import {
@@ -82,6 +84,9 @@ export function WholesaleBookCard({ project }: { project: PatternProject }) {
   // issue #4 project seam: one scoped store per project; the legacy flat key 'kskwsb-v1' is folded in on first read, then removed.
   const handle = useMemo(() => projectStorage<StoredState>('wholesalebook', project.id, ['kskwsb-v1']), [project.id]);
   const { toast } = useToast();
+  const { language } = useSettings();
+  const tc = getToastCopy(language);
+
   const [stored, setStored] = useState(() => loadStored(handle));
 
   useEffect(() => {
@@ -100,9 +105,9 @@ export function WholesaleBookCard({ project }: { project: PatternProject }) {
   const copy = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      toast({ title: 'Copied to clipboard' });
+      toast({ title: tc.wholesaleCopied });
     } catch {
-      toast({ title: 'Select and copy manually' });
+      toast({ title: tc.wholesaleSelectManually });
     }
   };
 

@@ -18,6 +18,8 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
+import { useSettings } from '@/context/SettingsContext';
+import { getToastCopy } from '@/lib/toast-copy';
 import { checkReadiness, generateListing, PLATFORM_LIST } from '@/lib/pattern-readiness';
 import { computeCredibility, generateCredibilityStatement } from '@/lib/credibility-report';
 import { PatternProject } from '@/lib/grading-engine';
@@ -61,6 +63,9 @@ export function PublishToolkitCard({
   onUpdateProject: (p: PatternProject) => void;
 }) {
   const { toast } = useToast();
+  const { language } = useSettings();
+  const tc = getToastCopy(language);
+
   const [platform, setPlatform] = React.useState<typeof PLATFORM_LIST[number]>('ravelry');
   const [weightOverride, setWeightOverride] = React.useState<string>(project.yarnWeight ?? '');
   const [tagline, setTagline] = React.useState('');
@@ -86,7 +91,7 @@ export function PublishToolkitCard({
       document.body.removeChild(area);
     }
     setStatementCopied(true);
-    toast({ title: 'Credibility statement copied', description: 'Paste it into any marketplace listing.' });
+    toast({ title: tc.credibilityStatementCopied, description: tc.credibilityStatementPaste });
     setTimeout(() => setStatementCopied(false), 2000);
   };
 
@@ -137,13 +142,13 @@ export function PublishToolkitCard({
       document.body.removeChild(area);
     }
     setCopied(true);
-    toast({ title: 'Listing copied', description: 'Paste it straight into your marketplace draft.' });
+    toast({ title: tc.listingCopied, description: tc.listingCopiedPaste });
     setTimeout(() => setCopied(false), 2000);
   };
 
   const saveNotes = () => {
     onUpdateProject({ ...project, description: notesDraft.trim() || undefined });
-    toast({ title: 'Notes saved', description: 'The listing pulls from these, so they are already included.' });
+    toast({ title: tc.publishNotesSaved, description: tc.publishNotesSavedDescription });
   };
 
   return (

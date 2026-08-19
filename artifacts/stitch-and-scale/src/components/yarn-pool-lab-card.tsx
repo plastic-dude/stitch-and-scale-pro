@@ -18,6 +18,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
+import { getToastCopy } from '@/lib/toast-copy';
 import { cn } from '@/lib/utils';
 import {
   analyzeYarnPool,
@@ -111,6 +112,8 @@ export function YarnPoolLabCard({ project }: { project: PatternProject }) {
   const { toast } = useToast();
   const { language } = useSettings();
   const copyText = YARN_POOL_COPY[language];
+  const tc = getToastCopy(language);
+
   const [stored, setStored] = useState<StoredState>(() => loadStored(handle));
   useEffect(() => {
     handle.write(stored);
@@ -143,7 +146,7 @@ export function YarnPoolLabCard({ project }: { project: PatternProject }) {
 
   const addColorway = () => {
     if (!cwGrams || (input.colorways || []).length >= 6) {
-      toast({ title: `${copyText.grams} ${copyText.colorways.toLowerCase()} required (max 6).` });
+      toast({ title: tc.yarnPoolRequired(6, copyText.colorways, 6) });
       return;
     }
     setStored(s => ({
@@ -179,7 +182,7 @@ export function YarnPoolLabCard({ project }: { project: PatternProject }) {
 
   const addMember = () => {
     if (!mGrams || (input.members || []).length >= 8) {
-      toast({ title: `${copyText.grams} ${copyText.members.toLowerCase()} required (max 8).` });
+      toast({ title: tc.yarnPoolRequired(8, copyText.members, 8) });
       return;
     }
     setStored(s => ({
