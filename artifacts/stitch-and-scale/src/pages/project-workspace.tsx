@@ -302,8 +302,41 @@ export default function ProjectWorkspace() {
   const { customStandard, t, language } = useSettings();
   const copy = getWorkspaceCopy(language);
 
-  const [activeTab, setActiveTab] = React.useState('sections');
-  const [expandedSection, setExpandedSection] = React.useState<string | null>(null);
+  
+  const [activeTab, setActiveTab] = React.useState(() => {
+    if (typeof window !== 'undefined') {
+      const hash = window.location.hash.replace('#', '');
+      if (TAB_REGISTRY.find(t => t.value === hash)) {
+        return hash;
+      }
+      return localStorage.getItem('sas-active-tab-' + project.id) || 'sections';
+    }
+    return 'sections';
+  });
+
+  React.useEffect(() => {
+    if (activeTab) {
+      localStorage.setItem('sas-active-tab-' + project.id, activeTab);
+      // update URL hash without scrolling
+      window.history.replaceState(null, '', '#' + activeTab);
+    }
+  }, [activeTab, project.id]);
+
+  const [expandedSection, setExpandedSection] = React.useState<string | null>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('sas-expanded-section-' + project.id) || null;
+    }
+    return null;
+  });
+
+  React.useEffect(() => {
+    if (expandedSection) {
+      localStorage.setItem('sas-expanded-section-' + project.id, expandedSection);
+    } else {
+      localStorage.removeItem('sas-expanded-section-' + project.id);
+    }
+  }, [expandedSection, project.id]);
+
 
   // Form states for new section
   const [isAddingSection, setIsAddingSection] = React.useState(false);
@@ -387,6 +420,40 @@ export default function ProjectWorkspace() {
       </div>
     );
   }
+
+  
+  // Mobile swipe gestures
+  const touchStartRef = React.useRef<number | null>(null);
+  const touchEndRef = React.useRef<number | null>(null);
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    touchEndRef.current = null;
+    touchStartRef.current = e.targetTouches[0].clientX;
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    touchEndRef.current = e.targetTouches[0].clientX;
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStartRef.current || !touchEndRef.current) return;
+    const distance = touchStartRef.current - touchEndRef.current;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+    
+    if (isLeftSwipe || isRightSwipe) {
+      const activeGroup = TAB_GROUPS[activeTab] || 'design';
+      const visibleTabs = TAB_REGISTRY.filter(t => TAB_GROUPS[t.value] === activeGroup);
+      const currentIndex = visibleTabs.findIndex(t => t.value === activeTab);
+      
+      if (isLeftSwipe && currentIndex < visibleTabs.length - 1) {
+        setActiveTab(visibleTabs[currentIndex + 1].value);
+      }
+      if (isRightSwipe && currentIndex > 0) {
+        setActiveTab(visibleTabs[currentIndex - 1].value);
+      }
+    }
+  };
 
   const { project, updateProject } = projectHook;
 
