@@ -17,7 +17,10 @@ export default function ProjectGrading() {
   const projectHook = useProject(id);
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+  
   const { customStandard, language } = useSettings();
+  const [cardView, setCardView] = React.useState(false);
+
   const gradingCopy = getGradingCopy(language);
   const tc = getToastCopy(language);
 
@@ -146,11 +149,47 @@ export default function ProjectGrading() {
                   </h3>
                 </div>
                 
-                <div className="overflow-x-auto" style={{ contain: 'layout inline-size' }}>
-                  <table className="w-full text-left border-collapse print:text-black">
-                    <thead className="bg-muted/20 text-muted-foreground print:bg-white print:text-gray-600">
+                
+                {cardView ? (
+                  <div className="p-4 sm:p-6 space-y-4 print:hidden">
+                    {section.measurements.map((m) => (
+                      <div key={m.measurementId} className="border border-border/60 rounded-xl overflow-hidden bg-card">
+                        <div className="bg-secondary/30 px-4 py-3 border-b border-border/50">
+                          <div className="font-serif text-lg font-medium">{m.label}</div>
+                          <div className="text-[11px] font-medium text-muted-foreground mt-1 uppercase tracking-wider flex items-center gap-1.5">
+                            <span>{m.measurementType}</span>
+                            <span className="w-1 h-1 rounded-full bg-border"></span>
+                            <span>{GRADING_KEY_LABELS[m.gradingKey]}</span>
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-2 divide-x divide-y divide-border/50">
+                          {ALL_SIZES.map(size => {
+                            const val = m.gradedValues.find(v => v.size === size);
+                            return (
+                              <div key={size} className={cn("p-3 flex flex-col items-center", size === project.baseSize ? "bg-primary/[0.04]" : "")}>
+                                <div className="text-xs font-bold text-muted-foreground mb-1">{size}</div>
+                                <div className="font-mono text-lg font-bold text-foreground">
+                                  {val?.stitchCount} <span className="text-[10px] font-sans font-medium text-muted-foreground -ml-0.5">sts</span>
+                                </div>
+                                {val?.rowCount !== undefined && (
+                                  <div className="font-mono text-sm font-semibold text-accent mt-0.5">
+                                    {val.rowCount} <span className="text-[9px] font-sans font-medium text-muted-foreground/70 -ml-0.5">rws</span>
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto" style={{ contain: 'layout inline-size' }}>
+                    <table className="w-full text-left border-collapse print:text-black">
+
+                    <thead className="bg-muted/20 text-muted-foreground print:bg-white print:text-gray-600 sticky top-0 z-30 shadow-[0_1px_0_0_hsl(var(--border))]">
                       <tr>
-                        <th className="p-4 sm:px-12 py-4 font-semibold border-r border-border/50 w-72 min-w-[240px] text-xs uppercase tracking-wider align-bottom print:border-gray-300">
+                        <th className="p-4 sm:px-12 py-4 font-semibold border-r border-border/50 w-72 min-w-[240px] text-xs uppercase tracking-wider align-bottom print:border-gray-300 sticky left-0 z-20 bg-card/90 backdrop-blur-sm shadow-[1px_0_0_0_hsl(var(--border))]">
                           Measurement
                         </th>
                         {ALL_SIZES.map(size => (
@@ -211,9 +250,12 @@ export default function ProjectGrading() {
                           })}
                         </tr>
                       ))}
+                    
                     </tbody>
                   </table>
                 </div>
+                )}
+
               </div>
             ))}
           </div>

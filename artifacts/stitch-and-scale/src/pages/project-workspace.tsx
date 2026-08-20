@@ -4,7 +4,6 @@ import { useProject } from '@/context/ProjectsContext';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { TAB_GROUPS } from '@/lib/workspace-tab-groups';
 import { TAB_REGISTRY } from '@/lib/tab-registry';
-import { TabNavigator } from '@/components/tab-navigator';
 import { NAVIGATOR_COPY } from '@/lib/tab-navigator-copy';
 import { getWorkspaceTabLabel } from '@/lib/workspace-tab-labels';
 import { GaugeFitTranslatorCard } from '@/components/gauge-fit-translator-card';
@@ -305,8 +304,41 @@ export default function ProjectWorkspace() {
   const copy = getWorkspaceCopy(language);
   const tc = getToastCopy(language);
 
-  const [activeTab, setActiveTab] = React.useState('sections');
-  const [expandedSection, setExpandedSection] = React.useState<string | null>(null);
+  
+  const [activeTab, setActiveTab] = React.useState(() => {
+    if (typeof window !== 'undefined') {
+      const hash = window.location.hash.replace('#', '');
+      if (TAB_REGISTRY.find(t => t.value === hash)) {
+        return hash;
+      }
+      return localStorage.getItem('sas-active-tab-' + project.id) || 'sections';
+    }
+    return 'sections';
+  });
+
+  React.useEffect(() => {
+    if (activeTab) {
+      localStorage.setItem('sas-active-tab-' + project.id, activeTab);
+      // update URL hash without scrolling
+      window.history.replaceState(null, '', '#' + activeTab);
+    }
+  }, [activeTab, project.id]);
+
+  const [expandedSection, setExpandedSection] = React.useState<string | null>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('sas-expanded-section-' + project.id) || null;
+    }
+    return null;
+  });
+
+  React.useEffect(() => {
+    if (expandedSection) {
+      localStorage.setItem('sas-expanded-section-' + project.id, expandedSection);
+    } else {
+      localStorage.removeItem('sas-expanded-section-' + project.id);
+    }
+  }, [expandedSection, project.id]);
+
 
   // Form states for new section
   const [isAddingSection, setIsAddingSection] = React.useState(false);
@@ -391,6 +423,40 @@ export default function ProjectWorkspace() {
       </div>
     );
   }
+
+  
+  // Mobile swipe gestures
+  const touchStartRef = React.useRef<number | null>(null);
+  const touchEndRef = React.useRef<number | null>(null);
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    touchEndRef.current = null;
+    touchStartRef.current = e.targetTouches[0].clientX;
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    touchEndRef.current = e.targetTouches[0].clientX;
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStartRef.current || !touchEndRef.current) return;
+    const distance = touchStartRef.current - touchEndRef.current;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+    
+    if (isLeftSwipe || isRightSwipe) {
+      const activeGroup = TAB_GROUPS[activeTab] || 'design';
+      const visibleTabs = TAB_REGISTRY.filter(t => TAB_GROUPS[t.value] === activeGroup);
+      const currentIndex = visibleTabs.findIndex(t => t.value === activeTab);
+      
+      if (isLeftSwipe && currentIndex < visibleTabs.length - 1) {
+        setActiveTab(visibleTabs[currentIndex + 1].value);
+      }
+      if (isRightSwipe && currentIndex > 0) {
+        setActiveTab(visibleTabs[currentIndex - 1].value);
+      }
+    }
+  };
 
   const { project, updateProject } = projectHook;
 
@@ -982,123 +1048,91 @@ export default function ProjectWorkspace() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        {/* CHK-125: the group-chip row was rendering at ALL widths — on
-            desktop it sat directly above the flat 79-tab strip and made it
-            look as if the individual tabs had vanished (user report). The
-            chips are the mobile/tablet substitute for the hidden strip, so
-            they must hide on desktop where the strip (accessibility) surface
-            is the primary navigation. */}
-        {/* CHK-131: chips now sit in a deliberate two-column grid, ordered by
-            group weight (densest first), with the count rendered as an
-            explicit "N labs" tag instead of a bare suffix that reads like a
-            ranking. No orphan tile on the last row, and the order no longer
-            looks accidental. */}
-        <div className="lg:hidden grid grid-cols-2 gap-1.5 mb-1.5 px-0.5">
-          {[
-            { g: 'design', label: t('workspace.group.design') },
-            { g: 'fit', label: t('workspace.group.fit') },
-            { g: 'pricing', label: t('workspace.group.pricing') },
-            { g: 'launch', label: t('workspace.group.launch') },
-            { g: 'channels', label: t('workspace.group.channels') },
-            { g: 'business', label: t('workspace.group.business') },
-          ]
-            .map(({ g, label }) => ({
-              g,
-              label,
-              // CHK-125: chip count derives from TAB_REGISTRY — the single
-              // source of truth for what the flat strip renders — so a drifted
-              // classification can never put the wrong number on a chip.
-              count: TAB_REGISTRY.filter((x) => x.group === g).length,
-            }))
-            .sort((a, b) => b.count - a.count)
-            .map(({ g, label, count }) => {
-              const first = Object.keys(TAB_GROUPS).find((v) => TAB_GROUPS[v] === g);
+        {/* MOBILE & DESKTOP: Dual-tier Navigation */}
+        <div className="flex flex-col gap-1 mb-4">
+          
+          {/* TIER 1: Group Selector (Horizontal scrolling pills) */}
+          <div className="flex overflow-x-auto gap-2 py-1 px-1 -mx-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] snap-x">
+            {[
+              { g: 'design', label: t('workspace.group.design') },
+              { g: 'fit', label: t('workspace.group.fit') },
+              { g: 'pricing', label: t('workspace.group.pricing') },
+              { g: 'launch', label: t('workspace.group.launch') },
+              { g: 'channels', label: t('workspace.group.channels') },
+              { g: 'business', label: t('workspace.group.business') },
+            ].map(({ g, label }) => {
+              const isActive = (TAB_GROUPS[activeTab] || 'design') === g;
+              const firstTab = Object.keys(TAB_GROUPS).find((v) => TAB_GROUPS[v] === g);
               return (
                 <button
                   key={g}
                   type="button"
-                  onClick={() => first && setActiveTab(first)}
-                  // CHK-123 (QA LIVE-004): chips were px-2 py-0.5 text-[10px] — a
-                  // ~16px hit area, far below the 44×44px touch-target minimum.
-                  // Now a full 44px touch target on every width; the chip stays
-                  // visually compact (leading-none, text-xs) while the hit area
-                  // does not.
-                  className="rounded-lg border border-border/60 bg-muted/40 px-3 py-2.5 text-xs leading-none font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors min-h-[44px] flex items-center justify-between gap-2"
+                  onClick={() => firstTab && setActiveTab(firstTab)}
+                  className={`shrink-0 snap-start px-4 py-2.5 rounded-full text-[13px] font-semibold transition-all ${
+                    isActive 
+                      ? 'bg-primary text-primary-foreground shadow-sm ring-1 ring-primary/20' 
+                      : 'bg-muted/40 text-muted-foreground hover:bg-muted/80 hover:text-foreground border border-border/40'
+                  }`}
                 >
-                  <span className="truncate">{label}</span>
-                  <span className="text-[11px] text-muted-foreground/80 whitespace-nowrap">{count} labs</span>
+                  {label}
                 </button>
               );
             })}
-        </div>
-        {/* CHK-120 / CHK-127 (QA #64, cycles 60+61): the mobile grouped
-            navigator must live OUTSIDE the desktop-only TabsList. It was
-            previously nested inside <TabsList className="hidden lg:flex">,
-            which made the entire navigator display:none below 1024px —
-            the All Labs trigger measured 0x0 at 360/390/430/768px and late
-            labs (Intl Pricing, Payback, Brag Cards) were unreachable by
-            touch. TabNavigator is self-contained (Sheet/Dropdown +
-            activeTab/onTabChange props), so the move has no semantic
-            side effect on the Radix Tabs primitives. */}
-        <div className="lg:hidden mb-2">
-          <TabNavigator
-            activeTab={activeTab}
-            onTabChange={setActiveTab}
-            language={language}
-            copy={NAVIGATOR_COPY[language] ?? NAVIGATOR_COPY.en}
-          />
-        </div>
-        {/* CHK-128 (QA #65, cycle 62): Radix's TabsList primitive styles the list
-            with inline-flex + justify-center, so inside an overflow-x-auto scroller
-            the 79-tab content was centered — at 1280px the first core tabs
-            (Sections, Preview, Yarn) sat at negative x and were clipped offscreen
-            behind a partial label. The Tailwind v4 arbitrary-value class
-            justify-[flex-start] is not emitted by v4's justify utility, so the
-            CSS-property-style arbitrary form justify-content-[flex-start] is used
-            instead — it generates a first-class utility that out-orders the
-            primitive's justify-center in the v4 cascade.
-            the strip opens at the first tab with scrollLeft=0; late tabs remain
-            reachable by horizontal scroll. */}
-        {/* CHK-132 (S277): overflow-x-auto scrolls but nothing says so — a right
-            inner-edge fade cues that more tabs exist off-screen. Mask-based so
-            it stays inside the card border and never blocks the tabs. */}
-        <div className="hidden lg:block relative">
-          <TabsList className="lg:flex lg:flex-nowrap w-full gap-1 bg-card border border-border p-1 h-auto overflow-x-auto" style={{ justifyContent: "flex-start" }}>
+          </div>
 
-        {TAB_REGISTRY.map((tab) => {
-              const localizedLabel = getWorkspaceTabLabel(language, tab.value, ({
-                sections: t('workspace.tab.sections'), preview: t('workspace.tab.preview'), yarn: t('workspace.tab.yarn'), notes: t('workspace.tab.notes'), income: t('workspace.tab.income'), draft: t('workspace.tab.draft'), pricing: t('workspace.tab.pricing'), publish: t('workspace.tab.publish'), testknit: t('workspace.tab.testKnit'), techedit: t('workspace.tab.techEdit'), finish: t('workspace.tab.finish'), launch: t('workspace.tab.launch'), channels: t('workspace.tab.channels'),
-              }[tab.value] ?? tab.label));
-            return (
-            <TabsTrigger
-              key={tab.value}
-              value={tab.value}
-              // CHK-123 (QA LIVE-004): shadcn's default h-10 (40px) is below the
-              // 44×44px touch-target minimum even on the desktop-only strip.
-              // min-h-11 raises the effective hit area to 44px with no layout
-              // impact below lg (the strip is hidden there anyway).
-              className="font-medium text-sm whitespace-nowrap shrink-0 min-h-11 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded"
-            >
-              <TriggerChildren value={tab.value} label={localizedLabel ?? tab.label} />
-            </TabsTrigger>
-            );
-          })}
-        </TabsList>
-          {/* Right-edge scroll cue: fades the last visible tabs into view. */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-y-1 right-1 w-12"
-            style={{
-              background: "linear-gradient(to right, transparent, hsl(var(--card)))",
-            }}
-          />
+          {/* TIER 2: Lab Selector (Horizontal scrolling underlined tabs) */}
+          <div className="relative">
+            <TabsList className="flex flex-nowrap w-full gap-2 bg-transparent border-b border-border/40 p-0 h-auto overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]" style={{ justifyContent: "flex-start" }}>
+              {TAB_REGISTRY.map((tab) => {
+                const isVisible = TAB_GROUPS[tab.value] === (TAB_GROUPS[activeTab] || 'design');
+                if (!isVisible) {
+                  // Radix requires TabsTrigger to be present, but we can hide it.
+                  // We must ensure the component returns valid JSX for hidden tabs.
+                  return (
+                    <TabsTrigger key={tab.value} value={tab.value} className="hidden">
+                      <span />
+                    </TabsTrigger>
+                  );
+                }
+                
+                const localizedLabel = getWorkspaceTabLabel(language, tab.value, ({
+                  sections: t('workspace.tab.sections'), preview: t('workspace.tab.preview'), yarn: t('workspace.tab.yarn'), notes: t('workspace.tab.notes'), income: t('workspace.tab.income'), draft: t('workspace.tab.draft'), pricing: t('workspace.tab.pricing'), publish: t('workspace.tab.publish'), testknit: t('workspace.tab.testKnit'), techedit: t('workspace.tab.techEdit'), finish: t('workspace.tab.finish'), launch: t('workspace.tab.launch'), channels: t('workspace.tab.channels'),
+                }[tab.value] ?? tab.label));
+
+                return (
+                  <TabsTrigger
+                    key={tab.value}
+                    value={tab.value}
+                    className="font-medium text-[13.5px] whitespace-nowrap shrink-0 min-h-[44px] border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-foreground data-[state=active]:bg-transparent rounded-none px-3 py-2 text-muted-foreground hover:text-foreground transition-all flex items-center justify-center data-[state=active]:shadow-none"
+                  >
+                    <TriggerChildren value={tab.value} label={localizedLabel ?? tab.label} />
+                  </TabsTrigger>
+                );
+              })}
+            </TabsList>
+            
+            {/* Right-edge scroll fade cue */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-y-0 right-0 w-8"
+              style={{
+                background: "linear-gradient(to right, transparent, hsl(var(--background)))",
+              }}
+            />
+          </div>
         </div>
 
-        {TAB_REGISTRY.map((t) => (
-  <TabsContent key={t.value} value={t.value} className="mt-6">
-    <TabPanel value={t.value} />
-  </TabsContent>
-))}</Tabs>
+        {TAB_REGISTRY.map((t) => {
+           // To avoid rendering 79 heavy components, we only mount the active group
+           // (or we can just let Radix handle it, but for performance, wrapping in a check helps).
+           // Actually Radix TabsContent handles mounting/unmounting automatically unless forceMount is used.
+           return (
+             <TabsContent key={t.value} value={t.value} className="mt-4 focus-visible:outline-none focus-visible:ring-0">
+               <TabPanel value={t.value} />
+             </TabsContent>
+           );
+        })}
+      </Tabs>
     </div>
   );
 }

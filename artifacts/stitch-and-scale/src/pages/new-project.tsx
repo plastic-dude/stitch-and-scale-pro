@@ -149,7 +149,7 @@ export default function NewProjectWizard() {
                         {sizingStandard === 'Custom' ? copy.customStandard : copy.cycStandard}
                       </span>
                       {' · '}
-                      <Link href="/settings" className="underline underline-offset-2 hover:text-foreground transition-colors">
+                      <Link href="/settings#sizing-standard" className="underline underline-offset-2 hover:text-foreground transition-colors">
                         {copy.changeSettings}
                       </Link>
                     </span>

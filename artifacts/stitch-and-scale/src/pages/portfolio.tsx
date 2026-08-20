@@ -257,7 +257,7 @@ export default function PortfolioPage() {
             pricing advisor, and platform fee model — nothing new invented.
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="overflow-x-auto overflow-y-hidden">
           {portfolio.lines.length === 0 ? (
             <div className="text-sm text-muted-foreground py-6 text-center">
               No projects yet — open <Link href="/" className="underline underline-offset-2">your dashboard</Link> to add the first pattern.
@@ -285,7 +285,7 @@ export default function PortfolioPage() {
             {copy.bundleDescription}
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="overflow-x-auto overflow-y-hidden">
           {portfolio.bundles.length === 0 ? (
             <div className="text-sm text-muted-foreground py-4 text-center">
               {copy.noBundles}
