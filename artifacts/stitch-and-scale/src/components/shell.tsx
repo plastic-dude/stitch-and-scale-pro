@@ -1,6 +1,6 @@
 import * as React from "react"
 import { Link, useLocation } from "wouter"
-import { Settings, Plus, BookOpen, ShieldCheck, X, Package, Home, Folder } from "lucide-react"
+import { Settings, Plus, BookOpen, ShieldCheck, X, Package } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useProjects } from "@/context/ProjectsContext"
 import { AutosaveIndicator } from "@/components/autosave-indicator"
@@ -51,7 +51,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
   }, [])
 
   return (
-    <div className="h-[100dvh] min-w-0 flex flex-col bg-background text-foreground transition-colors duration-200 overflow-hidden">
+    <div className="min-h-[100dvh] min-w-0 flex flex-col bg-background text-foreground transition-colors duration-200">
       <header className="sticky top-0 z-30 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5 no-underline group">
@@ -71,23 +71,27 @@ export function Shell({ children }: { children: React.ReactNode }) {
           </div>
           
           <nav className="flex items-center gap-1 sm:gap-4">
-            <div className="hidden md:flex items-center gap-2">
-              <Link href="/" aria-label={projectsLabel} className={`min-h-11 min-w-11 p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors flex items-center gap-2 ${location === '/' ? 'bg-secondary/50' : ''}`}>
-                <BookOpen className="w-5 h-5" />
-                <span className="text-sm font-medium">{projectsLabel}</span>
-              </Link>
-              <Link href="/portfolio" aria-label={t('nav.portfolio')} className={`min-h-11 min-w-11 p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors flex items-center gap-2 ${location === '/portfolio' ? 'bg-secondary/50' : ''}`}>
-                <Package className="w-5 h-5" />
-                <span className="text-sm font-medium">{t('nav.portfolio')}</span>
-              </Link>
-              <Link href="/settings" aria-label={settingsLabel} className={`min-h-11 min-w-11 p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors flex items-center gap-2 ${location === '/settings' ? 'bg-secondary/50' : ''}`}>
-                <Settings className="w-5 h-5" />
-                <span className="text-sm font-medium">{settingsLabel}</span>
-              </Link>
-            </div>
+            {/* CHK-129: at phone widths the labels hide (hidden md:inline) and the
+                link's p-2 hit area is 36×36px — below the 44×44px touch-target
+                minimum (QA LIVE-004). min-h-11/min-w-11 raise the hit area
+                without widening the visible icon (same pattern as CHK-123). */}
+            <Link href="/" aria-label={projectsLabel} className={`min-h-11 min-w-11 p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors flex items-center gap-2 ${location === '/' ? 'bg-secondary/50' : ''}`}>
+              <BookOpen className="w-5 h-5" />
+              <span className="hidden md:inline text-sm font-medium">{projectsLabel}</span>
+            </Link>
+            <Link href="/portfolio" aria-label={t('nav.portfolio')} className={`min-h-11 min-w-11 p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors flex items-center gap-2 ${location === '/portfolio' ? 'bg-secondary/50' : ''}`}>
+              <Package className="w-5 h-5" />
+              <span className="hidden md:inline text-sm font-medium">{t('nav.portfolio')}</span>
+            </Link>
+            <Link href="/settings" aria-label={settingsLabel} className={`min-h-11 min-w-11 p-2 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors flex items-center gap-2 ${location === '/settings' ? 'bg-secondary/50' : ''}`}>
+              <Settings className="w-5 h-5" />
+              <span className="hidden md:inline text-sm font-medium">{settingsLabel}</span>
+            </Link>
             
-            <div className="w-px h-6 bg-border mx-2 hidden md:block"></div>
+            <div className="w-px h-6 bg-border mx-2"></div>
             
+            {/* CHK-129: at phone widths this is icon-only (label hidden <sm) —
+                h-9 is 36px, below the 44×44px minimum. min-h-11 raises it. */}
             <Link href="/project/new" aria-label={t('nav.newProject')} className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring bg-primary text-primary-foreground shadow hover:bg-primary/90 min-h-11 px-4 py-2 gap-2">
               <Plus className="w-4 h-4" />
               <span className="hidden sm:inline">{t('nav.newProject')}</span>
@@ -102,7 +106,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
 
       {justExported && <InstallBanner trigger="export" />}
 
-      <main className="flex-1 overflow-y-auto flex flex-col min-w-0 w-full max-w-7xl mx-auto p-4 sm:p-6 md:p-8 pb-24 md:pb-8 relative">
+      <main className="flex-1 flex flex-col min-w-0 w-full max-w-7xl mx-auto p-4 sm:p-6 md:p-8">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={location}
@@ -117,27 +121,9 @@ export function Shell({ children }: { children: React.ReactNode }) {
         </AnimatePresence>
       </main>
       
-      <footer className="border-t py-6 md:py-0 md:h-16 flex items-center justify-center text-sm text-muted-foreground hidden md:flex">
+      <footer className="border-t py-6 md:py-0 md:h-16 flex items-center justify-center text-sm text-muted-foreground">
         <p>{t('nav.footerDescription')}</p>
       </footer>
-      
-      {/* Mobile Bottom Navigation */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-background/95 backdrop-blur-md border-t border-border/40 pb-safe">
-        <nav className="flex justify-around items-center h-16 px-2">
-          <Link href="/" className={`flex flex-col items-center justify-center w-full h-full space-y-1 ${location === '/' ? 'text-primary' : 'text-muted-foreground'}`}>
-            <Home className={`w-6 h-6 ${location === '/' ? 'fill-primary/20' : ''}`} strokeWidth={location === '/' ? 2.5 : 2} />
-            <span className="text-[10px] font-medium">Overview</span>
-          </Link>
-          <Link href="/portfolio" className={`flex flex-col items-center justify-center w-full h-full space-y-1 ${location === '/portfolio' ? 'text-primary' : 'text-muted-foreground'}`}>
-            <Folder className={`w-6 h-6 ${location === '/portfolio' ? 'fill-primary/20' : ''}`} strokeWidth={location === '/portfolio' ? 2.5 : 2} />
-            <span className="text-[10px] font-medium">Projects</span>
-          </Link>
-          <Link href="/settings" className={`flex flex-col items-center justify-center w-full h-full space-y-1 ${location === '/settings' ? 'text-primary' : 'text-muted-foreground'}`}>
-            <Settings className={`w-6 h-6 ${location === '/settings' ? 'fill-primary/20' : ''}`} strokeWidth={location === '/settings' ? 2.5 : 2} />
-            <span className="text-[10px] font-medium">Settings</span>
-          </Link>
-        </nav>
-      </div>
     </div>
   )
 }

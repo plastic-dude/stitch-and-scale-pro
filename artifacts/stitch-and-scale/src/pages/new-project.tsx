@@ -11,6 +11,42 @@ import { ChevronRight, ChevronLeft, Check, Ruler, Scissors, BookOpen, Fingerprin
 import { cn } from '@/lib/utils';
 import { NEW_PROJECT_COPY } from '@/lib/new-project-copy';
 
+
+function DynamicGaugePreview({ stitches, rows, unit }: { stitches: number; rows: number; unit: string }) {
+  if (!stitches || !rows) return null;
+  // A realistic knit stitch is usually wider than it is tall, e.g. 20 sts x 28 rows per 4 inches.
+  // The stitch aspect ratio is rows / stitches.
+  const ratio = rows / stitches;
+  
+  // Render a mini grid representing 1 square inch (or cm) of stitches
+  const gridStitches = Math.max(1, Math.round(stitches / 4));
+  const gridRows = Math.max(1, Math.round(rows / 4));
+  
+  return (
+    <div className="mt-8 p-4 bg-muted/20 border border-border/40 rounded-xl flex items-center justify-center flex-col gap-4">
+       <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Dynamic Gauge Preview</div>
+       <div 
+         className="relative bg-background border border-border shadow-inner overflow-hidden flex items-center justify-center text-[10px] font-mono text-muted-foreground/30"
+         style={{ width: '120px', height: '120px' }}
+       >
+         <div 
+           className="absolute inset-0 opacity-20"
+           style={{
+             backgroundImage: 'linear-gradient(to right, currentColor 1px, transparent 1px), linear-gradient(to bottom, currentColor 1px, transparent 1px)',
+             backgroundSize: `${120 / gridStitches}px ${120 / gridRows}px`
+           }}
+         />
+         <div className="relative z-10 font-mono font-medium text-muted-foreground text-xs bg-background/80 px-2 py-1 rounded backdrop-blur-sm border border-border/50">
+           Stitch Ratio: {ratio.toFixed(2)}
+         </div>
+       </div>
+       <div className="text-[11px] text-muted-foreground text-center">
+         Visualizing 1 {unit} of your fabric density.
+       </div>
+    </div>
+  );
+}
+
 export default function NewProjectWizard() {
   const [, setLocation] = useLocation();
   const { createProject } = useProjects();
@@ -278,6 +314,7 @@ export default function NewProjectWizard() {
                       <div className="absolute right-4 bottom-5 text-xs text-muted-foreground font-medium">{gauge.unit === 'in' ? 'per 4 inches' : 'per 10 cm'}</div>
                     </div>
                   </div>
+                  <DynamicGaugePreview stitches={gauge.stitchesPer4In} rows={gauge.rowsPer4In} unit={gauge.unit} />
                 </div>
               </motion.div>
             )}

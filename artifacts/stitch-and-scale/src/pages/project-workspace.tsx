@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion, AnimatePresence, useAnimation } from 'framer-motion';
 import { useParams, useLocation, Link } from 'wouter';
 import { useProject } from '@/context/ProjectsContext';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -309,33 +310,33 @@ export default function ProjectWorkspace() {
       if (TAB_REGISTRY.find(t => t.value === hash)) {
         return hash;
       }
-      return localStorage.getItem('sas-active-tab-' + project.id) || 'sections';
+      return localStorage.getItem('sas-active-tab-' + id) || 'sections';
     }
     return 'sections';
   });
 
   React.useEffect(() => {
     if (activeTab) {
-      localStorage.setItem('sas-active-tab-' + project.id, activeTab);
+      localStorage.setItem('sas-active-tab-' + id, activeTab);
       // update URL hash without scrolling
       window.history.replaceState(null, '', '#' + activeTab);
     }
-  }, [activeTab, project.id]);
+  }, [activeTab, id]);
 
   const [expandedSection, setExpandedSection] = React.useState<string | null>(() => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('sas-expanded-section-' + project.id) || null;
+      return localStorage.getItem('sas-expanded-section-' + id) || null;
     }
     return null;
   });
 
   React.useEffect(() => {
     if (expandedSection) {
-      localStorage.setItem('sas-expanded-section-' + project.id, expandedSection);
+      localStorage.setItem('sas-expanded-section-' + id, expandedSection);
     } else {
-      localStorage.removeItem('sas-expanded-section-' + project.id);
+      localStorage.removeItem('sas-expanded-section-' + id);
     }
-  }, [expandedSection, project.id]);
+  }, [expandedSection, id]);
 
 
   // Form states for new section
@@ -481,13 +482,54 @@ export default function ProjectWorkspace() {
     setExpandedSection(newSection.id);
   };
 
+  
+  const [sectionUndoStash, setSectionUndoStash] = React.useState<{
+    section: any;
+    timer?: ReturnType<typeof setTimeout>;
+  }[]>([]);
+
+  const handleUndoDeleteSection = (targetSection: any) => {
+    setSectionUndoStash(prev => {
+      const item = prev.find(s => s.section.id === targetSection.id);
+      if (item?.timer) clearTimeout(item.timer);
+      return prev.filter(s => s.section.id !== targetSection.id);
+    });
+    updateProject(prev => {
+      const restored = [...prev.sections, targetSection];
+      // Try to put it back in order, or just append
+      return { ...prev, sections: restored };
+    });
+    toast({ title: `Section restored` });
+  };
+
   const handleDeleteSection = (sectionId: string) => {
+    const section = project.sections.find(s => s.id === sectionId);
+    if (!section) return;
+    
     updateProject({
       ...project,
       sections: project.sections.filter(s => s.id !== sectionId)
     });
-    toast({ title: 'Section deleted', description: 'If that was a misclick, it is saved in your last export.' });
+    
+    setSectionUndoStash(prev => [
+      ...prev,
+      {
+        section,
+        timer: setTimeout(() => {
+          setSectionUndoStash(curr => curr.filter(s => s.section.id !== sectionId));
+        }, 8000)
+      }
+    ]);
+    
+    toast({ 
+      title: 'Section deleted', 
+      description: 'One click is never final.',
+      action: (
+        <button onClick={() => handleUndoDeleteSection(section)} className="text-sm font-medium text-primary underline underline-offset-2 px-2">Undo</button>
+      ),
+    });
   };
+
 
   const handleAddMeasurement = (sectionId: string) => {
     if (!mLabel.trim() || !mBaseValue) return;
@@ -634,9 +676,35 @@ export default function ProjectWorkspace() {
               </CardContent>
             </Card>
           ) : (
+            
             <div className="space-y-4">
+              <AnimatePresence mode="popLayout">
               {project.sections.map(section => (
-                <Card key={section.id} className="overflow-hidden border-border transition-all">
+                <motion.div 
+                  key={section.id} 
+                  layout
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0, scale: 0.95 }}
+                  transition={{ duration: 0.2 }}
+                  className="relative group rounded-xl bg-destructive"
+                >
+                  <div className="absolute inset-y-0 right-0 w-24 flex items-center justify-end px-6 rounded-xl">
+                     <Trash2 className="w-5 h-5 text-destructive-foreground" />
+                  </div>
+                  <motion.div
+                    drag="x"
+                    dragConstraints={{ left: -100, right: 0 }}
+                    dragElastic={0.1}
+                    onDragEnd={(e, info) => {
+                      if (info.offset.x < -75) {
+                        handleDeleteSection(section.id);
+                      }
+                    }}
+                    className="relative z-10 bg-background rounded-xl border-border shadow-sm"
+                  >
+                  <Card className="overflow-hidden border-border transition-all">
+
                   <div 
                     className={cn(
                       "flex items-center justify-between p-4 cursor-pointer hover:bg-muted/50 transition-colors",
@@ -818,7 +886,11 @@ export default function ProjectWorkspace() {
                     </div>
                   )}
                 </Card>
+                </motion.div>
+                </motion.div>
               ))}
+              </AnimatePresence>
+
 
               {isAddingSection ? (
                 <Card className="p-4 border-primary">
