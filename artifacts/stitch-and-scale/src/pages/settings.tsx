@@ -80,7 +80,7 @@ export default function SettingsPage() {
 
       <div className="grid gap-8">
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
-          <Card className="border-border/60 shadow-sm overflow-hidden rounded-2xl">
+          <Card id="language" className="scroll-mt-24 border-border/60 shadow-sm overflow-hidden rounded-2xl">
             <CardHeader className="bg-secondary/10 border-b border-border/40 pb-5">
               <CardTitle className="font-serif text-xl flex items-center gap-2">🌐 {t('settings.language.title')}</CardTitle>
               <CardDescription className="text-[13px]">{t('settings.language.description')}</CardDescription>
@@ -111,7 +111,7 @@ export default function SettingsPage() {
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-          <Card className="border-border/60 shadow-sm overflow-hidden rounded-2xl">
+          <Card id="measurement-units" className="scroll-mt-24 border-border/60 shadow-sm overflow-hidden rounded-2xl">
             <CardHeader className="bg-secondary/10 border-b border-border/40 pb-5">
               <CardTitle className="font-serif text-xl flex items-center gap-2">
                 <Ruler className="w-5 h-5 text-accent" />
@@ -144,7 +144,7 @@ export default function SettingsPage() {
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
-          <Card className="border-border/60 shadow-sm overflow-hidden rounded-2xl">
+          <Card id="sizing-standard" className="scroll-mt-24 border-border/60 shadow-sm overflow-hidden rounded-2xl">
             <CardHeader className="bg-secondary/10 border-b border-border/40 pb-5">
               <CardTitle className="font-serif text-xl flex items-center gap-2">
                 <Layers className="w-5 h-5 text-accent" />
@@ -292,7 +292,7 @@ export default function SettingsPage() {
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-          <Card className="border-border/60 shadow-sm overflow-hidden rounded-2xl">
+          <Card id="display-interface" className="scroll-mt-24 border-border/60 shadow-sm overflow-hidden rounded-2xl">
             <CardHeader className="bg-secondary/10 border-b border-border/40 pb-5">
               <CardTitle className="font-serif text-xl flex items-center gap-2">
                 <Monitor className="w-5 h-5 text-accent" />
@@ -335,7 +335,7 @@ export default function SettingsPage() {
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
-          <Card className="border-border/60 shadow-sm overflow-hidden rounded-2xl">
+          <Card id="system-controls" className="scroll-mt-24 border-border/60 shadow-sm overflow-hidden rounded-2xl">
             <CardHeader className="bg-secondary/10 border-b border-border/40 pb-5">
               <CardTitle className="font-serif text-xl flex items-center gap-2">
                 <RotateCcw className="w-5 h-5 text-accent" />
@@ -368,7 +368,7 @@ export default function SettingsPage() {
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-          <Card className="border-border/60 shadow-sm overflow-hidden rounded-2xl">
+          <Card id="data-backup" className="scroll-mt-24 border-border/60 shadow-sm overflow-hidden rounded-2xl">
             <CardHeader className="bg-secondary/10 border-b border-border/40 pb-5">
               <CardTitle className="font-serif text-xl flex items-center gap-2">
                 <Download className="w-5 h-5 text-accent" />

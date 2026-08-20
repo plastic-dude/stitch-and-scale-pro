@@ -9,6 +9,30 @@ import { SettingsProvider, useSettings } from '@/context/SettingsContext';
 import { ProjectsProvider } from '@/context/ProjectsContext';
 import OnboardingOverlay from '@/pages/onboarding';
 
+import { useEffect } from 'react';
+
+function ScrollHandler() {
+  const [location] = useLocation();
+
+  useEffect(() => {
+    // Yield to the browser to ensure the DOM has rendered the new page
+    setTimeout(() => {
+      if (window.location.hash) {
+        const id = window.location.hash.replace('#', '');
+        const element = document.getElementById(id);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+          return;
+        }
+      }
+      window.scrollTo(0, 0);
+    }, 10);
+  }, [location]);
+
+  return null;
+}
+
+
 const queryClient = new QueryClient();
 
 // CHK-080 — the onboarding overlay must not greet cold visitors who land
@@ -67,6 +91,7 @@ function App() {
         <ProjectsProvider>
           <TooltipProvider>
             <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, '')}>
+              <ScrollHandler />
               <Router />
             </WouterRouter>
             <Toaster />
