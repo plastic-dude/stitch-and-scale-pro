@@ -10,6 +10,7 @@ import { ProjectsProvider } from '@/context/ProjectsContext';
 import OnboardingOverlay from '@/pages/onboarding';
 
 import { useEffect } from 'react';
+import { SplashScreen } from '@/components/splash-screen';
 
 function ScrollHandler() {
   const [location] = useLocation();
@@ -84,17 +85,20 @@ function Router() {
   );
 }
 
+
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <SettingsProvider>
         <ProjectsProvider>
           <TooltipProvider>
-            <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, '')}>
-              <ScrollHandler />
-              <Router />
-            </WouterRouter>
-            <Toaster />
+            <SplashScreen>
+              <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, '')}>
+                <ScrollHandler />
+                <Router />
+              </WouterRouter>
+              <Toaster />
+            </SplashScreen>
           </TooltipProvider>
         </ProjectsProvider>
       </SettingsProvider>
