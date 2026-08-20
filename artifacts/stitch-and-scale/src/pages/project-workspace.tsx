@@ -985,7 +985,7 @@ export default function ProjectWorkspace() {
         <div className="flex flex-col gap-1 mb-4">
           
           {/* TIER 1: Group Selector (Horizontal scrolling pills) */}
-          <div className="flex overflow-x-auto gap-2 py-1 px-1 -mx-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] touch-pan-x overscroll-contain">
+          <div className="flex overflow-x-auto gap-2 py-1 px-1 -mx-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] snap-x">
             {[
               { g: 'design', label: t('workspace.group.design') },
               { g: 'fit', label: t('workspace.group.fit') },
@@ -1001,7 +1001,7 @@ export default function ProjectWorkspace() {
                   key={g}
                   type="button"
                   onClick={() => firstTab && setActiveTab(firstTab)}
-                  className={`shrink-0 snap-none px-4 py-2.5 rounded-full text-[13px] font-semibold transition-all ${
+                  className={`shrink-0 snap-start px-4 py-2.5 rounded-full text-[13px] font-semibold transition-all ${
                     isActive 
                       ? 'bg-primary text-primary-foreground shadow-sm ring-1 ring-primary/20' 
                       : 'bg-muted/40 text-muted-foreground hover:bg-muted/80 hover:text-foreground border border-border/40'
