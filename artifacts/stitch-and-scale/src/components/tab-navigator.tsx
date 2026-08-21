@@ -38,10 +38,12 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { ListTree } from 'lucide-react';
+import { ListTree, Search, Star, History, X } from 'lucide-react';
+import { Input } from '@/components/ui/input';
 import { TAB_REGISTRY } from '@/lib/tab-registry';
 import { TAB_GROUP_LABELS, groupFor, type TabGroup } from '@/lib/workspace-tab-groups';
 import { getWorkspaceTabLabel } from '@/lib/workspace-tab-labels';
+import { cn } from '@/lib/utils';
 
 // Group display order — keeps the strip's established visual order.
 const GROUP_ORDER: TabGroup[] = ['design', 'fit', 'pricing', 'launch', 'channels', 'business'];
@@ -73,19 +75,25 @@ export interface TabNavigatorProps {
   /** Current UI language code, used to localize lab labels via the
    *  workspace label catalogue. */
   language: string;
-  /** Localized copy — the navigator's visible strings (caller passes the
-   *  currently chosen UI language's strings, same as the workspace copy
-   *  catalogue pattern). */
+  /** Localized copy — the navigator's visible strings. */
   copy: {
-    /** Button/trigger label, e.g. "Labs". */
     allLabs: string;
-    /** Grouped sheet title, e.g. "All 79 labs". */
     labsTitle: string;
-    /** Grouped sheet description. */
     labsDescription: string;
-    /** ARIA label for the desktop dropdown trigger. */
     allLabsAriaLabel: string;
+    searchPlaceholder: string;
+    noResults: string;
+    favorites: string;
+    recent: string;
+    addToFavorites: string;
+    removeFromFavorites: string;
   };
+  /** List of favorite tab values. */
+  favorites?: string[];
+  /** List of recently used tab values. */
+  recentLabs?: string[];
+  /** Called when the user toggles a lab as favorite. */
+  onToggleFavorite?: (value: string) => void;
   className?: string;
 }
 
@@ -109,13 +117,37 @@ export function tabGroupsFromRegistry(): { group: TabGroup; entries: typeof TAB_
   return GROUPED_TABS;
 }
 
-export function TabNavigator({ activeTab, onTabChange, language, copy, className }: TabNavigatorProps) {
+export function TabNavigator({ 
+  activeTab, 
+  onTabChange, 
+  language, 
+  copy, 
+  favorites = [], 
+  recentLabs = [], 
+  onToggleFavorite, 
+  className 
+}: TabNavigatorProps) {
   const isDesktop = useViewportWidth();
   const [isSheetOpen, setIsSheetOpen] = React.useState(false);
+  const [searchQuery, setSearchQuery] = React.useState('');
   const groups = tabGroupsFromRegistry();
 
-  const localizedLabel = (value: string, fallback: string) =>
-    getWorkspaceTabLabel(language, value, fallback);
+  const localizedLabel = React.useCallback((value: string, fallback: string) =>
+    getWorkspaceTabLabel(language, value, fallback), [language]);
+
+  const filteredGroups = React.useMemo(() => {
+    if (!searchQuery.trim()) return groups;
+    const q = searchQuery.toLowerCase().trim();
+    return groups.map(g => ({
+      ...g,
+      entries: g.entries.filter(t => 
+        localizedLabel(t.value, t.label).toLowerCase().includes(q) ||
+        t.value.toLowerCase().includes(q)
+      )
+    })).filter(g => g.entries.length > 0);
+  }, [groups, searchQuery, localizedLabel]);
+
+  const hasResults = filteredGroups.length > 0;
 
   const handlePick = (value: string) => {
     onTabChange(value);
@@ -142,43 +174,146 @@ export function TabNavigator({ activeTab, onTabChange, language, copy, className
               {copy.allLabs}
             </Button>
           </SheetTrigger>
-          <SheetContent side="bottom" className="max-h-[80vh] overflow-y-auto rounded-t-xl">
-            <SheetHeader>
-              <SheetTitle>{copy.labsTitle}</SheetTitle>
-              <SheetDescription>{copy.labsDescription}</SheetDescription>
+          <SheetContent side="bottom" className="max-h-[90vh] flex flex-col p-0 rounded-t-xl overflow-hidden">
+            <SheetHeader className="p-4 pb-2 text-left">
+              <SheetTitle className="font-serif text-lg">{copy.labsTitle}</SheetTitle>
+              <SheetDescription className="text-xs">{copy.labsDescription}</SheetDescription>
             </SheetHeader>
-            <div className="mt-2 space-y-4 pb-6">
-              {groups.map(
-                ({ group, entries }) =>
-                  entries.length > 0 && (
-                    <div key={group}>
-                      <h3 className="px-1 pt-2 first:pt-0 text-[11px] font-bold uppercase tracking-wide text-primary border-b border-border/60 mb-2 pb-1">
-                        {TAB_GROUP_LABELS[group]} ({entries.length})
+
+            <div className="px-4 py-2">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  placeholder={copy.searchPlaceholder}
+                  className="pl-9 pr-9 h-11 bg-muted/30 border-border/60 focus-visible:ring-primary/30"
+                />
+                {searchQuery && (
+                  <button 
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
+            </div>
+
+            <div className="flex-1 overflow-y-auto px-4 pb-8 space-y-6">
+              {!searchQuery && (
+                <>
+                  {favorites.length > 0 && (
+                    <div>
+                      <h3 className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-wide text-amber-500 border-b border-amber-500/20 mb-2 pb-1">
+                        <Star className="h-3 w-3 fill-current" />
+                        {copy.favorites}
                       </h3>
-                      <ul className="mt-1.5">
-                        {entries.map((tab) => {
-                          const isActive = tab.value === activeTab;
+                      <ul className="grid grid-cols-1 gap-1">
+                        {favorites.map(val => {
+                          const tab = TAB_REGISTRY.find(t => t.value === val);
+                          if (!tab) return null;
+                          const isActive = val === activeTab;
                           return (
-                            <li key={tab.value}>
+                            <li key={val} className="flex items-center gap-1">
                               <button
                                 type="button"
-                                onClick={() => handlePick(tab.value)}
-                                className={
-                                  'block w-full rounded-md px-3 py-2.5 text-left text-sm transition-colors ' +
-                                  (isActive
-                                    ? 'bg-primary text-primary-foreground font-medium'
-                                    : 'text-foreground hover:bg-muted')
-                                }
-                                aria-current={isActive ? 'true' : undefined}
+                                onClick={() => handlePick(val)}
+                                className={cn(
+                                  "flex-1 rounded-md px-3 py-3 text-left text-sm transition-colors min-h-[44px]",
+                                  isActive ? "bg-primary text-primary-foreground font-medium" : "bg-muted/30 text-foreground hover:bg-muted"
+                                )}
                               >
-                                {localizedLabel(tab.value, tab.label)}
+                                {localizedLabel(val, tab.label)}
+                              </button>
+                              <Button 
+                                variant="ghost" size="icon" className="h-11 w-11 shrink-0 text-amber-500"
+                                onClick={(e) => { e.stopPropagation(); onToggleFavorite?.(val); }}
+                                aria-label={copy.removeFromFavorites}
+                              >
+                                <Star className="h-4 w-4 fill-current" />
+                              </Button>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </div>
+                  )}
+
+                  {recentLabs.length > 0 && (
+                    <div>
+                      <h3 className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-wide text-primary border-b border-border/60 mb-2 pb-1">
+                        <History className="h-3 w-3" />
+                        {copy.recent}
+                      </h3>
+                      <ul className="grid grid-cols-2 gap-2">
+                        {recentLabs.map(val => {
+                          const tab = TAB_REGISTRY.find(t => t.value === val);
+                          if (!tab) return null;
+                          const isActive = val === activeTab;
+                          return (
+                            <li key={val}>
+                              <button
+                                type="button"
+                                onClick={() => handlePick(val)}
+                                className={cn(
+                                  "w-full rounded-md px-3 py-3 text-left text-xs transition-colors min-h-[44px] flex items-center justify-between gap-2",
+                                  isActive ? "bg-primary text-primary-foreground font-medium" : "bg-muted/30 text-foreground hover:bg-muted"
+                                )}
+                              >
+                                <span className="truncate">{localizedLabel(val, tab.label)}</span>
                               </button>
                             </li>
                           );
                         })}
                       </ul>
                     </div>
-                  ),
+                  )}
+                </>
+              )}
+
+              {!hasResults ? (
+                <div className="py-12 text-center text-muted-foreground animate-in fade-in duration-300">
+                  <Search className="h-12 w-12 mx-auto mb-3 opacity-20" />
+                  <p>{copy.noResults}</p>
+                </div>
+              ) : (
+                filteredGroups.map(({ group, entries }) => (
+                  <div key={group} className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+                    <h3 className="text-[11px] font-bold uppercase tracking-wide text-primary border-b border-border/60 mb-2 pb-1">
+                      {TAB_GROUP_LABELS[group]} ({entries.length})
+                    </h3>
+                    <ul className="grid grid-cols-1 gap-1">
+                      {entries.map((tab) => {
+                        const isActive = tab.value === activeTab;
+                        const isFav = favorites.includes(tab.value);
+                        return (
+                          <li key={tab.value} className="flex items-center gap-1">
+                            <button
+                              type="button"
+                              onClick={() => handlePick(tab.value)}
+                              className={cn(
+                                "flex-1 rounded-md px-3 py-3 text-left text-sm transition-colors min-h-[44px]",
+                                isActive ? "bg-primary text-primary-foreground font-medium" : "text-foreground hover:bg-muted"
+                              )}
+                            >
+                              {localizedLabel(tab.value, tab.label)}
+                            </button>
+                            {!searchQuery && (
+                              <Button 
+                                variant="ghost" size="icon" className={cn("h-11 w-11 shrink-0 transition-colors", isFav ? "text-amber-500" : "text-muted-foreground/40 hover:text-amber-500")}
+                                onClick={(e) => { e.stopPropagation(); onToggleFavorite?.(tab.value); }}
+                                aria-label={isFav ? copy.removeFromFavorites : copy.addToFavorites}
+                              >
+                                <Star className={cn("h-4 w-4", isFav && "fill-current")} />
+                              </Button>
+                            )}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                ))
               )}
             </div>
           </SheetContent>

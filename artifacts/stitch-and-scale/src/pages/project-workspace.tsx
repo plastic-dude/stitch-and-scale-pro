@@ -38,6 +38,7 @@ import { Plus, Edit2, Trash2, Table as TableIcon, Copy, ChevronDown, ChevronRigh
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useSettings } from '@/context/SettingsContext';
+import { useProjectStorage, useProjectStorageState } from '@/lib/storage-lib';
 import { getWorkspaceCopy, workspaceGaugeByline, STS_UNIT, ROWS_UNIT } from '@/lib/workspace-copy';
 import { getToastCopy } from '@/lib/toast-copy';
 import { notesNeedSave, withNotes } from '@/lib/notes-persistence';
@@ -209,6 +210,44 @@ export default function ProjectWorkspace() {
   const tc = getToastCopy(currentLanguage);
 
   const [activeTab, setActiveTab] = React.useState('sections');
+  
+  // CHK-162 (QUEUE-019): Favorites and recents tracking
+  const favHandle = useProjectStorage<string[]>(
+    'favorites',
+    project.id,
+    ['stitch-and-scale-favorites']
+  );
+  const [favorites, setFavorites] = useProjectStorageState<string[]>(
+    favHandle,
+    (raw) => raw ?? []
+  );
+
+  const recentHandle = useProjectStorage<string[]>(
+    'recent-labs',
+    project.id,
+    ['stitch-and-scale-recent-labs']
+  );
+  const [recentLabs, setRecentLabs] = useProjectStorageState<string[]>(
+    recentHandle,
+    (raw) => raw ?? []
+  );
+
+  const toggleFavorite = React.useCallback((tabValue: string) => {
+    setFavorites(prev => 
+      prev.includes(tabValue) 
+        ? prev.filter(v => v !== tabValue) 
+        : [...prev, tabValue].slice(-12) // Limit to 12 favorites
+    );
+  }, [setFavorites]);
+
+  const trackRecent = React.useCallback((tabValue: string) => {
+    if (['sections', 'preview', 'notes'].includes(tabValue)) return;
+    setRecentLabs(prev => {
+      const filtered = prev.filter(v => v !== tabValue);
+      return [tabValue, ...filtered].slice(0, 8); // Keep last 8
+    });
+  }, [setRecentLabs]);
+
   const [expandedSection, setExpandedSection] = React.useState<string | null>(null);
   const [isAddingSection, setIsAddingSection] = React.useState(false);
   const [newSectionName, setNewSectionName] = React.useState('');
@@ -289,6 +328,7 @@ export default function ProjectWorkspace() {
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
+    trackRecent(value);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -901,6 +941,9 @@ export default function ProjectWorkspace() {
             onTabChange={handleTabChange}
             language={currentLanguage}
             copy={NAVIGATOR_COPY[currentLanguage] ?? NAVIGATOR_COPY.en}
+            favorites={favorites}
+            recentLabs={recentLabs}
+            onToggleFavorite={toggleFavorite}
           />
         </div>
 
