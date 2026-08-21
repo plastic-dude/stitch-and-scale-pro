@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import {
   HardDrive,
-  Cloud,
+  DatabaseBackup,
   ShieldCheck,
   Calculator,
   Scissors,
@@ -85,33 +85,15 @@ function StepWelcome() {
 // ─── STEP 2: Philosophy ───────────────────────────────────────────────────────
 
 const PHILOSOPHY_CARDS = [
-  {
-    icon: HardDrive,
-    title: 'Local First',
-    body: 'Projects save immediately to your device. No internet required, no waiting for uploads.',
-  },
-  {
-    icon: Cloud,
-    title: 'Optional Cloud Sync',
-    body: 'Sign in later if you want multi-device access. It will always be optional.',
-  },
-  {
-    icon: ShieldCheck,
-    title: 'Your Data',
-    body: 'Your measurements belong to you. Export the full dataset anytime as JSON.',
-  },
-  {
-    icon: Calculator,
-    title: 'Transparent Math',
-    body: 'Every stitch count comes from visible calculations. No hidden AI decisions.',
-  },
+  // All philosophy copy is localized; see StepPhilosophy below.
 ];
 
 function StepPhilosophy() {
   const { t } = useSettings();
   const philosophyCards = [
-    { icon: HardDrive, title: t('workflow.philosophy.localTitle'), body: t('workflow.philosophy.localBody') },
-    { icon: Cloud, title: t('workflow.philosophy.cloudTitle'), body: t('workflow.philosophy.cloudBody') },
+    // Step content localized below; PHILOSOPHY_CARDS removed.
+  { icon: HardDrive, title: t('workflow.philosophy.localTitle'), body: t('workflow.philosophy.localBody') },
+    { icon: DatabaseBackup, title: t('workflow.philosophy.cloudTitle'), body: t('workflow.philosophy.cloudBody') },
     { icon: ShieldCheck, title: t('workflow.philosophy.dataTitle'), body: t('workflow.philosophy.dataBody') },
     { icon: Calculator, title: t('workflow.philosophy.mathTitle'), body: t('workflow.philosophy.mathBody') },
   ];
@@ -209,7 +191,7 @@ function StepSizingStandard({ sizingStandard, setSizingStandard }: { sizingStand
       )}
       {!available && (
         <span className="shrink-0 text-[10px] font-medium text-muted-foreground/70 bg-muted/40 rounded-md px-1.5 py-0.5 mt-0.5">
-          Coming soon
+          {t('workflow.onboarding.comingSoon')}
         </span>
       )}
     </button>
