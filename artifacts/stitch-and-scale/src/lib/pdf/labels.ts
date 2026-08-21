@@ -1,4 +1,4 @@
-import type { LanguageCode } from '@/lib/i18n';
+import type { LanguageCode } from '../i18n.js';
 
 export interface PdfLabels {
   by: string;
