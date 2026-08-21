@@ -10,6 +10,8 @@ import { projectStorage } from '@/lib/storage-lib';
 import { useSettings } from '@/context/SettingsContext';
 import { KAL_PLANNER_COPY } from '@/lib/kal-planner-copy';
 import { analyzeKal, DEFAULT_KAL, KAL_FORMAT_LABELS, type KalFormat, type KalInput } from '@/lib/kal-planner';
+import { getWorkspaceCopy } from '@/lib/workspace-copy';
+import { BenchmarkFooter } from './benchmark-footer';
 
 function defaultStored(): KalInput {
   return { ...DEFAULT_KAL };
@@ -71,6 +73,7 @@ export function KalPlannerCard({ project }: { project: PatternProject }) {
   const patch = (patch: Partial<KalInput>) => setStored((s) => ({ ...s, ...patch }));
 
   const result = useMemo(() => analyzeKal(stored), [stored]);
+  const workspaceCopy = getWorkspaceCopy(language);
 
   return (
     <Card>
@@ -141,13 +144,11 @@ export function KalPlannerCard({ project }: { project: PatternProject }) {
             value={stored.mysteryHoursPerClue ?? 4} min={1} max={12}
             onChange={(n) => patch({ mysteryHoursPerClue: Math.min(12, Math.max(1, n)) })} suffix="hrs" />
         )}
-        <p className="text-xs text-muted-foreground">
-          Benchmarks baked in: Ravelry&apos;s best-ever January averaged $203/designer across the whole site;
-          a sweater pattern costs ~55 hours and ~$155 to produce; typical KAL prizes are $10–50 gift cards
-          (sponsor donors like Malabrigo/Hobbii are common); mystery KALs run 4 weekly clues; a well-run
-          launch KAL roughly 2–4×s the base weekly rate inside its window, decaying back to baseline, with an
-          ~8-week afterglow tail.
-        </p>
+        <BenchmarkFooter
+          text="Ravelry's best-ever January averaged $203/designer across the whole site; a sweater pattern costs ~55 hours and ~$155 to produce; typical KAL prizes are $10–50 gift cards (sponsor donors like Malabrigo/Hobbii are common); mystery KALs run 4 weekly clues; a well-run launch KAL roughly 2–4×s the base weekly rate inside its window, decaying back to baseline, with an ~8-week afterglow tail."
+          sourceLabel={workspaceCopy.sourceMethodology}
+          methodology={workspaceCopy.methodologyKal}
+        />
 
         {/* Verdict */}
         <div className={`rounded-lg border p-4 ${verdictColor(result.verdict)}`}>

@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useToast } from '@/hooks/use-toast';
 import { useSettings } from '@/context/SettingsContext';
 import { getToastCopy } from '@/lib/toast-copy';
+import { getWorkspaceCopy } from '@/lib/workspace-copy';
 import { GraduationCap, ClipboardCopy, AlertTriangle, Scale, BarChart3 } from 'lucide-react';
 import { PatternProject } from '@/lib/grading-engine';
 import { safeNum } from '@/lib/numeric-guard';
@@ -26,6 +27,7 @@ import {
   normalizeTeachInput,
   analyzePlatformModels,
 } from '@/lib/teach-economics';
+import { BenchmarkFooter } from './benchmark-footer';
 
 const STORAGE_KEY = 'stitch-and-scale-teach-v1';
 
@@ -114,6 +116,7 @@ export function TeachEconomicsCard({ project: _project }: { project: PatternProj
     setStored((s) => ({ input: normalizeTeachInput({ ...s.input, ...patch }) }));
 
   const result = useMemo(() => analyzeTeachingOffer(stored.input), [stored.input]);
+  const workspaceCopy = getWorkspaceCopy(language);
   const hosted = useMemo(() => analyzeHostedOffer({
     model: hostedMode ? 'perStudent' : 'flatFee',
     flatFee: stored.input.ticketPrice,
@@ -282,12 +285,11 @@ export function TeachEconomicsCard({ project: _project }: { project: PatternProj
           </div>
           )}
           {isCourse && (
-          <p className="text-xs text-muted-foreground">
-            Benchmarks baked in: hosted workshops pay teachers $300–1,000/day with break-even at ~8
-            students; tickets run $75–150/day in North America; self-paced flagships cluster at
-            $500–600 (Pip &amp; Pin charges $548 / $99×6); enrollment from an owned list realistically
-            lands at 1–3%.
-          </p>
+            <BenchmarkFooter
+              text="hosted workshops pay teachers $300–1,000/day with break-even at ~8 students; tickets run $75–150/day in North America; self-paced flagships cluster at $500–600 (Pip & Pin charges $548 / $99×6); enrollment from an owned list realistically lands at 1–3%."
+              sourceLabel={workspaceCopy.sourceMethodology}
+              methodology={workspaceCopy.methodologyTeach}
+            />
           )}
         </div>
 

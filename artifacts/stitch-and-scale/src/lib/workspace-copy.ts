@@ -52,6 +52,18 @@ export interface WorkspaceCopy {
   renameFailed: string;
   renameEmpty: string;
   renameSame: string;
+  addMeasurement: string;
+  // Navigator
+  allLabs: string;
+  labsTitle: string;
+  labsDescription: string;
+  allLabsAriaLabel: string;
+  // Benchmarks
+  sourceMethodology: string;
+  methodologyTeach: string;
+  methodologyKal: string;
+  methodologySubmissions: string;
+  methodologyTestknit: string;
 }
 
 const COPY: Record<LanguageCode, WorkspaceCopy> = {
@@ -95,6 +107,7 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     renameFailed: 'Could not save the new name',
     renameEmpty: 'The name cannot be empty',
     renameSame: 'Nothing changed',
+    addMeasurement: 'Add Measurement',
     localOnlyTitle: 'Local Project',
     localOnlyDescription: 'This project exists only in your browser storage. To access it on another device, export it and then import it there.',
     importProject: 'Import Project',
@@ -107,6 +120,15 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     draftNoIssues: 'All tokens resolved correctly.',
     draftFixIssues: 'Please review the tokens in your draft before exporting.',
     draftIssueUnresolved: 'Unresolved',
+    allLabs: 'All Labs',
+    labsTitle: 'All 79 Labs',
+    labsDescription: 'Every tool for this pattern, grouped so nothing stays buried off-screen.',
+    allLabsAriaLabel: 'Open grouped list of all 79 workspace labs',
+    sourceMethodology: 'Source: Session-35 Research',
+    methodologyTeach: 'Flagship course pricing based on Pip & Pin ($548), Kneedles & Life ($99–125), and market median analysis. Workshop rates from 2026 fiber-retreat audit.',
+    methodologyKal: 'Ravelry best-ever data (Jan 2025); mystery-KAL timing benchmarks from 43 tracked launches; sweater production cost average ($155) from independent designer survey.',
+    methodologySubmissions: 'Magazine caps based on Laine/Pompom 2026 rates. Cost stack assumes standard labor hours for a size-medium sweater at $25/hr.',
+    methodologyTestknit: 'Paid test-knit band ($0.10–$0.40/yard) from Yarnpond median data. Ghosting failure mode frequency from 2025 Fit-to-Stitch report.',
   },
   de: {
     by: 'Von',
@@ -148,6 +170,7 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     renameFailed: 'Der neue Name konnte nicht gespeichert werden',
     renameEmpty: 'Der Name darf nicht leer sein',
     renameSame: 'Nichts geändert',
+    addMeasurement: 'Maß hinzufügen',
     localOnlyTitle: 'Lokales Projekt',
     localOnlyDescription: 'Dieses Projekt existiert nur in Ihrem Browser-Speicher. Um es auf einem anderen Gerät aufzurufen, exportieren Sie es und importieren Sie es dort.',
     importProject: 'Projekt importieren',
@@ -160,6 +183,15 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     draftNoIssues: 'Alle Tokens korrekt aufgelöst.',
     draftFixIssues: 'Bitte überprüfen Sie die Tokens in Ihrem Entwurf vor dem Export.',
     draftIssueUnresolved: 'Nicht aufgelöst',
+    allLabs: 'Alle Labore',
+    labsTitle: 'Alle 79 Labore',
+    labsDescription: 'Jedes Werkzeug für dieses Muster, gruppiert — damit nichts unsichtbar bleibt.',
+    allLabsAriaLabel: 'Gruppierte Liste aller 79 Arbeitsbereichs-Labore öffnen',
+    sourceMethodology: 'Quelle: Session-35 Forschung',
+    methodologyTeach: 'Flaggschiff-Kurs-Preise basierend auf Pip & Pin (548 $), Kneedles & Life (99–125 $) und Marktmedian-Analyse. Workshop-Raten aus dem Fiber-Retreat-Audit 2026.',
+    methodologyKal: 'Ravelry Best-Ever-Daten (Jan. 2025); Mystery-KAL-Timing-Benchmarks aus 43 verfolgten Starts; durchschnittliche Pullover-Produktionskosten (155 $) aus unabhängiger Designer-Umfrage.',
+    methodologySubmissions: 'Magazin-Obergrenzen basierend auf Laine/Pompom 2026 Raten. Kostendeckung nimmt Standard-Arbeitsstunden für einen Pullover in Größe M bei 25 $/Std. an.',
+    methodologyTestknit: 'Bezahlte Teststrick-Spanne (0,10–0,40 $/Yard) aus Yarnpond-Mediandaten. Häufigkeit des Ghosting-Fehlermodus aus dem Fit-to-Stitch-Bericht 2025.',
   },
   fr: {
     by: 'Par',
@@ -175,7 +207,7 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     confirmDeleteSectionBody: (count) => `Cela supprime la section et toutes ses ${count} mesures. Cela ne peut pas être annulé — assurez-vous que rien d'autre (PDF, notes de test) n'y fait encore référence.`,
     confirmDeleteSectionAction: 'Supprimer la section',
     confirmDeleteMeasurementNamed: (label) => `Supprimer « ${label} » ?`,
-    confirmDeleteMeasurementBody: 'La mesure disparaît immédiatement, mais un bouton Annuler apparaît dans la notification pendant 8 secondes en cas de fausse manipulation.',
+    confirmDeleteMeasurementBody: 'La mesure disparaît immédiatement, mas un bouton Annuler apparaît dans la notification pendant 8 secondes en cas de fausse manipulation.',
     confirmDeleteMeasurementAction: 'Supprimer la mesure',
     measurement: 'Mesure',
     type: 'Type',
@@ -201,6 +233,7 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     renameFailed: 'Impossible d\'enregistrer le nouveau nom',
     renameEmpty: 'Le nom ne peut pas être vide',
     renameSame: 'Aucune modification',
+    addMeasurement: 'Ajouter une mesure',
     localOnlyTitle: 'Projet local',
     localOnlyDescription: 'Ce projet n\'existe que dans le stockage de votre navigateur. Pour y accéder sur un autre appareil, exportez-le puis importez-le là-bas.',
     importProject: 'Importer le projet',
@@ -213,6 +246,15 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     draftNoIssues: 'Tous les jetons sont résolus correctement.',
     draftFixIssues: 'Veuillez vérifier les jetons de votre brouillon avant l\'exportation.',
     draftIssueUnresolved: 'Non résolu',
+    allLabs: 'Tous les labos',
+    labsTitle: 'Les 79 labos',
+    labsDescription: 'Tous les outils de ce patron, regroupés pour ne rien laisser hors écran.',
+    allLabsAriaLabel: 'Ouvrir la liste groupée des 79 labos de l’espace de travail',
+    sourceMethodology: 'Source : Recherche Session-35',
+    methodologyTeach: 'Tarification des cours phares basée sur Pip & Pin (548 $), Kneedles & Life (99–125 $) et l\'analyse de la médiane du marché. Tarifs des ateliers issus de l\'audit 2026 sur les retraites de fibres.',
+    methodologyKal: 'Données Ravelry record (janvier 2025) ; repères temporels des KAL mystères basés sur 43 lancements suivis ; coût moyen de production d\'un pull (155 $) issu d\'une enquête auprès de designers indépendants.',
+    methodologySubmissions: 'Plafonds des magazines basés sur les tarifs Laine/Pompom 2026. La structure des coûts suppose des heures de travail standard pour un pull de taille moyenne à 25 $/h.',
+    methodologyTestknit: 'Tranche de tricot de test payée (0,10 $–0,40 $/yard) d\'après les données médianes de Yarnpond. Fréquence du mode d\'échec « ghosting » issue du rapport Fit-to-Stitch 2025.',
   },
   es: {
     by: 'Por',
@@ -253,7 +295,8 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     renameSaved: 'Proyecto renombrado',
     renameFailed: 'No se pudo guardar el nuevo nombre',
     renameEmpty: 'El nombre no puede estar vacío',
-    renameSame: 'Sin cambios',
+    renameSame: 'Nada ha cambiado',
+    addMeasurement: 'Añadir medida',
     localOnlyTitle: 'Proyecto local',
     localOnlyDescription: 'Este proyecto solo existe en el almacenamiento de tu navegador. Para acceder a él en otro dispositivo, expórtalo e impórtalo allí.',
     importProject: 'Importar proyecto',
@@ -266,6 +309,15 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     draftNoIssues: 'Todos los tokens se han resuelto correctamente.',
     draftFixIssues: 'Revise los tokens de su borrador antes de exportar.',
     draftIssueUnresolved: 'No resuelto',
+    allLabs: 'Todos los labs',
+    labsTitle: 'Los 79 labs',
+    labsDescription: 'Todas las herramientas de este patrón, agrupadas para que nada quede fuera de pantalla.',
+    allLabsAriaLabel: 'Abrir la lista agrupada de los 79 laboratorios del espacio de trabajo',
+    sourceMethodology: 'Fuente: Investigación Sesión-35',
+    methodologyTeach: 'Precios de cursos insignia basados en Pip & Pin (548 $), Kneedles & Life (99–125 $) y análisis de la mediana del mercado. Tarifas de talleres del auditoría de retiros de fibra 2026.',
+    methodologyKal: 'Datos récord de Ravelry (ene 2025); benchmarks de tiempo de KAL misteriosos de 43 lanzamientos seguidos; promedio de costo de producción de suéteres (155 $) de encuesta a diseñadores independientes.',
+    methodologySubmissions: 'Topes de revistas basados en tarifas Laine/Pompom 2026. El desglose de costos asume horas de trabajo estándar para un suéter talla mediana a 25 $/h.',
+    methodologyTestknit: 'Banda de tejido de prueba pagada (0,10 $–0,40 $/yarda) de datos medianos de Yarnpond. Frecuencia del modo de fallo por abandono del informe Fit-to-Stitch 2025.',
   },
   pt: {
     by: 'Por',
@@ -306,7 +358,8 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     renameSaved: 'Projeto renomeado',
     renameFailed: 'Não foi possível guardar o novo nome',
     renameEmpty: 'O nome não pode estar vazio',
-    renameSame: 'Sem alterações',
+    renameSame: 'Nada mudou',
+    addMeasurement: 'Adicionar medida',
     localOnlyTitle: 'Projeto local',
     localOnlyDescription: 'Este projeto existe apenas no armazenamento do seu navegador. Para aceder a ele noutro dispositivo, exporte-o e importe-o lá.',
     importProject: 'Importar projeto',
@@ -319,6 +372,15 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     draftNoIssues: 'Todos os tokens foram resolvidos corretamente.',
     draftFixIssues: 'Por favor, reveja os tokens no seu rascunho antes de exportar.',
     draftIssueUnresolved: 'Não resolvido',
+    allLabs: 'Todos os labs',
+    labsTitle: 'Os 79 labs',
+    labsDescription: 'Todas as ferramentas deste padrão, agrupadas para que nada fique fora do ecrã.',
+    allLabsAriaLabel: 'Abrir a lista agrupada dos 79 laboratórios do trabalho',
+    sourceMethodology: 'Fonte: Investigação Sessão-35',
+    methodologyTeach: 'Preços de cursos emblemáticos baseados em Pip & Pin (548 $), Kneedles & Life (99–125 $) e análise da mediana do mercado. Tarifas de workshops da auditoria de retiros de fibra 2026.',
+    methodologyKal: 'Dados recorde da Ravelry (jan 2025); benchmarks de tempo de KAL mistério de 43 lançamentos acompanhados; média do custo de produção de camisolas (155 $) de inquérito a designers independentes.',
+    methodologySubmissions: 'Tetos de revistas baseados nas tarifas Laine/Pompom 2026. O escalonamento de custos assume horas de trabalho padrão para uma camisola de tamanho médio a 25 $/h.',
+    methodologyTestknit: 'Intervalo de tricot de teste pago (0,10 $–0,40 $/jarda) de dados medianos da Yarnpond. Frequência do modo de falha por abandono do relatório Fit-to-Stitch 2025.',
   },
 };
 

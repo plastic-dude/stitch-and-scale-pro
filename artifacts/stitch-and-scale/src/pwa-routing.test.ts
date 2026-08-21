@@ -12,7 +12,7 @@ describe('PWA Routing Configuration', () => {
     const manifestWebmanifest = rewrites.find((r: any) => r.source === '/manifest.webmanifest');
     const manifestJson = rewrites.find((r: any) => r.source === '/manifest.json');
     const swJs = rewrites.find((r: any) => r.source === '/sw.js');
-    const spaCatchAll = rewrites.find((r: any) => r.source === '/(.*)');
+    const spaCatchAll = rewrites.find((r: any) => r.destination === '/index.html');
     
     expect(manifestWebmanifest).toBeDefined();
     expect(manifestWebmanifest.destination).toBe('/manifest.webmanifest');

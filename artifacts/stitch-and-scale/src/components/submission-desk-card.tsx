@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { AlertTriangle, FileSearch } from 'lucide-react';
 import { PatternProject } from '@/lib/grading-engine';
 import { projectStorage } from '@/lib/storage-lib';
+import { getWorkspaceCopy } from '@/lib/workspace-copy';
 import {
   analyzeSubmission,
   DEFAULT_SUBMISSION,
@@ -27,6 +28,7 @@ import {
   type Difficulty,
   type SubmissionInput,
 } from '@/lib/submission-desk';
+import { BenchmarkFooter } from './benchmark-footer';
 
 function defaultStored(): SubmissionInput {
   return { ...DEFAULT_SUBMISSION };
@@ -112,6 +114,7 @@ export function SubmissionDeskCard({ project }: { project: PatternProject }) {
   const applyPreset = (preset: Partial<SubmissionInput>) => setStored((s) => ({ ...s, ...preset }));
 
   const result = useMemo(() => analyzeSubmission(stored), [stored]);
+  const copy = getWorkspaceCopy(language);
 
   const hoursRange = stored.difficulty === 'accessory' ? ACCESSORY_HOURS_RANGE : SWEATER_HOURS_RANGE;
 
@@ -200,15 +203,11 @@ export function SubmissionDeskCard({ project }: { project: PatternProject }) {
             min={0} step={0.5} onChange={(n) => patch({ weeklyOwnSales: n })} suffix="wk" />
         </div>
 
-        <p className="text-xs text-muted-foreground">
-          Benchmarks baked in: magazines pay by difficulty and cap around ${MAGAZINE_SWEATER_CEILING} for a sweater
-          ({SWEATER_HOURS_RANGE.min}–{SWEATER_HOURS_RANGE.max}h; accessories {ACCESSORY_HOURS_RANGE.min}–{ACCESSORY_HOURS_RANGE.max}h);
-          the standard cost stack is ${TECH_EDIT_COST} tech edit / ${MODEL_COST} model / ${YARN_COST} yarn (MediaPeruana BTS);
-          Laine-style exclusivity runs {LAINE_EXCLUSIVITY_MONTHS} months from publication; KnitCrate — the cautionary tale,
-          collapsed Dec 2022 owing artists, having paid a max of ${KNITCRATE_MAX_ITEM_FEE} per item — is the reason the
-          box-channel flag exists; median Ravelry income is ${RAVELRY_MEDIAN_JAN} in a good January, so self-publish rates
-          are entered honestly.
-        </p>
+        <BenchmarkFooter
+          text={`magazines pay by difficulty and cap around $${MAGAZINE_SWEATER_CEILING} for a sweater (${SWEATER_HOURS_RANGE.min}–${SWEATER_HOURS_RANGE.max}h; accessories ${ACCESSORY_HOURS_RANGE.min}–${ACCESSORY_HOURS_RANGE.max}h); the standard cost stack is $${TECH_EDIT_COST} tech edit / $${MODEL_COST} model / $${YARN_COST} yarn (MediaPeruana BTS); Laine-style exclusivity runs ${LAINE_EXCLUSIVITY_MONTHS} months from publication; KnitCrate — the cautionary tale, collapsed Dec 2022 owing artists, having paid a max of $${KNITCRATE_MAX_ITEM_FEE} per item — is the reason the box-channel flag exists; median Ravelry income is $${RAVELRY_MEDIAN_JAN} in a good January, so self-publish rates are entered honestly.`}
+          sourceLabel={copy.sourceMethodology}
+          methodology={copy.methodologySubmissions}
+        />
 
         {/* Verdict */}
         <div className={`rounded-lg border p-4 ${verdictColor(result.verdict)}`}>

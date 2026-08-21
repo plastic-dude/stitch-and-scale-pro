@@ -10,7 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GradingKey, GRADING_KEY_LABELS, ALL_SIZES, SIZE_STANDARDS } from '@/lib/grading-engine';
-import { getInitialLanguage, LANGUAGE_OPTIONS, languageLabel, translate, type LanguageCode } from '@/lib/i18n';
+import { getInitialLanguage, LANGUAGE_OPTIONS, languageLabel, translate, type LanguageCode, type TranslationKey, type TranslationVariables } from '@/lib/i18n';
 import { getSettingsCopy } from '@/lib/settings-copy';
 import { getToastCopy } from '@/lib/toast-copy';
 import { getStudioProfileCopy } from '@/lib/studio-profile-copy';
@@ -28,7 +28,7 @@ export default function SettingsPage() {
   const logoInputRef = React.useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const [editingKey, setEditingKey] = React.useState<GradingKey>('bust');
-  const t = (key: Parameters<typeof translate>[1]) => translate(language, key);
+  const t = (key: TranslationKey, variables?: TranslationVariables) => translate(language, key, variables);
   const copy = getSettingsCopy(language);
   const profileCopy = getStudioProfileCopy(language);
   const tc = getToastCopy(language);

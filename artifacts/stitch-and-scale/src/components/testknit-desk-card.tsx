@@ -9,12 +9,14 @@ import { Switch } from '@/components/ui/switch';
 import { AlertTriangle, Users } from 'lucide-react';
 import { PatternProject, ALL_SIZES } from '@/lib/grading-engine';
 import { useProjectStorage, useProjectStorageState } from '@/lib/storage-lib';
+import { getWorkspaceCopy } from '@/lib/workspace-copy';
 import {
   analyzeTestKnit, DEFAULT_TESTKNIT, formatUsd,
   type TestKnitInputs, type TesterInput, type SizeCoverage,
 } from '@/lib/testknit-desk';
 import { useSettings } from '@/context/SettingsContext';
 import { testknitDeskTestersEmptyState } from '@/lib/testknit-desk-copy';
+import { BenchmarkFooter } from './benchmark-footer';
 
 function defaultStored(): TestKnitInputs {
   return {
@@ -111,8 +113,8 @@ export function TestKnitDeskCard({ project }: { project: PatternProject }) {
   const removeTester = (idx: number) =>
     setStored((s) => ({ ...s, testers: s.testers.filter((_, i) => i !== idx) }));
 
-  const result = useMemo(() => analyzeTestKnit(project, stored), [project, stored]);
-
+    const result = useMemo(() => analyzeTestKnit(project, stored), [project, stored]);
+  const copy = getWorkspaceCopy(language);
   const errors = result.flags.filter(f => f.severity === 'error').length;
   const warnings = result.flags.filter(f => f.severity === 'warning').length;
 
@@ -235,13 +237,11 @@ export function TestKnitDeskCard({ project }: { project: PatternProject }) {
           <NumField id="tk-yarnsupp" label={ls.yarnSupportUnpaid} value={stored.yarnSupportPerTester}
             min={0} step={1} onChange={(n) => patch({ yarnSupportPerTester: n })} suffix="$" />
         </div>
-        <p className="text-xs text-muted-foreground">
-          Benchmarks baked in (research session 43): the paid band is $0.10–$0.40/yard with a
-          $0.18 fair floor (r/craftsnark, r/AdvancedKnitting); sweater tests typically run 3–4 weeks;
-          a typical test budget is $75–250 plus a free final pattern (the documented minimum reward);
-          sample knitters surrender the finished object; Yarnpond&apos;s documented failure mode is
-          testers ghosting on underpaid or overpromised calls.
-        </p>
+        <BenchmarkFooter
+          text="the paid band is $0.10–$0.40/yard with a $0.18 fair floor (r/craftsnark, r/AdvancedKnitting); sweater tests typically run 3–4 weeks; a typical test budget is $75–250 plus a free final pattern (the documented minimum reward); sample knitters surrender the finished object; Yarnpond's documented failure mode is testers ghosting on underpaid or overpromised calls."
+          sourceLabel={copy.sourceMethodology}
+          methodology={copy.methodologyTestknit}
+        />
 
         {/* KPI tiles */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
