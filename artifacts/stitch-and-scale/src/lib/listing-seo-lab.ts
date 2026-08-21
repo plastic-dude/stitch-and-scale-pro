@@ -219,6 +219,8 @@ export interface ListingKit {
   tags: string;
   /** Description skeleton with romance copy placeholder spots, no invented facts. */
   description: string;
+  /** quarantined if title or description is missing or too short */
+  isComplete: boolean;
 }
 
 export function buildListingKit(project: PatternProject, inputs: ListingInputs): ListingKit {
@@ -246,7 +248,11 @@ export function buildListingKit(project: PatternProject, inputs: ListingInputs):
     `What you get: the full pattern PDF for ${sizeLine}${inputs.writtenAndCharted ? ' (written + charts)' : ''}.`,
     'Always check gauge — and always list your own swatch numbers.',
   ].join('\n');
-  return { title, tags, description };
+  
+  const score = scoreListing(project, inputs);
+  const isComplete = title.length > 5 && description.length > 20 && score.total >= 35;
+
+  return { title, tags, description, isComplete };
 }
 
 /** HRN momentum targets: queue/favourite thresholds that drive the "recently popular" sort. */

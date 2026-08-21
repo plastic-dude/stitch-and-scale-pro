@@ -104,6 +104,10 @@ export function MembershipCard({ project }: { project: PatternProject }) {
   const setField = (patch: Partial<StoredMembership>) => setStored((s) => ({ ...s, ...patch }));
 
   const copy = async (text: string) => {
+    if (!result.isComplete) {
+      toast({ title: copyText.incompleteQuarantine || "Complete the tier structure first to copy", variant: "destructive" });
+      return;
+    }
     try {
       await copyTextOrThrow(text);
       toast({ title: copyText.copied });
@@ -370,7 +374,7 @@ export function MembershipCard({ project }: { project: PatternProject }) {
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <h4 className="text-sm font-semibold">{copyText.tierCopy}</h4>
-            <Button variant="outline" size="sm" onClick={() => copy(result.tierCopy)}>
+            <Button variant="outline" size="sm" onClick={() => copy(result.tierCopy)} disabled={!result.isComplete}>
               <ClipboardCopy className="h-4 w-4" /> {copyText.copy}
             </Button>
           </div>

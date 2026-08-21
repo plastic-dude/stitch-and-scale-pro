@@ -81,6 +81,8 @@ export interface WholesaleResult {
   labourCovered: boolean;
   verdict: Verdict;
   notes: string[];
+  /** quarantined if order quantity is 0 or non-finite economics */
+  isComplete: boolean;
 }
 
 export interface BookInputs {
@@ -109,6 +111,8 @@ export interface BookResult {
   firstStatementLagMonths: number;
   verdict: Verdict;
   notes: string[];
+  /** quarantined if advance is 0 or non-finite economics */
+  isComplete: boolean;
 }
 
 export interface BulkCheckItem {
@@ -205,6 +209,8 @@ export function analyzeWholesaleDeal(input: WholesaleInputs): WholesaleResult {
     );
   }
 
+  const isComplete = input.orderQuantity > 0 && isFinite(wholesaleNet) && input.wholesaleRate > 0;
+
   return {
     wholesaleNet: round2(wholesaleNet),
     directNetEquivalent: round2(directNetEquivalent),
@@ -213,6 +219,7 @@ export function analyzeWholesaleDeal(input: WholesaleInputs): WholesaleResult {
     labourCovered,
     verdict,
     notes,
+    isComplete,
   };
 }
 
@@ -295,6 +302,8 @@ export function analyzeBookDeal(input: BookInputs): BookResult {
     );
   }
 
+  const isComplete = input.advance > 0 && isFinite(netAdvanceAfterDeductions) && input.patterns > 0;
+
   return {
     earnOutCopies,
     perCopyRoyalty: round2(perCopyRoyalty),
@@ -308,6 +317,7 @@ export function analyzeBookDeal(input: BookInputs): BookResult {
     firstStatementLagMonths,
     verdict,
     notes,
+    isComplete,
   };
 }
 

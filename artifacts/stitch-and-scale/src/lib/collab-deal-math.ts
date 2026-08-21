@@ -142,6 +142,8 @@ export interface DealMathResult {
   clauseFlags: { code: string; severity: 'critical' | 'warning'; text: string }[];
   /** Paste-ready counter-offer letter. */
   counterLetter: string;
+  /** quarantined if hours or sales are 0 or non-finite economics */
+  isComplete: boolean;
 }
 
 const round2 = (n: number) => Math.round(n * 100) / 100;
@@ -286,6 +288,8 @@ export function analyzeDealMath(input: DealMathInput): DealMathResult {
     { channel: 'own', label: 'Your channel (tail window)', units: input.ownMonthlySales * Math.max(0, input.tailMonths), netRevenue: ownNet },
   ];
 
+  const isComplete = input.requiredHours > 0 && isFinite(deal.brandNet) && (input.fixedFee > 0 || input.royaltyPct > 0 || input.yarnSupportValue > 0);
+
   return {
     channels, deal,
     selfChannel: {
@@ -293,5 +297,6 @@ export function analyzeDealMath(input: DealMathInput): DealMathResult {
       netRevenue: platformNet(input.platform, input.patternPrice, input.ownMonthlySales).netRevenue,
     },
     channelComparison, bestStructure: best, clauseFlags, counterLetter,
+    isComplete,
   };
 }

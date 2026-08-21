@@ -295,6 +295,10 @@ export function ReceiptLabCard(props: { project: PatternProject }) {
   }
 
   async function copyReceiptText() {
+    if (!result.isComplete) {
+      toast({ title: copy.incompleteQuarantine || "Complete the receipt draft to copy", variant: "destructive" });
+      return;
+    }
     try {
       await copyTextOrThrow(buildTextLines());
       setCopied(true);
@@ -306,6 +310,10 @@ export function ReceiptLabCard(props: { project: PatternProject }) {
   }
 
   async function shareReceipt() {
+    if (!result.isComplete) {
+      toast({ title: copy.incompleteQuarantine || "Complete the receipt draft to share", variant: "destructive" });
+      return;
+    }
     const text = buildTextLines();
     const sharePayload: { title?: string; text: string; url?: string } = { title: result.document.title, text };
     if (navigator.share) {
@@ -575,7 +583,7 @@ export function ReceiptLabCard(props: { project: PatternProject }) {
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="flex flex-wrap gap-2">
-                  <Button onClick={shareReceipt} size="sm">
+                  <Button onClick={shareReceipt} size="sm" disabled={!result.isComplete}>
                     <Share2 className="h-4 w-4 mr-1.5" /> {copied ? copy.copied : copy.copyShare}
                   </Button>
                   <Button variant="outline" size="sm" onClick={saveReceiptImage}>

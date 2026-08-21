@@ -137,7 +137,12 @@ export function PartnerEconomicsCard({ project }: { project: PatternProject }) {
   const pitchResult = useMemo(() => scorePitch(stored.pitch), [stored.pitch]);
   const pipeline = useMemo(() => summarizePipeline(stored.pitches), [stored.pitches]);
 
+  const isPartnerComplete = stored.offer.offeredAmount > 0 && stored.offer.hoursWorked > 0;
   const copy = async (text: string) => {
+    if (!isPartnerComplete) {
+      toast({ title: partnerCopy.incompleteQuarantine || "Complete the offer details to copy", variant: "destructive" });
+      return;
+    }
     try {
       await copyTextOrThrow(text);
       toast({ title: partnerCopy.copied });
@@ -343,7 +348,7 @@ export function PartnerEconomicsCard({ project }: { project: PatternProject }) {
             <div className="rounded-lg border bg-muted/30 p-4 text-xs whitespace-pre-line font-mono">
               {contractText}
             </div>
-            <Button variant="outline" size="sm" onClick={() => copy(contractText)}>
+            <Button variant="outline" size="sm" onClick={() => copy(contractText)} disabled={!isPartnerComplete}>
               <ClipboardCopy className="h-3.5 w-3.5 mr-1.5" /> Copy agreement draft
             </Button>
           </div>

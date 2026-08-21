@@ -95,6 +95,10 @@ export function CollabDealMathCard({ project }: { project: PatternProject }) {
   const input = stored.input;
 
   const copyLetter = async () => {
+    if (!result.isComplete) {
+      toast({ title: copyText.incompleteQuarantine || "Complete the deal inputs to copy", variant: "destructive" });
+      return;
+    }
     try {
       await copyTextOrThrow(result.counterLetter);
       toast({ title: `${copyText.counterLetter} — ${copyText.copy}` });
@@ -247,7 +251,7 @@ export function CollabDealMathCard({ project }: { project: PatternProject }) {
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <Label className="text-xs font-medium">{copyText.counterLetter}</Label>
-            <Button variant="outline" size="sm" className="h-7 gap-1 text-xs" onClick={copyLetter}>
+            <Button variant="outline" size="sm" className="h-7 gap-1 text-xs" onClick={copyLetter} disabled={!result.isComplete}>
               <ClipboardCopy className="h-3 w-3" /> {copyText.copy}
             </Button>
           </div>

@@ -131,7 +131,11 @@ const handle = useProjectStorage<StoredState>('wholesalebook', project.id, ['ksk
   const setBook = (patch: Partial<BookInputs>) =>
     setStored((s) => ({ ...s, book: { ...s.book, ...patch } }));
 
-  const copy = async (text: string) => {
+  const copy = async (text: string, isComplete?: boolean) => {
+    if (isComplete === false) {
+      toast({ title: tc.incompleteQuarantine || "Complete the offer details to copy", variant: "destructive" });
+      return;
+    }
     try {
       await copyTextOrThrow(text);
       toast({ title: tc.wholesaleCopied });
@@ -261,7 +265,7 @@ const handle = useProjectStorage<StoredState>('wholesalebook', project.id, ['ksk
           <div className="mt-3 bg-secondary/40 rounded-lg p-3">
             <div className="flex items-center justify-between mb-2">
               <p className="text-sm font-medium">Paste-ready reply / counteroffer</p>
-              <Button size="sm" variant="outline" onClick={() => copy(pack.reply)}>
+              <Button size="sm" variant="outline" onClick={() => copy(pack.reply, wholesale.isComplete)} disabled={!wholesale.isComplete}>
                 <ClipboardCopy className="w-3 h-3 mr-1" /> Copy
               </Button>
             </div>

@@ -99,6 +99,9 @@ export function ListingSeoLabCard({ project }: { project: PatternProject }) {
   };
   const [copied, setCopied] = useState<string | null>(null);
   const copy = async (text: string, key: string) => {
+    if (!kit.isComplete) {
+      return;
+    }
     try {
       await copyTextOrThrow(text);
       setCopied(key);
@@ -251,7 +254,7 @@ export function ListingSeoLabCard({ project }: { project: PatternProject }) {
           <div className="flex flex-wrap items-center gap-2">
             <div className="font-semibold text-sm">{copyText.kit}</div>
             <Button variant="outline" size="sm" className="h-7 text-xs"
-              onClick={() => copy(kitText, 'kit')}>
+              onClick={() => copy(kitText, 'kit')} disabled={!kit.isComplete}>
               {copied === 'kit' ? <CheckCircle2 className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
               {copied === 'kit' ? copyText.copied : copyText.copyKit}
             </Button>

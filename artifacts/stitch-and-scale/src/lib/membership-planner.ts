@@ -90,6 +90,8 @@ export type MembershipResult = {
   verdictNote: string;
   flags: string[];
   tierCopy: string; // paste-ready tier page copy
+  /** quarantined if no members or non-finite economics */
+  isComplete: boolean;
 };
 
 export function defaultTiers(): MembershipTier[] {
@@ -311,6 +313,8 @@ export function analyzeMembership(input: MembershipInput): MembershipResult {
     ].join('\n');
   }).join('\n');
 
+  const isComplete = totalMembers > 0 && isFinite(profitMonthly) && input.tiers.some(t => t.price > 0);
+
   return {
     tiers: tierNets,
     grossMonthly,
@@ -330,5 +334,6 @@ export function analyzeMembership(input: MembershipInput): MembershipResult {
     verdictNote,
     flags,
     tierCopy,
+    isComplete,
   };
 }

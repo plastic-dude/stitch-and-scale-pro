@@ -228,6 +228,8 @@ export interface ReceiptLabResult {
     profit: number;
   };
   nextDocNumber: string;
+  /** quarantined if subtotal is 0 or non-finite */
+  isComplete: boolean;
 }
 
 // --- helpers -----------------------------------------------------------------
@@ -468,6 +470,8 @@ export function analyzeReceipt(input: ReceiptLabInput): ReceiptLabResult {
   const balanceDue = draft.kind === "quote" ? total - clamp(draft.depositReceived, 0, total) : 0;
 
 
+  const isComplete = isEffectiveSale(draft) && isFiniteNumber(total) && total > 0;
+
   return {
     document: {
       kind: draft.kind,
@@ -485,6 +489,7 @@ export function analyzeReceipt(input: ReceiptLabInput): ReceiptLabResult {
     ledger: led,
     totals: { salesCount, revenue, refunds, profit: profitTotal },
     nextDocNumber: nextDocNumber(ledger, draft.kind),
+    isComplete,
   };
 }
 
