@@ -18,8 +18,9 @@ import { analyzeGrading, GRADING_LAB_VERSION, type LabResult } from './grading-l
 import { buildGradingCsv } from './grading-csv.js';
 
 export const MCP_PROTOCOL_VERSION = '2026-07-28';
+export const MCP_SUPPORTED_PROTOCOL_VERSIONS = ['2026-07-28', '2025-11-25'] as const;
 export const MCP_SERVER_NAME = 'stitch-and-scale-pro';
-export const MCP_SERVER_VERSION = '0.2.0';
+export const MCP_SERVER_VERSION = '0.3.0';
 export const MCP_CONTRACT_VERSION = 1;
 
 const MAX_ID_LENGTH = 120;
@@ -496,11 +497,11 @@ export interface McpGradingCsvOutput {
 }
 
 /** Serializes a grading.run result as CSV, reusing the exact buildGradingCsv()
- *  function the in-app grading page's "Download CSV" button already uses -
- *  same headers, same escaping, same numbers, no new formatting logic. This
- *  exists for AI clients and spreadsheet-habituated designers who want the
- *  tool's math in the format they already trust and work in, rather than
- *  needing to trust or reverse-engineer a JSON blob. */
+ * function the in-app grading page's "Download CSV" button already uses -
+ * same headers, same escaping, same numbers, no new formatting logic. This
+ * exists for AI clients and spreadsheet-habituated designers who want the
+ * tool's math in the format they already trust and work in, rather than
+ * needing to trust or reverse-engineer a JSON blob. */
 export function exportMcpGradingCsv(raw: unknown): McpGradingCsvOutput | McpValidationOutput {
   const grade = runMcpGrading(raw);
   if (!isMcpGradeOutput(grade)) return grade;
@@ -519,8 +520,239 @@ export function isMcpGradingCsvOutput(value: McpGradingCsvOutput | McpValidation
   return 'csv' in value && 'filename' in value;
 }
 
+export interface McpStandardsComparisonRow {
+  gradingKey: GradingKey;
+  size: SizeKey;
+  projectStandardValue: number;
+  cycBaselineValue: number;
+  delta: number;
+}
+
+export interface McpStandardsComparisonOutput {
+  schemaVersion: number;
+  projectId: string;
+  projectRevision: string;
+  projectStandard: SizingStandard;
+  baselineStandard: 'CYC';
+  identical: boolean;
+  rows: McpStandardsComparisonRow[];
+  note: string;
+}
+
+/** Compares the project's own resolved standard (CYC, or its frozen Custom
+ *  snapshot) against the CYC baseline chart, size by size and key by key.
+ *  Deliberately does NOT compare against UK/EN13402/Japanese/Korean/Chinese/
+ *  Australian - those enum values exist for future selection but have no
+ *  real backing chart today (resolveProjectStandards folds all of them to
+ *  CYC), so a fabricated multi-standard diff would misrepresent data that
+ *  does not exist. Only ever compares real tables: a genuine Custom
+ *  snapshot, or CYC against itself (trivially identical). */
+export function compareMcpStandards(raw: unknown): McpStandardsComparisonOutput | McpValidationOutput {
+  const normalized = normalizeMcpProject(raw);
+  const project = normalized.project;
+  if (!project || normalized.issues.some(issue => issue.severity === 'error')) {
+    return validateMcpProject(raw);
+  }
+  const projectStandards = resolveProjectStandards(project);
+  const rows: McpStandardsComparisonRow[] = [];
+  for (const size of ALL_SIZES) {
+    for (const key of Object.keys(GRADING_KEY_LABELS) as GradingKey[]) {
+      const projectValue = projectStandards[size][key];
+      const baselineValue = SIZE_STANDARDS[size][key];
+      if (projectValue !== baselineValue) {
+        rows.push({
+          gradingKey: key,
+          size,
+          projectStandardValue: projectValue,
+          cycBaselineValue: baselineValue,
+          delta: Math.round((projectValue - baselineValue) * 100) / 100,
+        });
+      }
+    }
+  }
+  return {
+    schemaVersion: MCP_CONTRACT_VERSION,
+    projectId: project.id,
+    projectRevision: revisionFor(project),
+    projectStandard: project.sizingStandard ?? 'CYC',
+    baselineStandard: 'CYC',
+    identical: rows.length === 0,
+    rows,
+    note: rows.length === 0
+      ? 'This project resolves to the same body measurements as the CYC baseline chart; there is no custom standard in effect.'
+      : 'Only sizes and measurements that differ from the CYC baseline are listed. Delta is projectStandardValue minus cycBaselineValue, in the source chart\'s inches.',
+  };
+}
+
+export function isMcpStandardsComparisonOutput(
+  value: McpStandardsComparisonOutput | McpValidationOutput,
+): value is McpStandardsComparisonOutput {
+  return 'rows' in value && 'identical' in value;
+}
+
+export interface McpResourceDefinition {
+  uri: string;
+  name: string;
+  title: string;
+  description: string;
+  mimeType: 'application/json';
+}
+
+const REFERENCE_RESOURCES: McpResourceDefinition[] = [
+  {
+    uri: 'stitch-scale://reference/sizing-standards',
+    name: 'sizing-standards',
+    title: 'CYC baseline sizing standard',
+    description: 'The Craft Yarn Council baseline body-measurement chart (inches) used whenever a project has no frozen custom standard of its own.',
+    mimeType: 'application/json',
+  },
+  {
+    uri: 'stitch-scale://reference/grading-keys',
+    name: 'grading-keys',
+    title: 'Grading key labels',
+    description: 'The full set of body-measurement grading keys supported by the deterministic grading engine, with human-readable labels.',
+    mimeType: 'application/json',
+  },
+  {
+    uri: 'stitch-scale://reference/contract',
+    name: 'contract',
+    title: 'MCP contract summary',
+    description: 'Server name, versions, and the exact tool allowlist exposed by this MCP endpoint - useful for a client to confirm capabilities without a tool call.',
+    mimeType: 'application/json',
+  },
+];
+
+/** Static, read-only reference data - never a project snapshot. Safe to
+ *  list and read without authentication concerns beyond the endpoint's
+ *  existing API-key gate, since nothing here is user- or project-specific. */
+export function getMcpResourceDefinitions(): McpResourceDefinition[] {
+  return REFERENCE_RESOURCES;
+}
+
+export function readMcpResource(uri: string): { uri: string; mimeType: string; text: string } | null {
+  switch (uri) {
+    case 'stitch-scale://reference/sizing-standards':
+      return {
+        uri,
+        mimeType: 'application/json',
+        text: JSON.stringify({
+          standard: 'CYC',
+          unit: 'in',
+          source: "Craft Yarn Council, Woman's Standard Body Measurements chart",
+          table: SIZE_STANDARDS,
+        }),
+      };
+    case 'stitch-scale://reference/grading-keys':
+      return { uri, mimeType: 'application/json', text: JSON.stringify(GRADING_KEY_LABELS) };
+    case 'stitch-scale://reference/contract':
+      return {
+        uri,
+        mimeType: 'application/json',
+        text: JSON.stringify({
+          server: MCP_SERVER_NAME,
+          serverVersion: MCP_SERVER_VERSION,
+          protocolVersion: MCP_PROTOCOL_VERSION,
+          contractVersion: MCP_CONTRACT_VERSION,
+          tools: getMcpToolNames(),
+        }),
+      };
+    default:
+      return null;
+  }
+}
+
+type ExplainIntent = McpExplainInput['intent'];
+
+export interface McpPromptDefinition {
+  name: string;
+  title: string;
+  description: string;
+  arguments: Array<{ name: string; description: string; required: boolean }>;
+}
+
+const PROMPT_COPY: Record<ExplainIntent, { promptName: string; title: string; description: string; framing: string }> = {
+  explain: {
+    promptName: 'grading.explain',
+    title: 'Explain this grading result',
+    description: 'Ask the assistant to explain a completed grading.run result in plain language.',
+    framing: 'The designer wants a plain-language explanation of the grading result below.',
+  },
+  teach: {
+    promptName: 'grading.teach',
+    title: 'Teach me this grading concept',
+    description: 'Ask the assistant to teach the underlying concept (width vs circumference, repeats, rounding parity, units) behind a result.',
+    framing: 'The designer wants to understand the grading concept behind the result below (for example: width vs circumference, stitch/row repeats, rounding parity, or unit conversion).',
+  },
+  check: {
+    promptName: 'grading.check',
+    title: 'Check my pattern before I export',
+    description: 'Ask the assistant to identify missing inputs or readiness issues before exporting a PDF.',
+    framing: 'The designer wants a pre-export readiness check: missing inputs, warnings, or issues in the result below.',
+  },
+  'next-step': {
+    promptName: 'grading.next_step',
+    title: 'What should I do next?',
+    description: 'Ask the assistant to propose one reversible next step based on the current grading state.',
+    framing: 'The designer wants one reversible next step based on the result below.',
+  },
+};
+
+const PROMPT_NAME_TO_INTENT: Record<string, ExplainIntent> = Object.fromEntries(
+  (Object.entries(PROMPT_COPY) as Array<[ExplainIntent, typeof PROMPT_COPY[ExplainIntent]]>)
+    .map(([intent, copy]) => [copy.promptName, intent]),
+);
+
+/** User-controlled prompt templates - the MCP host presents these as
+ *  selectable actions; the model does not invoke them autonomously. Each
+ *  prompt reuses explainMcpGrade for its actual content rather than handing
+ *  the model raw caller-supplied JSON: every fact, caveat, and next step is
+ *  already bounded and defended by explainMcpGrade, and the safety
+ *  instruction is echoed verbatim from there instead of duplicated here, so
+ *  the two can never drift out of sync. */
+export function getMcpPromptDefinitions(): McpPromptDefinition[] {
+  return Object.values(PROMPT_COPY).map(copy => ({
+    name: copy.promptName,
+    title: copy.title,
+    description: copy.description,
+    arguments: [{ name: 'grade', description: 'A grading.run result (McpGradeOutput) to explain.', required: true }],
+  }));
+}
+
+function bulletList(lines: string[]): string {
+  return lines.map(line => `- ${line}`).join('\n');
+}
+
+export function getMcpPrompt(
+  name: string,
+  args: Record<string, unknown>,
+): { description: string; messages: Array<{ role: 'user'; content: { type: 'text'; text: string } }> } | null {
+  const intent = PROMPT_NAME_TO_INTENT[name];
+  if (!intent) return null;
+  const copy = PROMPT_COPY[intent];
+  const grade = (isRecord(args.grade) ? args.grade : {}) as unknown as McpGradeOutput;
+  const explanation = explainMcpGrade({ grade, intent });
+  const text = [
+    copy.framing,
+    '',
+    'CALCULATED FACTS:',
+    bulletList(explanation.calculatedFacts),
+    '',
+    'CAVEATS:',
+    bulletList(explanation.caveats),
+    '',
+    'SUGGESTED NEXT STEPS:',
+    bulletList(explanation.suggestedNextSteps),
+    '',
+    explanation.modelInstruction,
+  ].join('\n');
+  return {
+    description: copy.description,
+    messages: [{ role: 'user', content: { type: 'text', text } }],
+  };
+}
+
 export function getMcpToolNames(): string[] {
-  return ['project.intake', 'project.validate', 'grading.run', 'grading.explain', 'grading.export_csv', 'export.pattern_pdf', 'export.project_book_pdf', 'export.brag_card', 'calculate.marketplace_take_rate'];
+  return ['project.intake', 'project.validate', 'grading.run', 'grading.explain', 'grading.export_csv', 'grading.compare_standards', 'export.pattern_pdf', 'export.project_book_pdf', 'export.brag_card', 'calculate.marketplace_take_rate'];
 }
 
 export function getMcpToolDefinitions() {
@@ -561,6 +793,14 @@ export function getMcpToolDefinitions() {
       name: 'grading.export_csv',
       title: 'Export a grading result as CSV',
       description: 'Grade an explicitly supplied project snapshot and return the result as CSV text, using the exact same serializer the in-app "Download CSV" button uses. For spreadsheet-habituated designers and AI clients that want the tool\'s numbers in a format they can paste directly into their existing spreadsheet workflow, rather than a JSON blob. Read-only; does not save, publish, or share anything.',
+      inputSchema: { type: 'object', additionalProperties: false, properties: { project: { type: 'object', description: 'Explicitly supplied project snapshot.' } }, required: ['project'] },
+      outputSchema: { type: 'object' },
+      annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
+    },
+    {
+      name: 'grading.compare_standards',
+      title: 'Compare against the CYC baseline',
+      description: 'Compare an explicitly supplied project\'s resolved sizing standard (CYC, or its frozen Custom snapshot) against the CYC baseline chart, size by size. Read-only; does not compare against unimplemented standards.',
       inputSchema: { type: 'object', additionalProperties: false, properties: { project: { type: 'object', description: 'Explicitly supplied project snapshot.' } }, required: ['project'] },
       outputSchema: { type: 'object' },
       annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
