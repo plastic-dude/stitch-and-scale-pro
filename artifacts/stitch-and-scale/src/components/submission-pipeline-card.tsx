@@ -140,16 +140,22 @@ const handle = useProjectStorage<{ calls: StoredCall[]; rates: StoredRates }>('s
       });
   };
 
-  const updateCall = (patch: Partial<PipelineCall>) => {
+  const updateCall = (patch: Partial<PipelineCall>, showToast = false) => {
     if (!editing) return;
     setStored((s) => ({
       ...s,
       calls: s.calls.map((c) => (c.id === editing.id ? ({ ...c, ...patch } as StoredCall) : c)),
     }));
+    if (showToast) {
+      toast({ title: copy.saved });
+    }
   };
 
-  const updateRates = (patch: Partial<StoredRates>) => {
+  const updateRates = (patch: Partial<StoredRates>, showToast = false) => {
     setStored((s) => ({ ...s, rates: { ...s.rates, ...patch } }));
+    if (showToast) {
+      toast({ title: copy.saved });
+    }
   };
 
   const stateStyle = (state: string) => {
@@ -174,6 +180,7 @@ const handle = useProjectStorage<{ calls: StoredCall[]; rates: StoredRates }>('s
               const c = blankCall();
               setStored((s) => ({ ...s, calls: [...s.calls, c] }));
               setEditingId(c.id);
+              toast({ title: copy.addCall, description: copy.untitled });
             }}>{copy.addCall}</Button>
           </div>
           {stored.calls.length === 0 && (
@@ -192,6 +199,7 @@ const handle = useProjectStorage<{ calls: StoredCall[]; rates: StoredRates }>('s
                 setStored((s) => ({ ...s, calls: s.calls.filter((x) => x.id !== c.id) }));
                 if (editingId === c.id) setEditingId(null);
                 if (selectedId === c.id) setSelectedId(null);
+                toast({ title: toastCopy.sectionDeletedTitle });
               }}>✕</Button>
             </div>
           ))}
@@ -204,43 +212,43 @@ const handle = useProjectStorage<{ calls: StoredCall[]; rates: StoredRates }>('s
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1">
                 <Label className="text-xs">Publication</Label>
-                <Input value={editing.publication} placeholder={copy.publicationPlaceholder} onChange={(e) => updateCall({ publication: e.target.value })} />
+                <Input value={editing.publication} placeholder={copy.publicationPlaceholder} onChange={(e) => updateCall({ publication: e.target.value })} onBlur={() => updateCall({}, true)} />
               </div>
               <div className="space-y-1">
                 <Label className="text-xs">Issue / theme</Label>
-                <Input value={editing.issue} placeholder={copy.issuePlaceholder} onChange={(e) => updateCall({ issue: e.target.value })} />
+                <Input value={editing.issue} placeholder={copy.issuePlaceholder} onChange={(e) => updateCall({ issue: e.target.value })} onBlur={() => updateCall({}, true)} />
               </div>
               <div className="space-y-1">
                 <Label className="text-xs">Submission deadline</Label>
-                {dateInput(editing.submissionDeadline, (v) => updateCall({ submissionDeadline: v }))}
+                {dateInput(editing.submissionDeadline, (v) => updateCall({ submissionDeadline: v }, true))}
               </div>
               <div className="space-y-1">
                 <Label className="text-xs">Decision date</Label>
-                {dateInput(editing.decisionDate, (v) => updateCall({ decisionDate: v }))}
+                {dateInput(editing.decisionDate, (v) => updateCall({ decisionDate: v }, true))}
               </div>
               <div className="space-y-1">
                 <Label className="text-xs">Pattern due</Label>
-                {dateInput(editing.patternDue, (v) => updateCall({ patternDue: v }))}
+                {dateInput(editing.patternDue, (v) => updateCall({ patternDue: v }, true))}
               </div>
               <div className="space-y-1">
                 <Label className="text-xs">Sample due</Label>
-                {dateInput(editing.sampleDue, (v) => updateCall({ sampleDue: v }))}
+                {dateInput(editing.sampleDue, (v) => updateCall({ sampleDue: v }, true))}
               </div>
               <div className="space-y-1">
                 <Label className="text-xs">Launch date</Label>
-                {dateInput(editing.launchDate, (v) => updateCall({ launchDate: v }))}
+                {dateInput(editing.launchDate, (v) => updateCall({ launchDate: v }, true))}
               </div>
               <div className="space-y-1">
                 <Label className="text-xs">Exclusive window (months from launch)</Label>
-                <Input type="number" min={0} value={editing.exclusiveMonths} onChange={(e) => updateCall({ exclusiveMonths: Number(e.target.value) || 0 })} />
+                <Input type="number" min={0} value={editing.exclusiveMonths} onChange={(e) => updateCall({ exclusiveMonths: Number(e.target.value) || 0 })} onBlur={() => updateCall({}, true)} />
               </div>
               <div className="space-y-1">
                 <Label className="text-xs">Fee on publishing ($)</Label>
-                <Input type="number" min={0} value={editing.fee} onChange={(e) => updateCall({ fee: Number(e.target.value) || 0 })} />
+                <Input type="number" min={0} value={editing.fee} onChange={(e) => updateCall({ fee: Number(e.target.value) || 0 })} onBlur={() => updateCall({}, true)} />
               </div>
               <div className="space-y-1">
                 <Label className="text-xs">Sample yarn weight</Label>
-                <Select value={stored.rates.yarnWeight} onValueChange={(v) => updateRates({ yarnWeight: v })}>
+                <Select value={stored.rates.yarnWeight} onValueChange={(v) => updateRates({ yarnWeight: v }, true)}>
                   <SelectTrigger className="h-9 w-full"><SelectValue /></SelectTrigger>
                   <SelectContent>
                     {YARN_WEIGHTS.map((w) => (
@@ -250,11 +258,11 @@ const handle = useProjectStorage<{ calls: StoredCall[]; rates: StoredRates }>('s
                 </Select>
               </div>
               <div className="flex items-center gap-2">
-                <Switch checked={editing.magazineCoversTechEdit} onCheckedChange={(v) => updateCall({ magazineCoversTechEdit: v })} />
+                <Switch checked={editing.magazineCoversTechEdit} onCheckedChange={(v) => updateCall({ magazineCoversTechEdit: v }, true)} />
                 <Label className="text-xs">Magazine covers tech editing &amp; test knitting</Label>
               </div>
               <div className="flex items-center gap-2">
-                <Switch checked={editing.yarnSupport} onCheckedChange={(v) => updateCall({ yarnSupport: v })} />
+                <Switch checked={editing.yarnSupport} onCheckedChange={(v) => updateCall({ yarnSupport: v }, true)} />
                 <Label className="text-xs">Yarn support / shipping provided</Label>
               </div>
             </div>
@@ -267,19 +275,19 @@ const handle = useProjectStorage<{ calls: StoredCall[]; rates: StoredRates }>('s
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="space-y-1">
               <Label className="text-xs">Sample knitting (yd/hr)</Label>
-              <Input type="number" value={stored.rates.knitYardsPerHour} onChange={(e) => updateRates({ knitYardsPerHour: Number(e.target.value) || 10 })} />
+              <Input type="number" value={stored.rates.knitYardsPerHour} onChange={(e) => updateRates({ knitYardsPerHour: Number(e.target.value) || 10 })} onBlur={() => updateRates({}, true)} />
             </div>
             <div className="space-y-1">
               <Label className="text-xs">Pattern writing (hrs)</Label>
-              <Input type="number" value={stored.rates.patternWriteHours} onChange={(e) => updateRates({ patternWriteHours: Number(e.target.value) || 0 })} />
+              <Input type="number" value={stored.rates.patternWriteHours} onChange={(e) => updateRates({ patternWriteHours: Number(e.target.value) || 0 })} onBlur={() => updateRates({}, true)} />
             </div>
             <div className="space-y-1">
               <Label className="text-xs">Swatch work (hrs)</Label>
-              <Input type="number" value={stored.rates.swatchHours} onChange={(e) => updateRates({ swatchHours: Number(e.target.value) || 0 })} />
+              <Input type="number" value={stored.rates.swatchHours} onChange={(e) => updateRates({ swatchHours: Number(e.target.value) || 0 })} onBlur={() => updateRates({}, true)} />
             </div>
             <div className="space-y-1">
               <Label className="text-xs">Hours/week available</Label>
-              <Input type="number" value={stored.rates.availableHoursPerWeek} onChange={(e) => updateRates({ availableHoursPerWeek: Number(e.target.value) || 1 })} />
+              <Input type="number" value={stored.rates.availableHoursPerWeek} onChange={(e) => updateRates({ availableHoursPerWeek: Number(e.target.value) || 1 })} onBlur={() => updateRates({}, true)} />
             </div>
           </div>
         </div>

@@ -56,6 +56,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useSettings } from "@/context/SettingsContext";
 import { getReceiptCopy, getReceiptOptionLabels } from "@/lib/receipt-copy";
+import { getToastCopy } from "@/lib/toast-copy";
 import { safeNum } from "@/lib/numeric-guard";
 
 const STORAGE_KEY = "stitch-and-scale-receipt-v1";
@@ -101,6 +102,7 @@ export function ReceiptLabCard(props: { project: PatternProject }) {
   const { toast } = useToast();
   const { language } = useSettings();
   const copy = getReceiptCopy(language);
+  const toastCopy = getToastCopy(language);
   const optionLabels = getReceiptOptionLabels(language);
 
   const [brand, setBrand] = useState<BrandProfile>(() => loadBrand(project));
@@ -197,10 +199,10 @@ export function ReceiptLabCard(props: { project: PatternProject }) {
       try {
         handle.write(next);
       } catch {
-        // write fails silently on storage errors — data already in memory
+        toast({ title: copy.copyFailed, description: copy.clipboardBlocked, variant: "destructive" });
       }
     },
-    [handle],
+    [handle, copy.copyFailed, copy.clipboardBlocked, toast],
   );
 
   function setItemField(idx: number, patch: Partial<ReceiptItem>) {
@@ -258,6 +260,7 @@ export function ReceiptLabCard(props: { project: PatternProject }) {
     const next = ledger.filter((s) => s.id !== id);
     setLedger(next);
     persist({ brand, ledger: next, ts: Date.now() });
+    toast({ title: toastCopy.sectionDeletedTitle });
   }
 
   function saveBrand() {

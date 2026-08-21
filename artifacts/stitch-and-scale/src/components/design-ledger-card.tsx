@@ -44,6 +44,7 @@ import { useToast } from "@/hooks/use-toast";
 import { BookMarked, Copy, Download, FileSpreadsheet, Plus, Trash2 } from "lucide-react";
 import { useSettings } from "@/context/SettingsContext";
 import { DESIGN_LEDGER_COPY, type DesignLedgerCopy } from "@/lib/design-ledger-copy";
+import { getToastCopy } from "@/lib/toast-copy";
 // CHK-132 (ledger S272): reuse the same stored-row resolvers payback uses so
 // Receipt Lab's actual SavedSale shape (no grossTotal, fees never persisted)
 // no longer silently resolves to $0 gross and $0 fees.
@@ -133,6 +134,7 @@ export function DesignLedgerCard(props: { project: PatternProject }) {
   const { toast } = useToast();
   const { language } = useSettings();
   const copy = DESIGN_LEDGER_COPY[language];
+  const toastCopy = getToastCopy(language);
   const handle = useMemo(
     () => projectStorage<StoredState>("designledger", project.id, [LEGACY_STORAGE_KEY]),
     [project.id],
@@ -156,9 +158,17 @@ export function DesignLedgerCard(props: { project: PatternProject }) {
   const [breakEvenPrice, setBreakEvenPrice] = useState("");
   const cardRef = useRef<HTMLDivElement>(null);
 
-  const persist = (next: Omit<StoredState, "ts">) => {
-    setState({ ...next, ts: Date.now() });
-    handle.write({ ...next, ts: Date.now() });
+  const persist = (next: Omit<StoredState, "ts">, showToast = false) => {
+    const nextState = { ...next, ts: Date.now() };
+    setState(nextState);
+    try {
+      handle.write(nextState);
+      if (showToast) {
+        toast({ title: copy.saved });
+      }
+    } catch {
+      toast({ title: toastCopy.copyFailed, description: toastCopy.copyFailedDescription, variant: "destructive" });
+    }
   };
 
   const sales = useMemo(() => receiptSaleRows(receiptStored, state.currency), [receiptStored, state.currency]);
@@ -232,6 +242,7 @@ export function DesignLedgerCard(props: { project: PatternProject }) {
                     value={state.studioName}
                     placeholder={copy.studioPlaceholder}
                     onChange={(e) => persist({ ...state, studioName: e.target.value })}
+                    onBlur={() => persist({ ...state }, true)}
                   />
                 </div>
                 <div>
@@ -239,7 +250,9 @@ export function DesignLedgerCard(props: { project: PatternProject }) {
                   <NativeSelect
                     id="dl-currency"
                     value={state.currency}
-                    onChange={(e) => persist({ ...state, currency: e.target.value })}
+                    onChange={(e) => {
+                      persist({ ...state, currency: e.target.value }, true);
+                    }}
                   >
                     <option value="USD">USD $</option>
                     <option value="EUR">EUR €</option>
@@ -357,17 +370,18 @@ export function DesignLedgerCard(props: { project: PatternProject }) {
                         persist({
                           ...state,
                           designs: state.designs.map((x) => (x.id === d.id ? { ...x, status, updatedAt: new Date().toISOString() } : x)),
-                        })
+                        }, true)
                       }
                       onNotes={(notes) =>
                         persist({
                           ...state,
                           designs: state.designs.map((x) => (x.id === d.id ? { ...x, notes, updatedAt: new Date().toISOString() } : x)),
-                        })
+                        }, true)
                       }
-                      onRemove={() =>
-                        persist({ ...state, designs: removeDesign(state.designs, d.id) })
-                      }
+                      onRemove={() => {
+                        persist({ ...state, designs: removeDesign(state.designs, d.id) });
+                        toast({ title: copy.designRemoved });
+                      }}
                       copy={copy}
                     />
                   ))}
@@ -436,11 +450,10 @@ export function DesignLedgerCard(props: { project: PatternProject }) {
                         currency: state.currency,
                         date: expDate,
                       }),
-                    });
+                    }, true);
                     setExpDesc("");
                     setExpAmount("");
                     setExpDate(new Date().toISOString().slice(0, 10));
-                    toast({ title: copy.costRecorded });
                   }}
                 >
                   <Plus className="h-4 w-4 mr-1" /> {copy.recordCost}
@@ -478,7 +491,10 @@ export function DesignLedgerCard(props: { project: PatternProject }) {
                             <button
                               aria-label={copy.removeCost}
                               className="text-muted-foreground hover:text-destructive"
-                              onClick={() => persist({ ...state, expenses: removeExpense(state.expenses, e.id) })}
+                              onClick={() => {
+                                persist({ ...state, expenses: removeExpense(state.expenses, e.id) });
+                                toast({ title: copy.costRemoved });
+                              }}
                             >
                               <Trash2 className="h-3.5 w-3.5" />
                             </button>
