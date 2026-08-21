@@ -36,8 +36,13 @@ import {
 } from '@/lib/pattern-pricing-advisor';
 import { PLATFORMS } from '@/lib/pattern-income-calculator';
 import { Slider } from '@/components/ui/slider';
-import { Coins, ListChecks, Package, Rocket, Target, TrendingUp } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Coins, FileText, Package, Rocket, Target, TrendingUp } from 'lucide-react';
 import { useSettings } from '@/context/SettingsContext';
+import { useToast } from '@/hooks/use-toast';
+import { renderProjectBookDocument } from '@/lib/project-book-export';
+import { openPrintWindow, sanitizeFilename } from '@/lib/pdf/print-utils';
+import { safeNum } from '@/lib/numeric-guard';
 import { PORTFOLIO_COPY, type PortfolioCopy } from '@/lib/portfolio-copy';
 
 const DEFAULT_INPUTS: PortfolioInputs = {
@@ -138,13 +143,37 @@ function PortfolioLineRow({ line, copy }: { line: PortfolioLine; copy: Portfolio
 
 export default function PortfolioPage() {
   const { projects } = useProjects();
-  const { language } = useSettings();
+  const { language, studioProfile } = useSettings();
+  const { toast } = useToast();
   const copy = PORTFOLIO_COPY[language];
   const interpolate = (template: string, values: Record<string, string | number>) => template.replace(/\{(\w+)\}/g, (_, key) => String(values[key] ?? ''));
   const [inputs, setInputs] = React.useState<PortfolioInputs>(DEFAULT_INPUTS);
   const [inputsRaw, setInputsRaw] = React.useState({ hours: '20', rate: '25', price: '8' });
+  const [bookFilename, setBookFilename] = React.useState('Project Book');
+  const [isExportingBook, setIsExportingBook] = React.useState(false);
 
   const portfolio = buildPortfolio(projects, inputs);
+
+  const handleProjectBookExport = () => {
+    if (isExportingBook) return;
+    setIsExportingBook(true);
+    const safeName = sanitizeFilename(bookFilename.trim() || 'Project Book');
+    const suggestedPdf = safeName.toLowerCase().endsWith('.pdf') ? safeName : `${safeName}.pdf`;
+    const html = renderProjectBookDocument({
+      title: bookFilename.trim() || copy.bookTitle,
+      projects,
+      portfolio,
+      studio: studioProfile,
+      locale: language,
+    });
+    const attempt = openPrintWindow(html, suggestedPdf);
+    setIsExportingBook(false);
+    if (attempt.ok) {
+      toast({ title: copy.bookReady, description: suggestedPdf });
+    } else {
+      toast({ title: copy.bookFailed, variant: 'destructive' });
+    }
+  };
   const bestPlatform = PLATFORMS[0];
   // Bundle premium slider (CHK-134, S284): per-bundle discount factor.
   // Defaults to the documented 71% anchor — the UI lets the designer slide
@@ -166,6 +195,28 @@ export default function PortfolioPage() {
           {copy.description}
         </p>
       </header>
+
+      {/* Delivery center: one print-ready book for the complete catalogue. */}
+      <Card className="border-primary/30 bg-primary/5">
+        <CardHeader>
+          <CardTitle className="font-serif text-base flex items-center gap-2">
+            <FileText className="h-4 w-4" /> {copy.bookTitle}
+          </CardTitle>
+          <CardDescription>{copy.bookDescription}</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div className="flex flex-col sm:flex-row gap-3 sm:items-end">
+            <div className="flex-1 min-w-0">
+              <Label htmlFor="project-book-name" className="text-xs text-muted-foreground mb-1 block">{copy.bookName}</Label>
+              <Input id="project-book-name" value={bookFilename} onChange={(e) => setBookFilename(e.target.value)} className="h-9" maxLength={120} />
+              <div className="text-[11px] text-muted-foreground mt-1">{copy.bookNameHint}</div>
+            </div>
+            <Button type="button" onClick={handleProjectBookExport} disabled={isExportingBook} className="shrink-0">
+              <FileText className="h-4 w-4 mr-2" />{isExportingBook ? copy.bookExporting : copy.bookExport}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Planning inputs */}
       <Card className="border-border/70 bg-card/50">
@@ -207,9 +258,9 @@ export default function PortfolioPage() {
                 ))}
               </NativeSelect>
             </div>
-            {numberInput('port-hours', copy.hours, copy.hoursHint, inputsRaw.hours, (v) => { setInputsRaw((p) => ({ ...p, hours: v })); setInputs((p) => ({ ...p, hoursWorked: parseFloat(v) || 0 })); })}
-            {numberInput('port-rate', copy.rate, copy.rateHint, inputsRaw.rate, (v) => { setInputsRaw((p) => ({ ...p, rate: v })); setInputs((p) => ({ ...p, hourlyRate: parseFloat(v) || 0 })); })}
-            {numberInput('port-price', copy.price, copy.priceHint, inputsRaw.price, (v) => { setInputsRaw((p) => ({ ...p, price: v })); setInputs((p) => ({ ...p, currentPrice: parseFloat(v) || 0 })); })}
+            {numberInput('port-hours', copy.hours, copy.hoursHint, inputsRaw.hours, (v) => { setInputsRaw((p) => ({ ...p, hours: v })); setInputs((p) => ({ ...p, hoursWorked: Math.max(0, safeNum(v, 0)) })); })}
+            {numberInput('port-rate', copy.rate, copy.rateHint, inputsRaw.rate, (v) => { setInputsRaw((p) => ({ ...p, rate: v })); setInputs((p) => ({ ...p, hourlyRate: Math.max(0, safeNum(v, 0)) })); })}
+            {numberInput('port-price', copy.price, copy.priceHint, inputsRaw.price, (v) => { setInputsRaw((p) => ({ ...p, price: v })); setInputs((p) => ({ ...p, currentPrice: Math.max(0, safeNum(v, 0)) })); })}
           </div>
         </CardContent>
       </Card>

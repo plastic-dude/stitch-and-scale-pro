@@ -177,4 +177,26 @@ describe("buildBragCardSvg", () => {
     );
     expect(svg).toContain(">4 profitable months<");
   });
+
+  it("applies configured studio branding to the final SVG artifact", () => {
+    const svg = buildBragCardSvg(
+      { totalRevenue: 130, totalSales: 9, totalProfit: 40, publishedCount: 2, revenuePerSale: 14.44, bestMonth: undefined, bestMonthProfit: 0, profitMonths: 4, profitRatio: 80 },
+      "USD",
+      "income",
+      "North <Loop>",
+      "#d87093",
+      "editorial",
+      undefined,
+      {
+        studioName: "North <Loop>",
+        customLogo: "data:image/svg+xml;base64,PHN2Zy8+",
+        socialHandle: "@northloop",
+        copyrightNotice: "© 2026 North Loop",
+      },
+    );
+    expect(svg).toContain("North &lt;Loop&gt;");
+    expect(svg).toContain('href="data:image/svg+xml;base64,PHN2Zy8+"');
+    expect(svg).toContain("@northloop · © 2026 North Loop");
+    expect(svg).not.toContain("STITCH &amp; SCALE");
+  });
 });

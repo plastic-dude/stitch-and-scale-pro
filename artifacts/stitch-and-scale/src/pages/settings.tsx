@@ -14,15 +14,18 @@ import { getInitialLanguage, LANGUAGE_OPTIONS, languageLabel, translate, type La
 import { getSettingsCopy } from '@/lib/settings-copy';
 import { getToastCopy } from '@/lib/toast-copy';
 import { getStudioProfileCopy } from '@/lib/studio-profile-copy';
+import { compressImageToDataUrl } from '@/lib/image-utils';
 
 export default function SettingsPage() {
   const {
     unit, theme, setUnit, setTheme, exportData, importData, setOnboardingCompleted,
     sizingStandard, setSizingStandard, customStandard, setCustomStandardValue, resetCustomStandard,
     studioProfile, updateStudioProfile,
+    pdfDefaults, setPdfDefaults,
     language, setLanguage,
   } = useSettings();
   const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const logoInputRef = React.useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const [editingKey, setEditingKey] = React.useState<GradingKey>('bust');
   const t = (key: Parameters<typeof translate>[1]) => translate(language, key);
@@ -58,6 +61,25 @@ export default function SettingsPage() {
     const { downloadSnapshot } = await import('@/lib/storage-lib');
     const snapshot = await downloadSnapshot(`stitch-and-scale-export-${new Date().toISOString().split('T')[0]}.json`);
     toast({ title: tc.backupDownloaded, description: tc.backupDownloadedDescription(snapshot.projects.length) });
+  };
+
+  const handleLogoChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    const result = await compressImageToDataUrl(file);
+    if (result.dataUrl) {
+      setPdfDefaults({ ...pdfDefaults, customLogo: result.dataUrl });
+      toast({ title: profileCopy.logoSaved });
+    } else {
+      toast({ title: profileCopy.logoFailed, description: result.error ?? undefined, variant: 'destructive' });
+    }
+    if (logoInputRef.current) logoInputRef.current.value = '';
+  };
+
+  const handleLogoRemove = () => {
+    const { customLogo: _removed, ...withoutLogo } = pdfDefaults;
+    setPdfDefaults(withoutLogo);
+    toast({ title: profileCopy.logoRemove });
   };
 
   const handleRestartOnboarding = () => {
@@ -146,6 +168,20 @@ export default function SettingsPage() {
                   autoComplete="off"
                   data-testid="input-studio-copyright"
                 />
+              </div>
+              <div className="space-y-2 rounded-xl border border-border/60 bg-secondary/10 p-4">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="min-w-0">
+                    <Label htmlFor="studio-logo" className="flex items-center gap-2">{profileCopy.logo}</Label>
+                    <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{profileCopy.logoHint}</p>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-2">
+                    {pdfDefaults.customLogo && <img src={pdfDefaults.customLogo} alt="" className="h-10 w-10 rounded-md border border-border/60 bg-background object-contain p-1" />}
+                    <input ref={logoInputRef} id="studio-logo" type="file" accept="image/png,image/jpeg,image/svg+xml" onChange={handleLogoChange} className="sr-only" />
+                    <Button type="button" variant="outline" size="sm" onClick={() => logoInputRef.current?.click()}>{profileCopy.logoChoose}</Button>
+                    {pdfDefaults.customLogo && <Button type="button" variant="ghost" size="sm" onClick={handleLogoRemove}>{profileCopy.logoRemove}</Button>}
+                  </div>
+                </div>
               </div>
               <p className="text-xs leading-relaxed text-muted-foreground">{profileCopy.usageHint}</p>
             </CardContent>

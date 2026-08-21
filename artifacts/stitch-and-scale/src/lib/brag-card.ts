@@ -95,6 +95,15 @@ export const BRAG_CARD_STYLES: { id: BragCardStyle; label: string }[] = [
   { id: "cameo", label: "Stitch Cameo" },
 ];
 
+/** Optional identity layered onto the generated social artifact. The logo is
+ * intentionally a local data URI: Brag Cards never fetch remote brand assets. */
+export interface BragCardBranding {
+  studioName?: string;
+  customLogo?: string;
+  socialHandle?: string;
+  copyrightNotice?: string;
+}
+
 /** Base palettes per style — ≤3 hues (D-3); accent stays free. */
 export const CARD_BASE_INK: Record<BragCardStyle, { bg: string; ink: string; inkSoft: string; rule: string }> = {
   navy: { bg: "#171b2b", ink: "#f1e9dd", inkSoft: "#b9b4c6", rule: "#3a3f57" },
@@ -200,7 +209,7 @@ export function buildBragCaption(stats: BragStats, currency: string, template: B
 
 /* ---------- small SVG building blocks (D-4, D-9) ---------- */
 
-const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, "&quot;").replace(/'/g, "&apos;");
 const FONT_SERIF = "Georgia, 'Times New Roman', serif";
 const FONT_SANS = "Helvetica, Arial, sans-serif";
 const FONT_MONO = "SFMono-Regular, 'SF Mono', Consolas, 'Liberation Mono', Menlo, monospace";
@@ -364,18 +373,38 @@ function styleCameo(stats: BragStats, currency: string, template: BragCardTempla
 </svg>`;
 }
 
+/** Add the configured identity to the final SVG so every visual style and
+ * every export route receives the same wordmark, logo, and legal line. */
+function applyBragBranding(svg: string, branding?: BragCardBranding): string {
+  if (!branding) return svg;
+  const wordmark = branding.studioName?.trim() || "STITCH & SCALE";
+  let branded = svg.replace(/STITCH &amp; SCALE/g, esc(wordmark));
+  const logo = branding.customLogo?.trim();
+  const logoMarkup = logo && /^(data:image\/|https?:\/\/)/i.test(logo)
+    ? `<image href="${esc(logo)}" x="910" y="62" width="108" height="108" preserveAspectRatio="xMidYMid meet"/>`
+    : "";
+  const legal = [branding.socialHandle?.trim(), branding.copyrightNotice?.trim()].filter(Boolean).join(" · ");
+  const legalMarkup = legal
+    ? `<text x="80" y="1000" font-family="${FONT_SANS}" font-size="20" letter-spacing="1" fill="currentColor">${esc(legal)}</text>`
+    : "";
+  return branded.replace("</svg>", `${logoMarkup}${legalMarkup}</svg>`);
+}
+
 /**
  * The visual card: returns SVG markup (1080x1080, social-ready).
  * Render client-side, then rasterize to PNG with canvas.
+ * The final branding argument is optional for backwards compatibility.
  */
-export function buildBragCardSvg(stats: BragStats, currency: string, template: BragCardTemplate, studioName: string, accent: string, style: BragCardStyle = "navy", copy: BragCardCopy = getBragCardCopy('en')): string {
+export function buildBragCardSvg(stats: BragStats, currency: string, template: BragCardTemplate, studioName: string, accent: string, style: BragCardStyle = "navy", copy: BragCardCopy = getBragCardCopy('en'), branding?: BragCardBranding): string {
+  let svg: string;
   switch (style) {
-    case "editorial": return styleEditorial(stats, currency, template, studioName, accent, copy);
-    case "swatch": return styleSwatch(stats, currency, template, studioName, accent, copy);
-    case "selvedge": return styleSelvedge(stats, currency, template, studioName, accent, copy);
-    case "swiss": return styleSwiss(stats, currency, template, studioName, accent, copy);
-    case "cameo": return styleCameo(stats, currency, template, studioName, accent, copy);
+    case "editorial": svg = styleEditorial(stats, currency, template, studioName, accent, copy); break;
+    case "swatch": svg = styleSwatch(stats, currency, template, studioName, accent, copy); break;
+    case "selvedge": svg = styleSelvedge(stats, currency, template, studioName, accent, copy); break;
+    case "swiss": svg = styleSwiss(stats, currency, template, studioName, accent, copy); break;
+    case "cameo": svg = styleCameo(stats, currency, template, studioName, accent, copy); break;
     case "navy":
-    default: return styleNavy(stats, currency, template, studioName, accent, copy);
+    default: svg = styleNavy(stats, currency, template, studioName, accent, copy); break;
   }
+  return applyBragBranding(svg, branding);
 }

@@ -116,7 +116,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
 
       {justExported && <InstallBanner trigger="export" />}
 
-      <main className="flex-1 flex flex-col min-w-0 w-full max-w-7xl mx-auto p-4 sm:p-6 md:p-8">
+      <main className="flex-1 flex flex-col min-w-0 w-full max-w-7xl mx-auto p-4 pb-24 sm:p-6 sm:pb-6 md:p-8">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={location}
@@ -130,6 +130,27 @@ export function Shell({ children }: { children: React.ReactNode }) {
           </motion.div>
         </AnimatePresence>
       </main>
+
+      <nav aria-label="Primary mobile navigation" className="md:hidden fixed inset-x-0 bottom-0 z-40 border-t border-border/70 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 pb-[env(safe-area-inset-bottom)]">
+        <div className="grid grid-cols-4 h-16 max-w-md mx-auto">
+          <Link href="/" aria-label={projectsLabel} aria-current={location === '/' ? 'page' : undefined} className={`flex flex-col items-center justify-center gap-0.5 text-[10px] font-medium transition-colors ${location === '/' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}>
+            <BookOpen className="h-5 w-5" aria-hidden="true" />
+            <span>{projectsLabel}</span>
+          </Link>
+          <Link href="/portfolio" aria-label={t('nav.portfolio')} aria-current={location === '/portfolio' ? 'page' : undefined} className={`flex flex-col items-center justify-center gap-0.5 text-[10px] font-medium transition-colors ${location === '/portfolio' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}>
+            <Package className="h-5 w-5" aria-hidden="true" />
+            <span>{t('nav.portfolio')}</span>
+          </Link>
+          <Link href="/settings" aria-label={settingsLabel} aria-current={location === '/settings' ? 'page' : undefined} className={`flex flex-col items-center justify-center gap-0.5 text-[10px] font-medium transition-colors ${location === '/settings' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}>
+            <Settings className="h-5 w-5" aria-hidden="true" />
+            <span>{settingsLabel}</span>
+          </Link>
+          <Link href="/project/new" aria-label={t('nav.newProject')} className="flex flex-col items-center justify-center gap-0.5 text-[10px] font-semibold text-primary transition-colors hover:text-primary/80">
+            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground"><Plus className="h-4 w-4" aria-hidden="true" /></span>
+            <span>{t('nav.newProject')}</span>
+          </Link>
+        </div>
+      </nav>
       
       <footer className="border-t py-6 md:py-0 md:h-16 flex items-center justify-center text-sm text-muted-foreground">
         <p>{t('nav.footerDescription')}</p>

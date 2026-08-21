@@ -15,6 +15,7 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import {
   buildBragCaption,
   computeBragStats,
+  type BragCardBranding,
   type BragCardStyle,
   type BragCardTemplate,
 } from "@/lib/brag-card";
@@ -62,7 +63,7 @@ const STYLES: { id: BragCardStyle; label: string }[] = [
 export function BragCardCard(props: { project: PatternProject }) {
   const { project } = props;
   const { toast } = useToast();
-  const { language } = useSettings();
+  const { language, studioProfile, pdfDefaults } = useSettings();
   const copy = getBragCardCopy(language);
 
   const ledger = useMemo<MonthlyLedgerRow[]>(() => {
@@ -121,7 +122,14 @@ export function BragCardCard(props: { project: PatternProject }) {
     [studioName, currency, ledger, publishedCount, salesCount],
   );
 
-  const displayStudio = (nameOverride || studioName || copy.studioPlaceholder).trim();
+  const profileStudioName = studioProfile.studioName.trim() || studioProfile.designerName.trim();
+  const displayStudio = (nameOverride || studioName || profileStudioName || copy.studioPlaceholder).trim();
+  const branding = useMemo<BragCardBranding>(() => ({
+    studioName: displayStudio,
+    customLogo: pdfDefaults.customLogo,
+    socialHandle: studioProfile.socialHandle,
+    copyrightNotice: studioProfile.copyrightNotice,
+  }), [displayStudio, pdfDefaults.customLogo, studioProfile.socialHandle, studioProfile.copyrightNotice]);
   const caption = useMemo(
     () => buildBragCaption(stats, currency, template, displayStudio, copy),
     [stats, currency, template, displayStudio, copy],
@@ -141,7 +149,7 @@ export function BragCardCard(props: { project: PatternProject }) {
   const downloadPng = useCallback(async () => {
     try {
       const { buildBragCardSvg } = await import("@/lib/brag-card");
-      const svg = buildBragCardSvg(stats, currency, template, displayStudio, accent, style, copy);
+      const svg = buildBragCardSvg(stats, currency, template, displayStudio, accent, style, copy, branding);
       const blob = new Blob([svg], { type: "image/svg+xml" });
       const url = URL.createObjectURL(blob);
       const img = new Image();
@@ -171,7 +179,7 @@ export function BragCardCard(props: { project: PatternProject }) {
     } catch {
       toast({ title: copy.exportFailed, description: copy.description, variant: "destructive" });
     }
-  }, [stats, currency, template, displayStudio, accent, style, toast, copy]);
+  }, [stats, currency, template, displayStudio, accent, style, toast, copy, branding]);
 
   const copyCaption = useCallback(async () => {
     try {
@@ -185,7 +193,7 @@ export function BragCardCard(props: { project: PatternProject }) {
   const shareNative = useCallback(async () => {
     try {
       const { buildBragCardSvg } = await import("@/lib/brag-card");
-      const svg = buildBragCardSvg(stats, currency, template, displayStudio, accent, style, copy);
+      const svg = buildBragCardSvg(stats, currency, template, displayStudio, accent, style, copy, branding);
       const blob = new Blob([svg], { type: "image/svg+xml" });
       const file = new File([blob], "brag-card.svg", { type: "image/svg+xml" });
       if (navigator.share) {
@@ -197,7 +205,7 @@ export function BragCardCard(props: { project: PatternProject }) {
         downloadPng();
       }
     }
-  }, [stats, currency, template, displayStudio, accent, style, caption, toast, downloadPng, copy]);
+  }, [stats, currency, template, displayStudio, accent, style, caption, toast, downloadPng, copy, branding]);
 
   const hasData = ledger.length > 0 || publishedCount > 0;
 
@@ -284,7 +292,7 @@ export function BragCardCard(props: { project: PatternProject }) {
 
           <div className="space-y-2">
             <Label className="text-xs font-medium">{copy.preview}</Label>
-            <BragCardPreview stats={stats} currency={currency} template={template} studioName={displayStudio} accent={accent} style={style} copy={copy} />
+            <BragCardPreview stats={stats} currency={currency} template={template} studioName={displayStudio} accent={accent} style={style} copy={copy} branding={branding} />
           </div>
         </div>
 
@@ -311,7 +319,7 @@ export function BragCardCard(props: { project: PatternProject }) {
   );
 }
 
-function BragCardPreview(props: { stats: ReturnType<typeof computeBragStats>; currency: string; template: BragCardTemplate; studioName: string; accent: string; style: BragCardStyle; copy: ReturnType<typeof getBragCardCopy> }) {
+function BragCardPreview(props: { stats: ReturnType<typeof computeBragStats>; currency: string; template: BragCardTemplate; studioName: string; accent: string; style: BragCardStyle; copy: ReturnType<typeof getBragCardCopy>; branding: BragCardBranding }) {
   const ref = useRef<HTMLDivElement | null>(null);
   const markup = useMemo(() => {
     try {
@@ -330,7 +338,7 @@ function BragCardPreview(props: { stats: ReturnType<typeof computeBragStats>; cu
   let big = "";
   let unit = "";
   let sub = "";
-  const { stats, currency, template, studioName, accent, style, copy } = props;
+  const { stats, currency, template, studioName, accent, style, copy, branding } = props;
   const c = buildBragCaption(stats, currency, template, studioName, props.copy);
   if (template === "income") { big = fmtMoney(stats.totalRevenue, currency); }
   else if (template === "sales") { big = String(stats.totalSales); unit = props.copy.sales; }
@@ -384,6 +392,7 @@ function BragCardPreview(props: { stats: ReturnType<typeof computeBragStats>; cu
       style={{ background: pal.bg, position: "relative" }}
       aria-label={`Brag card preview: ${c.headline}`}
     >
+      {branding.customLogo && /^(data:image\/|https?:\/\/)/i.test(branding.customLogo) ? <img src={branding.customLogo} alt="" className="absolute right-3 top-3 z-10 h-10 w-10 rounded-md object-contain" /> : null}
       {style === "navy" ? <div className="absolute rounded-full" style={{ width: "22%", height: "22%", right: "-4%", top: "-4%", background: accent, opacity: 0.10 }} /> : null}
       {style === "navy" ? <div className="absolute rounded-full" style={{ width: "18%", height: "18%", left: "-3%", bottom: "-3%", background: "#e8b4b8", opacity: 0.08 }} /> : null}
       {style === "editorial" ? <div className="absolute inset-3 rounded-none" style={{ border: "2px solid " + pal.rule }} /> : null}
@@ -412,7 +421,8 @@ function BragCardPreview(props: { stats: ReturnType<typeof computeBragStats>; cu
             <div className="mt-auto">
               <div className="h-px mb-2" style={{ background: pal.rule }} />
               <p className="font-sans" style={{ fontSize: "clamp(8px, 1.8vw, 12px)", color: pal.soft, letterSpacing: "0.08em" }}>{esc(footer)}</p>
-              <p className="font-sans mt-0.5 text-right" style={{ fontSize: "clamp(7px, 1.5vw, 10px)", color: pal.soft, letterSpacing: "0.18em" }}>STITCH &amp; SCALE</p>
+              <p className="font-sans mt-0.5 text-right" style={{ fontSize: "clamp(7px, 1.5vw, 10px)", color: pal.soft, letterSpacing: "0.18em" }}>{esc(branding.studioName || "STITCH & SCALE")}</p>
+              {(branding.socialHandle || branding.copyrightNotice) ? <p className="font-sans mt-0.5 text-right" style={{ fontSize: "clamp(6px, 1.2vw, 8px)", color: pal.soft }}>{esc([branding.socialHandle, branding.copyrightNotice].filter(Boolean).join(" · "))}</p> : null}
             </div>
           </>
         )}

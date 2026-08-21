@@ -312,3 +312,28 @@
     inset: -1px;
   }
 }
+
+
+/* Publication accessibility baseline: every interactive control remains usable
+   with keyboard, touch, and reduced-motion preferences. */
+:where(button, a, input, select, textarea):focus-visible {
+  outline: 3px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+@media (pointer: coarse) {
+  :where(button, [role='button'], input:not([type='checkbox']):not([type='radio']), select, textarea) {
+    min-height: 44px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
