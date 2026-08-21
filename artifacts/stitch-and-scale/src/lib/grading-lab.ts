@@ -79,8 +79,11 @@ const GAUGE_STITCH_FLOOR = 4; // coarser than this is a swatch error, not a gaug
 const MAX_EASE_DRIFT_CM = 1.0; // ease should move smoothly; >1cm drift between neighbours flags
 
 /** Grade every size of every section in one pass — one call, no per-keystroke re-render. */
-export function gradeWholeProject(project: PatternProject) {
-  return gradePattern(project);
+export function gradeWholeProject(
+  project: PatternProject,
+  standards = resolveProjectStandards(project),
+) {
+  return gradePattern(project, standards);
 }
 
 function bustMeasurement(project: PatternProject) {
@@ -105,8 +108,12 @@ export function invalidMeasurements(project: PatternProject): Array<{ label: str
   return bad;
 }
 
-function bustPhysicalCmAt(project: PatternProject, sizeIndex: number): number | null {
-  const graded = gradeWholeProject(project);
+function bustPhysicalCmAt(
+  project: PatternProject,
+  sizeIndex: number,
+  standards = resolveProjectStandards(project),
+): number | null {
+  const graded = gradeWholeProject(project, standards);
   for (const section of graded) {
     for (const m of section.measurements) {
       if (m.gradingKey === 'bust') {
@@ -119,11 +126,14 @@ function bustPhysicalCmAt(project: PatternProject, sizeIndex: number): number | 
   return null;
 }
 
-export function analyzeGrading(project: PatternProject): LabResult {
+export function analyzeGrading(
+  project: PatternProject,
+  standards = resolveProjectStandards(project),
+): LabResult {
   const flags: LabFlag[] = [];
   const sizeChecks: SizeCheck[] = [];
 
-  const graded = gradeWholeProject(project);
+  const graded = gradeWholeProject(project, standards);
   const totalSizes = ALL_SIZES.length;
 
   // G-09: integrity first — impossible base values anywhere in the project
@@ -198,7 +208,7 @@ export function analyzeGrading(project: PatternProject): LabResult {
   }
 
   // Per-size checks from the bust physical values, worked in cm regardless of project unit.
-  const bustAt: (number | null)[] = ALL_SIZES.map((_, i) => bustPhysicalCmAt(project, i));
+  const bustAt: (number | null)[] = ALL_SIZES.map((_, i) => bustPhysicalCmAt(project, i, standards));
   const gradedIdxFor = (size: typeof ALL_SIZES[number]) => ALL_SIZES.indexOf(size);
 
   for (let i = 0; i < totalSizes; i++) {
@@ -285,7 +295,6 @@ export function analyzeGrading(project: PatternProject): LabResult {
   let easeBand: string | null = null;
   if (b0 !== null && bustMeasure) {
     // ease = garment physical at base size minus body measurement at base size.
-    const standards = resolveProjectStandards(project);
     const bodyBust = standards[project.baseSize]?.bust;
     if (bodyBust !== undefined) {
       // CYC midpoints are inches; b0 is in cm.

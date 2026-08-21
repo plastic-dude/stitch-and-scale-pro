@@ -13,6 +13,7 @@ import { getToastCopy } from '@/lib/toast-copy';
 import { BodySchematic } from '@/components/body-schematic';
 import { buildGradingCsv } from '@/lib/grading-csv';
 import { copyTextOrThrow } from '@/lib/clipboard';
+import { McpGradingAssistantCard } from '@/components/mcp-grading-assistant-card';
 
 export default function ProjectGrading() {
   const params = useParams();
@@ -102,6 +103,13 @@ export default function ProjectGrading() {
           <BodySchematic usedKeys={usedGradingKeys} />
         </div>
       )}
+
+      <McpGradingAssistantCard
+        project={project}
+        language={language}
+        hasData={hasData}
+        customStandard={customStandard}
+      />
 
       <div className="bg-card rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-border overflow-hidden print:shadow-none print:border-none print:p-0 print:bg-white">
         <div className="p-8 sm:p-12 border-b border-border bg-gradient-to-br from-background to-secondary/10 print:from-white print:to-white">
