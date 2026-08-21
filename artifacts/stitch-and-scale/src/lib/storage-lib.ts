@@ -231,6 +231,14 @@ export function projectStorage<T>(
         return;
       }
       // Scoped key is empty: fold the legacy value over, then remove it.
+      // CHK-151 (QUEUE-006, S160 "migration delta" repro): the old guard
+      // `typeof parsed === 'object'` silently orphaned every legacy value
+      // that wasn't an object — several pre-seam tabs stored primitives
+      // (a count, a rate, a flag) directly, so the migration produced a
+      // scoped key that stayed empty, the legacy key that stayed in place,
+      // and the card reading null forever with no trace of loss. The rule
+      // now: anything that parses, folds — primitives and objects alike.
+      // (Corrupt JSON still falls through to the catch below.)
       let parsed = JSON.parse(raw) as T;
       // Partitioned legacy blob ({ [projectId]: state }) — the pre-seam layout
       // the trunk-show and translation-bundle tabs used: one flat key whose
@@ -239,13 +247,14 @@ export function projectStorage<T>(
       // discarded rather than polluting every project with everyone's data.
       if (opts?.partition && parsed && typeof parsed === 'object') {
         const part = (parsed as unknown as Record<string, unknown>)[safeId];
-        if (part && typeof part === 'object') parsed = part as T;
+        // CHK-151: the partition itself may be a primitive (e.g. a stored
+        // count). Silently defaulting to {} was the second half of the
+        // delta — fold whatever the partition holds, verbatim.
+        if (part !== undefined && part !== null) parsed = part as T;
         else parsed = {} as T;
       }
-      if (parsed && typeof parsed === 'object') {
-        write(parsed);
-        localStorage.removeItem(legacyKey);
-      }
+      write(parsed);
+      localStorage.removeItem(legacyKey);
     } catch {
       // Corrupt legacy key: leave it alone, drop from migration.
     }
