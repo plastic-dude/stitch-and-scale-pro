@@ -64,6 +64,10 @@ export interface WorkspaceCopy {
   methodologyKal: string;
   methodologySubmissions: string;
   methodologyTestknit: string;
+  loadingLab: string;
+  labLoadErrorTitle: string;
+  labLoadErrorDesc: string;
+  retry: string;
 }
 
 const COPY: Record<LanguageCode, WorkspaceCopy> = {
@@ -129,6 +133,10 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     methodologyKal: 'Ravelry best-ever data (Jan 2025); mystery-KAL timing benchmarks from 43 tracked launches; sweater production cost average ($155) from independent designer survey.',
     methodologySubmissions: 'Magazine caps based on Laine/Pompom 2026 rates. Cost stack assumes standard labor hours for a size-medium sweater at $25/hr.',
     methodologyTestknit: 'Paid test-knit band ($0.10–$0.40/yard) from Yarnpond median data. Ghosting failure mode frequency from 2025 Fit-to-Stitch report.',
+    loadingLab: 'Loading lab...',
+    labLoadErrorTitle: 'Lab failed to load',
+    labLoadErrorDesc: 'An error occurred while rendering this lab. Your project data is safe.',
+    retry: 'Retry',
   },
   de: {
     by: 'Von',
@@ -192,6 +200,10 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     methodologyKal: 'Ravelry Best-Ever-Daten (Jan. 2025); Mystery-KAL-Timing-Benchmarks aus 43 verfolgten Starts; durchschnittliche Pullover-Produktionskosten (155 $) aus unabhängiger Designer-Umfrage.',
     methodologySubmissions: 'Magazin-Obergrenzen basierend auf Laine/Pompom 2026 Raten. Kostendeckung nimmt Standard-Arbeitsstunden für einen Pullover in Größe M bei 25 $/Std. an.',
     methodologyTestknit: 'Bezahlte Teststrick-Spanne (0,10–0,40 $/Yard) aus Yarnpond-Mediandaten. Häufigkeit des Ghosting-Fehlermodus aus dem Fit-to-Stitch-Bericht 2025.',
+    loadingLab: 'Labor wird geladen...',
+    labLoadErrorTitle: 'Labor konnte nicht geladen werden',
+    labLoadErrorDesc: 'Beim Rendern dieses Labors ist ein Fehler aufgetreten. Deine Projektdaten sind sicher.',
+    retry: 'Erneut versuchen',
   },
   fr: {
     by: 'Par',
@@ -255,6 +267,10 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     methodologyKal: 'Données Ravelry record (janvier 2025) ; repères temporels des KAL mystères basés sur 43 lancements suivis ; coût moyen de production d\'un pull (155 $) issu d\'une enquête auprès de designers indépendants.',
     methodologySubmissions: 'Plafonds des magazines basés sur les tarifs Laine/Pompom 2026. La structure des coûts suppose des heures de travail standard pour un pull de taille moyenne à 25 $/h.',
     methodologyTestknit: 'Tranche de tricot de test payée (0,10 $–0,40 $/yard) d\'après les données médianes de Yarnpond. Fréquence du mode d\'échec « ghosting » issue du rapport Fit-to-Stitch 2025.',
+    loadingLab: 'Chargement du labo...',
+    labLoadErrorTitle: 'Échec du chargement du labo',
+    labLoadErrorDesc: 'Une erreur s\'est produite lors de l\'affichage de ce labo. Vos données de projet sont en sécurité.',
+    retry: 'Réessayer',
   },
   es: {
     by: 'Por',
@@ -318,6 +334,10 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     methodologyKal: 'Datos récord de Ravelry (ene 2025); benchmarks de tiempo de KAL misteriosos de 43 lanzamientos seguidos; promedio de costo de producción de suéteres (155 $) de encuesta a diseñadores independientes.',
     methodologySubmissions: 'Topes de revistas basados en tarifas Laine/Pompom 2026. El desglose de costos asume horas de trabajo estándar para un suéter talla mediana a 25 $/h.',
     methodologyTestknit: 'Banda de tejido de prueba pagada (0,10 $–0,40 $/yarda) de datos medianos de Yarnpond. Frecuencia del modo de fallo por abandono del informe Fit-to-Stitch 2025.',
+    loadingLab: 'Cargando lab...',
+    labLoadErrorTitle: 'Error al cargar el lab',
+    labLoadErrorDesc: 'Ocurrió un error al renderizar este lab. Los datos de su proyecto están seguros.',
+    retry: 'Reintentar',
   },
   pt: {
     by: 'Por',
@@ -381,6 +401,10 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     methodologyKal: 'Dados recorde da Ravelry (jan 2025); benchmarks de tempo de KAL mistério de 43 lançamentos acompanhados; média do custo de produção de camisolas (155 $) de inquérito a designers independentes.',
     methodologySubmissions: 'Tetos de revistas baseados nas tarifas Laine/Pompom 2026. O escalonamento de custos assume horas de trabalho padrão para uma camisola de tamanho médio a 25 $/h.',
     methodologyTestknit: 'Intervalo de tricot de teste pago (0,10 $–0,40 $/jarda) de dados medianos da Yarnpond. Frequência do modo de falha por abandono do relatório Fit-to-Stitch 2025.',
+    loadingLab: 'A carregar o laboratório...',
+    labLoadErrorTitle: 'Falha ao carregar o laboratório',
+    labLoadErrorDesc: 'Ocorreu um erro ao processar este laboratório. Os dados do seu projeto estão seguros.',
+    retry: 'Tentar novamente',
   },
 };
 

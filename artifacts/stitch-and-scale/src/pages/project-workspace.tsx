@@ -133,10 +133,60 @@ const LAB = {
   payback: React.lazy(cardLazy(() => import('@/components/payback-lab-card'))),
 };
 
+class LabErrorBoundary extends React.Component<
+  { children: React.ReactNode; fallback: React.ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: { children: React.ReactNode; fallback: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch(error: any, errorInfo: any) {
+    console.error('Lab render error:', error, errorInfo);
+  }
+  render() {
+    if (this.state.hasError) return this.props.fallback;
+    return this.props.children;
+  }
+}
+
 function LazyPanel({ loader, project }: { loader: React.LazyExoticComponent<any>; project: any }): React.ReactElement {
-  const { language: currentLanguage, t } = useSettings();
+  const { language } = useSettings();
+  const copy = getWorkspaceCopy(language);
   const Lab = loader as React.ComponentType<{ project: any }>;
-  return <React.Suspense fallback={<div className="py-10 text-center text-sm text-muted-foreground">{t('workspace.loadingLab')}</div>}><Lab project={project} /></React.Suspense>;
+  const errorFallback = (
+    <Card className="my-8 border-destructive/20 bg-destructive/5">
+      <CardContent className="pt-6 text-center">
+        <div className="mb-4 flex justify-center">
+          <div className="rounded-full bg-destructive/10 p-3 text-destructive">
+            <Trash2 className="h-6 w-6" />
+          </div>
+        </div>
+        <h3 className="mb-2 text-lg font-medium">{copy.labLoadErrorTitle}</h3>
+        <p className="mb-6 text-sm text-muted-foreground">
+          {copy.labLoadErrorDesc}
+        </p>
+        <Button 
+          variant="outline" 
+          onClick={() => window.location.reload()}
+          className="gap-2"
+        >
+          {copy.retry}
+        </Button>
+      </CardContent>
+    </Card>
+  );
+
+  return (
+    <LabErrorBoundary fallback={errorFallback}>
+      <React.Suspense fallback={<div className="py-10 text-center text-sm text-muted-foreground">{copy.loadingLab}</div>}>
+        <Lab project={project} />
+      </React.Suspense>
+    </LabErrorBoundary>
+  );
 }
 
 function TriggerChildren({ value, label }: { value: string; label?: string }): React.ReactElement {
