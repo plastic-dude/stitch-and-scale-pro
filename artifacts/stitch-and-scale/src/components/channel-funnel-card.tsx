@@ -16,6 +16,9 @@ import { CHANNEL_FUNNEL_COPY, getChannelTypeLabel, getChannelVerdictLabel, getCh
 import {
   analyzeChannel,
   analyzeFunnel,
+  normalizeBoxPitchInput,
+  normalizeChannelDeal,
+  normalizeFunnelInput,
   defaultChannelDeal,
   defaultFunnelInput,
   generateBoxPitch,
@@ -62,22 +65,38 @@ function defaultChannel(): StoredChannel {
 // handle, so it can never reach for a freshly-created handle in an initializer.
 function loadStored(raw: StoredChannel | null): StoredChannel {
   try {
-    
-    if (raw) {
-      if (raw && raw.channel) {
-        return {
-          ...defaultChannel(),
-          ...raw,
-          channel: { ...defaultChannelDeal(), ...raw.channel },
-          funnel: { ...defaultFunnelInput(), ...raw.funnel },
-          pitch: { ...defaultChannel().pitch, ...raw.pitch },
-        };
-      }
+    if (raw?.channel) {
+      const channel = normalizeChannelDeal(raw.channel);
+      const pitch = normalizeBoxPitchInput({
+        ...raw.pitch,
+        audienceReach: channel.audienceReach,
+      });
+      return {
+        ...defaultChannel(),
+        ...raw,
+        channel,
+        funnel: normalizeFunnelInput(raw.funnel),
+        pitch: {
+          ...defaultChannel().pitch,
+          ...raw.pitch,
+          feeAsk: pitch.feeAsk,
+          exclusivityAskMonths: pitch.exclusivityAskMonths,
+        },
+      };
     }
   } catch {
     /* storage unreadable — start fresh */
   }
   return defaultChannel();
+}
+
+function boundedNumber(raw: string, min: number, max: number, fallback: number): number {
+  const value = Number(raw);
+  return Number.isFinite(value) ? Math.min(max, Math.max(min, value)) : fallback;
+}
+
+function boundedInteger(raw: string, min: number, max: number, fallback: number): number {
+  return Math.round(boundedNumber(raw, min, max, fallback));
 }
 
 const fmt$ = (n: number) =>
@@ -184,7 +203,7 @@ const handle = useProjectStorage<StoredChannel>('channels', project.id, ['kskcha
                 type="number"
                 className="h-9"
                 value={stored.channel.designFee}
-                onChange={(e) => setChannel({ designFee: Number(e.target.value) })}
+                onChange={(e) => setChannel({ designFee: boundedNumber(e.target.value, 0, 1_000_000, stored.channel.designFee) })}
               />
             </div>
             <div className="space-y-1.5">
@@ -196,7 +215,7 @@ const handle = useProjectStorage<StoredChannel>('channels', project.id, ['kskcha
                 type="number"
                 className="h-9"
                 value={stored.channel.extrasValue}
-                onChange={(e) => setChannel({ extrasValue: Number(e.target.value) })}
+                onChange={(e) => setChannel({ extrasValue: boundedNumber(e.target.value, 0, 1_000_000, stored.channel.extrasValue) })}
               />
             </div>
             <div className="space-y-1.5">
@@ -208,7 +227,7 @@ const handle = useProjectStorage<StoredChannel>('channels', project.id, ['kskcha
                 type="number"
                 className="h-9"
                 value={stored.channel.exclusivityMonths}
-                onChange={(e) => setChannel({ exclusivityMonths: Number(e.target.value) })}
+                onChange={(e) => setChannel({ exclusivityMonths: boundedNumber(e.target.value, 0, 240, stored.channel.exclusivityMonths) })}
               />
             </div>
             <div className="space-y-1.5">
@@ -220,7 +239,7 @@ const handle = useProjectStorage<StoredChannel>('channels', project.id, ['kskcha
                 type="number"
                 className="h-9"
                 value={stored.channel.audienceReach}
-                onChange={(e) => setChannel({ audienceReach: Number(e.target.value) })}
+                onChange={(e) => setChannel({ audienceReach: boundedInteger(e.target.value, 0, 100_000_000, stored.channel.audienceReach) })}
               />
             </div>
             <div className="space-y-1.5">
@@ -232,7 +251,7 @@ const handle = useProjectStorage<StoredChannel>('channels', project.id, ['kskcha
                 type="number"
                 className="h-9"
                 value={stored.channel.profileVisitPct}
-                onChange={(e) => setChannel({ profileVisitPct: Number(e.target.value) })}
+                onChange={(e) => setChannel({ profileVisitPct: boundedNumber(e.target.value, 0, 100, stored.channel.profileVisitPct) })}
               />
             </div>
             <div className="space-y-1.5">
@@ -244,7 +263,7 @@ const handle = useProjectStorage<StoredChannel>('channels', project.id, ['kskcha
                 type="number"
                 className="h-9"
                 value={stored.channel.visitorConvertPct}
-                onChange={(e) => setChannel({ visitorConvertPct: Number(e.target.value) })}
+                onChange={(e) => setChannel({ visitorConvertPct: boundedNumber(e.target.value, 0, 100, stored.channel.visitorConvertPct) })}
               />
             </div>
             <div className="space-y-1.5">
@@ -256,7 +275,7 @@ const handle = useProjectStorage<StoredChannel>('channels', project.id, ['kskcha
                 type="number"
                 className="h-9"
                 value={stored.channel.visitorSpend}
-                onChange={(e) => setChannel({ visitorSpend: Number(e.target.value) })}
+                onChange={(e) => setChannel({ visitorSpend: boundedNumber(e.target.value, 0, 1_000_000, stored.channel.visitorSpend) })}
               />
             </div>
             <div className="space-y-1.5">
@@ -268,7 +287,7 @@ const handle = useProjectStorage<StoredChannel>('channels', project.id, ['kskcha
                 type="number"
                 className="h-9"
                 value={stored.channel.effectMonths}
-                onChange={(e) => setChannel({ effectMonths: Number(e.target.value) })}
+                onChange={(e) => setChannel({ effectMonths: boundedNumber(e.target.value, 0, 240, stored.channel.effectMonths) })}
               />
             </div>
             <div className="space-y-1.5">
@@ -280,7 +299,7 @@ const handle = useProjectStorage<StoredChannel>('channels', project.id, ['kskcha
                 type="number"
                 className="h-9"
                 value={stored.channel.baselineSalesPerMonth}
-                onChange={(e) => setChannel({ baselineSalesPerMonth: Number(e.target.value) })}
+                onChange={(e) => setChannel({ baselineSalesPerMonth: boundedNumber(e.target.value, 0, 1_000_000, stored.channel.baselineSalesPerMonth) })}
               />
             </div>
             <div className="space-y-1.5">
@@ -292,7 +311,7 @@ const handle = useProjectStorage<StoredChannel>('channels', project.id, ['kskcha
                 type="number"
                 className="h-9"
                 value={stored.channel.patternPrice}
-                onChange={(e) => setChannel({ patternPrice: Number(e.target.value) })}
+                onChange={(e) => setChannel({ patternPrice: boundedNumber(e.target.value, 0, 1_000_000, stored.channel.patternPrice) })}
               />
             </div>
             <div className="space-y-1.5">
@@ -304,7 +323,7 @@ const handle = useProjectStorage<StoredChannel>('channels', project.id, ['kskcha
                 type="number"
                 className="h-9"
                 value={stored.channel.workHours}
-                onChange={(e) => setChannel({ workHours: Number(e.target.value) })}
+                onChange={(e) => setChannel({ workHours: boundedNumber(e.target.value, 0, 100_000, stored.channel.workHours) })}
               />
             </div>
             <div className="space-y-1.5">
@@ -316,7 +335,7 @@ const handle = useProjectStorage<StoredChannel>('channels', project.id, ['kskcha
                 type="number"
                 className="h-9"
                 value={stored.channel.deliveryBufferWeeks}
-                onChange={(e) => setChannel({ deliveryBufferWeeks: Number(e.target.value) })}
+                onChange={(e) => setChannel({ deliveryBufferWeeks: boundedNumber(e.target.value, 0, 520, stored.channel.deliveryBufferWeeks) })}
               />
             </div>
             <div className="space-y-1.5">
@@ -328,7 +347,7 @@ const handle = useProjectStorage<StoredChannel>('channels', project.id, ['kskcha
                 type="number"
                 className="h-9"
                 value={Math.round(stored.channel.channelDefunctRate * 100)}
-                onChange={(e) => setChannel({ channelDefunctRate: Number(e.target.value) / 100 })}
+                onChange={(e) => setChannel({ channelDefunctRate: boundedNumber(e.target.value, 0, 100, stored.channel.channelDefunctRate * 100) / 100 })}
               />
             </div>
             <div className="space-y-1.5">
@@ -399,7 +418,7 @@ const handle = useProjectStorage<StoredChannel>('channels', project.id, ['kskcha
                 type="number"
                 className="h-9"
                 value={stored.funnel.listSize}
-                onChange={(e) => setFunnel({ listSize: Number(e.target.value) })}
+                onChange={(e) => setFunnel({ listSize: boundedInteger(e.target.value, 0, 100_000_000, stored.funnel.listSize) })}
               />
             </div>
             <div className="space-y-1.5">
@@ -411,7 +430,7 @@ const handle = useProjectStorage<StoredChannel>('channels', project.id, ['kskcha
                 type="number"
                 className="h-9"
                 value={stored.funnel.freebieLeadInPerMonth}
-                onChange={(e) => setFunnel({ freebieLeadInPerMonth: Number(e.target.value) })}
+                onChange={(e) => setFunnel({ freebieLeadInPerMonth: boundedInteger(e.target.value, 0, 10_000_000, stored.funnel.freebieLeadInPerMonth) })}
               />
             </div>
             <div className="space-y-1.5">
@@ -423,7 +442,7 @@ const handle = useProjectStorage<StoredChannel>('channels', project.id, ['kskcha
                 type="number"
                 className="h-9"
                 value={stored.funnel.launchConversionPct}
-                onChange={(e) => setFunnel({ launchConversionPct: Number(e.target.value) })}
+                onChange={(e) => setFunnel({ launchConversionPct: boundedNumber(e.target.value, 0, 100, stored.funnel.launchConversionPct) })}
               />
             </div>
             <div className="space-y-1.5">
@@ -435,7 +454,7 @@ const handle = useProjectStorage<StoredChannel>('channels', project.id, ['kskcha
                 type="number"
                 className="h-9"
                 value={stored.funnel.launchPrice}
-                onChange={(e) => setFunnel({ launchPrice: Number(e.target.value) })}
+                onChange={(e) => setFunnel({ launchPrice: boundedNumber(e.target.value, 0, 1_000_000, stored.funnel.launchPrice) })}
               />
             </div>
             <div className="space-y-1.5">
@@ -447,7 +466,7 @@ const handle = useProjectStorage<StoredChannel>('channels', project.id, ['kskcha
                 type="number"
                 className="h-9"
                 value={Math.round(stored.funnel.launchWeekShare * 100)}
-                onChange={(e) => setFunnel({ launchWeekShare: Number(e.target.value) / 100 })}
+                onChange={(e) => setFunnel({ launchWeekShare: boundedNumber(e.target.value, 0, 100, stored.funnel.launchWeekShare * 100) / 100 })}
               />
             </div>
             <div className="space-y-1.5">
@@ -459,7 +478,7 @@ const handle = useProjectStorage<StoredChannel>('channels', project.id, ['kskcha
                 type="number"
                 className="h-9"
                 value={stored.funnel.evergreenConversionPct}
-                onChange={(e) => setFunnel({ evergreenConversionPct: Number(e.target.value) })}
+                onChange={(e) => setFunnel({ evergreenConversionPct: boundedNumber(e.target.value, 0, 100, stored.funnel.evergreenConversionPct) })}
               />
             </div>
             <div className="space-y-1.5">
@@ -471,7 +490,7 @@ const handle = useProjectStorage<StoredChannel>('channels', project.id, ['kskcha
                 type="number"
                 className="h-9"
                 value={stored.funnel.postLaunchConversionPct}
-                onChange={(e) => setFunnel({ postLaunchConversionPct: Number(e.target.value) })}
+                onChange={(e) => setFunnel({ postLaunchConversionPct: boundedNumber(e.target.value, 0, 100, stored.funnel.postLaunchConversionPct) })}
               />
             </div>
             <div className="space-y-1.5">
@@ -483,7 +502,7 @@ const handle = useProjectStorage<StoredChannel>('channels', project.id, ['kskcha
                 type="number"
                 className="h-9"
                 value={stored.funnel.monthsTracked}
-                onChange={(e) => setFunnel({ monthsTracked: Number(e.target.value) })}
+                onChange={(e) => setFunnel({ monthsTracked: boundedInteger(e.target.value, 1, 120, stored.funnel.monthsTracked) })}
               />
             </div>
             <div className="space-y-1.5">
@@ -495,7 +514,7 @@ const handle = useProjectStorage<StoredChannel>('channels', project.id, ['kskcha
                 type="number"
                 className="h-9"
                 value={stored.funnel.maintenanceHoursPerMonth}
-                onChange={(e) => setFunnel({ maintenanceHoursPerMonth: Number(e.target.value) })}
+                onChange={(e) => setFunnel({ maintenanceHoursPerMonth: boundedNumber(e.target.value, 0, 10_000, stored.funnel.maintenanceHoursPerMonth) })}
               />
             </div>
             <div className="space-y-1.5">
@@ -507,7 +526,7 @@ const handle = useProjectStorage<StoredChannel>('channels', project.id, ['kskcha
                 type="number"
                 className="h-9"
                 value={stored.funnel.launchEffortHours}
-                onChange={(e) => setFunnel({ launchEffortHours: Number(e.target.value) })}
+                onChange={(e) => setFunnel({ launchEffortHours: boundedNumber(e.target.value, 0, 100_000, stored.funnel.launchEffortHours) })}
               />
             </div>
             <div className="space-y-1.5">
@@ -588,7 +607,7 @@ const handle = useProjectStorage<StoredChannel>('channels', project.id, ['kskcha
                     type="number"
                     className="h-9"
                     value={stored.pitch.feeAsk}
-                    onChange={(e) => setPitch({ feeAsk: Number(e.target.value) })}
+                    onChange={(e) => setPitch({ feeAsk: boundedNumber(e.target.value, 0, 1_000_000, stored.pitch.feeAsk) })}
                   />
                 </div>
                 <div className="space-y-1.5">
@@ -600,7 +619,7 @@ const handle = useProjectStorage<StoredChannel>('channels', project.id, ['kskcha
                     type="number"
                     className="h-9"
                     value={stored.pitch.exclusivityAskMonths}
-                    onChange={(e) => setPitch({ exclusivityAskMonths: Number(e.target.value) })}
+                    onChange={(e) => setPitch({ exclusivityAskMonths: boundedNumber(e.target.value, 0, 240, stored.pitch.exclusivityAskMonths) })}
                   />
                 </div>
                 <label className="flex items-center justify-between rounded-md border px-3 py-2 text-sm">

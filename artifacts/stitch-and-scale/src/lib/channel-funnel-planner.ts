@@ -22,6 +22,8 @@
  *   CHK-019), ~60% of garment sales happen in launch week for most designers.
  */
 
+import { safeNum } from './numeric-guard';
+
 export type ChannelType = 'subbox' | 'brand-collab' | 'magazine' | 'other';
 
 export interface ChannelDeal {
@@ -91,6 +93,53 @@ export const CHANNEL_TYPE_LABELS: Record<ChannelType, string> = {
   other: 'Other placement',
 };
 
+function bounded(raw: unknown, min: number, max: number, fallback: number): number {
+  const value = safeNum(typeof raw === 'number' ? raw : String(raw ?? ''), fallback);
+  return Math.min(max, Math.max(min, value));
+}
+
+function whole(raw: unknown, min: number, max: number, fallback: number): number {
+  return Math.round(bounded(raw, min, max, fallback));
+}
+
+function text(raw: unknown, fallback: string): string {
+  return typeof raw === 'string' ? raw : fallback;
+}
+
+function bool(raw: unknown, fallback: boolean): boolean {
+  return typeof raw === 'boolean' ? raw : fallback;
+}
+
+export function normalizeChannelDeal(raw: Partial<ChannelDeal> = {}): ChannelDeal {
+  const defaults = defaultChannelDeal();
+  const merged = { ...defaults, ...raw };
+  const type: ChannelType = merged.type === 'subbox' || merged.type === 'brand-collab' || merged.type === 'magazine' || merged.type === 'other'
+    ? merged.type
+    : defaults.type;
+  return {
+    type,
+    name: text(merged.name, defaults.name),
+    designFee: bounded(merged.designFee, 0, 1_000_000, defaults.designFee),
+    extrasValue: bounded(merged.extrasValue, 0, 1_000_000, defaults.extrasValue),
+    exclusivityMonths: bounded(merged.exclusivityMonths, 0, 240, defaults.exclusivityMonths),
+    audienceReach: whole(merged.audienceReach, 0, 100_000_000, defaults.audienceReach),
+    profileVisitPct: bounded(merged.profileVisitPct, 0, 100, defaults.profileVisitPct),
+    visitorConvertPct: bounded(merged.visitorConvertPct, 0, 100, defaults.visitorConvertPct),
+    visitorSpend: bounded(merged.visitorSpend, 0, 1_000_000, defaults.visitorSpend),
+    effectMonths: bounded(merged.effectMonths, 0, 240, defaults.effectMonths),
+    isExclusive: bool(merged.isExclusive, defaults.isExclusive),
+    baselineSalesPerMonth: bounded(merged.baselineSalesPerMonth, 0, 1_000_000, defaults.baselineSalesPerMonth),
+    patternPrice: bounded(merged.patternPrice, 0, 1_000_000, defaults.patternPrice),
+    platformFeeRate: bounded(merged.platformFeeRate, 0, 1, defaults.platformFeeRate),
+    workHours: bounded(merged.workHours, 0, 100_000, defaults.workHours),
+    hourlyRate: bounded(merged.hourlyRate, 0, 100_000, defaults.hourlyRate),
+    deliveryBufferWeeks: bounded(merged.deliveryBufferWeeks, 0, 520, defaults.deliveryBufferWeeks),
+    hasMarketingInsert: bool(merged.hasMarketingInsert, defaults.hasMarketingInsert),
+    paidInWriting: bool(merged.paidInWriting, defaults.paidInWriting),
+    channelDefunctRate: bounded(merged.channelDefunctRate, 0, 1, defaults.channelDefunctRate),
+  };
+}
+
 export function defaultChannelDeal(): ChannelDeal {
   return {
     type: 'subbox',
@@ -116,7 +165,8 @@ export function defaultChannelDeal(): ChannelDeal {
   };
 }
 
-export function analyzeChannel(deal: ChannelDeal): ChannelResult {
+export function analyzeChannel(rawDeal: ChannelDeal): ChannelResult {
+  const deal = normalizeChannelDeal(rawDeal);
   const notes: string[] = [];
   const clamped = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
 
@@ -306,7 +356,28 @@ export function defaultFunnelInput(): FunnelInput {
   };
 }
 
-export function analyzeFunnel(input: FunnelInput): FunnelResult {
+export function normalizeFunnelInput(raw: Partial<FunnelInput> = {}): FunnelInput {
+  const defaults = defaultFunnelInput();
+  const merged = { ...defaults, ...raw };
+  return {
+    listSize: whole(merged.listSize, 0, 100_000_000, defaults.listSize),
+    freebieLeadInPerMonth: whole(merged.freebieLeadInPerMonth, 0, 10_000_000, defaults.freebieLeadInPerMonth),
+    launchWeekShare: bounded(merged.launchWeekShare, 0, 1, defaults.launchWeekShare),
+    launchConversionPct: bounded(merged.launchConversionPct, 0, 100, defaults.launchConversionPct),
+    launchPrice: bounded(merged.launchPrice, 0, 1_000_000, defaults.launchPrice),
+    evergreenConversionPct: bounded(merged.evergreenConversionPct, 0, 100, defaults.evergreenConversionPct),
+    evergreenPrice: bounded(merged.evergreenPrice, 0, 1_000_000, defaults.evergreenPrice),
+    postLaunchConversionPct: bounded(merged.postLaunchConversionPct, 0, 100, defaults.postLaunchConversionPct),
+    monthsTracked: whole(merged.monthsTracked, 1, 120, defaults.monthsTracked),
+    platformFeeRate: bounded(merged.platformFeeRate, 0, 1, defaults.platformFeeRate),
+    launchEffortHours: bounded(merged.launchEffortHours, 0, 100_000, defaults.launchEffortHours),
+    maintenanceHoursPerMonth: bounded(merged.maintenanceHoursPerMonth, 0, 10_000, defaults.maintenanceHoursPerMonth),
+    hourlyRate: bounded(merged.hourlyRate, 0, 100_000, defaults.hourlyRate),
+  };
+}
+
+export function analyzeFunnel(rawInput: FunnelInput): FunnelResult {
+  const input = normalizeFunnelInput(rawInput);
   const notes: string[] = [];
   const clamped = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
   const feeRate = clamped(input.platformFeeRate, 0, 1);
@@ -398,7 +469,30 @@ export interface BoxPitchInput {
   insertPromise: boolean;
 }
 
-export function generateBoxPitch(input: BoxPitchInput): string {
+export function normalizeBoxPitchInput(raw: Partial<BoxPitchInput> = {}): BoxPitchInput {
+  const defaults: BoxPitchInput = {
+    designerName: '',
+    patternName: '',
+    boxName: '',
+    audienceReach: defaultChannelDeal().audienceReach,
+    feeAsk: 200,
+    exclusivityAskMonths: 3,
+    insertPromise: true,
+  };
+  const merged = { ...defaults, ...raw };
+  return {
+    designerName: text(merged.designerName, defaults.designerName),
+    patternName: text(merged.patternName, defaults.patternName),
+    boxName: text(merged.boxName, defaults.boxName),
+    audienceReach: whole(merged.audienceReach, 0, 100_000_000, defaults.audienceReach),
+    feeAsk: bounded(merged.feeAsk, 0, 1_000_000, defaults.feeAsk),
+    exclusivityAskMonths: bounded(merged.exclusivityAskMonths, 0, 240, defaults.exclusivityAskMonths),
+    insertPromise: bool(merged.insertPromise, defaults.insertPromise),
+  };
+}
+
+export function generateBoxPitch(rawInput: BoxPitchInput): string {
+  const input = normalizeBoxPitchInput(rawInput);
   const lines: string[] = [];
   lines.push(`Subject: Exclusive design for ${input.boxName} — ${input.patternName}`);
   lines.push('');

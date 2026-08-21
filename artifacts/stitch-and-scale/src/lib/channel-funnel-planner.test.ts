@@ -2,6 +2,9 @@ import { describe, expect, it } from 'vitest';
 import {
   analyzeChannel,
   analyzeFunnel,
+  normalizeBoxPitchInput,
+  normalizeChannelDeal,
+  normalizeFunnelInput,
   defaultChannelDeal,
   defaultFunnelInput,
   generateBoxPitch,
@@ -216,6 +219,111 @@ describe('generateBoxPitch', () => {
       insertPromise: false,
     });
     expect(pitch).not.toContain('marketing card');
+  });
+});
+
+describe('hostile input normalization', () => {
+  it('bounds channel deals before economic analysis', () => {
+    const normalized = normalizeChannelDeal({
+      designFee: Number.POSITIVE_INFINITY,
+      exclusivityMonths: -4,
+      audienceReach: Number.NaN,
+      profileVisitPct: 500,
+      visitorConvertPct: -10,
+      effectMonths: Number.POSITIVE_INFINITY,
+      workHours: Number.NEGATIVE_INFINITY,
+      channelDefunctRate: 4,
+      type: 'invalid' as never,
+    });
+    expect(normalized.designFee).toBe(150);
+    expect(normalized.exclusivityMonths).toBe(0);
+    expect(normalized.audienceReach).toBe(300);
+    expect(normalized.profileVisitPct).toBe(100);
+    expect(normalized.visitorConvertPct).toBe(0);
+    expect(normalized.effectMonths).toBe(6);
+    expect(normalized.workHours).toBe(40);
+    expect(normalized.channelDefunctRate).toBe(1);
+
+    const result = analyzeChannel({ ...defaultChannelDeal(), designFee: Number.POSITIVE_INFINITY, workHours: Number.NaN });
+    for (const value of [
+      result.channelIncome,
+      result.audienceIncome,
+      result.lostSelfSell,
+      result.exposureValue,
+      result.totalValue,
+      result.labourCost,
+      result.netProfit,
+      result.effectiveHourly,
+      result.stabilityRisk,
+    ]) {
+      expect(Number.isFinite(value)).toBe(true);
+    }
+  });
+
+  it('bounds funnel inputs and keeps narrative output finite', () => {
+    const normalized = normalizeFunnelInput({
+      listSize: Number.POSITIVE_INFINITY,
+      freebieLeadInPerMonth: -4,
+      launchWeekShare: 4,
+      launchConversionPct: Number.NaN,
+      launchPrice: Number.NEGATIVE_INFINITY,
+      monthsTracked: 999,
+      platformFeeRate: -2,
+    });
+    expect(normalized.listSize).toBe(300);
+    expect(normalized.freebieLeadInPerMonth).toBe(0);
+    expect(normalized.launchWeekShare).toBe(1);
+    expect(normalized.launchConversionPct).toBe(3);
+    expect(normalized.launchPrice).toBe(12);
+    expect(normalized.monthsTracked).toBe(120);
+    expect(normalized.platformFeeRate).toBe(0);
+
+    const result = analyzeFunnel({
+      ...defaultFunnelInput(),
+      listSize: Number.POSITIVE_INFINITY,
+      launchPrice: Number.NaN,
+      hourlyRate: Number.NEGATIVE_INFINITY,
+    });
+    for (const value of [
+      result.leadFlowValue,
+      result.launchSales,
+      result.launchRevenue,
+      result.evergreenSales,
+      result.evergreenRevenue,
+      result.postLaunchSales,
+      result.postLaunchRevenue,
+      result.grossRevenue,
+      result.fees,
+      result.labourCost,
+      result.netProfit,
+      result.effectiveHourly,
+    ]) {
+      expect(Number.isFinite(value)).toBe(true);
+    }
+    expect(result.launchWeekInsight).not.toMatch(/NaN|Infinity/);
+  });
+
+  it('sanitizes pitch asks before generating commercial copy', () => {
+    const normalized = normalizeBoxPitchInput({
+      feeAsk: Number.POSITIVE_INFINITY,
+      exclusivityAskMonths: -2,
+      audienceReach: Number.NaN,
+      insertPromise: 'yes' as never,
+    });
+    expect(normalized.feeAsk).toBe(200);
+    expect(normalized.exclusivityAskMonths).toBe(0);
+    expect(normalized.audienceReach).toBe(300);
+    expect(normalized.insertPromise).toBe(true);
+    const pitch = generateBoxPitch({
+      designerName: 'Me',
+      patternName: 'Test',
+      boxName: 'Box',
+      audienceReach: Number.POSITIVE_INFINITY,
+      feeAsk: Number.NaN,
+      exclusivityAskMonths: Number.NEGATIVE_INFINITY,
+      insertPromise: true,
+    });
+    expect(pitch).not.toMatch(/NaN|Infinity/);
   });
 });
 
