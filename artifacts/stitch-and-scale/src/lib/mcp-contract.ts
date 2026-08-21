@@ -487,7 +487,7 @@ export function isMcpGradeOutput(value: McpGradeOutput | McpValidationOutput): v
 }
 
 export function getMcpToolNames(): string[] {
-  return ['project.intake', 'project.validate', 'grading.run', 'grading.explain', 'export.pattern_pdf'];
+  return ['project.intake', 'project.validate', 'grading.run', 'grading.explain', 'export.pattern_pdf', 'export.project_book_pdf', 'export.brag_card', 'calculate.marketplace_take_rate'];
 }
 
 export function getMcpToolDefinitions() {
@@ -541,6 +541,61 @@ export function getMcpToolDefinitions() {
           includeNotes: { type: 'boolean' },
         },
         required: ['project', 'userApproved'],
+      },
+      outputSchema: { type: 'object' },
+      annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
+    },
+    {
+      name: 'export.project_book_pdf',
+      title: 'Prepare a multi-project Project Book PDF',
+      description: 'Create one bounded PDF from an explicitly supplied ordered list of valid project snapshots after the user confirms the complete list, ordering, filename, and export. Every project is graded by the deterministic Stitch & Scale engine; the server does not save, publish, share, or email the artifact.',
+      inputSchema: {
+        type: 'object',
+        additionalProperties: false,
+        properties: {
+          projects: { type: 'array', minItems: 1, maxItems: 52, description: 'Explicitly supplied ordered project snapshots.' },
+          userApproved: { type: 'boolean', description: 'Must be true only after the user confirms the complete project list, order, filename, and PDF creation.' },
+          title: { type: 'string', maxLength: 160 },
+          filename: { type: 'string', maxLength: 100 },
+          locale: { type: 'string', enum: ['en', 'de', 'fr', 'es', 'pt'] },
+          includeCover: { type: 'boolean' },
+        },
+        required: ['projects', 'userApproved'],
+      },
+      outputSchema: { type: 'object' },
+      annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
+    },
+    {
+      name: 'calculate.marketplace_take_rate',
+      title: 'Calculate marketplace take-rate from explicit assumptions',
+      description: 'Run the canonical Marketplace Take-Rate tab engine against explicitly supplied channel volumes, prices, seller region, and fee assumptions. The tool rejects incomplete assumptions rather than applying hidden defaults; it returns deterministic fee leaks, net revenue, thresholds, concentration, and caveats.',
+      inputSchema: {
+        type: 'object',
+        additionalProperties: false,
+        properties: {
+          calculation: { type: 'object', description: 'Explicit MarketplaceTakeRateInput including currency, currencySymbol, sellerRegion, channels, offsiteAdsRate, ravelryPayPalPct, ravelryPayPalFixed, and ravelryHighTier.' },
+        },
+        required: ['calculation'],
+      },
+      outputSchema: { type: 'object' },
+      annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
+    },
+    {
+      name: 'export.brag_card',
+      title: 'Prepare a branded Brag Card SVG',
+      description: 'Create a social-ready SVG from an explicitly supplied Receipt Lab ledger and published/sales counts after user confirmation. Metrics are computed by the canonical Brag Card module; the server does not invent, verify, save, publish, share, or email the artifact.',
+      inputSchema: {
+        type: 'object',
+        additionalProperties: false,
+        properties: {
+          card: { type: 'object', description: 'Explicitly supplied card inputs: studioName, currency, ledger, publishedCount, salesCount, template, and style.' },
+          userApproved: { type: 'boolean', description: 'Must be true only after the user confirms the supplied ledger, counts, design, filename, and SVG creation.' },
+          filename: { type: 'string', maxLength: 100 },
+          locale: { type: 'string', enum: ['en', 'de', 'fr', 'es', 'pt'] },
+          accent: { type: 'string', pattern: '^#[0-9a-fA-F]{6}$' },
+          branding: { type: 'object', description: 'Optional local branding fields; remote logos are rejected.' },
+        },
+        required: ['card', 'userApproved'],
       },
       outputSchema: { type: 'object' },
       annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },

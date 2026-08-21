@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { renderProjectBookDocument } from '@/lib/project-book-export';
+import { normalizeProjectBookFilename, projectBookPrintTitle, renderProjectBookDocument } from '@/lib/project-book-export';
 import { buildPortfolio, type PortfolioSummary } from '@/lib/release-portfolio';
 import type { PatternProject } from '@/lib/grading-engine';
 
@@ -48,6 +48,13 @@ describe('renderProjectBookDocument', () => {
     expect(html).toContain('@northloop');
     expect(html).toContain('2026');
     expect(html.match(/<section class="page project-page">/g)?.length).toBe(2);
+  });
+
+  it('normalizes custom filenames without paths, markup, or duplicate extensions', () => {
+    expect(normalizeProjectBookFilename('  My 2026 / <Catalogue>.PDF  ')).toBe('my-2026-catalogue.pdf');
+    expect(normalizeProjectBookFilename('')).toBe('stitch-and-scale-project-book.pdf');
+    expect(projectBookPrintTitle('My Catalogue.PDF')).toBe('my-catalogue');
+    expect(normalizeProjectBookFilename('A'.repeat(200))).toHaveLength(104);
   });
 
   it('includes the human review record in the handoff artifact', () => {

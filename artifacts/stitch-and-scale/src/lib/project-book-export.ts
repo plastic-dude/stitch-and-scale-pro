@@ -14,6 +14,29 @@ export interface ProjectBookRenderContext {
   exportedAt?: Date;
 }
 
+const PROJECT_BOOK_FILENAME_MAX = 100;
+
+/** Normalize a user-provided Project Book filename without ever trusting it as markup or a path. */
+export function normalizeProjectBookFilename(raw: string, fallback = 'stitch-and-scale-project-book'): string {
+  const candidate = (raw || fallback)
+    .trim()
+    .replace(/\.pdf$/i, '')
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-zA-Z0-9._-]+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^[-.]+|[-.]+$/g, '')
+    .slice(0, PROJECT_BOOK_FILENAME_MAX)
+    || fallback;
+  const lower = candidate.toLowerCase();
+  return lower.endsWith('.pdf') ? lower : `${lower}.pdf`;
+}
+
+/** Browser print uses the document title as the default Save-as-PDF filename. */
+export function projectBookPrintTitle(filename: string): string {
+  return normalizeProjectBookFilename(filename).replace(/\.pdf$/i, '');
+}
+
 function esc(value: unknown): string {
   return String(value ?? '')
     .replace(/&/g, '&amp;')

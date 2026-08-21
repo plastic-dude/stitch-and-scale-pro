@@ -36,9 +36,11 @@ import {
 } from '@/lib/pattern-pricing-advisor';
 import { PLATFORMS } from '@/lib/pattern-income-calculator';
 import { Slider } from '@/components/ui/slider';
-import { Coins, ListChecks, Package, Rocket, Target, TrendingUp } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Coins, Download, ListChecks, Package, Rocket, Target, TrendingUp } from 'lucide-react';
 import { useSettings } from '@/context/SettingsContext';
 import { PORTFOLIO_COPY, type PortfolioCopy } from '@/lib/portfolio-copy';
+import { normalizeProjectBookFilename, projectBookPrintTitle, renderProjectBookDocument } from '@/lib/project-book-export';
 
 const DEFAULT_INPUTS: PortfolioInputs = {
   itemType: 'sweater',
@@ -138,13 +140,55 @@ function PortfolioLineRow({ line, copy }: { line: PortfolioLine; copy: Portfolio
 
 export default function PortfolioPage() {
   const { projects } = useProjects();
-  const { language } = useSettings();
+  const { language, studioProfile } = useSettings();
   const copy = PORTFOLIO_COPY[language];
   const interpolate = (template: string, values: Record<string, string | number>) => template.replace(/\{(\w+)\}/g, (_, key) => String(values[key] ?? ''));
   const [inputs, setInputs] = React.useState<PortfolioInputs>(DEFAULT_INPUTS);
   const [inputsRaw, setInputsRaw] = React.useState({ hours: '20', rate: '25', price: '8' });
+  const [bookFilename, setBookFilename] = React.useState(copy.bookTitle);
+  const [selectedProjectIds, setSelectedProjectIds] = React.useState<string[]>(() => projects.map(project => project.id));
+  const [bookStatus, setBookStatus] = React.useState('');
+
+  React.useEffect(() => {
+    setSelectedProjectIds(previous => {
+      const available = new Set(projects.map(project => project.id));
+      const kept = previous.filter(id => available.has(id));
+      return kept.length > 0 || projects.length === 0 ? kept : projects.map(project => project.id);
+    });
+  }, [projects]);
 
   const portfolio = buildPortfolio(projects, inputs);
+  const selectedBookProjects = projects.filter(project => selectedProjectIds.includes(project.id));
+  const toggleBookProject = (projectId: string) => {
+    setSelectedProjectIds(previous => previous.includes(projectId)
+      ? previous.filter(id => id !== projectId)
+      : [...previous, projectId]);
+  };
+  const prepareProjectBook = () => {
+    if (selectedBookProjects.length === 0) {
+      setBookStatus(copy.bookEmptySelection);
+      return;
+    }
+    const filename = normalizeProjectBookFilename(bookFilename, copy.bookTitle);
+    const popup = window.open('', '_blank');
+    if (!popup) {
+      setBookStatus(copy.bookFailed);
+      return;
+    }
+    const html = renderProjectBookDocument({
+      title: projectBookPrintTitle(filename),
+      projects: selectedBookProjects,
+      portfolio: buildPortfolio(selectedBookProjects, inputs),
+      studio: studioProfile,
+      locale: language,
+    });
+    popup.document.open();
+    popup.document.write(html);
+    popup.document.close();
+    popup.focus();
+    setBookStatus(copy.bookReady);
+    window.setTimeout(() => popup.print(), 160);
+  };
   const bestPlatform = PLATFORMS[0];
   // Bundle premium slider (CHK-134, S284): per-bundle discount factor.
   // Defaults to the documented 71% anchor — the UI lets the designer slide
@@ -331,6 +375,60 @@ export default function PortfolioPage() {
               })}
             </div>
           )}
+        </CardContent>
+      </Card>
+
+      {/* Multi-project Project Book handoff */}
+      <Card className="border-primary/25 bg-primary/[0.03]">
+        <CardHeader>
+          <CardTitle className="font-serif text-base flex items-center gap-2">
+            <Download className="h-4 w-4" /> {copy.bookTitle}
+          </CardTitle>
+          <CardDescription>{copy.bookDescription}</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-1.5">
+            <Label htmlFor="portfolio-book-name" className="text-xs text-muted-foreground">{copy.bookName}</Label>
+            <Input
+              id="portfolio-book-name"
+              value={bookFilename}
+              onChange={(event) => setBookFilename(event.target.value)}
+              maxLength={100}
+              aria-describedby="portfolio-book-name-hint"
+              data-testid="portfolio-book-filename"
+            />
+            <p id="portfolio-book-name-hint" className="text-[11px] text-muted-foreground">{copy.bookNameHint}</p>
+          </div>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <p className="text-xs text-muted-foreground" aria-live="polite">
+              {interpolate(copy.bookSelected, { selected: selectedBookProjects.length, total: projects.length })}
+            </p>
+            <div className="flex gap-2">
+              <Button type="button" variant="ghost" size="sm" onClick={() => setSelectedProjectIds(projects.map(project => project.id))}>{copy.bookSelectAll}</Button>
+              <Button type="button" variant="ghost" size="sm" onClick={() => setSelectedProjectIds([])}>{copy.bookClear}</Button>
+            </div>
+          </div>
+          <div className="grid gap-2 sm:grid-cols-2" role="group" aria-label={copy.bookTitle}>
+            {projects.length === 0 ? (
+              <p className="text-sm text-muted-foreground">{copy.noProjects}</p>
+            ) : projects.map(project => (
+              <label key={project.id} className="flex min-h-11 items-center gap-3 rounded-lg border border-border/70 bg-background/60 px-3 py-2 text-sm cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={selectedProjectIds.includes(project.id)}
+                  onChange={() => toggleBookProject(project.id)}
+                  className="h-4 w-4 accent-primary"
+                />
+                <span className="min-w-0 truncate">{project.name || 'Untitled pattern'}</span>
+              </label>
+            ))}
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <Button type="button" onClick={prepareProjectBook} disabled={selectedBookProjects.length === 0} data-testid="portfolio-book-export">
+              <Download className="h-4 w-4 mr-1" /> {copy.bookExport}
+            </Button>
+            <span className="text-xs text-muted-foreground" aria-live="polite">{bookStatus}</span>
+          </div>
         </CardContent>
       </Card>
 

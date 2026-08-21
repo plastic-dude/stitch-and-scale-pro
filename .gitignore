@@ -2,6 +2,8 @@
 
 # compiled output
 dist
+/artifacts/stitch-and-scale/dist-analysis/
+.research/product-plan-archive/unpacked/
 tmp
 out-tsc
 *.tsbuildinfo
