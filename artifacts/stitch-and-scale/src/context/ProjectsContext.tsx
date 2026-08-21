@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useReducer, useRef, useState } from 'react';
 import { get, set } from 'idb-keyval';
 import { PatternProject, generateId } from '@/lib/grading-engine';
-import { SAMPLE_CREW_NECK_SWEATER } from '@/lib/sample-projects';
+import { getSampleCrewNeckSweater } from '@/lib/sample-projects';
 // CHK-119: landing CTAs link to /project/{DEMO_PROJECT_ID} promising a no-signup
 // live demo — but nothing ever created that project, so a clean profile saw
 // "Project Not Found" (QA #61). The demo now seeds lazily on first request for
@@ -210,8 +210,8 @@ export const DEMO_PROJECT_ID = 'mss5osqd88j6fdyvtdu';
 // Build the populated demo project (sample crew neck re-id'd) — exported so the
 // seed logic and its regression tests share one definition. Timestamps are
 // injected at seed time, not baked into the module, so tests can freeze time.
-export function makeDemoProject(now: string = new Date().toISOString()): PatternProject {
-  return { ...SAMPLE_CREW_NECK_SWEATER, id: DEMO_PROJECT_ID, createdAt: now, updatedAt: now };
+export function makeDemoProject(lang: any = 'en', now: string = new Date().toISOString()): PatternProject {
+  return { ...getSampleCrewNeckSweater(lang), id: DEMO_PROJECT_ID, createdAt: now, updatedAt: now };
 }
 
 export function useProject(id?: string) {
@@ -221,7 +221,7 @@ export function useProject(id?: string) {
 
   // CHK-119: first visit to the demo id with no stored project seeds the demo.
   if (!existing && id === DEMO_PROJECT_ID) {
-    const demo = makeDemoProject();
+    const demo = makeDemoProject(); // Default to 'en' or detected locale
     createProject(demo);
     return {
       project: demo,

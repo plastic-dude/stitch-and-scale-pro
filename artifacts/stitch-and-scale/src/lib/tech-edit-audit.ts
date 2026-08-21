@@ -1,29 +1,3 @@
-/**
- * CHK-010 — Self Tech-Edit Audit
- *
- * Automated arithmetic audit of a graded pattern, mirroring the "numbers
- * sweep" a human tech editor performs (every number, every calculation,
- * every measurement — Marina Skua's two-sweep method).
- *
- * Why this exists (session-11 research):
- * - Tech editors charge $20–40/hr and a sweater takes ~4 hours of editing
- *   (StitchReader, Heather Storta, r/AdvancedKnitting).
- * - Top reasons designers skip tech editing: cost, "testers are enough" —
- *   but testers usually knit ONE size, so grading math across all sizes
- *   goes undetected until buyer complaints.
- * - No tool on the market takes a designer's graded table and runs the
- *   arithmetic a tech editor would run. KnitBird is dead (Adobe AIR),
- *   Stitch Foundry $185 and broken on new OSes, chart makers audit
- *   nothing. Fit Analytics/Size.ly are retail widgets, not pattern math.
- * - Stitch & Scale already has every stitch count, row count, size table
- *   and gauge in machine form — the only pattern app positioned to do
- *   this. Their flaw: every alternative is human labour at $30-40/hr.
- *   Our strength: the arithmetic pass is instant, free, and repeatable.
- *
- * This library audits NUMBERS only. Style/grammar/abbreviations remain
- * human-editor territory — the audit produces a paste-ready "pre-edit
- * summary" so a paid editor's bill shrinks to the prose pass.
- */
 import {
   ALL_SIZES,
   gradePattern,
@@ -34,6 +8,8 @@ import {
   resolveProjectStandards,
 } from './grading-engine';
 import { SIZE_STANDARDS } from './grading-engine';
+import { TECH_EDIT_COPY } from './tech-edit-copy';
+import { LanguageCode } from './i18n';
 
 export type AuditSeverity = 'error' | 'warning' | 'info' | 'pass';
 
@@ -77,6 +53,7 @@ export interface AuditSummary {
 export interface AuditConfig {
   /** Hourly rate used in the cost-saved framing ($20–40 typical). */
   editorRatePerHour?: number;
+  language?: LanguageCode;
 }
 
 const DEFAULT_RATE = 35;
@@ -177,7 +154,8 @@ function gaugeIsUsable(project: PatternProject): boolean {
   );
 }
 
-function checkGauge(project: PatternProject): AuditFinding[] {
+function checkGauge(project: PatternProject, lang: LanguageCode): AuditFinding[] {
+  const copy = TECH_EDIT_COPY[lang];
   const usable = gaugeIsUsable(project);
   return usable
     ? []
@@ -185,13 +163,14 @@ function checkGauge(project: PatternProject): AuditFinding[] {
         location: 'Project',
         severity: 'error',
         code: 'GA-01',
-        title: 'Gauge not set — every number below is unreliable',
-        detail: 'Set stitches/rows per 4in in the project gauge. A tech editor cannot verify math without it, and neither can a tester. This is the first thing on any tech-edit pre-edit checklist.',
+        title: copy.findingGa01Title,
+        detail: copy.findingGa01Detail,
       }];
 }
 
 /** GA-02: base values sanity — negatives and zeros where they shouldn't be. */
-function checkBaseValues(project: PatternProject): AuditFinding[] {
+function checkBaseValues(project: PatternProject, lang: LanguageCode): AuditFinding[] {
+  const copy = TECH_EDIT_COPY[lang];
   const findings: AuditFinding[] = [];
   for (const section of project.sections) {
     for (const m of section.measurements) {
@@ -200,16 +179,16 @@ function checkBaseValues(project: PatternProject): AuditFinding[] {
           location: location(section.name, m.label),
           severity: 'error',
           code: 'GA-02',
-          title: 'Base measurement is negative',
-          detail: `Base value ${m.baseValue} is negative. Measurements must be positive — a negative width or length cannot be knit.`,
+          title: copy.findingGa02Title,
+          detail: copy.findingGa02Detail(m.baseValue),
         });
       } else if (m.baseValue === 0) {
         findings.push({
           location: location(section.name, m.label),
           severity: 'info',
           code: 'GA-02b',
-          title: 'Base measurement is zero — excluded from grading',
-          detail: 'A zero base value excludes this measurement from all graded sizes. If this is intentional (e.g. a decorative panel), fine; if not, enter the base size value.',
+          title: copy.findingGa02bTitle,
+          detail: copy.findingGa02bDetail,
         });
       }
     }
@@ -218,7 +197,8 @@ function checkBaseValues(project: PatternProject): AuditFinding[] {
 }
 
 /** GA-03: size progression — physical values must be monotonic in size. */
-function checkSizeProgression(project: PatternProject): AuditFinding[] {
+function checkSizeProgression(project: PatternProject, lang: LanguageCode): AuditFinding[] {
+  const copy = TECH_EDIT_COPY[lang];
   const findings: AuditFinding[] = [];
   const graded = regrade(project);
   for (const section of graded) {
@@ -237,8 +217,8 @@ function checkSizeProgression(project: PatternProject): AuditFinding[] {
           location: location(section.sectionName, m.label),
           severity: 'warning',
           code: 'GA-03',
-          title: 'Size progression is not monotonic',
-          detail: `Physical values across ${sizes.join(' → ')} are: ${values.join(', ')} in. Garment dimensions should grow (or stay level) with size — check whether this measurement's grading key or type is correct.`,
+          title: copy.findingGa03Title,
+          detail: copy.findingGa03Detail(sizes.join(' → '), values.join(', '), project.gauge.unit),
         });
       }
     }
@@ -249,7 +229,8 @@ function checkSizeProgression(project: PatternProject): AuditFinding[] {
 /** GA-04: stitch/row rounding consistency — the rounded number must still be
  *  within tolerance of the raw target (a repeat-constraint can pull a
  *  number far from the raw target; beyond ~10% the fit risk rises). */
-function checkRoundingTolerance(project: PatternProject): AuditFinding[] {
+function checkRoundingTolerance(project: PatternProject, lang: LanguageCode): AuditFinding[] {
+  const copy = TECH_EDIT_COPY[lang];
   const findings: AuditFinding[] = [];
   const graded = regrade(project);
   const TOL = 0.10;
@@ -263,8 +244,8 @@ function checkRoundingTolerance(project: PatternProject): AuditFinding[] {
             location: location(section.sectionName, m.label),
             severity: 'warning',
             code: 'GA-04',
-            title: `Stitch count pulled ${Math.round(stitchDev * 100)}% from raw target (${g.size})`,
-            detail: `Rounded to ${g.stitchCount} stitches vs raw ${g.exactStitchCount.toFixed(1)}. The stitch pattern's repeat/parity constraint is forcing the count away from the target measurement — check the finished fit at this size.`,
+            title: copy.findingGa04Title(Math.round(stitchDev * 100), g.size),
+            detail: copy.findingGa04Detail(g.stitchCount, g.exactStitchCount.toFixed(1)),
           });
         }
         if (g.rowCount !== undefined && g.exactRowCount !== undefined && g.rowCount > 0) {
@@ -274,8 +255,8 @@ function checkRoundingTolerance(project: PatternProject): AuditFinding[] {
               location: location(section.sectionName, m.label),
               severity: 'info',
               code: 'GA-04b',
-              title: `Row count pulled ${Math.round(rowDev * 100)}% from raw target (${g.size})`,
-              detail: `Rounded to ${g.rowCount} rows vs raw ${g.exactRowCount.toFixed(1)}. Length tolerance is usually forgiving, but flag if the measurement is critical (e.g. armhole depth).`,
+              title: copy.findingGa04bTitle(Math.round(rowDev * 100), g.size),
+              detail: copy.findingGa04bDetail(g.rowCount, g.exactRowCount.toFixed(1)),
             });
           }
         }
@@ -287,7 +268,8 @@ function checkRoundingTolerance(project: PatternProject): AuditFinding[] {
 
 /** GA-05: repeat/parity rule validity — remainder must be inside the repeat
  *  and parity must be positive where used. */
-function checkRoundingRules(project: PatternProject): AuditFinding[] {
+function checkRoundingRules(project: PatternProject, lang: LanguageCode): AuditFinding[] {
+  const copy = TECH_EDIT_COPY[lang];
   const findings: AuditFinding[] = [];
   for (const section of project.sections) {
     for (const m of section.measurements) {
@@ -299,8 +281,8 @@ function checkRoundingRules(project: PatternProject): AuditFinding[] {
             location: location(section.name, m.label),
             severity: 'warning',
             code: 'GA-05',
-            title: 'Stitch repeat of 1 is a no-op',
-            detail: `A repeat of ${rep} rounds to the nearest integer like no repeat at all. Set the actual stitch-pattern multiple (e.g. 6 for a 6-stitch cable panel) or clear it.`,
+            title: copy.findingGa05Title(rep),
+            detail: copy.findingGa05Detail(rep),
           });
         }
         if (rem < 0 || rem >= rep) {
@@ -308,8 +290,8 @@ function checkRoundingRules(project: PatternProject): AuditFinding[] {
             location: location(section.name, m.label),
             severity: 'error',
             code: 'GA-05b',
-            title: 'Stitch remainder is invalid for the repeat',
-            detail: `Remainder ${rem} is outside the valid range 0…${rep - 1} for a repeat of ${rep}. Valid counts would be …${rep + rem}, ${2 * rep + rem}, …`,
+            title: copy.findingGa05bTitle,
+            detail: copy.findingGa05bDetail(rem, rep),
           });
         }
       }
@@ -318,8 +300,8 @@ function checkRoundingRules(project: PatternProject): AuditFinding[] {
           location: location(section.name, m.label),
           severity: 'info',
           code: 'GA-05c',
-          title: 'Both parity and repeat set — parity wins',
-          detail: 'When both are set, parity rounding takes precedence. Keep whichever constraint actually governs this measurement.',
+          title: copy.findingGa05cTitle,
+          detail: copy.findingGa05cDetail,
         });
       }
     }
@@ -329,7 +311,8 @@ function checkRoundingRules(project: PatternProject): AuditFinding[] {
 
 /** GA-06: stitch counts must be plausible for the size — never zero or
  *  negative after rounding in a graded size. */
-function checkStitchCounts(project: PatternProject): AuditFinding[] {
+function checkStitchCounts(project: PatternProject, lang: LanguageCode): AuditFinding[] {
+  const copy = TECH_EDIT_COPY[lang];
   const findings: AuditFinding[] = [];
   const graded = regrade(project);
   for (const section of graded) {
@@ -340,8 +323,8 @@ function checkStitchCounts(project: PatternProject): AuditFinding[] {
             location: location(section.sectionName, m.label),
             severity: 'error',
             code: 'GA-06',
-            title: `Zero/negative stitch count at size ${g.size}`,
-            detail: `Rounded stitch count is ${g.stitchCount}. A count this small usually means the base value, gauge, or grading key is wrong for this measurement.`,
+            title: copy.findingGa06Title(g.size),
+            detail: copy.findingGa06Detail(g.stitchCount),
           });
         }
       }
@@ -353,7 +336,8 @@ function checkStitchCounts(project: PatternProject): AuditFinding[] {
 /** GA-07: circumference vs width discipline — a 'width' measurement graded
  *  from a circumference key must not exceed half the key's body value by a
  *  suspicious margin, catching mis-keyed measurements. */
-function checkMeasurementTyping(project: PatternProject): AuditFinding[] {
+function checkMeasurementTyping(project: PatternProject, lang: LanguageCode): AuditFinding[] {
+  const copy = TECH_EDIT_COPY[lang];
   const findings: AuditFinding[] = [];
   const graded = regrade(project);
   for (const section of graded) {
@@ -363,17 +347,13 @@ function checkMeasurementTyping(project: PatternProject): AuditFinding[] {
       const mDef = src.measurements.find(mm => mm.id === m.measurementId);
       if (!mDef) continue;
       const key = m.gradingKey;
-      // Circumference keys (bust/waist/hip/arm...) graded as 'width' get
-      // halved — but neckCircumference and wrist as "width" pieces is a
-      // common real-world mis-keying when designers want half-back widths.
-      // We only flag the genuinely wrong case: a length key graded as width.
       if (mDef.measurementType === 'width' && (key === 'backLength' || key === 'sleeveLength' || key === 'armholeDepth')) {
         findings.push({
           location: location(section.sectionName, m.label),
           severity: 'warning',
           code: 'GA-07',
-          title: 'Length key graded as a width',
-          detail: `${m.label} uses the ${key} key (a length) with type "width", which halves the value when grading. If this measurement should be a length, set its type to "length" or "direct".`,
+          title: copy.findingGa07Title,
+          detail: copy.findingGa07Detail(m.label, key),
         });
       }
     }
@@ -384,7 +364,8 @@ function checkMeasurementTyping(project: PatternProject): AuditFinding[] {
 /** GA-08: minimum size count — one-size garments are fine, but grading
  *  across fewer than 3 sizes while billing a "multi-size" pattern is the
  *  classic buyer-complaint pattern. */
-function checkSizeCount(project: PatternProject): AuditFinding[] {
+function checkSizeCount(project: PatternProject, lang: LanguageCode): AuditFinding[] {
+  const copy = TECH_EDIT_COPY[lang];
   const sizesInUse = new Set<SizeKey>();
   for (const section of project.sections) {
     for (const m of section.measurements) {
@@ -396,8 +377,8 @@ function checkSizeCount(project: PatternProject): AuditFinding[] {
       location: 'Project',
       severity: 'warning',
       code: 'GA-08',
-      title: 'No sizes graded',
-      detail: 'Every measurement has a zero base value, so nothing is graded. Enter the base size\'s measurements first.',
+      title: copy.findingGa08Title,
+      detail: copy.findingGa08Detail,
     }];
   }
   if (sizesInUse.size === 1) {
@@ -405,8 +386,8 @@ function checkSizeCount(project: PatternProject): AuditFinding[] {
       location: 'Project',
       severity: 'info',
       code: 'GA-08b',
-      title: 'Single-size pattern',
-      detail: 'Only one size is graded. Single-size patterns are a common buyer complaint class ("why isn\'t this in more sizes?") — multi-size patterns consistently out-sell them on Ravelry and Etsy. Consider grading 3+ sizes before publishing.',
+      title: copy.findingGa08bTitle,
+      detail: copy.findingGa08bDetail,
     }];
   }
   return [];
@@ -415,7 +396,8 @@ function checkSizeCount(project: PatternProject): AuditFinding[] {
 /** GA-09: CYC body-standard cross-check for the base size — is the designer's
  *  stated base measurement close to the standard? Big drift usually means a
  *  body vs garment-ease mix-up. */
-function checkBaseStandardDrift(project: PatternProject): AuditFinding[] {
+function checkBaseStandardDrift(project: PatternProject, lang: LanguageCode): AuditFinding[] {
+  const copy = TECH_EDIT_COPY[lang];
   const findings: AuditFinding[] = [];
   const std = resolveAuditStandards(project);
   const base = std[project.baseSize];
@@ -427,26 +409,21 @@ function checkBaseStandardDrift(project: PatternProject): AuditFinding[] {
       if (!stdValue) continue;
       const target = m.measurementType === 'width' ? stdValue * 0.5 : stdValue;
       const drift = (m.baseValue - target) / target;
-      // Positive drift is ease — expected and correct for garments, so the
-      // check only flags genuinely suspicious cases: measurements SMALLER
-      // than the body itself (a garment can't be narrower than the body it
-      // covers), or ones more than double the body value (usually a
-      // unit/circumference-vs-width mix-up).
       if (drift < 0) {
         findings.push({
           location: location(section.name, m.label),
           severity: 'warning',
           code: 'GA-09',
-          title: `Base value ${Math.round(Math.abs(drift) * 100)}% below the ${project.sizingStandard ?? 'CYC'} ${project.baseSize} standard`,
-          detail: `You entered ${m.baseValue}${project.gauge.unit} for ${m.label}, but the ${project.sizingStandard ?? 'CYC'} standard body value for size ${project.baseSize} is ${target.toFixed(1)}${project.gauge.unit}. A garment can't be smaller than the body it covers — check whether this should be a circumference grading key, or whether the base value belongs to a different size.`,
+          title: copy.findingGa09Title(Math.round(Math.abs(drift) * 100), project.sizingStandard ?? 'CYC', project.baseSize),
+          detail: copy.findingGa09Detail(m.baseValue, project.gauge.unit, project.sizingStandard ?? 'CYC', project.baseSize, target.toFixed(1)),
         });
       } else if (drift > 1.0) {
         findings.push({
           location: location(section.name, m.label),
           severity: 'warning',
           code: 'GA-09b',
-          title: `Base value more than double the ${project.sizingStandard ?? 'CYC'} ${project.baseSize} standard`,
-          detail: `You entered ${m.baseValue}${project.gauge.unit} for ${m.label} vs a body value of ${target.toFixed(1)}${project.gauge.unit}. Ease explains drift, but not a doubling — this usually means a circumference was entered where a half-width belongs (or vice versa).`,
+          title: copy.findingGa09bTitle(project.sizingStandard ?? 'CYC', project.baseSize),
+          detail: copy.findingGa09bDetail(m.baseValue, project.gauge.unit, target.toFixed(1)),
         });
       }
     }
@@ -456,7 +433,8 @@ function checkBaseStandardDrift(project: PatternProject): AuditFinding[] {
 
 /** GA-10: duplicate labels within a section — ambiguous references are a
  *  real tech-edit clarity flag ("bust" meaning two different numbers). */
-function checkDuplicateLabels(project: PatternProject): AuditFinding[] {
+function checkDuplicateLabels(project: PatternProject, lang: LanguageCode): AuditFinding[] {
+  const copy = TECH_EDIT_COPY[lang];
   const findings: AuditFinding[] = [];
   for (const section of project.sections) {
     const counts = new Map<string, number>();
@@ -469,8 +447,8 @@ function checkDuplicateLabels(project: PatternProject): AuditFinding[] {
           location: location(section.name, label),
           severity: 'warning',
           code: 'GA-10',
-          title: `Duplicate measurement label "${label}"`,
-          detail: `This label appears ${n} times in "${section.name}". Two measurements with the same name confuse both test knitters and tech editors — give each a distinct name (e.g. "Bust (front)" / "Bust (back)").`,
+          title: copy.findingGa10Title(label),
+          detail: copy.findingGa10Detail(n, section.name),
         });
       }
     }
@@ -479,7 +457,8 @@ function checkDuplicateLabels(project: PatternProject): AuditFinding[] {
 }
 
 /** GA-11: row gauge missing when row rounding is used — silently wrong. */
-function checkRowGauge(project: PatternProject): AuditFinding[] {
+function checkRowGauge(project: PatternProject, lang: LanguageCode): AuditFinding[] {
+  const copy = TECH_EDIT_COPY[lang];
   const findings: AuditFinding[] = [];
   const usesRows = project.sections.some(s =>
     s.measurements.some(m => m.rowRepeat !== undefined || m.rowParity !== undefined));
@@ -488,8 +467,8 @@ function checkRowGauge(project: PatternProject): AuditFinding[] {
       location: 'Project',
       severity: 'error',
       code: 'GA-11',
-      title: 'Row rounding used but row gauge is not set',
-      detail: 'At least one measurement rounds its row count, but rows/4in is unset. Row counts will be computed with zero gauge — every length in the pattern is silently wrong. Enter the row gauge before publishing.',
+      title: copy.findingGa11Title,
+      detail: copy.findingGa11Detail,
     });
   }
   return findings;
@@ -497,23 +476,21 @@ function checkRowGauge(project: PatternProject): AuditFinding[] {
 
 /** GA-12: single-section check — patterns with only one section are rarely
  *  a full garment; flag before publishing as a completeness check. */
-function checkCompleteness(project: PatternProject): AuditFinding[] {
+function checkCompleteness(project: PatternProject, lang: LanguageCode): AuditFinding[] {
+  const copy = TECH_EDIT_COPY[lang];
   if (project.sections.length < 2) {
     return [{
       location: 'Project',
       severity: 'info',
       code: 'GA-12',
-      title: 'Pattern has a single section',
-      detail: 'Most garments have at least a body and sleeves. If this pattern is genuinely one piece (scarf, cowl), ignore this; otherwise add sections before the publish readiness check.',
+      title: copy.findingGa12Title,
+      detail: copy.findingGa12Detail,
     }];
   }
   return [];
 }
 
 function resolveAuditStandards(project: PatternProject): StandardsTable {
-  // The workspace passes liveCustomStandard explicitly; the audit runs
-  // offline (no live chart context), so pass SIZE_STANDARDS as the live
-  // fallback — the same default the workspace uses for CYC projects.
   return resolveProjectStandards(project, SIZE_STANDARDS);
 }
 
@@ -524,7 +501,7 @@ const SEVERITY_WEIGHT: Record<AuditSeverity, number> = { error: 25, warning: 10,
 /** What the same numbers sweep would cost on the open editor market —
  *  session-42 market framing with real rate bands and the turnaround wait.
  *  Takes the raw counts so it works before the AuditSummary is assembled. */
-function estimateMarketBillFor(findings: AuditFinding[], findingCounts: Record<AuditSeverity, number>, project: PatternProject): {
+function estimateMarketBillFor(findings: AuditFinding[], findingCounts: Record<AuditSeverity, number>, project: PatternProject, lang: LanguageCode): {
   low: number;
   high: number;
   hours: number;
@@ -532,15 +509,11 @@ function estimateMarketBillFor(findings: AuditFinding[], findingCounts: Record<A
   waitDays: number;
   note: string;
 } {
+  const copy = TECH_EDIT_COPY[lang];
   const pending = findingCounts.error + findingCounts.warning;
   const hours = editorHoursFor(project);
-  // Issue #31: the note must name the project's graded-size count, never
-  // the findings count (a 9-size sweater with 2 findings must say
-  // "9 graded sizes", and singular/plural must be correct).
   const sizeCount = gradedSizeCount(project);
   const sizesWord = sizeCount === 1 ? 'graded size' : 'graded sizes';
-  // Clean patterns negotiate the lower half of the quote; outstanding
-  // findings are exactly what an editor charges full rate to find.
   const lowFactor = pending > 0 ? 1 : 0.6;
   const low = Math.max(EDITOR_MARKET.rateLow, Math.round(EDITOR_MARKET.rateLow * hours * lowFactor));
   const high = Math.round(EDITOR_MARKET.rateHigh * hours);
@@ -551,17 +524,18 @@ function estimateMarketBillFor(findings: AuditFinding[], findingCounts: Record<A
     pending,
     waitDays: EDITOR_MARKET.turnaroundDays,
     note: pending > 0
-      ? `Editors charge $${EDITOR_MARKET.rateLow}–$${EDITOR_MARKET.rateHigh}/hr for this sweep (~${hours}h for ${sizeCount} ${sizesWord}) and document a real shortage — patterns wait ~${EDITOR_MARKET.turnaroundDays} days in queue. Resolve findings first to justify negotiating the lower end.`
-      : `A human editor would quote $${low}–$${high} for the same ${hours}h of arithmetic, at ` + '$' + EDITOR_MARKET.rateLow + '–$' + EDITOR_MARKET.rateHigh + `/hr — and most would add a per-size premium. The numbers sweep is fully automatable; their flaw is charging hourly rates for arithmetic.`,
+      ? copy.marketNotePending(pending, EDITOR_MARKET.rateLow, EDITOR_MARKET.rateHigh, hours, sizeCount, sizesWord, EDITOR_MARKET.turnaroundDays)
+      : copy.marketNoteClean(low, high, hours, sizeCount, sizesWord, EDITOR_MARKET.turnaroundDays),
   };
 }
 
 /** Public wrapper for callers that already hold a finished AuditSummary. */
-export function estimateMarketBill(summary: AuditSummary, project: PatternProject) {
-  return estimateMarketBillFor(summary.findings, summary.findingCounts, project);
+export function estimateMarketBill(summary: AuditSummary, project: PatternProject, lang: LanguageCode = 'en') {
+  return estimateMarketBillFor(summary.findings, summary.findingCounts, project, lang);
 }
 
 export function runTechEditAudit(project: PatternProject, config: AuditConfig = {}): AuditSummary {
+  const lang = config.language || 'en';
   const checks = [
     checkGauge,
     checkBaseValues,
@@ -578,31 +552,32 @@ export function runTechEditAudit(project: PatternProject, config: AuditConfig = 
   ];
   const findings: AuditFinding[] = [];
   for (const check of checks) {
-    findings.push(...check(project));
+    findings.push(...check(project, lang));
   }
   const findingCounts: Record<AuditSeverity, number> = { error: 0, warning: 0, info: 0, pass: 0 };
   for (const f of findings) findingCounts[f.severity]++;
   const deduction = findings.reduce((acc, f) => acc + SEVERITY_WEIGHT[f.severity], 0);
   const score = Math.max(0, Math.round(100 - deduction));
   const verdict = findingCounts.error > 0 ? 'fix' : findingCounts.warning > 0 ? 'check' : 'clean';
-  const marketBill = estimateMarketBillFor(findings, findingCounts, project);
+  const marketBill = estimateMarketBillFor(findings, findingCounts, project, lang);
   return { findingCounts, score, verdict, findings, marketBill };
 }
 
 /** Money framing: what the arithmetic sweep is worth at human-editor rates.
  *  A sweater takes ~4 hours of editing; the numbers sweep is roughly the
  *  first 2 of those hours (StitchReader/r/AdvancedKnitting sizing). */
-export function estimateEditorSavings(summary: AuditSummary, ratePerHour = DEFAULT_RATE): {
+export function estimateEditorSavings(summary: AuditSummary, ratePerHour = DEFAULT_RATE, lang: LanguageCode = 'en'): {
   hoursCovered: number;
   savings: number;
   note: string;
 } {
+  const copy = TECH_EDIT_COPY[lang];
   const hoursCovered = 2;
   const savings = Math.round(ratePerHour * hoursCovered);
   const pending = summary.findingCounts.error + summary.findingCounts.warning;
   const note = pending > 0
-    ? `Resolve the ${pending} outstanding finding(s) above before a human editor touches the pattern — every one they don't have to find is billable time saved.`
-    : `The numbers sweep is clean — a paid editor can now focus purely on the prose pass (style, abbreviations, clarity), which is the half of the bill that genuinely needs human eyes.`;
+    ? copy.savingsNote(pending)
+    : copy.cleanSavingsNote;
   return { hoursCovered, savings, note };
 }
 
@@ -610,29 +585,24 @@ export function estimateEditorSavings(summary: AuditSummary, ratePerHour = DEFAU
  *  "here's what's already checked" note that shrinks their scope (and
  *  justifies a lower quote). Their flaw (everything manual, Google-Doc
  *  back-and-forth, $20-40/hr for arithmetic) = our strength. */
-export function generatePreEditSummary(project: PatternProject, summary: AuditSummary): string {
+export function generatePreEditSummary(project: PatternProject, summary: AuditSummary, lang: LanguageCode = 'en'): string {
+  const copy = TECH_EDIT_COPY[lang];
   const lines = [
-    `PRE-EDIT SUMMARY — ${project.name}`,
-    `Designer: ${project.author}`,
-    `Base size: ${project.baseSize} | Gauge: ${project.gauge.stitchesPer4In}sts × ${project.gauge.rowsPer4In}rows / 4in (${project.gauge.unit})`,
-    `Self tech-edit audit score: ${summary.score}/100 (${summary.verdict.toUpperCase()})`,
+    copy.preEditSummaryHeader(project.name),
+    `${copy.designerLabel}: ${project.author}`,
+    `${copy.baseSizeLabel}: ${project.baseSize} | ${copy.gaugeLabel}: ${project.gauge.stitchesPer4In}sts × ${project.gauge.rowsPer4In}rows / 4in (${project.gauge.unit})`,
+    copy.auditScoreLabel(summary.score, summary.verdict),
     '',
-    'Already checked automatically (numbers sweep):',
-    '  • gauge validity',
-    '  • size progression monotonicity across all graded sizes',
-    '  • stitch/row rounding vs repeat and parity constraints',
-    '  • stitch count plausibility in every size',
-    '  • measurement key vs type (width/length/circumference) consistency',
-    '  • base values vs body standard for the base size',
-    '  • duplicate labels, row gauge completeness',
+    copy.alreadyCheckedLabel,
+    ...copy.checkedItems.map(item => `  • ${item}`),
     '',
-    `Outstanding items (${summary.findingCounts.error + summary.findingCounts.warning}):`,
+    copy.outstandingItemsLabel(summary.findingCounts.error + summary.findingCounts.warning),
     ...summary.findings
       .filter(f => f.severity === 'error' || f.severity === 'warning')
       .map(f => `  • [${f.code}] ${f.location}: ${f.title} — ${f.detail}`),
     '',
-    'What I still need from you (the prose pass): style/abbreviations consistency,',
-    'clarity of instructions, UK/US spelling, cohesiveness with charts/schematics.',
+    copy.prosePassLabel,
+    copy.prosePassDetails,
   ];
   return lines.join('\n');
 }

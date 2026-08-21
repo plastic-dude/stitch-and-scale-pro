@@ -22,7 +22,7 @@ import {
   Check,
   X,
 } from 'lucide-react';
-import { SAMPLE_CREW_NECK_SWEATER, SAMPLE_BASIC_BEANIE } from '@/lib/sample-projects';
+import { getSampleCrewNeckSweater, getSampleBasicBeanie } from '@/lib/sample-projects';
 
 const TOTAL_STEPS = 7;
 
@@ -464,8 +464,8 @@ export default function OnboardingOverlay() {
     const now = new Date().toISOString();
     const hasProject = projects.length > 0;
     if (!hasProject) {
-      createProject({ ...SAMPLE_CREW_NECK_SWEATER, createdAt: now, updatedAt: now });
-      createProject({ ...SAMPLE_BASIC_BEANIE, createdAt: now, updatedAt: now });
+      createProject(getSampleCrewNeckSweater(language));
+      createProject(getSampleBasicBeanie(language));
     }
     // Preserve the deep link the visitor opened: skip returns to the entry route
     // unless it was the app root, which has no content without a project flow.
@@ -485,14 +485,13 @@ export default function OnboardingOverlay() {
   const handleOpenSample = () => {
     setUnit(localUnit);
     setSizingStandard(localStandard);
-    const alreadySeeded = projects.some(p => p.id === SAMPLE_CREW_NECK_SWEATER.id);
+    const alreadySeeded = projects.some(p => p.id === 'sample-crew-neck-sweater');
     if (!alreadySeeded && projects.length === 0) {
-      const now = new Date().toISOString();
-      createProject({ ...SAMPLE_CREW_NECK_SWEATER, createdAt: now, updatedAt: now });
-      createProject({ ...SAMPLE_BASIC_BEANIE, createdAt: now, updatedAt: now });
+      createProject(getSampleCrewNeckSweater(language));
+      createProject(getSampleBasicBeanie(language));
     }
     setOnboardingCompleted(true);
-    setLocation(`/project/${SAMPLE_CREW_NECK_SWEATER.id}`);
+    setLocation('/project/sample-crew-neck-sweater');
   };
 
   const handleCreateOwn = () => {

@@ -1,106 +1,467 @@
-// AUTO-GENERATED QUEUE-003 localization module. Do not hand-edit keys.
-import type { LanguageCode } from '@/lib/i18n';
+import { LanguageCode } from './i18n';
 
 export interface PricingPsychologyCopy {
-  bundleCandidateTotal: string;
-  bundleUnitsMonth: string;
-  candidatePrice: string;
-  componentPrice0No: string;
-  componentUnitsMonthEach: string;
-  currentPrice: string;
-  designPositioning: string;
-  isDollar999Actually: string;
-  marketAnchorsNineEndingsLifted: string;
-  marketplaceTakeRate: string;
-  otherTierPricesIn: string;
-  patternName: string;
-  patternsInBundle: string;
-  unitsSoldMonth: string;
+  title: string;
+  description: string;
+  patternNameLabel: string;
+  currentPriceLabel: string;
+  candidatePriceLabel: string;
+  monthlyUnitsLabel: string;
+  platformTakeRateLabel: string;
+  tierPositioningLabel: string;
+  bargainLabel: string;
+  mainstreamLabel: string;
+  premiumLabel: string;
+  multiTierShopLabel: string;
+  shopTiersLabel: string;
+  bundleSectionTitle: string;
+  bundleSizeLabel: string;
+  componentPriceLabel: string;
+  bundleTotalLabel: string;
+  bundleUnitsLabel: string;
+  componentUnitsLabel: string;
+  monthlyNetLabel: string;
+  impliedUnitsLabel: string;
+  leftDigitChangeLabel: string;
+  endingModifierLabel: string;
+  recommendedEndingLabel: string;
+  charm99Label: string;
+  round00Label: string;
+  mixedLabel: string;
+  bundleNetLabel: string;
+  singleNetLabel: string;
+  bundleFramingLabel: string;
+  oddTotalLabel: string;
+  evenComponentsLabel: string;
+  highestAnchorLabel: string;
+  verdictClean: string;
+  verdictCheck: string;
+  verdictFix: string;
+  findingsCount: (errors: number, warnings: number, infos: number) => string;
+  cleanSweep: string;
+  editorBillSaved: string;
+  editorRateLabel: string;
+  perHour: string;
+  savingsNote: (p: number) => string;
+  cleanSavingsNote: string;
+  marketQuoteTitle: string;
+  marketQuoteDetails: (hours: number, days: number) => string;
+  negotiateHint: (pending: number) => string;
+  preEditSummaryTitle: string;
+  copyForEditor: string;
+  preEditSummaryHeader: (name: string) => string;
+  designerLabel: string;
+  baseSizeLabel: string;
+  gaugeLabel: string;
+  auditScoreLabel: (score: number, verdict: string) => string;
+  alreadyCheckedLabel: string;
+  checkedItems: string[];
+  outstandingItemsLabel: (count: number) => string;
+  prosePassLabel: string;
+  prosePassDetails: string;
+  findingPp01Title: (rounded: boolean) => string;
+  findingPp01Detail: (candidate: number, floor: number, current: number, rounded: boolean) => string;
+  findingPp02Title: string;
+  findingPp02Detail: (candidate: number, rounded: number) => string;
+  findingPp03Title: string;
+  findingPp03Detail: (name: string, candidate: number, rounded: number) => string;
+  findingPp04Title: string;
+  findingPp04Detail: (candidate: number) => string;
+  findingPp05Title: string;
+  findingPp05Detail: (p1: number, p2: number) => string;
+  findingPp06Title: (candidate: number, pct: number, current: number, floor: number) => string;
+  findingPp06Detail: (candidate: number, pct: number, current: number, floor: number) => string;
 }
 
-const en:PricingPsychologyCopy={
-  bundleCandidateTotal: 'Bundle candidate total',
-  bundleUnitsMonth: 'Bundle units / month',
-  candidatePrice: 'Candidate price',
-  componentPrice0No: 'Component price (0 = no bundle)',
-  componentUnitsMonthEach: 'Component units / month each',
-  currentPrice: 'Current price',
-  designPositioning: 'Design positioning',
-  isDollar999Actually: 'Is $9.99 actually better than $10.00 — and is $64.99 quietly hurting a premium design? Field experiments show nine-endings outselling identical rounded prices by ~8% at zero discount (Sori & Widjaja) and lifting apparel demand 10–30% in catalog trials (Schindler & Kibarian), but the effect FLIPS at higher price points where .99 endings damage quality perception. This lab prices the left-digit barrier ($10 → $9.99 crosses the \\"under ten\\" line), the charm-vs-premium flip, decoy tier placement inside your shop, and the proven bundle-endings rule (even component prices + odd bundle total, Baumgartner & Hähnchen 2016) — each scored against your real unit volume and marketplace take rate.',
-  marketAnchorsNineEndingsLifted: 'Market anchors: nine-endings lifted identical-garment sales ~8% at zero discount (Sori & Widjaja field experiment) and 10–30% in catalog trials (Schindler & Kibarian); the effect flips at high price points where .99 damages perceived quality; 0/5 endings process easier and signal quality (Lynn et al. 2013); bundles sell best with even component prices and an odd bundle total (Baumgartner & Hähnchen 2016); the first (highest) price a buyer sees anchors everything below it.',
-  marketplaceTakeRate: 'Marketplace take rate',
-  otherTierPricesIn: 'Other tier prices in the shop (comma-separated, up to 5)',
-  patternName: 'Pattern name',
-  patternsInBundle: 'Patterns in bundle',
-  unitsSoldMonth: 'Units sold / month',
+export const PRICING_PSYCHOLOGY_COPY: Record<LanguageCode, PricingPsychologyCopy> = {
+  en: {
+    title: 'Price Psychology Lab',
+    description: 'Optimize your pattern pricing using behavioral research: charm endings, left-digit barriers, and decoy anchors.',
+    patternNameLabel: 'Pattern Name',
+    currentPriceLabel: 'Current Price',
+    candidatePriceLabel: 'Candidate Price',
+    monthlyUnitsLabel: 'Monthly Units',
+    platformTakeRateLabel: 'Platform Take Rate',
+    tierPositioningLabel: 'Tier Positioning',
+    bargainLabel: 'Bargain',
+    mainstreamLabel: 'Mainstream',
+    premiumLabel: 'Premium',
+    multiTierShopLabel: 'Multi-tier Shop',
+    shopTiersLabel: 'Other Shop Tiers ($)',
+    bundleSectionTitle: 'Bundle Scenario',
+    bundleSizeLabel: 'Bundle Size',
+    componentPriceLabel: 'Component Price',
+    bundleTotalLabel: 'Bundle Total',
+    bundleUnitsLabel: 'Bundle Units/Mo',
+    componentUnitsLabel: 'Component Units/Mo',
+    monthlyNetLabel: 'Monthly Net',
+    impliedUnitsLabel: 'Implied Units',
+    leftDigitChangeLabel: 'Left-digit change',
+    endingModifierLabel: 'Ending modifier',
+    recommendedEndingLabel: 'Recommended Ending',
+    charm99Label: 'Charm (.99)',
+    round00Label: 'Rounded (.00)',
+    mixedLabel: 'Mixed (.95/.99)',
+    bundleNetLabel: 'Bundle Monthly Net',
+    singleNetLabel: 'Singles Monthly Net',
+    bundleFramingLabel: 'Bundle Framing',
+    oddTotalLabel: 'Odd Total',
+    evenComponentsLabel: 'Even Components',
+    highestAnchorLabel: 'Highest Shop Anchor',
+    verdictClean: 'Price optimized',
+    verdictCheck: 'Worth a look',
+    verdictFix: 'Fix pricing strategy',
+    findingsCount: (e, w, i) => `${e} error${e === 1 ? '' : 's'} · ${w} warning${w === 1 ? '' : 's'} · ${i} note${i === 1 ? '' : 's'}`,
+    cleanSweep: 'The pricing psychology sweep passed clean: left-digit barriers, tier positioning, and shop anchors are all optimized.',
+    editorBillSaved: 'Revenue lift modeled',
+    editorRateLabel: 'Your time value',
+    perHour: '/hr',
+    savingsNote: (p) => `Your candidate price earns $${p} more per month than current — resolve the ${p} findings to maximize lift.`,
+    cleanSavingsNote: 'Your candidate price is optimized for the highest psychological lift at this tier.',
+    marketQuoteTitle: 'Market behavior',
+    marketQuoteDetails: (h, d) => `≈${h}h of buyer friction | ~${d}-day sales cycle`,
+    negotiateHint: (p) => `${p} finding(s) — resolve to lower buyer friction`,
+    preEditSummaryTitle: 'Pricing rationale',
+    copyForEditor: 'Copy for your shop',
+    preEditSummaryHeader: (name) => `Pricing Rationale for ${name}`,
+    designerLabel: 'Designer',
+    baseSizeLabel: 'Base Size',
+    gaugeLabel: 'Gauge',
+    auditScoreLabel: (s, v) => `Psychology Score: ${s}/100 (${v})`,
+    alreadyCheckedLabel: 'Research Anchors Checked:',
+    checkedItems: [
+      'Left-digit effect (9.99 vs 10.00)',
+      'Tier positioning (Quality vs Bargain)',
+      'Shop anchor placement',
+      'Bundle framing (Odd/Even rule)',
+      'Decoy tier dominance',
+    ],
+    outstandingItemsLabel: (c) => `Psychological Friction Points (${c}):`,
+    prosePassLabel: 'Visual Branding Pass:',
+    prosePassDetails: 'The numbers are optimized; ensure your photos match the premium/bargain positioning chosen.',
+    findingPp01Title: (r) => r ? 'Current price sits on a left-digit barrier' : 'Candidate sits on a left-digit barrier',
+    findingPp01Detail: (cand, floor, curr, r) => `$${cand.toFixed(2)} reads as a $${floor} price in the quick scan that drives most pattern buys — and $${r ? curr.toFixed(2) : cand.toFixed(2)} is only a cent from crossing under the $${floor} line.`,
+    findingPp02Title: 'Charm ending hurts at this price point',
+    findingPp02Detail: (cand, round) => `At $${cand.toFixed(2)} a .99 ending works against you: nine-endings underperform at higher price points because buyers read them as discount-tier. Round to $${round}.00.`,
+    findingPp03Title: 'Premium design, bargain ending',
+    findingPp03Detail: (name, cand, round) => `You've positioned ${name} as premium, but $${cand.toFixed(2)} signals "deal". Luxury brands price $200, not $199.99. Recast as $${round}.00.`,
+    findingPp04Title: 'Nothing in the shop anchors higher',
+    findingPp04Detail: (cand) => `Every tier in your shop costs $${cand.toFixed(2)} or less. Add one signature design at a higher price as a visible high anchor.`,
+    findingPp05Title: 'Two tiers too close — an accidental decoy',
+    findingPp05Detail: (p1, p2) => `$${p1.toFixed(2)} and $${p2.toFixed(2)} sit within 10% of each other, so buyers will always take the cheaper one. Widen the gap.`,
+    findingPp06Title: () => 'Price cut that doesn\u2019t cross a barrier',
+    findingPp06Detail: (cand, pct, curr, floor) => `$${cand.toFixed(2)} is ${pct}% under $${curr.toFixed(2)} but reads as the SAME price. Either cross the barrier ($${(floor - 0.01).toFixed(2)}) or keep the higher price.`,
+  },
+  de: {
+    title: 'Preispsychologie-Labor',
+    description: 'Optimiere deine Anleitungs-Preise mit Verhaltensforschung: Charm-Preise, Linksziffer-Barrieren und Anker-Effekte.',
+    patternNameLabel: 'Name der Anleitung',
+    currentPriceLabel: 'Aktueller Preis',
+    candidatePriceLabel: 'Geplanter Preis',
+    monthlyUnitsLabel: 'Einheiten pro Monat',
+    platformTakeRateLabel: 'Plattform-Gebühr',
+    tierPositioningLabel: 'Positionierung',
+    bargainLabel: 'Schnäppchen',
+    mainstreamLabel: 'Mainstream',
+    premiumLabel: 'Premium',
+    multiTierShopLabel: 'Mehrstufiger Shop',
+    shopTiersLabel: 'Andere Shop-Stufen (€)',
+    bundleSectionTitle: 'Paket-Szenario',
+    bundleSizeLabel: 'Paket-Größe',
+    componentPriceLabel: 'Einzelpreis im Paket',
+    bundleTotalLabel: 'Paket-Gesamtpreis',
+    bundleUnitsLabel: 'Paket-Einheiten/Monat',
+    componentUnitsLabel: 'Einzel-Einheiten/Monat',
+    monthlyNetLabel: 'Monatliches Netto',
+    impliedUnitsLabel: 'Erwartete Einheiten',
+    leftDigitChangeLabel: 'Linksziffer-Wechsel',
+    endingModifierLabel: 'Endungs-Modifikator',
+    recommendedEndingLabel: 'Empfohlene Endung',
+    charm99Label: 'Charm (.99)',
+    round00Label: 'Gerundet (.00)',
+    mixedLabel: 'Gemischt (.95/.99)',
+    bundleNetLabel: 'Paket-Monatsnetto',
+    singleNetLabel: 'Einzel-Monatsnetto',
+    bundleFramingLabel: 'Paket-Framing',
+    oddTotalLabel: 'Ungerade Summe',
+    evenComponentsLabel: 'Gerade Einzelpreise',
+    highestAnchorLabel: 'Höchster Shop-Anker',
+    verdictClean: 'Preis optimiert',
+    verdictCheck: 'Einen Blick wert',
+    verdictFix: 'Preisstrategie korrigieren',
+    findingsCount: (e, w, i) => `${e} Fehler · ${w} Warnung${w === 1 ? '' : 'en'} · ${i} Hinweis${i === 1 ? '' : 'e'}`,
+    cleanSweep: 'Die preispsychologische Prüfung war erfolgreich: Linksziffer-Barrieren, Positionierung und Shop-Anker sind optimiert.',
+    editorBillSaved: 'Umsatzplus modelliert',
+    editorRateLabel: 'Dein Zeitwert',
+    perHour: '/Std',
+    savingsNote: (p) => `Dein geplanter Preis verdient €${p} mehr pro Monat als der aktuelle — löse die ${p} Punkte, um den Zuwachs zu maximieren.`,
+    cleanSavingsNote: 'Dein geplanter Preis ist für den höchsten psychologischen Effekt in dieser Stufe optimiert.',
+    marketQuoteTitle: 'Marktverhalten',
+    marketQuoteDetails: (h, d) => `≈${h}h Kaufwiderstand | ~${d}-Tage Verkaufszyklus`,
+    negotiateHint: (p) => `${p} Punkt(e) — lösen, um den Kaufwiderstand zu senken`,
+    preEditSummaryTitle: 'Preisbegründung',
+    copyForEditor: 'Für deinen Shop kopieren',
+    preEditSummaryHeader: (name) => `Preisbegründung für ${name}`,
+    designerLabel: 'Designer',
+    baseSizeLabel: 'Basisgröße',
+    gaugeLabel: 'Maschenprobe',
+    auditScoreLabel: (s, v) => `Psychologie-Score: ${s}/100 (${v})`,
+    alreadyCheckedLabel: 'Geprüfte Forschungsanker:',
+    checkedItems: [
+      'Linksziffer-Effekt (9,99 vs 10,00)',
+      'Stufen-Positionierung (Qualität vs Schnäppchen)',
+      'Shop-Anker-Platzierung',
+      'Paket-Framing (Gerade/Ungerade-Regel)',
+      'Dominanz der Lockvogel-Stufe',
+    ],
+    outstandingItemsLabel: (c) => `Psychologische Reibungspunkte (${c}):`,
+    prosePassLabel: 'Visuelles Branding:',
+    prosePassDetails: 'Die Zahlen sind optimiert; stelle sicher, dass deine Fotos zur gewählten Positionierung passen.',
+    findingPp01Title: (r) => r ? 'Aktueller Preis liegt an einer Linksziffer-Barriere' : 'Geplanter Preis liegt an einer Linksziffer-Barriere',
+    findingPp01Detail: (cand, floor, curr, r) => `€${cand.toFixed(2)} wird beim schnellen Scannen als €${floor}-Preis wahrgenommen — und €${r ? curr.toFixed(2) : cand.toFixed(2)} ist nur einen Cent davon entfernt, die €${floor}-Grenze zu unterschreiten.`,
+    findingPp02Title: 'Charm-Endung schadet bei diesem Preis',
+    findingPp02Detail: (cand, round) => `Bei €${cand.toFixed(2)} wirkt eine .99-Endung gegen dich: Neuner-Endungen schneiden bei höheren Preisen schlechter ab, da Käufer sie als "Billig-Stufe" wahrnehmen. Runde auf €${round},00.`,
+    findingPp03Title: 'Premium-Design, Schnäppchen-Endung',
+    findingPp03Detail: (name, cand, round) => `Du hast ${name} als Premium positioniert, aber €${cand.toFixed(2)} signalisiert ein "Angebot". Luxusmarken preisen €200, nicht €199,99. Ändere auf €${round},00.`,
+    findingPp04Title: 'Kein hoher Anker im Shop',
+    findingPp04Detail: (cand) => `Jede Stufe in deinem Shop kostet €${cand.toFixed(2)} oder weniger. Füge ein Signature-Design zu einem höheren Preis als sichtbaren Anker hinzu.`,
+    findingPp05Title: 'Zwei Stufen zu nah beieinander',
+    findingPp05Detail: (p1, p2) => `€${p1.toFixed(2)} und €${p2.toFixed(2)} liegen innerhalb von 10% beieinander, daher werden Käufer immer die günstigere Option wählen. Vergrößere den Abstand.`,
+    findingPp06Title: () => 'Preissenkung ohne Barriere-Wechsel',
+    findingPp06Detail: (cand, pct, curr, floor) => `€${cand.toFixed(2)} liegt ${pct}% unter €${curr.toFixed(2)}, wird aber als der GLEICHE Preis wahrgenommen. Unterschreite entweder die Barriere (€${(floor - 0.01).toFixed(2)}) oder behalte den höheren Preis bei.`,
+  },
+  fr: {
+    title: 'Laboratoire de Psychologie des Prix',
+    description: 'Optimisez vos prix avec la recherche comportementale : terminaisons psychologiques, barrières du chiffre de gauche et ancres.',
+    patternNameLabel: 'Nom du modèle',
+    currentPriceLabel: 'Prix actuel',
+    candidatePriceLabel: 'Prix envisagé',
+    monthlyUnitsLabel: 'Unités par mois',
+    platformTakeRateLabel: 'Commission plateforme',
+    tierPositioningLabel: 'Positionnement',
+    bargainLabel: 'Bonne affaire',
+    mainstreamLabel: 'Standard',
+    premiumLabel: 'Premium',
+    multiTierShopLabel: 'Boutique multi-niveaux',
+    shopTiersLabel: 'Autres niveaux (€)',
+    bundleSectionTitle: 'Scénario de pack',
+    bundleSizeLabel: 'Taille du pack',
+    componentPriceLabel: 'Prix unitaire dans le pack',
+    bundleTotalLabel: 'Total du pack',
+    bundleUnitsLabel: 'Unités pack/mois',
+    componentUnitsLabel: 'Unités solo/mois',
+    monthlyNetLabel: 'Net mensuel',
+    impliedUnitsLabel: 'Unités prévues',
+    leftDigitChangeLabel: 'Changement chiffre gauche',
+    endingModifierLabel: 'Modificateur de terminaison',
+    recommendedEndingLabel: 'Terminaison recommandée',
+    charm99Label: 'Psychologique (.99)',
+    round00Label: 'Arrondi (.00)',
+    mixedLabel: 'Mixte (.95/.99)',
+    bundleNetLabel: 'Net mensuel pack',
+    singleNetLabel: 'Net mensuel solo',
+    bundleFramingLabel: 'Cadrage du pack',
+    oddTotalLabel: 'Total impair',
+    evenComponentsLabel: 'Composants pairs',
+    highestAnchorLabel: 'Ancre la plus haute',
+    verdictClean: 'Prix optimisé',
+    verdictCheck: 'À vérifier',
+    verdictFix: 'Corriger la stratégie',
+    findingsCount: (e, w, i) => `${e} erreur${e === 1 ? '' : 's'} · ${w} avertissement${w === 1 ? '' : 's'} · ${i} note${i === 1 ? '' : 's'}`,
+    cleanSweep: 'L\'audit de psychologie des prix est réussi : les barrières, le positionnement et les ancres sont optimisés.',
+    editorBillSaved: 'Hausse de revenu modélisée',
+    editorRateLabel: 'Valeur de votre temps',
+    perHour: '/h',
+    savingsNote: (p) => `Votre prix envisagé rapporte ${p} € de plus par mois — résolvez les ${p} points pour maximiser le gain.`,
+    cleanSavingsNote: 'Votre prix envisagé est optimisé pour l\'impact psychologique maximal à ce niveau.',
+    marketQuoteTitle: 'Comportement du marché',
+    marketQuoteDetails: (h, d) => `≈${h}h de friction acheteur | cycle de vente ~${d} jours`,
+    negotiateHint: (p) => `${p} point(s) — à résoudre pour réduire la friction`,
+    preEditSummaryTitle: 'Justification du prix',
+    copyForEditor: 'Copier pour votre boutique',
+    preEditSummaryHeader: (name) => `Justification du prix pour ${name}`,
+    designerLabel: 'Designer',
+    baseSizeLabel: 'Taille de base',
+    gaugeLabel: 'Échantillon',
+    auditScoreLabel: (s, v) => `Score psychologique : ${s}/100 (${v})`,
+    alreadyCheckedLabel: 'Ancres de recherche vérifiées :',
+    checkedItems: [
+      'Effet du chiffre de gauche (9,99 vs 10,00)',
+      'Positionnement (Qualité vs Prix)',
+      'Placement de l\'ancre en boutique',
+      'Cadrage du pack (Règle Pair/Impair)',
+      'Dominance du niveau leurre',
+    ],
+    outstandingItemsLabel: (c) => `Points de friction psychologique (${c}) :`,
+    prosePassLabel: 'Branding visuel :',
+    prosePassDetails: 'Les chiffres sont optimisés ; assurez-vous que vos photos correspondent au positionnement choisi.',
+    findingPp01Title: (r) => r ? 'Le prix actuel est sur une barrière de chiffre' : 'Le candidat est sur une barrière de chiffre',
+    findingPp01Detail: (cand, floor, curr, r) => `${cand.toFixed(2)} € est lu comme un prix de ${floor} € lors du scan rapide — et ${r ? curr.toFixed(2) : cand.toFixed(2)} € n'est qu'à un centime de franchir la barre des ${floor} €.`,
+    findingPp02Title: 'La terminaison psychologique nuit à ce prix',
+    findingPp02Detail: (cand, round) => `À ${cand.toFixed(2)} €, une terminaison en .99 joue contre vous : elles sont moins performantes sur les prix élevés car perçues comme "bas de gamme". Arrondissez à ${round},00 €.`,
+    findingPp03Title: 'Modèle premium, prix "bonne affaire"',
+    findingPp03Detail: (name, cand, round) => `Vous avez positionné ${name} comme premium, mas ${cand.toFixed(2)} € signale une "promo". Les marques de luxe affichent 200 €, pas 199,99 €. Passez à ${round},00 €.`,
+    findingPp04Title: 'Aucune ancre haute dans la boutique',
+    findingPp04Detail: (cand) => `Tous vos modèles coûtent ${cand.toFixed(2)} € ou moins. Ajoutez un modèle signature à un prix plus élevé comme ancre visuelle.`,
+    findingPp05Title: 'Deux niveaux trop proches',
+    findingPp05Detail: (p1, p2) => `${p1.toFixed(2)} € et ${p2.toFixed(2)} € sont à moins de 10% d'écart, les acheteurs prendront toujours le moins cher. Élargissez l'écart.`,
+    findingPp06Title: () => 'Baisse de prix sans franchissement de barrière',
+    findingPp06Detail: (cand, pct, curr, floor) => `${cand.toFixed(2)} € est ${pct}% sous ${curr.toFixed(2)} € mais est lu comme le MÊME prix. Franchissez la barrière (${(floor - 0.01).toFixed(2)} €) ou gardez le prix haut.`,
+  },
+  es: {
+    title: 'Laboratorio de Psicología de Precios',
+    description: 'Optimiza tus precios con investigación conductual: terminaciones atractivas, barreras de dígito izquierdo y anclajes.',
+    patternNameLabel: 'Nombre del patrón',
+    currentPriceLabel: 'Precio actual',
+    candidatePriceLabel: 'Precio propuesto',
+    monthlyUnitsLabel: 'Unidades mensuales',
+    platformTakeRateLabel: 'Comisión plataforma',
+    tierPositioningLabel: 'Posicionamiento',
+    bargainLabel: 'Ganga',
+    mainstreamLabel: 'Estándar',
+    premiumLabel: 'Premium',
+    multiTierShopLabel: 'Tienda multinivel',
+    shopTiersLabel: 'Otros niveles ($)',
+    bundleSectionTitle: 'Escenario de pack',
+    bundleSizeLabel: 'Tamaño del pack',
+    componentPriceLabel: 'Precio unitario en pack',
+    bundleTotalLabel: 'Total del pack',
+    bundleUnitsLabel: 'Unidades pack/mes',
+    componentUnitsLabel: 'Unidades solo/mes',
+    monthlyNetLabel: 'Neto mensual',
+    impliedUnitsLabel: 'Unidades previstas',
+    leftDigitChangeLabel: 'Cambio dígito izquierdo',
+    endingModifierLabel: 'Modificador terminación',
+    recommendedEndingLabel: 'Terminación recomendada',
+    charm99Label: 'Atractivo (.99)',
+    round00Label: 'Redondeado (.00)',
+    mixedLabel: 'Mixto (.95/.99)',
+    bundleNetLabel: 'Neto mensual pack',
+    singleNetLabel: 'Neto mensual solo',
+    bundleFramingLabel: 'Encuadre del pack',
+    oddTotalLabel: 'Total impar',
+    evenComponentsLabel: 'Componentes pares',
+    highestAnchorLabel: 'Anclaje más alto',
+    verdictClean: 'Precio optimizado',
+    verdictCheck: 'Vale la pena revisar',
+    verdictFix: 'Corregir estrategia',
+    findingsCount: (e, w, i) => `${e} error${e === 1 ? '' : 'es'} · ${w} advertencia${w === 1 ? '' : 's'} · ${i} nota${i === 1 ? '' : 's'}`,
+    cleanSweep: 'El análisis de psicología de precios fue exitoso: barreras, posicionamiento y anclajes están optimizados.',
+    editorBillSaved: 'Aumento de ingresos modelado',
+    editorRateLabel: 'Valor de tu tiempo',
+    perHour: '/h',
+    savingsNote: (p) => `Tu precio propuesto gana $${p} más al mes que el actual — resuelve los ${p} puntos para maximizar el beneficio.`,
+    cleanSavingsNote: 'Tu precio propuesto está optimizado para el máximo impacto psicológico en este nivel.',
+    marketQuoteTitle: 'Comportamiento del mercado',
+    marketQuoteDetails: (h, d) => `≈${h}h de fricción del comprador | ciclo de venta ~${d} días`,
+    negotiateHint: (p) => `${p} punto(s) — resolver para reducir la fricción`,
+    preEditSummaryTitle: 'Justificación del precio',
+    copyForEditor: 'Copiar para tu tienda',
+    preEditSummaryHeader: (name) => `Justificación del precio para ${name}`,
+    designerLabel: 'Diseñador',
+    baseSizeLabel: 'Talla base',
+    gaugeLabel: 'Muestra',
+    auditScoreLabel: (s, v) => `Puntuación psicológica: ${s}/100 (${v})`,
+    alreadyCheckedLabel: 'Anclajes de investigación revisados:',
+    checkedItems: [
+      'Efecto del dígito izquierdo (9.99 vs 10.00)',
+      'Posicionamiento (Calidad vs Ganga)',
+      'Colocación de anclajes en tienda',
+      'Encuadre del pack (Regla Par/Impar)',
+      'Dominio del nivel señuelo',
+    ],
+    outstandingItemsLabel: (c) => `Puntos de fricción psicológica (${c}):`,
+    prosePassLabel: 'Imagen de marca:',
+    prosePassDetails: 'Los números están optimizados; asegúrate de que tus fotos coincidan con el posicionamiento elegido.',
+    findingPp01Title: (r) => r ? 'El precio actual está en una barrera de dígito' : 'El candidato está en una barrera de dígito',
+    findingPp01Detail: (cand, floor, curr, r) => `$${cand.toFixed(2)} se lee como un precio de $${floor} en el escaneo rápido — y $${r ? curr.toFixed(2) : cand.toFixed(2)} está a solo un céntimo de bajar de los $${floor}.`,
+    findingPp02Title: 'La terminación atractiva perjudica a este precio',
+    findingPp02Detail: (cand, round) => `A $${cand.toFixed(2)}, una terminación en .99 juega en tu contra: funcionan peor en precios altos porque se perciben como "baratos". Redondea a $${round}.00.`,
+    findingPp03Title: 'Diseño premium, terminación de ganga',
+    findingPp03Detail: (name, cand, round) => `Has posicionado ${name} como premium, pero $${cand.toFixed(2)} señala una "oferta". Las marcas de lujo ponen $200, no $199.99. Cambia a $${round}.00.`,
+    findingPp04Title: 'Sin anclaje alto en la tienda',
+    findingPp04Detail: (cand) => `Todos tus niveles cuestan $${cand.toFixed(2)} o menos. Añade un diseño de firma a un precio más alto como anclaje visual.`,
+    findingPp05Title: 'Dos niveles demasiado cercanos',
+    findingPp05Detail: (p1, p2) => `$${p1.toFixed(2)} y $${p2.toFixed(2)} están a menos del 10% de diferencia, los compradores siempre elegirán el más barato. Amplía la brecha.`,
+    findingPp06Title: () => 'Bajada de precio sin cruzar barrera',
+    findingPp06Detail: (cand, pct, curr, floor) => `$${cand.toFixed(2)} está un ${pct}% bajo $${curr.toFixed(2)} pero se lee como el MISMO precio. Cruza la barrera ($${(floor - 0.01).toFixed(2)}) o mantén el precio alto.`,
+  },
+  pt: {
+    title: 'Laboratório de Psicologia de Preços',
+    description: 'Otimize os seus preços com pesquisa comportamental: terminações atraentes, barreiras de dígito esquerdo e âncoras.',
+    patternNameLabel: 'Nome do modelo',
+    currentPriceLabel: 'Preço atual',
+    candidatePriceLabel: 'Preço proposto',
+    monthlyUnitsLabel: 'Unidades mensais',
+    platformTakeRateLabel: 'Comissão da plataforma',
+    tierPositioningLabel: 'Posicionamento',
+    bargainLabel: 'Pechincha',
+    mainstreamLabel: 'Padrão',
+    premiumLabel: 'Premium',
+    multiTierShopLabel: 'Loja multinível',
+    shopTiersLabel: 'Outros níveis ($)',
+    bundleSectionTitle: 'Cenário de pack',
+    bundleSizeLabel: 'Tamanho do pack',
+    componentPriceLabel: 'Preço unitário no pack',
+    bundleTotalLabel: 'Total do pack',
+    bundleUnitsLabel: 'Unidades pack/mês',
+    componentUnitsLabel: 'Unidades solo/mês',
+    monthlyNetLabel: 'Líquido mensal',
+    impliedUnitsLabel: 'Unidades previstas',
+    leftDigitChangeLabel: 'Mudança de dígito esquerdo',
+    endingModifierLabel: 'Modificador de terminação',
+    recommendedEndingLabel: 'Terminação recomendada',
+    charm99Label: 'Atraente (.99)',
+    round00Label: 'Arredondado (.00)',
+    mixedLabel: 'Misto (.95/.99)',
+    bundleNetLabel: 'Líquido mensal pack',
+    singleNetLabel: 'Líquido mensal solo',
+    bundleFramingLabel: 'Enquadramento do pack',
+    oddTotalLabel: 'Total ímpar',
+    evenComponentsLabel: 'Componentes pares',
+    highestAnchorLabel: 'Âncora mais alta',
+    verdictClean: 'Preço otimizado',
+    verdictCheck: 'Vale a pena rever',
+    verdictFix: 'Corrigir estratégia',
+    findingsCount: (e, w, i) => `${e} erro${e === 1 ? '' : 's'} · ${w} aviso${w === 1 ? '' : 's'} · ${i} nota${i === 1 ? '' : 's'}`,
+    cleanSweep: 'A análise de psicologia de preços foi bem-sucedida: barreiras, posicionamento e âncoras estão otimizados.',
+    editorBillSaved: 'Aumento de receita modelado',
+    editorRateLabel: 'Valor do seu tempo',
+    perHour: '/h',
+    savingsNote: (p) => `O seu preço proposto rende $${p} mais por mês que o atual — resolva os ${p} pontos para maximizar o ganho.`,
+    cleanSavingsNote: 'O seu preço proposto está otimizado para o máximo impacto psicológico neste nível.',
+    marketQuoteTitle: 'Comportamento do mercado',
+    marketQuoteDetails: (h, d) => `≈${h}h de fricção do comprador | ciclo de venda ~${d} dias`,
+    negotiateHint: (p) => `${p} ponto(s) — resolver para reduzir a fricção`,
+    preEditSummaryTitle: 'Justificação do preço',
+    copyForEditor: 'Copiar para a sua loja',
+    preEditSummaryHeader: (name) => `Justificação do preço para ${name}`,
+    designerLabel: 'Designer',
+    baseSizeLabel: 'Tamanho base',
+    gaugeLabel: 'Amostra',
+    auditScoreLabel: (s, v) => `Pontuação psicológica: ${s}/100 (${v})`,
+    alreadyCheckedLabel: 'Âncoras de pesquisa verificadas:',
+    checkedItems: [
+      'Efeito do dígito esquerdo (9.99 vs 10.00)',
+      'Posicionamento (Qualidade vs Pechincha)',
+      'Colocação de âncoras na loja',
+      'Enquadramento do pack (Regra Par/Ímpar)',
+      'Domínio do nível isca',
+    ],
+    outstandingItemsLabel: (c) => `Pontos de fricção psicológica (${c}):`,
+    prosePassLabel: 'Imagem de marca:',
+    prosePassDetails: 'Os números estão otimizados; certifique-se de que as suas fotos correspondem ao posicionamento escolhido.',
+    findingPp01Title: (r) => r ? 'Preço atual está numa barreira de dígito' : 'Candidato está numa barreira de dígito',
+    findingPp01Detail: (cand, floor, curr, r) => `$${cand.toFixed(2)} é lido como um preço de $${floor} na leitura rápida — e $${r ? curr.toFixed(2) : cand.toFixed(2)} está a apenas um cêntimo de baixar dos $${floor}.`,
+    findingPp02Title: 'Terminação atraente prejudica a este preço',
+    findingPp02Detail: (cand, round) => `A $${cand.toFixed(2)}, uma terminação em .99 joga contra si: funcionam pior em preços altos porque são percebidos como "baratos". Arredonde para $${round}.00.`,
+    findingPp03Title: 'Design premium, terminação de pechincha',
+    findingPp03Detail: (name, cand, round) => `Posicionou ${name} como premium, mas $${cand.toFixed(2)} sinaliza um "negócio". Marcas de luxo marcam $200, não $199.99. Mude para $${round}.00.`,
+    findingPp04Title: 'Sem âncora alta na loja',
+    findingPp04Detail: (cand) => `Todos os níveis na sua loja custam $${cand.toFixed(2)} ou menos. Adicione um design de assinatura a um preço mais alto como âncora visual.`,
+    findingPp05Title: 'Dois níveis demasiado próximos',
+    findingPp05Detail: (p1, p2) => `$${p1.toFixed(2)} e $${p2.toFixed(2)} estão a menos de 10% de diferença, os compradores escolherão sempre o mais barato. Aumente a diferença.`,
+    findingPp06Title: () => 'Baixa de preço sem cruzar barreira',
+    findingPp06Detail: (cand, pct, curr, floor) => `$${cand.toFixed(2)} está ${pct}% abaixo de $${curr.toFixed(2)} mas é lido como o MESMO preço. Ou cruze a barreira ($${(floor - 0.01).toFixed(2)}) ou mantenha o preço alto.`,
+  },
 };
-
-const de:PricingPsychologyCopy={...en,
-  bundleCandidateTotal: 'Bundle-Kandidat Gesamt',
-  bundleUnitsMonth: 'Bundle-Einheiten / Monat',
-  candidatePrice: 'Kandidatenpreis',
-  componentPrice0No: 'Komponentenpreis (0 = kein Bundle)',
-  componentUnitsMonthEach: 'Komponenten-Einheiten / Monat je Stück',
-  currentPrice: 'Aktueller Preis',
-  designPositioning: 'Design-Positionierung',
-  isDollar999Actually: 'Ist 9,99 $ wirklich besser als 10,00 $ — und schadet 64,99 $ heimlich einem Premium-Design? Feldexperimente zeigen, dass Neun-Endungen identische Rundungspreise bei null Rabatt um ~8 % schlagen (Sori & Widjaja) und die Nachfrage bei Bekleidung in Katalogversuchen um 10–30 % heben (Schindler & Kibarian) — aber der Effekt KIPPT bei höheren Preispunkten, wo .99-Endungen die Qualitätswahrnehmung beschädigen. Dieses Lab preist die Links-Digit-Schwelle (10 $ → 9,99 $ kreuzt die „unter zehn“-Linie), den Charm-vs.-Premium-Umschwung, die Platzierung der Köder-Preisstufen in deinem Shop und die bewährte Bundle-Endungsregel (gerade Komponentpreise + ungerader Bundle-Gesamtpreis, Baumgartner & Hähnchen 2016) — jede gegen dein echtes Stückvolumen und deine Marktplatz-Take-Rate gewertet.',
-  marketAnchorsNineEndingsLifted: 'Markt-Anker: Neun-Endungen hoben Verkäufe identischer Kleidungsstücke um ~8 % bei null Rabatt (Sori-&-Widjaja-Feldexperiment) und 10–30 % in Katalogversuchen (Schindler & Kibarian); der Effekt kippt bei hohen Preispunkten, wo .99 die wahrgenommene Qualität beschädigt; 0/5-Endungen sind leichter verarbeitbar und signalisieren Qualität (Lynn et al. 2013); Bundles verkaufen sich am besten mit geraden Komponentpreisen und ungeradem Bundle-Gesamtpreis (Baumgartner & Hähnchen 2016); der erste (höchste) Preis, den eine Käuferin sieht, verankert alles darunter.',
-  marketplaceTakeRate: 'Marktplatz-Take-Rate',
-  otherTierPricesIn: 'Weitere Stufenpreise im Shop (kommagetrennt, max. 5)',
-  patternName: 'Mustername',
-  patternsInBundle: 'Muster im Bundle',
-  unitsSoldMonth: 'Verkaufte Einheiten / Monat',
-};
-
-const fr:PricingPsychologyCopy={...en,
-  bundleCandidateTotal: 'Total bundle candidat',
-  bundleUnitsMonth: 'Unités bundle / mois',
-  candidatePrice: 'Prix candidat',
-  componentPrice0No: 'Prix composant (0 = pas de bundle)',
-  componentUnitsMonthEach: 'Unités composant / mois chacune',
-  currentPrice: 'Prix actuel',
-  designPositioning: 'Positionnement du design',
-  isDollar999Actually: '9,99 $ est-il vraiment mieux que 10,00 $ — et 64,99 $ nuit-il silencieusement à un design premium ? Les essais de terrain montrent que les prix finissant en neuf surpassent les prix arrondis identiques d’environ 8 % à rabais nul (Sori & Widjaja) et boostent la demande de vêtements de 10–30 % dans les essais catalogues (Schindler & Kibarian) — mais l’effet S’INVERSE aux prix élevés où les fins en .99 abîment la perception de qualité. Ce lab chiffre le seuil du premier chiffre (10 $ → 9,99 $ franchit la ligne « sous dix »), le bascule charme-vs-premium, le placement des prix leurre dans votre boutique et la règle éprouvée des fins de bundle (prix composants pairs + total de bundle impair, Baumgartner & Hähnchen 2016) — chacun noté contre votre vrai volume unitaire et votre taux de marketplace.',
-  marketAnchorsNineEndingsLifted: 'Repères de marché : les fins en neuf ont fait grimper les ventes de vêtements identiques d’environ 8 % à rabais nul (essai de terrain Sori & Widjaja) et de 10–30 % dans les essais catalogues (Schindler & Kibarian) ; l’effet s’inverse aux prix élevés où .99 abîme la qualité perçue ; les fins en 0/5 se traitent plus facilement et signalent la qualité (Lynn et al. 2013) ; les bundles se vendent mieux avec des prix composants pairs et un total de bundle impair (Baumgartner & Hähnchen 2016) ; le premier (plus haut) prix qu’une acheteuse voit ancre tout ce qui suit.',
-  marketplaceTakeRate: 'Taux de marketplace',
-  otherTierPricesIn: 'Autres prix de paliers dans la boutique (séparés par des virgules, jusqu’à 5)',
-  patternName: 'Nom du patron',
-  patternsInBundle: 'Patrons dans le bundle',
-  unitsSoldMonth: 'Unités vendues / mois',
-};
-
-const es:PricingPsychologyCopy={...en,
-  bundleCandidateTotal: 'Total bundle candidato',
-  bundleUnitsMonth: 'Unidades bundle / mes',
-  candidatePrice: 'Precio candidato',
-  componentPrice0No: 'Precio de componente (0 = sin bundle)',
-  componentUnitsMonthEach: 'Unidades componente / mes cada una',
-  currentPrice: 'Precio actual',
-  designPositioning: 'Posicionamiento del diseño',
-  isDollar999Actually: '¿$9.99 es realmente mejor que $10.00 — y $64.99 está dañando silenciosamente un diseño premium? Experimentos de campo muestran que los finales en nueve superan a precios redondeados idénticos en ~8% a descuento cero (Sori & Widjaja) y elevan la demanda de ropa 10–30% en ensayos de catálogo (Schindler & Kibarian) — pero el efecto INVIERTEN en puntos de precio altos donde los finales .99 dañan la percepción de calidad. Este lab tasifica la barrera del primer dígito ($10 → $9.99 cruza la línea \'bajo diez\'), el giro charm-vs-premium, el emplazamiento del precio señuelo en tu tienda y la regla comprobada de finales de bundle (precios de componentes pares + total de bundle impar, Baumgartner & Hähnchen 2016) — cada uno valorado contra tu volumen unitario real y tu tasa de marketplace.',
-  marketAnchorsNineEndingsLifted: 'Anclas de mercado: finales en nueve elevaron ventas de prendas idénticas ~8% a descuento cero (experimento de campo Sori & Widjaja) y 10–30% en ensayos de catálogo (Schindler & Kibarian); el efecto invierte en precios altos donde .99 daña la calidad percibida; finales 0/5 se procesan más fácil y señalan calidad (Lynn et al. 2013); los bundles venden mejor con precios de componentes pares y total de bundle impar (Baumgartner & Hähnchen 2016); el primer (más alto) precio que una compradora ve ancla todo lo de abajo.',
-  marketplaceTakeRate: 'Tasa de marketplace',
-  otherTierPricesIn: 'Otros precios de niveles en la tienda (separados por comas, hasta 5)',
-  patternName: 'Nombre del patrón',
-  patternsInBundle: 'Patrones en el bundle',
-  unitsSoldMonth: 'Unidades vendidas / mes',
-};
-
-const pt:PricingPsychologyCopy={...en,
-  bundleCandidateTotal: 'Total bundle candidato',
-  bundleUnitsMonth: 'Unidades bundle / mês',
-  candidatePrice: 'Preço candidato',
-  componentPrice0No: 'Preço do componente (0 = sem bundle)',
-  componentUnitsMonthEach: 'Unidades componente / mês cada',
-  currentPrice: 'Preço atual',
-  designPositioning: 'Posicionamento do design',
-  isDollar999Actually: 'US$ 9,99 é realmente melhor que US$ 10,00 — e US$ 64,99 está prejudicando silenciosamente um design premium? Experimentos de campo mostram que preços terminados em nove superam preços arredondados idênticos em ~8% a desconto zero (Sori & Widjaja) e elevam a demanda de vestuário 10–30% em ensaios de catálogo (Schindler & Kibarian) — mas o efeito INVERTE em pontos de preço altos onde finais .99 danificam a percepção de qualidade. Este lab precifica a barreira do primeiro dígito (US$ 10 → US$ 9,99 cruza a linha \'abaixo de dez\'), a virada charm-vs-premium, o posicionamento do preço isca na sua loja e a regra comprovada de finais de bundle (preços de componentes pares + total de bundle ímpar, Baumgartner & Hähnchen 2016) — cada um avaliado contra seu volume unitário real e sua taxa de marketplace.',
-  marketAnchorsNineEndingsLifted: 'Âncoras de mercado: finais em nove elevaram vendas de peças idênticas ~8% a desconto zero (experimento de campo Sori & Widjaja) e 10–30% em ensaios de catálogo (Schindler & Kibarian); o efeito inverte em preços altos onde .99 danifica a qualidade percebida; finais 0/5 processam mais fácil e sinalizam qualidade (Lynn et al. 2013); bundles vendem melhor com preços de componentes pares e total de bundle ímpar (Baumgartner & Hähnchen 2016); o primeiro (mais alto) preço que uma compradora vê ancora tudo abaixo dele.',
-  marketplaceTakeRate: 'Taxa de marketplace',
-  otherTierPricesIn: 'Outros preços de níveis na loja (separados por vírgula, até 5)',
-  patternName: 'Nome do padrão',
-  patternsInBundle: 'Padrões no bundle',
-  unitsSoldMonth: 'Unidades vendidas / mês',
-};
-
-export const PRICING_PSYCHOLOGY_COPY:Record<LanguageCode,PricingPsychologyCopy>={en,de,fr,es,pt};
