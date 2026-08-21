@@ -10,6 +10,7 @@ import {
 import { writeProjects } from '@/lib/storage-lib';
 import type { PatternProject } from '@/lib/grading-engine';
 import { getInitialLanguage, translate, type LanguageCode, type TranslationKey, type TranslationVariables } from '@/lib/i18n';
+import { DEFAULT_STUDIO_PROFILE, type StudioProfile } from '@/lib/studio-profile-copy';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -51,6 +52,8 @@ interface SettingsState {
    *  and dangerous (zero-value grading) if a designer picks Custom without
    *  editing anything yet. */
   customStandard: CustomStandardValues;
+  /** Local studio identity used as a default for new projects and future exports. */
+  studioProfile: StudioProfile;
   onboardingCompleted: boolean;
   /** Interface language. Auto-detected once, then persisted after explicit choice. */
   language: LanguageCode;
@@ -63,6 +66,8 @@ interface SettingsContextType extends SettingsState {
   setSizingStandard:      (standard: SizingStandard) => void;
   setCustomStandardValue: (size: SizeKey, key: GradingKey, value: number) => void;
   resetCustomStandard:    () => void;
+  setStudioProfile:       (profile: StudioProfile) => void;
+  updateStudioProfile:    (patch: Partial<StudioProfile>) => void;
   exportData:             () => void;
   importData:             (jsonData: string) => boolean;
   setOnboardingCompleted: (completed: boolean) => void;
@@ -92,6 +97,7 @@ const defaultSettings: SettingsState = {
   pdfDefaults: DEFAULT_PDF_DEFAULTS,
   sizingStandard: 'CYC',
   customStandard: JSON.parse(JSON.stringify(SIZE_STANDARDS)),
+  studioProfile: { ...DEFAULT_STUDIO_PROFILE },
   onboardingCompleted: false,
   language: getInitialLanguage(),
 };
@@ -119,6 +125,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         ...parsed,
         pdfDefaults: { ...DEFAULT_PDF_DEFAULTS, ...(parsed.pdfDefaults ?? {}) },
         customStandard: mergedCustomStandard,
+        studioProfile: { ...DEFAULT_STUDIO_PROFILE, ...(parsed.studioProfile ?? {}) },
       };
     } catch {
       return defaultSettings;
@@ -151,6 +158,10 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     }));
   const resetCustomStandard = () =>
     setSettings(s => ({ ...s, customStandard: JSON.parse(JSON.stringify(SIZE_STANDARDS)) }));
+  const setStudioProfile = (studioProfile: StudioProfile) =>
+    setSettings(s => ({ ...s, studioProfile: { ...DEFAULT_STUDIO_PROFILE, ...studioProfile } }));
+  const updateStudioProfile = (patch: Partial<StudioProfile>) =>
+    setSettings(s => ({ ...s, studioProfile: { ...s.studioProfile, ...patch } }));
   const setOnboardingCompleted = (onboardingCompleted: boolean)  => setSettings(s => ({ ...s, onboardingCompleted }));
   const setLanguage = (language: LanguageCode) => setSettings(s => ({ ...s, language }));
   const t = (key: TranslationKey, variables?: TranslationVariables) => translate(settings.language, key, variables);
@@ -195,6 +206,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
             ...parsed.settings,
             pdfDefaults: { ...DEFAULT_PDF_DEFAULTS, ...(parsed.settings.pdfDefaults ?? {}) },
             customStandard: mergedCustomStandard,
+            studioProfile: { ...DEFAULT_STUDIO_PROFILE, ...(parsed.settings.studioProfile ?? {}) },
           };
         });
       }
@@ -213,6 +225,8 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       setSizingStandard,
       setCustomStandardValue,
       resetCustomStandard,
+      setStudioProfile,
+      updateStudioProfile,
       setOnboardingCompleted,
       setLanguage,
       t,

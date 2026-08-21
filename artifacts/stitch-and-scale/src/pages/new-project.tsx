@@ -14,12 +14,12 @@ import { NEW_PROJECT_COPY } from '@/lib/new-project-copy';
 export default function NewProjectWizard() {
   const [, setLocation] = useLocation();
   const { createProject } = useProjects();
-  const { unit: defaultUnit, sizingStandard, customStandard, t, language } = useSettings();
+  const { unit: defaultUnit, sizingStandard, customStandard, studioProfile, t, language } = useSettings();
   const copy = NEW_PROJECT_COPY[language];
 
   const [step, setStep] = useState(1);
   const [name, setName] = useState('');
-  const [author, setAuthor] = useState('');
+  const [author, setAuthor] = useState(studioProfile.designerName);
   const [baseSize, setBaseSize] = useState<SizeKey>('M');
   const [gauge, setGauge] = useState<Gauge>({ stitchesPer4In: 20, rowsPer4In: 28, unit: defaultUnit });
 

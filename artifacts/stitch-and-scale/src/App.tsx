@@ -8,6 +8,7 @@ import Landing from '@/pages/landing';
 import { SettingsProvider, useSettings } from '@/context/SettingsContext';
 import { ProjectsProvider } from '@/context/ProjectsContext';
 import OnboardingOverlay from '@/pages/onboarding';
+import { RouteErrorBoundary, getRouteErrorCopy } from '@/components/route-error-boundary';
 
 const queryClient = new QueryClient();
 
@@ -33,7 +34,8 @@ function LandingGate({ onboardingCompleted }: { onboardingCompleted: boolean }) 
 }
 
 function Router() {
-  const { onboardingCompleted } = useSettings();
+  const { onboardingCompleted, language } = useSettings();
+  const routeErrorCopy = getRouteErrorCopy(language);
 
   return (
     <>
@@ -46,14 +48,16 @@ function Router() {
       <Switch>
         <Route path="/landing" component={Landing} />
         <Route>
-          <Shell>
-            <Switch>
-              {ROUTES.map(({ path, component: Component }) => (
-                <Route key={path} path={path} component={Component} />
-              ))}
-              <Route component={NotFound} />
-            </Switch>
-          </Shell>
+          <RouteErrorBoundary copy={routeErrorCopy}>
+            <Shell>
+              <Switch>
+                {ROUTES.map(({ path, component: Component }) => (
+                  <Route key={path} path={path} component={Component} />
+                ))}
+                <Route component={NotFound} />
+              </Switch>
+            </Shell>
+          </RouteErrorBoundary>
         </Route>
       </Switch>
     </>

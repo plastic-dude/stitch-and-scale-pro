@@ -2,7 +2,9 @@ import React from 'react';
 import { useSettings } from '@/context/SettingsContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Download, Upload, Moon, Sun, Monitor, Ruler, Settings as SettingsIcon, RotateCcw, Layers, Check } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Download, Upload, Moon, Sun, Monitor, Ruler, Settings as SettingsIcon, RotateCcw, Layers, Check, UserRound, Globe2, AtSign, Copyright } from 'lucide-react';
 import StorageHealthCard from '@/components/storage-health-card';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
@@ -11,11 +13,13 @@ import { GradingKey, GRADING_KEY_LABELS, ALL_SIZES, SIZE_STANDARDS } from '@/lib
 import { getInitialLanguage, LANGUAGE_OPTIONS, languageLabel, translate, type LanguageCode } from '@/lib/i18n';
 import { getSettingsCopy } from '@/lib/settings-copy';
 import { getToastCopy } from '@/lib/toast-copy';
+import { getStudioProfileCopy } from '@/lib/studio-profile-copy';
 
 export default function SettingsPage() {
   const {
     unit, theme, setUnit, setTheme, exportData, importData, setOnboardingCompleted,
     sizingStandard, setSizingStandard, customStandard, setCustomStandardValue, resetCustomStandard,
+    studioProfile, updateStudioProfile,
     language, setLanguage,
   } = useSettings();
   const fileInputRef = React.useRef<HTMLInputElement>(null);
@@ -23,6 +27,7 @@ export default function SettingsPage() {
   const [editingKey, setEditingKey] = React.useState<GradingKey>('bust');
   const t = (key: Parameters<typeof translate>[1]) => translate(language, key);
   const copy = getSettingsCopy(language);
+  const profileCopy = getStudioProfileCopy(language);
   const tc = getToastCopy(language);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -81,6 +86,80 @@ export default function SettingsPage() {
       </div>
 
       <div className="grid gap-8">
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.02 }}>
+          <Card className="border-border/60 shadow-sm overflow-hidden rounded-2xl">
+            <CardHeader className="bg-secondary/10 border-b border-border/40 pb-5">
+              <CardTitle className="font-serif text-xl flex items-center gap-2">
+                <UserRound className="w-5 h-5 text-accent" />
+                {profileCopy.title}
+              </CardTitle>
+              <CardDescription className="text-[13px]">{profileCopy.description}</CardDescription>
+            </CardHeader>
+            <CardContent className="p-6 space-y-5">
+              <div className="grid gap-5 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="studio-designer-name">{profileCopy.designerName}</Label>
+                  <Input
+                    id="studio-designer-name"
+                    value={studioProfile.designerName}
+                    onChange={(event) => updateStudioProfile({ designerName: event.target.value })}
+                    placeholder={profileCopy.designerNamePlaceholder}
+                    autoComplete="name"
+                    data-testid="input-studio-designer-name"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="studio-name">{profileCopy.studioName}</Label>
+                  <Input
+                    id="studio-name"
+                    value={studioProfile.studioName}
+                    onChange={(event) => updateStudioProfile({ studioName: event.target.value })}
+                    placeholder={profileCopy.studioNamePlaceholder}
+                    autoComplete="organization"
+                    data-testid="input-studio-name"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="studio-website" className="flex items-center gap-2"><Globe2 className="w-3.5 h-3.5 text-muted-foreground" />{profileCopy.website}</Label>
+                  <Input
+                    id="studio-website"
+                    type="url"
+                    value={studioProfile.website}
+                    onChange={(event) => updateStudioProfile({ website: event.target.value })}
+                    placeholder={profileCopy.websitePlaceholder}
+                    inputMode="url"
+                    autoComplete="url"
+                    data-testid="input-studio-website"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="studio-social-handle" className="flex items-center gap-2"><AtSign className="w-3.5 h-3.5 text-muted-foreground" />{profileCopy.socialHandle}</Label>
+                  <Input
+                    id="studio-social-handle"
+                    value={studioProfile.socialHandle}
+                    onChange={(event) => updateStudioProfile({ socialHandle: event.target.value })}
+                    placeholder={profileCopy.socialHandlePlaceholder}
+                    autoComplete="off"
+                    data-testid="input-studio-social-handle"
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="studio-copyright" className="flex items-center gap-2"><Copyright className="w-3.5 h-3.5 text-muted-foreground" />{profileCopy.copyrightNotice}</Label>
+                <Input
+                  id="studio-copyright"
+                  value={studioProfile.copyrightNotice}
+                  onChange={(event) => updateStudioProfile({ copyrightNotice: event.target.value })}
+                  placeholder={profileCopy.copyrightNoticePlaceholder}
+                  autoComplete="off"
+                  data-testid="input-studio-copyright"
+                />
+              </div>
+              <p className="text-xs leading-relaxed text-muted-foreground">{profileCopy.usageHint}</p>
+            </CardContent>
+          </Card>
+        </motion.div>
+
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}>
           <Card className="border-border/60 shadow-sm overflow-hidden rounded-2xl">
             <CardHeader className="bg-secondary/10 border-b border-border/40 pb-5">
