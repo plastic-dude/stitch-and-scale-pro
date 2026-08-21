@@ -210,6 +210,26 @@ describe('analyzeTeachingOffer', () => {
     expect(r.redFlags.some(f => f.id === 'T-05')).toBe(true);
   });
 
+  it('rejects non-finite and impossible offer inputs without leaking bad math', () => {
+    const r = analyzeTeachingOffer({
+      ticketPrice: Number.POSITIVE_INFINITY,
+      earlyBirdDiscount: -1,
+      earlyBirdShare: Number.NaN,
+      installmentPremium: Number.POSITIVE_INFINITY,
+      emailListSize: -100,
+      listConversion: Number.POSITIVE_INFINITY,
+      prepHours: Number.NEGATIVE_INFINITY,
+      hourlyRate: Number.NaN,
+      platformMonths: Number.POSITIVE_INFINITY,
+      refundRate: -0.5,
+      platformCut: Number.POSITIVE_INFINITY,
+    });
+    expect(Object.values(r).filter((value) => typeof value === 'number').every(Number.isFinite)).toBe(true);
+    expect(r.tickets.standard).toBe(DEFAULT_TEACH.ticketPrice);
+    expect(r.tickets.earlyBird).toBeGreaterThanOrEqual(0);
+    expect(r.profit).toBeGreaterThanOrEqual(-1e9);
+  });
+
   it('multi-session series scales revenue by session count', () => {
     const six = analyzeTeachingOffer({
       format: 'zoomSeries',
@@ -238,6 +258,21 @@ describe('analyzeTeachingOffer', () => {
 });
 
 describe('analyzeHostedOffer', () => {
+  it('keeps hosted economics finite for hostile numeric input', () => {
+    const r = analyzeHostedOffer({
+      model: 'flatFee',
+      flatFee: Number.POSITIVE_INFINITY,
+      hoursPerSession: Number.NaN,
+      sessions: Number.NEGATIVE_INFINITY,
+      hourlyRate: Number.POSITIVE_INFINITY,
+      patternHourlyRate: Number.NaN,
+      outOfPocket: -500,
+    });
+    expect(r.net).toBe(0);
+    expect(Number.isFinite(r.effectiveHourlyRate)).toBe(true);
+    expect(Number.isFinite(r.vsPatternMultiple)).toBe(true);
+  });
+
   it('nets a market flat-fee day after travel', () => {
     const r = analyzeHostedOffer({
       model: 'flatFee',

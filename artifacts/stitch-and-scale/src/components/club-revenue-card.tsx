@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { ClipboardCopy, CalendarDays, Layers, Receipt } from 'lucide-react';
 import { PatternProject } from '@/lib/grading-engine';
+import { safeNum } from '@/lib/numeric-guard';
 import { useSettings } from '@/context/SettingsContext';
 import { CLUB_REVENUE_COPY } from '@/lib/club-revenue-copy';
 import {
@@ -60,25 +61,45 @@ function defaultState(): StoredState {
   };
 }
 
+function bounded(raw: string | number, fallback: number, min = 0, max = Infinity): number {
+  return Math.min(max, Math.max(min, safeNum(raw, fallback)));
+}
+
 // CHK-152: pure derivation over the raw stored value — takes no
 // handle, so it can never reach for a freshly-created handle in an initializer.
 function loadStored(raw: StoredState | null): StoredState {
+  const base = defaultState();
   try {
-    
-    if (raw) {
-      if (raw && raw.club) {
-        return {
-          ...defaultState(),
-          ...raw,
-          club: { ...defaultClubInput(), ...raw.club },
-          email: { ...defaultState().email, ...raw.email },
-        };
-      }
+    if (raw?.club) {
+      const club = { ...base.club, ...raw.club };
+      return {
+        ...base,
+        ...raw,
+        club: {
+          ...club,
+          monthlyMembers: bounded(club.monthlyMembers, base.club.monthlyMembers),
+          annualMembers: bounded(club.annualMembers, base.club.annualMembers),
+          monthlyPrice: bounded(club.monthlyPrice, base.club.monthlyPrice),
+          annualPrice: bounded(club.annualPrice, base.club.annualPrice),
+          newMembersPerMonth: bounded(club.newMembersPerMonth, base.club.newMembersPerMonth),
+          monthlyChurnPct: bounded(club.monthlyChurnPct, base.club.monthlyChurnPct, 0, 100),
+          directCostPerPattern: bounded(club.directCostPerPattern, base.club.directCostPerPattern),
+          monthlyOverhead: bounded(club.monthlyOverhead, base.club.monthlyOverhead),
+          marketingSpendPerMonth: bounded(club.marketingSpendPerMonth, base.club.marketingSpendPerMonth),
+          hoursPerPattern: bounded(club.hoursPerPattern, base.club.hoursPerPattern),
+          adminHoursPerMonth: bounded(club.adminHoursPerMonth, base.club.adminHoursPerMonth),
+          premiumMembers: bounded(club.premiumMembers, base.club.premiumMembers),
+          premiumPrice: bounded(club.premiumPrice, base.club.premiumPrice),
+          premiumHoursPerMonth: bounded(club.premiumHoursPerMonth, base.club.premiumHoursPerMonth),
+          monthlyNoticeDays: bounded(club.monthlyNoticeDays, base.club.monthlyNoticeDays, 0, 365),
+        },
+        email: { ...base.email, ...raw.email },
+      };
     }
   } catch {
     /* storage unreadable — start fresh */
   }
-  return defaultState();
+  return base;
 }
 
 const fmt$ = (n: number) =>
@@ -163,7 +184,7 @@ const handle = useProjectStorage<StoredState>('clubrev', project.id, ['kskclubre
                 type="number"
                 className="h-9"
                 value={stored.club.monthlyMembers}
-                onChange={(e) => setClub({ monthlyMembers: Number(e.target.value) })}
+                onChange={(e) => setClub({ monthlyMembers: bounded(e.target.value, stored.club.monthlyMembers) })}
               />
             </div>
             <div className="space-y-1.5">
@@ -175,7 +196,7 @@ const handle = useProjectStorage<StoredState>('clubrev', project.id, ['kskclubre
                 type="number"
                 className="h-9"
                 value={stored.club.annualMembers}
-                onChange={(e) => setClub({ annualMembers: Number(e.target.value) })}
+                onChange={(e) => setClub({ annualMembers: bounded(e.target.value, stored.club.annualMembers) })}
               />
             </div>
             <div className="space-y-1.5">
@@ -187,7 +208,7 @@ const handle = useProjectStorage<StoredState>('clubrev', project.id, ['kskclubre
                 type="number"
                 className="h-9"
                 value={stored.club.monthlyPrice}
-                onChange={(e) => setClub({ monthlyPrice: Number(e.target.value) })}
+                onChange={(e) => setClub({ monthlyPrice: bounded(e.target.value, stored.club.monthlyPrice) })}
               />
             </div>
             <div className="space-y-1.5">
@@ -199,7 +220,7 @@ const handle = useProjectStorage<StoredState>('clubrev', project.id, ['kskclubre
                 type="number"
                 className="h-9"
                 value={stored.club.annualPrice}
-                onChange={(e) => setClub({ annualPrice: Number(e.target.value) })}
+                onChange={(e) => setClub({ annualPrice: bounded(e.target.value, stored.club.annualPrice) })}
               />
             </div>
             <div className="space-y-1.5">
@@ -211,7 +232,7 @@ const handle = useProjectStorage<StoredState>('clubrev', project.id, ['kskclubre
                 type="number"
                 className="h-9"
                 value={stored.club.newMembersPerMonth}
-                onChange={(e) => setClub({ newMembersPerMonth: Number(e.target.value) })}
+                onChange={(e) => setClub({ newMembersPerMonth: bounded(e.target.value, stored.club.newMembersPerMonth) })}
               />
             </div>
             <div className="space-y-1.5">
@@ -223,7 +244,7 @@ const handle = useProjectStorage<StoredState>('clubrev', project.id, ['kskclubre
                 type="number"
                 className="h-9"
                 value={stored.club.monthlyChurnPct}
-                onChange={(e) => setClub({ monthlyChurnPct: Number(e.target.value) })}
+                onChange={(e) => setClub({ monthlyChurnPct: bounded(e.target.value, stored.club.monthlyChurnPct, 0, 100) })}
               />
             </div>
             <div className="space-y-1.5">
@@ -235,7 +256,7 @@ const handle = useProjectStorage<StoredState>('clubrev', project.id, ['kskclubre
                 type="number"
                 className="h-9"
                 value={stored.club.directCostPerPattern}
-                onChange={(e) => setClub({ directCostPerPattern: Number(e.target.value) })}
+                onChange={(e) => setClub({ directCostPerPattern: bounded(e.target.value, stored.club.directCostPerPattern) })}
               />
             </div>
             <div className="space-y-1.5">
@@ -247,7 +268,7 @@ const handle = useProjectStorage<StoredState>('clubrev', project.id, ['kskclubre
                 type="number"
                 className="h-9"
                 value={stored.club.monthlyOverhead}
-                onChange={(e) => setClub({ monthlyOverhead: Number(e.target.value) })}
+                onChange={(e) => setClub({ monthlyOverhead: bounded(e.target.value, stored.club.monthlyOverhead) })}
               />
             </div>
             <div className="space-y-1.5">
@@ -259,7 +280,7 @@ const handle = useProjectStorage<StoredState>('clubrev', project.id, ['kskclubre
                 type="number"
                 className="h-9"
                 value={stored.club.marketingSpendPerMonth}
-                onChange={(e) => setClub({ marketingSpendPerMonth: Number(e.target.value) })}
+                onChange={(e) => setClub({ marketingSpendPerMonth: bounded(e.target.value, stored.club.marketingSpendPerMonth) })}
               />
             </div>
             <div className="space-y-1.5">
@@ -271,7 +292,7 @@ const handle = useProjectStorage<StoredState>('clubrev', project.id, ['kskclubre
                 type="number"
                 className="h-9"
                 value={stored.club.hoursPerPattern}
-                onChange={(e) => setClub({ hoursPerPattern: Number(e.target.value) })}
+                onChange={(e) => setClub({ hoursPerPattern: bounded(e.target.value, stored.club.hoursPerPattern) })}
               />
             </div>
             <div className="space-y-1.5">
@@ -283,7 +304,7 @@ const handle = useProjectStorage<StoredState>('clubrev', project.id, ['kskclubre
                 type="number"
                 className="h-9"
                 value={stored.club.adminHoursPerMonth}
-                onChange={(e) => setClub({ adminHoursPerMonth: Number(e.target.value) })}
+                onChange={(e) => setClub({ adminHoursPerMonth: bounded(e.target.value, stored.club.adminHoursPerMonth) })}
               />
             </div>
             <div className="space-y-1.5">
@@ -295,7 +316,7 @@ const handle = useProjectStorage<StoredState>('clubrev', project.id, ['kskclubre
                 type="number"
                 className="h-9"
                 value={stored.club.premiumMembers}
-                onChange={(e) => setClub({ premiumMembers: Number(e.target.value) })}
+                onChange={(e) => setClub({ premiumMembers: bounded(e.target.value, stored.club.premiumMembers) })}
               />
             </div>
             <div className="space-y-1.5">
@@ -307,7 +328,7 @@ const handle = useProjectStorage<StoredState>('clubrev', project.id, ['kskclubre
                 type="number"
                 className="h-9"
                 value={stored.club.premiumPrice}
-                onChange={(e) => setClub({ premiumPrice: Number(e.target.value) })}
+                onChange={(e) => setClub({ premiumPrice: bounded(e.target.value, stored.club.premiumPrice) })}
               />
             </div>
             <div className="space-y-1.5">
@@ -319,7 +340,7 @@ const handle = useProjectStorage<StoredState>('clubrev', project.id, ['kskclubre
                 type="number"
                 className="h-9"
                 value={stored.club.premiumHoursPerMonth}
-                onChange={(e) => setClub({ premiumHoursPerMonth: Number(e.target.value) })}
+                onChange={(e) => setClub({ premiumHoursPerMonth: bounded(e.target.value, stored.club.premiumHoursPerMonth) })}
               />
             </div>
             <div className="space-y-1.5">
@@ -331,7 +352,7 @@ const handle = useProjectStorage<StoredState>('clubrev', project.id, ['kskclubre
                 type="number"
                 className="h-9"
                 value={stored.club.monthlyNoticeDays}
-                onChange={(e) => setClub({ monthlyNoticeDays: Number(e.target.value) })}
+                onChange={(e) => setClub({ monthlyNoticeDays: bounded(e.target.value, stored.club.monthlyNoticeDays, 0, 365) })}
               />
             </div>
             <label className="flex items-center justify-between rounded-md border px-3 py-2 text-sm">

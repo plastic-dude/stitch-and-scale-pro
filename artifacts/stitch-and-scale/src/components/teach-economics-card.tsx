@@ -13,6 +13,7 @@ import { useSettings } from '@/context/SettingsContext';
 import { getToastCopy } from '@/lib/toast-copy';
 import { GraduationCap, ClipboardCopy, AlertTriangle, Scale, BarChart3 } from 'lucide-react';
 import { PatternProject } from '@/lib/grading-engine';
+import { safeNum } from '@/lib/numeric-guard';
 import {
   analyzeTeachingOffer,
   analyzeHostedOffer,
@@ -21,10 +22,16 @@ import {
   TEACH_FORMAT_LABELS,
   type TeachFormat,
   type TeachInput,
+  normalizeTeachInput,
   analyzePlatformModels,
 } from '@/lib/teach-economics';
 
 const STORAGE_KEY = 'stitch-and-scale-teach-v1';
+
+function bounded(raw: unknown, fallback: number, min = 0, max = Infinity): number {
+  const candidate = typeof raw === 'string' || typeof raw === 'number' ? raw : fallback;
+  return Math.min(max, Math.max(min, safeNum(candidate, fallback)));
+}
 
 interface StoredTeach {
   input: TeachInput;
@@ -39,11 +46,11 @@ function loadStored(handle: ProjectStorageHandle<StoredTeach>): StoredTeach {
     const raw = handle.read();
     if (raw) {
       const parsed = raw as StoredTeach;
-      if (parsed && parsed.input && typeof parsed.input.ticketPrice === 'number') {
+      if (parsed && parsed.input && typeof parsed.input === 'object') {
         return {
           ...defaultStored(),
           ...parsed,
-          input: { ...defaultStored().input, ...parsed.input },
+          input: normalizeTeachInput(parsed.input),
         };
       }
     }
@@ -71,7 +78,7 @@ function NumField({ id, label, value, onChange, min = 0, max, step = 1, suffix }
       <div className="relative">
         <Input id={id} type="number" min={min} {...(max !== undefined ? { max } : {})} step={step}
           value={value}
-          onChange={(e) => onChange(Number(e.target.value) >= 0 ? Number(e.target.value) : 0)}
+          onChange={(e) => onChange(bounded(e.target.value, value, min, max ?? Infinity))}
           className={suffix ? 'pr-8' : undefined} />
         {suffix && (
           <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">
@@ -103,7 +110,7 @@ export function TeachEconomicsCard({ project: _project }: { project: PatternProj
   }, [stored]);
 
   const patchInput = (patch: Partial<TeachInput>) =>
-    setStored((s) => ({ input: { ...s.input, ...patch } }));
+    setStored((s) => ({ input: normalizeTeachInput({ ...s.input, ...patch }) }));
 
   const result = useMemo(() => analyzeTeachingOffer(stored.input), [stored.input]);
   const hosted = useMemo(() => analyzeHostedOffer({
@@ -213,25 +220,25 @@ export function TeachEconomicsCard({ project: _project }: { project: PatternProj
             <NumField id="teach-platform-cost" label={ls.platformToolingPerMonth} value={stored.input.platformMonthlyCost}
               min={0} step={1} onChange={(n) => patchInput({ platformMonthlyCost: n })} suffix="$" />
             <NumField id="teach-platform-months" label={ls.toolingRunwayMonths} value={stored.input.platformMonths}
-              min={0} max={36} onChange={(n) => patchInput({ platformMonths: Math.min(36, n) })} />
+              min={0} max={36} onChange={(n) => patchInput({ platformMonths: bounded(n, stored.input.platformMonths, 0, 36) })} />
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <NumField id="teach-materials" label={ls.materialsTravelOutOfPocket} value={stored.input.materialCost}
               min={0} step={5} onChange={(n) => patchInput({ materialCost: n })} suffix="$" />
             <NumField id="teach-hosted-hours" label={ls.hoursPerSession}
               value={stored.input.hostedHoursPerSession ?? 4} min={1} max={12}
-              onChange={(n) => patchInput({ hostedHoursPerSession: Math.min(12, Math.max(1, n)) })} suffix="h" />
+              onChange={(n) => patchInput({ hostedHoursPerSession: bounded(n, stored.input.hostedHoursPerSession ?? 4, 1, 12) })} suffix="h" />
             <NumField id="teach-hosted-sessions" label={ls.sessions}
               value={stored.input.hostedSessions ?? 1} min={1} max={10}
-              onChange={(n) => patchInput({ hostedSessions: Math.min(10, Math.max(1, n)) })} />
+              onChange={(n) => patchInput({ hostedSessions: bounded(n, stored.input.hostedSessions ?? 1, 1, 10) })} />
             <NumField id="teach-students" label={ls.expectedStudentsZeroProject} value={stored.input.expectedStudents}
               min={0} onChange={(n) => patchInput({ expectedStudents: n })} />
             <NumField id="teach-conversion" label={ls.listConversion} value={stored.input.listConversion}
               min={0} max={0.1} step={0.005}
-              onChange={(n) => patchInput({ listConversion: Math.min(0.1, n) })} suffix="rate" />
+              onChange={(n) => patchInput({ listConversion: bounded(n, stored.input.listConversion, 0, 0.1) })} suffix="rate" />
             <NumField id="teach-refunds" label={ls.refundRate} value={stored.input.refundRate}
               min={0} max={0.5} step={0.01}
-              onChange={(n) => patchInput({ refundRate: Math.min(0.5, n) })} suffix="share" />
+              onChange={(n) => patchInput({ refundRate: bounded(n, stored.input.refundRate, 0, 0.5) })} suffix="share" />
           </div>
           {isCourse && (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

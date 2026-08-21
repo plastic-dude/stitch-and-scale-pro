@@ -18,6 +18,8 @@
  *   small cut. Fixed monthly cost vs projected gross is the silent killer.
  */
 
+import { safeNum } from '@/lib/numeric-guard';
+
 export type TeachFormat =
   | 'selfPacedCourse'
   | 'cohortCourse'
@@ -111,6 +113,38 @@ export const DEFAULT_TEACH: TeachInput = {
   patternHourlyRate: 32,
 };
 
+function bounded(raw: unknown, fallback: number, min = 0, max = Infinity): number {
+  const candidate = typeof raw === 'string' || typeof raw === 'number' ? raw : fallback;
+  return Math.min(max, Math.max(min, safeNum(candidate, fallback)));
+}
+
+/** Normalize all public analyzer inputs, including data loaded from old storage. */
+export function normalizeTeachInput(raw: Partial<TeachInput>): TeachInput {
+  const input = { ...DEFAULT_TEACH, ...raw };
+  return {
+    ...input,
+    sessionCount: bounded(input.sessionCount, DEFAULT_TEACH.sessionCount ?? 1, 1, 52),
+    ticketPrice: bounded(input.ticketPrice, DEFAULT_TEACH.ticketPrice),
+    earlyBirdDiscount: bounded(input.earlyBirdDiscount, DEFAULT_TEACH.earlyBirdDiscount, 0, 0.5),
+    earlyBirdShare: bounded(input.earlyBirdShare, DEFAULT_TEACH.earlyBirdShare, 0, 1),
+    installmentPremium: bounded(input.installmentPremium, DEFAULT_TEACH.installmentPremium, 0, 0.25),
+    installmentShare: bounded(input.installmentShare, DEFAULT_TEACH.installmentShare, 0, 1),
+    emailListSize: bounded(input.emailListSize, DEFAULT_TEACH.emailListSize),
+    listConversion: bounded(input.listConversion, DEFAULT_TEACH.listConversion, 0, 0.1),
+    expectedStudents: bounded(input.expectedStudents, DEFAULT_TEACH.expectedStudents),
+    prepHours: bounded(input.prepHours, DEFAULT_TEACH.prepHours),
+    hourlyRate: bounded(input.hourlyRate, DEFAULT_TEACH.hourlyRate),
+    platformMonthlyCost: bounded(input.platformMonthlyCost, DEFAULT_TEACH.platformMonthlyCost),
+    platformMonths: bounded(input.platformMonths, DEFAULT_TEACH.platformMonths, 0, 36),
+    materialCost: bounded(input.materialCost, DEFAULT_TEACH.materialCost),
+    refundRate: bounded(input.refundRate, DEFAULT_TEACH.refundRate, 0, 0.5),
+    platformCut: bounded(input.platformCut, DEFAULT_TEACH.platformCut, 0, 0.5),
+    patternHourlyRate: bounded(input.patternHourlyRate, DEFAULT_TEACH.patternHourlyRate),
+    hostedHoursPerSession: bounded(input.hostedHoursPerSession, 4, 1, 12),
+    hostedSessions: bounded(input.hostedSessions, 1, 1, 10),
+  };
+}
+
 export interface TicketEcon {
   standard: number;
   earlyBird: number;
@@ -173,7 +207,7 @@ export function projectStudents(input: Pick<TeachInput, 'expectedStudents' | 'em
  * Full teaching-economics analysis for one offer.
  */
 export function analyzeTeachingOffer(raw: Partial<TeachInput>): TeachResult {
-  const input = { ...DEFAULT_TEACH, ...raw } as TeachInput;
+  const input = normalizeTeachInput(raw);
   const tickets = computeTickets(input);
   const students = Math.max(0, Math.round(projectStudents(input)));
 
@@ -351,14 +385,15 @@ export function buildPricingLadder(
   target: number,
   anchors?: { anchorPct?: number; earlyBirdPct?: number; installmentPct?: number },
 ): PricingLadder {
-  const anchorPct = anchors?.anchorPct ?? 0.6; // flagship anchor at ~60% of price
-  const earlyBirdPct = anchors?.earlyBirdPct ?? 0.15;
-  const installmentPct = anchors?.installmentPct ?? 0.12;
+  const safeTarget = bounded(target, 0);
+  const anchorPct = bounded(anchors?.anchorPct, 0.6, 0.1, 1); // flagship anchor at ~60% of price
+  const earlyBirdPct = bounded(anchors?.earlyBirdPct, 0.15, 0, 0.5);
+  const installmentPct = bounded(anchors?.installmentPct, 0.12, 0, 0.25);
   return {
-    anchor: Math.round(target / Math.max(0.1, Math.min(1, anchorPct))),
-    standard: Math.round(target * 100) / 100,
-    earlyBird: Math.round(target * (1 - Math.max(0, Math.min(0.5, earlyBirdPct))) * 100) / 100,
-    installment: Math.round(target * (1 + Math.max(0, Math.min(0.25, installmentPct))) * 100) / 100,
+    anchor: Math.round(safeTarget / anchorPct),
+    standard: Math.round(safeTarget * 100) / 100,
+    earlyBird: Math.round(safeTarget * (1 - earlyBirdPct) * 100) / 100,
+    installment: Math.round(safeTarget * (1 + installmentPct) * 100) / 100,
   };
 }
 
@@ -387,31 +422,31 @@ export function analyzeHostedOffer(input: {
   vsPatternMultiple: number;
   advice: string;
 } {
-  const hoursPerSession = Math.max(0.5, input.hoursPerSession ?? 4);
-  const sessions = Math.max(1, Math.round(input.sessions ?? 1));
+  const hoursPerSession = bounded(input.hoursPerSession, 4, 0.5, 24);
+  const sessions = Math.max(1, Math.round(bounded(input.sessions, 1, 1, 52)));
   const totalHours = hoursPerSession * sessions;
-  const outOfPocket = Math.max(0, input.outOfPocket ?? 0);
+  const outOfPocket = bounded(input.outOfPocket, 0);
 
   let net = 0;
   if (input.model === 'flatFee') {
-    net = Math.max(0, input.flatFee ?? 0) - outOfPocket;
+    net = bounded(input.flatFee, 0) - outOfPocket;
   } else if (input.model === 'graduated' && input.graduatedRates?.length) {
-    const s = Math.max(0, input.students ?? 0);
-    const tier = input.graduatedRates.find(t => s >= t.min && s <= t.max);
-    const rate = tier ? tier.ratePerHour : (input.graduatedRates[0]?.ratePerHour ?? 0);
+    const s = bounded(input.students, 0);
+    const tier = input.graduatedRates.find(t => s >= bounded(t.min, 0) && s <= bounded(t.max, 0));
+    const rate = tier ? bounded(tier.ratePerHour, 0) : bounded(input.graduatedRates[0]?.ratePerHour, 0);
     net = rate * totalHours - outOfPocket;
   } else if (input.model === 'perStudent' && input.perStudentPrice) {
-    net = Math.max(0, input.perStudentPrice ?? 0) * Math.max(0, input.students ?? 0) - outOfPocket;
+    net = bounded(input.perStudentPrice, 0) * bounded(input.students, 0) - outOfPocket;
   }
 
   const effectiveHourlyRate = Math.round((net / totalHours) * 100) / 100;
-  const patternRate = Math.max(0.01, input.patternHourlyRate);
+  const patternRate = Math.max(0.01, bounded(input.patternHourlyRate, 0));
   const vsPatternMultiple = Math.round((effectiveHourlyRate / patternRate) * 100) / 100;
 
   let advice = '';
   if (net <= 0) {
     advice = 'This gig loses money after out-of-pocket costs — decline or renegotiate travel.';
-  } else if (effectiveHourlyRate < input.hourlyRate * 0.8) {
+  } else if (effectiveHourlyRate < bounded(input.hourlyRate, 0) * 0.8) {
     advice = 'Below your own rate; ask for the graduated-fee model ($50/75/100 per class-hour by enrollment) or a day rate nearer $300–1,000.';
   } else if (vsPatternMultiple < 1) {
     advice = 'Slightly above your rate but below what the same hours earn from patterns — only take it if the marketing draw is worth it.';

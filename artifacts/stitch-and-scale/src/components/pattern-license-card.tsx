@@ -12,6 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { ClipboardCopy, FileText, Scale } from 'lucide-react';
 import { PatternProject } from '@/lib/grading-engine';
+import { safeNum } from '@/lib/numeric-guard';
 import { YARN_WEIGHTS, YarnWeight } from '@/lib/yarn-estimator';
 import { PLATFORMS, PLATFORM_LABELS, PlatformId } from '@/lib/pattern-income-calculator';
 import {
@@ -62,17 +63,38 @@ function defaultStored(): StoredLicence {
 
 // CHK-152: pure derivation over the raw stored value — takes no
 // handle, so it can never reach for a freshly-created handle in an initializer.
+function bounded(raw: string | number, fallback: number, min = 0, max = Infinity): number {
+  return Math.min(max, Math.max(min, safeNum(raw, fallback)));
+}
+
 function loadStored(raw: StoredLicence | null): StoredLicence {
+  const base = defaultStored();
   try {
-    if (raw) {
-      if (raw && raw.offer) {
-        return { ...defaultStored(), ...raw, offer: { ...defaultStored().offer, ...raw.offer } };
-      }
+    if (raw?.offer) {
+      const offer = { ...base.offer, ...raw.offer };
+      return {
+        ...base,
+        ...raw,
+        price: bounded(raw.price, base.price),
+        monthlySales: bounded(raw.monthlySales, base.monthlySales),
+        designRate: bounded(raw.designRate, base.designRate, 12),
+        effortHours: bounded(raw.effortHours, base.effortHours),
+        horizonMonths: bounded(raw.horizonMonths, base.horizonMonths, 1, 60),
+        offer: {
+          ...offer,
+          fee: bounded(offer.fee, base.offer.fee),
+          royaltyPercent: bounded(offer.royaltyPercent, base.offer.royaltyPercent, 0, 100),
+          licensorMonthlySales: bounded(offer.licensorMonthlySales, base.offer.licensorMonthlySales),
+          exclusivityMonths: bounded(offer.exclusivityMonths, base.offer.exclusivityMonths, 0, 60),
+          productionCost: bounded(offer.productionCost, base.offer.productionCost),
+          paymentTimingMonths: bounded(offer.paymentTimingMonths, base.offer.paymentTimingMonths, 0, 12),
+        },
+      };
     }
   } catch {
     /* storage unreadable — start fresh */
   }
-  return defaultStored();
+  return base;
 }
 
 const fmt$ = (n: number) =>
@@ -170,7 +192,7 @@ export function PatternLicensePlannerCard({ project }: { project: PatternProject
               type="number"
               min={0}
               value={stored.price}
-              onChange={(e) => setField({ price: Number(e.target.value) })}
+              onChange={(e) => setField({ price: bounded(e.target.value, stored.price) })}
             />
           </div>
           <div className="space-y-1.5">
@@ -180,7 +202,7 @@ export function PatternLicensePlannerCard({ project }: { project: PatternProject
               type="number"
               min={0}
               value={stored.monthlySales}
-              onChange={(e) => setField({ monthlySales: Number(e.target.value) })}
+              onChange={(e) => setField({ monthlySales: bounded(e.target.value, stored.monthlySales) })}
             />
           </div>
           <div className="space-y-1.5">
@@ -190,7 +212,7 @@ export function PatternLicensePlannerCard({ project }: { project: PatternProject
               type="number"
               min={12}
               value={stored.designRate}
-              onChange={(e) => setField({ designRate: Number(e.target.value) })}
+              onChange={(e) => setField({ designRate: bounded(e.target.value, stored.designRate, 12) })}
             />
           </div>
           <div className="space-y-1.5">
@@ -200,7 +222,7 @@ export function PatternLicensePlannerCard({ project }: { project: PatternProject
               type="number"
               min={0}
               value={stored.effortHours}
-              onChange={(e) => setField({ effortHours: Number(e.target.value) })}
+              onChange={(e) => setField({ effortHours: bounded(e.target.value, stored.effortHours) })}
             />
           </div>
           <div className="space-y-1.5">
@@ -211,7 +233,7 @@ export function PatternLicensePlannerCard({ project }: { project: PatternProject
               min={1}
               max={60}
               value={stored.horizonMonths}
-              onChange={(e) => setField({ horizonMonths: Number(e.target.value) })}
+              onChange={(e) => setField({ horizonMonths: bounded(e.target.value, stored.horizonMonths, 1, 60) })}
             />
           </div>
         </div>
@@ -237,7 +259,7 @@ export function PatternLicensePlannerCard({ project }: { project: PatternProject
                 type="number"
                 min={0}
                 value={stored.offer.fee}
-                onChange={(e) => setOffer({ fee: Number(e.target.value) })}
+                onChange={(e) => setOffer({ fee: bounded(e.target.value, stored.offer.fee) })}
               />
             </div>
           )}
@@ -250,7 +272,7 @@ export function PatternLicensePlannerCard({ project }: { project: PatternProject
                   type="number"
                   min={0}
                   value={stored.offer.fee}
-                  onChange={(e) => setOffer({ fee: Number(e.target.value) })}
+                  onChange={(e) => setOffer({ fee: bounded(e.target.value, stored.offer.fee) })}
                 />
               </div>
               <div className="space-y-1.5">
@@ -261,7 +283,7 @@ export function PatternLicensePlannerCard({ project }: { project: PatternProject
                   min={0}
                   max={100}
                   value={stored.offer.royaltyPercent}
-                  onChange={(e) => setOffer({ royaltyPercent: Number(e.target.value) })}
+                  onChange={(e) => setOffer({ royaltyPercent: bounded(e.target.value, stored.offer.royaltyPercent, 0, 100) })}
                 />
               </div>
               <div className="space-y-1.5">
@@ -271,7 +293,7 @@ export function PatternLicensePlannerCard({ project }: { project: PatternProject
                   type="number"
                   min={0}
                   value={stored.offer.licensorMonthlySales}
-                  onChange={(e) => setOffer({ licensorMonthlySales: Number(e.target.value) })}
+                  onChange={(e) => setOffer({ licensorMonthlySales: bounded(e.target.value, stored.offer.licensorMonthlySales) })}
                 />
               </div>
             </>
@@ -285,7 +307,7 @@ export function PatternLicensePlannerCard({ project }: { project: PatternProject
                 min={0}
                 max={60}
                 value={stored.offer.exclusivityMonths}
-                onChange={(e) => setOffer({ exclusivityMonths: Number(e.target.value) })}
+                onChange={(e) => setOffer({ exclusivityMonths: bounded(e.target.value, stored.offer.exclusivityMonths, 0, 60) })}
               />
             </div>
           )}
@@ -297,7 +319,7 @@ export function PatternLicensePlannerCard({ project }: { project: PatternProject
                 type="number"
                 min={0}
                 value={stored.offer.productionCost}
-                onChange={(e) => setOffer({ productionCost: Number(e.target.value) })}
+                onChange={(e) => setOffer({ productionCost: bounded(e.target.value, stored.offer.productionCost) })}
               />
             </div>
           )}
@@ -309,7 +331,7 @@ export function PatternLicensePlannerCard({ project }: { project: PatternProject
               min={0}
               max={12}
               value={stored.offer.paymentTimingMonths}
-              onChange={(e) => setOffer({ paymentTimingMonths: Number(e.target.value) })}
+              onChange={(e) => setOffer({ paymentTimingMonths: bounded(e.target.value, stored.offer.paymentTimingMonths, 0, 12) })}
             />
           </div>
         </div>

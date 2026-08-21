@@ -11,6 +11,7 @@ import { getLabStatCopy, type LabStatCopy } from '@/lib/lab-stat-copy';
 import { getGradingCopy } from '@/lib/grading-copy';
 import { getToastCopy } from '@/lib/toast-copy';
 import { BodySchematic } from '@/components/body-schematic';
+import { buildGradingCsv } from '@/lib/grading-csv';
 
 export default function ProjectGrading() {
   const params = useParams();
@@ -61,23 +62,7 @@ export default function ProjectGrading() {
   };
 
   const handleDownloadCSV = () => {
-    let csv = `Section,Measurement,Property,${ALL_SIZES.join(',')}\n`;
-    gradingResults.forEach(section => {
-      section.measurements.forEach(m => {
-        const stsRow = ALL_SIZES.map(size => m.gradedValues.find(v => v.size === size)?.stitchCount).join(',');
-        csv += `"${section.sectionName}","${m.label}",Stitches,${stsRow}\n`;
-        
-        const hasRows = m.gradedValues.some(v => v.rowCount !== undefined);
-        if (hasRows) {
-          const rowsRow = ALL_SIZES.map(size => m.gradedValues.find(v => v.size === size)?.rowCount || '').join(',');
-          csv += `"${section.sectionName}","${m.label}",Rows,${rowsRow}\n`;
-        }
-        
-        const physRow = ALL_SIZES.map(size => m.gradedValues.find(v => v.size === size)?.physicalValue).join(',');
-        csv += `"${section.sectionName}","${m.label}",Physical (${(project.gauge?.unit || "in")}),${physRow}\n`;
-      });
-    });
-
+    const csv = buildGradingCsv(gradingResults, project.gauge?.unit || 'in');
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');

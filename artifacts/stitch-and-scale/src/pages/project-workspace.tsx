@@ -47,6 +47,8 @@ function normalizeProjectName(raw: string): string {
   return raw.replace(/\s+/g, ' ').trim();
 }
 import { getToastCopy } from '@/lib/toast-copy';
+import { notesNeedSave, withNotes } from '@/lib/notes-persistence';
+import { parsePositiveMeasurement } from '@/lib/measurement-validation';
 // CHK-094 bundle fix: lab cards are lazy-loaded on first tab activation.
 // LAB maps each tab value to a dynamic import (each card is a named export,
 // so the import is remapped to { default } for React.lazy). LazyPanel wraps
@@ -443,11 +445,41 @@ export default function ProjectWorkspace() {
   };
 
   const [notesDraft, setNotesDraft] = React.useState(project.description || '');
-  const notesDirty = notesDraft !== (project.description || '');
+  const notesDirty = notesNeedSave(project, notesDraft);
+  const notesDraftRef = React.useRef(notesDraft);
+  const projectRef = React.useRef(project);
+  notesDraftRef.current = notesDraft;
+  projectRef.current = project;
+
+  const persistNotes = React.useCallback(() => {
+    const latestProject = projectRef.current;
+    const latestDraft = notesDraftRef.current;
+    if (!notesNeedSave(latestProject, latestDraft)) return false;
+    updateProject(withNotes(latestProject, latestDraft));
+    return true;
+  }, [updateProject]);
+
+  // Notes used to live only in component state until the designer pressed
+  // Save, so changing tabs, navigating away, or closing the PWA could discard
+  // a long draft. Keep the explicit button, but make the safe path automatic.
+  React.useEffect(() => {
+    setNotesDraft(project.description || '');
+  }, [project.id, project.description]);
+
+  React.useEffect(() => {
+    if (!notesDirty) return;
+    const timer = window.setTimeout(() => persistNotes(), 500);
+    return () => window.clearTimeout(timer);
+  }, [notesDraft, notesDirty, persistNotes]);
+
+  React.useEffect(() => {
+    const flushNotes = () => persistNotes();
+    window.addEventListener('pagehide', flushNotes);
+    return () => window.removeEventListener('pagehide', flushNotes);
+  }, [persistNotes]);
 
   const handleSaveNotes = () => {
-    updateProject({ ...project, description: notesDraft.trim() || undefined });
-    toast({ title: tc.notesSaved });
+    if (persistNotes()) toast({ title: tc.notesSaved });
   };
 
   const handleAddSection = () => {
@@ -480,8 +512,8 @@ export default function ProjectWorkspace() {
   // instead of silently persisting a corrupt measurement.
   const handleAddMeasurement = (sectionId: string) => {
     const rawBase = mBaseValue.trim();
-    const parsedBase = parseFloat(rawBase);
-    if (!mLabel.trim() || !Number.isFinite(parsedBase) || parsedBase <= 0) {
+    const parsedBase = parsePositiveMeasurement(rawBase);
+    if (!mLabel.trim() || parsedBase === null) {
       const rejected = tc.invalidMeasurementValue(mLabel.trim() || '…', rawBase || '–');
       toast({ title: rejected, variant: 'destructive' });
       return;
@@ -911,6 +943,7 @@ export default function ProjectWorkspace() {
               <Textarea
                 value={notesDraft}
                 onChange={(e) => setNotesDraft(e.target.value)}
+                onBlur={handleSaveNotes}
                 placeholder="e.g. Worked flat, seamed at the side. Blocks generously — swatch and block before committing to a size."
                 className="min-h-[180px] resize-y"
                 data-testid="textarea-notes"

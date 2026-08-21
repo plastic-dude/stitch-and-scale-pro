@@ -16,6 +16,8 @@
 // Honest-branding guard (docs/brand-voice-brief.md Rule 1): nothing in this
 // module invents designer credentials on the receipt — it renders only what
 // the designer actually configured.
+import { isFiniteNumber } from '@/lib/numeric-guard';
+
 export type ReceiptDocKind = "receipt" | "quote" | "refund";
 
 export const DOC_KIND_LABELS: Record<ReceiptDocKind, string> = {
@@ -231,7 +233,8 @@ export interface ReceiptLabResult {
 // --- helpers -----------------------------------------------------------------
 
 function clamp(v: number, lo: number, hi: number): number {
-  return Math.min(hi, Math.max(lo, v));
+  const finiteValue = isFiniteNumber(v) ? v : lo;
+  return Math.min(hi, Math.max(lo, finiteValue));
 }
 
 function sumItems(items: ReceiptItem[]): number {

@@ -39,6 +39,16 @@ export function isFiniteNonNegative(n: unknown): boolean {
 }
 
 /**
+ * UI-input convenience wrapper. Unlike `safeNumber`, this helper always
+ * returns a finite number, using `fallback` for empty, malformed, NaN, or
+ * infinite values. Domain-specific callers still own min/max clamping.
+ */
+export function safeNum(raw: string | number, fallback = 0): number {
+  const value = safeNumber(raw, fallback);
+  return value !== null && Number.isFinite(value) ? value : fallback;
+}
+
+/**
  * Normalize a raw value (string input, empty field, NaN, undefined) into a
  * usable number, or `null` when it is unusable. `fallbackForMissing` is
  * applied ONLY when the value is genuinely absent/empty — never to repair

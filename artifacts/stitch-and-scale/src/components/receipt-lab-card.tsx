@@ -55,8 +55,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useSettings } from "@/context/SettingsContext";
 import { getReceiptCopy, getReceiptOptionLabels } from "@/lib/receipt-copy";
+import { safeNum } from "@/lib/numeric-guard";
 
 const STORAGE_KEY = "stitch-and-scale-receipt-v1";
+
+function bounded(raw: string | number, fallback: number, min = 0, max = Infinity): number {
+  return Math.min(max, Math.max(min, safeNum(raw, fallback)));
+}
 
 interface StoredState {
   brand: BrandProfile;
@@ -113,7 +118,8 @@ export function ReceiptLabCard(props: { project: PatternProject }) {
   const [shippingCharged, setShippingCharged] = useState(0);
   const [shippingCost, setShippingCost] = useState(0);
   const [materialsCost, setMaterialsCost] = useState(0);
-  const [depositPct, setDepositPct] = useState(0.5);
+  // UI stores this field as a percentage (50 means 50%); quoteTerms converts it to a fraction on save.
+  const [depositPct, setDepositPct] = useState(50);
   const [leadDays, setLeadDays] = useState(21);
   const [validDays, setValidDays] = useState(14);
   const [description, setDescription] = useState("");
@@ -197,7 +203,15 @@ export function ReceiptLabCard(props: { project: PatternProject }) {
   );
 
   function setItemField(idx: number, patch: Partial<ReceiptItem>) {
-    setItems((prev) => prev.map((it, i) => (i === idx ? { ...it, ...patch } : it)));
+    setItems((prev) => prev.map((it, i) => {
+      if (i !== idx) return it;
+      return {
+        ...it,
+        ...patch,
+        ...(patch.qty !== undefined ? { qty: bounded(patch.qty, it.qty, 0, 999) } : {}),
+        ...(patch.unitPrice !== undefined ? { unitPrice: bounded(patch.unitPrice, it.unitPrice, 0, 1e9) } : {}),
+      };
+    }));
   }
 
   function addItem() {
@@ -209,7 +223,7 @@ export function ReceiptLabCard(props: { project: PatternProject }) {
   }
 
   function saveSale() {
-    if (items.every((it) => !it.name && it.unitPrice <= 0)) {
+    if (!items.some((it) => it.name.trim() && it.qty > 0 && it.unitPrice > 0)) {
       toast({ title: copy.addPricedItem, variant: "destructive" });
       return;
     }
@@ -327,6 +341,9 @@ export function ReceiptLabCard(props: { project: PatternProject }) {
     setShippingCharged(0);
     setShippingCost(0);
     setMaterialsCost(0);
+    setDepositPct(50);
+    setLeadDays(21);
+    setValidDays(14);
     setDepositReceived(0);
     setNote("");
     setDescription("");
@@ -409,8 +426,8 @@ export function ReceiptLabCard(props: { project: PatternProject }) {
                     onChange={(e) => setItemField(idx, { name: e.target.value })}
                     placeholder={copy.itemNamePlaceholder}
                   />
-                  <Input className="w-20" type="number" min={0} max={999} value={it.qty} onChange={(e) => setItemField(idx, { qty: Number(e.target.value) })} placeholder={copy.qty} />
-                  <Input className="w-28" type="number" min={0} step="0.01" value={it.unitPrice || ""} onChange={(e) => setItemField(idx, { unitPrice: Number(e.target.value) })} placeholder={copy.price} />
+                  <Input className="w-20" type="number" min={0} max={999} value={it.qty} onChange={(e) => setItemField(idx, { qty: bounded(e.target.value, it.qty, 0, 999) })} placeholder={copy.qty} />
+                  <Input className="w-28" type="number" min={0} step="0.01" value={it.unitPrice || ""} onChange={(e) => setItemField(idx, { unitPrice: bounded(e.target.value, it.unitPrice, 0, 1e9) })} placeholder={copy.price} />
                   {items.length > 1 && (
                     <Button variant="ghost" size="icon" onClick={() => removeItem(idx)} aria-label={copy.removeItem}>
                       <Trash2 className="h-4 w-4" />
@@ -432,19 +449,19 @@ export function ReceiptLabCard(props: { project: PatternProject }) {
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs font-medium">{copy.depositPercent}</Label>
-                  <Input type="number" min={0} max={100} value={depositPct} onChange={(e) => setDepositPct(Number(e.target.value))} />
+                  <Input type="number" min={0} max={100} value={depositPct} onChange={(e) => setDepositPct(bounded(e.target.value, depositPct, 0, 100))} />
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs font-medium">{copy.leadTimeDays}</Label>
-                  <Input type="number" min={1} value={leadDays} onChange={(e) => setLeadDays(Number(e.target.value))} />
+                  <Input type="number" min={1} value={leadDays} onChange={(e) => setLeadDays(bounded(e.target.value, leadDays, 1, 365))} />
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs font-medium">{copy.quoteValidDays}</Label>
-                  <Input type="number" min={1} value={validDays} onChange={(e) => setValidDays(Number(e.target.value))} />
+                  <Input type="number" min={1} value={validDays} onChange={(e) => setValidDays(bounded(e.target.value, validDays, 1, 365))} />
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs font-medium">{copy.depositReceived}</Label>
-                  <Input type="number" min={0} step="0.01" value={depositReceived || ""} onChange={(e) => setDepositReceived(Number(e.target.value))} />
+                  <Input type="number" min={0} step="0.01" value={depositReceived || ""} onChange={(e) => setDepositReceived(bounded(e.target.value, depositReceived, 0, 1e9))} />
                 </div>
               </div>
             )}
@@ -453,31 +470,31 @@ export function ReceiptLabCard(props: { project: PatternProject }) {
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 <div className="space-y-1.5">
                   <Label className="text-xs font-medium">{copy.tax} %</Label>
-                  <Input type="number" min={0} max={100} value={taxPct || ""} onChange={(e) => setTaxPct(Number(e.target.value))} placeholder="0" />
+                  <Input type="number" min={0} max={100} value={taxPct || ""} onChange={(e) => setTaxPct(bounded(e.target.value, taxPct, 0, 100))} placeholder="0" />
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs font-medium">{copy.platformFee} %</Label>
-                  <Input type="number" min={0} max={100} step="0.1" value={commissionPct || ""} onChange={(e) => setCommissionPct(Number(e.target.value))} placeholder="0" />
+                  <Input type="number" min={0} max={100} step="0.1" value={commissionPct || ""} onChange={(e) => setCommissionPct(bounded(e.target.value, commissionPct, 0, 100))} placeholder="0" />
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs font-medium">{copy.processingFee} %</Label>
-                  <Input type="number" min={0} max={100} step="0.1" value={processingPct || ""} onChange={(e) => setProcessingPct(Number(e.target.value))} placeholder="0" />
+                  <Input type="number" min={0} max={100} step="0.1" value={processingPct || ""} onChange={(e) => setProcessingPct(bounded(e.target.value, processingPct, 0, 100))} placeholder="0" />
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs font-medium">{copy.processingFee}</Label>
-                  <Input type="number" min={0} step="0.01" value={processingFlat || ""} onChange={(e) => setProcessingFlat(Number(e.target.value))} placeholder="0.00" />
+                  <Input type="number" min={0} step="0.01" value={processingFlat || ""} onChange={(e) => setProcessingFlat(bounded(e.target.value, processingFlat, 0, 1e9))} placeholder="0.00" />
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs font-medium">{copy.shipping} (charged)</Label>
-                  <Input type="number" min={0} step="0.01" value={shippingCharged || ""} onChange={(e) => setShippingCharged(Number(e.target.value))} placeholder="0.00" />
+                  <Input type="number" min={0} step="0.01" value={shippingCharged || ""} onChange={(e) => setShippingCharged(bounded(e.target.value, shippingCharged, 0, 1e9))} placeholder="0.00" />
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs font-medium">{copy.shipping} (cost)</Label>
-                  <Input type="number" min={0} step="0.01" value={shippingCost || ""} onChange={(e) => setShippingCost(Number(e.target.value))} placeholder="0.00" />
+                  <Input type="number" min={0} step="0.01" value={shippingCost || ""} onChange={(e) => setShippingCost(bounded(e.target.value, shippingCost, 0, 1e9))} placeholder="0.00" />
                 </div>
                 <div className="space-y-1.5">
                   <Label className="text-xs font-medium">{copy.materialsCost}</Label>
-                  <Input type="number" min={0} step="0.01" value={materialsCost || ""} onChange={(e) => setMaterialsCost(Number(e.target.value))} placeholder="0.00" />
+                  <Input type="number" min={0} step="0.01" value={materialsCost || ""} onChange={(e) => setMaterialsCost(bounded(e.target.value, materialsCost, 0, 1e9))} placeholder="0.00" />
                 </div>
               </div>
             )}

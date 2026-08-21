@@ -10,6 +10,7 @@ import { AlertTriangle, Flag, Tag, Layers, Lightbulb } from 'lucide-react';
 import { PatternProject } from '@/lib/grading-engine';
 import { PRICING_PSYCHOLOGY_COPY } from '@/lib/pricing-psychology-copy';
 import { projectStorage } from '@/lib/storage-lib';
+import { safeNum } from '@/lib/numeric-guard';
 import {
   analyzePricingPsychology,
   DEFAULT_PRICING_PSYCHOLOGY,
@@ -36,7 +37,7 @@ function loadStored(handle: ReturnType<typeof projectStorage<StoredState>>): Sto
 function parseTiers(raw: string): number[] {
   return raw
     .split(/[,\s]+/)
-    .map(s => parseFloat(s.replace(/[^0-9.]/g, '')))
+    .map(s => safeNum(s.replace(/[^0-9.]/g, ''), 0))
     .filter(n => Number.isFinite(n) && n > 0)
     .slice(0, 5);
 }
@@ -56,8 +57,8 @@ function NumField({ id, label, value, onChange, min = 0, max, step = 1, suffix }
         <Input id={id} type="number" min={min} {...(max !== undefined ? { max } : {})} step={step}
           value={value}
           onChange={e => {
-            const n = parseFloat(e.target.value);
-            if (Number.isFinite(n)) onChange(n);
+            const n = safeNum(e.target.value, 0);
+            onChange(n);
           }}
           className="text-sm pr-8" />
         {suffix ? <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">{suffix}</span> : null}

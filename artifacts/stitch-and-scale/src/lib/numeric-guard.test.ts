@@ -4,6 +4,7 @@ import {
   isFinitePositive,
   isFiniteNonNegative,
   safeNumber,
+  safeNum,
   finite,
   finiteMoney,
   finiteNarrative,
@@ -34,6 +35,22 @@ describe('numeric-guard boundary helpers (CHK-146)', () => {
       expect(isFinitePositive(Infinity)).toBe(false);
       expect(isFiniteNonNegative(0)).toBe(true);
       expect(isFiniteNonNegative(-0.5)).toBe(false);
+    });
+  });
+
+  describe('safeNum', () => {
+    it('returns finite numeric strings and numbers', () => {
+      expect(safeNum('3.5')).toBe(3.5);
+      expect(safeNum(12)).toBe(12);
+      expect(safeNum('-4.25')).toBe(-4.25);
+    });
+    it('uses the fallback for empty, malformed, NaN, and infinite input', () => {
+      expect(safeNum('', 7)).toBe(7);
+      expect(safeNum('   ', 7)).toBe(7);
+      expect(safeNum('abc', 7)).toBe(7);
+      expect(safeNum(NaN, 7)).toBe(7);
+      expect(safeNum(Infinity, 7)).toBe(7);
+      expect(safeNum(-Infinity, 7)).toBe(7);
     });
   });
 

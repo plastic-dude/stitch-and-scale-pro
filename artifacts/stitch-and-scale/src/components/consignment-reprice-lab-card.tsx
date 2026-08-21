@@ -24,6 +24,7 @@ import {
 import { projectStorage } from '@/lib/storage-lib';
 import { PatternProject } from '@/lib/grading-engine';
 import { useSettings } from '@/context/SettingsContext';
+import { safeNum } from '@/lib/numeric-guard';
 import { CONSIGNMENT_REPRICE_COPY, localizeConsignmentResult } from '@/lib/consignment-reprice-copy';
 
 const STORAGE_KEY = 'stitch-and-scale-reprice-v1';
@@ -100,8 +101,7 @@ export function ConsignmentRepriceLabCard({ project }: { project: PatternProject
       setState({ [key]: undefined } as Partial<StoredState>);
       return;
     }
-    const n = parseFloat(v);
-    if (Number.isNaN(n)) return;
+    const n = safeNum(v, 0);
     const clamped = Math.min(Math.max(n, opts.min ?? 0), opts.max ?? Infinity);
     setState({ [key]: clamped } as Partial<StoredState>);
   };

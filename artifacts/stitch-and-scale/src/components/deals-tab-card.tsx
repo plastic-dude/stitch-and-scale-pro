@@ -47,6 +47,7 @@ import {
 } from '@/lib/design-offer-evaluator';
 import { PLATFORMS, PLATFORM_LABELS, PlatformId } from '@/lib/pattern-income-calculator';
 import { PatternProject } from '@/lib/grading-engine';
+import { safeNum } from '@/lib/numeric-guard';
 import { Handshake, Scale, Copy, TrendingUp, Lock, BadgeDollarSign, AlertTriangle, CheckCircle2 } from 'lucide-react';
 
 function DefaultBadge({ text }: { text: string }) {
@@ -143,7 +144,8 @@ export function DealsTabCard({
       type="number"
       value={value}
       step={step}
-      onChange={(e) => setter(Number(e.target.value) || 0)}
+      min={0}
+      onChange={(e) => setter(Math.max(0, safeNum(e.target.value, value)))}
       className="h-9 bg-background"
       aria-label={ariaLabel}
     />
@@ -417,7 +419,8 @@ function DesignOfferSection({
       type="number"
       value={value}
       step={step}
-      onChange={(e) => setter(Number(e.target.value) || 0)}
+      min={0}
+      onChange={(e) => setter(Math.max(0, safeNum(e.target.value, value)))}
       className="h-9 bg-background"
       aria-label={ariaLabel}
     />

@@ -131,6 +131,32 @@ describe("receipt-lab engine", () => {
     expect(r.platformFee).toBe(0);
   });
 
+  it("never leaks non-finite or negative financial values from hostile input", () => {
+    const sale = makeSale({
+      items: [{ name: "X", qty: Number.POSITIVE_INFINITY, unitPrice: Number.NaN }],
+      fees: {
+        platformCommissionPct: Number.POSITIVE_INFINITY,
+        processingPct: -0.5,
+        processingFlat: Number.NaN,
+        taxPct: -1,
+        shippingCharged: Number.NEGATIVE_INFINITY,
+        shippingCost: -25,
+      },
+    });
+    const r = analyzeReceiptFees(sale);
+    expect(r).toMatchObject({
+      subtotal: 0,
+      taxAmount: 0,
+      shippingCharged: 0,
+      grossTotal: 0,
+      platformFee: 0,
+      processingFee: 0,
+      shippingCost: 0,
+      netAfterFees: 0,
+    });
+    expect(Object.values(r).every(Number.isFinite)).toBe(true);
+  });
+
   it("doc lines include profit with materials note when cost set", () => {
     const sale = makeSale({
       items: [{ name: "Cardigan", qty: 1, unitPrice: 150 }],
