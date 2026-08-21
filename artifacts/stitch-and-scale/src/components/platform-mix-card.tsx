@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { projectStorage, type ProjectStorageHandle } from '@/lib/storage-lib';
+import { useProjectStorage, useProjectStorageState } from '@/lib/storage-lib';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -28,23 +28,22 @@ function defaultStored(): StoredMix {
   return { input: { ...DEFAULT_MIX, platforms: DEFAULT_MIX.platforms.map((p) => ({ ...p })) } };
 }
 
-function loadStored(handle: ProjectStorageHandle<StoredMix>): StoredMix {
+function loadStored(raw: StoredMix | null): StoredMix {
   try {
-    const parsed = handle.read();
-    if (parsed) {
-      if (parsed && parsed.input && Array.isArray(parsed.input.platforms)) {
+    
+    
+      if (raw && raw.input && Array.isArray(raw.input.platforms)) {
         return {
           input: {
             ...defaultStored().input,
-            ...parsed.input,
-            platforms: parsed.input.platforms.map((p: { platform: PlatformId; salesSharePct: number; enabled?: boolean }) => ({
+            ...raw.input,
+            platforms: raw.input.platforms.map((p: { platform: PlatformId; salesSharePct: number; enabled?: boolean }) => ({
               ...defaultStored().input.platforms.find((d) => d.platform === p.platform)!,
               ...p,
             })),
           },
         };
       }
-    }
   } catch {
     /* storage unreadable — start fresh */
   }
@@ -59,15 +58,11 @@ const fmtDec = (n: number) =>
 
 export function PlatformMixCard({ project }: { project: PatternProject }) {
   // issue #4 project seam: scoped store per project; flat key folded in on first read, then removed.
-  const handle = useMemo(() => projectStorage<StoredMix>('pmix', project.id, [STORAGE_KEY]), [project.id]);
+  const handle = useProjectStorage<StoredMix>('pmix', project.id, [STORAGE_KEY]);
   const { toast } = useToast();
   const { language } = useSettings();
   const copyText = PLATFORM_MIX_COPY[language];
-  const [stored, setStored] = useState(() => loadStored(handle));
-
-  useEffect(() => {
-    handle.write(stored);
-  }, [stored]);
+  const [stored, setStored] = useProjectStorageState(handle, (raw) => loadStored(raw));
 
   const patchInput = (patch: Partial<PlatformMixInput>) =>
     setStored((s) => ({ input: { ...s.input, ...patch } }));

@@ -15,8 +15,8 @@
  * task list, a paste-ready shop proposal letter, an event pitch, and a
  * full cottage-license price sheet with copy-ready buyer offer.
  */
-import React, { useMemo, useState, useEffect } from 'react';
-import { projectStorage, type ProjectStorageHandle } from '@/lib/storage-lib';
+import React, { useMemo } from 'react';
+import { useProjectStorage, useProjectStorageState } from '@/lib/storage-lib';
 import { useSettings } from '@/context/SettingsContext';
 import { TRUNK_SHOW_COPY } from '@/lib/trunk-show-copy';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -46,10 +46,11 @@ interface StoredState {
   licenseConfig?: Partial<LicenseConfig>;
 }
 
-function loadStored(handle: ProjectStorageHandle<StoredState>): StoredState {
+// CHK-152: pure derivation over the raw stored value — takes no handle, so
+// it can never reach for a freshly-created handle inside an initializer.
+function loadStored(raw: StoredState | null): StoredState {
   // Storage-seam convention (CHK-117): defaults are folded in by the shared
   // lib helper so the card and the planner never drift apart.
-  const raw = handle.read();
   const h = hydrateTrunkShowStored(raw);
   return { trunk: h.trunk, licensePrices: h.licensePrices, licenseConfig: h.licenseConfig };
 }
@@ -91,9 +92,11 @@ export function TrunkShowCard({ project }: { project: PatternProject }) {
   // legacy flat key 'stitch-and-scale-trunk-show' was projectId-partitioned
   // (projects shared one blob, silently colliding). Read-once migration folds
   // this project's partition into the scoped key, then removes the flat key.
-  const handle = useMemo(() => projectStorage<StoredState>('trunkshow', project.id, ['stitch-and-scale-trunk-show'], { partition: true }), [project.id]);
-
-  const [stored, setStored] = React.useState<StoredState>(() => loadStored(handle));
+  // CHK-152 (QUEUE-010): the old useMemo handle + `useState(() =>
+  // loadStored(handle))` lazy initializer was the crash class under HMR.
+  // Now flows through the shared seam: stable handle, memoized derivation.
+  const handle = useProjectStorage<StoredState>('trunkshow', project.id, ['stitch-and-scale-trunk-show'], { partition: true });
+  const [stored, setStored] = useProjectStorageState(handle, (raw) => loadStored(raw));
   const { language } = useSettings();
   const copyText = TRUNK_SHOW_COPY[language];
   const saved: StoredState = stored;
@@ -190,9 +193,8 @@ export function TrunkShowCard({ project }: { project: PatternProject }) {
     [licenseConfig, licensePricing, project.name],
   );
 
-  React.useEffect(() => {
-    handle.write(stored);
-  }, [stored]);
+  // Persistence is now owned by the seam's state hook (CHK-152) — a manual
+  // write-on-change effect would double-write every update.
 
   return (
     <Card>

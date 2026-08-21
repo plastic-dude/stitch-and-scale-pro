@@ -1,5 +1,5 @@
-import { useMemo, useState, useEffect } from 'react';
-import { projectStorage, type ProjectStorageHandle } from '@/lib/storage-lib';
+import { useMemo, useState } from 'react';
+import { useProjectStorage, useProjectStorageState } from '@/lib/storage-lib';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -57,17 +57,19 @@ function defaultChannel(): StoredChannel {
   };
 }
 
-function loadStored(handle: ProjectStorageHandle<StoredChannel>): StoredChannel {
+// CHK-152: pure derivation over the raw stored value — takes no
+// handle, so it can never reach for a freshly-created handle in an initializer.
+function loadStored(raw: StoredChannel | null): StoredChannel {
   try {
-    const parsed = handle.read();
-    if (parsed) {
-      if (parsed && parsed.channel) {
+    
+    if (raw) {
+      if (raw && raw.channel) {
         return {
           ...defaultChannel(),
-          ...parsed,
-          channel: { ...defaultChannelDeal(), ...parsed.channel },
-          funnel: { ...defaultFunnelInput(), ...parsed.funnel },
-          pitch: { ...defaultChannel().pitch, ...parsed.pitch },
+          ...raw,
+          channel: { ...defaultChannelDeal(), ...raw.channel },
+          funnel: { ...defaultFunnelInput(), ...raw.funnel },
+          pitch: { ...defaultChannel().pitch, ...raw.pitch },
         };
       }
     }
@@ -84,13 +86,14 @@ export function ChannelFunnelCard({ project }: { project: PatternProject }) {
   const { language } = useSettings();
   const copyText = CHANNEL_FUNNEL_COPY[language];
   // issue #4 project seam: one scoped store per project; the legacy flat key 'kskchannels-v1' is folded in on first read, then removed.
-  const handle = useMemo(() => projectStorage<StoredChannel>('channels', project.id, ['kskchannels-v1']), [project.id]);
+  // CHK-152 (QUEUE-010): the old useMemo handle + `useState(() =>
+// loadStored(handle))` lazy initializer was the crash class under HMR.
+// Now flows through the shared seam: stable handle, memoized derivation.
+const handle = useProjectStorage<StoredChannel>('channels', project.id, ['kskchannels-v1']);
   const { toast } = useToast();
-  const [stored, setStored] = useState(() => loadStored(handle));
-
-  useEffect(() => {
-    handle.write(stored);
-  }, [stored]);
+  const [stored, setStored] = useProjectStorageState(handle, (raw) => loadStored(raw));
+  // CHK-152: persistence owned by the seam's state hook — a manual
+  // write-on-change effect would double-write every update.
 
   const channel = useMemo(() => analyzeChannel(stored.channel), [stored.channel]);
   const funnel = useMemo(() => analyzeFunnel(stored.funnel), [stored.funnel]);

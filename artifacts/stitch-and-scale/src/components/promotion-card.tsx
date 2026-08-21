@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { projectStorage, type ProjectStorageHandle } from '@/lib/storage-lib';
+import { useProjectStorage, useProjectStorageState } from '@/lib/storage-lib';
 import { useSettings } from '@/context/SettingsContext';
 import { PROMOTION_COPY } from '@/lib/promotion-copy';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -55,20 +55,19 @@ function defaultStored(): StoredPromotion {
   };
 }
 
-function loadStored(handle: ProjectStorageHandle<StoredPromotion>): StoredPromotion {
+function loadStored(raw: StoredPromotion | null): StoredPromotion {
   try {
-    const parsed = handle.read();
-    if (parsed) {
-      if (parsed && parsed.platform && Array.isArray(parsed.channels) && parsed.channels.length > 0) {
+    
+    
+      if (raw && raw.platform && Array.isArray(raw.channels) && raw.channels.length > 0) {
         const defs = defaultStored();
         // Merge per-channel so stale stored records (pre-enabled-flag) pick up
         // the default values for any missing keys instead of carrying dead state.
         const channels = defs.channels.map((def, i) => ({
           ...def,
-          patch: { ...def.patch, ...(parsed.channels[i]?.patch || {}) },
+          patch: { ...def.patch, ...(raw.channels[i]?.patch || {}) },
         }));
-        return { ...defs, ...parsed, channels };
-      }
+        return { ...defs, ...raw, channels };
     }
   } catch {
     /* storage unreadable — start fresh */
@@ -209,15 +208,11 @@ function ChannelRow({ result, params, onToggle, onPatch }: {
 
 export function PromotionCard({ project }: { project: PatternProject }) {
   // issue #4 project seam: one scoped store per project; the legacy flat key 'promo-v1' is folded in on first read, then removed.
-  const handle = useMemo(() => projectStorage<StoredPromotion>('promo', project.id, ['promo-v1']), [project.id]);
+  const handle = useProjectStorage<StoredPromotion>('promo', project.id, ['promo-v1']);
   const { toast } = useToast();
   const { language } = useSettings();
   const copyText = PROMOTION_COPY[language];
-  const [stored, setStored] = useState(() => loadStored(handle));
-
-  useEffect(() => {
-    handle.write(stored);
-  }, [stored]);
+  const [stored, setStored] = useProjectStorageState(handle, (raw) => loadStored(raw));
 
   const input = useMemo<PromotionInput>(() => {
     const ids: PromoChannelId[] = ['etsyOnsite', 'etsyOffsite', 'pinterest', 'newsletter', 'freePattern'];

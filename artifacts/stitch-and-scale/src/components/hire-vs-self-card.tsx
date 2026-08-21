@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
-import { projectStorage, type ProjectStorageHandle } from '@/lib/storage-lib';
+import { useMemo, useState } from 'react';
+import { useProjectStorage, useProjectStorageState } from '@/lib/storage-lib';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -43,12 +43,14 @@ function defaults(): StoredHire {
   };
 }
 
-function loadStored(handle: ProjectStorageHandle<StoredHire>): StoredHire {
+// CHK-152: pure derivation over the raw stored value — takes no
+// handle, so it can never reach for a freshly-created handle in an initializer.
+function loadStored(raw: StoredHire | null): StoredHire {
   try {
-    const parsed = handle.read();
-    if (parsed) {
-      if (parsed && typeof parsed.opportunityRate === 'number') {
-        return { ...defaults(), ...parsed };
+    
+    if (raw) {
+      if (raw && typeof raw.opportunityRate === 'number') {
+        return { ...defaults(), ...raw };
       }
     }
   } catch {
@@ -64,15 +66,16 @@ const fmtDec = (n: number, digits = 1) =>
 
 export function HireVsSelfCard({ project }: { project: PatternProject }) {
   // issue #4 project seam: one scoped store per project; the legacy flat key 'kskhirevsself-v1' is folded in on first read, then removed.
-  const handle = useMemo(() => projectStorage<StoredHire>('hirevsself', project.id, ['kskhirevsself-v1']), [project.id]);
+  // CHK-152 (QUEUE-010): the old useMemo handle + `useState(() =>
+// loadStored(handle))` lazy initializer was the crash class under HMR.
+// Now flows through the shared seam: stable handle, memoized derivation.
+const handle = useProjectStorage<StoredHire>('hirevsself', project.id, ['kskhirevsself-v1']);
   const { toast } = useToast();
   const { language } = useSettings();
   const copyText = HIRE_VS_SELF_COPY[language];
-  const [stored, setStored] = useState(() => loadStored(handle));
-
-  useEffect(() => {
-    handle.write(stored);
-  }, [stored]);
+  const [stored, setStored] = useProjectStorageState(handle, (raw) => loadStored(raw));
+  // CHK-152: persistence owned by the seam's state hook — a manual
+  // write-on-change effect would double-write every update.
 
   const result = useMemo(
     () =>

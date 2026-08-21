@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
-import { projectStorage, type ProjectStorageHandle } from '@/lib/storage-lib';
+import { useProjectStorage, useProjectStorageState } from '@/lib/storage-lib';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -30,17 +30,16 @@ function defaultStored(): StoredRetention {
   return { input: { ...DEFAULT_RETENTION } };
 }
 
-function loadStored(handle: ProjectStorageHandle<StoredRetention>): StoredRetention {
+function loadStored(raw: StoredRetention | null): StoredRetention {
   try {
-    const parsed = handle.read();
-    if (parsed) {
-      if (parsed && parsed.input && typeof parsed.input.listSize === 'number') {
+    
+    
+      if (raw && raw.input && typeof raw.input.listSize === 'number') {
         return {
           ...defaultStored(),
-          ...parsed,
-          input: { ...defaultStored().input, ...parsed.input },
+          ...raw,
+          input: { ...defaultStored().input, ...raw.input },
         };
-      }
     }
   } catch {
     /* storage unreadable — start fresh */
@@ -82,13 +81,9 @@ export function RetentionCard({ project: _project }: { project: PatternProject }
   const { language } = useSettings();
   const copyText = RETENTION_COPY[language];
   // issue #4 project seam: scoped store per project; flat key folded in on first read, then removed.
-  const handle = useMemo(() => projectStorage<StoredRetention>('retain', _project.id, [STORAGE_KEY]), [_project.id]);
+  const handle = useProjectStorage<StoredRetention>('retain', _project.id, [STORAGE_KEY]);
   const { toast } = useToast();
-  const [stored, setStored] = useState(() => loadStored(handle));
-
-  useEffect(() => {
-    handle.write(stored);
-  }, [stored]);
+  const [stored, setStored] = useProjectStorageState(handle, (raw) => loadStored(raw));
 
   const patchInput = (patch: Partial<RetentionInput>) =>
     setStored((s) => ({ input: { ...s.input, ...patch } }));

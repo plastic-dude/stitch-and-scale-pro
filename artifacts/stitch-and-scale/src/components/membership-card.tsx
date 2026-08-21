@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { projectStorage, type ProjectStorageHandle } from '@/lib/storage-lib';
+import { useProjectStorage, useProjectStorageState } from '@/lib/storage-lib';
 import { useSettings } from '@/context/SettingsContext';
 import { MEMBERSHIP_COPY } from '@/lib/membership-copy';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -59,14 +59,13 @@ function defaultStored(): StoredMembership {
   };
 }
 
-function loadStored(handle: ProjectStorageHandle<StoredMembership>): StoredMembership {
+function loadStored(raw: StoredMembership | null): StoredMembership {
   try {
-    const parsed = handle.read();
-    if (parsed) {
-      if (parsed && Array.isArray(parsed.tiers) && parsed.tiers.length > 0) {
-        return { ...defaultStored(), ...parsed, tiers: parsed.tiers.map((t: Partial<MembershipTier>) => ({ ...defaultStored().tiers[0], ...t })) };
+    
+    
+      if (raw && Array.isArray(raw.tiers) && raw.tiers.length > 0) {
+        return { ...defaultStored(), ...raw, tiers: raw.tiers.map((t: Partial<MembershipTier>) => ({ ...defaultStored().tiers[0], ...t })) };
       }
-    }
   } catch {
     /* storage unreadable — start fresh */
   }
@@ -78,15 +77,11 @@ const fmt$ = (n: number) =>
 
 export function MembershipCard({ project }: { project: PatternProject }) {
   // issue #4 project seam: one scoped store per project; the legacy flat key 'mspl-v1' is folded in on first read, then removed.
-  const handle = useMemo(() => projectStorage<StoredMembership>('membership', project.id, ['mspl-v1']), [project.id]);
+  const handle = useProjectStorage<StoredMembership>('membership', project.id, ['mspl-v1']);
   const { toast } = useToast();
   const { language } = useSettings();
   const copyText = MEMBERSHIP_COPY[language];
-  const [stored, setStored] = useState(() => loadStored(handle));
-
-  useEffect(() => {
-    handle.write(stored);
-  }, [stored]);
+  const [stored, setStored] = useProjectStorageState(handle, (raw) => loadStored(raw));
 
   const input = useMemo<MembershipInput>(() => ({ ...stored, platform: stored.platform }), [stored]);
   const result = useMemo(() => analyzeMembership(input), [input]);

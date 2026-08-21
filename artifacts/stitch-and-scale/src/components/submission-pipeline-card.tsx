@@ -1,5 +1,5 @@
-import { useMemo, useState, useEffect } from 'react';
-import { projectStorage, type ProjectStorageHandle } from '@/lib/storage-lib';
+import { useMemo, useState } from 'react';
+import { useProjectStorage, useProjectStorageState } from '@/lib/storage-lib';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -38,12 +38,11 @@ interface StoredRates extends ProductionRates {
   yarnWeight: string;
 }
 
-function loadStored(handle: ProjectStorageHandle<{ calls: StoredCall[]; rates: StoredRates }>): { calls: StoredCall[]; rates: StoredRates } {
+function loadStored(raw: { calls: StoredCall[]; rates: StoredRates } | null): { calls: StoredCall[]; rates: StoredRates } {
   try {
-    const parsed = handle.read();
-    if (parsed) {
-      if (Array.isArray(parsed.calls) && parsed.rates) {
-        return { calls: parsed.calls, rates: { ...defaultRates(), ...parsed.rates } };
+    if (raw) {
+      if (Array.isArray(raw.calls) && raw.rates) {
+        return { calls: raw.calls, rates: { ...defaultRates(), ...raw.rates } };
       }
     }
   } catch {
@@ -90,15 +89,16 @@ export function SubmissionPipelineCard({ project }: { project: PatternProject })
   const { language } = useSettings();
   const copy = SUBMISSION_PIPELINE_COPY[language];
   // issue #4 project seam: one scoped store per project; the legacy flat key 'snsp-v1' is folded in on first read, then removed.
-  const handle = useMemo(() => projectStorage<{ calls: StoredCall[]; rates: StoredRates }>('submitpipe', project.id, ['snsp-v1']), [project.id]);
+  // CHK-152 (QUEUE-010): the old useMemo handle + `useState(() =>
+// loadStored(handle))` lazy initializer was the crash class under HMR.
+// Now flows through the shared seam: stable handle, memoized derivation.
+const handle = useProjectStorage<{ calls: StoredCall[]; rates: StoredRates }>('submitpipe', project.id, ['snsp-v1']);
   const { toast } = useToast();
-  const [stored, setStored] = useState(() => loadStored(handle));
+  const [stored, setStored] = useProjectStorageState(handle, (raw) => loadStored(raw));
   const [editingId, setEditingId] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
-
-  useEffect(() => {
-    handle.write(stored);
-  }, [stored]);
+  // CHK-152: persistence owned by the seam's state hook — a manual
+  // write-on-change effect would double-write every update.
 
   const editing = stored.calls.find((c) => c.id === editingId);
   const selected = stored.calls.find((c) => c.id === selectedId);

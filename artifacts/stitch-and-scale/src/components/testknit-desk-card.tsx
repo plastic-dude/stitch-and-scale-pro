@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo } from 'react';
 import { getLabStatCopy, type LabStatCopy } from '@/lib/lab-stat-copy';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { AlertTriangle, Users } from 'lucide-react';
 import { PatternProject, ALL_SIZES } from '@/lib/grading-engine';
-import { projectStorage } from '@/lib/storage-lib';
+import { useProjectStorage, useProjectStorageState } from '@/lib/storage-lib';
 import {
   analyzeTestKnit, DEFAULT_TESTKNIT, formatUsd,
   type TestKnitInputs, type TesterInput, type SizeCoverage,
@@ -23,10 +23,11 @@ function defaultStored(): TestKnitInputs {
   };
 }
 
-function loadStored(handle: ReturnType<typeof projectStorage<TestKnitInputs>>): TestKnitInputs {
-  const parsed = handle.read();
-  if (parsed && Array.isArray(parsed.testers)) {
-    const merged = { ...defaultStored(), ...parsed };
+// CHK-152: pure derivation over the raw stored value — takes no handle, so
+// it can never reach for a freshly-created handle inside an initializer.
+function loadStored(raw: TestKnitInputs | null): TestKnitInputs {
+  if (raw && Array.isArray(raw.testers)) {
+    const merged = { ...defaultStored(), ...raw };
     return merged as TestKnitInputs;
   }
   return defaultStored();
@@ -79,15 +80,12 @@ function BoolField({ id, label, value, onChange }: {
 export function TestKnitDeskCard({ project }: { project: PatternProject }) {
   const { language } = useSettings();
   const ls: LabStatCopy = getLabStatCopy(language);
-  const handle = useMemo(
-    () => projectStorage<TestKnitInputs>('testknit', project.id || '', []),
-    [project.id],
-  );
-  const [stored, setStored] = useState<TestKnitInputs>(() => loadStored(handle));
-
-  useEffect(() => {
-    handle.write(stored);
-  }, [stored, handle]);
+  // CHK-152 (QUEUE-010): old pattern — useMemo handle + `useState(() =>
+  // loadStored(handle))` lazy initializer — created a fresh handle on every
+  // HMR module re-run and touched it mid-transition; the crash class. Now
+  // flows through the shared seam: stable handle, memoized derivation.
+  const handle = useProjectStorage<TestKnitInputs>('testknit', project.id || '', []);
+  const [stored, setStored] = useProjectStorageState(handle, (raw) => loadStored(raw));
 
   const patch = (patch: Partial<TestKnitInputs>) => setStored((s) => ({ ...s, ...patch }));
 

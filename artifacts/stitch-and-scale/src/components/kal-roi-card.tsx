@@ -1,5 +1,5 @@
-import { useMemo, useState, useEffect } from 'react';
-import { projectStorage, type ProjectStorageHandle } from '@/lib/storage-lib';
+import { useMemo, useState } from 'react';
+import { useProjectStorage, useProjectStorageState } from '@/lib/storage-lib';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -64,12 +64,12 @@ function defaultRates(): StoredRates {
   };
 }
 
-function loadStored(handle: ProjectStorageHandle<{ event: KalEvent; rates: StoredRates }>): { event: KalEvent; rates: StoredRates } {
+function loadStored(raw: { event: KalEvent; rates: StoredRates } | null): { event: KalEvent; rates: StoredRates } {
   try {
-    const parsed = handle.read();
-    if (parsed) {
-      if (parsed && parsed.event) {
-        return { event: { ...defaultKalEvent(), ...parsed.event }, rates: { ...defaultRates(), ...parsed.rates } };
+    
+    if (raw) {
+      if (raw && raw.event) {
+        return { event: { ...defaultKalEvent(), ...raw.event }, rates: { ...defaultRates(), ...raw.rates } };
       }
     }
   } catch {
@@ -85,13 +85,14 @@ export function KalRoiCard({ project }: { project: PatternProject }) {
   const { language } = useSettings();
   const copyText = KAL_ROI_COPY[language];
   // issue #4 project seam: one scoped store per project; the legacy flat key 'kskroi-v1' is folded in on first read, then removed.
-  const handle = useMemo(() => projectStorage<{ event: KalEvent; rates: StoredRates }>('kalroi', project.id, ['kskroi-v1']), [project.id]);
+  // CHK-152 (QUEUE-010): the old useMemo handle + `useState(() =>
+// loadStored(handle))` lazy initializer was the crash class under HMR.
+// Now flows through the shared seam: stable handle, memoized derivation.
+const handle = useProjectStorage<{ event: KalEvent; rates: StoredRates }>('kalroi', project.id, ['kskroi-v1']);
   const { toast } = useToast();
-  const [stored, setStored] = useState(() => loadStored(handle));
-
-  useEffect(() => {
-    handle.write(stored);
-  }, [stored]);
+  const [stored, setStored] = useProjectStorageState(handle, (raw) => loadStored(raw));
+  // CHK-152: persistence owned by the seam's state hook — a manual
+  // write-on-change effect would double-write every update.
 
   const result = useMemo(() => analyzeKal(stored.event), [stored.event]);
 

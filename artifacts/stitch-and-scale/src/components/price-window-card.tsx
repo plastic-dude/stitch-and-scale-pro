@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { projectStorage, type ProjectStorageHandle } from '@/lib/storage-lib';
+import { useProjectStorage, useProjectStorageState } from '@/lib/storage-lib';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -37,17 +37,14 @@ function defaultStored(): StoredPriceWindow {
   };
 }
 
-function loadStored(handle: ProjectStorageHandle<StoredPriceWindow>): StoredPriceWindow {
+function loadStored(raw: StoredPriceWindow | null): StoredPriceWindow {
   try {
-    const parsed = handle.read();
-    if (parsed) {
-      if (parsed && parsed.input && typeof parsed.input.listPrice === 'number') {
-        return {
-          ...defaultStored(),
-          ...parsed,
-          input: { ...defaultStored().input, ...parsed.input },
-        };
-      }
+    if (raw && raw.input && typeof raw.input.listPrice === 'number') {
+      return {
+        ...defaultStored(),
+        ...raw,
+        input: { ...defaultStored().input, ...raw.input },
+      };
     }
   } catch {
     /* storage unreadable — start fresh */
@@ -84,13 +81,9 @@ export function PriceWindowCard({ project }: { project: PatternProject }) {
   const { language } = useSettings();
   const copyText = PRICE_WINDOW_COPY[language];
   // issue #4 project seam: scoped store per project; flat key folded in on first read, then removed.
-  const handle = useMemo(() => projectStorage<StoredPriceWindow>('pricewin', project.id, [STORAGE_KEY]), [project.id]);
+  const handle = useProjectStorage<StoredPriceWindow>('pricewin', project.id, [STORAGE_KEY]);
   const { toast } = useToast();
-  const [stored, setStored] = useState(() => loadStored(handle));
-
-  useEffect(() => {
-    handle.write(stored);
-  }, [stored]);
+  const [stored, setStored] = useProjectStorageState(handle, (raw) => loadStored(raw));
 
   const patchInput = (patch: Partial<PriceWindowInput>) =>
     setStored((s) => ({ ...s, input: { ...s.input, ...patch } }));

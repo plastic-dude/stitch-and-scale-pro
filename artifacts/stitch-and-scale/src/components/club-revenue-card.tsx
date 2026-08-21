@@ -1,6 +1,6 @@
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState } from 'react';
 import { getLabStatCopy, type LabStatCopy } from '@/lib/lab-stat-copy';
-import { projectStorage, type ProjectStorageHandle } from '@/lib/storage-lib';
+import { useProjectStorage, useProjectStorageState } from '@/lib/storage-lib';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -60,16 +60,18 @@ function defaultState(): StoredState {
   };
 }
 
-function loadStored(handle: ProjectStorageHandle<StoredState>): StoredState {
+// CHK-152: pure derivation over the raw stored value — takes no
+// handle, so it can never reach for a freshly-created handle in an initializer.
+function loadStored(raw: StoredState | null): StoredState {
   try {
-    const parsed = handle.read();
-    if (parsed) {
-      if (parsed && parsed.club) {
+    
+    if (raw) {
+      if (raw && raw.club) {
         return {
           ...defaultState(),
-          ...parsed,
-          club: { ...defaultClubInput(), ...parsed.club },
-          email: { ...defaultState().email, ...parsed.email },
+          ...raw,
+          club: { ...defaultClubInput(), ...raw.club },
+          email: { ...defaultState().email, ...raw.email },
         };
       }
     }
@@ -87,13 +89,14 @@ export function ClubRevenueCard({ project }: { project: PatternProject }) {
   const { language } = useSettings();
   const ls: LabStatCopy = getLabStatCopy(language);
   const copyText = CLUB_REVENUE_COPY[language];
-  const handle = useMemo(() => projectStorage<StoredState>('clubrev', project.id, ['kskclubrev-v1']), [project.id]);
+  // CHK-152 (QUEUE-010): the old useMemo handle + `useState(() =>
+// loadStored(handle))` lazy initializer was the crash class under HMR.
+// Now flows through the shared seam: stable handle, memoized derivation.
+const handle = useProjectStorage<StoredState>('clubrev', project.id, ['kskclubrev-v1']);
   const { toast } = useToast();
-  const [stored, setStored] = useState(() => loadStored(handle));
-
-  useEffect(() => {
-    handle.write(stored);
-  }, [stored]);
+  const [stored, setStored] = useProjectStorageState(handle, (raw) => loadStored(raw));
+  // CHK-152: persistence owned by the seam's state hook — a manual
+  // write-on-change effect would double-write every update.
 
   const analysis = useMemo(() => modelClub(stored.club), [stored.club]);
   const perks = useMemo(() => auditPremiumTier(stored.club.premiumDelivered), [stored.club.premiumDelivered]);

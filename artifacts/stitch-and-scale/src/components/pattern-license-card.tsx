@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
-import { projectStorage, type ProjectStorageHandle } from '@/lib/storage-lib';
+import { useMemo } from 'react';
+import { useProjectStorage, useProjectStorageState } from '@/lib/storage-lib';
 import { useSettings } from '@/context/SettingsContext';
 import { PATTERN_LICENSE_COPY } from '@/lib/pattern-license-copy';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -60,12 +60,13 @@ function defaultStored(): StoredLicence {
   };
 }
 
-function loadStored(handle: ProjectStorageHandle<StoredLicence>): StoredLicence {
+// CHK-152: pure derivation over the raw stored value — takes no
+// handle, so it can never reach for a freshly-created handle in an initializer.
+function loadStored(raw: StoredLicence | null): StoredLicence {
   try {
-    const parsed = handle.read();
-    if (parsed) {
-      if (parsed && parsed.offer) {
-        return { ...defaultStored(), ...parsed, offer: { ...defaultStored().offer, ...parsed.offer } };
+    if (raw) {
+      if (raw && raw.offer) {
+        return { ...defaultStored(), ...raw, offer: { ...defaultStored().offer, ...raw.offer } };
       }
     }
   } catch {
@@ -79,15 +80,16 @@ const fmt$ = (n: number) =>
 
 export function PatternLicensePlannerCard({ project }: { project: PatternProject }) {
   // issue #4 project seam: one scoped store per project; the legacy flat key 'pslc-v1' is folded in on first read, then removed.
-  const handle = useMemo(() => projectStorage<StoredLicence>('pslicense', project.id, ['pslc-v1']), [project.id]);
+  // CHK-152 (QUEUE-010): the old useMemo handle + `useState(() =>
+  // loadStored(handle))` lazy initializer was the crash class under HMR.
+  // Now flows through the shared seam: stable handle, memoized derivation.
+  const handle = useProjectStorage<StoredLicence>('pslicense', project.id, ['pslc-v1']);
   const { toast } = useToast();
   const { language } = useSettings();
   const copyText = PATTERN_LICENSE_COPY[language];
-  const [stored, setStored] = useState(() => loadStored(handle));
-
-  useEffect(() => {
-    handle.write(stored);
-  }, [stored]);
+  const [stored, setStored] = useProjectStorageState(handle, (raw) => loadStored(raw));
+  // CHK-152: persistence owned by the seam's state hook — a manual
+  // write-on-change effect would double-write every update.
 
   const result = useMemo(
     () =>

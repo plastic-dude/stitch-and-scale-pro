@@ -19,7 +19,7 @@
  */
 import React, { useMemo, useState, useEffect } from 'react';
 import { getLabStatCopy, type LabStatCopy } from '@/lib/lab-stat-copy';
-import { projectStorage, type ProjectStorageHandle } from '@/lib/storage-lib';
+import { useProjectStorage, useProjectStorageState } from '@/lib/storage-lib';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -63,10 +63,11 @@ interface StoredState {
   };
 }
 
-function loadStored(handle: ProjectStorageHandle<StoredState>): StoredState {
+// CHK-152: pure derivation over the raw stored value — takes no handle, so
+// it can never reach for a freshly-created handle inside an initializer.
+function loadStored(raw: StoredState | null): StoredState {
   try {
-    const parsed = handle.read();
-    if (parsed && typeof parsed === 'object') return parsed as StoredState;
+    if (raw && typeof raw === 'object') return raw as StoredState;
   } catch {
     /* storage unreadable — start fresh */
   }
@@ -112,14 +113,18 @@ export function TranslationBundleCard({ project }: { project: PatternProject }) 
   // legacy flat key 'stitch-and-scale-translation-bundle' was projectId-partitioned
   // (projects shared one blob, silently colliding). Read-once migration folds
   // this project's partition into the scoped key, then removes the flat key.
-  const handle = useMemo(() => projectStorage<StoredState>('translate', project.id, ['stitch-and-scale-translation-bundle'], { partition: true }), [project.id]);
+  // CHK-152 (QUEUE-010): handle now comes from the shared seam — stable by
+  // key string across re-renders and HMR module re-evaluation, instead of a
+  // useMemo that built a fresh handle on every module re-run.
+  const handle = useProjectStorage<StoredState>('translate', project.id, ['stitch-and-scale-translation-bundle'], { partition: true });
   const { toast } = useToast();
   const { language } = useSettings();
   const ls: LabStatCopy = getLabStatCopy(language);
   const tc = getToastCopy(language);
-
-  const stored = React.useMemo(() => loadStored(handle), [handle]);
-
+  // CHK-152: stored comes from a memoized derivation over the stable seam
+  // handle — never from a lazy initializer touching a handle (the crash
+  // class). Mutations persist through the seam's write-on-change effect.
+  const [stored, setStored] = useProjectStorageState(handle, (raw) => loadStored(raw));
   const [wordCount, setWordCount] = React.useState(stored.translation?.wordCount ?? 2000);
   const [repeatedWords, setRepeatedWords] = React.useState(stored.translation?.repeatedWords ?? 400);
   const [perWordRate, setPerWordRate] = React.useState(stored.translation?.perWordRate ?? 0.01);
@@ -151,8 +156,11 @@ export function TranslationBundleCard({ project }: { project: PatternProject }) 
   const [patternRetail, setPatternRetail] = React.useState(8);
   const [patternSoloCopies, setPatternSoloCopies] = React.useState(5);
 
+  // CHK-152: persistence owned by the seam's state hook — one stable effect
+  // keyed on the scoped-key string, replacing the 17-field write effect
+  // that re-ran through a freshly-created handle on every HMR module re-run.
   React.useEffect(() => {
-    handle.write({
+    setStored({
       translation: { wordCount, repeatedWords, perWordRate, repeatDiscount, fixedFees, homeMonthlyCopies, pricePerCopy, channelFeeRate },
       markets,
       bundle: { bundlePrice, expectedUnits, channelFeeRate: bundleChannelFeeRate, hostFeeRate, splitMode, designerCount, partners },

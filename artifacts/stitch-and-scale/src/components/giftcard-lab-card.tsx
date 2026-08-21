@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { AlertTriangle, BadgeCheck, BadgeX, HelpCircle, Info, Lightbulb, RefreshCw } from "lucide-react";
 import {
   analyzeGiftCard,
@@ -10,7 +10,7 @@ import {
 import type { PatternProject } from "@/lib/grading-engine";
 import { useSettings } from "@/context/SettingsContext";
 import { giftCardComplianceNote, giftCardEscheatOption, giftCardFlagNote, giftCardFlagTitle, giftCardInputHint, giftCardInputLabel, giftCardVerdictLabel, giftCardVerdictNote, GIFTCARD_COPY } from '@/lib/giftcard-copy';
-import { projectStorage } from "@/lib/storage-lib";
+import { useProjectStorage, useProjectStorageState } from "@/lib/storage-lib";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -33,36 +33,33 @@ interface StoredState {
   ts: number;
 }
 
-function loadStored(project: PatternProject): GiftCardInput {
-  try {
-    const handle = projectStorage<StoredState>("giftcard", project.id, [STORAGE_KEY]);
-    const stored = handle.read();
-    if (stored && stored.input) {
-      const n = (v: unknown) => (typeof v === "number" && isFinite(v) ? v : undefined);
-      return {
-        ...DEFAULT_GIFTCARD,
-        ...stored.input,
-        cardSalesPerMonth: n(stored.input.cardSalesPerMonth) ?? DEFAULT_GIFTCARD.cardSalesPerMonth,
-        refundCreditPerMonth: n(stored.input.refundCreditPerMonth) ?? DEFAULT_GIFTCARD.refundCreditPerMonth,
-        redemptionRate: n(stored.input.redemptionRate) ?? DEFAULT_GIFTCARD.redemptionRate,
-        spendUpliftPct: n(stored.input.spendUpliftPct) ?? DEFAULT_GIFTCARD.spendUpliftPct,
-        redemptionLagMonths: n(stored.input.redemptionLagMonths) ?? DEFAULT_GIFTCARD.redemptionLagMonths,
-        dormancyMonths: n(stored.input.dormancyMonths) ?? DEFAULT_GIFTCARD.dormancyMonths,
-        escheatTakePct: n(stored.input.escheatTakePct) ?? DEFAULT_GIFTCARD.escheatTakePct,
-        cashBackThreshold: n(stored.input.cashBackThreshold) ?? DEFAULT_GIFTCARD.cashBackThreshold,
-        processingPct: n(stored.input.processingPct) ?? DEFAULT_GIFTCARD.processingPct,
-        redeemedCostPct: n(stored.input.redeemedCostPct) ?? DEFAULT_GIFTCARD.redeemedCostPct,
-        breakageAssumption: n(stored.input.breakageAssumption) ?? DEFAULT_GIFTCARD.breakageAssumption,
-        adminHoursPerMonth: n(stored.input.adminHoursPerMonth) ?? DEFAULT_GIFTCARD.adminHoursPerMonth,
-        hourlyRate: n(stored.input.hourlyRate) ?? DEFAULT_GIFTCARD.hourlyRate,
-        horizonMonths: n(stored.input.horizonMonths) ?? DEFAULT_GIFTCARD.horizonMonths,
-        feeIncomePerMonth: n(stored.input.feeIncomePerMonth) ?? DEFAULT_GIFTCARD.feeIncomePerMonth,
-      };
-    }
-  } catch {
-    // fall through to defaults
-  }
-  return { ...DEFAULT_GIFTCARD };
+const n = (v: unknown) => (typeof v === "number" && isFinite(v) ? v : undefined);
+/**
+ * Hydrate a raw stored gift-card input into a validated one.
+ * Extracted from the old `loadStored` so the shared seam derivation
+ * (CHK-152) can reuse it without ever creating a handle itself — the crash
+ * class was born from initializers that reached for freshly-created handles.
+ */
+function hydrateInput(raw: Partial<GiftCardInput>): GiftCardInput {
+  return {
+    ...DEFAULT_GIFTCARD,
+    ...raw,
+    cardSalesPerMonth: n(raw.cardSalesPerMonth) ?? DEFAULT_GIFTCARD.cardSalesPerMonth,
+    refundCreditPerMonth: n(raw.refundCreditPerMonth) ?? DEFAULT_GIFTCARD.refundCreditPerMonth,
+    redemptionRate: n(raw.redemptionRate) ?? DEFAULT_GIFTCARD.redemptionRate,
+    spendUpliftPct: n(raw.spendUpliftPct) ?? DEFAULT_GIFTCARD.spendUpliftPct,
+    redemptionLagMonths: n(raw.redemptionLagMonths) ?? DEFAULT_GIFTCARD.redemptionLagMonths,
+    dormancyMonths: n(raw.dormancyMonths) ?? DEFAULT_GIFTCARD.dormancyMonths,
+    escheatTakePct: n(raw.escheatTakePct) ?? DEFAULT_GIFTCARD.escheatTakePct,
+    cashBackThreshold: n(raw.cashBackThreshold) ?? DEFAULT_GIFTCARD.cashBackThreshold,
+    processingPct: n(raw.processingPct) ?? DEFAULT_GIFTCARD.processingPct,
+    redeemedCostPct: n(raw.redeemedCostPct) ?? DEFAULT_GIFTCARD.redeemedCostPct,
+    breakageAssumption: n(raw.breakageAssumption) ?? DEFAULT_GIFTCARD.breakageAssumption,
+    adminHoursPerMonth: n(raw.adminHoursPerMonth) ?? DEFAULT_GIFTCARD.adminHoursPerMonth,
+    hourlyRate: n(raw.hourlyRate) ?? DEFAULT_GIFTCARD.hourlyRate,
+    horizonMonths: n(raw.horizonMonths) ?? DEFAULT_GIFTCARD.horizonMonths,
+    feeIncomePerMonth: n(raw.feeIncomePerMonth) ?? DEFAULT_GIFTCARD.feeIncomePerMonth,
+  };
 }
 
 function NumField(props: {
@@ -129,19 +126,22 @@ function effectiveEscheatTake(input: GiftCardInput): number {
 export function GiftCardLabCard({ project }: { project: PatternProject }) {
   const { language } = useSettings();
   const copy = GIFTCARD_COPY[language];
-  const [input, setInput] = useState<GiftCardInput>(() => loadStored(project));
+  // CHK-152 (QUEUE-010): the old `useState(() => loadStored(project))` lazy
+  // initializer created a fresh handle on every module re-run under HMR and
+  // touched it mid-transition — the crash class. State now flows through the
+  // shared seam: a stable handle plus a memoized derivation, so no
+  // initializer ever reaches for a handle.
+  const handle = useProjectStorage<StoredState>("giftcard", project.id, [STORAGE_KEY]);
+  const [stored, setStored] = useProjectStorageState(handle, (raw) => ({
+    input: raw?.input ? hydrateInput(raw.input) : { ...DEFAULT_GIFTCARD },
+    ts: raw?.ts ?? 0,
+  }));
+  const input = stored.input;
 
   const result: GiftCardResult = useMemo(() => analyzeGiftCard(input), [input]);
 
-  const persist = (next: GiftCardInput) => {
-    setInput(next);
-    try {
-      const handle = projectStorage<StoredState>("giftcard", project.id, [STORAGE_KEY]);
-      handle.write({ input: next, ts: Date.now() });
-    } catch {
-      // storage unavailable — UI still works in memory
-    }
-  };
+  const persist = (next: GiftCardInput) =>
+    setStored({ input: next, ts: Date.now() });
 
   const set = <K extends keyof GiftCardInput>(key: K, value: GiftCardInput[K]) =>
     persist({ ...input, [key]: value });

@@ -20,6 +20,7 @@
  * after sync is added (offline-first, same reconciliation model).
  */
 import { get as idbGet, set as idbSet, keys as idbKeys } from 'idb-keyval';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { PatternProject } from '@/lib/grading-engine';
 
 export const PROJECTS_KEY = 'stitch-and-scale-v1';
@@ -264,6 +265,82 @@ export function projectStorage<T>(
   // this handle is created for a projectId that hasn't written yet.
   for (const legacy of legacyKeys) handle.migrateFrom(legacy, { partition });
   return handle;
+}
+
+/**
+ * THE REACT SEAM (CHK-152 / QUEUE-010 — HMR crash class).
+ *
+ * WHY: the four lazy-loader cards (giftcard, testknit-desk, translation-
+ * bundle, trunk-show) hand-built handles with `useMemo(() =>
+ * projectStorage(...), [project.id])` and then fed the handle into a
+ * `useState(() => loader(handle))` lazy initializer. Under Vite 7 HMR the
+ * module body re-runs while the component is mid-transition, and a lazy
+ * initializer that touches a freshly-disposed handle is exactly where the
+ * "Cannot read properties of null (reading 'useState')" crash was born.
+ *
+ * THE RULE: no component may derive a useState lazy initializer from a
+ * useMemo-created handle. All per-project storage state goes through the
+ * two hooks below. Handles are stable by key string (independent of object
+ * identity), and stored state is derived through useMemo instead — so an
+ * HMR module re-evaluation can never hand a component a half-dead handle.
+ */
+
+/**
+ * Stable project-storage handle for a React component.
+ * Identity is stable as long as prefix + projectId stay equal — a re-render
+ * or HMR module re-evaluation never hands back a new handle for the same
+ * key, which is the property that killed the cards.
+ */
+export function useProjectStorage<T>(
+  prefix: string,
+  projectId: string,
+  legacyKeys: string[] = [],
+  opts?: { partition?: boolean },
+): ProjectStorageHandle<T> {
+  // useMemo keyed on the canonical string shape of every parameter — the
+  // handle object identity is stable even when HMR re-runs this module.
+  return useMemo(
+    () => projectStorage<T>(prefix, projectId, legacyKeys, opts),
+    // eslint-disable-next-line react-hooks/exhaustive-deps — projectId is the
+    // cache key by identity; String() keeps it from being an opaque object.
+    [prefix, String(projectId), legacyKeys.join(','), String(opts?.partition ?? false)],
+  );
+}
+
+/**
+ * Stored state derived from a stable project-storage handle, persisted on
+ * every change. Returns [stored, setStored] with the same shape as useState,
+ * so cards migrate with a two-line diff.
+ *
+ * Derivation rule: the loaded value always comes from a MEMOIZED derivation
+ * over the handle, never from a useState lazy initializer — that was the
+ * crash pattern. Persistence rides an effect keyed on the scoped-key
+ * string, which survives HMR re-mounts unchanged.
+ */
+export function useProjectStorageState<T>(
+  handle: ProjectStorageHandle<T>,
+  load: (raw: T | null) => T,
+): [T, (next: T | ((prev: T) => T)) => void] {
+  // Memoized derivation — not a useState lazy initializer.
+  const raw = useMemo(() => handle.read(), [handle.scopedKey]); // eslint-disable-line react-hooks/exhaustive-deps
+  const initial = useMemo(() => load(raw), []); // eslint-disable-line react-hooks/exhaustive-deps
+  const [stored, setStored] = useState<T>(initial);
+  // Persist every change through the handle's own write path. The effect
+  // deps are stable strings/handle across HMR, so no re-mount replays a
+  // write through a disposed handle.
+  useEffect(() => {
+    handle.write(stored);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stored, handle.scopedKey]);
+  // Updater-function form (setState(s => ...)) keeps the seam as a drop-in
+  // replacement for every card's existing useState usage.
+  const update = useCallback(
+    (next: T | ((prev: T) => T)) => {
+      setStored((prev) => (typeof next === 'function' ? (next as (prev: T) => T)(prev) : next));
+    },
+    [],
+  );
+  return [stored, update];
 }
 
 export function recordBackupEvent(sizeBytes = 0, projectCount = 0): void {

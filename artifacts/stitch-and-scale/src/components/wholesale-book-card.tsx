@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
-import { projectStorage, type ProjectStorageHandle } from '@/lib/storage-lib';
+import { useMemo, useState } from 'react';
+import { useProjectStorage, useProjectStorageState } from '@/lib/storage-lib';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -59,16 +59,18 @@ function defaults(): StoredState {
   };
 }
 
-function loadStored(handle: ProjectStorageHandle<StoredState>): StoredState {
+// CHK-152: pure derivation over the raw stored value — takes no
+// handle, so it can never reach for a freshly-created handle in an initializer.
+function loadStored(raw: StoredState | null): StoredState {
   try {
-    const parsed = handle.read();
-    if (parsed) {
-      if (parsed && parsed.wholesale) {
+    
+    if (raw) {
+      if (raw && raw.wholesale) {
         return {
           ...defaults(),
-          ...parsed,
-          wholesale: { ...defaults().wholesale, ...parsed.wholesale },
-          book: { ...defaults().book, ...parsed.book },
+          ...raw,
+          wholesale: { ...defaults().wholesale, ...raw.wholesale },
+          book: { ...defaults().book, ...raw.book },
         };
       }
     }
@@ -83,17 +85,18 @@ const fmt$ = (n: number) =>
 
 export function WholesaleBookCard({ project }: { project: PatternProject }) {
   // issue #4 project seam: one scoped store per project; the legacy flat key 'kskwsb-v1' is folded in on first read, then removed.
-  const handle = useMemo(() => projectStorage<StoredState>('wholesalebook', project.id, ['kskwsb-v1']), [project.id]);
+  // CHK-152 (QUEUE-010): the old useMemo handle + `useState(() =>
+// loadStored(handle))` lazy initializer was the crash class under HMR.
+// Now flows through the shared seam: stable handle, memoized derivation.
+const handle = useProjectStorage<StoredState>('wholesalebook', project.id, ['kskwsb-v1']);
   const { toast } = useToast();
   const { language } = useSettings();
   const tc = getToastCopy(language);
   const wbc = getWholesaleBookCopy(language);
 
-  const [stored, setStored] = useState(() => loadStored(handle));
-
-  useEffect(() => {
-    handle.write(stored);
-  }, [stored]);
+  const [stored, setStored] = useProjectStorageState(handle, (raw) => loadStored(raw));
+  // CHK-152: persistence owned by the seam's state hook — a manual
+  // write-on-change effect would double-write every update.
 
   const wholesale = useMemo(() => analyzeWholesaleDeal(stored.wholesale), [stored.wholesale]);
   const pack = useMemo(() => buildWholesalePack(stored.wholesale, wholesale), [stored.wholesale, wholesale]);

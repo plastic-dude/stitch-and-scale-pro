@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
-import { projectStorage, type ProjectStorageHandle } from '@/lib/storage-lib';
+import { useProjectStorage, useProjectStorageState } from '@/lib/storage-lib';
 import {
   Card,
   CardContent,
@@ -95,11 +95,13 @@ interface StoredClub {
   magazine: MagazineDraftState;
 }
 
-function loadStored(handle: ProjectStorageHandle<StoredClub>): StoredClub {
+// CHK-152: pure derivation over the raw stored value — takes no
+// handle, so it can never reach for a freshly-created handle in an initializer.
+function loadStored(raw: StoredClub | null): StoredClub {
   try {
-    const parsed = handle.read();
-    if (parsed && typeof parsed === 'object' && parsed.draft && parsed.magazine) {
-      return { draft: { ...defaultDraft, ...parsed.draft }, magazine: { ...defaultMagazine, ...parsed.magazine } };
+    
+    if (raw && typeof raw === 'object' && raw.draft && raw.magazine) {
+      return { draft: { ...defaultDraft, ...raw.draft }, magazine: { ...defaultMagazine, ...raw.magazine } };
     }
   } catch {
     /* storage unreadable — start fresh */
@@ -171,15 +173,19 @@ export function PatternClubCard({ project }: { project: PatternProject }) {
   // issue #4 project seam (S036): the plan was fully ephemeral — a refresh
   // wiped the designer's numbers. Now persisted per project; the legacy
   // comment 'fully-ephemeral pattern-club-card' is history, not behavior.
-  const handle = useMemo(() => projectStorage<StoredClub>('patternclub', project.id), [project.id]);
-  const [draft, setDraft] = useState<ClubDraftState>(() => loadStored(handle).draft);
-  const [mag, setMag] = useState<MagazineDraftState>(() => loadStored(handle).magazine);
+  // CHK-152 (QUEUE-010): handle now comes from the shared seam — stable by
+// key string across re-renders and HMR module re-evaluation.
+const handle = useProjectStorage<StoredClub>('patternclub', project.id);
+  const [stored, setStored] = useProjectStorageState(handle, (raw) => loadStored(raw));
+  const [draft, setDraft] = useState<ClubDraftState>(stored.draft);
+  const [mag, setMag] = useState<MagazineDraftState>(stored.magazine);
   const { toast } = useToast();
   const { language } = useSettings();
   const copy = PATTERN_CLUB_COPY[language];
-
+  // CHK-152: persistence owned by the seam's state hook — re-sync
+  // both drafts into the seam store whenever either changes.
   useEffect(() => {
-    handle.write({ draft, magazine: mag });
+    setStored({ draft, magazine: mag });
   }, [draft, mag]);
 
   const result = useMemo(() => {

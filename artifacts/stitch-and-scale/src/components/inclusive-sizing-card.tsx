@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -44,12 +44,14 @@ const DEFAULT_SIZES: SizeRow[] = [
   { label: '2XL', bust: 50, cup: '', broad: false },
 ];
 
-import { projectStorage, type ProjectStorageHandle } from '@/lib/storage-lib';
+import { useProjectStorage, useProjectStorageState } from '@/lib/storage-lib';
 
-function loadStored(handle: ProjectStorageHandle<Stored>): Stored {
+// CHK-152: pure derivation over the raw stored value — takes no
+// handle, so it can never reach for a freshly-created handle in an initializer.
+function loadStored(raw: Stored | null): Stored {
   try {
-    const parsed = handle.read();
-    if (parsed && typeof parsed === 'object' && typeof parsed.price === 'number') return parsed;
+    
+    if (raw && typeof raw === 'object' && typeof raw.price === 'number') return raw;
   } catch {
     // fall through
   }
@@ -91,12 +93,13 @@ export function InclusiveSizingCard({ project }: Props) {
   const { language } = useSettings();
   const copy = INCLUSIVE_SIZING_COPY[language];
   // issue #4 project seam: one scoped store per project; the legacy flat key 'sncis-v1' is folded in on first read, then removed.
-  const handle = useMemo(() => projectStorage<Stored>('incsizing', project.id, ['sncis-v1']), [project.id]);
-  const [stored, setStored] = useState<Stored>(() => loadStored(handle));
-
-  useEffect(() => {
-    handle.write(stored);
-  }, [stored]);
+  // CHK-152 (QUEUE-010): the old useMemo handle + `useState(() =>
+// loadStored(handle))` lazy initializer was the crash class under HMR.
+// Now flows through the shared seam: stable handle, memoized derivation.
+const handle = useProjectStorage<Stored>('incsizing', project.id, ['sncis-v1']);
+  const [stored, setStored] = useProjectStorageState(handle, (raw) => loadStored(raw));
+  // CHK-152: persistence owned by the seam's state hook — a manual
+  // write-on-change effect would double-write every update.
 
   const sizeRows = stored.sizes.length > 0 ? stored.sizes : DEFAULT_SIZES;
 
