@@ -13,8 +13,8 @@ import {
   type StandardsTable,
   gradePattern,
   resolveProjectStandards,
-} from './grading-engine';
-import { analyzeGrading, GRADING_LAB_VERSION, type LabResult } from './grading-lab';
+} from './grading-engine.js';
+import { analyzeGrading, GRADING_LAB_VERSION, type LabResult } from './grading-lab.js';
 
 export const MCP_PROTOCOL_VERSION = '2026-07-28';
 export const MCP_SERVER_NAME = 'stitch-and-scale-pro';

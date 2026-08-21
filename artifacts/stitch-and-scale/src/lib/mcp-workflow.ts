@@ -6,10 +6,10 @@ import {
   type McpGradeOutput,
   type McpValidationIssue,
   type McpValidationOutput,
-} from './mcp-contract';
-import { isMcpGradeOutput } from './mcp-contract';
-import { getPdfLabels } from './pdf/labels';
-import { type PatternProject } from './grading-engine';
+} from './mcp-contract.js';
+import { isMcpGradeOutput } from './mcp-contract.js';
+import { getPdfLabels } from './pdf/labels.js';
+import { type PatternProject } from './grading-engine.js';
 
 const MAX_FILENAME_LENGTH = 100;
 const MAX_EXPORT_BYTES = 3 * 1024 * 1024;

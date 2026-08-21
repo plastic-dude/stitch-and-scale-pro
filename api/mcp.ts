@@ -6,7 +6,7 @@ import {
   dispatchMcpRequestAsync,
   parseMcpBody,
   type McpJsonRpcResponse,
-} from '../artifacts/stitch-and-scale/src/lib/mcp-server';
+} from '../artifacts/stitch-and-scale/src/lib/mcp-server.js';
 
 interface VercelRequest extends IncomingMessage {
   body?: unknown;

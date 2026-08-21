@@ -20,7 +20,7 @@ import {
   PatternProject,
   resolveProjectStandards,
   gradePattern,
-} from './grading-engine';
+} from './grading-engine.js';
 
 export const GRADING_LAB_VERSION = 1;
 

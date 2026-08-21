@@ -1,4 +1,4 @@
-import { assessMcpProject, prepareMcpPdfExport } from './mcp-workflow';
+import { assessMcpProject, prepareMcpPdfExport } from './mcp-workflow.js';
 import {
   explainMcpGrade,
   getMcpToolDefinitions,
@@ -10,7 +10,7 @@ import {
   validateMcpProject,
   type McpGradeOutput,
   type McpExplainInput,
-} from './mcp-contract';
+} from './mcp-contract.js';
 
 export const MCP_JSONRPC_VERSION = '2.0';
 export const MCP_MAX_BODY_BYTES = 256 * 1024;
