@@ -1,6 +1,6 @@
-import type { LanguageCode } from '@/lib/i18n';
-import type { BragCardTemplate, BragStats } from '@/lib/brag-card';
-import { fmtMoney } from '@/lib/receipt-lab';
+import type { LanguageCode } from './i18n.js';
+import type { BragCardTemplate, BragStats } from './brag-card.js';
+import { fmtMoney } from './receipt-lab.js';
 
 export interface BragCardCopy {
   sales: string; published: string; profitableMonths: string; bestMonth: string; earned: string; patternSales: string;
