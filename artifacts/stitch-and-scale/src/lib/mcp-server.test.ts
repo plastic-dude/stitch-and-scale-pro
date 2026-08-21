@@ -3,6 +3,7 @@ import { generateId, type PatternProject } from './grading-engine';
 import {
   MCP_MAX_BODY_BYTES,
   dispatchMcpRequest,
+  dispatchMcpRequestAsync,
   mcpInitializeResult,
   parseMcpBody,
 } from './mcp-server';
@@ -33,12 +34,12 @@ describe('MCP server transport contract', () => {
     expect(result.instructions).toContain('never saves');
   });
 
-  it('lists only the three allowlisted read-only tools', () => {
+  it('lists only the allowlisted read-only tools', () => {
     const response = dispatchMcpRequest({ jsonrpc: '2.0', id: 1, method: 'tools/list' });
     expect('result' in response).toBe(true);
     if (!('result' in response)) throw new Error('tools/list failed');
     expect((response.result.tools as Array<{ name: string }>).map(tool => tool.name)).toEqual([
-      'project.validate', 'grading.run', 'grading.explain',
+      'project.intake', 'project.validate', 'grading.run', 'grading.explain', 'export.pattern_pdf',
     ]);
   });
 
@@ -56,12 +57,30 @@ describe('MCP server transport contract', () => {
     expect(response.result.structuredContent).toBeDefined();
   });
 
+  it('returns a real embedded PDF resource only after explicit approval', async () => {
+    const response = await dispatchMcpRequestAsync({
+      jsonrpc: '2.0',
+      id: 'pdf-1',
+      method: 'tools/call',
+      params: { name: 'export.pattern_pdf', arguments: { project: project(), userApproved: true, filename: 'transport-report' } },
+    });
+    expect('result' in response).toBe(true);
+    if (!('result' in response)) throw new Error('PDF export failed');
+    const content = response.result.content as Array<{ type: string; resource?: { mimeType?: string; blob?: string } }>;
+    expect(content[0]?.type).toBe('resource');
+    expect(content[0]?.resource?.mimeType).toBe('application/pdf');
+    expect(content[0]?.resource?.blob?.slice(0, 8)).toBe('JVBERi0x');
+  });
+
   it('rejects unknown tools and missing project arguments without throwing', () => {
     const unknown = dispatchMcpRequest({ jsonrpc: '2.0', id: 2, method: 'tools/call', params: { name: 'storage.read_all', arguments: {} } });
     expect('error' in unknown).toBe(true);
     const missing = dispatchMcpRequest({ jsonrpc: '2.0', id: 3, method: 'tools/call', params: { name: 'grading.run', arguments: {} } });
     expect('error' in missing).toBe(true);
+    const pdf = dispatchMcpRequest({ jsonrpc: '2.0', id: 4, method: 'tools/call', params: { name: 'export.pattern_pdf', arguments: { project: project(), userApproved: true } } });
+    expect('error' in pdf).toBe(true);
     if ('error' in missing) expect(missing.error.code).toBe(-32602);
+    if ('error' in pdf) expect(pdf.error.code).toBe(-32006);
   });
 
   it('returns JSON parse and body-size errors without exposing request data', () => {

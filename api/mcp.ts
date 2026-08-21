@@ -2,7 +2,7 @@ import { timingSafeEqual } from 'node:crypto';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import {
   MCP_JSONRPC_VERSION,
-  dispatchMcpRequest,
+  dispatchMcpRequestAsync,
   parseMcpBody,
   type McpJsonRpcResponse,
 } from '../artifacts/stitch-and-scale/src/lib/mcp-server';
@@ -171,6 +171,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     res.end();
     return;
   }
-  const response = dispatchMcpRequest(parsed.request);
-  writeJson(res, 'error' in response ? 400 : 200, response, origin);
+  try {
+    const response = await dispatchMcpRequestAsync(parsed.request);
+    writeJson(res, 'error' in response ? 400 : 200, response, origin);
+  } catch {
+    writeJson(res, 500, rpcError(-32007, 'MCP operation failed safely. No project or artifact data was persisted.'), origin);
+  }
 }

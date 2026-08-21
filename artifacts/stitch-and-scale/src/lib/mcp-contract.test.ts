@@ -95,7 +95,7 @@ describe('MCP contract', () => {
 
   it('exposes only read-only, non-destructive tools', () => {
     const tools = getMcpToolDefinitions();
-    expect(tools.map(tool => tool.name)).toEqual(['project.validate', 'grading.run', 'grading.explain']);
+    expect(tools.map(tool => tool.name)).toEqual(['project.intake', 'project.validate', 'grading.run', 'grading.explain', 'export.pattern_pdf']);
     for (const tool of tools) {
       expect(tool.annotations.readOnlyHint).toBe(true);
       expect(tool.annotations.destructiveHint).toBe(false);

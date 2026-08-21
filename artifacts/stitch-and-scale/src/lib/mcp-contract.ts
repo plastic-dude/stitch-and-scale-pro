@@ -18,7 +18,7 @@ import { analyzeGrading, GRADING_LAB_VERSION, type LabResult } from './grading-l
 
 export const MCP_PROTOCOL_VERSION = '2026-07-28';
 export const MCP_SERVER_NAME = 'stitch-and-scale-pro';
-export const MCP_SERVER_VERSION = '0.1.0';
+export const MCP_SERVER_VERSION = '0.2.0';
 export const MCP_CONTRACT_VERSION = 1;
 
 const MAX_ID_LENGTH = 120;
@@ -487,11 +487,19 @@ export function isMcpGradeOutput(value: McpGradeOutput | McpValidationOutput): v
 }
 
 export function getMcpToolNames(): string[] {
-  return ['project.validate', 'grading.run', 'grading.explain'];
+  return ['project.intake', 'project.validate', 'grading.run', 'grading.explain', 'export.pattern_pdf'];
 }
 
 export function getMcpToolDefinitions() {
   return [
+    {
+      name: 'project.intake',
+      title: 'Build a safe pattern grading draft',
+      description: 'Normalize an explicitly supplied partial pattern snapshot and identify the next questions. Read-only; never guesses missing measurements and never saves a draft.',
+      inputSchema: { type: 'object', additionalProperties: false, properties: { project: { type: 'object', description: 'Explicitly supplied full or partial project snapshot.' } }, required: ['project'] },
+      outputSchema: { type: 'object' },
+      annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
+    },
     {
       name: 'project.validate',
       title: 'Validate a Stitch & Scale project',
@@ -513,6 +521,27 @@ export function getMcpToolDefinitions() {
       title: 'Explain a grading result',
       description: 'Prepare a constrained explanation from a supplied deterministic grading result. It does not recalculate, save, or share project data.',
       inputSchema: { type: 'object', additionalProperties: false, properties: { intent: { type: 'string', enum: ['explain', 'teach', 'check', 'next-step'] }, grade: { type: 'object' } }, required: ['intent', 'grade'] },
+      outputSchema: { type: 'object' },
+      annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
+    },
+    {
+      name: 'export.pattern_pdf',
+      title: 'Prepare a pattern grading PDF',
+      description: 'Create a real PDF artifact from an explicitly supplied, valid project snapshot after the user confirms the scope and filename. The server returns the file but does not save, publish, share, or email it.',
+      inputSchema: {
+        type: 'object',
+        additionalProperties: false,
+        properties: {
+          project: { type: 'object', description: 'Explicitly supplied project snapshot.' },
+          userApproved: { type: 'boolean', description: 'Must be true only after the user confirms PDF creation, scope, and filename.' },
+          filename: { type: 'string', maxLength: 100 },
+          locale: { type: 'string', enum: ['en', 'de', 'fr', 'es', 'pt'] },
+          includeCover: { type: 'boolean' },
+          includeGaugeSummary: { type: 'boolean' },
+          includeNotes: { type: 'boolean' },
+        },
+        required: ['project', 'userApproved'],
+      },
       outputSchema: { type: 'object' },
       annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
     },

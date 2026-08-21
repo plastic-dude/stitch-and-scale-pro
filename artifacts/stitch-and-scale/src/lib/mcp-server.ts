@@ -1,3 +1,4 @@
+import { assessMcpProject, prepareMcpPdfExport } from './mcp-workflow';
 import {
   explainMcpGrade,
   getMcpToolDefinitions,
@@ -106,6 +107,12 @@ export function dispatchMcpRequest(request: McpJsonRpcRequest): McpJsonRpcRespon
         return invalidParams(request, 'tools/call requires a tool name.');
       }
       const name = request.params.name;
+      if (name === 'project.intake') {
+        const project = toolProject(request.params.arguments);
+        if (project === null) return invalidParams(request, 'project.intake requires arguments.project.');
+        const output = assessMcpProject(project);
+        return success(request, { content: [{ type: 'text', text: JSON.stringify(output) }], structuredContent: output, isError: !output.ready });
+      }
       if (name === 'project.validate') {
         const project = toolProject(request.params.arguments);
         if (project === null) return invalidParams(request, 'project.validate requires arguments.project.');
@@ -131,11 +138,45 @@ export function dispatchMcpRequest(request: McpJsonRpcRequest): McpJsonRpcRespon
         const output = explainMcpGrade({ intent: args.intent as McpExplainInput['intent'], grade: args.grade as unknown as McpGradeOutput });
         return success(request, { content: [{ type: 'text', text: JSON.stringify(output) }], structuredContent: output, isError: false });
       }
+      if (name === 'export.pattern_pdf') {
+        return error(request, -32006, 'This tool creates a binary artifact and must be dispatched through the asynchronous MCP transport.');
+      }
       return error(request, -32601, `Unknown tool: ${name}.`);
     }
     default:
       return error(request, -32601, `Unsupported MCP method: ${request.method}.`);
   }
+}
+
+export async function dispatchMcpRequestAsync(request: McpJsonRpcRequest): Promise<McpJsonRpcResponse> {
+  if (request.method !== 'tools/call' || !isRecord(request.params) || request.params.name !== 'export.pattern_pdf') {
+    return dispatchMcpRequest(request);
+  }
+  const args = request.params.arguments;
+  if (!isRecord(args) || !Object.prototype.hasOwnProperty.call(args, 'project')) {
+    return invalidParams(request, 'export.pattern_pdf requires arguments.project.');
+  }
+  const output = await prepareMcpPdfExport(args);
+  if ('data' in output && output.ready) {
+    const { data, ...metadata } = output;
+    return success(request, {
+      content: [{
+        type: 'resource',
+        resource: {
+          uri: `stitch-scale://artifacts/${metadata.artifact.filename}`,
+          mimeType: metadata.artifact.mimeType,
+          blob: data,
+        },
+      }],
+      structuredContent: metadata,
+      isError: false,
+    });
+  }
+  return success(request, {
+    content: [{ type: 'text', text: JSON.stringify(output) }],
+    structuredContent: output,
+    isError: 'valid' in output ? !output.valid : false,
+  });
 }
 
 export function parseMcpBody(rawBody: string): { request: McpJsonRpcRequest | null; error?: McpJsonRpcError } {
