@@ -8,12 +8,13 @@ import { renderDocument } from '@/lib/pdf/renderer';
 import { openPrintWindow, getDefaultFilename, sanitizeFilename, detectNamingStyle, applyNamingTemplate } from '@/lib/pdf/print-utils';
 import { compressImageToDataUrl } from '@/lib/image-utils';
 import { getPdfLabels } from '@/lib/pdf/labels';
+import { validatePublicationPreflight } from '@/lib/publication-quality';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
-import { ArrowLeft, Download, FileText, Eye, Info, X, Loader2, ImagePlus } from 'lucide-react';
+import { ArrowLeft, Download, FileText, Eye, Info, X, Loader2, ImagePlus, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { getToastCopy } from '@/lib/toast-copy';
@@ -222,6 +223,24 @@ export default function ProjectPdf() {
     [projectHook?.project, customStandard],
   );
 
+  // Publication preflight is deliberately computed from the same project,
+  // grading result, template, locale, and logo that feed the export. This makes
+  // the gate explainable and prevents a user from exporting a document whose
+  // visible preview does not match the checks they just passed.
+  const publicationPreflight = useMemo(
+    () => projectHook?.project
+      ? validatePublicationPreflight({
+          project: projectHook.project,
+          gradingResult,
+          locale: language,
+          templateId: selectedTheme,
+          customLogo,
+          liveCustomStandard: customStandard,
+        })
+      : null,
+    [projectHook?.project, gradingResult, language, selectedTheme, customLogo, customStandard],
+  );
+
   // Computed: rendered HTML (regenerated on any control change)
   const previewHtml = useMemo(() => {
     if (!projectHook?.project) return '';
@@ -264,17 +283,11 @@ export default function ProjectPdf() {
     setAccentColor(''); // reset accent override when switching theme
   }, []);
 
-    // F-04 (CHK-153): never leave the button stuck in "Preparing…" — the print
-  // path is now a small state machine with explicit failure and fallback
-  // transitions (see print-utils.ts for the dialog outcome contract).
-  const resetExportTimer = useRef<number | undefined>(undefined);
+  // F-04 (CHK-153): the page UI only represents preparation and the handoff
+  // attempt. The print utility owns the OS-dialog lifecycle and iframe cleanup;
+  // a successful handoff must not leave this button dependent on afterprint.
   const handleExport = useCallback(() => {
-    if (!previewHtml || !projectHook?.project) return;
-    // Clear any prior fallback timer before entering a new export.
-    if (resetExportTimer.current !== undefined) {
-      window.clearTimeout(resetExportTimer.current);
-      resetExportTimer.current = undefined;
-    }
+    if (!previewHtml || !projectHook?.project || !publicationPreflight?.readyToPrint) return;
     setIsExporting(true);
     // F-05 (CHK-154): the user-edited filename is sanitized on export, not on
     // typing — the field stays permissive, but the actual export name is the
@@ -310,34 +323,12 @@ export default function ProjectPdf() {
       });
       return;
     }
-    // Happy path: the OS print dialog drives the outcome through afterprint,
-    // which releaseExport uses to re-enable the button. If the dialog never
-    // reports (edge browsers, dialog left open indefinitely), this fallback
-    // timer guarantees the UI always recovers.
-    resetExportTimer.current = window.setTimeout(() => {
-      resetExportTimer.current = undefined;
-      setIsExporting(false);
-    }, 6000);
-  }, [previewHtml, filename, selectedTheme, accentColor, includeCover, includeGauge, includeNotes, customLogo, pdfDefaults, setPdfDefaults, projectHook?.project, labels.exportFailed, tc, toast]);
-
-  // Afterprint-driven exit from the export state: the print dialog (iframe or
-  // new window) reports close/cancel/save through `onafterprint`. The listener
-  // re-attaches each time the export state flips, so every new export gets a
-  // fresh handler and the previous one is torn down.
-  useEffect(() => {
-    if (!isExporting) return;
-    const onAfter = () => {
-      if (resetExportTimer.current !== undefined) {
-        window.clearTimeout(resetExportTimer.current);
-        resetExportTimer.current = undefined;
-      }
-      setIsExporting(false);
-    };
-    // Poll-free: print-utils sets afterprint on the print surface itself; the
-    // main window handler covers browsers that forward the event to the opener.
-    window.addEventListener('afterprint', onAfter);
-    return () => window.removeEventListener('afterprint', onAfter);
-  }, [isExporting]);
+    // The print utility has accepted the handoff. The browser's print dialog
+    // now owns the interaction, so this page must immediately leave its
+    // preparation state. `openPrintWindow` retains its own in-flight lock and
+    // afterprint cleanup independently of this UI state.
+    setIsExporting(false);
+  }, [previewHtml, filename, selectedTheme, accentColor, includeCover, includeGauge, includeNotes, customLogo, pdfDefaults, setPdfDefaults, projectHook?.project, publicationPreflight?.readyToPrint, labels.exportFailed, tc, toast]);
 
   if (!projectHook) {
     return (
@@ -517,14 +508,63 @@ export default function ProjectPdf() {
                 : null;
             })()}
           </section>
+
+          {/* ── Publication preflight ── */}
+          {publicationPreflight && (
+            <section
+              className={cn(
+                'rounded-xl border p-3.5 text-sm',
+                publicationPreflight.readyToPrint
+                  ? 'border-emerald-500/30 bg-emerald-500/5'
+                  : 'border-destructive/30 bg-destructive/5',
+              )}
+              aria-live="polite"
+              data-testid="publication-preflight"
+            >
+              <div className="flex items-start gap-2.5">
+                {publicationPreflight.readyToPrint
+                  ? <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" aria-hidden="true" />
+                  : <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" aria-hidden="true" />}
+                <div className="min-w-0 flex-1">
+                  <p className="font-medium text-foreground">{labels.preflightTitle}</p>
+                  <p className={cn('mt-0.5 text-xs font-medium', publicationPreflight.readyToPrint ? 'text-emerald-700 dark:text-emerald-400' : 'text-destructive')}>
+                    {publicationPreflight.readyToPrint ? labels.preflightReady : labels.preflightBlocked}
+                  </p>
+                </div>
+                <span className="shrink-0 text-[11px] text-muted-foreground">
+                  {publicationPreflight.flags.filter(flag => flag.severity === 'error').length} errors
+                  {' · '}
+                  {publicationPreflight.flags.filter(flag => flag.severity === 'warn').length} warnings
+                </span>
+              </div>
+              <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+                {publicationPreflight.readyToPrint
+                  ? labels.preflightReadyDescription
+                  : labels.preflightBlockedDescription(publicationPreflight.flags.filter(flag => flag.severity === 'error').length)}
+              </p>
+              {publicationPreflight.flags.length > 0 && (
+                <ul className="mt-2.5 space-y-1.5 border-t border-border/40 pt-2.5" aria-label={labels.preflightTitle}>
+                  {publicationPreflight.flags.slice(0, 4).map(flag => (
+                    <li key={`${flag.code}-${flag.title}`} className="text-xs leading-relaxed text-muted-foreground">
+                      <span className="font-mono text-[10px] text-foreground/70">{flag.code}</span> {flag.detail}
+                    </li>
+                  ))}
+                  {publicationPreflight.flags.length > 4 && (
+                    <li className="text-xs text-muted-foreground">+ {publicationPreflight.flags.length - 4} more</li>
+                  )}
+                </ul>
+              )}
+            </section>
+          )}
         </div>
 
         {/* ── Export Button (sticky bottom) ── */}
         <div className="sticky bottom-0 bg-background border-t border-border/40 px-5 py-4">
+
           <Button
             className="w-full gap-2 h-10 font-semibold"
             onClick={handleExport}
-            disabled={isExporting || !previewHtml}
+            disabled={isExporting || !previewHtml || !publicationPreflight?.readyToPrint}
           >
             {isExporting ? (
               <>

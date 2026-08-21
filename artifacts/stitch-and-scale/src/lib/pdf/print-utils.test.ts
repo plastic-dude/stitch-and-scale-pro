@@ -184,25 +184,24 @@ describe('project-pdf export state machine', () => {
     expect(pageSrc).toMatch(/toast\(\{[\s\S]*?variant: 'destructive'[\s\S]*?\}/);
   });
 
-  it('never uses a blind fixed reset while the print dialog may be open', () => {
+  it('does not leave the page UI dependent on a blind print-dialog timer', () => {
     // The old "setTimeout(() => setIsExporting(false), 1500)" ran while
     // window.print() blocked the JS thread — the stuck-state root cause.
     expect(pageSrc).not.toMatch(/setTimeout\(\(\) => setIsExporting\(false\), 1500\)/);
-    // The recovery timer must be bounded (never unbounded/infinite) and
-    // clearable, so the button always comes back.
-    expect(pageSrc).toMatch(/setTimeout\([\s\S]*?, 6000\)/);
-    expect(pageSrc).toContain('window.clearTimeout');
+    // The page owns only the short preparation/handoff state. The print
+    // utility owns the dialog lifecycle; no page-side timeout is allowed to
+    // pretend that a dialog has closed or saved a file.
+    expect(pageSrc).not.toContain('resetExportTimer');
+    expect(pageSrc).not.toContain("window.addEventListener('afterprint'");
+    expect(pageSrc).toMatch(/const attempt = openPrintWindow\([\s\S]*?\n[\s\S]*?setIsExporting\(false\);/);
   });
 
-  it('listens to afterprint to exit the export state deterministically', () => {
-    expect(pageSrc).toContain("window.addEventListener('afterprint'");
-    expect(pageSrc).toContain("window.removeEventListener('afterprint'");
-    // The listener must tear down the fallback timer (no double transitions).
-    const handlerStart = pageSrc.indexOf('const onAfter = () =>');
-    expect(handlerStart).toBeGreaterThan(-1);
-    const listenerChunk = pageSrc.slice(handlerStart, handlerStart + 600);
-    expect(listenerChunk).toContain('clearTimeout');
-    expect(listenerChunk).toContain('setIsExporting(false)');
+  it('releases the page UI immediately after a successful print handoff', () => {
+    const successStart = pageSrc.indexOf('if (!attempt.ok)');
+    expect(successStart).toBeGreaterThan(-1);
+    const successChunk = pageSrc.slice(successStart, successStart + 1500);
+    expect(successChunk).toContain('setIsExporting(false)');
+    expect(successChunk).toContain('The print utility has accepted the handoff');
   });
 
   it('translates the failure title in all five locales', () => {
