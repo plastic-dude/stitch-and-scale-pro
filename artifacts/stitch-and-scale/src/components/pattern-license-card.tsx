@@ -1,3 +1,4 @@
+import { copyTextOrThrow } from '@/lib/clipboard';
 import { useMemo } from 'react';
 import { useProjectStorage, useProjectStorageState } from '@/lib/storage-lib';
 import { useSettings } from '@/context/SettingsContext';
@@ -135,7 +136,7 @@ export function PatternLicensePlannerCard({ project }: { project: PatternProject
 
   const copy = async (text: string) => {
     try {
-      await navigator.clipboard.writeText(text);
+      await copyTextOrThrow(text);
       toast({ title: copyText.copied });
     } catch {
       toast({ title: copyText.copyManually });

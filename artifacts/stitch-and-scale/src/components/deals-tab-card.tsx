@@ -1,3 +1,4 @@
+import { copyTextOrThrow } from '@/lib/clipboard';
 /**
  * Deal Comparator — model a yarn-company collaboration offer (flat fee,
  * royalty, exclusive license) against the self-publishing baseline, built
@@ -132,7 +133,7 @@ export function DealsTabCard({
   const copyTerms = async (offer: DealOffer, outcome: ReturnType<typeof compareDeal>) => {
     const text = generateTermsResponse(input, outcome);
     try {
-      await navigator.clipboard.writeText(text);
+      await copyTextOrThrow(text);
       toast({ title: copy.copyTerms, description: copy.pasteReply });
     } catch {
       toast({ title: copy.copyFailed, description: copy.manualCopy });
@@ -407,7 +408,7 @@ function DesignOfferSection({
 
   const copyOfferResponse = async () => {
     try {
-      await navigator.clipboard.writeText(generateOfferResponse(designInput, designVerdict));
+      await copyTextOrThrow(generateOfferResponse(designInput, designVerdict));
       toast({ title: copy.copyTerms, description: copy.pasteReply });
     } catch {
       toast({ title: copy.copyFailed, description: copy.manualCopy });

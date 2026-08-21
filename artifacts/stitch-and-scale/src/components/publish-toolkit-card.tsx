@@ -26,6 +26,7 @@ import { computeCredibility, generateCredibilityStatement } from '@/lib/credibil
 import { PatternProject } from '@/lib/grading-engine';
 import { YARN_WEIGHTS, YARN_WEIGHT_LABELS } from '@/lib/yarn-estimator';
 import { PLATFORM_LABELS } from '@/lib/pattern-income-calculator';
+import { copyTextOrThrow } from '@/lib/clipboard';
 import { FileCheck2, AlertTriangle, AlertCircle, CircleCheck, Copy, ClipboardCheck, Sparkles, Save, ShieldCheck, ShieldAlert } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -83,18 +84,13 @@ export function PublishToolkitCard({
   const copyStatement = async () => {
     const statement = generateCredibilityStatement(project);
     try {
-      await navigator.clipboard.writeText(statement);
+      await copyTextOrThrow(statement);
+      setStatementCopied(true);
+      toast({ title: tc.credibilityStatementCopied, description: tc.credibilityStatementPaste });
+      setTimeout(() => setStatementCopied(false), 2000);
     } catch {
-      const area = document.createElement('textarea');
-      area.value = statement;
-      document.body.appendChild(area);
-      area.select();
-      document.execCommand('copy');
-      document.body.removeChild(area);
+      toast({ title: tc.copyFailed, description: tc.copyFailedDescription });
     }
-    setStatementCopied(true);
-    toast({ title: tc.credibilityStatementCopied, description: tc.credibilityStatementPaste });
-    setTimeout(() => setStatementCopied(false), 2000);
   };
 
   const verdictConfig = {
@@ -134,18 +130,13 @@ export function PublishToolkitCard({
 
   const copy = async () => {
     try {
-      await navigator.clipboard.writeText(listing);
+      await copyTextOrThrow(listing);
+      setCopied(true);
+      toast({ title: tc.listingCopied, description: tc.listingCopiedPaste });
+      setTimeout(() => setCopied(false), 2000);
     } catch {
-      const area = document.createElement('textarea');
-      area.value = listing;
-      document.body.appendChild(area);
-      area.select();
-      document.execCommand('copy');
-      document.body.removeChild(area);
+      toast({ title: tc.copyFailed, description: tc.copyFailedDescription });
     }
-    setCopied(true);
-    toast({ title: tc.listingCopied, description: tc.listingCopiedPaste });
-    setTimeout(() => setCopied(false), 2000);
   };
 
   const saveNotes = () => {

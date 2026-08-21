@@ -1,3 +1,4 @@
+import { copyTextOrThrow } from '@/lib/clipboard';
 import { useMemo, useState } from 'react';
 import { getLabStatCopy, type LabStatCopy } from '@/lib/lab-stat-copy';
 import { useProjectStorage, useProjectStorageState } from '@/lib/storage-lib';
@@ -146,7 +147,7 @@ const handle = useProjectStorage<StoredState>('clubrev', project.id, ['kskclubre
 
   const copy = async (text: string) => {
     try {
-      await navigator.clipboard.writeText(text);
+      await copyTextOrThrow(text);
       toast({ title: copyText.copied });
     } catch {
       toast({ title: copyText.copyManual });

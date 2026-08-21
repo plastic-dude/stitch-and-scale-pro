@@ -1,3 +1,4 @@
+import { copyTextOrThrow } from '@/lib/clipboard';
 import React from 'react';
 import {
   Card,
@@ -36,7 +37,7 @@ function CopyLine({ text, label, copyLabels }: { text: string; label: string; co
   const [copied, setCopied] = React.useState(false);
   const copy = async () => {
     try {
-      await navigator.clipboard.writeText(text);
+      await copyTextOrThrow(text);
       setCopied(true);
       setTimeout(() => setCopied(false), 2500);
       toast({ title: copyLabels.copied, description: label });

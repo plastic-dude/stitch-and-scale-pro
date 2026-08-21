@@ -13,6 +13,7 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { copyTextOrThrow } from '@/lib/clipboard';
 import { Copy } from 'lucide-react';
 import {
   compareMagazine,
@@ -153,8 +154,9 @@ function CopyLine({ text }: { text: string }) {
       variant="outline"
       className="gap-1.5 text-xs"
       onClick={() => {
-        navigator.clipboard.writeText(text).catch(() => {});
-        toast({ title: copy.copied, description: copy.copyHint });
+        copyTextOrThrow(text)
+          .then(() => toast({ title: copy.copied, description: copy.copyHint }))
+          .catch(() => toast({ title: copy.copy, description: copy.copyHint }));
       }}
     >
       <Copy className="h-3.5 w-3.5" />

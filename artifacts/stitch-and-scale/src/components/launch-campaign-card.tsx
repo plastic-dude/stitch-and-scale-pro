@@ -1,3 +1,4 @@
+import { copyTextOrThrow } from '@/lib/clipboard';
 /**
  * Launch Campaign Manager — a dated, paste-ready launch plan built from
  * the pattern's own data.
@@ -103,7 +104,7 @@ function CopyLine({ text, copyText }: { text: string; copyText: { copied: string
   const [copied, setCopied] = React.useState(false);
   const copy = async () => {
     try {
-      await navigator.clipboard.writeText(text);
+      await copyTextOrThrow(text);
       setCopied(true);
       setTimeout(() => setCopied(false), 2500);
       toast({ title: copyText.copied, description: copyText.copyMilestone });

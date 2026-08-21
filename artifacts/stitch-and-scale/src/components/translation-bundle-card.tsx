@@ -1,3 +1,4 @@
+import { copyTextOrThrow } from '@/lib/clipboard';
 /**
  * Translation & Bundle Revenue Planner (CHK-015)
  *
@@ -79,7 +80,7 @@ function CopyLine({ text, tc, ls }: { text: string; tc: ToastCopy; ls: LabStatCo
   const [copied, setCopied] = React.useState(false);
   const copy = async () => {
     try {
-      await navigator.clipboard.writeText(text);
+      await copyTextOrThrow(text);
       setCopied(true);
       setTimeout(() => setCopied(false), 2500);
       toast({ title: tc.copied, description: tc.copiedDescription });

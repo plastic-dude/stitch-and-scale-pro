@@ -1,3 +1,4 @@
+import { copyTextOrThrow } from '@/lib/clipboard';
 import { useMemo, useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -95,7 +96,7 @@ export function CollabDealMathCard({ project }: { project: PatternProject }) {
 
   const copyLetter = async () => {
     try {
-      await navigator.clipboard.writeText(result.counterLetter);
+      await copyTextOrThrow(result.counterLetter);
       toast({ title: `${copyText.counterLetter} — ${copyText.copy}` });
     } catch {
       toast({ title: copyText.copy });

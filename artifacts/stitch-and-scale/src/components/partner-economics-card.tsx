@@ -1,3 +1,4 @@
+import { copyTextOrThrow } from '@/lib/clipboard';
 import { useMemo, useState, useEffect, useCallback } from 'react';
 import { getLabStatCopy, type LabStatCopy } from '@/lib/lab-stat-copy';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -124,7 +125,7 @@ export function PartnerEconomicsCard({ project }: { project: PatternProject }) {
 
   const copy = async (text: string) => {
     try {
-      await navigator.clipboard.writeText(text);
+      await copyTextOrThrow(text);
       toast({ title: partnerCopy.copied });
     } catch {
       toast({ title: getToastCopy(language).copyFailedSelectManually });

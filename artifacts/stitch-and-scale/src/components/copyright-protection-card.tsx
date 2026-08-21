@@ -1,3 +1,4 @@
+import { copyTextOrThrow } from '@/lib/clipboard';
 /**
  * Protect — Copyright Protection Planner.
  *
@@ -185,7 +186,7 @@ export function CopyrightProtectionCard({ project }: { project: PatternProject }
 
   const copyToClipboard = async (text: string, title: string) => {
     try {
-      await navigator.clipboard.writeText(text);
+      await copyTextOrThrow(text);
       toast({ title, description: copy.copied });
     } catch {
       toast({ title: copy.copyFailed, description: copy.manual });

@@ -1,3 +1,4 @@
+import { copyTextOrThrow } from '@/lib/clipboard';
 /**
  * Trunk Show & Cottage License Planner — models the in-person sales channel
  * no tool in the market currently does: trunk shows at local yarn shops and
@@ -67,7 +68,7 @@ function CopyLine({ text, label }: { text: string; label: string }) {
   const [copied, setCopied] = React.useState(false);
   const copy = async () => {
     try {
-      await navigator.clipboard.writeText(text);
+      await copyTextOrThrow(text);
       setCopied(true);
       setTimeout(() => setCopied(false), 2500);
       toast({ title: copyText.copied, description: label });

@@ -1,3 +1,4 @@
+import { copyTextOrThrow } from '@/lib/clipboard';
 // Receipt Lab — receipt-lab-card.tsx
 //
 // Chat-first receipts for indie knitwear designers.
@@ -295,7 +296,7 @@ export function ReceiptLabCard(props: { project: PatternProject }) {
 
   async function copyReceiptText() {
     try {
-      await navigator.clipboard.writeText(buildTextLines());
+      await copyTextOrThrow(buildTextLines());
       setCopied(true);
       setTimeout(() => setCopied(false), 1500);
       toast({ title: copy.receiptCopied, description: copy.pasteIntoChat });

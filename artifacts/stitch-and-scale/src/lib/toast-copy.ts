@@ -168,7 +168,7 @@ const COPY: Record<LanguageCode, ToastCopy> = {
     reconcileFailedDescription: 'Something went wrong while unifying storage.',
 
     updated: 'updated',
-    copyFailedSelectManually: 'updated',
+    copyFailedSelectManually: 'Copy failed — select the text manually.',
     invalidMeasurementValue: (label, raw) => `Measurement “${label}” could not be saved: ${raw} is not a valid positive number. A physical dimension cannot be zero or negative.`,
 
   },

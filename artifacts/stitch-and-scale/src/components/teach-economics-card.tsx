@@ -1,3 +1,4 @@
+import { copyTextOrThrow } from '@/lib/clipboard';
 import { useMemo, useState, useEffect } from 'react';
 import { getLabStatCopy, type LabStatCopy } from '@/lib/lab-stat-copy';
 import { projectStorage, type ProjectStorageHandle } from '@/lib/storage-lib';
@@ -164,7 +165,7 @@ export function TeachEconomicsCard({ project: _project }: { project: PatternProj
 
   const copy = async (text: string) => {
     try {
-      await navigator.clipboard.writeText(text);
+      await copyTextOrThrow(text);
       toast({ title: tc.courseCopied, description: tc.courseCopiedPaste });
     } catch {
       toast({ title: tc.copyFailed, description: tc.copyFailedDescription });

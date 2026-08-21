@@ -1,3 +1,4 @@
+import { copyTextOrThrow } from '@/lib/clipboard';
 /**
  * Pattern Finish & Care Guide — the last page of every good pattern,
  * generated from the project's own yarn data.
@@ -115,7 +116,7 @@ export function FinishGuideCard({ project }: { project: PatternProject }) {
   const b = guide.behavior;
 
   const copySection = async () => {
-    await navigator.clipboard.writeText(guide.patternSection);
+    await copyTextOrThrow(guide.patternSection);
     setCopied(true);
     toast({ title: copy.copied, description: copy.copiedDescription });
     setTimeout(() => setCopied(false), 2000);

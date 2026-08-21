@@ -1,3 +1,4 @@
+import { copyTextOrThrow } from '@/lib/clipboard';
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -83,7 +84,7 @@ export function PatternDraftCard({ project }: { project: PatternProject }) {
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(rendered);
+      await copyTextOrThrow(rendered);
       toast({ title: copy.copied, description: copy.copiedHint });
     } catch {
       toast({ title: copy.copyBlocked, description: copy.copyBlockedHint });

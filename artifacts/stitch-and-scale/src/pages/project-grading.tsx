@@ -12,6 +12,7 @@ import { getGradingCopy } from '@/lib/grading-copy';
 import { getToastCopy } from '@/lib/toast-copy';
 import { BodySchematic } from '@/components/body-schematic';
 import { buildGradingCsv } from '@/lib/grading-csv';
+import { copyTextOrThrow } from '@/lib/clipboard';
 
 export default function ProjectGrading() {
   const params = useParams();
@@ -56,8 +57,10 @@ export default function ProjectGrading() {
       tsv += '\n';
     });
 
-    navigator.clipboard.writeText(tsv).then(() => {
+    copyTextOrThrow(tsv).then(() => {
       toast({ title: tc.tableCopied, description: tc.tableCopiedDescription });
+    }).catch(() => {
+      toast({ title: tc.copyFailed, description: tc.copyFailedSelectManually });
     });
   };
 

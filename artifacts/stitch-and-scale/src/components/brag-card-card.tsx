@@ -1,3 +1,4 @@
+import { copyTextOrThrow } from '@/lib/clipboard';
 /**
  * Brag Card tab (CHK-091) — the shareable "brag moment" generator.
  *
@@ -174,7 +175,7 @@ export function BragCardCard(props: { project: PatternProject }) {
 
   const copyCaption = useCallback(async () => {
     try {
-      await navigator.clipboard.writeText(caption.caption);
+      await copyTextOrThrow(caption.caption);
       toast({ title: copy.copyCaption, description: copy.description });
     } catch {
       toast({ title: copy.copyFailed, description: copy.description, variant: "destructive" });

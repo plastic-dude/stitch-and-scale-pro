@@ -1,3 +1,4 @@
+import { copyTextOrThrow } from '@/lib/clipboard';
 /**
  * Book It — PoD Book Builder & Evaluator.
  *
@@ -153,7 +154,7 @@ export function PodBookCard({ project }: { project: PatternProject }) {
 
   const copy = async () => {
     try {
-      await navigator.clipboard.writeText(pitch);
+      await copyTextOrThrow(pitch);
       toast({ title: copyText.copied, description: copyText.copyDescription });
     } catch {
       toast({ title: copyText.copyFailed, description: copyText.copyFailedDescription });

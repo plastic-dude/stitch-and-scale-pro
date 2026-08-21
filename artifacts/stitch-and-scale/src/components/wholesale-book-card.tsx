@@ -1,3 +1,4 @@
+import { copyTextOrThrow } from '@/lib/clipboard';
 import { useMemo, useState } from 'react';
 import { useProjectStorage, useProjectStorageState } from '@/lib/storage-lib';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -132,7 +133,7 @@ const handle = useProjectStorage<StoredState>('wholesalebook', project.id, ['ksk
 
   const copy = async (text: string) => {
     try {
-      await navigator.clipboard.writeText(text);
+      await copyTextOrThrow(text);
       toast({ title: tc.wholesaleCopied });
     } catch {
       toast({ title: tc.wholesaleSelectManually });

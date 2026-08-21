@@ -1,3 +1,4 @@
+import { copyTextOrThrow } from '@/lib/clipboard';
 import { useMemo, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -99,7 +100,7 @@ export function ListingSeoLabCard({ project }: { project: PatternProject }) {
   const [copied, setCopied] = useState<string | null>(null);
   const copy = async (text: string, key: string) => {
     try {
-      await navigator.clipboard.writeText(text);
+      await copyTextOrThrow(text);
       setCopied(key);
       setTimeout(() => setCopied(null), 1600);
     } catch {

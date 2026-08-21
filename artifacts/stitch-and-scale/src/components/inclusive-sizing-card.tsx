@@ -18,6 +18,7 @@ import {
   buildInclusivePack,
 } from '@/lib/inclusive-sizing-analyzer';
 import { platformNet, PLATFORM_LABELS } from '@/lib/pattern-income-calculator';
+import { copyTextOrThrow } from '@/lib/clipboard';
 
 const STORAGE_KEY = 'sncis-v1';
 
@@ -130,8 +131,7 @@ const handle = useProjectStorage<Stored>('incsizing', project.id, ['sncis-v1']);
   const update = (patch: Partial<Stored>) => setStored(s => ({ ...s, ...patch }));
 
   const copyToClipboard = (text: string) => {
-    navigator.clipboard
-      .writeText(text)
+    copyTextOrThrow(text)
       .then(() => toast({ title: copy.copied }))
       .catch(() => toast({ title: copy.copyManual }));
   };

@@ -13,8 +13,10 @@ import { Calendar, ClipboardCopy, PackageCheck, CheckCircle2, XCircle, AlertCirc
 import { PatternProject } from '@/lib/grading-engine';
 import { useSettings } from '@/context/SettingsContext';
 import { SUBMISSION_PIPELINE_COPY } from '@/lib/submission-pipeline-copy';
+import { getToastCopy } from '@/lib/toast-copy';
 import { YarnWeight, YARN_WEIGHTS, YARN_WEIGHT_LABELS } from '@/lib/yarn-estimator';
 import { PLATFORMS, PLATFORM_LABELS } from '@/lib/pattern-income-calculator';
+import { copyTextOrThrow } from '@/lib/clipboard';
 import {
   buildPipeline,
   submissionPackChecklist,
@@ -88,6 +90,7 @@ function dateInput(value: string | undefined, onChange: (v: string) => void) {
 export function SubmissionPipelineCard({ project }: { project: PatternProject }) {
   const { language } = useSettings();
   const copy = SUBMISSION_PIPELINE_COPY[language];
+  const toastCopy = getToastCopy(language);
   // issue #4 project seam: one scoped store per project; the legacy flat key 'snsp-v1' is folded in on first read, then removed.
   // CHK-152 (QUEUE-010): the old useMemo handle + `useState(() =>
 // loadStored(handle))` lazy initializer was the crash class under HMR.
@@ -128,9 +131,13 @@ const handle = useProjectStorage<{ calls: StoredCall[]; rates: StoredRates }>('s
   );
 
   const copyText = (text: string, label: string) => {
-    navigator.clipboard.writeText(text).then(() => {
-      toast({ title: `${label} — ${copy.copied}`, description: copy.pasteHint });
-    });
+    copyTextOrThrow(text)
+      .then(() => {
+        toast({ title: `${label} — ${copy.copied}`, description: copy.pasteHint });
+      })
+      .catch(() => {
+        toast({ title: `${label} — ${toastCopy.copyFailed}`, description: toastCopy.copyFailedDescription });
+      });
   };
 
   const updateCall = (patch: Partial<PipelineCall>) => {

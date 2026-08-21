@@ -324,6 +324,13 @@ export default function ProjectWorkspace() {
   const ls: LabStatCopy = getLabStatCopy(language);
 
   const [activeTab, setActiveTab] = React.useState('sections');
+  const handleTabChange = React.useCallback((value: string) => {
+    // Keep Radix’s controlled value and the rendered panel on the same
+    // canonical registry. A stale or synthetic value must never fall through
+    // to a previously mounted late panel (the source of the Payback reversion
+    // observed in the stress audit).
+    if (TAB_REGISTRY.some((tab) => tab.value === value)) setActiveTab(value);
+  }, []);
   const [expandedSection, setExpandedSection] = React.useState<string | null>(null);
 
   // Form states for new section
@@ -1115,7 +1122,7 @@ export default function ProjectWorkspace() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
         {/* CHK-125: the group-chip row was rendering at ALL widths — on
             desktop it sat directly above the flat 79-tab strip and made it
             look as if the individual tabs had vanished (user report). The
@@ -1177,7 +1184,7 @@ export default function ProjectWorkspace() {
         <div className="lg:hidden mb-2">
           <TabNavigator
             activeTab={activeTab}
-            onTabChange={setActiveTab}
+            onTabChange={handleTabChange}
             language={language}
             copy={NAVIGATOR_COPY[language] ?? NAVIGATOR_COPY.en}
           />
@@ -1228,11 +1235,10 @@ export default function ProjectWorkspace() {
           />
         </div>
 
-        {TAB_REGISTRY.map((t) => (
-  <TabsContent key={t.value} value={t.value} className="mt-6">
-    <TabPanel value={t.value} />
-  </TabsContent>
-))}</Tabs>
+        <TabsContent key={activeTab} value={activeTab} className="mt-6">
+          <TabPanel value={activeTab} />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

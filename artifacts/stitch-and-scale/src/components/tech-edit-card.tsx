@@ -1,3 +1,4 @@
+import { copyTextOrThrow } from '@/lib/clipboard';
 /**
  * Self Tech-Edit Audit — run a numbers-first tech edit before paying a human
  * editor. Built from session-11 research on the tech-edit market:
@@ -94,7 +95,7 @@ export function TechEditCard({ project }: { project: PatternProject }) {
   async function handleCopySummary() {
     const text = generatePreEditSummary(project, summary);
     try {
-      await navigator.clipboard.writeText(text);
+      await copyTextOrThrow(text);
       toast({ title: tc.preEditSummaryCopied, description: tc.preEditSummaryPaste });
     } catch {
       toast({ title: tc.copyFailed, description: tc.selectManuallyFromBox });

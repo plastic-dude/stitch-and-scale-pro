@@ -1,3 +1,4 @@
+import { copyTextOrThrow } from '@/lib/clipboard';
 /**
  * Design Ledger card (CHK-086) — the record room.
  *
@@ -193,7 +194,7 @@ export function DesignLedgerCard(props: { project: PatternProject }) {
   const copySummary = async () => {
     const summary = exportLedgerSummary(roll, studioName);
     try {
-      await navigator.clipboard.writeText(summary);
+      await copyTextOrThrow(summary);
       toast({ title: copy.export, description: copy.summaryCopied });
     } catch {
       toast({ title: copy.export, description: copy.summaryCopyFailed });

@@ -1,3 +1,4 @@
+import { copyTextOrThrow } from '@/lib/clipboard';
 import { useMemo, useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -90,7 +91,7 @@ export function ChartLabCard({ project }: { project: PatternProject }) {
 
   const proseText = result.proseRows.map((p) => p.text).join('\n');
   const copyProse = async () => {
-    await navigator.clipboard.writeText(proseText);
+    await copyTextOrThrow(proseText);
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
   };

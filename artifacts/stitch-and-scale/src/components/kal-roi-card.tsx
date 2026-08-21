@@ -11,7 +11,9 @@ import { useToast } from '@/hooks/use-toast';
 import { ClipboardCopy, LineChart, Megaphone, CheckCircle2, XCircle, AlertTriangle, PackageOpen } from 'lucide-react';
 import { PatternProject } from '@/lib/grading-engine';
 import { useSettings } from '@/context/SettingsContext';
+import { copyTextOrThrow } from '@/lib/clipboard';
 import { KAL_ROI_COPY } from '@/lib/kal-roi-copy';
+import { getToastCopy } from '@/lib/toast-copy';
 import {
   analyzeKal,
   defaultKalEvent,
@@ -84,6 +86,7 @@ const fmt$ = (n: number) =>
 export function KalRoiCard({ project }: { project: PatternProject }) {
   const { language } = useSettings();
   const copyText = KAL_ROI_COPY[language];
+  const toastCopy = getToastCopy(language);
   // issue #4 project seam: one scoped store per project; the legacy flat key 'kskroi-v1' is folded in on first read, then removed.
   // CHK-152 (QUEUE-010): the old useMemo handle + `useState(() =>
 // loadStored(handle))` lazy initializer was the crash class under HMR.
@@ -147,9 +150,13 @@ const handle = useProjectStorage<{ event: KalEvent; rates: StoredRates }>('kalro
   };
 
   const copy = (text: string, label: string) => {
-    navigator.clipboard.writeText(text).then(() => {
-      toast({ title: `${label} ${copyText.copied}`, description: copyText.paste });
-    });
+    copyTextOrThrow(text)
+      .then(() => {
+        toast({ title: `${label} ${copyText.copied}`, description: copyText.paste });
+      })
+      .catch(() => {
+        toast({ title: `${label} — ${toastCopy.copyFailed}`, description: toastCopy.copyFailedDescription });
+      });
   };
 
   const num = (v: string, fallback: number) => (v === '' ? fallback : Number(v) || fallback);

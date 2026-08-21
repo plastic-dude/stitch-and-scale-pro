@@ -1,3 +1,4 @@
+import { copyTextOrThrow } from '@/lib/clipboard';
 /**
  * Test-Knit Programme — run a size-covered test knit from inside the project.
  *
@@ -119,7 +120,7 @@ export function TestKnitCard({ project }: { project: PatternProject }) {
 
   const copyCall = async () => {
     try {
-      await navigator.clipboard.writeText(callText);
+      await copyTextOrThrow(callText);
       setCopied(true);
       setTimeout(() => setCopied(false), 2500);
       toast({ title: tc.testerCallCopied, description: tc.testerCallPaste });
