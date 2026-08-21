@@ -3,7 +3,7 @@ import { useParams, useLocation } from 'wouter';
 import { useProject } from '@/context/ProjectsContext';
 import { GRADING_KEY_LABELS, ALL_SIZES, gradePattern, resolveProjectStandards } from '@/lib/grading-engine';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Copy, Download, Printer } from 'lucide-react';
+import { ArrowLeft, Copy, Download, Printer, FileCheck2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useSettings } from '@/context/SettingsContext';
@@ -16,6 +16,9 @@ import { getToastCopy } from '@/lib/toast-copy';
 import { BodySchematic } from '@/components/body-schematic';
 import { buildGradingCsv } from '@/lib/grading-csv';
 import { copyTextOrThrow } from '@/lib/clipboard';
+import { downloadJsonFile } from '@/lib/storage-lib';
+import { buildHandoffEvidence } from '@/lib/handoff-evidence';
+import { getHandoffCopy } from '@/lib/handoff-copy';
 import { McpGradingAssistantCard } from '@/components/mcp-grading-assistant-card';
 
 export default function ProjectGrading() {
@@ -28,6 +31,7 @@ export default function ProjectGrading() {
   const ls: LabStatCopy = getLabStatCopy(language);
   const gradingCopy = getGradingCopy(language);
   const tc = getToastCopy(language);
+  const handoffCopy = getHandoffCopy(language);
 
   if (!projectHook) {
     return (
@@ -84,6 +88,13 @@ export default function ProjectGrading() {
 
   const handlePrint = () => window.print();
 
+  const handleDownloadHandoff = () => {
+    const evidence = buildHandoffEvidence(project, readiness, audit);
+    const filename = `${project.name.replace(/\s+/g, '-').toLowerCase()}-technical-handoff.json`;
+    downloadJsonFile(evidence, filename);
+    toast({ title: handoffCopy.downloaded, description: handoffCopy.downloadedDescription });
+  };
+
   return (
     <div id="sas-print-sheet" className="animate-in fade-in duration-500 mx-auto pb-24 print:pb-0 print:m-0 print:p-0">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-8 print:hidden">
@@ -96,6 +107,9 @@ export default function ProjectGrading() {
           </Button>
           <Button variant="outline" size="sm" onClick={handleDownloadCSV} disabled={!hasData} className="rounded-full bg-background" data-testid="button-download-csv">
             <Download className="w-4 h-4 mr-2" /> CSV
+          </Button>
+          <Button variant="outline" size="sm" onClick={handleDownloadHandoff} disabled={!hasData} className="rounded-full bg-background" data-testid="button-download-handoff">
+            <FileCheck2 className="w-4 h-4 mr-2" /> {handoffCopy.download}
           </Button>
           <Button size="sm" onClick={handlePrint} disabled={!hasData} className="bg-primary hover:bg-primary/90 rounded-full px-6 shadow-sm" data-testid="button-print">
             <Printer className="w-4 h-4 mr-2" /> Print Sheet
