@@ -16,7 +16,7 @@
 // Honest-branding guard (docs/brand-voice-brief.md Rule 1): nothing in this
 // module invents designer credentials on the receipt — it renders only what
 // the designer actually configured.
-import { isFiniteNumber } from '@/lib/numeric-guard';
+import { isFiniteNumber } from './numeric-guard.js';
 
 export type ReceiptDocKind = "receipt" | "quote" | "refund";
 
