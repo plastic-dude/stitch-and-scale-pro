@@ -3,6 +3,7 @@ import { generateId, type PatternProject, SIZE_STANDARDS } from './grading-engin
 import {
   explainMcpGrade,
   getMcpToolDefinitions,
+  getMcpToolNames,
   isMcpGradeOutput,
   normalizeMcpProject,
   runMcpGrading,
@@ -95,7 +96,8 @@ describe('MCP contract', () => {
 
   it('exposes only read-only, non-destructive tools', () => {
     const tools = getMcpToolDefinitions();
-    expect(tools.map(tool => tool.name)).toEqual(['project.intake', 'project.validate', 'grading.run', 'grading.explain', 'export.pattern_pdf', 'export.project_book_pdf', 'calculate.marketplace_take_rate', 'export.brag_card']);
+    expect(tools.map(tool => tool.name)).toEqual(['project.intake', 'project.validate', 'grading.run', 'grading.explain', 'export.pattern_pdf', 'export.project_book_pdf', 'export.brag_card', 'calculate.marketplace_take_rate']);
+    expect(getMcpToolNames()).toEqual(tools.map(tool => tool.name));
     for (const tool of tools) {
       expect(tool.annotations.readOnlyHint).toBe(true);
       expect(tool.annotations.destructiveHint).toBe(false);

@@ -51,3 +51,10 @@ Vercel deployment `dpl_GG4p7rweRfbLkVsxCz6rsihnSNAP` for `ef416ca` reached READY
 Production checks immediately after redeploy: `GET /api/mcp` without an Origin returned 405 as intended. A request carrying the public Origin returned 403 origin-not-allowed for both OPTIONS and POST, indicating the current public origin is not yet reflected in `MCP_ALLOWED_ORIGIN` on the deployed function; this remains an active configuration issue to resolve. The earlier pre-configuration POST without auth returned 503 with the explicit MCP-disabled message, proving the endpoint was then fail-closed when `MCP_API_KEY` was absent.
 
 The project environment API accepted creation of production-scoped `MCP_API_KEY` and `MCP_ALLOWED_ORIGIN` variables with HTTP 201, but the redeployment from an existing deployment still returned 403 for the configured Origin. A fresh Git-source production deployment is required to ensure the current project environment snapshot is loaded rather than relying on an older deployment snapshot.
+
+
+## MCP registry consistency hardening (2026-08-21)
+
+The local audit found a real contract-quality defect: `getMcpToolNames()` listed `export.brag_card` before `calculate.marketplace_take_rate`, while `getMcpToolDefinitions()` and the live `tools/list` response exposed the reverse order. Membership was identical, but consumers relying on deterministic registry order could observe inconsistent contracts. The definitions were reordered to the canonical sequence and the contract test now asserts that helper names exactly equal the definition names; the transport test was aligned to the same sequence.
+
+Post-fix local evidence: root TypeScript passed, app TypeScript passed, the focused MCP subset passed (4 files, 21 tests), the full Vitest suite passed (175 files, 2,275 tests), and the production build passed. The post-fix source still requires a fresh Vercel deployment before the live order can be rechecked.

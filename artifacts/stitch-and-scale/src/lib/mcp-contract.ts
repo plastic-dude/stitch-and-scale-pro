@@ -566,21 +566,6 @@ export function getMcpToolDefinitions() {
       annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
     },
     {
-      name: 'calculate.marketplace_take_rate',
-      title: 'Calculate marketplace take-rate from explicit assumptions',
-      description: 'Run the canonical Marketplace Take-Rate tab engine against explicitly supplied channel volumes, prices, seller region, and fee assumptions. The tool rejects incomplete assumptions rather than applying hidden defaults; it returns deterministic fee leaks, net revenue, thresholds, concentration, and caveats.',
-      inputSchema: {
-        type: 'object',
-        additionalProperties: false,
-        properties: {
-          calculation: { type: 'object', description: 'Explicit MarketplaceTakeRateInput including currency, currencySymbol, sellerRegion, channels, offsiteAdsRate, ravelryPayPalPct, ravelryPayPalFixed, and ravelryHighTier.' },
-        },
-        required: ['calculation'],
-      },
-      outputSchema: { type: 'object' },
-      annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
-    },
-    {
       name: 'export.brag_card',
       title: 'Prepare a branded Brag Card SVG',
       description: 'Create a social-ready SVG from an explicitly supplied Receipt Lab ledger and published/sales counts after user confirmation. Metrics are computed by the canonical Brag Card module; the server does not invent, verify, save, publish, share, or email the artifact.',
@@ -596,6 +581,21 @@ export function getMcpToolDefinitions() {
           branding: { type: 'object', description: 'Optional local branding fields; remote logos are rejected.' },
         },
         required: ['card', 'userApproved'],
+      },
+      outputSchema: { type: 'object' },
+      annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
+    },
+    {
+      name: 'calculate.marketplace_take_rate',
+      title: 'Calculate marketplace take-rate from explicit assumptions',
+      description: 'Run the canonical Marketplace Take-Rate tab engine against explicitly supplied channel volumes, prices, seller region, and fee assumptions. The tool rejects incomplete assumptions rather than applying hidden defaults; it returns deterministic fee leaks, net revenue, thresholds, concentration, and caveats.',
+      inputSchema: {
+        type: 'object',
+        additionalProperties: false,
+        properties: {
+          calculation: { type: 'object', description: 'Explicit MarketplaceTakeRateInput including currency, currencySymbol, sellerRegion, channels, offsiteAdsRate, ravelryPayPalPct, ravelryPayPalFixed, and ravelryHighTier.' },
+        },
+        required: ['calculation'],
       },
       outputSchema: { type: 'object' },
       annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },

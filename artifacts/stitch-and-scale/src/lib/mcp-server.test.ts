@@ -39,7 +39,7 @@ describe('MCP server transport contract', () => {
     expect('result' in response).toBe(true);
     if (!('result' in response)) throw new Error('tools/list failed');
     expect((response.result.tools as Array<{ name: string }>).map(tool => tool.name)).toEqual([
-      'project.intake', 'project.validate', 'grading.run', 'grading.explain', 'export.pattern_pdf', 'export.project_book_pdf', 'calculate.marketplace_take_rate', 'export.brag_card',
+      'project.intake', 'project.validate', 'grading.run', 'grading.explain', 'export.pattern_pdf', 'export.project_book_pdf', 'export.brag_card', 'calculate.marketplace_take_rate',
     ]);
   });
 
