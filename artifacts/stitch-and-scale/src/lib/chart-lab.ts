@@ -135,15 +135,24 @@ export function analyzeChartRows(
   rows: ChartRowDef[],
   gradedStitchCount: number | null,
 ): ChartLabResult {
+  // A graded count is only usable when it is a positive, finite number —
+  // a zero or negative "base count" means the lab has nothing legitimate
+  // to check rows against, same as having no count at all. A chart can never
+  // truthfully be declared "ready" without a usable graded count (F-08).
+  const usableGradedCount = gradedStitchCount !== null &&
+    Number.isFinite(gradedStitchCount) &&
+    gradedStitchCount > 0
+    ? gradedStitchCount
+    : null;
   const accounts = rows.map((r) => {
     const total = rowStitchTotal(r);
     const block = r.symbols.reduce((a, s) => a + symCost(s.symbolId, s.count), 0);
-    const drift = gradedStitchCount !== null ? total - gradedStitchCount : 0;
+    const drift = usableGradedCount !== null ? total - usableGradedCount : 0;
     return {
       row: r.row,
       repeatStitches: block,
       totalStitches: total,
-      exactFit: gradedStitchCount === null || total === gradedStitchCount,
+      exactFit: usableGradedCount !== null && total === usableGradedCount,
       drift,
     };
   });
@@ -183,9 +192,21 @@ export function analyzeChartRows(
     });
   }
   const exact = accounts.filter(a => a.exactFit).length;
-  const drifts = gradedStitchCount !== null ? accounts.map(a => Math.abs(a.drift)) : [0];
+  // With a usable graded count, drift is the gap to that count; without one,
+  // report the widest internal disagreement between rows (stitches a designer
+  // must still reconcile) rather than pretending the gap is zero.
+  const drifts = usableGradedCount !== null
+    ? accounts.map(a => Math.abs(a.drift))
+    : accounts.map(a => {
+        // No valid target: drift = how far this row's total sits from the
+        // chart's own center (median row total), so the max-drift tile never
+        // pretends an unverified chart is internally consistent.
+        const totals = accounts.map(x => x.totalStitches).sort((x, y) => x - y);
+        const median = totals[Math.floor(totals.length / 2)] ?? 0;
+        return Math.abs(a.totalStitches - median);
+      });
   const maxDrift = drifts.length ? Math.max(...drifts) : 0;
-  if (gradedStitchCount !== null && exact < accounts.length) {
+  if (usableGradedCount !== null && exact < accounts.length) {
     const off = accounts.filter(a => !a.exactFit).map(a => `row ${a.row}`).join(', ');
     flags.push({
       code: 'C-05', title: 'Row budget mismatch', severity: 'warn',
@@ -200,7 +221,7 @@ export function analyzeChartRows(
       detail: 'The chart desk is empty — author at least one row to run the lab.',
     });
   }
-  if (gradedStitchCount === null) {
+  if (gradedStitchCount === null || !Number.isFinite(gradedStitchCount) || gradedStitchCount <= 0) {
     flags.push({
       code: 'C-07', title: 'No graded count to check against', severity: 'info',
       detail: 'Give the lab the base-size stitch count (e.g. the graded bust row) so row ' +
@@ -210,10 +231,12 @@ export function analyzeChartRows(
 
   const hasError = flags.some(f => f.severity === 'error');
   const hasWarn = flags.some(f => f.severity === 'warn');
-  const verdict: ChartLabResult['verdict'] = hasError ? 'blocked' : hasWarn ? 'review' : 'ready';
+  const hasIncomplete = flags.some(f => f.severity === 'info');
+  // F-08: info flags (no rows authored, no usable graded count) mean the lab
+  // has not actually validated anything — never surface a false "ready".
+  const verdict: ChartLabResult['verdict'] = hasError ? 'blocked' : (hasWarn || hasIncomplete) ? 'review' : 'ready';
   const verdictReason = verdict === 'ready'
-    ? (rows.length === 0 ? 'Empty chart — author rows to run the lab.'
-      : `All ${accounts.length} row(s) balance against the graded count; repeat math is sound.`)
+    ? `All ${accounts.length} row(s) balance against the graded count; repeat math is sound.`
     : verdict === 'blocked'
       ? `${accounts.length} row(s) analyzed; ${flags.filter(f => f.severity === 'error').length} ` +
         'error(s) must be fixed before the chart can be trusted.'

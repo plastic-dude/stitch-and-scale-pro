@@ -27,20 +27,63 @@ const pageSrc = readFileSync(PAGE, 'utf8');
 
 import {
   getDefaultFilename,
+  sanitizeFilename,
   detectNamingStyle,
   applyNamingTemplate,
 } from './print-utils';
 
+describe('sanitizeFilename', () => {
+  it('removes traversal sequences, path separators, and invalid characters', () => {
+    expect(sanitizeFilename('../secret')).toBe('secret');
+    // '..' stripped first leaves 'a/b', then '/' becomes a dash — separators
+    // never pass through, characters between them stay.
+    expect(sanitizeFilename('a/../b')).toBe('a-b');
+    expect(sanitizeFilename('Top/Secret: "Project"')).toBe('Top-Secret- -Project');
+    expect(sanitizeFilename('win\\file')).toBe('win-file');
+    // control chars and NUL stripped entirely
+    expect(sanitizeFilename('a\x00b\x1fc')).toBe('abc');
+  });
+
+  it('strips trailing dots and spaces that Windows silently removes', () => {
+    expect(sanitizeFilename('My Sweater.')).toBe('My Sweater');
+    expect(sanitizeFilename('My Sweater... ')).toBe('My Sweater');
+  });
+
+  it('collapses whitespace and removes surrogate-adjacent empty tokens', () => {
+    expect(sanitizeFilename('   My   Sweater   ')).toBe('My Sweater');
+  });
+
+  it('blocks Windows reserved device names with any extension', () => {
+    for (const bad of ['CON', 'con', 'PRN', 'AUX', 'NUL', 'COM1', 'COM9', 'LPT1', 'CON.txt', 'nul.log']) {
+      expect(sanitizeFilename(bad)).toBe('Pattern');
+    }
+  });
+
+  it('never returns an empty string — falls back to a usable basename', () => {
+    expect(sanitizeFilename('')).toBe('Pattern');
+    expect(sanitizeFilename('   ')).toBe('Pattern');
+    expect(sanitizeFilename('<<<>>>???')).toBe('Pattern');
+    expect(sanitizeFilename('...')).toBe('Pattern');
+  });
+
+  it('caps at 180 characters', () => {
+    expect(sanitizeFilename('a'.repeat(300)).length).toBe(180);
+  });
+});
+
 describe('getDefaultFilename', () => {
   it('uses the project name with invalid filename chars sanitized', () => {
     expect(getDefaultFilename('My Sweater')).toBe('My Sweater');
-    expect(getDefaultFilename('Top/Secret: "Project"')).toBe('Top-Secret- -Project-');
+    expect(getDefaultFilename('Top/Secret: "Project"')).toBe('Top-Secret- -Project');
   });
 
-  it('caps at 180 characters and never returns a generic fallback name', () => {
+  it('caps at 180 characters and never returns an empty name', () => {
     const longName = 'a'.repeat(300);
     expect(getDefaultFilename(longName).length).toBe(180);
-    expect(getDefaultFilename('')).not.toBe('Pattern.pdf');
+    // An empty project name still yields a usable, non-empty basename.
+    const empty = getDefaultFilename('');
+    expect(empty).toBeTruthy();
+    expect(empty.length).toBeGreaterThan(0);
   });
 });
 
@@ -62,6 +105,13 @@ describe('detectNamingStyle', () => {
 describe('applyNamingTemplate', () => {
   it('replaces the {name} placeholder with the sanitized project name', () => {
     expect(applyNamingTemplate('FINAL - {name}', 'My Sweater')).toBe('FINAL - My Sweater');
+  });
+
+  it('sanitizes dangerous user characters inside the template before exporting', () => {
+    // F-05: a template containing path separators must not survive into the
+    // exported filename.
+    expect(applyNamingTemplate('{name}/../leak', 'My Sweater')).toBe('My Sweater-leak');
+    expect(applyNamingTemplate('{name}: <bad>', 'My Sweater')).toBe('My Sweater- -bad');
   });
 
   it('falls back to the default filename when the template has no placeholder', () => {

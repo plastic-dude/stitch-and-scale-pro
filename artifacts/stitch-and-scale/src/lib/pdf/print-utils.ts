@@ -152,13 +152,45 @@ export function __resetInFlightForTests(): void {
 }
 
 /**
+ * Sanitize any filename (default or user-edited) into a safe, portable basename.
+ * Policy (F-05, CHK-154):
+ *  - strip path separators and traversal sequences (`..`, `\`, `/`, NUL)
+ *  - strip characters invalid in Windows/POSIX names (`<>:"|?*`) and control chars
+ *  - strip trailing dots and spaces (Windows silently strips them)
+ *  - collapse runs of whitespace to a single space, trim, drop empty tokens
+ *  - block Windows reserved device names (CON, PRN, AUX, NUL, COM1-9, LPT1-9)
+ *  - collapse the result to dashes when it is empty, never return an empty string
+ * The returned name is always non-empty and contains no control, path, or
+ * reserved-name content. Used verbatim as the exported filename stem.
+ */
+export function sanitizeFilename(raw: string): string {
+  let name = raw;
+  // Drop a user-supplied ".pdf" extension — the export layer appends ".pdf"
+  // exactly once, so keeping one in the stem would double it ("name.pdf.pdf").
+  name = name.replace(/\.pdf\s*$/i, "");
+  // Drop traversal and null/control characters early.
+  name = name.replace(/\.\./g, "").replace(/[\x00-\x1f\x7f]/g, "");
+  // Remove path separators and characters that are invalid on Windows/macOS.
+  name = name.replace(/[\/\\:*?"<>|]/g, "-");
+  // Collapse whitespace.
+  name = name.replace(/\s+/g, " ").trim();
+  // Remove trailing dots (Windows strips them), collapse substitution-driven
+  // runs of dashes into one, and drop any dashes left at the edges.
+  name = name.replace(/\.+$/, "").replace(/-+/g, "-").replace(/^-|-$/g, "").trim();
+  if (!name) return "Pattern";
+  // Windows reserved device names are still usable as file stems on some
+  // platforms and cause confusing failures; block them outright.
+  const upper = name.toUpperCase();
+  if (/^(CON|PRN|AUX|NUL|COM\d|LPT\d)(\.[^.]*)?$/i.test(upper)) return "Pattern";
+  return name.slice(0, 180);
+}
+
+/**
  * Build the default export filename from project data.
  * Prefers project name. Never falls back to generic "Pattern.pdf".
  */
 export function getDefaultFilename(projectName: string): string {
-  const clean = (projectName || "Untitled Pattern").trim();
-  // Sanitize: remove characters invalid in filenames
-  return clean.replace(/[/\\:*?"<>|]/g, "-").slice(0, 180);
+  return sanitizeFilename((projectName || "Untitled Pattern").trim());
 }
 
 /**
@@ -185,5 +217,5 @@ export function detectNamingStyle(edited: string, defaultName: string): string |
  */
 export function applyNamingTemplate(template: string, projectName: string): string {
   if (!template || !template.includes("{name}")) return getDefaultFilename(projectName);
-  return template.replace("{name}", projectName.trim()).replace(/[/\\:*?"<>|]/g, "-").slice(0, 180);
+  return sanitizeFilename(template.replace("{name}", projectName.trim()));
 }

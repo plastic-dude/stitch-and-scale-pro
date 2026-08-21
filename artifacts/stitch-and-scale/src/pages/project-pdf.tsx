@@ -5,7 +5,7 @@ import { useSettings } from '@/context/SettingsContext';
 import { gradePattern, resolveProjectStandards } from '@/lib/grading-engine';
 import { THEMES, resolveTheme, type ThemeId } from '@/lib/pdf/themes';
 import { renderDocument } from '@/lib/pdf/renderer';
-import { openPrintWindow, getDefaultFilename, detectNamingStyle, applyNamingTemplate } from '@/lib/pdf/print-utils';
+import { openPrintWindow, getDefaultFilename, sanitizeFilename, detectNamingStyle, applyNamingTemplate } from '@/lib/pdf/print-utils';
 import { compressImageToDataUrl } from '@/lib/image-utils';
 import { getPdfLabels } from '@/lib/pdf/labels';
 import { Button } from '@/components/ui/button';
@@ -276,7 +276,10 @@ export default function ProjectPdf() {
       resetExportTimer.current = undefined;
     }
     setIsExporting(true);
-    const safeName = filename.trim() || getDefaultFilename(projectHook.project.name || 'Untitled Pattern');
+    // F-05 (CHK-154): the user-edited filename is sanitized on export, not on
+    // typing — the field stays permissive, but the actual export name is the
+    // safe, normalized basename the browser will receive.
+    const safeName = sanitizeFilename(filename.trim() || getDefaultFilename(projectHook.project.name || 'Untitled Pattern'));
     const suggestedPdf = safeName.endsWith('.pdf') ? safeName : `${safeName}.pdf`;
     // Detect if user applied a custom naming style and persist it
     const defaultName = getDefaultFilename(projectHook.project.name || 'Untitled Pattern');
@@ -498,6 +501,21 @@ export default function ProjectPdf() {
                 ? labels.usingSaved
                 : labels.namingRemembered}
             </p>
+            {/* F-05 (CHK-154): show the sanitized name that will actually be
+                exported whenever the user's text would be normalized. */}
+            {(() => {
+              const finalName = sanitizeFilename(
+                (filename.trim() || getDefaultFilename(projectHook?.project?.name || 'Untitled Pattern')),
+              );
+              const diverges = filename.trim() !== finalName;
+              return diverges
+                ? (
+                  <p className="text-[11px] text-amber-600 mt-1">
+                    {labels.finalFilename.replace('{name}', finalName)}
+                  </p>
+                )
+                : null;
+            })()}
           </section>
         </div>
 

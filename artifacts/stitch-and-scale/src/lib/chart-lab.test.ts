@@ -164,13 +164,51 @@ describe('analyzeChartRows', () => {
     expect(r.maxDrift).toBe(0);
   });
 
-  it('skips drift checks without a graded count but still prose-writes', () => {
+  it('skips mismatch warnings without a graded count but still prose-writes', () => {
     const rows = [row({ row: 1, symbols: [{ symbolId: 'yo', count: 1 }, { symbolId: 'k2tog', count: 1 }],
       repeatCount: 3 })];
     const r = analyzeChartRows(rows, null);
     expect(r.flags.every(f => f.code !== 'C-05')).toBe(true);
     expect(r.proseRows[0].text).toContain('(1 yo, 1 k2tog) x 3');
+  });
+
+  it('caps an empty chart at review instead of a false ready (F-08)', () => {
+    const r = analyzeChartRows([], null);
+    expect(r.verdict).toBe('review');
+    expect(r.flags.some(f => f.code === 'C-06')).toBe(true);
+  });
+
+  it('caps authored rows without a graded count at review (F-08)', () => {
+    const rows = [
+      row({ row: 1, symbols: [{ symbolId: 'knit', count: 3 }], repeatCount: 5,
+        before: [{ symbolId: 'knit', count: 1 }], after: [{ symbolId: 'knit', count: 1 }] }),
+    ];
+    // 1 + 3×5 + 1 = 17, but with no usable target nothing is verified.
+    const r = analyzeChartRows(rows, null);
+    expect(r.verdict).toBe('review');
+    expect(r.rows[0].exactFit).toBe(false);
+    expect(r.flags.some(f => f.code === 'C-07')).toBe(true);
+  });
+
+  it('rejects a zero, negative, or NaN graded count as unusable (F-08)', () => {
+    const rows = [row({ row: 1, symbols: [{ symbolId: 'knit', count: 3 }], repeatCount: 5 })];
+    for (const bad of [0, -17, NaN, Infinity]) {
+      const r = analyzeChartRows(rows, bad);
+      expect(r.verdict).toBe('review');
+      expect(r.rows[0].exactFit).toBe(false);
+      expect(r.flags.some(f => f.code === 'C-07')).toBe(true);
+    }
+  });
+
+  it('still declares ready when a valid graded count is met (regression)', () => {
+    const rows = [
+      row({ row: 1, symbols: [{ symbolId: 'knit', count: 3 }], repeatCount: 5,
+        before: [{ symbolId: 'knit', count: 1 }], after: [{ symbolId: 'knit', count: 1 }] }),
+    ];
+    const r = analyzeChartRows(rows, 17);
+    expect(r.verdict).toBe('ready');
     expect(r.rows[0].exactFit).toBe(true);
+    expect(r.flags.length).toBe(0);
   });
 
   it('prose-prints every authored row', () => {
