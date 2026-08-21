@@ -27,6 +27,7 @@
  */
 
 import { platformNet } from './pattern-income-calculator';
+import { safeNum } from './numeric-guard';
 
 // ---- market constants (session-46 research, cited in the research file) ----
 
@@ -216,15 +217,39 @@ export interface DistributionResult {
   moneyLine: string;
 }
 
+function bounded(raw: unknown, min: number, max: number, fallback: number): number {
+  const value = safeNum(typeof raw === 'number' ? raw : String(raw ?? ''), fallback);
+  return Math.min(max, Math.max(min, value));
+}
+
+export function normalizeDistributionInputs(raw: Partial<DistributionInputs> = {}): DistributionInputs {
+  const merged = { ...DEFAULT_DISTRIBUTION, ...raw };
+  const hasExplicitAllocations = Object.prototype.hasOwnProperty.call(raw, 'allocations');
+  const allocations = hasExplicitAllocations && Array.isArray(merged.allocations)
+    ? merged.allocations
+        .filter((a) => DISTRIBUTION_CHANNELS.includes(a.channel))
+        .map((a) => ({ channel: a.channel, share: bounded(a.share, 0, 1, 0) }))
+        .filter((a) => a.share > 0)
+    : DEFAULT_DISTRIBUTION.allocations;
+  return {
+    price: bounded(merged.price, 0.01, 1_000_000, DEFAULT_DISTRIBUTION.price),
+    monthlyUnits: Math.round(bounded(merged.monthlyUnits, 0, 10_000_000, DEFAULT_DISTRIBUTION.monthlyUnits)),
+    allocations,
+    libraryRoyaltyPerDownload: bounded(merged.libraryRoyaltyPerDownload, 0, 2.45, DEFAULT_DISTRIBUTION.libraryRoyaltyPerDownload),
+    clubDownloadsPerMember: bounded(merged.clubDownloadsPerMember, 0, 1, DEFAULT_DISTRIBUTION.clubDownloadsPerMember),
+    clubMembers: Math.round(bounded(merged.clubMembers, 0, 10_000_000, DEFAULT_DISTRIBUTION.clubMembers)),
+    clubRate: bounded(merged.clubRate, 0, 10_000, DEFAULT_DISTRIBUTION.clubRate),
+    lifetimeMonths: Math.round(bounded(merged.lifetimeMonths, 1, 120, DEFAULT_DISTRIBUTION.lifetimeMonths)),
+    buildCost: bounded(merged.buildCost, 0, 100_000_000, DEFAULT_DISTRIBUTION.buildCost),
+  };
+}
+
 export function analyzeDistribution(raw?: Partial<DistributionInputs>): DistributionResult {
-  const inputs: DistributionInputs = { ...DEFAULT_DISTRIBUTION, ...raw };
-  const price = Number.isFinite(inputs.price) && inputs.price > 0 ? inputs.price : DEFAULT_DISTRIBUTION.price;
-  const monthlyUnits = Number.isFinite(inputs.monthlyUnits) && inputs.monthlyUnits >= 0
-    ? inputs.monthlyUnits : DEFAULT_DISTRIBUTION.monthlyUnits;
-  const lifetimeMonths = Number.isFinite(inputs.lifetimeMonths) && inputs.lifetimeMonths > 0
-    ? inputs.lifetimeMonths : DEFAULT_DISTRIBUTION.lifetimeMonths;
-  const buildCost = Number.isFinite(inputs.buildCost) && inputs.buildCost >= 0
-    ? inputs.buildCost : DEFAULT_DISTRIBUTION.buildCost;
+  const inputs = normalizeDistributionInputs(raw);
+  const price = inputs.price;
+  const monthlyUnits = inputs.monthlyUnits;
+  const lifetimeMonths = inputs.lifetimeMonths;
+  const buildCost = inputs.buildCost;
 
   const flags: DistributionResult['flags'] = [];
 

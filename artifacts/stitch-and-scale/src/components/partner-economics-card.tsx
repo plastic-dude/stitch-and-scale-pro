@@ -16,8 +16,10 @@ import { PatternProject } from '@/lib/grading-engine';
 import { useSettings } from '@/context/SettingsContext';
 import { getToastCopy } from '@/lib/toast-copy';
 import { PARTNER_COPY } from '@/lib/partner-copy';
+import { safeNum } from '@/lib/numeric-guard';
 import {
   analyzePartnerDeal,
+  normalizePartnerDeal,
   scorePitch,
   summarizePipeline,
   DEFAULT_PARTNER,
@@ -57,9 +59,18 @@ function loadStored(projectId: string): StoredPartner {
         return {
           ...defaultStored(),
           ...parsed,
-          offer: { ...defaultStored().offer, ...parsed.offer },
-          pitch: { ...defaultStored().pitch, ...(parsed.pitch || {}) },
-          pitches: Array.isArray(parsed.pitches) ? parsed.pitches : [],
+          offer: normalizePartnerDeal({ ...defaultStored().offer, ...parsed.offer }),
+          pitch: {
+            ...defaultStored().pitch,
+            ...(parsed.pitch || {}),
+            portfolioPatterns: Math.max(0, Math.min(100000, Number.isFinite(Number(parsed.pitch?.portfolioPatterns)) ? Number(parsed.pitch.portfolioPatterns) : defaultStored().pitch.portfolioPatterns)),
+          },
+          pitches: Array.isArray(parsed.pitches)
+            ? parsed.pitches.map((p: Partial<PitchEntry>) => ({
+                ...p,
+                amount: Math.max(0, Math.min(10_000_000, Number.isFinite(Number(p.amount)) ? Number(p.amount) : 0)),
+              }))
+            : [],
         };
       }
     }
@@ -88,7 +99,10 @@ function NumField({ id, label, value, onChange, min = 0, max, step = 1, suffix }
       <div className="relative">
         <Input id={id} type="number" min={min} {...(max !== undefined ? { max } : {})} step={step}
           value={value}
-          onChange={(e) => onChange(Number(e.target.value) >= 0 ? Number(e.target.value) : 0)}
+          onChange={(e) => {
+            const parsed = safeNum(e.target.value, 0);
+            onChange(Math.min(max ?? Number.MAX_SAFE_INTEGER, Math.max(min, parsed)));
+          }}
           className={suffix ? 'pr-8' : undefined} />
         {suffix && (
           <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">

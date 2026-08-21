@@ -14,6 +14,7 @@ import { PatternProject } from '@/lib/grading-engine';
 import { PLATFORMS, PLATFORM_LABELS, PlatformId } from '@/lib/pattern-income-calculator';
 import {
   analyzeMembership,
+  normalizeMembershipInput,
   DEFAULT_EXCLUSIVE_PATTERN_COST,
   DEFAULT_EXCLUSIVE_PATTERN_HOURS,
   PLATFORM_FEE_PCT,
@@ -21,6 +22,7 @@ import {
   MembershipInput,
   MembershipTier,
 } from '@/lib/membership-planner';
+import { safeNum } from '@/lib/numeric-guard';
 
 const STORAGE_KEY = 'mspl-v1';
 
@@ -62,15 +64,18 @@ function defaultStored(): StoredMembership {
 
 function loadStored(raw: StoredMembership | null): StoredMembership {
   try {
-    
-    
-      if (raw && Array.isArray(raw.tiers) && raw.tiers.length > 0) {
-        return { ...defaultStored(), ...raw, tiers: raw.tiers.map((t: Partial<MembershipTier>) => ({ ...defaultStored().tiers[0], ...t })) };
-      }
+    if (raw && Array.isArray(raw.tiers) && raw.tiers.length > 0) {
+      return normalizeMembershipInput(raw);
+    }
   } catch {
     /* storage unreadable — start fresh */
   }
-  return defaultStored();
+  return normalizeMembershipInput(defaultStored());
+}
+
+function fieldNumber(raw: string, min: number, max: number, fallback = min, integer = false): number {
+  const value = Math.min(max, Math.max(min, safeNum(raw, fallback)));
+  return integer ? Math.round(value) : value;
 }
 
 const fmt$ = (n: number) =>
@@ -84,7 +89,7 @@ export function MembershipCard({ project }: { project: PatternProject }) {
   const copyText = MEMBERSHIP_COPY[language];
   const [stored, setStored] = useProjectStorageState(handle, (raw) => loadStored(raw));
 
-  const input = useMemo<MembershipInput>(() => ({ ...stored, platform: stored.platform }), [stored]);
+  const input = useMemo<MembershipInput>(() => normalizeMembershipInput(stored), [stored]);
   const result = useMemo(() => analyzeMembership(input), [input]);
 
   const setTier = (index: number, patch: Partial<MembershipTier>) =>
@@ -152,7 +157,7 @@ export function MembershipCard({ project }: { project: PatternProject }) {
                     type="number"
                     min={1}
                     value={tier.price}
-                    onChange={(e) => setTier(index, { price: Number(e.target.value) })}
+                    onChange={(e) => setTier(index, { price: fieldNumber(e.target.value, 1, 10000, 1) })}
                   />
                 </div>
                 <div className="w-20 min-w-20 space-y-1.5">
@@ -161,7 +166,7 @@ export function MembershipCard({ project }: { project: PatternProject }) {
                     type="number"
                     min={0}
                     value={tier.members}
-                    onChange={(e) => setTier(index, { members: Number(e.target.value) })}
+                    onChange={(e) => setTier(index, { members: fieldNumber(e.target.value, 0, 10000000, 0, true) })}
                   />
                 </div>
                 <div className="w-20 min-w-20 space-y-1.5">
@@ -171,7 +176,7 @@ export function MembershipCard({ project }: { project: PatternProject }) {
                     min={0}
                     max={100}
                     value={tier.monthlyChurnPct}
-                    onChange={(e) => setTier(index, { monthlyChurnPct: Number(e.target.value) })}
+                    onChange={(e) => setTier(index, { monthlyChurnPct: fieldNumber(e.target.value, 0, 100, 0) })}
                   />
                 </div>
                 <Button
@@ -221,7 +226,7 @@ export function MembershipCard({ project }: { project: PatternProject }) {
               min={1}
               max={36}
               value={stored.rampMonths}
-              onChange={(e) => setField({ rampMonths: Number(e.target.value) })}
+              onChange={(e) => setField({ rampMonths: fieldNumber(e.target.value, 1, 36, 1, true) })}
             />
           </div>
           <div className="space-y-1.5">
@@ -232,7 +237,7 @@ export function MembershipCard({ project }: { project: PatternProject }) {
               min={0}
               max={30}
               value={stored.platformRate}
-              onChange={(e) => setField({ platformRate: Number(e.target.value) })}
+              onChange={(e) => setField({ platformRate: fieldNumber(e.target.value, 0, 100, 0) })}
             />
           </div>
           <div className="space-y-1.5">
@@ -243,7 +248,7 @@ export function MembershipCard({ project }: { project: PatternProject }) {
               min={0}
               max={15}
               value={stored.processingRate}
-              onChange={(e) => setField({ processingRate: Number(e.target.value) })}
+              onChange={(e) => setField({ processingRate: fieldNumber(e.target.value, 0, 100, 0) })}
             />
           </div>
           <div className="space-y-1.5">
@@ -254,7 +259,7 @@ export function MembershipCard({ project }: { project: PatternProject }) {
               min={0}
               max={6}
               value={stored.exclusivePatternsPerMonth}
-              onChange={(e) => setField({ exclusivePatternsPerMonth: Number(e.target.value) })}
+              onChange={(e) => setField({ exclusivePatternsPerMonth: fieldNumber(e.target.value, 0, 6, 0, true) })}
             />
           </div>
           <div className="space-y-1.5">
@@ -264,7 +269,7 @@ export function MembershipCard({ project }: { project: PatternProject }) {
               type="number"
               min={0}
               value={stored.exclusivePatternCost}
-              onChange={(e) => setField({ exclusivePatternCost: Number(e.target.value) })}
+              onChange={(e) => setField({ exclusivePatternCost: fieldNumber(e.target.value, 0, 1000000, 0) })}
             />
           </div>
           <div className="space-y-1.5">
@@ -274,7 +279,7 @@ export function MembershipCard({ project }: { project: PatternProject }) {
               type="number"
               min={0}
               value={stored.designerHoursPerPattern}
-              onChange={(e) => setField({ designerHoursPerPattern: Number(e.target.value) })}
+              onChange={(e) => setField({ designerHoursPerPattern: fieldNumber(e.target.value, 0, 1000, 0) })}
             />
           </div>
           <div className="space-y-1.5">
@@ -284,7 +289,7 @@ export function MembershipCard({ project }: { project: PatternProject }) {
               type="number"
               min={12}
               value={stored.designRate}
-              onChange={(e) => setField({ designRate: Number(e.target.value) })}
+              onChange={(e) => setField({ designRate: fieldNumber(e.target.value, 12, 10000, 12) })}
             />
           </div>
           <div className="space-y-1.5">
@@ -294,7 +299,7 @@ export function MembershipCard({ project }: { project: PatternProject }) {
               type="number"
               min={0}
               value={stored.parkedPatternPrice}
-              onChange={(e) => setField({ parkedPatternPrice: Number(e.target.value) })}
+              onChange={(e) => setField({ parkedPatternPrice: fieldNumber(e.target.value, 0, 1000000, 0) })}
             />
           </div>
           <div className="space-y-1.5">
@@ -304,7 +309,7 @@ export function MembershipCard({ project }: { project: PatternProject }) {
               type="number"
               min={0}
               value={stored.parkedPatternMonthlySalesLost}
-              onChange={(e) => setField({ parkedPatternMonthlySalesLost: Number(e.target.value) })}
+              onChange={(e) => setField({ parkedPatternMonthlySalesLost: fieldNumber(e.target.value, 0, 1000000, 0, true) })}
             />
           </div>
           <div className="space-y-1.5">
@@ -315,7 +320,7 @@ export function MembershipCard({ project }: { project: PatternProject }) {
               min={1}
               max={60}
               value={stored.parkedHorizonMonths}
-              onChange={(e) => setField({ parkedHorizonMonths: Number(e.target.value) })}
+              onChange={(e) => setField({ parkedHorizonMonths: fieldNumber(e.target.value, 1, 60, 1, true) })}
             />
           </div>
         </div>

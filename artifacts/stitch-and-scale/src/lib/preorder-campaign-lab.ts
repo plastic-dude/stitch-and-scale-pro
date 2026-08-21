@@ -46,6 +46,8 @@
  * campaign-length and pricing-policy checks (PC-01..PC-07), and a verdict.
  */
 
+import { safeNum } from './numeric-guard';
+
 export type ChargeModel = 'upfront' | 'chargeLater' | 'deposit';
 export const CHARGE_MODEL_LABELS: Record<ChargeModel, string> = {
   upfront: 'Charge upfront (full payment now)',
@@ -193,8 +195,50 @@ export interface PreorderResult {
   suggestion: string;
 }
 
+function bounded(raw: unknown, min: number, max: number, fallback: number): number {
+  const value = safeNum(typeof raw === 'number' ? raw : String(raw ?? ''), fallback);
+  return Math.min(max, Math.max(min, value));
+}
+
+function whole(raw: unknown, min: number, max: number, fallback: number): number {
+  return Math.round(bounded(raw, min, max, fallback));
+}
+
+export function normalizePreorderCampaignInput(
+  input: Partial<PreorderCampaignInput> = {},
+): PreorderCampaignInput {
+  const merged = { ...PREORDER_CAMPAIGN_DEFAULTS, ...input };
+  const chargeModel: ChargeModel = merged.chargeModel === 'upfront' || merged.chargeModel === 'chargeLater' || merged.chargeModel === 'deposit'
+    ? merged.chargeModel
+    : PREORDER_CAMPAIGN_DEFAULTS.chargeModel;
+  return {
+    itemPrice: bounded(merged.itemPrice, 0.01, 1_000_000, PREORDER_CAMPAIGN_DEFAULTS.itemPrice),
+    earlyBirdPrice: bounded(merged.earlyBirdPrice, 0.01, 1_000_000, PREORDER_CAMPAIGN_DEFAULTS.earlyBirdPrice),
+    earlyBirdShare: bounded(merged.earlyBirdShare, 0, 1, PREORDER_CAMPAIGN_DEFAULTS.earlyBirdShare),
+    platformFeePct: bounded(merged.platformFeePct, 0, 1, PREORDER_CAMPAIGN_DEFAULTS.platformFeePct),
+    campaignDays: whole(merged.campaignDays, 1, 365, PREORDER_CAMPAIGN_DEFAULTS.campaignDays),
+    chargeModel,
+    leadTimeDays: whole(merged.leadTimeDays, 0, 2_000, PREORDER_CAMPAIGN_DEFAULTS.leadTimeDays),
+    materialsPerUnit: bounded(merged.materialsPerUnit, 0, 1_000_000, PREORDER_CAMPAIGN_DEFAULTS.materialsPerUnit),
+    knitHoursPerUnit: bounded(merged.knitHoursPerUnit, 0, 10_000, PREORDER_CAMPAIGN_DEFAULTS.knitHoursPerUnit),
+    laborRate: bounded(merged.laborRate, 0, 100_000, PREORDER_CAMPAIGN_DEFAULTS.laborRate),
+    fixedSeriesCosts: bounded(merged.fixedSeriesCosts, 0, 100_000_000, PREORDER_CAMPAIGN_DEFAULTS.fixedSeriesCosts),
+    fulfillmentHoursPerUnit: bounded(merged.fulfillmentHoursPerUnit, 0, 10_000, PREORDER_CAMPAIGN_DEFAULTS.fulfillmentHoursPerUnit),
+    shippingPerUnit: bounded(merged.shippingPerUnit, 0, 1_000_000, PREORDER_CAMPAIGN_DEFAULTS.shippingPerUnit),
+    emailListSize: whole(merged.emailListSize, 0, 100_000_000, PREORDER_CAMPAIGN_DEFAULTS.emailListSize),
+    emailConversion: bounded(merged.emailConversion, 0, 1, PREORDER_CAMPAIGN_DEFAULTS.emailConversion),
+    socialExpectedOrders: whole(merged.socialExpectedOrders, 0, 100_000_000, PREORDER_CAMPAIGN_DEFAULTS.socialExpectedOrders),
+    waitlistSize: whole(merged.waitlistSize, 0, 100_000_000, PREORDER_CAMPAIGN_DEFAULTS.waitlistSize),
+    waitlistConversion: bounded(merged.waitlistConversion, 0, 1, PREORDER_CAMPAIGN_DEFAULTS.waitlistConversion),
+    useThreshold: Boolean(merged.useThreshold),
+    thresholdShareOfPredicted: bounded(merged.thresholdShareOfPredicted, 0, 1, PREORDER_CAMPAIGN_DEFAULTS.thresholdShareOfPredicted),
+    safetyMarginPct: bounded(merged.safetyMarginPct, 0, 1, PREORDER_CAMPAIGN_DEFAULTS.safetyMarginPct),
+    bufferShare: bounded(merged.bufferShare, 0, 1, PREORDER_CAMPAIGN_DEFAULTS.bufferShare),
+  };
+}
+
 export function analyzePreorderCampaign(input: Partial<PreorderCampaignInput> = {}): PreorderResult {
-  const i: PreorderCampaignInput = { ...PREORDER_CAMPAIGN_DEFAULTS, ...input };
+  const i = normalizePreorderCampaignInput(input);
 
   // --- Demand.
   const emailOrders = Math.round(i.emailListSize * i.emailConversion);

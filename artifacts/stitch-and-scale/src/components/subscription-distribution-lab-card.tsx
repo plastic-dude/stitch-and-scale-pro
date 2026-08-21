@@ -13,6 +13,7 @@ import { PatternProject } from '@/lib/grading-engine';
 import { projectStorage } from '@/lib/storage-lib';
 import {
   analyzeDistribution,
+  normalizeDistributionInputs,
   DEFAULT_DISTRIBUTION,
   CHANNEL_LABELS,
   DISTRIBUTION_CHANNELS,
@@ -21,6 +22,7 @@ import {
   type ChannelAllocation,
   type ChannelNet,
 } from '@/lib/subscription-distribution-lab';
+import { safeNum } from '@/lib/numeric-guard';
 
 function defaultStored(): DistributionInputs {
   return { ...DEFAULT_DISTRIBUTION };
@@ -37,13 +39,18 @@ function loadStored(handle: ReturnType<typeof projectStorage<DistributionInputs>
       ),
     };
     merged.allocations = merged.allocations.length > 0 ? merged.allocations : defaultStored().allocations;
-    return merged;
+    return normalizeDistributionInputs(merged);
   }
   return defaultStored();
 }
 
 const fmt$ = (n: number) =>
   n.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 2 });
+
+function fieldNumber(raw: string, min: number, max: number, fallback = min, integer = false): number {
+  const value = Math.min(max, Math.max(min, safeNum(raw, fallback)));
+  return integer ? Math.round(value) : value;
+}
 
 const verdictColor = (v: string) =>
   v === 'ready' ? 'bg-emerald-500/15 text-emerald-700 border-emerald-500/30' :
@@ -60,7 +67,7 @@ function NumField({ id, label, value, onChange, min = 0, max, step = 1, suffix }
       <div className="relative">
         <Input id={id} type="number" min={min} {...(max !== undefined ? { max } : {})} step={step}
           value={value}
-          onChange={(e) => onChange(Number(e.target.value) >= 0 ? Number(e.target.value) : 0)}
+          onChange={(e) => onChange(fieldNumber(e.target.value, min, max ?? 100_000_000, min, step >= 1 && Number.isInteger(step)))}
           className={suffix ? 'pr-8' : undefined} />
         {suffix && (
           <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground pointer-events-none">

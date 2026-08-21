@@ -85,6 +85,30 @@ describe('analyzePriceWindow', () => {
     const r = analyzePriceWindow({ launchDiscountPct: 15, launchWeeks: 0 });
     expect(r.trap.items.some(i => i.includes('zero sale weeks'))).toBe(true);
   });
+
+  it('normalizes hostile direct inputs before pricing math', () => {
+    const r = analyzePriceWindow({
+      platform: 'not-a-platform' as never,
+      listPrice: Number.POSITIVE_INFINITY,
+      baselineMonthlySales: -20,
+      faveQueue: Number.NaN,
+      launchDiscountPct: 150,
+      launchWeeks: Number.POSITIVE_INFINITY,
+      promoThreadLiftPerWeek: -4,
+      promoThreadMonths: 0,
+      fullPriceConversionPct: Number.POSITIVE_INFINITY,
+      discountUpliftMultiple: -2,
+      seasonMult: Number.NaN,
+    });
+
+    for (const path of [r.fullPricePath, r.launchDiscountPath, r.permanentDiscountPath]) {
+      expect(Number.isFinite(path.netRevenue)).toBe(true);
+      expect(Number.isFinite(path.sales)).toBe(true);
+    }
+    expect(Number.isFinite(r.launchDelta)).toBe(true);
+    expect(r.launchDiscountPath.name).toContain('100%');
+    expect(r.horizonMonths).toBe(1);
+  });
 });
 
 describe('season tables', () => {

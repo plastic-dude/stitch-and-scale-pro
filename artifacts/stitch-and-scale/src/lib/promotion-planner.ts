@@ -20,6 +20,7 @@
  * - Kill rule: $30 spend with 0 orders → pause the listing.
  */
 import { platformNet, PlatformId } from '@/lib/pattern-income-calculator';
+import { safeNum } from '@/lib/numeric-guard';
 
 export type PromoChannelId =
   | 'etsyOnsite'
@@ -166,16 +167,50 @@ function makeInput(channels?: Partial<ChannelParams>[]): PromotionInput {
 
 export { makeInput as defaultPromotionInput };
 
-export function analyzePromotion(input: PromotionInput): PromotionResult {
-  const horizonMonths = Math.max(input.horizonMonths, 1);
+const bounded = (raw: unknown, min: number, max: number, fallback: number): number => {
+  const value = safeNum(typeof raw === 'number' ? raw : String(raw ?? ''), fallback);
+  return Math.min(max, Math.max(min, value));
+};
 
-  const baseline = platformNet(input.platform, input.price, input.monthlySales);
+/** Normalize direct callers to the same finite, domain-bounded contract as the UI. */
+export function normalizePromotionInput(input: PromotionInput): PromotionInput {
+  const defaults = makeInput();
+  const channels = defaults.channels.map((def) => {
+    const raw = input.channels?.find((channel) => channel.id === def.id);
+    const merged = { ...def, ...(raw ?? {}) };
+    return {
+      ...merged,
+      budget: bounded(merged.budget, 0, 1_000_000, def.budget),
+      cpc: bounded(merged.cpc, 0, 1_000, def.cpc),
+      conversionPct: bounded(merged.conversionPct, 0, 100, def.conversionPct),
+      offsiteCommissionPct: bounded(merged.offsiteCommissionPct, 0, 100, def.offsiteCommissionPct),
+      hourlyRate: bounded(merged.hourlyRate, 0, 100_000, def.hourlyRate),
+      clicksPerHour: bounded(merged.clicksPerHour, 0, 1_000_000, def.clicksPerHour),
+      organicConversionPct: bounded(merged.organicConversionPct, 0, 100, def.organicConversionPct),
+    };
+  });
+  return {
+    ...defaults,
+    ...input,
+    price: bounded(input.price, 0.01, 1_000_000, defaults.price),
+    monthlySales: bounded(input.monthlySales, 0, 1_000_000, defaults.monthlySales),
+    horizonMonths: bounded(input.horizonMonths, 1, 120, defaults.horizonMonths),
+    killSpendThreshold: bounded(input.killSpendThreshold, 0, 1_000_000, defaults.killSpendThreshold),
+    channels,
+  };
+}
+
+export function analyzePromotion(input: PromotionInput): PromotionResult {
+  const normalized = normalizePromotionInput(input);
+  const horizonMonths = Math.max(normalized.horizonMonths, 1);
+
+  const baseline = platformNet(normalized.platform, normalized.price, normalized.monthlySales);
   const grossBaseline = Math.round(
-    baseline.netPerSale * Math.max(input.monthlySales, 0) * horizonMonths * 100,
+    baseline.netPerSale * Math.max(normalized.monthlySales, 0) * horizonMonths * 100,
   ) / 100;
 
-  const channelResults: ChannelResult[] = input.channels.map((c) => {
-    const netPerSale = platformNet(input.platform, input.price, Math.max(input.monthlySales, 1)).netPerSale;
+  const channelResults: ChannelResult[] = normalized.channels.map((c) => {
+    const netPerSale = platformNet(normalized.platform, normalized.price, Math.max(normalized.monthlySales, 1)).netPerSale;
     const offsiteNetPerSale = Math.round(
       netPerSale * (1 - (c.offsiteCommissionPct || DEFAULT_OFFSITE_COMM) / 100) * 100,
     ) / 100;
@@ -197,7 +232,7 @@ export function analyzePromotion(input: PromotionInput): PromotionResult {
     if (c.id === 'etsyOnsite') {
       const clicks = c.cpc > 0 ? Math.round((spend / c.cpc) * 10) / 10 : 0;
       const expectedSales = Math.round((clicks * (Math.max(c.conversionPct, 0) / 100)) * 100) / 100;
-      const expectedRevenue = Math.round(expectedSales * input.price * 100) / 100;
+      const expectedRevenue = Math.round(expectedSales * normalized.price * 100) / 100;
       const expectedProfit = Math.round(expectedSales * netPerSale * 100) / 100 - spend;
       // Break-even CPC: profit per sale × conv rate = max CPC
       const breakevenCpc = Math.round(netPerSale * (Math.max(c.conversionPct, 0) / 100) * 1000) / 1000;
@@ -259,7 +294,7 @@ export function analyzePromotion(input: PromotionInput): PromotionResult {
     return {
       id: c.id, label: CHANNEL_LABELS[c.id], enabled: true, isPaid: false, spend, netPerSale,
       offsiteNetPerSale: netPerSale, clicks, expectedSales,
-      expectedRevenue: Math.round(expectedSales * input.price * 100) / 100,
+      expectedRevenue: Math.round(expectedSales * normalized.price * 100) / 100,
       expectedProfit, breakevenCpc: 0, requiredConversionPct: 0, revenueRoas, verdict, verdictNote,
     };
   });
@@ -336,7 +371,7 @@ export function analyzePromotion(input: PromotionInput): PromotionResult {
     budgetSplit,
     verdict,
     verdictNote,
-    killRule: `$${input.killSpendThreshold} spent with zero orders → pause that listing, no exceptions.`,
+    killRule: `$${normalized.killSpendThreshold} spent with zero orders → pause that listing, no exceptions.`,
     testPlan,
   };
 }

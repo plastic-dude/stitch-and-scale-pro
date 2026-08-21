@@ -153,4 +153,44 @@ describe('analyzePromotion', () => {
     expect(t.find((c) => c.id === 'etsyOnsite')?.enabled).toBe(false);
     expect(t.find((c) => c.id === 'etsyOffsite')?.enabled).toBe(true);
   });
+
+  it('normalizes hostile direct inputs before commercial math', () => {
+    const input = defaultPromotionInput([
+      {
+        id: 'etsyOnsite',
+        enabled: true,
+        budget: -500,
+        cpc: Number.POSITIVE_INFINITY,
+        conversionPct: 150,
+      },
+      {
+        id: 'newsletter',
+        enabled: true,
+        budget: Number.NaN,
+        hourlyRate: -25,
+        clicksPerHour: Number.POSITIVE_INFINITY,
+        organicConversionPct: -10,
+      },
+    ]);
+    const result = analyzePromotion({
+      ...input,
+      price: Number.POSITIVE_INFINITY,
+      monthlySales: -10,
+      horizonMonths: Number.NaN,
+      killSpendThreshold: -1,
+    });
+
+    expect(Number.isFinite(result.totalSpend)).toBe(true);
+    expect(Number.isFinite(result.totalExpectedProfit)).toBe(true);
+    expect(Number.isFinite(result.grossBaseline)).toBe(true);
+    for (const channel of result.channels) {
+      expect(Number.isFinite(channel.spend)).toBe(true);
+      expect(Number.isFinite(channel.expectedSales)).toBe(true);
+      expect(Number.isFinite(channel.expectedProfit)).toBe(true);
+      expect(Number.isFinite(channel.offsiteNetPerSale)).toBe(true);
+    }
+    expect(result.channels.find((c) => c.id === 'etsyOnsite')?.spend).toBe(0);
+    expect(result.channels.find((c) => c.id === 'newsletter')?.spend).toBe(0);
+    expect(result.killRule).toContain('$0');
+  });
 });

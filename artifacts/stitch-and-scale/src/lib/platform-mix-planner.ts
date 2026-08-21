@@ -14,6 +14,7 @@
  * maintenance hours each listing costs.
  */
 import { platformNet, PLATFORM_LABELS, type PlatformId } from './pattern-income-calculator';
+import { safeNum } from './numeric-guard';
 
 export type Verdict = 'go' | 'maybe' | 'no';
 
@@ -96,6 +97,36 @@ export const DEFAULT_MIX: PlatformMixInput = {
   subjectToOffsiteAds: true,
 };
 
+const bounded = (raw: unknown, min: number, max: number, fallback: number): number => {
+  const value = safeNum(typeof raw === 'number' ? raw : String(raw ?? ''), fallback);
+  return Math.min(max, Math.max(min, value));
+};
+
+/** Normalize direct callers to the same finite, domain-bounded contract as the UI. */
+export function normalizePlatformMixInput(input: Partial<PlatformMixInput> = {}): PlatformMixInput {
+  const defaults = DEFAULT_MIX;
+  const rawPlatforms = Array.isArray(input.platforms) ? input.platforms : [];
+  const platforms = DEFAULT_PLATFORMS.map((fallback) => {
+    const raw = rawPlatforms.find((candidate) => candidate?.platform === fallback.platform);
+    return {
+      platform: fallback.platform,
+      salesSharePct: bounded(raw?.salesSharePct, 0, 100, fallback.salesSharePct),
+      enabled: typeof raw?.enabled === 'boolean' ? raw.enabled : fallback.enabled,
+    };
+  });
+  return {
+    platforms,
+    monthlySales: bounded(input.monthlySales, 0, 1_000_000, defaults.monthlySales),
+    avgPrice: bounded(input.avgPrice, 0.01, 1_000_000, defaults.avgPrice),
+    designRate: bounded(input.designRate, 0, 100_000, defaults.designRate),
+    marketingHoursAvailable: bounded(input.marketingHoursAvailable, 0, 744, defaults.marketingHoursAvailable),
+    internationalSalesPct: bounded(input.internationalSalesPct, 0, 100, defaults.internationalSalesPct),
+    subjectToOffsiteAds: typeof input.subjectToOffsiteAds === 'boolean'
+      ? input.subjectToOffsiteAds
+      : defaults.subjectToOffsiteAds,
+  };
+}
+
 // Maintenance hours per month per active listing (re-listing, SEO, questions,
 // promos). Etsy is heavier (SEO churn, messages, offsite ads management).
 const MAINTENANCE_HOURS: Record<PlatformId, number> = {
@@ -138,39 +169,40 @@ function makeZeroEntry(platform: PlatformId, internationalSalesPct: number) {
   };
 }
 
-export function analyzePlatformMix(input: PlatformMixInput): MixResult {
-
-  const enabledPlatforms = input.platforms.filter((p) => p.enabled);
+export function analyzePlatformMix(input: Partial<PlatformMixInput> = {}): MixResult {
+  const normalized = normalizePlatformMixInput(input);
+  const enabledPlatforms = normalized.platforms.filter((p) => p.enabled);
   const enabled = enabledPlatforms.length;
 
   const totalMarketingHours = enabledPlatforms.reduce(
     (s, p) => s + (MAINTENANCE_HOURS[p.platform] ?? 1.5), 0);
-  const capacityExceeded = totalMarketingHours > input.marketingHoursAvailable;
+  const capacityExceeded = totalMarketingHours > normalized.marketingHoursAvailable;
 
   const enabledWithShare = enabledPlatforms.reduce((s, p) => s + p.salesSharePct, 0);
+  const shareBase = enabledWithShare > 0 ? enabledWithShare : Math.max(enabled, 1);
   // Sales are routed by share among enabled platforms; if shares don't sum to
   // 100, normalize against enabled share.
 
   let totalSalesRouted = 0;
-  const perPlatform = input.platforms.map((p) => {
+  const perPlatform = normalized.platforms.map((p) => {
     // Disabled platforms route nothing — their intended share redistributes
     // across enabled platforms by share ratio, and any leftover (shares that
     // belonged to disabled platforms or sums over/under 100) spreads evenly.
     if (!p.enabled) {
-      return makeZeroEntry(p.platform, input.internationalSalesPct);
+      return makeZeroEntry(p.platform, normalized.internationalSalesPct);
     }
     const sales = Math.round(
-      (p.salesSharePct / enabledWithShare) * input.monthlySales * 10) / 10;
-    const net = platformNet(p.platform, input.avgPrice, Math.max(sales, 0));
-    const gross = Math.round(input.avgPrice * sales * 100) / 100;
+      ((enabledWithShare > 0 ? p.salesSharePct : 1) / shareBase) * normalized.monthlySales * 10) / 10;
+    const net = platformNet(p.platform, normalized.avgPrice, Math.max(sales, 0));
+    const gross = Math.round(normalized.avgPrice * sales * 100) / 100;
     const maintenanceHours = MAINTENANCE_HOURS[p.platform] ?? 1.5;
     const maintenanceCost = p.enabled
-      ? Math.round(maintenanceHours * input.designRate * 100) / 100
+      ? Math.round(maintenanceHours * normalized.designRate * 100) / 100
       : 0;
     const internationalSales = Math.round(
-      sales * (input.internationalSalesPct / 100) * 100) / 100;
+      sales * (normalized.internationalSalesPct / 100) * 100) / 100;
     const offsiteAdsCost =
-      p.platform === 'etsy' && input.subjectToOffsiteAds && p.enabled
+      p.platform === 'etsy' && normalized.subjectToOffsiteAds && p.enabled
         ? Math.round(gross * 0.15 * 100) / 100
         : 0;
     const netRevenue = Math.round((net.netRevenue - offsiteAdsCost) * 100) / 100;
@@ -217,7 +249,7 @@ export function analyzePlatformMix(input: PlatformMixInput): MixResult {
   const items: string[] = [];
   const singlePlatformRisk = enabled <= 1;
   const vatBurden = enabledResults.some((r) => !HANDLES_VAT[r.platform] &&
-    r.internationalSales > 0 && input.internationalSalesPct > 10);
+    r.internationalSales > 0 && normalized.internationalSalesPct > 10);
   if (singlePlatformRisk) {
     items.push(`All eggs in one basket: ${enabled} active platform. Ravelry removed sellers' stores for TOS disputes; platforms change algorithms and fees (Etsy added a 15% offsite-ads fee). ${enabledPlatforms.length > 1 ? 'Spread at least some volume to a second store.' : 'Enable a second platform.'}`);
   }
@@ -225,7 +257,7 @@ export function analyzePlatformMix(input: PlatformMixInput): MixResult {
     const selfServe = enabledResults.filter((r) => !HANDLES_VAT[r.platform]);
     items.push(`${selfServe.map((r) => PLATFORM_LABELS[r.platform]).join(' and ')} leave${selfServe.length === 1 ? 's' : ''} VAT/GST remittance on you for EU/UK/AU buyers — that's quarterly admin work and late-filing risk. Routing international volume through VAT-handling platforms buys back ~${VAT_COMPLIANCE_VALUE_MONTHLY}/mo of admin value.`);
   }
-  if (input.subjectToOffsiteAds) {
+  if (normalized.subjectToOffsiteAds) {
     const etsyEntry = enabledResults.find((r) => r.platform === 'etsy');
     if (etsyEntry && etsyEntry.offsiteAdsCost > 0) {
       items.push(`Etsy offsite ads are a 15% haircut on Etsy revenue once sales cross $10k/yr (mandatory) — your Etsy stream nets ${
@@ -249,8 +281,8 @@ export function analyzePlatformMix(input: PlatformMixInput): MixResult {
     .filter((r) => !r.enabled)
     .map((r) => {
       const full = analyzePlatformMix({
-        ...input,
-        platforms: input.platforms.map((p) =>
+        ...normalized,
+        platforms: normalized.platforms.map((p) =>
           p.platform === r.platform ? { ...p, enabled: true } : p),
       });
       // Its entry in the enabled mix: the platform itself, plus its new

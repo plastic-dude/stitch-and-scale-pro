@@ -188,6 +188,35 @@ describe('analyzePlatformMix', () => {
     // that isn't selling anything is actively bleeding.
     expect(r.totalNetAfterMaintenance).toBeLessThan(0);
     expect(r.totalMaintenanceCost).toBeGreaterThan(0);
-    expect(r.watchOut.items.some((i) => i.includes('negative after maintenance'))).toBe(true);
+    expect(r.watchOut.items.some(i => i.includes('negative after maintenance'))).toBe(true);
+  });
+
+  it('normalizes hostile inputs and survives zero enabled shares', () => {
+    const r = analyzePlatformMix({
+      platforms: DEFAULT_PLATFORMS.map((p) => ({
+        ...p,
+        salesSharePct: Number.NaN,
+        enabled: true,
+      })),
+      monthlySales: Number.POSITIVE_INFINITY,
+      avgPrice: -8,
+      designRate: Number.NaN,
+      marketingHoursAvailable: Number.POSITIVE_INFINITY,
+      internationalSalesPct: 250,
+      subjectToOffsiteAds: true,
+    });
+
+    expect(r.perPlatform).toHaveLength(DEFAULT_PLATFORMS.length);
+    expect(Number.isFinite(r.totalGross)).toBe(true);
+    expect(Number.isFinite(r.totalFees)).toBe(true);
+    expect(Number.isFinite(r.totalNetAfterMaintenance)).toBe(true);
+    expect(r.perPlatform.every((p) => Number.isFinite(p.sales) && Number.isFinite(p.netRevenue))).toBe(true);
+
+    const zeroShare = analyzePlatformMix({
+      ...DEFAULT_MIX,
+      platforms: DEFAULT_PLATFORMS.map((p) => ({ ...p, salesSharePct: 0, enabled: true })),
+    });
+    expect(zeroShare.totalSalesRouted).toBe(DEFAULT_MIX.monthlySales);
+    expect(zeroShare.perPlatform.every((p) => Number.isFinite(p.sales))).toBe(true);
   });
 });

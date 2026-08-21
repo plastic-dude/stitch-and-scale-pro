@@ -325,6 +325,56 @@ describe('pitch pipeline', () => {
 /* Labels & reference data                                            */
 /* ------------------------------------------------------------------ */
 
+describe('hostile offer inputs', () => {
+  it('normalizes non-finite, negative, and over-range offer values', () => {
+    const a = analyzePartnerDeal({
+      ...DEFAULT_PARTNER,
+      offeredAmount: Number.NEGATIVE_INFINITY,
+      idpFeePct: 150,
+      exclusivityMonths: Number.POSITIVE_INFINITY,
+      patternPrice: -8,
+      expectedUnitSales12m: Number.NaN,
+      marketingReach: 250,
+      yarnValue: -100,
+      kalfollowers: Number.POSITIVE_INFINITY,
+      productionCost: Number.NaN,
+      hoursWorked: -25,
+      deliverablesCount: Number.POSITIVE_INFINITY,
+      lysDayWindowDays: 900,
+    });
+
+    expect(Number.isFinite(a.cashValue)).toBe(true);
+    expect(Number.isFinite(a.selfPublishValue12m)).toBe(true);
+    expect(Number.isFinite(a.totalValue12m)).toBe(true);
+    expect(Number.isFinite(a.effectiveHourly)).toBe(true);
+    expect(Number.isFinite(a.deliverablesPerHour)).toBe(true);
+    expect(Number.isFinite(a.pitchScore)).toBe(true);
+  });
+});
+
+describe('hostile pitch and pipeline inputs', () => {
+  it('keeps pitch scores finite when portfolio counts are malformed', () => {
+    const result = scorePitch({
+      ...DEFAULT_PITCH,
+      portfolioPatterns: Number.POSITIVE_INFINITY,
+    });
+    expect(Number.isFinite(result.score)).toBe(true);
+    expect(result.score).toBeGreaterThanOrEqual(0);
+    expect(result.score).toBeLessThanOrEqual(100);
+  });
+
+  it('clamps negative and non-finite pipeline amounts and invalid statuses', () => {
+    const result = summarizePipeline([
+      { id: 'bad', company: 'Bad', dealType: 'lumpSum', status: 'not-a-status' as any, dueDate: 'not-a-date', amount: -500, notes: '' },
+      { id: 'nan', company: 'NaN', dealType: 'lumpSum', status: 'pitched', dueDate: 'not-a-date', amount: Number.NaN, notes: '' },
+    ]);
+    expect(result.cashInFlight).toBe(0);
+    expect(result.byStatus.draft).toBe(1);
+    expect(result.byStatus.pitched).toBe(1);
+    expect(Number.isFinite(result.avgDaysToDeadline)).toBe(true);
+  });
+});
+
 describe('reference data', () => {
   it('has a label for every deal type and rights grant', () => {
     expect(Object.keys(DEAL_LABELS).length).toBe(6);

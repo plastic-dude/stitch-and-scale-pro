@@ -8,6 +8,8 @@
  * Local-first, no backend, no external state.
  */
 
+import { safeNum } from './numeric-guard';
+
 /* ------------------------------------------------------------------ */
 /* Types                                                              */
 /* ------------------------------------------------------------------ */
@@ -100,6 +102,41 @@ export const DEFAULT_PARTNER: DealOffer = {
 
 export const DEFAULT_PITCHES: PitchEntry[] = [];
 
+const bounded = (raw: unknown, min: number, max: number, fallback: number): number => {
+  const value = safeNum(typeof raw === 'number' ? raw : String(raw ?? ''), fallback);
+  return Math.min(max, Math.max(min, value));
+};
+
+/** Normalize deal offers at the model boundary so UI and direct callers share one contract. */
+export function normalizePartnerDeal(input: Partial<DealOffer> = {}): DealOffer {
+  const p = { ...DEFAULT_PARTNER, ...input };
+  const dealType = (Object.keys(DEAL_LABELS) as DealType[]).includes(p.dealType)
+    ? p.dealType
+    : DEFAULT_PARTNER.dealType;
+  const rights = (Object.keys(RIGHTS_LABELS) as RightsGrant[]).includes(p.rights)
+    ? p.rights
+    : DEFAULT_PARTNER.rights;
+  return {
+    ...DEFAULT_PARTNER,
+    ...p,
+    dealType,
+    rights,
+    offeredAmount: bounded(p.offeredAmount, 0, 10_000_000, DEFAULT_PARTNER.offeredAmount),
+    idpFeePct: bounded(p.idpFeePct, 0, 100, DEFAULT_PARTNER.idpFeePct),
+    exclusivityMonths: bounded(p.exclusivityMonths, 0, 120, DEFAULT_PARTNER.exclusivityMonths),
+    patternPrice: bounded(p.patternPrice, 0, 1_000_000, DEFAULT_PARTNER.patternPrice),
+    expectedUnitSales12m: bounded(p.expectedUnitSales12m, 0, 10_000_000, DEFAULT_PARTNER.expectedUnitSales12m),
+    marketingReach: bounded(p.marketingReach, 0, 100, DEFAULT_PARTNER.marketingReach),
+    yarnValue: bounded(p.yarnValue, 0, 10_000_000, DEFAULT_PARTNER.yarnValue),
+    kalfollowers: bounded(p.kalfollowers, 0, 1_000_000_000, DEFAULT_PARTNER.kalfollowers),
+    productionCost: bounded(p.productionCost, 0, 10_000_000, DEFAULT_PARTNER.productionCost),
+    hoursWorked: bounded(p.hoursWorked, 0, 10_000, DEFAULT_PARTNER.hoursWorked),
+    deliverablesCount: Math.round(bounded(p.deliverablesCount, 0, 10_000, DEFAULT_PARTNER.deliverablesCount)),
+    exclusiveListed: typeof p.exclusiveListed === 'boolean' ? p.exclusiveListed : DEFAULT_PARTNER.exclusiveListed,
+    lysDayWindowDays: bounded(p.lysDayWindowDays, 0, 365, DEFAULT_PARTNER.lysDayWindowDays),
+  };
+}
+
 /* ------------------------------------------------------------------ */
 /* Constants                                                          */
 /* ------------------------------------------------------------------ */
@@ -178,6 +215,7 @@ export function selfPublishValue(o: DealOffer): number {
 /* ------------------------------------------------------------------ */
 
 export function analyzePartnerDeal(o: DealOffer): DealAnalysis {
+  o = normalizePartnerDeal(o);
   const selfPub = selfPublishValue(o);
   const platformNet = selfPub * (1 - MARKETPLACE_FEE_PCT / 100);
 
@@ -304,6 +342,19 @@ export const DEFAULT_PITCH: PitchInput = {
   hasAudienceStats: true,
 };
 
+export function normalizePitchInput(input: Partial<PitchInput> = {}): PitchInput {
+  const p = { ...DEFAULT_PITCH, ...input };
+  return {
+    hasConceptBrief: Boolean(p.hasConceptBrief),
+    hasSketches: Boolean(p.hasSketches),
+    hasYarnSpec: Boolean(p.hasYarnSpec),
+    hasTimeline: Boolean(p.hasTimeline),
+    hasMarketingPlan: Boolean(p.hasMarketingPlan),
+    portfolioPatterns: Math.round(bounded(p.portfolioPatterns, 0, 100_000, DEFAULT_PITCH.portfolioPatterns)),
+    hasAudienceStats: Boolean(p.hasAudienceStats),
+  };
+}
+
 export function computePitchScore(o: DealOffer): number {
   /* How well-prepared the designer is to pitch this deal type.
      (UI layer provides PitchInput; the deal itself contributes structure.) */
@@ -334,6 +385,7 @@ export function computePitchGaps(o: DealOffer): string[] {
 }
 
 export function scorePitch(p: PitchInput): { score: number; gaps: string[] } {
+  p = normalizePitchInput(p);
   const gaps: string[] = [];
   let score = 0;
   if (p.hasConceptBrief) score += 20; else gaps.push('Concept brief — dyers want the design idea, not a request for free yarn.');
@@ -358,7 +410,13 @@ export interface PipelineSummary {
 }
 
 export function summarizePipeline(pitches: PitchEntry[]): PipelineSummary {
-  const open = pitches.filter((p) => p.status !== 'closed' && p.status !== 'delivered');
+  const validStatuses = new Set<PitchStatus>(['draft', 'pitched', 'yarnReceived', 'inDesign', 'delivered', 'closed']);
+  const normalized = pitches.map((p) => ({
+    ...p,
+    status: validStatuses.has(p.status) ? p.status : 'draft' as PitchStatus,
+    amount: bounded(p.amount, 0, 10_000_000, 0),
+  }));
+  const open = normalized.filter((p) => p.status !== 'closed' && p.status !== 'delivered');
   const cashInFlight = open.reduce((sum, p) => sum + p.amount, 0);
   const now = Date.now();
   const days = open
@@ -366,7 +424,7 @@ export function summarizePipeline(pitches: PitchEntry[]): PipelineSummary {
     .filter((d) => d > 0);
   const avgDaysToDeadline = days.length > 0 ? days.reduce((a, b) => a + b, 0) / days.length : 0;
   const byStatus = { draft: 0, pitched: 0, yarnReceived: 0, inDesign: 0, delivered: 0, closed: 0 } as Record<PitchStatus, number>;
-  for (const p of pitches) byStatus[p.status] += 1;
+  for (const p of normalized) byStatus[p.status] += 1;
   return { open, cashInFlight, avgDaysToDeadline, byStatus };
 }
 

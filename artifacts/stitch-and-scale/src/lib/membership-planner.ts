@@ -20,7 +20,8 @@
  * - Snickerdoodle's Pattern Design Circle shows memberships can target
  *   designers (B2B) as well as knitters.
  */
-import { platformNet, PlatformId } from '@/lib/pattern-income-calculator';
+import { platformNet, PLATFORMS, PlatformId } from '@/lib/pattern-income-calculator';
+import { safeNum } from '@/lib/numeric-guard';
 
 export const PLATFORM_FEE_PCT = 10; // Patreon standard
 export const PROCESSING_FEE_PCT = 5;
@@ -117,6 +118,60 @@ export function defaultTiers(): MembershipTier[] {
   ];
 }
 
+function bounded(raw: unknown, min: number, max: number, fallback: number): number {
+  const value = safeNum(typeof raw === 'number' ? raw : String(raw ?? ''), fallback);
+  return Math.min(max, Math.max(min, value));
+}
+
+export function normalizeMembershipInput(input: Partial<MembershipInput> = {}): MembershipInput {
+  const base = {
+    tiers: defaultTiers(),
+    rampMonths: 6,
+    platformRate: PLATFORM_FEE_PCT,
+    processingRate: PROCESSING_FEE_PCT,
+    exclusivePatternsPerMonth: 1,
+    exclusivePatternCost: DEFAULT_EXCLUSIVE_PATTERN_COST,
+    designerHoursPerPattern: DEFAULT_EXCLUSIVE_PATTERN_HOURS,
+    designRate: 12,
+    parkedPatternPrice: 8,
+    parkedPatternMonthlySalesLost: 20,
+    platform: 'ravelry' as PlatformId,
+    parkedHorizonMonths: 12,
+  };
+  const raw = { ...base, ...input };
+  const tiers = Array.isArray(raw.tiers) && raw.tiers.length > 0
+    ? raw.tiers.slice(0, 5).map((tier, index) => {
+        const fallback = base.tiers[Math.min(index, base.tiers.length - 1)];
+        return {
+          ...fallback,
+          ...tier,
+          name: typeof tier.name === 'string' ? tier.name.slice(0, 120) : fallback.name,
+          price: bounded(tier.price, 0, 10_000, fallback.price),
+          members: Math.round(bounded(tier.members, 0, 10_000_000, fallback.members)),
+          monthlyChurnPct: bounded(tier.monthlyChurnPct, 0, 100, fallback.monthlyChurnPct),
+          perks: Array.isArray(tier.perks)
+            ? tier.perks.filter((perk): perk is string => typeof perk === 'string').slice(0, 20).map((perk) => perk.slice(0, 240))
+            : fallback.perks,
+        };
+      })
+    : base.tiers;
+  const platform = (PLATFORMS as readonly PlatformId[]).includes(raw.platform) ? raw.platform : base.platform;
+  return {
+    tiers,
+    rampMonths: Math.round(bounded(raw.rampMonths, 1, 36, base.rampMonths)),
+    platformRate: bounded(raw.platformRate, 0, 100, base.platformRate),
+    processingRate: bounded(raw.processingRate, 0, 100, base.processingRate),
+    exclusivePatternsPerMonth: Math.round(bounded(raw.exclusivePatternsPerMonth, 0, 6, base.exclusivePatternsPerMonth)),
+    exclusivePatternCost: bounded(raw.exclusivePatternCost, 0, 1_000_000, base.exclusivePatternCost),
+    designerHoursPerPattern: bounded(raw.designerHoursPerPattern, 0, 1_000, base.designerHoursPerPattern),
+    designRate: bounded(raw.designRate, 12, 10_000, base.designRate),
+    parkedPatternPrice: bounded(raw.parkedPatternPrice, 0, 1_000_000, base.parkedPatternPrice),
+    parkedPatternMonthlySalesLost: Math.round(bounded(raw.parkedPatternMonthlySalesLost, 0, 1_000_000, base.parkedPatternMonthlySalesLost)),
+    platform,
+    parkedHorizonMonths: Math.round(bounded(raw.parkedHorizonMonths, 1, 60, base.parkedHorizonMonths)),
+  };
+}
+
 function netPerMember(price: number, platformRate: number, processingRate: number): number {
   // Platform takes platformRate% of gross; processing ~processingRate% of what's left
   const afterPlatform = price * (1 - platformRate / 100);
@@ -125,6 +180,7 @@ function netPerMember(price: number, platformRate: number, processingRate: numbe
 }
 
 export function analyzeMembership(input: MembershipInput): MembershipResult {
+  input = normalizeMembershipInput(input);
   const rampMonths = Math.max(input.rampMonths, 1);
   const platformRate = input.platformRate || PLATFORM_FEE_PCT;
   const processingRate = input.processingRate || PROCESSING_FEE_PCT;

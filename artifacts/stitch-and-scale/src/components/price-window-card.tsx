@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useToast } from '@/hooks/use-toast';
 import { CalendarDays, ClipboardCopy, AlertTriangle, TrendingUp } from 'lucide-react';
 import { PatternProject } from '@/lib/grading-engine';
+import { safeNum } from '@/lib/numeric-guard';
 import { useSettings } from '@/context/SettingsContext';
 import { PRICE_WINDOW_COPY } from '@/lib/price-window-copy';
 import {
@@ -19,12 +20,16 @@ import {
   SEASON_MULTIPLIERS,
   PLATFORMS,
   DEFAULT_PRICE_WINDOW,
+  normalizePriceWindowInput,
   PriceWindowInput,
   type SeasonId,
 } from '@/lib/price-window-optimizer';
 import { PLATFORM_LABELS, type PlatformId } from '@/lib/pattern-income-calculator';
 
 const STORAGE_KEY = 'prcw-v1';
+
+const boundedInput = (raw: string, min: number, max: number, fallback: number): number =>
+  Math.min(max, Math.max(min, safeNum(raw, fallback)));
 
 interface StoredPriceWindow {
   input: PriceWindowInput;
@@ -44,7 +49,8 @@ function loadStored(raw: StoredPriceWindow | null): StoredPriceWindow {
       return {
         ...defaultStored(),
         ...raw,
-        input: { ...defaultStored().input, ...raw.input },
+        launchMonth: boundedInput(String(raw.launchMonth), 1, 12, defaultStored().launchMonth),
+        input: normalizePriceWindowInput({ ...defaultStored().input, ...raw.input }),
       };
     }
   } catch {
@@ -122,7 +128,7 @@ export function PriceWindowCard({ project }: { project: PatternProject }) {
             <Label htmlFor="pw-price" className="text-xs">{copyText.price}</Label>
             <Input id="pw-price" type="number" min={1} step={0.5}
               value={stored.input.listPrice}
-              onChange={(e) => patchInput({ listPrice: Number(e.target.value) || 0 })} />
+              onChange={(e) => patchInput({ listPrice: boundedInput(e.target.value, 0.01, 1_000_000, DEFAULT_PRICE_WINDOW.listPrice) })} />
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="pw-platform" className="text-xs">{copyText.sellWhere}</Label>
@@ -140,13 +146,13 @@ export function PriceWindowCard({ project }: { project: PatternProject }) {
             <Label htmlFor="pw-baseline" className="text-xs">{copyText.baseline}</Label>
             <Input id="pw-baseline" type="number" min={0}
               value={stored.input.baselineMonthlySales}
-              onChange={(e) => patchInput({ baselineMonthlySales: Number(e.target.value) || 0 })} />
+              onChange={(e) => patchInput({ baselineMonthlySales: boundedInput(e.target.value, 0, 1_000_000, DEFAULT_PRICE_WINDOW.baselineMonthlySales) })} />
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="pw-faves" className="text-xs">{copyText.queue}</Label>
             <Input id="pw-faves" type="number" min={0}
               value={stored.input.faveQueue}
-              onChange={(e) => patchInput({ faveQueue: Number(e.target.value) || 0 })} />
+              onChange={(e) => patchInput({ faveQueue: boundedInput(e.target.value, 0, 1_000_000, DEFAULT_PRICE_WINDOW.faveQueue) })} />
           </div>
         </div>
 
@@ -217,25 +223,25 @@ export function PriceWindowCard({ project }: { project: PatternProject }) {
               <Label className="text-xs">{copyText.queueConversion}</Label>
               <Input type="number" min={0} step={0.5}
                 value={stored.input.fullPriceConversionPct}
-                onChange={(e) => patchInput({ fullPriceConversionPct: Number(e.target.value) || 0 })} />
+                onChange={(e) => patchInput({ fullPriceConversionPct: boundedInput(e.target.value, 0, 100, DEFAULT_PRICE_WINDOW.fullPriceConversionPct) })} />
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs">{copyText.uplift}</Label>
               <Input type="number" min={1} step={0.5}
                 value={stored.input.discountUpliftMultiple}
-                onChange={(e) => patchInput({ discountUpliftMultiple: Number(e.target.value) || 1 })} />
+                onChange={(e) => patchInput({ discountUpliftMultiple: boundedInput(e.target.value, 0, 100, DEFAULT_PRICE_WINDOW.discountUpliftMultiple) })} />
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs">{copyText.promoLift}</Label>
               <Input type="number" min={0} step={0.5}
                 value={stored.input.promoThreadLiftPerWeek}
-                onChange={(e) => patchInput({ promoThreadLiftPerWeek: Number(e.target.value) || 0 })} />
+                onChange={(e) => patchInput({ promoThreadLiftPerWeek: boundedInput(e.target.value, 0, 1_000_000, DEFAULT_PRICE_WINDOW.promoThreadLiftPerWeek) })} />
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs">{copyText.liftMonths}</Label>
               <Input type="number" min={1} max={12} step={1}
                 value={stored.input.promoThreadMonths}
-                onChange={(e) => patchInput({ promoThreadMonths: Number(e.target.value) || 1 })} />
+                onChange={(e) => patchInput({ promoThreadMonths: boundedInput(e.target.value, 1, 120, DEFAULT_PRICE_WINDOW.promoThreadMonths) })} />
             </div>
           </div>
         </details>

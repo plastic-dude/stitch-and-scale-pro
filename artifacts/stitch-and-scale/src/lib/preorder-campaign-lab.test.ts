@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   analyzePreorderCampaign,
+  normalizePreorderCampaignInput,
   PREORDER_CAMPAIGN_DEFAULTS as D,
 } from './preorder-campaign-lab';
 
@@ -228,6 +229,59 @@ describe('analyzePreorderCampaign', () => {
     const r = analyzePreorderCampaign({ useThreshold: false });
     expect(r.minimumThreshold).toBe(0);
     expect(r.thresholdCoverage).toBe(r.predictedOrders);
+  });
+
+  it('normalizes hostile inputs before analysis', () => {
+    const normalized = normalizePreorderCampaignInput({
+      itemPrice: Number.POSITIVE_INFINITY,
+      earlyBirdPrice: Number.NaN,
+      earlyBirdShare: 9,
+      platformFeePct: -2,
+      campaignDays: 9999,
+      chargeModel: 'invalid' as never,
+      leadTimeDays: -40,
+      materialsPerUnit: Number.NEGATIVE_INFINITY,
+      knitHoursPerUnit: Number.NaN,
+      emailListSize: 2.9,
+      emailConversion: 4,
+      socialExpectedOrders: -10,
+      waitlistConversion: Number.POSITIVE_INFINITY,
+      thresholdShareOfPredicted: -1,
+      safetyMarginPct: 4,
+      bufferShare: Number.NaN,
+    });
+
+    expect(normalized.itemPrice).toBe(D.itemPrice);
+    expect(normalized.earlyBirdPrice).toBe(D.earlyBirdPrice);
+    expect(normalized.earlyBirdShare).toBe(1);
+    expect(normalized.platformFeePct).toBe(0);
+    expect(normalized.campaignDays).toBe(365);
+    expect(normalized.chargeModel).toBe(D.chargeModel);
+    expect(normalized.leadTimeDays).toBe(0);
+    expect(normalized.materialsPerUnit).toBe(D.materialsPerUnit);
+    expect(normalized.knitHoursPerUnit).toBe(D.knitHoursPerUnit);
+    expect(normalized.emailListSize).toBe(3);
+    expect(normalized.emailConversion).toBe(1);
+    expect(normalized.socialExpectedOrders).toBe(0);
+    expect(normalized.waitlistConversion).toBe(D.waitlistConversion);
+    expect(normalized.thresholdShareOfPredicted).toBe(0);
+    expect(normalized.safetyMarginPct).toBe(1);
+    expect(normalized.bufferShare).toBe(D.bufferShare);
+
+    const result = analyzePreorderCampaign({
+      itemPrice: Number.POSITIVE_INFINITY,
+      earlyBirdPrice: Number.NaN,
+      platformFeePct: Number.POSITIVE_INFINITY,
+      emailListSize: Number.POSITIVE_INFINITY,
+      emailConversion: Number.NEGATIVE_INFINITY,
+      fixedSeriesCosts: Number.NEGATIVE_INFINITY,
+    });
+    expect(JSON.stringify(result)).not.toContain('null');
+    expect(Object.values(result).every((value) => {
+      if (typeof value === 'number') return Number.isFinite(value);
+      if (Array.isArray(value)) return value.every((flag) => typeof flag.detail === 'string');
+      return true;
+    })).toBe(true);
   });
 
   it('keeps results bounded for edge inputs', () => {

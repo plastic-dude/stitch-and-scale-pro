@@ -3,6 +3,7 @@ import { AlertTriangle, BadgeCheck, BadgeX, HelpCircle, Info, Lightbulb, Refresh
 import {
   analyzeGiftCard,
   DEFAULT_GIFTCARD,
+  normalizeGiftCardInput,
   fmt$,
   type GiftCardInput,
   type GiftCardResult,
@@ -33,33 +34,12 @@ interface StoredState {
   ts: number;
 }
 
-const n = (v: unknown) => (typeof v === "number" && isFinite(v) ? v : undefined);
 /**
- * Hydrate a raw stored gift-card input into a validated one.
- * Extracted from the old `loadStored` so the shared seam derivation
- * (CHK-152) can reuse it without ever creating a handle itself — the crash
- * class was born from initializers that reached for freshly-created handles.
+ * Hydrate a raw stored gift-card input into the same bounded model contract
+ * used by the analyzer, so the UI never renders impossible persisted values.
  */
 function hydrateInput(raw: Partial<GiftCardInput>): GiftCardInput {
-  return {
-    ...DEFAULT_GIFTCARD,
-    ...raw,
-    cardSalesPerMonth: n(raw.cardSalesPerMonth) ?? DEFAULT_GIFTCARD.cardSalesPerMonth,
-    refundCreditPerMonth: n(raw.refundCreditPerMonth) ?? DEFAULT_GIFTCARD.refundCreditPerMonth,
-    redemptionRate: n(raw.redemptionRate) ?? DEFAULT_GIFTCARD.redemptionRate,
-    spendUpliftPct: n(raw.spendUpliftPct) ?? DEFAULT_GIFTCARD.spendUpliftPct,
-    redemptionLagMonths: n(raw.redemptionLagMonths) ?? DEFAULT_GIFTCARD.redemptionLagMonths,
-    dormancyMonths: n(raw.dormancyMonths) ?? DEFAULT_GIFTCARD.dormancyMonths,
-    escheatTakePct: n(raw.escheatTakePct) ?? DEFAULT_GIFTCARD.escheatTakePct,
-    cashBackThreshold: n(raw.cashBackThreshold) ?? DEFAULT_GIFTCARD.cashBackThreshold,
-    processingPct: n(raw.processingPct) ?? DEFAULT_GIFTCARD.processingPct,
-    redeemedCostPct: n(raw.redeemedCostPct) ?? DEFAULT_GIFTCARD.redeemedCostPct,
-    breakageAssumption: n(raw.breakageAssumption) ?? DEFAULT_GIFTCARD.breakageAssumption,
-    adminHoursPerMonth: n(raw.adminHoursPerMonth) ?? DEFAULT_GIFTCARD.adminHoursPerMonth,
-    hourlyRate: n(raw.hourlyRate) ?? DEFAULT_GIFTCARD.hourlyRate,
-    horizonMonths: n(raw.horizonMonths) ?? DEFAULT_GIFTCARD.horizonMonths,
-    feeIncomePerMonth: n(raw.feeIncomePerMonth) ?? DEFAULT_GIFTCARD.feeIncomePerMonth,
-  };
+  return normalizeGiftCardInput(raw);
 }
 
 function NumField(props: {

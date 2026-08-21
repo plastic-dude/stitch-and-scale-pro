@@ -22,6 +22,7 @@ import {
 import { projectStorage, type ProjectStorageHandle } from '@/lib/storage-lib';
 import {
   analyzePreorderCampaign,
+  normalizePreorderCampaignInput,
   PREORDER_CAMPAIGN_DEFAULTS,
   CHARGE_MODEL_LABELS,
 } from '@/lib/preorder-campaign-lab';
@@ -39,6 +40,7 @@ function NumField({
   onChange,
   step = 1,
   min = 0,
+  max = 100_000_000,
   prefix,
   suffix,
 }: {
@@ -47,6 +49,7 @@ function NumField({
   onChange: (v: number) => void;
   step?: number;
   min?: number;
+  max?: number;
   prefix?: string;
   suffix?: string;
 }) {
@@ -61,9 +64,10 @@ function NumField({
           value={value}
           min={min}
           step={step}
+          max={max}
           onChange={(e) => {
-            const v = parseFloat(e.target.value);
-            if (!Number.isNaN(v)) onChange(v);
+            const raw = Number.parseFloat(e.target.value);
+            if (Number.isFinite(raw)) onChange(Math.min(max, Math.max(min, raw)));
           }}
         />
         {suffix && <span className="text-sm text-muted-foreground">{suffix}</span>}
@@ -93,6 +97,7 @@ function PctField({
       value={Math.round(value * 1000) / 10}
       step={Math.round(step * 1000) / 10}
       min={Math.round(min * 100)}
+      max={Math.round(max * 100)}
       suffix="%"
       onChange={(v) => onChange(Math.max(min, Math.min(max, v / 100)))}
     />
@@ -114,7 +119,7 @@ export function PreorderCampaignLabCard({
 
   const [input, setInput] = useState<PreorderCampaignInput>(() => {
     const saved = handle.read();
-    return saved ?? { ...PREORDER_CAMPAIGN_DEFAULTS };
+    return normalizePreorderCampaignInput(saved ?? PREORDER_CAMPAIGN_DEFAULTS);
   });
 
   useEffect(() => {

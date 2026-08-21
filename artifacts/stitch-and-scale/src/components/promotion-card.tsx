@@ -13,6 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 import { ClipboardCopy, Megaphone, TrendingDown, TrendingUp } from 'lucide-react';
 import { PatternProject } from '@/lib/grading-engine';
 import { PLATFORMS, PLATFORM_LABELS, PlatformId } from '@/lib/pattern-income-calculator';
+import { safeNum } from '@/lib/numeric-guard';
 import {
   analyzePromotion,
   CHANNEL_LABELS,
@@ -26,6 +27,9 @@ import {
 } from '@/lib/promotion-planner';
 
 const STORAGE_KEY = 'promo-v1';
+
+const boundedInput = (raw: string, min: number, max: number, fallback: number): number =>
+  Math.min(max, Math.max(min, safeNum(raw, fallback)));
 
 interface StoredPromotion {
   price: number;
@@ -114,7 +118,7 @@ function ChannelRow({ result, params, onToggle, onPatch }: {
                 type="number"
                 min={1}
                 value={Math.round(params.budget / 30)}
-                onChange={(e) => onPatch({ budget: Number(e.target.value) * 30 })}
+                onChange={(e) => onPatch({ budget: boundedInput(e.target.value, 1, 1_000_000, 1) * 30 })}
               />
             </div>
             <div className="space-y-1.5">
@@ -124,7 +128,7 @@ function ChannelRow({ result, params, onToggle, onPatch }: {
                 step="0.05"
                 min={0.05}
                 value={params.cpc}
-                onChange={(e) => onPatch({ cpc: Number(e.target.value) })}
+                onChange={(e) => onPatch({ cpc: boundedInput(e.target.value, 0.05, 1_000, 0.35) })}
               />
             </div>
             <div className="space-y-1.5">
@@ -134,7 +138,7 @@ function ChannelRow({ result, params, onToggle, onPatch }: {
                 min={0}
                 max={100}
                 value={params.conversionPct}
-                onChange={(e) => onPatch({ conversionPct: Number(e.target.value) })}
+                onChange={(e) => onPatch({ conversionPct: boundedInput(e.target.value, 0, 100, 0) })}
               />
             </div>
             <div className="space-y-1.5">
@@ -151,7 +155,7 @@ function ChannelRow({ result, params, onToggle, onPatch }: {
               min={0}
               max={30}
               value={params.offsiteCommissionPct}
-              onChange={(e) => onPatch({ offsiteCommissionPct: Number(e.target.value) })}
+              onChange={(e) => onPatch({ offsiteCommissionPct: boundedInput(e.target.value, 0, 30, 15) })}
             />
           </div>
         )}
@@ -163,7 +167,7 @@ function ChannelRow({ result, params, onToggle, onPatch }: {
                 type="number"
                 min={0}
                 value={params.budget}
-                onChange={(e) => onPatch({ budget: Number(e.target.value) })}
+                onChange={(e) => onPatch({ budget: boundedInput(e.target.value, 0, 1_000_000, 0) })}
               />
             </div>
             <div className="space-y-1.5">
@@ -172,7 +176,7 @@ function ChannelRow({ result, params, onToggle, onPatch }: {
                 type="number"
                 min={0}
                 value={params.hourlyRate}
-                onChange={(e) => onPatch({ hourlyRate: Number(e.target.value) })}
+                onChange={(e) => onPatch({ hourlyRate: boundedInput(e.target.value, 0, 100_000, 25) })}
               />
             </div>
             <div className="space-y-1.5">
@@ -181,7 +185,7 @@ function ChannelRow({ result, params, onToggle, onPatch }: {
                 type="number"
                 min={0}
                 value={params.clicksPerHour}
-                onChange={(e) => onPatch({ clicksPerHour: Number(e.target.value) })}
+                onChange={(e) => onPatch({ clicksPerHour: boundedInput(e.target.value, 0, 1_000_000, 0) })}
               />
             </div>
             <div className="space-y-1.5">
@@ -191,7 +195,7 @@ function ChannelRow({ result, params, onToggle, onPatch }: {
                 min={0}
                 max={100}
                 value={params.organicConversionPct}
-                onChange={(e) => onPatch({ organicConversionPct: Number(e.target.value) })}
+                onChange={(e) => onPatch({ organicConversionPct: boundedInput(e.target.value, 0, 100, 0) })}
               />
             </div>
           </>
@@ -266,7 +270,7 @@ export function PromotionCard({ project }: { project: PatternProject }) {
           <div className="space-y-1.5">
             <Label htmlFor="pm-price">{copyText.patternPrice}</Label>
             <Input id="pm-price" type="number" min={1} value={stored.price}
-              onChange={(e) => setStored((s) => ({ ...s, price: Number(e.target.value) }))} />
+              onChange={(e) => setStored((s) => ({ ...s, price: boundedInput(e.target.value, 1, 1_000_000, 1) }))} />
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="pm-platform">{copyText.whereSell}</Label>
@@ -279,17 +283,17 @@ export function PromotionCard({ project }: { project: PatternProject }) {
           <div className="space-y-1.5">
             <Label htmlFor="pm-sales">{copyText.baselineSales}</Label>
             <Input id="pm-sales" type="number" min={0} value={stored.monthlySales}
-              onChange={(e) => setStored((s) => ({ ...s, monthlySales: Number(e.target.value) }))} />
+              onChange={(e) => setStored((s) => ({ ...s, monthlySales: boundedInput(e.target.value, 0, 1_000_000, 0) }))} />
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="pm-horizon">{copyText.horizon}</Label>
             <Input id="pm-horizon" type="number" min={1} max={24} value={stored.horizonMonths}
-              onChange={(e) => setStored((s) => ({ ...s, horizonMonths: Number(e.target.value) }))} />
+              onChange={(e) => setStored((s) => ({ ...s, horizonMonths: boundedInput(e.target.value, 1, 24, DEFAULT_HORIZON) }))} />
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="pm-kill">{copyText.killThreshold}</Label>
             <Input id="pm-kill" type="number" min={10} value={stored.killThreshold}
-              onChange={(e) => setStored((s) => ({ ...s, killThreshold: Number(e.target.value) }))} />
+              onChange={(e) => setStored((s) => ({ ...s, killThreshold: boundedInput(e.target.value, 10, 1_000_000, DEFAULT_KILL_THRESHOLD) }))} />
           </div>
         </div>
 

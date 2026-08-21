@@ -1,4 +1,6 @@
 // Gift-Card & Store-Credit Lab — giftcard-lab.ts
+import { safeNum } from './numeric-guard';
+
 // Prices a knitwear pattern shop's gift-card / store-credit program the honest
 // way: cash-in float vs the liability sitting behind it, recognized revenue under
 // the ASC 606 proportionate method, breakage income net of the share a state can
@@ -88,6 +90,42 @@ export const DEFAULT_GIFTCARD: GiftCardInput = {
   hourlyRate: 40,
   horizonMonths: 36,
 };
+
+const bounded = (raw: unknown, min: number, max: number, fallback: number): number => {
+  const value = safeNum(typeof raw === 'number' ? raw : String(raw ?? ''), fallback);
+  return Math.min(max, Math.max(min, value));
+};
+
+/** Normalize direct callers to the same finite, legal-domain contract as the UI. */
+export function normalizeGiftCardInput(input: Partial<GiftCardInput> = {}): GiftCardInput {
+  const p = { ...DEFAULT_GIFTCARD, ...input };
+  const escheatMode: EscheatMode = p.escheatMode === 'none' || p.escheatMode === 'full' || p.escheatMode === 'partial60'
+    ? p.escheatMode
+    : DEFAULT_GIFTCARD.escheatMode;
+  return {
+    ...DEFAULT_GIFTCARD,
+    ...p,
+    cardSalesPerMonth: bounded(p.cardSalesPerMonth, 0, 10_000_000, DEFAULT_GIFTCARD.cardSalesPerMonth),
+    refundCreditPerMonth: bounded(p.refundCreditPerMonth, 0, 10_000_000, DEFAULT_GIFTCARD.refundCreditPerMonth),
+    redemptionRate: bounded(p.redemptionRate, 0, 1, DEFAULT_GIFTCARD.redemptionRate),
+    spendUpliftPct: bounded(p.spendUpliftPct, 0, 1, DEFAULT_GIFTCARD.spendUpliftPct),
+    redemptionLagMonths: bounded(p.redemptionLagMonths, 0, 120, DEFAULT_GIFTCARD.redemptionLagMonths),
+    dormancyMonths: bounded(p.dormancyMonths, 1, 1_200, DEFAULT_GIFTCARD.dormancyMonths),
+    escheatTakePct: bounded(p.escheatTakePct, 0, 1, DEFAULT_GIFTCARD.escheatTakePct),
+    escheatMode,
+    cashBackThreshold: bounded(p.cashBackThreshold, 0, 1_000_000, DEFAULT_GIFTCARD.cashBackThreshold),
+    expiryAndFeesAllowed: typeof p.expiryAndFeesAllowed === 'boolean'
+      ? p.expiryAndFeesAllowed
+      : DEFAULT_GIFTCARD.expiryAndFeesAllowed,
+    feeIncomePerMonth: bounded(p.feeIncomePerMonth, 0, 10_000_000, DEFAULT_GIFTCARD.feeIncomePerMonth),
+    processingPct: bounded(p.processingPct, 0, 1, DEFAULT_GIFTCARD.processingPct),
+    redeemedCostPct: bounded(p.redeemedCostPct, 0, 1, DEFAULT_GIFTCARD.redeemedCostPct),
+    breakageAssumption: bounded(p.breakageAssumption, 0, 1, DEFAULT_GIFTCARD.breakageAssumption),
+    adminHoursPerMonth: bounded(p.adminHoursPerMonth, 0, 744, DEFAULT_GIFTCARD.adminHoursPerMonth),
+    hourlyRate: bounded(p.hourlyRate, 0, 100_000, DEFAULT_GIFTCARD.hourlyRate),
+    horizonMonths: bounded(p.horizonMonths, 1, 1_200, DEFAULT_GIFTCARD.horizonMonths),
+  };
+}
 
 export interface FlagDetail { code: string; title: string; note: string; severity: "high" | "mid" | "low" }
 
@@ -263,48 +301,49 @@ export function resolvedEscheatTake(input: Pick<GiftCardInput, "escheatMode" | "
 }
 
 export function analyzeGiftCard(input: GiftCardInput): GiftCardResult {
+  const normalized = normalizeGiftCardInput(input);
   const flags: FlagDetail[] = [];
-  const sales = Math.max(0, input.cardSalesPerMonth);
-  const refunds = Math.max(0, input.refundCreditPerMonth);
-  const redeemPct = clamp(input.redemptionRate, 0, 1);
-  const uplift = clamp(input.spendUpliftPct, 0, 1);
-  const sim = simulate(input);
-  const escheat = resolvedEscheatTake(input);
+  const sales = Math.max(0, normalized.cardSalesPerMonth);
+  const refunds = Math.max(0, normalized.refundCreditPerMonth);
+  const redeemPct = clamp(normalized.redemptionRate, 0, 1);
+  const uplift = clamp(normalized.spendUpliftPct, 0, 1);
+  const sim = simulate(normalized);
+  const escheat = resolvedEscheatTake(normalized);
 
-  const processingFees = sales * input.processingPct * input.horizonMonths;
+  const processingFees = sales * normalized.processingPct * normalized.horizonMonths;
   const upliftValue = sim.totalRedemptions * uplift;
   const upliftSales = sim.totalRedemptions * uplift;
-  const redemptionCOGS = sim.totalRedemptions * clamp(input.redeemedCostPct, 0, 1);
+  const redemptionCOGS = sim.totalRedemptions * clamp(normalized.redeemedCostPct, 0, 1);
   // fee income only counts when the program is legally allowed to charge fees;
   // an illegal dormancy fee is a compliance liability, not revenue
-  const feeIncome = input.expiryAndFeesAllowed ? Math.max(0, input.feeIncomePerMonth) * input.horizonMonths : 0;
-  const adminCost = input.adminHoursPerMonth * input.hourlyRate * input.horizonMonths;
+  const feeIncome = normalized.expiryAndFeesAllowed ? normalized.feeIncomePerMonth * normalized.horizonMonths : 0;
+  const adminCost = normalized.adminHoursPerMonth * normalized.hourlyRate * normalized.horizonMonths;
 
   // ASC 606 proportionate method: recognize breakage in proportion to actual
   // redemptions against expected total redemptions over the cohort life.
-  const expectedTotalRedeemed = sales * input.horizonMonths * redeemPct;
-  const expectedBreakage = sales * input.horizonMonths * (1 - redeemPct);
-  const breakageEstimate = Math.max(0, input.breakageAssumption);
+  const expectedTotalRedeemed = sales * normalized.horizonMonths * redeemPct;
+  const expectedBreakage = sales * normalized.horizonMonths * (1 - redeemPct);
+  const breakageEstimate = normalized.breakageAssumption;
   let recognizedRevenue = 0;
   if (expectedTotalRedeemed + expectedBreakage > 0) {
     const proportion =
       sim.totalRedemptions /
       (sim.totalRedemptions + expectedBreakage * (1 - escheat));
     recognizedRevenue =
-      sim.totalCash + proportion * Math.min(sim.totalBreakageKept, sales * input.horizonMonths * breakageEstimate);
+      sim.totalCash + proportion * Math.min(sim.totalBreakageKept, sales * normalized.horizonMonths * breakageEstimate);
   }
 
   const cashBackPayouts = sim.totalCashBack;
   // refund credits are a pure liability with zero cash benefit — the full
   // unspent balance sits on the shop's books
-  const refundCreditLiability = refunds * (1 - redeemPct) * Math.min(input.horizonMonths, Math.max(1, Math.round(input.dormancyMonths)));
+  const refundCreditLiability = refunds * (1 - redeemPct) * Math.min(normalized.horizonMonths, Math.max(1, Math.round(normalized.dormancyMonths)));
   const netProgramProfit =
     recognizedRevenue + feeIncome - redemptionCOGS - cashBackPayouts - adminCost - processingFees - sim.totalEscheat;
-  const totalCardFace = sales * input.horizonMonths;
+  const totalCardFace = sales * normalized.horizonMonths;
   const effectiveMarginPct = totalCardFace > 0 ? (netProgramProfit / totalCardFace) * 100 : 0;
 
   // stabilization: months until new cash-in ≈ redemptions + maturing breakage
-  let stabilizationMonths = input.horizonMonths;
+  let stabilizationMonths = normalized.horizonMonths;
   let prevCash = 0;
   let prevRed = 0;
   for (let m = 1; m < sim.cashIn.length; m++) {
@@ -337,19 +376,19 @@ export function analyzeGiftCard(input: GiftCardInput): GiftCardResult {
     flags.push({
       code: "GC-03",
       title: "Heavy escheat exposure",
-      note: `Your state takes ${Math.round(input.escheatTakePct * 100)}% of unredeemed balances after ${Math.round(input.dormancyMonths / 12)} yr. Many states exempt merchandise-only retail credits — check your state's retail-credit exemption before counting breakage as profit.`,
+      note: `Your state takes ${Math.round(normalized.escheatTakePct * 100)}% of unredeemed balances after ${Math.round(normalized.dormancyMonths / 12)} yr. Many states exempt merchandise-only retail credits — check your state's retail-credit exemption before counting breakage as profit.`,
       severity: "mid",
     });
   }
-  if (input.cashBackThreshold > 0) {
+  if (normalized.cashBackThreshold > 0) {
     flags.push({
       code: "GC-04",
       title: "Small-balance cash-back liability",
-      note: `Balances under ${fmt$(input.cashBackThreshold)} must be paid out in cash (federal <$10; California <$15 from Apr 2026). This is a permanent liability no expiry date can remove.`,
+      note: `Balances under ${fmt$(normalized.cashBackThreshold)} must be paid out in cash (federal <$10; California <$15 from Apr 2026). This is a permanent liability no expiry date can remove.`,
       severity: "mid",
     });
   }
-  if (!input.expiryAndFeesAllowed && input.feeIncomePerMonth > 0) {
+  if (!normalized.expiryAndFeesAllowed && normalized.feeIncomePerMonth > 0) {
     flags.push({
       code: "GC-05",
       title: "Fees without legal permission",
@@ -361,23 +400,23 @@ export function analyzeGiftCard(input: GiftCardInput): GiftCardResult {
     flags.push({
       code: "GC-06",
       title: "Program loses money on recognized basis",
-      note: `Recognized-program profit is ${fmt$(netProgramProfit)} over ${input.horizonMonths} months — processing, COGS, escheat and admin outweigh the float.`,
+      note: `Recognized-program profit is ${fmt$(netProgramProfit)} over ${normalized.horizonMonths} months — processing, COGS, escheat and admin outweigh the float.`,
       severity: "high",
     });
   }
-  if (input.redemptionRate < 0.7) {
+  if (normalized.redemptionRate < 0.7) {
     flags.push({
       code: "GC-07",
       title: "Low redemption — churn risk",
-      note: `At ${Math.round(input.redemptionRate * 100)}% redemption, your float balloons but so does escheat exposure; industry average is 80-90%. Customers who forget cards become complaints, not revenue.`,
+      note: `At ${Math.round(normalized.redemptionRate * 100)}% redemption, your float balloons but so does escheat exposure; industry average is 80-90%. Customers who forget cards become complaints, not revenue.`,
       severity: "mid",
     });
   }
-  if (input.redeemedCostPct > 0.3) {
+  if (normalized.redeemedCostPct > 0.3) {
     flags.push({
       code: "GC-08",
       title: "High redemption COGS",
-      note: `Physical goods redeem at ${Math.round(input.redeemedCostPct * 100)}% cost — with 12% breakage the breakage cushion evaporates and every redeemed dollar costs you nearly a dollar.`,
+      note: `Physical goods redeem at ${Math.round(normalized.redeemedCostPct * 100)}% cost — with 12% breakage the breakage cushion evaporates and every redeemed dollar costs you nearly a dollar.`,
       severity: "mid",
     });
   }
@@ -389,11 +428,11 @@ export function analyzeGiftCard(input: GiftCardInput): GiftCardResult {
       severity: "high",
     });
   }
-  if (input.breakageAssumption > 0.25) {
+  if (normalized.breakageAssumption > 0.25) {
     flags.push({
       code: "GC-10",
       title: "Overstated breakage assumption",
-      note: `Assuming ${Math.round(input.breakageAssumption * 100)}% breakage is optimistic — measured breakage runs 10-19% and falls as tracking improves (7.5% by 2015 industry data).`,
+      note: `Assuming ${Math.round(normalized.breakageAssumption * 100)}% breakage is optimistic — measured breakage runs 10-19% and falls as tracking improves (7.5% by 2015 industry data).`,
       severity: "low",
     });
   }
@@ -430,13 +469,13 @@ export function analyzeGiftCard(input: GiftCardInput): GiftCardResult {
     verdictNote = `Refund credits (${fmt$(refunds)}/mo) are larger than new card sales (${fmt$(sales)}/mo). The credit loop inflates liability faster than the float grows — fix the refund policy before scaling the program.`;
   } else if (!beatsFloatCost) {
     verdict = "Treat as pure float — keep it small and simple";
-    verdictNote = `On a recognized basis the program nets ${fmt$(netProgramProfit)} over ${input.horizonMonths} months. The cash-in float is real, but breakage income is capped by escheat and cash-back law — run the program small, don't count on breakage.`;
+    verdictNote = `On a recognized basis the program nets ${fmt$(netProgramProfit)} over ${normalized.horizonMonths} months. The cash-in float is real, but breakage income is capped by escheat and cash-back law — run the program small, don't count on breakage.`;
   } else if (upliftAlone) {
     verdict = "Strong program — uplift alone justifies it";
     verdictNote = `Redeemers spend ${fmt$(upliftValue)} extra above face value — the uplift alone covers admin and processing. The float and kept breakage are upside.`;
   } else {
     verdict = "Worth running — float + breakage beat the cost of the liability";
-    verdictNote = `Recognized profit ${fmt$(netProgramProfit)} over ${input.horizonMonths} months: float + uplift + kept breakage cover escheat, cash-back, admin and processing. Keep expiry law-compliant and never refund cards to cash.`;
+    verdictNote = `Recognized profit ${fmt$(netProgramProfit)} over ${normalized.horizonMonths} months: float + uplift + kept breakage cover escheat, cash-back, admin and processing. Keep expiry law-compliant and never refund cards to cash.`;
   }
 
   return {

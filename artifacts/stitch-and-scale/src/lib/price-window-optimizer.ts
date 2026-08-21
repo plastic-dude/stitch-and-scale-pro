@@ -17,6 +17,7 @@
  */
 
 import { platformNet, PLATFORMS, type PlatformId } from './pattern-income-calculator';
+import { safeNum } from './numeric-guard';
 
 export type SeasonId = 'novdec' | 'janfeb' | 'marapr' | 'mayjun' | 'jul' | 'aug' | 'sepoct';
 
@@ -110,12 +111,37 @@ export interface PriceWindowResult {
 
 export const PRICE_WINDOW_STORAGE_KEY = 'prcw-v1';
 
+const bounded = (raw: unknown, min: number, max: number, fallback: number): number => {
+  const value = safeNum(typeof raw === 'number' ? raw : String(raw ?? ''), fallback);
+  return Math.min(max, Math.max(min, value));
+};
+
+/** Normalize direct callers to the same finite, physical bounds as the UI. */
+export function normalizePriceWindowInput(input: Partial<PriceWindowInput> = {}): PriceWindowInput {
+  const p = { ...DEFAULT_PRICE_WINDOW, ...input };
+  return {
+    ...DEFAULT_PRICE_WINDOW,
+    ...p,
+    platform: PLATFORMS.includes(p.platform as PlatformId) ? p.platform as PlatformId : DEFAULT_PRICE_WINDOW.platform,
+    listPrice: bounded(p.listPrice, 0.01, 1_000_000, DEFAULT_PRICE_WINDOW.listPrice),
+    baselineMonthlySales: bounded(p.baselineMonthlySales, 0, 1_000_000, DEFAULT_PRICE_WINDOW.baselineMonthlySales),
+    faveQueue: bounded(p.faveQueue, 0, 1_000_000, DEFAULT_PRICE_WINDOW.faveQueue),
+    launchDiscountPct: bounded(p.launchDiscountPct, 0, 100, DEFAULT_PRICE_WINDOW.launchDiscountPct),
+    launchWeeks: bounded(p.launchWeeks, 0, 12, DEFAULT_PRICE_WINDOW.launchWeeks),
+    promoThreadLiftPerWeek: bounded(p.promoThreadLiftPerWeek, 0, 1_000_000, DEFAULT_PRICE_WINDOW.promoThreadLiftPerWeek),
+    promoThreadMonths: bounded(p.promoThreadMonths, 1, 120, DEFAULT_PRICE_WINDOW.promoThreadMonths),
+    fullPriceConversionPct: bounded(p.fullPriceConversionPct, 0, 100, DEFAULT_PRICE_WINDOW.fullPriceConversionPct),
+    discountUpliftMultiple: bounded(p.discountUpliftMultiple, 0, 100, DEFAULT_PRICE_WINDOW.discountUpliftMultiple),
+    seasonMult: bounded(p.seasonMult, 0, 10, DEFAULT_PRICE_WINDOW.seasonMult),
+  };
+}
+
 /**
  * Full-path analysis: full price vs launch-window discount vs permanent
  * discount, over a season-adjusted horizon, all net of platform fees.
  */
 export function analyzePriceWindow(input: Partial<PriceWindowInput> = {}): PriceWindowResult {
-  const p: PriceWindowInput = { ...DEFAULT_PRICE_WINDOW, ...input };
+  const p = normalizePriceWindowInput(input);
   const horizonMonths = Math.max(1, Math.round(p.promoThreadMonths));
 
   // --- Path 1: full price, no launch discount. Baseline sales season-
