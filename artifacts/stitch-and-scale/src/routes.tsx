@@ -11,16 +11,21 @@
  * ─────────────────────────────────────────────────────────────────
  */
 
-import Dashboard from '@/pages/dashboard';
-import NewProjectWizard from '@/pages/new-project';
-import ProjectWorkspace from '@/pages/project-workspace';
-import ProjectGrading from '@/pages/project-grading';
-import SettingsPage from '@/pages/settings';
+import { lazy } from 'react';
+
+// Route pages are lazy-loaded so a mobile entry point does not download the
+// entire workspace and all export/settings surfaces before the user asks for
+// them. Each page still keeps its default export contract.
+const Dashboard = lazy(() => import('@/pages/dashboard'));
+const NewProjectWizard = lazy(() => import('@/pages/new-project'));
+const ProjectWorkspace = lazy(() => import('@/pages/project-workspace'));
+const ProjectGrading = lazy(() => import('@/pages/project-grading'));
+const SettingsPage = lazy(() => import('@/pages/settings'));
+const ProjectPdf = lazy(() => import('@/pages/project-pdf'));
+const ImportCSV = lazy(() => import('@/pages/import-csv'));
+const Portfolio = lazy(() => import('@/pages/portfolio'));
+
 import NotFound from '@/pages/not-found';
-// ── Feature pages ────────────────────────────────────────────────
-import ProjectPdf from '@/pages/project-pdf';
-import ImportCSV from '@/pages/import-csv';
-import Portfolio from '@/pages/portfolio';
 
 // ── Core routes (always present) ─────────────────────────────────
 export const ROUTES = [

@@ -57,6 +57,14 @@ const GROUP_ICONS: Record<TabGroup, string> = {
 
 const GROUPS_ORDER = GROUP_ORDER;
 
+// The registry is static for the lifetime of the bundle. Build the grouped
+// navigation model once instead of filtering all labs on every workspace
+// render; localized labels are still resolved at render time below.
+const GROUPED_TABS = GROUPS_ORDER.map((g) => ({
+  group: g,
+  entries: TAB_REGISTRY.filter((t) => t.group === g),
+}));
+
 export interface TabNavigatorProps {
   /** Currently active tab value. */
   activeTab: string;
@@ -98,10 +106,7 @@ function useViewportWidth() {
 // A single grouped entry — used by both the desktop menu and the mobile sheet
 // so the two surfaces can never drift apart.
 export function tabGroupsFromRegistry(): { group: TabGroup; entries: typeof TAB_REGISTRY }[] {
-  return GROUPS_ORDER.map((g) => ({
-    group: g,
-    entries: TAB_REGISTRY.filter((t) => t.group === g),
-  }));
+  return GROUPED_TABS;
 }
 
 export function TabNavigator({ activeTab, onTabChange, language, copy, className }: TabNavigatorProps) {

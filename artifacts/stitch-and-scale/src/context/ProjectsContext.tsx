@@ -13,6 +13,7 @@ import { SAMPLE_CREW_NECK_SWEATER } from '@/lib/sample-projects';
 // writeProjects (IndexedDB + localStorage, audit-aware) a second, unsynchronized
 // writer. A single writer now: both paths persist through the seam helper.
 import { writeProjects } from '@/lib/storage-lib';
+import { ORIGIN_MIGRATION_RESTORED_EVENT } from '@/lib/origin-migration';
 
 type ProjectsAction = 
   | { type: 'INIT'; payload: PatternProject[] }
@@ -142,7 +143,13 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
         setIsLoaded(true);
       }
     }
-    load();
+
+    const handleMigrationRestore = () => {
+      void load();
+    };
+    window.addEventListener(ORIGIN_MIGRATION_RESTORED_EVENT, handleMigrationRestore);
+    void load();
+    return () => window.removeEventListener(ORIGIN_MIGRATION_RESTORED_EVENT, handleMigrationRestore);
   }, []);
 
   useEffect(() => {

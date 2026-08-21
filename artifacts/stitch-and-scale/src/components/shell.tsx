@@ -8,17 +8,35 @@ import { analyzeProjectValidity } from "@/lib/project-validity"
 import { StorageBadge } from "@/components/storage-badge"
 import { InstallBanner } from "@/components/install-banner"
 import { useSettings } from "@/context/SettingsContext"
+function useStaticPageTransition(): boolean {
+  const [staticTransition, setStaticTransition] = React.useState(() => {
+    if (typeof window === 'undefined') return false;
+    return window.matchMedia('(pointer: coarse)').matches
+      || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  });
+
+  React.useEffect(() => {
+    const coarse = window.matchMedia('(pointer: coarse)');
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const update = () => setStaticTransition(coarse.matches || reduced.matches);
+    coarse.addEventListener('change', update);
+    reduced.addEventListener('change', update);
+    update();
+    return () => {
+      coarse.removeEventListener('change', update);
+      reduced.removeEventListener('change', update);
+    };
+  }, []);
+
+  return staticTransition;
+}
+
 function RecoveryBanner() {
   const { recovered, dismissRecovery } = useProjects()
   const { t } = useSettings()
   if (!recovered) return null
   return (
-    <motion.div
-      initial={{ opacity: 0, y: -8 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -8 }}
-      className="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-8 pt-4"
-    >
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-8 pt-4">
       <div className="flex items-center gap-3 bg-secondary/40 border border-border rounded-lg px-4 py-2.5 text-sm">
         <ShieldCheck className="w-4 h-4 text-primary flex-shrink-0" aria-hidden="true" />
         <p className="flex-1 text-foreground/80">
@@ -33,7 +51,7 @@ function RecoveryBanner() {
           <X className="w-3.5 h-3.5" />
         </button>
       </div>
-    </motion.div>
+    </div>
   )
 }
 
@@ -53,6 +71,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
   const projectsLabel = t('nav.projects')
   const settingsLabel = t('nav.settings')
   const [justExported, setJustExported] = React.useState(false)
+  const staticPageTransition = useStaticPageTransition()
 
   React.useEffect(() => {
     const onExported = () => setJustExported(true)
@@ -110,25 +129,29 @@ export function Shell({ children }: { children: React.ReactNode }) {
         </div>
       </header>
 
-      <AnimatePresence>
-        <RecoveryBanner />
-      </AnimatePresence>
+      <RecoveryBanner />
 
       {justExported && <InstallBanner trigger="export" />}
 
       <main className="flex-1 flex flex-col min-w-0 w-full max-w-7xl mx-auto p-4 pb-24 sm:p-6 sm:pb-6 md:p-8">
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.div
-            key={location}
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -6 }}
-            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-            className="flex-1 flex flex-col min-w-0"
-          >
+        {staticPageTransition ? (
+          <div key={location} className="flex-1 flex flex-col min-w-0">
             {children}
-          </motion.div>
-        </AnimatePresence>
+          </div>
+        ) : (
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={location}
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+              className="flex-1 flex flex-col min-w-0"
+            >
+              {children}
+            </motion.div>
+          </AnimatePresence>
+        )}
       </main>
 
       <nav aria-label="Primary mobile navigation" className="md:hidden fixed inset-x-0 bottom-0 z-40 border-t border-border/70 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 pb-[env(safe-area-inset-bottom)]">

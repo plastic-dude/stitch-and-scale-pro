@@ -7,8 +7,7 @@ import {
 // 'stitch-and-scale-v1' directly, racing the seam's writeProjects. One writer:
 // both the reducer (ProjectsContext) and import land through the seam helper,
 // which persists to IndexedDB AND localStorage atomically.
-import { writeProjects, downloadSnapshot } from '@/lib/storage-lib';
-import type { PatternProject } from '@/lib/grading-engine';
+import { downloadOriginMigrationPackage, restoreOriginMigrationPackage, type MigrationRestoreResult, type OriginMigrationPackage } from '@/lib/origin-migration';
 import { getInitialLanguage, translate, type LanguageCode, type TranslationKey, type TranslationVariables } from '@/lib/i18n';
 import { DEFAULT_STUDIO_PROFILE, type StudioProfile } from '@/lib/studio-profile-copy';
 
@@ -68,8 +67,8 @@ interface SettingsContextType extends SettingsState {
   resetCustomStandard:    () => void;
   setStudioProfile:       (profile: StudioProfile) => void;
   updateStudioProfile:    (patch: Partial<StudioProfile>) => void;
-  exportData:             () => void;
-  importData:             (jsonData: string) => boolean;
+  exportData:             () => Promise<OriginMigrationPackage>;
+  importData:             (jsonData: string) => Promise<MigrationRestoreResult | null>;
   setOnboardingCompleted: (completed: boolean) => void;
   setLanguage:           (language: LanguageCode) => void;
   t:                     (key: TranslationKey, variables?: TranslationVariables) => string;
@@ -166,42 +165,36 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const setLanguage = (language: LanguageCode) => setSettings(s => ({ ...s, language }));
   const t = (key: TranslationKey, variables?: TranslationVariables) => translate(settings.language, key, variables);
 
-  const exportData = () => {
-    void downloadSnapshot(`stitch-and-scale-export-${new Date().toISOString().split('T')[0]}.json`)
-      .catch((error) => console.error('Failed to export data', error));
-  };
+  const exportData = () => downloadOriginMigrationPackage(
+    `stitch-and-scale-origin-migration-${new Date().toISOString().split('T')[0]}.json`,
+  );
 
-  const importData = (jsonData: string): boolean => {
+  const importData = async (jsonData: string): Promise<MigrationRestoreResult | null> => {
     try {
       const parsed = JSON.parse(jsonData);
-      if (parsed.projects && Array.isArray(parsed.projects)) {
-        writeProjects(parsed.projects as PatternProject[]).catch(err =>
-          console.error('[SettingsContext] import persistence failed', err)
-        );
-      }
-      if (parsed.settings) {
-        setSettings(s => {
-          const mergedCustomStandard = { ...s.customStandard };
-          if (parsed.settings.customStandard) {
-            for (const size of ALL_SIZES) {
-              mergedCustomStandard[size] = {
-                ...s.customStandard[size],
-                ...(parsed.settings.customStandard[size] ?? {}),
-              };
-            }
+      const result = await restoreOriginMigrationPackage(parsed);
+      setSettings(current => {
+        const mergedCustomStandard = { ...current.customStandard };
+        if (result.settings.customStandard && typeof result.settings.customStandard === 'object') {
+          for (const size of ALL_SIZES) {
+            const restoredSize = (result.settings.customStandard as Record<string, unknown>)[size];
+            mergedCustomStandard[size] = {
+              ...current.customStandard[size],
+              ...(restoredSize && typeof restoredSize === 'object' ? restoredSize : {}),
+            };
           }
-          return {
-            ...s,
-            ...parsed.settings,
-            pdfDefaults: { ...DEFAULT_PDF_DEFAULTS, ...(parsed.settings.pdfDefaults ?? {}) },
-            customStandard: mergedCustomStandard,
-            studioProfile: { ...DEFAULT_STUDIO_PROFILE, ...(parsed.settings.studioProfile ?? {}) },
-          };
-        });
-      }
-      return true;
+        }
+        return {
+          ...current,
+          ...result.settings,
+          pdfDefaults: { ...DEFAULT_PDF_DEFAULTS, ...(result.settings.pdfDefaults && typeof result.settings.pdfDefaults === 'object' ? result.settings.pdfDefaults : {}) },
+          customStandard: mergedCustomStandard,
+          studioProfile: { ...DEFAULT_STUDIO_PROFILE, ...(result.settings.studioProfile && typeof result.settings.studioProfile === 'object' ? result.settings.studioProfile : {}) },
+        };
+      });
+      return result;
     } catch {
-      return false;
+      return null;
     }
   };
 

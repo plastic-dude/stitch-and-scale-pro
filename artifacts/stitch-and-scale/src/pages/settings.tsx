@@ -41,26 +41,33 @@ export default function SettingsPage() {
     reader.onload = async (event) => {
       const content = event.target?.result as string;
       try {
-        const data = JSON.parse(content);
-        if (!data || (!data.projects && !data.settings)) throw new Error('not a backup');
-        const { importSnapshot } = await import('@/lib/storage-lib');
-        const result = await importSnapshot(data);
+        const result = await importData(content);
+        if (!result) throw new Error('invalid migration file');
         toast({
           title: tc.importSuccessTitle(result.imported),
-          description: tc.importMergedDescription(result.imported, result.existingKept),
+          description: result.warnings.length > 0
+            ? `${tc.importMergedDescription(result.imported, result.existingKept)} ${result.warnings[0]}`
+            : tc.importMergedDescription(result.imported, result.existingKept),
         });
       } catch {
         toast({ title: tc.importFailed, description: tc.importFailedDescription, variant: 'destructive' });
       }
       if (fileInputRef.current) fileInputRef.current.value = '';
     };
+    reader.onerror = () => {
+      toast({ title: tc.importFailed, description: tc.importFailedDescription, variant: 'destructive' });
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    };
     reader.readAsText(file);
   };
 
   const handleExport = async () => {
-    const { downloadSnapshot } = await import('@/lib/storage-lib');
-    const snapshot = await downloadSnapshot(`stitch-and-scale-export-${new Date().toISOString().split('T')[0]}.json`);
-    toast({ title: tc.backupDownloaded, description: tc.backupDownloadedDescription(snapshot.projects.length) });
+    try {
+      const migration = await exportData();
+      toast({ title: tc.backupDownloaded, description: tc.backupDownloadedDescription(migration.snapshot.projects.length) });
+    } catch {
+      toast({ title: tc.importFailed, description: tc.importFailedDescription, variant: 'destructive' });
+    }
   };
 
   const handleLogoChange = async (event: React.ChangeEvent<HTMLInputElement>) => {

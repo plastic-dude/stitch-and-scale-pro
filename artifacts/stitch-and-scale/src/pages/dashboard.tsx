@@ -316,6 +316,17 @@ export default function Dashboard() {
             {isImporting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
             {isImporting ? copy.restoring : copy.orRestore}
           </button>
+          <div className="mt-6 max-w-md rounded-xl border border-border/50 bg-muted/20 px-4 py-3 text-left">
+            <p className="text-xs leading-relaxed text-muted-foreground">{copy.migrationHint}</p>
+            <Button
+              variant="link"
+              className="h-auto p-0 mt-2 text-sm font-medium"
+              onClick={() => setLocation('/settings')}
+              data-testid="button-origin-migration"
+            >
+              {copy.migrationAction}
+            </Button>
+          </div>
         </motion.div>
       ) : (
         <motion.div 

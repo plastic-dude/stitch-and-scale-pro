@@ -1,10 +1,11 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Suspense, lazy } from 'react';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { Route, Switch, Router as WouterRouter, useLocation } from 'wouter';
 import { Shell } from '@/components/shell';
 import { ROUTES, NotFound } from '@/routes';
-import Landing from '@/pages/landing';
+const Landing = lazy(() => import('@/pages/landing'));
 import { SettingsProvider, useSettings } from '@/context/SettingsContext';
 import { ProjectsProvider } from '@/context/ProjectsContext';
 import OnboardingOverlay from '@/pages/onboarding';
@@ -33,6 +34,14 @@ function LandingGate({ onboardingCompleted }: { onboardingCompleted: boolean }) 
   return <OnboardingOverlay />;
 }
 
+function RouteLoadingFallback() {
+  return (
+    <main className="min-h-[100dvh] grid place-items-center bg-background px-6 text-sm text-muted-foreground" role="status" aria-live="polite">
+      Loading…
+    </main>
+  );
+}
+
 function Router() {
   const { onboardingCompleted, language } = useSettings();
   const routeErrorCopy = getRouteErrorCopy(language);
@@ -45,21 +54,23 @@ function Router() {
 
       {/* CHK-080 — public marketing surface. Keep it mutually exclusive
           with the app shell so its 404 fallback cannot render underneath. */}
-      <Switch>
-        <Route path="/landing" component={Landing} />
-        <Route>
-          <RouteErrorBoundary copy={routeErrorCopy}>
-            <Shell>
-              <Switch>
-                {ROUTES.map(({ path, component: Component }) => (
-                  <Route key={path} path={path} component={Component} />
-                ))}
-                <Route component={NotFound} />
-              </Switch>
-            </Shell>
-          </RouteErrorBoundary>
-        </Route>
-      </Switch>
+      <Suspense fallback={<RouteLoadingFallback />}>
+        <Switch>
+          <Route path="/landing" component={Landing} />
+          <Route>
+            <RouteErrorBoundary copy={routeErrorCopy}>
+              <Shell>
+                <Switch>
+                  {ROUTES.map(({ path, component: Component }) => (
+                    <Route key={path} path={path} component={Component} />
+                  ))}
+                  <Route component={NotFound} />
+                </Switch>
+              </Shell>
+            </RouteErrorBoundary>
+          </Route>
+        </Switch>
+      </Suspense>
     </>
   );
 }
