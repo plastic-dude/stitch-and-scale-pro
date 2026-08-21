@@ -8,7 +8,7 @@ import { ROUTES, NotFound } from '@/routes';
 const Landing = lazy(() => import('@/pages/landing'));
 import { SettingsProvider, useSettings } from '@/context/SettingsContext';
 import { ProjectsProvider } from '@/context/ProjectsContext';
-import OnboardingOverlay from '@/pages/onboarding';
+const OnboardingOverlay = lazy(() => import('@/pages/onboarding'));
 import { RouteErrorBoundary, getRouteErrorCopy } from '@/components/route-error-boundary';
 
 const queryClient = new QueryClient();
@@ -31,7 +31,11 @@ function LandingGate({ onboardingCompleted }: { onboardingCompleted: boolean }) 
     || /^\/project\/[\w-]+$/.test(location);
   const onPublicSurface = location === '/landing' || !isEntryFlow;
   if (onboardingCompleted || onPublicSurface) return null;
-  return <OnboardingOverlay />;
+  return (
+    <Suspense fallback={null}>
+      <OnboardingOverlay />
+    </Suspense>
+  );
 }
 
 function RouteLoadingFallback() {

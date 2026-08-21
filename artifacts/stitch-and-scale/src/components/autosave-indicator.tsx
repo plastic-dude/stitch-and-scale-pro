@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { AlertTriangle, Check, CloudOff, Loader2 } from 'lucide-react';
 import type { ProjectValidityReport } from '@/lib/project-validity';
 
@@ -18,16 +17,11 @@ interface AutosaveIndicatorProps {
 export function AutosaveIndicator({ status, validity }: AutosaveIndicatorProps) {
   const [hover, setHover] = React.useState(false);
   const invalid = validity?.level === 'invalid';
+  if (status === 'idle') return null;
   return (
-    <AnimatePresence mode="wait">
-      {status !== 'idle' && (
-        <motion.div
+        <div
           key={status}
-          initial={{ opacity: 0, y: -4 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -4 }}
-          transition={{ duration: 0.2 }}
-          className="flex items-center gap-1.5 text-xs text-muted-foreground select-none"
+          className="flex items-center gap-1.5 text-xs text-muted-foreground select-none save-status-enter"
           aria-live="polite"
           aria-label={
             invalid ? `Saved locally — invalid data: ${validity.reason}` :
@@ -74,8 +68,6 @@ export function AutosaveIndicator({ status, validity }: AutosaveIndicatorProps) 
               )}
             </>
           )}
-        </motion.div>
-      )}
-    </AnimatePresence>
+        </div>
   );
 }

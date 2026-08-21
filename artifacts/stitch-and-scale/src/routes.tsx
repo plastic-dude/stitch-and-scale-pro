@@ -25,7 +25,7 @@ const ProjectPdf = lazy(() => import('@/pages/project-pdf'));
 const ImportCSV = lazy(() => import('@/pages/import-csv'));
 const Portfolio = lazy(() => import('@/pages/portfolio'));
 
-import NotFound from '@/pages/not-found';
+const NotFound = lazy(() => import('@/pages/not-found'));
 
 // ── Core routes (always present) ─────────────────────────────────
 export const ROUTES = [
