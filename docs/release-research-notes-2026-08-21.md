@@ -58,3 +58,10 @@ The project environment API accepted creation of production-scoped `MCP_API_KEY`
 The local audit found a real contract-quality defect: `getMcpToolNames()` listed `export.brag_card` before `calculate.marketplace_take_rate`, while `getMcpToolDefinitions()` and the live `tools/list` response exposed the reverse order. Membership was identical, but consumers relying on deterministic registry order could observe inconsistent contracts. The definitions were reordered to the canonical sequence and the contract test now asserts that helper names exactly equal the definition names; the transport test was aligned to the same sequence.
 
 Post-fix local evidence: root TypeScript passed, app TypeScript passed, the focused MCP subset passed (4 files, 21 tests), the full Vitest suite passed (175 files, 2,275 tests), and the production build passed. The post-fix source still requires a fresh Vercel deployment before the live order can be rechecked.
+
+
+## Registry-order release verification (2026-08-21)
+
+Commit `9846ae0` was pushed to both `coder/perfection-foundation-2026-08-21` and `main`. Fresh Git-source production deployment `dpl_EsioRhDUiz2aJtaHXkkjvUyf7D6a` reached READY at `stitch-and-scale-pro-api-server-f2coi3ppf.vercel.app`.
+
+The public alias `https://stitch-and-scale-pro-api-server.vercel.app/api/mcp` now passes the final transport checks: GET returns 405, allowed-origin OPTIONS returns 204 with `Access-Control-Allow-Origin: https://stitch-and-scale-pro-api-server.vercel.app`, authenticated `tools/list` returns HTTP 200 with no JSON-RPC error, and the eight tools appear in canonical order: `project.intake`, `project.validate`, `grading.run`, `grading.explain`, `export.pattern_pdf`, `export.project_book_pdf`, `export.brag_card`, `calculate.marketplace_take_rate`. A request from `https://example.com` returns 403, confirming origin allowlisting remains fail-closed. The deployment URL redirects to the public alias, so the alias is the authoritative live smoke-test target.
