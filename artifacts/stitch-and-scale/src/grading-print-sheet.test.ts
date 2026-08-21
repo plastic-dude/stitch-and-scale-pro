@@ -33,7 +33,7 @@ describe("Grading Print Sheet print-contrast contract", () => {
     // not the "Project Not Found" fallback branch in the same file.
     // The id sits inside the root container's own opening tag, so the first
     // `<div` on the main path must itself carry the id.
-    const mainReturnIdx = SRC.indexOf("const { project }");
+    const mainReturnIdx = SRC.indexOf("const { project");
     const mainChunk = SRC.slice(mainReturnIdx);
     const firstDiv = mainChunk.indexOf("<div");
     const firstDivTag = mainChunk.slice(firstDiv, mainChunk.indexOf(">", firstDiv) + 1);

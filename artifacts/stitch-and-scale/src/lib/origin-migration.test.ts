@@ -86,6 +86,42 @@ describe('origin migration package', () => {
     expect(result.ok).toBe(false);
   });
 
+  it('rejects malformed human-review records instead of importing unsafe project data', () => {
+    const base = project('review', 'Review Project');
+    const malformed = {
+      ...base,
+      humanReview: {
+        status: 'approved',
+        reviewerName: 'Editor',
+        note: { toString: () => 'hostile' },
+        reviewedAt: '2026-08-21T00:00:00Z',
+      },
+    };
+    const result = validateOriginMigrationPackage({
+      format: 'stitch-and-scale-origin-migration', version: 1, exportedAt: '2026-08-21T00:00:00Z',
+      sourceOrigin: null, snapshot: { projects: [malformed], settings: {} }, localStorage: [],
+    });
+    expect(result.ok).toBe(false);
+  });
+
+  it('preserves a valid human-review record through migration validation', () => {
+    const reviewed = {
+      ...project('review', 'Review Project'),
+      humanReview: {
+        status: 'approved' as const,
+        reviewerName: 'Editor',
+        note: 'Checked clarity and finishing.',
+        reviewedAt: '2026-08-21T00:00:00Z',
+      },
+    };
+    const result = validateOriginMigrationPackage({
+      format: 'stitch-and-scale-origin-migration', version: 1, exportedAt: '2026-08-21T00:00:00Z',
+      sourceOrigin: null, snapshot: { projects: [reviewed], settings: {} }, localStorage: [],
+    });
+    expect(result.ok).toBe(true);
+    if (result.ok) expect(result.value.snapshot.projects[0].humanReview?.status).toBe('approved');
+  });
+
   it('skips oversized and non-portable auxiliary entries with warnings', () => {
     const result = validateOriginMigrationPackage({
       format: 'stitch-and-scale-origin-migration', version: 1, exportedAt: '2026-08-21T00:00:00Z',

@@ -84,6 +84,21 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
 }
 
+const HUMAN_REVIEW_STATUSES = new Set(['not-reviewed', 'in-review', 'changes-requested', 'approved']);
+
+function isHumanReviewRecord(value: unknown): boolean {
+  if (!isRecord(value)) return false;
+  return typeof value.status === 'string'
+    && HUMAN_REVIEW_STATUSES.has(value.status)
+    && typeof value.reviewerName === 'string'
+    && value.reviewerName.length <= 120
+    && typeof value.note === 'string'
+    && value.note.length <= 2000
+    && typeof value.reviewedAt === 'string'
+    && value.reviewedAt.length <= 100
+    && Number.isFinite(Date.parse(value.reviewedAt));
+}
+
 function isPatternProject(value: unknown): value is PatternProject {
   if (!isRecord(value)) return false;
   return typeof value.id === 'string'
@@ -91,7 +106,8 @@ function isPatternProject(value: unknown): value is PatternProject {
     && value.id.length <= 160
     && typeof value.name === 'string'
     && value.name.length <= 500
-    && Array.isArray(value.sections);
+    && Array.isArray(value.sections)
+    && (value.humanReview === undefined || isHumanReviewRecord(value.humanReview));
 }
 
 function isPortableKey(key: string): boolean {

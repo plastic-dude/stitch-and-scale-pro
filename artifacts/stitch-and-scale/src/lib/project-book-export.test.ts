@@ -50,6 +50,22 @@ describe('renderProjectBookDocument', () => {
     expect(html.match(/<section class="page project-page">/g)?.length).toBe(2);
   });
 
+  it('includes the human review record in the handoff artifact', () => {
+    const p = project('reviewed', 'Reviewed Pattern');
+    p.humanReview = {
+      status: 'approved',
+      reviewerName: 'Tech Editor',
+      note: 'Checked the size walk and clarified the finishing notes.',
+      reviewedAt: '2026-08-21T00:00:00.000Z',
+    };
+    const html = renderProjectBookDocument({ title: 'Reviewed Book', projects: [p], portfolio: summaryFor([p]) });
+
+    expect(html).toContain('Human review record');
+    expect(html).toContain('Human approved');
+    expect(html).toContain('Tech Editor');
+    expect(html).toContain('clarified the finishing notes');
+  });
+
   it('escapes title, description, and identifiers instead of injecting markup', () => {
     const p = project('id-<unsafe>', '<script>alert(1)</script>');
     p.description = 'Description <strong>must remain text</strong>';

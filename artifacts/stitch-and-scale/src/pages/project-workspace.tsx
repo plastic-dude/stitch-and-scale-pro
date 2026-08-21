@@ -7,7 +7,6 @@ import { TAB_REGISTRY } from '@/lib/tab-registry';
 import { TabNavigator } from '@/components/tab-navigator';
 import { NAVIGATOR_COPY } from '@/lib/tab-navigator-copy';
 import { getWorkspaceTabLabel } from '@/lib/workspace-tab-labels';
-import { GaugeFitTranslatorCard } from '@/components/gauge-fit-translator-card';
 import {
   AlertDialog,
   AlertDialogAction,

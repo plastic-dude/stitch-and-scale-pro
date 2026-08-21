@@ -9,6 +9,9 @@ import { useToast } from '@/hooks/use-toast';
 import { useSettings } from '@/context/SettingsContext';
 import { getLabStatCopy, type LabStatCopy } from '@/lib/lab-stat-copy';
 import { getGradingCopy } from '@/lib/grading-copy';
+import { checkReadiness } from '@/lib/pattern-readiness';
+import { runTechEditAudit } from '@/lib/tech-edit-audit';
+import { HumanReviewCard } from '@/components/human-review-card';
 import { getToastCopy } from '@/lib/toast-copy';
 import { BodySchematic } from '@/components/body-schematic';
 import { buildGradingCsv } from '@/lib/grading-csv';
@@ -35,8 +38,10 @@ export default function ProjectGrading() {
     );
   }
 
-  const { project } = projectHook;
+  const { project, updateProject } = projectHook;
   const gradingResults = gradePattern(project, resolveProjectStandards(project, customStandard));
+  const readiness = checkReadiness(project, customStandard);
+  const audit = runTechEditAudit(project);
   const hasData = gradingResults.some(s => s.measurements.length > 0);
   const usedGradingKeys = Array.from(
     new Set(gradingResults.flatMap(s => s.measurements.map(m => m.gradingKey)))
@@ -109,6 +114,13 @@ export default function ProjectGrading() {
         language={language}
         hasData={hasData}
         customStandard={customStandard}
+      />
+
+      <HumanReviewCard
+        project={project}
+        updateProject={updateProject}
+        readiness={readiness}
+        audit={audit}
       />
 
       <div className="bg-card rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-border overflow-hidden print:shadow-none print:border-none print:p-0 print:bg-white">

@@ -41,6 +41,15 @@ export interface PatternSection {
   measurements: SectionMeasurement[];
 }
 
+export type HumanReviewStatus = 'not-reviewed' | 'in-review' | 'changes-requested' | 'approved';
+
+export interface HumanReviewRecord {
+  status: HumanReviewStatus;
+  reviewerName: string;
+  note: string;
+  reviewedAt: string;
+}
+
 export interface PatternProject {
   id: string;
   name: string;
@@ -63,6 +72,8 @@ export interface PatternProject {
    *  silently change this project's grading too - the same problem a
    *  missing sizingStandard would cause, one level deeper. */
   customStandardSnapshot?: StandardsTable;
+  /** Explicit human-review state; absent on legacy projects until a reviewer records one. */
+  humanReview?: HumanReviewRecord;
 }
 
 export interface GradedMeasurement {

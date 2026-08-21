@@ -17,7 +17,6 @@ import { es } from 'date-fns/locale/es';
 import { fr } from 'date-fns/locale/fr';
 import { pt } from 'date-fns/locale/pt';
 import { enUS } from 'date-fns/locale/en-US';
-import { motion, type Variants } from 'framer-motion';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -189,27 +188,12 @@ export default function Dashboard() {
     .filter(p => p.name.toLowerCase().includes(search.toLowerCase()) || p.author.toLowerCase().includes(search.toLowerCase()))
     .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
 
-  const container: Variants = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: { staggerChildren: 0.1 }
-    }
-  };
-
-  const item: Variants = {
-    hidden: { opacity: 0, y: 15 },
-    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
-  };
-
   return (
     <div className="w-full space-y-10">
       
             {showStorageWarning && (
-        <motion.div 
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-accent/10 border border-accent/20 rounded-xl p-4 flex items-start gap-4 relative"
+        <div
+          className="sts-dashboard-enter bg-accent/10 border border-accent/20 rounded-xl p-4 flex items-start gap-4 relative"
         >
           <Info className="w-5 h-5 text-accent shrink-0 mt-0.5" />
           <div className="flex-1 pr-6">
@@ -225,7 +209,7 @@ export default function Dashboard() {
           >
             <X className="w-4 h-4" />
           </button>
-        </motion.div>
+        </div>
       )}
 
       <input
@@ -284,11 +268,8 @@ export default function Dashboard() {
       )}
 
       {projects.length === 0 ? (
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="flex flex-col items-center justify-center py-32 text-center px-4 max-w-xl mx-auto"
+        <div
+          className="sts-dashboard-enter flex flex-col items-center justify-center py-32 text-center px-4 max-w-xl mx-auto"
         >
           <div className="w-24 h-24 rounded-2xl bg-secondary/40 flex items-center justify-center mb-8 text-primary/80 ring-1 ring-border/50 shadow-sm rotate-3">
             <Layers className="w-10 h-10 -rotate-3" />
@@ -327,16 +308,11 @@ export default function Dashboard() {
               {copy.migrationAction}
             </Button>
           </div>
-        </motion.div>
+        </div>
       ) : (
-        <motion.div 
-          variants={container}
-          initial="hidden"
-          animate="show"
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-        >
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredProjects.map((project) => (
-            <motion.div key={project.id} variants={item} className="h-full">
+            <div key={project.id} className="sts-dashboard-item h-full">
               <Link href={`/project/${project.id}`}>
                 <Card className="relative h-full cursor-pointer transition-all duration-300 hover:shadow-md hover:border-primary/30 bg-card overflow-hidden group flex flex-col border-border/60" data-testid={`card-project-${project.id}`}>
                   <div className="h-1.5 w-full bg-gradient-to-r from-secondary to-secondary group-hover:from-primary group-hover:to-accent transition-all duration-500" />
@@ -434,10 +410,10 @@ export default function Dashboard() {
                   </CardFooter>
                 </Card>
               </Link>
-            </motion.div>
+            </div>
           ))}
           
-          <motion.div variants={item}>
+          <div className="sts-dashboard-item">
             <Card 
               className="h-full min-h-[240px] cursor-pointer border-dashed border-2 border-border/60 hover:border-primary/40 hover:bg-primary/[0.02] transition-all duration-300 flex flex-col items-center justify-center text-muted-foreground hover:text-primary group rounded-xl shadow-none"
               onClick={() => setLocation('/project/new')}
@@ -451,8 +427,8 @@ export default function Dashboard() {
                 {copy.setUpBase} <ChevronRight className="w-3 h-3 ml-0.5" />
               </span>
             </Card>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       )}
 
       <AlertDialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
