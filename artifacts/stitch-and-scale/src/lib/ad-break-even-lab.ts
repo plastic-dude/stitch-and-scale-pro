@@ -312,7 +312,16 @@ export function analyzeAdSpend(input: AdLabInput): AdLabResult {
 
   let budgetVerdict: BudgetVerdict['verdict'] = 'test_small';
   let budgetReason = '';
-  if (!bestPaid || (bestPaid.expectedDailyProfit ?? 0) <= 0) {
+  // CHK-146 (extended audit E-02): with a zero/negative pattern price the
+  // net-per-sale is 0 and every channel "profit" is really the budget
+  // sign-flipped — the planner must refuse to name a best channel instead
+  // of projecting -$999,999/day and $∞ ROAS into advice.
+  const priceInvalid = input.price <= 0;
+  if (priceInvalid) {
+    budgetVerdict = 'skip';
+    budgetReason =
+      `No channel economics can be computed with a $${input.price} pattern price — a zero or negative price makes every "net per sale" meaningless, so no recommendation is made. Set a real price first.`;
+  } else if (!bestPaid || (bestPaid.expectedDailyProfit ?? 0) <= 0) {
     budgetVerdict = 'skip';
     budgetReason =
       `No CPC channel profits at the assumed ${Math.round(input.clickToOrder * 100)}% click→order rate and ${fmt(input.typicalCpc)} CPC — ` +

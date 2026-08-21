@@ -115,6 +115,18 @@ describe('analyzeRetention', () => {
       Math.abs(r.twelveMonthNet) + 100);
   });
 
+  it('CHK-146: never leaks NaN/Infinity into the cold-acquisition cost', () => {
+    // Extended audit E-02 repro: with no real price, net-per-sale was 0 and
+    // the division produced Infinity/NaN, which surfaced as "$NaN". Now the
+    // cost must itself be non-finite when the comparison is meaningless.
+    const zeroPrice = analyzeRetention({ avgPrice: 0 });
+    expect(Number.isFinite(zeroPrice.twelveMonthColdAcquisitionCost)).toBe(false);
+    // Sanity: a normal price still computes a finite cost.
+    const normal = analyzeRetention({ avgPrice: 8 });
+    expect(Number.isFinite(normal.twelveMonthColdAcquisitionCost)).toBe(true);
+    expect(normal.twelveMonthColdAcquisitionCost).toBeGreaterThan(0);
+  });
+
   it('Etsy net is lower than Ravelry at the same list (fee seam)', () => {
     const etsy = analyzeRetention({ platform: 'etsy' });
     const ravelry = analyzeRetention({ platform: 'ravelry' });

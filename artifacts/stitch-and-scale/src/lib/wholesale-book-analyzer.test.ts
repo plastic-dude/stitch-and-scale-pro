@@ -84,6 +84,24 @@ describe('analyzeWholesaleDeal', () => {
     // no retail price → yourRate falls back to 0 (Ravelry net on $0 is 0)
     expect(r.volumeBreakeven).toBe(Infinity);
   });
+
+  it('CHK-146: prose never stringifies an infinite breakeven', () => {
+    // Extended audit E-02 repro: with retail 0 and yourRate 0 the earlier
+    // note read "Sell Infinity copies direct...". The comparison note must
+    // be replaced by an explicit "cannot compute" explanation instead.
+    const r = analyzeWholesaleDeal({ ...defaults, yourRate: 0, retailPrice: 0 });
+    expect(r.notes.every((n) => !n.includes('Infinity'))).toBe(true);
+    expect(r.notes.some((n) => n.includes('could not be computed'))).toBe(true);
+  });
+
+  it('CHK-146: the volume-checklist item never stringifies Infinity either', () => {
+    const r = analyzeWholesaleDeal({ ...defaults, yourRate: 0, retailPrice: 0 });
+    const pack = buildWholesalePack(
+      { ...defaults, yourRate: 0, retailPrice: 0 },
+      r
+    );
+    expect(pack.checklist.some((c) => c.check.includes('no computable breakeven'))).toBe(true);
+  });
 });
 
 describe('analyzeBookDeal', () => {

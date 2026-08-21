@@ -256,7 +256,17 @@ export function RetentionCard({ project: _project }: { project: PatternProject }
           </div>
           <div className="rounded-lg border bg-muted/30 p-4">
             <div className="text-xs text-muted-foreground">Cold-acquisition cost of the same buyers</div>
-            <div className="text-xl font-bold">{fmt$(result.twelveMonthColdAcquisitionCost)}</div>
+            <div className="text-xl font-bold">
+              {Number.isFinite(result.twelveMonthColdAcquisitionCost)
+                ? fmt$(result.twelveMonthColdAcquisitionCost)
+                : '—'}
+            </div>
+            {!Number.isFinite(result.twelveMonthColdAcquisitionCost) && (
+              <p className="text-xs text-muted-foreground mt-1">
+                No cold-acquisition comparison: a zero net per sale makes the ratio meaningless —
+                set a real average price first.
+              </p>
+            )}
           </div>
         </div>
 

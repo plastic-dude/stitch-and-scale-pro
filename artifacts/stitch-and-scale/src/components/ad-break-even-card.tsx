@@ -236,8 +236,12 @@ export function AdBreakEvenCard({ project }: { project: PatternProject }) {
               <TrendingUp className="h-4 w-4" /> {copy.bestPaid}
             </div>
             <p className="text-xs text-muted-foreground">
-              {best ? `${getAdChannelLabel(language, best.channel, AD_CHANNEL_LABELS[best.channel])} · ${fmt$(best.expectedDailyProfit ?? 0)}/day · ${result.budget.spendableClicksPerDay} clicks/day at ${fmt$(stored.input.typicalCpc)} — anything above ${fmt$(result.budget.wastefulSpendThreshold)}/day is wasted spend.`
-                : copy.noPaid}
+              {/* CHK-146: name a best channel only when the economics are real —
+                  a zero/negative price or non-finite daily profit turns the
+                  ranking into sign-flipped budget arithmetic. */}
+              {best && result.budget.verdict !== 'skip' && Number.isFinite(best.expectedDailyProfit) && (best.expectedDailyProfit ?? 0) > 0 ?
+                `${getAdChannelLabel(language, best.channel, AD_CHANNEL_LABELS[best.channel])} · ${fmt$(best.expectedDailyProfit ?? 0)}/day · ${result.budget.spendableClicksPerDay} clicks/day at ${fmt$(stored.input.typicalCpc)} — anything above ${fmt$(result.budget.wastefulSpendThreshold)}/day is wasted spend.`
+                : getAdBudgetReason(language, result.budget.verdict, result.budget.reason)}
               {result.emailBeatsAllAds && (
                 <span className="block mt-1 font-medium text-blue-700">
                   <TrendingDown className="h-3.5 w-3.5 inline mr-1" />

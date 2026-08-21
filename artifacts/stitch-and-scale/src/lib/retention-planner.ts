@@ -206,8 +206,14 @@ export function analyzeRetention(input: Partial<RetentionInput> = {}): Retention
   const twelveMonthListRevenue = Math.round(projectedRevenue * 100) / 100;
   const twelveMonthNet = Math.round(totalNet * 100) / 100;
   // Cold acquisition would need to buy each of those buyers at full cost.
-  const twelveMonthColdAcquisitionCost = Math.round(
-    (projectedRevenue / net.netPerSale) * p.acquisitionCostPerFan * 100) / 100;
+  // CHK-146 (extended audit E-02): a zero net-per-sale would make this
+  // division produce Infinity (or NaN when revenue is also 0), which then
+  // leaked into user-facing output as "$NaN". The comparison only makes
+  // sense when each sale actually nets something positive.
+  const twelveMonthColdAcquisitionCost = net.netPerSale > 0
+    ? Math.round(
+        (projectedRevenue / net.netPerSale) * p.acquisitionCostPerFan * 100) / 100
+    : NaN;
 
   // --- Watch-outs
   const items: string[] = [];

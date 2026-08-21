@@ -50,6 +50,7 @@
 
 import { platformNet, PLATFORM_LABELS } from './pattern-income-calculator';
 import { estimateYarn, YARN_WEIGHTS } from './yarn-estimator';
+import { isFinitePositive } from './numeric-guard'; // CHK-146: prose must never stringify Infinity/NaN
 
 export const HOURLY_FLOOR = 12; // realistic floor for a part-time designer's time
 export const AGENT_SHARE = 0.15;
@@ -162,9 +163,18 @@ export function analyzeWholesaleDeal(input: WholesaleInputs): WholesaleResult {
     );
   }
 
-  notes.push(
-    `Sell ${volumeBreakeven} copies direct to match this wholesale cheque at your $${yourRate.toFixed(2)}/pattern net. If your realistic direct volume over this term is lower, wholesale wins on volume; if higher, you're handing the margin away.`
-  );
+  // CHK-146 (extended audit E-02): never stringify a non-finite breakeven.
+  // When the self-sell net cannot be computed (no retail price AND no
+  // Ravelry net), the direct-vs-wholesale comparison is meaningless.
+  if (isFinitePositive(yourRate)) {
+    notes.push(
+      `Sell ${volumeBreakeven} copies direct to match this wholesale cheque at your $${yourRate.toFixed(2)}/pattern net. If your realistic direct volume over this term is lower, wholesale wins on volume; if higher, you're handing the margin away.`
+    );
+  } else {
+    notes.push(
+      `No direct-vs-wholesale volume comparison is possible yet: your self-sell net per pattern could not be computed (set a real retail price or your own platform rate first).`
+    );
+  }
 
   if (!input.exclusive) {
     notes.push(
@@ -324,7 +334,7 @@ export function buildWholesalePack(
       flag: false,
     },
     {
-      check: `Volume breakeven sanity — ${result.volumeBreakeven} direct copies would equal this cheque`,
+      check: `Volume breakeven sanity — ${isFinite(result.volumeBreakeven) ? result.volumeBreakeven.toLocaleString() : 'no computable breakeven'} direct copies would equal this cheque`,
       rationale: `At roughly half of direct net per copy, wholesale only wins on volume you can't reach yourself. If the order is small (under ~25 copies), the admin alone eats the margin.`,
       flag: inputs.orderQuantity < 25,
     },
