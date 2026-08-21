@@ -5,9 +5,11 @@ import { useSettings } from '@/context/SettingsContext';
 import { gradePattern, resolveProjectStandards } from '@/lib/grading-engine';
 import { THEMES, resolveTheme, type ThemeId } from '@/lib/pdf/themes';
 import { renderDocument } from '@/lib/pdf/renderer';
+import { validateDraft } from '@/lib/pattern-draft-renderer';
 import { openPrintWindow, getDefaultFilename, sanitizeFilename, detectNamingStyle, applyNamingTemplate } from '@/lib/pdf/print-utils';
 import { compressImageToDataUrl } from '@/lib/image-utils';
 import { getPdfLabels } from '@/lib/pdf/labels';
+import { getWorkspaceCopy } from '@/lib/workspace-copy';
 import { validatePublicationPreflight } from '@/lib/publication-quality';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -175,6 +177,7 @@ export default function ProjectPdf() {
   const projectHook = useProject(params.id);
   const { pdfDefaults, setPdfDefaults, customStandard, language } = useSettings();
   const labels = getPdfLabels(language);
+  const copy = getWorkspaceCopy(language);
 
   // Template / accent
   const [selectedTheme, setSelectedTheme] = useState<ThemeId>(pdfDefaults.themeId);
@@ -239,6 +242,10 @@ export default function ProjectPdf() {
         })
       : null,
     [projectHook?.project, gradingResult, language, selectedTheme, customLogo, customStandard],
+  );
+  const draftIssues = useMemo(
+    () => projectHook?.project ? validateDraft(projectHook.project.description || '', projectHook.project, customStandard) : [],
+    [projectHook?.project, customStandard],
   );
 
   // Computed: rendered HTML (regenerated on any control change)

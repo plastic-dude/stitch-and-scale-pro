@@ -582,7 +582,7 @@ export default function OnboardingOverlay() {
 
       {/* Footer nav — hidden on steps that have their own CTAs */}
       {step !== 6 && step !== 7 && (
-        <div className="px-6 py-4 border-t border-border/30 flex items-center justify-between bg-background/80">
+        <div className="px-6 pt-4 pb-6 sm:pb-4 border-t border-border/30 flex items-center justify-between bg-background/80 pb-[env(safe-area-inset-bottom,16px)]">
           <Button
             variant="ghost"
             size="sm"
@@ -607,7 +607,7 @@ export default function OnboardingOverlay() {
 
       {/* Keyboard nav for step 6 / 7 back button */}
       {(step === 6 || step === 7) && (
-        <div className="px-6 py-4 border-t border-border/30 flex items-center justify-start bg-background/80">
+        <div className="px-6 pt-4 pb-6 sm:pb-4 border-t border-border/30 flex items-center justify-start bg-background/80 pb-[env(safe-area-inset-bottom,16px)]">
           <Button
             variant="ghost"
             size="sm"
