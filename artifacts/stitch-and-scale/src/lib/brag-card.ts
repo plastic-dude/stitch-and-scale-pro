@@ -35,9 +35,9 @@
  *   D-9  Knit texture over gradient (purl-bump / grid SVG patterns).
  *   D-10 1080x1080, social-ready.
  */
-import { fmtMoney } from "./receipt-lab";
-import { getBragCardCopy, type BragCardCopy } from "./brag-copy";
-import type { MonthlyLedgerRow } from "./receipt-lab";
+import { fmtMoney } from "./receipt-lab.js";
+import { getBragCardCopy, type BragCardCopy } from "./brag-copy.js";
+import type { MonthlyLedgerRow } from "./receipt-lab.js";
 
 export interface BragCardInput {
   /** Studio / brand name shown on the card. */
