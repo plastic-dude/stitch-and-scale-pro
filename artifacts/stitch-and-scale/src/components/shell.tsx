@@ -4,6 +4,7 @@ import { Settings, Plus, BookOpen, ShieldCheck, X, Package } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useProjects } from "@/context/ProjectsContext"
 import { AutosaveIndicator } from "@/components/autosave-indicator"
+import { analyzeProjectValidity } from "@/lib/project-validity"
 import { StorageBadge } from "@/components/storage-badge"
 import { InstallBanner } from "@/components/install-banner"
 import { useSettings } from "@/context/SettingsContext"
@@ -39,6 +40,15 @@ function RecoveryBanner() {
 export function Shell({ children }: { children: React.ReactNode }) {
   const [location] = useLocation()
   const { saveStatus } = useProjects()
+
+  // QUEUE-017-GATE: derive the current project's data-validity report from the
+  // persistent project record. The workspace URL is /project/{id}; the header
+  // is the only always-visible surface, so it carries the flag. When no
+  // project is open (dashboard/portfolio/settings) there is nothing to judge.
+  const projectId = location.startsWith('/project/') ? location.split('/')[2] : undefined;
+  const { projects } = useProjects();
+  const currentProject = projects.find(p => p.id === projectId);
+  const validity = currentProject ? analyzeProjectValidity(currentProject) : undefined;
   const { t } = useSettings()
   const projectsLabel = t('nav.projects')
   const settingsLabel = t('nav.settings')
@@ -67,7 +77,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
 
           <div className="hidden sm:flex items-center gap-2">
             <StorageBadge />
-            <AutosaveIndicator status={saveStatus} />
+            <AutosaveIndicator status={saveStatus} validity={validity} />
           </div>
           
           <nav className="flex items-center gap-1 sm:gap-4">

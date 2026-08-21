@@ -95,7 +95,7 @@ function bustMeasurement(project: PatternProject) {
  * sensible physical value — the whole graded set is only as trustworthy as
  * its worst measurement, so this blocks the verdict outright.
  */
-function invalidMeasurements(project: PatternProject): Array<{ label: string; baseValue: number }> {
+export function invalidMeasurements(project: PatternProject): Array<{ label: string; baseValue: number }> {
   const bad: Array<{ label: string; baseValue: number }> = [];
   for (const section of project.sections) {
     for (const m of section.measurements) {
