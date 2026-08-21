@@ -264,17 +264,23 @@ export default function ProjectPdf() {
     setAccentColor(''); // reset accent override when switching theme
   }, []);
 
+    // F-04 (CHK-153): never leave the button stuck in "Preparing…" — the print
+  // path is now a small state machine with explicit failure and fallback
+  // transitions (see print-utils.ts for the dialog outcome contract).
+  const resetExportTimer = useRef<number | undefined>(undefined);
   const handleExport = useCallback(() => {
     if (!previewHtml || !projectHook?.project) return;
+    // Clear any prior fallback timer before entering a new export.
+    if (resetExportTimer.current !== undefined) {
+      window.clearTimeout(resetExportTimer.current);
+      resetExportTimer.current = undefined;
+    }
     setIsExporting(true);
-
     const safeName = filename.trim() || getDefaultFilename(projectHook.project.name || 'Untitled Pattern');
     const suggestedPdf = safeName.endsWith('.pdf') ? safeName : `${safeName}.pdf`;
-
     // Detect if user applied a custom naming style and persist it
     const defaultName = getDefaultFilename(projectHook.project.name || 'Untitled Pattern');
     const namingStyle = detectNamingStyle(safeName, defaultName);
-
     // Persist settings
     setPdfDefaults({
       ...pdfDefaults,
@@ -287,14 +293,48 @@ export default function ProjectPdf() {
       includeNotes,
       customLogo,
     });
-
-    openPrintWindow(previewHtml, suggestedPdf);
+    const attempt = openPrintWindow(previewHtml, suggestedPdf);
     setShowTip(false);
     window.dispatchEvent(new CustomEvent('stitch-and-scale:pattern-exported'));
+    if (!attempt.ok) {
+      // Recoverable failure: popup blocked / no window / write threw.
+      // Tell the user and re-enable the button immediately.
+      setIsExporting(false);
+      toast({
+        title: labels.exportFailed,
+        description: tc.unknownError,
+        variant: 'destructive',
+      });
+      return;
+    }
+    // Happy path: the OS print dialog drives the outcome through afterprint,
+    // which releaseExport uses to re-enable the button. If the dialog never
+    // reports (edge browsers, dialog left open indefinitely), this fallback
+    // timer guarantees the UI always recovers.
+    resetExportTimer.current = window.setTimeout(() => {
+      resetExportTimer.current = undefined;
+      setIsExporting(false);
+    }, 6000);
+  }, [previewHtml, filename, selectedTheme, accentColor, includeCover, includeGauge, includeNotes, customLogo, pdfDefaults, setPdfDefaults, projectHook?.project, labels.exportFailed, tc, toast]);
 
-    // Reset exporting state after a moment
-    setTimeout(() => setIsExporting(false), 1500);
-  }, [previewHtml, filename, selectedTheme, accentColor, includeCover, includeGauge, includeNotes, customLogo, pdfDefaults, setPdfDefaults, projectHook?.project]);
+  // Afterprint-driven exit from the export state: the print dialog (iframe or
+  // new window) reports close/cancel/save through `onafterprint`. The listener
+  // re-attaches each time the export state flips, so every new export gets a
+  // fresh handler and the previous one is torn down.
+  useEffect(() => {
+    if (!isExporting) return;
+    const onAfter = () => {
+      if (resetExportTimer.current !== undefined) {
+        window.clearTimeout(resetExportTimer.current);
+        resetExportTimer.current = undefined;
+      }
+      setIsExporting(false);
+    };
+    // Poll-free: print-utils sets afterprint on the print surface itself; the
+    // main window handler covers browsers that forward the event to the opener.
+    window.addEventListener('afterprint', onAfter);
+    return () => window.removeEventListener('afterprint', onAfter);
+  }, [isExporting]);
 
   if (!projectHook) {
     return (
