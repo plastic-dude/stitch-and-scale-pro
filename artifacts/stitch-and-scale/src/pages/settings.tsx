@@ -55,16 +55,8 @@ export default function SettingsPage() {
   };
 
   const handleExport = async () => {
-    const { exportSnapshot, recordBackupEvent } = await import('@/lib/storage-lib');
-    const snapshot = await exportSnapshot();
-    const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(snapshot, null, 2));
-    const a = document.createElement('a');
-    a.setAttribute('href', dataStr);
-    a.setAttribute('download', `stitch-and-scale-export-${new Date().toISOString().split('T')[0]}.json`);
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    recordBackupEvent(new Blob([JSON.stringify(snapshot)]).size, snapshot.projects.length);
+    const { downloadSnapshot } = await import('@/lib/storage-lib');
+    const snapshot = await downloadSnapshot(`stitch-and-scale-export-${new Date().toISOString().split('T')[0]}.json`);
     toast({ title: tc.backupDownloaded, description: tc.backupDownloadedDescription(snapshot.projects.length) });
   };
 

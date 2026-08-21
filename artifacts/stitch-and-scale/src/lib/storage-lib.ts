@@ -102,9 +102,39 @@ export async function exportSnapshot(): Promise<StoreSnapshot> {
   return { projects, settings };
 }
 
-/** Import into both stores, merging with existing data rather than
- *  clobbering — restore can never accidentally erase projects that were
- *  never part of the backup file (self-audit W3). */
+/** Download JSON through a Blob when available, with a data-URI fallback for
+ * older embedded browsers. Keeping this here prevents individual screens from
+ * accidentally exporting stale localStorage-only data. */
+export function downloadJsonFile(value: unknown, filename: string): void {
+  const payload = JSON.stringify(value, null, 2);
+  const blob = new Blob([payload], { type: 'application/json;charset=utf-8' });
+  const canCreateObjectUrl = typeof URL !== 'undefined' && typeof URL.createObjectURL === 'function';
+  const href = canCreateObjectUrl
+    ? URL.createObjectURL(blob)
+    : `data:application/json;charset=utf-8,${encodeURIComponent(payload)}`;
+  const anchor = document.createElement('a');
+  anchor.href = href;
+  anchor.download = filename;
+  anchor.rel = 'noopener';
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+  if (canCreateObjectUrl && href.startsWith('blob:')) URL.revokeObjectURL(href);
+}
+
+/** Export the canonical live snapshot and record exactly what was offered to
+ * the designer as a recoverable backup event. */
+export async function downloadSnapshot(filename: string): Promise<StoreSnapshot> {
+  const snapshot = await exportSnapshot();
+  downloadJsonFile(snapshot, filename);
+  recordBackupEvent(bytesOf(snapshot), snapshot.projects.length);
+  return snapshot;
+}
+
+/**
+ * Import into both stores, merging with existing data rather than
+ * clobbering — restore can never accidentally erase projects that were
+ * never part of the backup file (self-audit W3). */
 export async function importSnapshot(
   data: { projects?: PatternProject[]; settings?: Record<string, unknown> },
   opts: { mode: 'merge' | 'replace' } = { mode: 'merge' },

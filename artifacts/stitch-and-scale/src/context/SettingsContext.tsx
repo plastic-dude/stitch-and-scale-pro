@@ -7,7 +7,7 @@ import {
 // 'stitch-and-scale-v1' directly, racing the seam's writeProjects. One writer:
 // both the reducer (ProjectsContext) and import land through the seam helper,
 // which persists to IndexedDB AND localStorage atomically.
-import { writeProjects } from '@/lib/storage-lib';
+import { writeProjects, downloadSnapshot } from '@/lib/storage-lib';
 import type { PatternProject } from '@/lib/grading-engine';
 import { getInitialLanguage, translate, type LanguageCode, type TranslationKey, type TranslationVariables } from '@/lib/i18n';
 import { DEFAULT_STUDIO_PROFILE, type StudioProfile } from '@/lib/studio-profile-copy';
@@ -167,19 +167,8 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const t = (key: TranslationKey, variables?: TranslationVariables) => translate(settings.language, key, variables);
 
   const exportData = () => {
-    try {
-      const projects = localStorage.getItem('stitch-and-scale-v1') || '[]';
-      const exportObj = { projects: JSON.parse(projects), settings };
-      const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(exportObj, null, 2));
-      const a = document.createElement('a');
-      a.setAttribute('href', dataStr);
-      a.setAttribute('download', `stitch-and-scale-export-${new Date().toISOString().split('T')[0]}.json`);
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-    } catch (e) {
-      console.error('Failed to export data', e);
-    }
+    void downloadSnapshot(`stitch-and-scale-export-${new Date().toISOString().split('T')[0]}.json`)
+      .catch((error) => console.error('Failed to export data', error));
   };
 
   const importData = (jsonData: string): boolean => {
