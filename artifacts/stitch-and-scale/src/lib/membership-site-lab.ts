@@ -15,6 +15,8 @@
  * inequality, and an annual-vs-monthly pricing verdict.
  */
 
+import { safeNum } from './numeric-guard';
+
 export interface FeeStack {
   /** Platform cut as a fraction of revenue, e.g. 0.05 for Payhip free plan. */
   platformCut: number;
@@ -110,8 +112,35 @@ export interface MembershipSiteResult {
   verdictNote: string;
 }
 
-function clamp01(n: number): number {
-  return Math.min(1, Math.max(0, n));
+function bounded(raw: unknown, min: number, max: number, fallback: number): number {
+  const value = safeNum(typeof raw === 'number' ? raw : String(raw ?? ''), fallback);
+  return Math.min(max, Math.max(min, value));
+}
+
+function whole(raw: unknown, min: number, max: number, fallback: number): number {
+  return Math.round(bounded(raw, min, max, fallback));
+}
+
+function feeKey(raw: unknown, fallback: string): string {
+  return typeof raw === 'string' && raw in FEE_STACKS ? raw : fallback;
+}
+
+export function normalizeMembershipSiteInput(raw: Partial<MembershipSiteInput> = {}): MembershipSiteInput {
+  const merged = { ...DEFAULT_CLUB, ...raw };
+  return {
+    audienceSize: whole(merged.audienceSize, 0, 100_000_000, DEFAULT_CLUB.audienceSize),
+    conversionBest: bounded(merged.conversionBest, 0, 0.10, DEFAULT_CLUB.conversionBest),
+    conversionRealistic: bounded(merged.conversionRealistic, 0, 0.10, DEFAULT_CLUB.conversionRealistic),
+    conversionWorst: bounded(merged.conversionWorst, 0, 0.10, DEFAULT_CLUB.conversionWorst),
+    monthlyPrice: bounded(merged.monthlyPrice, 0, 100_000, DEFAULT_CLUB.monthlyPrice),
+    annualPrice: bounded(merged.annualPrice, 0, 1_000_000, DEFAULT_CLUB.annualPrice),
+    annualShare: bounded(merged.annualShare, 0, 1, DEFAULT_CLUB.annualShare),
+    monthlyChurn: bounded(merged.monthlyChurn, 0, 0.20, DEFAULT_CLUB.monthlyChurn),
+    contentHours: bounded(merged.contentHours, 0, 10_000, DEFAULT_CLUB.contentHours),
+    hourlyRate: bounded(merged.hourlyRate, 0, 100_000, DEFAULT_CLUB.hourlyRate),
+    supportHours: bounded(merged.supportHours, 0, 10_000, DEFAULT_CLUB.supportHours),
+    feeStackKey: feeKey(merged.feeStackKey, DEFAULT_CLUB.feeStackKey),
+  };
 }
 
 interface EffectiveInput extends MembershipSiteInput {
@@ -131,7 +160,8 @@ function scenario(label: string, conversion: number, input: EffectiveInput): Sce
   return { label, members, grossRevenue, fees, netRevenue, ltvPerMember };
 }
 
-export function analyzeMembershipSite(input: MembershipSiteInput): MembershipSiteResult {
+export function analyzeMembershipSite(rawInput: MembershipSiteInput): MembershipSiteResult {
+  const input = normalizeMembershipSiteInput(rawInput);
   const feeStack = FEE_STACKS[input.feeStackKey]?.stack ?? FEE_STACKS[DEFAULT_FEE_STACK_KEY].stack;
   const effective: EffectiveInput = { ...input, feeStack };
 

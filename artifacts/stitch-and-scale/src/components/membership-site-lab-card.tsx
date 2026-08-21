@@ -10,6 +10,7 @@ import { MEMBERSHIP_SITE_COPY, getMembershipFeeStackLabel, getMembershipFlagTitl
 import { projectStorage } from '@/lib/storage-lib';
 import {
   analyzeMembershipSite,
+  normalizeMembershipSiteInput,
   DEFAULT_CLUB,
   FEE_STACKS,
   fmt$,
@@ -26,10 +27,10 @@ function defaultStored(): StoredState {
 
 function loadStored(handle: ReturnType<typeof projectStorage<StoredState>>): StoredState {
   const parsed = handle.read();
-  if (parsed) {
-    return { ...defaultStored(), ...parsed, ts: undefined };
-  }
-  return defaultStored();
+  return {
+    ...normalizeMembershipSiteInput(parsed ?? defaultStored()),
+    ts: undefined,
+  };
 }
 
 function NumField({ id, label, value, onChange, min = 0, max, step = 1, suffix }: {
@@ -43,8 +44,10 @@ function NumField({ id, label, value, onChange, min = 0, max, step = 1, suffix }
         <Input id={id} type="number" min={min} {...(max !== undefined ? { max } : {})} step={step}
           value={value}
           onChange={e => {
-            const n = parseFloat(e.target.value);
-            if (Number.isFinite(n)) onChange(n);
+            const n = Number(e.target.value);
+            if (!Number.isFinite(n)) return;
+            const bounded = Math.min(max ?? Number.MAX_SAFE_INTEGER, Math.max(min, n));
+            onChange(bounded);
           }}
           className="text-sm pr-8" />
         {suffix ? <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">{suffix}</span> : null}
@@ -85,14 +88,16 @@ export function MembershipSiteLabCard({ project }: { project: PatternProject }) 
   }, [handle]);
 
   const persist = (next: MembershipSiteInput) => {
-    setInput(next);
-    handle.write({ ...next, ts: Date.now() });
+    const sanitized = normalizeMembershipSiteInput(next);
+    setInput(sanitized);
+    handle.write({ ...sanitized, ts: Date.now() });
   };
 
   const result = useMemo(() => analyzeMembershipSite(input), [input]);
   const realistic = result.scenarios[1];
   const monthlyCost = (input.contentHours + input.supportHours) * input.hourlyRate;
   const feeShare = realistic.grossRevenue > 0 ? realistic.fees / realistic.grossRevenue : 0;
+  const lifetimeLabel = input.monthlyChurn > 0 ? `≈${(1 / input.monthlyChurn).toFixed(0)} mo` : '∞';
   const localizedVerdict = getMembershipVerdict(language, result.verdict);
   const localizedVerdictNote = getMembershipVerdictNote(language, result.verdict, {
     audience: input.audienceSize,
@@ -121,7 +126,7 @@ export function MembershipSiteLabCard({ project }: { project: PatternProject }) 
         <section className="space-y-3">
           <h3 className="text-sm font-semibold flex items-center gap-1.5"><Users className="size-4" />{copyText.audience}</h3>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            <NumField id="ms-audience" label={copyText.engaged} value={input.audienceSize} onChange={n => set('audienceSize', n)} suffix={copyText.people} />
+            <NumField id="ms-audience" label={copyText.engaged} value={input.audienceSize} onChange={n => set('audienceSize', n)} max={100_000_000} suffix={copyText.people} />
             <NumField id="ms-conv-w" label={copyText.conservative} value={input.conversionWorst * 100} onChange={n => set('conversionWorst', n / 100)} min={0} max={10} step={0.5} suffix="%" />
             <NumField id="ms-conv-r" label={copyText.realistic} value={input.conversionRealistic * 100} onChange={n => set('conversionRealistic', n / 100)} min={0} max={10} step={0.5} suffix="%" />
             <NumField id="ms-conv-b" label={copyText.best} value={input.conversionBest * 100} onChange={n => set('conversionBest', n / 100)} min={0} max={10} step={0.5} suffix="%" />
@@ -132,15 +137,15 @@ export function MembershipSiteLabCard({ project }: { project: PatternProject }) 
         <section className="space-y-3">
           <h3 className="text-sm font-semibold">{copyText.pricing}</h3>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            <NumField id="ms-monthly" label={copyText.monthly} value={input.monthlyPrice} onChange={n => set('monthlyPrice', n)} step={0.5} suffix="$" />
-            <NumField id="ms-annual" label={copyText.annual} value={input.annualPrice} onChange={n => set('annualPrice', n)} step={1} suffix="$" />
+            <NumField id="ms-monthly" label={copyText.monthly} value={input.monthlyPrice} onChange={n => set('monthlyPrice', n)} max={100_000} step={0.5} suffix="$" />
+            <NumField id="ms-annual" label={copyText.annual} value={input.annualPrice} onChange={n => set('annualPrice', n)} max={1_000_000} step={1} suffix="$" />
             <NumField id="ms-annual-share" label={copyText.annualMembers} value={input.annualShare * 100} onChange={n => set('annualShare', n / 100)} min={0} max={100} step={5} suffix="%" />
             <NumField id="ms-churn" label={copyText.churn} value={input.monthlyChurn * 100} onChange={n => set('monthlyChurn', n / 100)} min={0} max={20} step={0.5} suffix="%" />
           </div>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            <NumField id="ms-content-h" label={copyText.contentHours} value={input.contentHours} onChange={n => set('contentHours', n)} suffix="hrs" />
-            <NumField id="ms-support-h" label={copyText.supportHours} value={input.supportHours} onChange={n => set('supportHours', n)} suffix="hrs" />
-            <NumField id="ms-rate" label={copyText.rate} value={input.hourlyRate} onChange={n => set('hourlyRate', n)} suffix="$/hr" />
+            <NumField id="ms-content-h" label={copyText.contentHours} value={input.contentHours} onChange={n => set('contentHours', n)} max={10_000} suffix="hrs" />
+            <NumField id="ms-support-h" label={copyText.supportHours} value={input.supportHours} onChange={n => set('supportHours', n)} max={10_000} suffix="hrs" />
+            <NumField id="ms-rate" label={copyText.rate} value={input.hourlyRate} onChange={n => set('hourlyRate', n)} max={100_000} suffix="$/hr" />
             <div className="space-y-1.5">
               <Label htmlFor="ms-stack" className="text-xs">{copyText.feeStack}</Label>
               <select id="ms-stack" value={input.feeStackKey}
@@ -184,7 +189,7 @@ export function MembershipSiteLabCard({ project }: { project: PatternProject }) 
             <StatBox label={copyText.breakEven} value={result.breakEvenAudience === Infinity ? '∞' : result.breakEvenAudience.toLocaleString('en-US')} />
             <StatBox label={copyText.treadmill} value={`${result.treadmillGap >= 0 ? '+' : ''}${fmt$(result.treadmillGap)}`} tone={result.treadmillGap >= 0 ? 'good' : 'bad'} />
             <StatBox label={copyText.ratio} value={`${result.treadmillRatio === Infinity ? '∞' : result.treadmillRatio.toFixed(2)}×`} tone={result.treadmillRatio >= 1.5 ? 'good' : 'warn'} />
-            <StatBox label={copyText.lifetime} value={`≈${(1 / input.monthlyChurn).toFixed(0)} mo`} />
+            <StatBox label={copyText.lifetime} value={lifetimeLabel} />
           </div>
         </section>
 

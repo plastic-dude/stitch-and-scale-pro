@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   analyzeMembershipSite,
+  normalizeMembershipSiteInput,
   DEFAULT_CLUB,
   FEE_STACKS,
   type MembershipSiteInput,
@@ -106,6 +107,55 @@ describe('Membership Site Lab — flags', () => {
   it('fires MS-07 when members exist but no support hours', () => {
     const r = analyzeMembershipSite(club({ supportHours: 0, audienceSize: 3000 }));
     expect(r.flags.some(f => f.code === 'MS-07')).toBe(true);
+  });
+});
+
+describe('Membership Site Lab — hostile input normalization', () => {
+  it('bounds persisted audience, pricing, conversion, churn, hours, and fee stack values', () => {
+    const normalized = normalizeMembershipSiteInput({
+      audienceSize: Number.POSITIVE_INFINITY,
+      conversionBest: 2,
+      conversionRealistic: Number.NaN,
+      conversionWorst: -1,
+      monthlyPrice: Number.NEGATIVE_INFINITY,
+      annualPrice: 2_000_000,
+      annualShare: 4,
+      monthlyChurn: 2,
+      contentHours: Number.POSITIVE_INFINITY,
+      hourlyRate: -5,
+      supportHours: Number.NaN,
+      feeStackKey: 'untrusted-stack',
+    });
+    expect(normalized.audienceSize).toBe(DEFAULT_CLUB.audienceSize);
+    expect(normalized.conversionBest).toBe(0.1);
+    expect(normalized.conversionRealistic).toBe(DEFAULT_CLUB.conversionRealistic);
+    expect(normalized.conversionWorst).toBe(0);
+    expect(normalized.monthlyPrice).toBe(DEFAULT_CLUB.monthlyPrice);
+    expect(normalized.annualPrice).toBe(1_000_000);
+    expect(normalized.annualShare).toBe(1);
+    expect(normalized.monthlyChurn).toBe(0.2);
+    expect(normalized.contentHours).toBe(DEFAULT_CLUB.contentHours);
+    expect(normalized.hourlyRate).toBe(0);
+    expect(normalized.supportHours).toBe(DEFAULT_CLUB.supportHours);
+    expect(normalized.feeStackKey).toBe(DEFAULT_CLUB.feeStackKey);
+  });
+
+  it('keeps hostile analysis results finite wherever the model promises numeric outputs', () => {
+    const result = analyzeMembershipSite({
+      ...DEFAULT_CLUB,
+      audienceSize: Number.POSITIVE_INFINITY,
+      monthlyPrice: Number.NaN,
+      annualPrice: Number.NEGATIVE_INFINITY,
+      hourlyRate: Number.POSITIVE_INFINITY,
+    });
+    for (const scenario of result.scenarios) {
+      for (const value of [scenario.members, scenario.grossRevenue, scenario.fees, scenario.netRevenue, scenario.ltvPerMember]) {
+        expect(Number.isFinite(value)).toBe(true);
+      }
+    }
+    expect(Number.isFinite(result.treadmillGap)).toBe(true);
+    expect(result.verdict).not.toMatch(/NaN|Infinity/);
+    expect(result.verdictNote).not.toMatch(/NaN|Infinity/);
   });
 });
 
