@@ -2,6 +2,7 @@ import { timingSafeEqual } from 'node:crypto';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import {
   MCP_JSONRPC_VERSION,
+  dispatchMcpRequest,
   dispatchMcpRequestAsync,
   parseMcpBody,
   type McpJsonRpcResponse,

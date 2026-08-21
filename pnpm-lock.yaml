@@ -164,6 +164,9 @@ importers:
         specifier: ^1.17.1
         version: 1.17.1
     devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 25.9.5
       prettier:
         specifier: ^3.9.6
         version: 3.9.6

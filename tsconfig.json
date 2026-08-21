@@ -2,6 +2,14 @@
   "extends": "./tsconfig.base.json",
   "compileOnSave": false,
   "files": [],
+  "compilerOptions": {
+    "lib": ["es2022", "dom", "dom.iterable"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["artifacts/stitch-and-scale/src/*"]
+    },
+    "types": ["node"]
+  },
   "references": [
     {
       "path": "./lib/db"
