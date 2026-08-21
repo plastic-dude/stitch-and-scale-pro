@@ -18,6 +18,7 @@
  * figure comes from the designer's own inputs or a cited published one.
  */
 import React from 'react';
+import { getLabStatCopy, type LabStatCopy } from '@/lib/lab-stat-copy';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -85,6 +86,7 @@ export function DealsTabCard({
 }) {
   const { toast } = useToast();
   const { language } = useSettings();
+  const ls: LabStatCopy = getLabStatCopy(language);
   const copy = DEALS_COPY[language];
 
   const [hours, setHours] = React.useState(DEFAULT_HOURS);
@@ -300,7 +302,7 @@ export function DealsTabCard({
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs">Direct-sales platform</Label>
-              <NativeSelect value={platform} onChange={(e) => setPlatform(e.target.value as PlatformId)} aria-label="platform">
+              <NativeSelect value={platform} onChange={(e) => setPlatform(e.target.value as PlatformId)} aria-label={ls.platformAria}>
                 {PLATFORMS.map((p) => (
                   <option key={p} value={p}>{PLATFORM_LABELS[p]}</option>
                 ))}
@@ -368,6 +370,7 @@ function DesignOfferSection({
   const { toast } = useToast();
   const { language } = useSettings();
   const copy = DEALS_COPY[language];
+  const ls: LabStatCopy = getLabStatCopy(language);
 
   const [offerType, setOfferType] = React.useState<DesignOfferType>('flat_fee');
   const [designFee, setDesignFee] = React.useState(350);
@@ -472,14 +475,14 @@ function DesignOfferSection({
         </div>
         <div className="space-y-1.5">
           <Label className="text-xs">Company covers tech edit?</Label>
-          <NativeSelect value={techEditCovered ? 'yes' : 'no'} onChange={(e) => setTechEditCovered(e.target.value === 'yes')} aria-label="tech edit covered">
+          <NativeSelect value={techEditCovered ? 'yes' : 'no'} onChange={(e) => setTechEditCovered(e.target.value === 'yes')} aria-label={ls.techEditCovered}>
             <option value="yes">Yes</option>
             <option value="no">No — you pay</option>
           </NativeSelect>
         </div>
         <div className="space-y-1.5">
           <Label className="text-xs">Company covers photography?</Label>
-          <NativeSelect value={photoCovered ? 'yes' : 'no'} onChange={(e) => setPhotoCovered(e.target.value === 'yes')} aria-label="photography covered">
+          <NativeSelect value={photoCovered ? 'yes' : 'no'} onChange={(e) => setPhotoCovered(e.target.value === 'yes')} aria-label={ls.photographyCovered}>
             <option value="yes">Yes</option>
             <option value="no">No — you pay</option>
           </NativeSelect>
@@ -487,7 +490,7 @@ function DesignOfferSection({
       </div>
       <div className="space-y-1.5 sm:w-1/2">
         <Label className="text-xs">{copy.rights}</Label>
-        <NativeSelect value={keepsOwnSite ? 'yes' : 'no'} onChange={(e) => setKeepsOwnSite(e.target.value === 'yes')} aria-label="keep own-site rights">
+        <NativeSelect value={keepsOwnSite ? 'yes' : 'no'} onChange={(e) => setKeepsOwnSite(e.target.value === 'yes')} aria-label={ls.keepOwnSiteRights}>
           <option value="yes">{copy.yesDetail}</option>
           <option value="no">{copy.noDetail}</option>
         </NativeSelect>

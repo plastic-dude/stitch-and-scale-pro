@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
+import { getLabStatCopy, type LabStatCopy } from '@/lib/lab-stat-copy';
 import { useSettings } from '@/context/SettingsContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -98,6 +99,7 @@ export function ReleaseTimingLabCard({ project }: { project: PatternProject }) {
   const handle = useMemo(() => projectStorage<StoredState>('release-timing', project.id, [STORAGE_KEY]), [project.id]);
   const [input, setInput] = useState<ReleaseTimingInput>(() => loadStored(handle));
   const { language } = useSettings();
+  const ls: LabStatCopy = getLabStatCopy(language);
   const copyText = RELEASE_TIMING_COPY[language];
 
   useEffect(() => {
@@ -126,15 +128,15 @@ export function ReleaseTimingLabCard({ project }: { project: PatternProject }) {
         <section className="space-y-3">
           <h3 className="text-sm font-semibold flex items-center gap-1.5"><TrendingUp className="size-4" />Design & calendar</h3>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
-            <SelectField id="rt-month" label="Earliest launch (this month)" value={String(input.currentMonth)} options={MONTH_NAMES.map((n, i) => ({ value: String(i), label: n }))} onChange={v => set('currentMonth', parseInt(v, 10))} />
+            <SelectField id="rt-month" label={ls.earliestLaunchThisMonth} value={String(input.currentMonth)} options={MONTH_NAMES.map((n, i) => ({ value: String(i), label: n }))} onChange={v => set('currentMonth', parseInt(v, 10))} />
             <NumField id="rt-lead" label={copyText.designLeadTime} value={input.designLeadMonths} onChange={n => set('designLeadMonths', Math.max(0, n))} suffix="mo" />
-            <SelectField id="rt-cat" label="Design category" value={input.categoryKey} options={categoryOptions} onChange={v => set('categoryKey', v)} />
+            <SelectField id="rt-cat" label={ls.designCategory} value={input.categoryKey} options={categoryOptions} onChange={v => set('categoryKey', v)} />
             <NumField id="rt-price" label={copyText.patternPrice} value={input.price} onChange={n => set('price', n)} min={0.5} step={0.5} suffix="$" />
             <NumField id="rt-base" label={copyText.baselineSalesMonthFlat} value={input.baseMonthlySales} onChange={n => set('baseMonthlySales', n)} min={0} />
           </div>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
             <NumField id="rt-sunk" label={copyText.hoursSunkSoFar} value={input.sunkHours} onChange={n => set('sunkHours', Math.max(0, n))} />
-            <NumField id="rt-rate" label="Opportunity rate" value={input.hourlyRate} onChange={n => set('hourlyRate', n)} suffix="$/hr" />
+            <NumField id="rt-rate" label={ls.opportunityRate} value={input.hourlyRate} onChange={n => set('hourlyRate', n)} suffix="$/hr" />
             <NumField id="rt-comp" label={copyText.competingDropExposure01} value={input.competingDropExposure} onChange={n => set('competingDropExposure', Math.min(1, Math.max(0, n)))} min={0} max={1} step={0.05} />
             <NumField id="rt-horizon" label={copyText.lookAheadHorizon} value={input.horizonMonths} onChange={n => set('horizonMonths', Math.min(12, Math.max(1, n)))} min={1} max={12} suffix="mo" />
           </div>
@@ -183,16 +185,16 @@ export function ReleaseTimingLabCard({ project }: { project: PatternProject }) {
             </table>
           </div>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            <StatBox label="Best launch month" value={`${result.bestMonth.name} (rank ${result.bestMonth.rank})`} tone={readyMonths.length ? 'good' : 'default'} />
-            <StatBox label="12-mo revenue at best window" value={fmt$(result.bestMonth.expectedRevenue)} tone="good" />
-            <StatBox label="As-soon-as-ready value" value={fmt$(result.bestMonth.expectedRevenue - result.waitValue)} />
-            <StatBox label="Mistiming cost (best vs worst ready)" value={fmt$(result.mistimingCost)} tone={result.mistimingCost > 300 ? 'warn' : 'default'} />
+            <StatBox label={ls.bestLaunchMonth} value={`${result.bestMonth.name} (rank ${result.bestMonth.rank})`} tone={readyMonths.length ? 'good' : 'default'} />
+            <StatBox label={ls.twelveMoRevenueBestWindow} value={fmt$(result.bestMonth.expectedRevenue)} tone="good" />
+            <StatBox label={ls.asSoonAsReadyValue} value={fmt$(result.bestMonth.expectedRevenue - result.waitValue)} />
+            <StatBox label={ls.mistimingCostBestVsWorst} value={fmt$(result.mistimingCost)} tone={result.mistimingCost > 300 ? 'warn' : 'default'} />
           </div>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            <StatBox label="Launch-week discounted net" value={fmt$(result.promoOutcome.promoNetRevenue)} />
-            <StatBox label="Launch-week full-price net" value={fmt$(result.promoOutcome.fullPriceNetRevenue)} />
-            <StatBox label="Promo adds revenue?" value={result.promoOutcome.promoAddsRevenue ? 'yes, +' + fmt$(result.promoOutcome.promoDelta) : 'no, ' + fmt$(result.promoOutcome.promoDelta)} tone={result.promoOutcome.promoAddsRevenue ? 'good' : result.promoOutcome.promoDelta < -input.baseMonthlySales * bestMult / 4 * input.price * 0.05 ? 'bad' : 'warn'} />
-            <StatBox label="Peak demand multiplier" value={`${bestMult.toFixed(2)}×`} />
+            <StatBox label={ls.launchWeekDiscountedNet} value={fmt$(result.promoOutcome.promoNetRevenue)} />
+            <StatBox label={ls.launchWeekFullPriceNet} value={fmt$(result.promoOutcome.fullPriceNetRevenue)} />
+            <StatBox label={ls.promoAddsRevenue} value={result.promoOutcome.promoAddsRevenue ? 'yes, +' + fmt$(result.promoOutcome.promoDelta) : 'no, ' + fmt$(result.promoOutcome.promoDelta)} tone={result.promoOutcome.promoAddsRevenue ? 'good' : result.promoOutcome.promoDelta < -input.baseMonthlySales * bestMult / 4 * input.price * 0.05 ? 'bad' : 'warn'} />
+            <StatBox label={ls.peakDemandMultiplier} value={`${bestMult.toFixed(2)}×`} />
           </div>
         </section>
 

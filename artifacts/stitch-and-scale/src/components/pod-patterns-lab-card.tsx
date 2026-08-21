@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
+import { getLabStatCopy, type LabStatCopy } from '@/lib/lab-stat-copy';
 import { useSettings } from '@/context/SettingsContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -87,6 +88,7 @@ export function PodPatternsLabCard({ project }: { project: PatternProject }) {
   const handle = useMemo(() => projectStorage<StoredState>('pod-patterns', project.id, [STORAGE_KEY]), [project.id]);
   const [input, setInput] = useState<PodPatternsInput>(() => loadStored(handle));
   const { language } = useSettings();
+  const ls: LabStatCopy = getLabStatCopy(language);
   const copyText = POD_PATTERNS_COPY[language];
 
   useEffect(() => {
@@ -155,17 +157,17 @@ export function PodPatternsLabCard({ project }: { project: PatternProject }) {
         <section className="space-y-3">
           <h3 className="text-sm font-semibold flex items-center gap-1.5"><BookOpen className="size-4" />Print economics vs the PDF baseline</h3>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            <StatBox label="Printing cost / copy" value={fmt$(result.unit.printingCost)} tone="default" />
-            <StatBox label="Net royalty / copy" value={fmt$(result.unit.netPerUnit)} tone={result.unit.netPerUnit > 0 ? 'good' : 'bad'} />
-            <StatBox label="Cannibalization drag / mo" value={fmt$(result.unit.cannibalDrag)} tone={result.unit.cannibalDrag > 0 ? 'warn' : 'default'} />
-            <StatBox label="Monthly net (after drag)" value={fmt$(result.unit.monthlyNet)} tone={result.unit.monthlyNet > 0 ? 'good' : 'bad'} />
-            <StatBox label="Minimum list (60% band)" value={fmt$(result.minListPrice)} tone={input.listPrice >= result.minListPrice ? 'good' : 'warn'} />
-            <StatBox label="Royalty band" value={`${(result.royaltyRate * 100).toFixed(0)}%`} tone={result.royaltyRate >= 0.6 ? 'good' : 'warn'} />
-            <StatBox label="Break-even units / mo" value={result.breakEvenUnits === Infinity ? '∞' : Math.ceil(result.breakEvenUnits).toLocaleString()} tone={input.expectedUnitsPerMonth >= Math.ceil(result.breakEvenUnits) ? 'good' : 'warn'} />
-            <StatBox label="Physical vs digital ratio" value={result.physicalToDigitalRatio.toFixed(2) + '×'} tone={result.physicalToDigitalRatio >= 1.5 ? 'good' : 'warn'} />
-            <StatBox label="Digital net / sale" value={fmt$(result.digital.digitalNetPerSale)} tone="default" />
-            <StatBox label="Digital net / month now" value={fmt$(result.digital.digitalMonthlyNet)} tone="good" />
-            <StatBox label="Months of physical to match 1 digital month" value={result.digital.monthsToDigitalMonth === Infinity ? '∞' : result.digital.monthsToDigitalMonth.toFixed(1)} tone={result.digital.monthsToDigitalMonth < 12 ? 'good' : 'warn'} />
+            <StatBox label={ls.printingCostPerCopy} value={fmt$(result.unit.printingCost)} tone="default" />
+            <StatBox label={ls.netRoyaltyPerCopy} value={fmt$(result.unit.netPerUnit)} tone={result.unit.netPerUnit > 0 ? 'good' : 'bad'} />
+            <StatBox label={ls.cannibalizationDragPerMo} value={fmt$(result.unit.cannibalDrag)} tone={result.unit.cannibalDrag > 0 ? 'warn' : 'default'} />
+            <StatBox label={ls.monthlyNetAfterDrag} value={fmt$(result.unit.monthlyNet)} tone={result.unit.monthlyNet > 0 ? 'good' : 'bad'} />
+            <StatBox label={ls.minimumList60Band} value={fmt$(result.minListPrice)} tone={input.listPrice >= result.minListPrice ? 'good' : 'warn'} />
+            <StatBox label={ls.royaltyBand} value={`${(result.royaltyRate * 100).toFixed(0)}%`} tone={result.royaltyRate >= 0.6 ? 'good' : 'warn'} />
+            <StatBox label={ls.breakEvenUnitsPerMo} value={result.breakEvenUnits === Infinity ? '∞' : Math.ceil(result.breakEvenUnits).toLocaleString()} tone={input.expectedUnitsPerMonth >= Math.ceil(result.breakEvenUnits) ? 'good' : 'warn'} />
+            <StatBox label={ls.physicalVsDigitalRatio} value={result.physicalToDigitalRatio.toFixed(2) + '×'} tone={result.physicalToDigitalRatio >= 1.5 ? 'good' : 'warn'} />
+            <StatBox label={ls.digitalNetPerSale} value={fmt$(result.digital.digitalNetPerSale)} tone="default" />
+            <StatBox label={ls.digitalNetPerMonthNow} value={fmt$(result.digital.digitalMonthlyNet)} tone="good" />
+            <StatBox label={ls.monthsOfPhysicalToMatch1DigitalMonth} value={result.digital.monthsToDigitalMonth === Infinity ? '∞' : result.digital.monthsToDigitalMonth.toFixed(1)} tone={result.digital.monthsToDigitalMonth < 12 ? 'good' : 'warn'} />
           </div>
           {result.unit.monthlyNet <= 0 && (
             <p className="text-xs text-muted-foreground">Negative monthly net means the physical title loses money every month at this volume — either raise the list, cut pages, or reserve the booklet purely as a marketing funnel for the PDF.</p>

@@ -1,4 +1,6 @@
 import { useMemo, useState, useEffect } from 'react';
+import { getLabStatCopy, type LabStatCopy } from '@/lib/lab-stat-copy';
+import { useSettings } from '@/context/SettingsContext';
 import {
   Card,
   CardContent,
@@ -77,6 +79,8 @@ function NumField({
 }
 
 export function WholesaleLabCard({ project }: { project: PatternProject }) {
+  const { language } = useSettings();
+  const ls: LabStatCopy = getLabStatCopy(language);
   const handle = useMemo<ProjectStorageHandle<StoredWholesale>>(
     () => projectStorage<StoredWholesale>('wholesale', project.id, [STORAGE_KEY]),
     [project.id],
@@ -268,7 +272,7 @@ export function WholesaleLabCard({ project }: { project: PatternProject }) {
           {/* Terms */}
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
             <NumField
-              label="First-order minimum ($)"
+              label={ls.firstOrderMinimumDollars}
               value={terms.firstOrderMinimum}
               onChange={(v) => setStored((p) => ({ ...p, terms: { ...p.terms, firstOrderMinimum: v } }))}
               min={50}
@@ -276,7 +280,7 @@ export function WholesaleLabCard({ project }: { project: PatternProject }) {
               prefix="$"
             />
             <NumField
-              label="Repeat minimum ($)"
+              label={ls.repeatMinimumDollars}
               value={terms.repeatMinimum}
               onChange={(v) => setStored((p) => ({ ...p, terms: { ...p.terms, repeatMinimum: v } }))}
               min={25}
@@ -284,14 +288,14 @@ export function WholesaleLabCard({ project }: { project: PatternProject }) {
               prefix="$"
             />
             <NumField
-              label="Reorders per stockist / yr"
+              label={ls.reordersPerStockistYr}
               value={terms.reordersPerYear}
               onChange={(v) => setStored((p) => ({ ...p, terms: { ...p.terms, reordersPerYear: v } }))}
               min={0}
               step={1}
             />
             <NumField
-              label="Order processing cost"
+              label={ls.orderProcessingCost}
               value={terms.orderProcessingCost}
               onChange={(v) => setStored((p) => ({ ...p, terms: { ...p.terms, orderProcessingCost: v } }))}
               min={0}
@@ -299,14 +303,14 @@ export function WholesaleLabCard({ project }: { project: PatternProject }) {
               prefix="$"
             />
             <NumField
-              label="Units per SKU per order"
+              label={ls.unitsPerSkuPerOrder}
               value={terms.unitsPerSkuPerOrder}
               onChange={(v) => setStored((p) => ({ ...p, terms: { ...p.terms, unitsPerSkuPerOrder: v } }))}
               min={1}
               step={1}
             />
             <NumField
-              label="Knit hours / year to wholesale"
+              label={ls.knitHoursPerYearWholesale}
               value={terms.annualWholesaleHours}
               onChange={(v) => setStored((p) => ({ ...p, terms: { ...p.terms, annualWholesaleHours: v } }))}
               min={10}
@@ -314,7 +318,7 @@ export function WholesaleLabCard({ project }: { project: PatternProject }) {
               suffix="h"
             />
             <NumField
-              label="Faire-style commission"
+              label={ls.faireStyleCommission}
               value={terms.marketplaceCommission}
               onChange={(v) => setStored((p) => ({ ...p, terms: { ...p.terms, marketplaceCommission: v } }))}
               min={0}

@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
+import { getLabStatCopy, type LabStatCopy } from '@/lib/lab-stat-copy';
 import { useSettings } from '@/context/SettingsContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -103,6 +104,7 @@ export function PricingPsychologyLabCard({ project }: { project: PatternProject 
   const handle = useMemo(() => projectStorage<StoredState>('price-psych', project.id, [STORAGE_KEY]), [project.id]);
   const [input, setInput] = useState<PricingPsychologyInput>(() => loadStored(handle));
   const { language } = useSettings();
+  const ls: LabStatCopy = getLabStatCopy(language);
   const copyText = PRICING_PSYCHOLOGY_COPY[language];
   const [tiersRaw, setTiersRaw] = useState<string>(() => tiersToString(loadStored(handle).shopTiers));
 
@@ -169,7 +171,7 @@ export function PricingPsychologyLabCard({ project }: { project: PatternProject 
               <Label htmlFor="pp-tiers" className="text-xs">Other tier prices in the shop (comma-separated, up to 5)</Label>
               <Input id="pp-tiers" value={tiersRaw}
                 onChange={e => setTiers(e.target.value)}
-                placeholder="5.00, 8.00, 14.00"
+                placeholder={ls.priceSamplesPlaceholder}
                 className="text-sm" />
             </div>
             <div className="col-span-2 flex items-end pb-1">
@@ -196,23 +198,23 @@ export function PricingPsychologyLabCard({ project }: { project: PatternProject 
         <section className="space-y-3">
           <h3 className="text-sm font-semibold flex items-center gap-1.5"><Tag className="size-4" />{input.patternName}: current vs candidate</h3>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            <StatBox label="Current monthly net" value={fmt$(result.current.monthlyNet)} />
-            <StatBox label="Candidate monthly net" value={fmt$(result.candidate.monthlyNet)} tone={delta >= 0 ? 'good' : 'bad'} />
-            <StatBox label="Change vs current" value={`${delta >= 0 ? '+' : ''}${fmt$(delta)}/mo`} tone={delta > 0 ? 'good' : delta < 0 ? 'bad' : 'default'} />
-            <StatBox label="Current implied units" value={`${result.current.impliedUnits.toFixed(1)}/mo`} />
-            <StatBox label="Candidate implied units" value={`${result.candidate.impliedUnits.toFixed(1)}/mo`} tone={result.candidate.impliedUnits > result.current.impliedUnits ? 'good' : 'default'} />
-            <StatBox label="Left digit moves" value={result.current.leftDigitChange > 0 ? `${Math.floor(input.currentPrice)} → ${Math.floor(input.candidatePrice)} (−${result.current.leftDigitChange})` : 'No digit change'} tone={result.current.leftDigitChange > 0 ? 'good' : 'warn'} />
-            <StatBox label="Recommended ending" value={endingLabel(result.recommendedEnding)} />
-            <StatBox label="Highest shop anchor" value={result.highestShopAnchor > 0 ? `$${result.highestShopAnchor.toFixed(2)}` : 'None set'} tone={result.highestShopAnchor >= input.candidatePrice * 1.5 ? 'good' : 'warn'} />
-            <StatBox label="Barrier below" value={`$${result.barriers.below.toFixed(2)}`} />
-            <StatBox label="Barrier above" value={`$${result.barriers.above.toFixed(2)}`} />
+            <StatBox label={ls.currentMonthlyNet} value={fmt$(result.current.monthlyNet)} />
+            <StatBox label={ls.candidateMonthlyNet} value={fmt$(result.candidate.monthlyNet)} tone={delta >= 0 ? 'good' : 'bad'} />
+            <StatBox label={ls.changeVsCurrent} value={`${delta >= 0 ? '+' : ''}${fmt$(delta)}/mo`} tone={delta > 0 ? 'good' : delta < 0 ? 'bad' : 'default'} />
+            <StatBox label={ls.currentImpliedUnits} value={`${result.current.impliedUnits.toFixed(1)}/mo`} />
+            <StatBox label={ls.candidateImpliedUnits} value={`${result.candidate.impliedUnits.toFixed(1)}/mo`} tone={result.candidate.impliedUnits > result.current.impliedUnits ? 'good' : 'default'} />
+            <StatBox label={ls.leftDigitMoves} value={result.current.leftDigitChange > 0 ? `${Math.floor(input.currentPrice)} → ${Math.floor(input.candidatePrice)} (−${result.current.leftDigitChange})` : 'No digit change'} tone={result.current.leftDigitChange > 0 ? 'good' : 'warn'} />
+            <StatBox label={ls.recommendedEnding} value={endingLabel(result.recommendedEnding)} />
+            <StatBox label={ls.highestShopAnchor} value={result.highestShopAnchor > 0 ? `$${result.highestShopAnchor.toFixed(2)}` : 'None set'} tone={result.highestShopAnchor >= input.candidatePrice * 1.5 ? 'good' : 'warn'} />
+            <StatBox label={ls.barrierBelow} value={`$${result.barriers.below.toFixed(2)}`} />
+            <StatBox label={ls.barrierAbove} value={`$${result.barriers.above.toFixed(2)}`} />
           </div>
           {isBundling && result.bundle && (
             <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-              <StatBox label="Singles net (all components)" value={fmt$(result.bundle.singleNet)} />
-              <StatBox label="Bundle net" value={fmt$(result.bundle.bundleNet)} tone={result.bundle.bundleNet >= result.bundle.singleNet ? 'good' : 'bad'} />
-              <StatBox label="Bundle total ends odd (.99)" value={result.bundle.totalEndsOdd ? 'Yes — best-selling config' : 'No — shift to .99'} tone={result.bundle.totalEndsOdd ? 'good' : 'bad'} />
-              <StatBox label="Components end even (.00)" value={result.bundle.componentsEndEven ? 'Yes — paired correctly' : 'No — end components .00'} tone={result.bundle.componentsEndEven ? 'good' : 'warn'} />
+              <StatBox label={ls.singlesNetAllComponents} value={fmt$(result.bundle.singleNet)} />
+              <StatBox label={ls.bundleNet} value={fmt$(result.bundle.bundleNet)} tone={result.bundle.bundleNet >= result.bundle.singleNet ? 'good' : 'bad'} />
+              <StatBox label={ls.bundleTotalEndsOdd} value={result.bundle.totalEndsOdd ? 'Yes — best-selling config' : 'No — shift to .99'} tone={result.bundle.totalEndsOdd ? 'good' : 'bad'} />
+              <StatBox label={ls.componentsEndEven} value={result.bundle.componentsEndEven ? 'Yes — paired correctly' : 'No — end components .00'} tone={result.bundle.componentsEndEven ? 'good' : 'warn'} />
             </div>
           )}
           <p className="text-xs text-muted-foreground leading-4">Market anchors: nine-endings lifted identical-garment sales ~8% at zero discount (Sori & Widjaja field experiment) and 10–30% in catalog trials (Schindler & Kibarian); the effect flips at high price points where .99 damages perceived quality; 0/5 endings process easier and signal quality (Lynn et al. 2013); bundles sell best with even component prices and an odd bundle total (Baumgartner & Hähnchen 2016); the first (highest) price a buyer sees anchors everything below it.</p>

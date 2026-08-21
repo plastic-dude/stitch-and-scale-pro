@@ -1,4 +1,6 @@
 import { useMemo, useState, useEffect } from 'react';
+import { useSettings } from '@/context/SettingsContext';
+import { getLabStatCopy, type LabStatCopy } from '@/lib/lab-stat-copy';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -84,6 +86,8 @@ function channelNetBadge(c: ChannelNet) {
 }
 
 export function SubscriptionDistributionLabCard({ project }: { project: PatternProject }) {
+  const { language } = useSettings();
+  const ls: LabStatCopy = getLabStatCopy(language);
   const handle = useMemo(
     () => projectStorage<DistributionInputs>('subdistlab', project.id || '', []),
     [project.id],
@@ -225,7 +229,7 @@ export function SubscriptionDistributionLabCard({ project }: { project: PatternP
                 <Label htmlFor="ch-library" className="text-sm font-medium">{CHANNEL_LABELS.library}</Label>
                 <Switch id="ch-library" checked={alloc('library') > 0} onCheckedChange={(v) => toggleChannel('library', v)} />
               </div>
-              <NumField id="dist-library-royalty" label="Royalty per download" value={stored.libraryRoyaltyPerDownload}
+              <NumField id="dist-library-royalty" label={ls.royaltyPerDownload} value={stored.libraryRoyaltyPerDownload}
                 onChange={(n) => setStored((s) => ({ ...s, libraryRoyaltyPerDownload: n }))} step={0.01} suffix="/dl" />
               {alloc('library') > 0 && result.channels.find((c) => c.channel === 'library') && (
                 <p className="text-xs text-muted-foreground leading-relaxed">
@@ -239,11 +243,11 @@ export function SubscriptionDistributionLabCard({ project }: { project: PatternP
                 <Switch id="ch-club" checked={alloc('club') > 0} onCheckedChange={(v) => toggleChannel('club', v)} />
               </div>
               <div className="grid grid-cols-3 gap-2">
-                <NumField id="dist-club-members" label="Members" value={stored.clubMembers}
+                <NumField id="dist-club-members" label={ls.members} value={stored.clubMembers}
                   onChange={(n) => setStored((s) => ({ ...s, clubMembers: n }))} step={1} />
-                <NumField id="dist-club-dlrate" label="Downloads/member/mo" value={stored.clubDownloadsPerMember}
+                <NumField id="dist-club-dlrate" label={ls.downloadsPerMemberMo} value={stored.clubDownloadsPerMember}
                   onChange={(n) => setStored((s) => ({ ...s, clubDownloadsPerMember: Math.min(n, 1) }))} step={0.05} />
-                <NumField id="dist-club-rate" label="Rate per pattern" value={stored.clubRate}
+                <NumField id="dist-club-rate" label={ls.ratePerPattern} value={stored.clubRate}
                   onChange={(n) => setStored((s) => ({ ...s, clubRate: n }))} step={0.5} suffix="$" />
               </div>
               {alloc('club') > 0 && (
@@ -272,13 +276,13 @@ export function SubscriptionDistributionLabCard({ project }: { project: PatternP
         <div className="space-y-3">
           <div className="text-sm font-medium">Pricing &amp; volume</div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <NumField id="dist-price" label="Pattern price" value={stored.price}
+            <NumField id="dist-price" label={ls.patternPriceVideo} value={stored.price}
               onChange={(n) => setStored((s) => ({ ...s, price: n }))} min={0.5} step={0.5} suffix="$" />
-            <NumField id="dist-monthly" label="Expected monthly units" value={stored.monthlyUnits}
+            <NumField id="dist-monthly" label={ls.expectedMonthlyUnits} value={stored.monthlyUnits}
               onChange={(n) => setStored((s) => ({ ...s, monthlyUnits: n }))} step={1} />
-            <NumField id="dist-lifetime" label="Pattern lifetime" value={stored.lifetimeMonths}
+            <NumField id="dist-lifetime" label={ls.patternLifetime} value={stored.lifetimeMonths}
               onChange={(n) => setStored((s) => ({ ...s, lifetimeMonths: n }))} min={1} step={1} suffix="mo" />
-            <NumField id="dist-buildcost" label="Build cost to recover" value={stored.buildCost}
+            <NumField id="dist-buildcost" label={ls.buildCostToRecover} value={stored.buildCost}
               onChange={(n) => setStored((s) => ({ ...s, buildCost: n }))} step={5} suffix="$" />
           </div>
         </div>

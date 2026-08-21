@@ -30,6 +30,7 @@ import { Plus, Edit2, Trash2, ArrowRight, Table as TableIcon, Copy, Settings, Ch
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useSettings } from '@/context/SettingsContext';
+import { getLabStatCopy, type LabStatCopy } from '@/lib/lab-stat-copy';
 import { getWorkspaceCopy, workspaceGaugeByline, STS_UNIT, ROWS_UNIT } from '@/lib/workspace-copy';
 import { getToastCopy } from '@/lib/toast-copy';
 // CHK-094 bundle fix: lab cards are lazy-loaded on first tab activation.
@@ -304,6 +305,7 @@ export default function ProjectWorkspace() {
   const { customStandard, t, language } = useSettings();
   const copy = getWorkspaceCopy(language);
   const tc = getToastCopy(language);
+  const ls: LabStatCopy = getLabStatCopy(language);
 
   const [activeTab, setActiveTab] = React.useState('sections');
   const [expandedSection, setExpandedSection] = React.useState<string | null>(null);
@@ -687,7 +689,7 @@ export default function ProjectWorkspace() {
                           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                             <div className="space-y-1.5">
                               <Label className="text-xs">{copy.label}</Label>
-                              <Input placeholder="e.g. Back Width" value={mLabel} onChange={(e) => setMLabel(e.target.value)} className="h-10" />
+                              <Input placeholder={ls.measurementPlaceholder} value={mLabel} onChange={(e) => setMLabel(e.target.value)} className="h-10" />
                             </div>
                             <div className="space-y-1.5">
                               <Label className="text-xs">{copy.typeLabel}</Label>
@@ -713,7 +715,7 @@ export default function ProjectWorkspace() {
                           </div>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                              <RoundingModeField
-                                label="Stitch Rounding"
+                                label={ls.stitchRounding}
                                 mode={mStitchMode}
                                 setMode={setMStitchMode}
                                 repeatValue={mStitchRepeat}
@@ -724,7 +726,7 @@ export default function ProjectWorkspace() {
                                 testIdPrefix="stitch"
                              />
                              <RoundingModeField
-                                label="Row Rounding"
+                                label={ls.rowRounding}
                                 mode={mRowMode}
                                 setMode={setMRowMode}
                                 repeatValue={mRowRepeat}

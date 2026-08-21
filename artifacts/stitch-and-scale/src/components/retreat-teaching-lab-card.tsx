@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
+import { getLabStatCopy, type LabStatCopy } from '@/lib/lab-stat-copy';
 import { useSettings } from '@/context/SettingsContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -108,6 +109,7 @@ export function RetreatTeachingLabCard({ project }: { project: PatternProject })
   const handle = useMemo(() => projectStorage<StoredState>('retreat-teaching', project.id, [STORAGE_KEY]), [project.id]);
   const [input, setInput] = useState<RetreatInput>(() => loadStored(handle));
   const { language } = useSettings();
+  const ls: LabStatCopy = getLabStatCopy(language);
   const copyText = RETREAT_TEACHING_COPY[language];
 
   useEffect(() => {
@@ -139,35 +141,35 @@ export function RetreatTeachingLabCard({ project }: { project: PatternProject })
       </CardHeader>
       <CardContent className="space-y-6">
         <section className="space-y-3">
-          <h3 className="text-sm font-semibold flex items-center gap-1.5"><Layers className="size-4" />Your role & trip</h3>
+          <h3 className="text-sm font-semibold flex items-center gap-1.5"><Layers className="size-4" />{ls.yourRoleAndTrip}</h3>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            <SelectField id="rt-role" label="Your role" value={input.role}
+            <SelectField id="rt-role" label={ls.yourRole} value={input.role}
               options={[
-                { value: 'guest', label: 'Guest teacher at a retreat' },
-                { value: 'cruise-guest', label: 'Featured teacher on a cruise' },
-                { value: 'host', label: 'Hosting my own retreat' },
+                { value: 'guest', label: ls.guestTeacherAtRetreat },
+                { value: 'cruise-guest', label: ls.featuredTeacherOnCruise },
+                { value: 'host', label: ls.hostingMyOwnRetreat },
               ]}
               onChange={v => set('role', v as RetreatRole)} />
             <NumField id="rt-days" label={copyText.tripLength} value={input.days} onChange={n => set('days', Math.max(1, Math.min(14, n)))} min={1} max={14} suffix="days" />
             <NumField id="rt-min" label={copyText.studentsMinimumCancelLine} value={input.studentsMin} onChange={n => set('studentsMin', Math.max(1, n))} min={1} suffix="ppl" />
             <NumField id="rt-real" label={copyText.realisticStudents} value={input.studentsReal} onChange={n => set('studentsReal', Math.max(1, n))} min={1} suffix="ppl" />
             <NumField id="rt-best" label={copyText.bestCaseStudents} value={input.studentsBest} onChange={n => set('studentsBest', Math.max(1, n))} min={1} suffix="ppl" />
-            <NumField id="rt-rate" label="Opportunity rate" value={input.hourlyRate} onChange={n => set('hourlyRate', Math.max(1, n))} suffix="$/hr" />
+            <NumField id="rt-rate" label={ls.opportunityRate} value={input.hourlyRate} onChange={n => set('hourlyRate', Math.max(1, n))} suffix="$/hr" />
             <NumField id="rt-travel" label={copyText.travelHoursRoundTrip} value={input.travelHours} onChange={n => set('travelHours', Math.max(0, n))} suffix="hrs" />
             <NumField id="rt-extra" label={copyText.extraWorkingHrsAt} value={input.extraWorkingHours} onChange={n => set('extraWorkingHours', Math.max(0, n))} suffix="hrs" />
           </div>
         </section>
 
         <section className="space-y-3">
-          <h3 className="text-sm font-semibold flex items-center gap-1.5"><Tent className="size-4" />Your classes</h3>
+          <h3 className="text-sm font-semibold flex items-center gap-1.5"><Tent className="size-4" />{ls.yourClasses}</h3>
           <div className="space-y-2">
             {input.classes.map((c, i) => (
               <div key={i} className="grid grid-cols-[1.4fr_1fr_1fr_auto] items-end gap-2">
                 <div className="space-y-1.5">
-                  <Label htmlFor={`rt-title-${i}`} className="text-xs">Class title</Label>
+                  <Label htmlFor={`rt-title-${i}`} className="text-xs">{ls.classTitle}</Label>
                   <Input id={`rt-title-${i}`} value={c.title}
                     onChange={e => setClass(i, { title: e.target.value })}
-                    className="text-sm" placeholder="e.g. Seamless yoke sweater construction" />
+                    className="text-sm" placeholder={ls.classTitleExample} />
                 </div>
                 <NumField id={`rt-hours-${i}`} label={copyText.contactHours} value={c.hours} onChange={n => setClass(i, { hours: Math.max(0.5, n) })} min={0.5} step={0.5} suffix="hrs" />
                 <NumField id={`rt-dev-${i}`} label={copyText.developmentHours} value={c.developmentHours} onChange={n => setClass(i, { developmentHours: Math.max(0, n) })} suffix="hrs" />
@@ -179,14 +181,14 @@ export function RetreatTeachingLabCard({ project }: { project: PatternProject })
               </div>
             ))}
             <Button type="button" variant="outline" size="sm" onClick={addClass} className="w-full">
-              <Plus className="size-4" /> Add another class
+              <Plus className="size-4" /> {ls.addAnotherClass}
             </Button>
           </div>
         </section>
 
         <section className="space-y-3">
           <h3 className="text-sm font-semibold flex items-center gap-1.5"><Tent className="size-4" />
-            {isHost ? 'Host economics' : 'Compensation & comp package'}</h3>
+            {isHost ? ls.hostEconomics : ls.compensationAndCompPackage}</h3>
           {isHost ? (
             <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
               <NumField id="rt-tuition" label={copyText.tuitionPerStudent} value={input.tuitionPerStudent} onChange={n => set('tuitionPerStudent', Math.max(0, n))} suffix="$" />
@@ -213,15 +215,15 @@ export function RetreatTeachingLabCard({ project }: { project: PatternProject })
         </section>
 
         <section className="space-y-3">
-          <h3 className="text-sm font-semibold flex items-center gap-1.5"><Tent className="size-4" />Deal math & scenario table</h3>
+          <h3 className="text-sm font-semibold flex items-center gap-1.5"><Tent className="size-4" />{ls.dealMathAndScenarioTable}</h3>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            <StatBox label="Realistic net cash" value={fmt$(realistic?.netCash ?? 0)} tone={(realistic?.netCash ?? 0) >= 0 ? 'good' : 'bad'} />
-            <StatBox label="Effective $/hr (all-in hours)" value={(realistic?.effectiveHourly ?? 0).toFixed(1)} tone={realistic ? (realistic.effectiveHourly >= input.hourlyRate ? 'good' : realistic.effectiveHourly >= 35 ? 'warn' : 'bad') : 'default'} />
-            <StatBox label="Guest rate benchmark" value={`${result.guestRateBenchmark}$/class-hr`} />
+            <StatBox label={ls.realisticNetCash} value={fmt$(realistic?.netCash ?? 0)} tone={(realistic?.netCash ?? 0) >= 0 ? 'good' : 'bad'} />
+            <StatBox label={ls.effectivePerHrAllIn} value={(realistic?.effectiveHourly ?? 0).toFixed(1)} tone={realistic ? (realistic.effectiveHourly >= input.hourlyRate ? 'good' : realistic.effectiveHourly >= 35 ? 'warn' : 'bad') : 'default'} />
+            <StatBox label={ls.guestRateBenchmark} value={`${result.guestRateBenchmark}$/class-hr`} />
             {isHost ? (
-              <StatBox label="Break-even / target students" value={`${result.breakEvenStudents === Infinity ? '∞' : result.breakEvenStudents} / ${result.targetStudents === Infinity ? '∞' : result.targetStudents}`} tone={result.breakEvenStudents <= input.studentsMin ? 'good' : 'warn'} />
+              <StatBox label={ls.breakEvenTargetStudents} value={`${result.breakEvenStudents === Infinity ? '∞' : result.breakEvenStudents} / ${result.targetStudents === Infinity ? '∞' : result.targetStudents}`} tone={result.breakEvenStudents <= input.studentsMin ? 'good' : 'warn'} />
             ) : (
-              <StatBox label="Alumni conversion value" value={fmt$(realistic?.conversionValue ?? 0)} />
+              <StatBox label={ls.alumniConversionValue} value={fmt$(realistic?.conversionValue ?? 0)} />
             )}
           </div>
           <div className="overflow-x-auto rounded-md border">

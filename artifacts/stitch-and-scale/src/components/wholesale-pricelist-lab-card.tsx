@@ -1,4 +1,5 @@
 import { WHOLESALE_PRICELIST_COPY } from '@/lib/wholesale-pricelist-copy';
+import { getLabStatCopy, type LabStatCopy } from '@/lib/lab-stat-copy';
 // CHK-078 — Wholesale Price List Lab card
 // Builds and stress-tests a wholesale line sheet for an indie knitwear
 // designer: pattern cards, POD books, mini zines, and accessory SKUs sold to
@@ -147,6 +148,7 @@ function StatBox(props: { label: string; value: string; tone?: "good" | "warn" |
 export function WholesalePricelistLabCard({ project }: { project: PatternProject }) {
   const [input, setInput] = useState<WholesaleInput>(() => loadStored(project));
   const { language } = useSettings();
+  const ls: LabStatCopy = getLabStatCopy(language);
   const copyText = WHOLESALE_PRICELIST_COPY[language];
 
   const result: WholesaleResult = useMemo(() => analyzeWholesale(input), [input]);
@@ -429,7 +431,7 @@ export function WholesalePricelistLabCard({ project }: { project: PatternProject
               onChange={(v) => set("hoursPerOrder", v)}
             />
             <NumField
-              label="Your hourly rate"
+              label={ls.yourHourlyRate}
               value={input.hourlyRate}
               step={5}
               prefix="$"
@@ -452,25 +454,25 @@ export function WholesalePricelistLabCard({ project }: { project: PatternProject
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <StatBox
-          label="Base wholesale (keystone floor)"
+          label={ls.baseWholesaleKeystoneFloor}
           value={fmt$(result.baseUnitWholesale)}
           tone={result.tiers.some((t) => !t.keystoneCompliant) ? "warn" : "good"}
           hint={`Keystone floor ${fmt$(keystoneFloor)} · implied retail ${fmt$(result.impliedRetailAtKeystone)}`}
         />
         <StatBox
-          label="Net per unit (base)"
+          label={ls.netPerUnitBase}
           value={fmt$(result.baseNetPerUnit)}
           tone={result.baseNetPerUnit > 0 ? "good" : "bad"}
           hint={copyText.baseWholesaleMinusFullyLoaded}
         />
         <StatBox
-          label="Monthly net (wholesale)"
+          label={ls.monthlyNetWholesale}
           value={fmt$(result.monthlyNet)}
           tone={result.monthlyNet >= 0 ? "good" : "bad"}
           hint={`After admin (${fmt$(result.monthlyLaborCost)}) and cash drag (${fmt$(result.monthlyCashDrag)})`}
         />
         <StatBox
-          label="Break-even orders"
+          label={ls.breakEvenOrders}
           value={isFinite(result.breakEvenOrdersPerMonth) ? `${result.breakEvenOrdersPerMonth}/mo` : "∞"}
           tone={result.breakEvenOrdersPerMonth <= Math.max(input.ordersPerMonth, 1) ? "good" : "warn"}
           hint={copyText.ordersMonthNeededTo}
@@ -479,13 +481,13 @@ export function WholesalePricelistLabCard({ project }: { project: PatternProject
 
       <div className="grid gap-3 sm:grid-cols-2">
         <StatBox
-          label="Annual wholesale net"
+          label={ls.annualWholesaleNet}
           value={fmt$(result.annualNet)}
           tone={result.annualNet >= 0 ? "good" : "bad"}
           hint={copyText.k12CurrentMonthlyAt}
         />
         <StatBox
-          label="Minimum order gate"
+          label={ls.minimumOrderGate}
           value={result.minOrderGate.length > 90 ? "See below" : result.minOrderGate}
           tone={result.minOrderGate.includes("profitable") ? "good" : "bad"}
         />

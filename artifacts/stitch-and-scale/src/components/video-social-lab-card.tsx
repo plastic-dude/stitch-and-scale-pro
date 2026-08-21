@@ -6,6 +6,7 @@
  * Session-54 research — sources in lib/video-social-lab.ts header.
  */
 import { useMemo, useState, useEffect } from 'react';
+import { getLabStatCopy, type LabStatCopy } from '@/lib/lab-stat-copy';
 import { useSettings } from '@/context/SettingsContext';
 import { projectStorage, type ProjectStorageHandle } from '@/lib/storage-lib';
 import { VIDEO_SOCIAL_COPY } from '@/lib/video-social-copy';
@@ -130,6 +131,7 @@ export function VideoSocialLabCard({ project }: { project: PatternProject }) {
   const { toast } = useToast();
   const [stored, setStored] = useState<StoredVideoLab>(() => loadStored(handle));
   const { language } = useSettings();
+  const ls: LabStatCopy = getLabStatCopy(language);
   const copyText = VIDEO_SOCIAL_COPY[language];
   useEffect(() => {
     handle.write(stored);
@@ -177,24 +179,24 @@ export function VideoSocialLabCard({ project }: { project: PatternProject }) {
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <NumField id="vs-posts" label="Posts per month (all platforms)" value={i.postsPerMonth}
+          <NumField id="vs-posts" label={ls.postsPerMonthAllPlatforms} value={i.postsPerMonth}
             onChange={(n) => patchInput({ postsPerMonth: n })} min={0} max={60} hint={copyText.k34WeekPerPlatform} />
-          <NumField id="vs-min" label="Minutes per post" value={i.minutesPerPost}
+          <NumField id="vs-min" label={ls.minutesPerPost} value={i.minutesPerPost}
             onChange={(n) => patchInput({ minutesPerPost: n })} min={0} max={300} step={5}
             hint={copyText.filmingEditingBatchedOr} />
-          <NumField id="vs-len" label="Video length" value={i.videoLengthSec}
+          <NumField id="vs-len" label={ls.videoLength} value={i.videoLengthSec}
             onChange={(n) => patchInput({ videoLengthSec: n })} min={5} max={180} step={5} suffix="sec"
             hint={copyText.k26sIsIgS} />
-          <NumField id="vs-price" label="Pattern price" value={i.patternPrice}
+          <NumField id="vs-price" label={ls.patternPriceVideo} value={i.patternPrice}
             onChange={(n) => patchInput({ patternPrice: n })} min={0} max={100} step={0.5} suffix="$" />
-          <NumField id="vs-fee" label="Platform fee" value={Math.round(i.platformFeePct * 100)}
+          <NumField id="vs-fee" label={ls.platformFee} value={Math.round(i.platformFeePct * 100)}
             onChange={(n) => patchInput({ platformFeePct: n / 100 })} min={0} max={50} suffix="%"
             hint={copyText.k15PctTypicalEtsyListing} />
-          <NumField id="vs-sales" label="Monthly pattern sales" value={i.monthlyPatternSales}
+          <NumField id="vs-sales" label={ls.monthlyPatternSales} value={i.monthlyPatternSales}
             onChange={(n) => patchInput({ monthlyPatternSales: n })} min={0} step={1} />
-          <NumField id="vs-listsize" label="Email list size" value={i.listSize}
+          <NumField id="vs-listsize" label={ls.emailListSize} value={i.listSize}
             onChange={(n) => patchInput({ listSize: n })} min={0} step={25} />
-          <NumField id="vs-emailsales" label="Email sales per month" value={i.emailSalesPerMonth}
+          <NumField id="vs-emailsales" label={ls.emailSalesPerMonth} value={i.emailSalesPerMonth}
             onChange={(n) => patchInput({ emailSalesPerMonth: n })} min={0} step={1}
             hint={copyText.dmEmailAdjacentAudiencesBuy} />
         </div>

@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
+import { getLabStatCopy, type LabStatCopy } from '@/lib/lab-stat-copy';
 import { useSettings } from '@/context/SettingsContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -78,6 +79,7 @@ export function WorkshopTeachingLabCard({ project }: { project: PatternProject }
   const handle = useMemo(() => projectStorage<StoredState>('workshop', project.id, [STORAGE_KEY]), [project.id]);
   const [input, setInput] = useState<WorkshopTeachingInput>(() => loadStored(handle));
   const { language } = useSettings();
+  const ls: LabStatCopy = getLabStatCopy(language);
   const copyText = WORKSHOP_TEACHING_COPY[language];
 
   useEffect(() => {
@@ -126,7 +128,7 @@ export function WorkshopTeachingLabCard({ project }: { project: PatternProject }
           </div>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
             <NumField id="wt-prep" label={copyText.prepHoursNewContent} value={input.prepHours} onChange={n => set('prepHours', Math.max(0, n))} />
-            <NumField id="wt-rate" label="Opportunity rate" value={input.hourlyRate} onChange={n => set('hourlyRate', n)} suffix="$/hr" />
+            <NumField id="wt-rate" label={ls.opportunityRate} value={input.hourlyRate} onChange={n => set('hourlyRate', n)} suffix="$/hr" />
             <NumField id="wt-attach" label={copyText.followUpPatternAttach} value={input.followUpAttach * 100} onChange={n => set('followUpAttach', Math.min(1, Math.max(0, n / 100)))} min={0} max={100} step={1} suffix="%" />
             <NumField id="wt-attachp" label={copyText.followUpPatternPrice} value={input.followUpPrice} onChange={n => set('followUpPrice', Math.max(0, n))} suffix="$" />
           </div>
@@ -164,15 +166,15 @@ export function WorkshopTeachingLabCard({ project }: { project: PatternProject }
             </table>
           </div>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            <StatBox label="Break-even students" value={result.breakEvenStudents === Infinity ? 'not reachable' : String(result.breakEvenStudents)} tone={result.breakEvenStudents === Infinity ? 'bad' : 'default'} />
-            <StatBox label="Students to clear your rate" value={result.profitableStudents === Infinity ? 'not reachable' : String(result.profitableStudents)} tone={result.profitableStudents === Infinity ? 'bad' : 'default'} />
-            <StatBox label="Realistic effective rate" value={fmt$(result.realisticHourly) + '/hr'} tone={hourlyTone(result.realisticHourly)} />
-            <StatBox label="Worst-case effective rate" value={fmt$(result.worstHourly) + '/hr'} tone={result.worstHourly >= 0 ? (result.worstHourly >= input.hourlyRate ? 'good' : 'warn') : 'bad'} />
+            <StatBox label={ls.breakEvenStudents} value={result.breakEvenStudents === Infinity ? 'not reachable' : String(result.breakEvenStudents)} tone={result.breakEvenStudents === Infinity ? 'bad' : 'default'} />
+            <StatBox label={ls.studentsToClearYourRate} value={result.profitableStudents === Infinity ? 'not reachable' : String(result.profitableStudents)} tone={result.profitableStudents === Infinity ? 'bad' : 'default'} />
+            <StatBox label={ls.realisticEffectiveRate} value={fmt$(result.realisticHourly) + '/hr'} tone={hourlyTone(result.realisticHourly)} />
+            <StatBox label={ls.worstCaseEffectiveRate} value={fmt$(result.worstHourly) + '/hr'} tone={result.worstHourly >= 0 ? (result.worstHourly >= input.hourlyRate ? 'good' : 'warn') : 'bad'} />
           </div>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
-            <StatBox label="Travel share of realistic take-home" value={result.travelBurden > 0 ? (result.travelBurden * 100).toFixed(0) + '%' : '—'} tone={result.travelBurden > 0.4 ? 'warn' : 'default'} />
-            <StatBox label="Realistic vs opportunity cost" value={fmt$(result.opportunityGap)} tone={result.opportunityGap >= 0 ? 'good' : 'bad'} />
-            <StatBox label="Hours invested (prep + class)" value={String(result.snapshots[1].totalHours) + ' hr'} />
+            <StatBox label={ls.travelShareOfRealisticTakeHome} value={result.travelBurden > 0 ? (result.travelBurden * 100).toFixed(0) + '%' : '—'} tone={result.travelBurden > 0.4 ? 'warn' : 'default'} />
+            <StatBox label={ls.realisticVsOpportunityCost} value={fmt$(result.opportunityGap)} tone={result.opportunityGap >= 0 ? 'good' : 'bad'} />
+            <StatBox label={ls.hoursInvestedPrepClass} value={String(result.snapshots[1].totalHours) + ' hr'} />
           </div>
         </section>
 

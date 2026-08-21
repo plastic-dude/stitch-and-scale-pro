@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { useSettings } from '@/context/SettingsContext';
 import { getToastCopy } from '@/lib/toast-copy';
+import { getWholesaleBookCopy } from '@/lib/wholesale-book-copy';
 import { ClipboardCopy, BookOpen, Package } from 'lucide-react';
 import { PatternProject } from '@/lib/grading-engine';
 import {
@@ -86,6 +87,7 @@ export function WholesaleBookCard({ project }: { project: PatternProject }) {
   const { toast } = useToast();
   const { language } = useSettings();
   const tc = getToastCopy(language);
+  const wbc = getWholesaleBookCopy(language);
 
   const [stored, setStored] = useState(() => loadStored(handle));
 
@@ -213,7 +215,7 @@ export function WholesaleBookCard({ project }: { project: PatternProject }) {
         </section>
 
         <section>
-          <h3 className="font-medium mb-3">Bulk-order checklist &amp; reply</h3>
+          <h3 className="font-medium mb-3">{wbc.bulkOrderChecklistReply}</h3>
           <div className="space-y-2">
             {pack.checklist.map((c, i) => (
               <div key={i} className={`text-sm rounded-md border p-2 ${c.flag ? 'bg-amber-500/10 border-amber-500/30' : 'bg-card border-border/60'}`}>

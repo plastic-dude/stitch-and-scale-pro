@@ -6,6 +6,7 @@
  * Session-55 research — sources in lib/show-roi-lab.ts header.
  */
 import { useMemo, useState, useEffect } from 'react';
+import { getLabStatCopy, type LabStatCopy } from '@/lib/lab-stat-copy';
 import { projectStorage, type ProjectStorageHandle } from '@/lib/storage-lib';
 import { SHOW_ROI_COPY, type ShowRoiCopy } from '@/lib/show-roi-copy';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -115,6 +116,7 @@ export function ShowRoiLabCard({ project }: { project: PatternProject }) {
   const handle = useMemo(() => projectStorage<StoredShowLab>('showroi', project.id, [STORAGE_KEY]), [project.id]);
   const { toast } = useToast();
   const { language } = useSettings();
+  const ls: LabStatCopy = getLabStatCopy(language);
   const copyText = SHOW_ROI_COPY[language];
   const tc = getToastCopy(language);
 
@@ -164,7 +166,7 @@ export function ShowRoiLabCard({ project }: { project: PatternProject }) {
           <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
             <NumField id="sh-attendance" label={copyText.expectedFootTraffic} value={i.attendance}
               step={100} onChange={(n) => patchInput({ attendance: n })} hint={copyText.theEventSAdvertised} />
-            <NumField id="sh-conversion" label="Conversion" value={i.conversionPct}
+            <NumField id="sh-conversion" label={ls.conversionRate} value={i.conversionPct}
               step={0.001} max={1} onChange={(n) => patchInput({ conversionPct: n })} hint={copyText.k13PctBrowseMarkets38Pct} />
             <NumField id="sh-ticket" label={copyText.averageTicket} value={i.avgTicket}
               onChange={(n) => patchInput({ avgTicket: n })} suffix="$" hint={copyText.whatABuyerSpends} />

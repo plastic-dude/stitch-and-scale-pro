@@ -7,6 +7,7 @@ import { ArrowLeft, Copy, Download, Printer } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useSettings } from '@/context/SettingsContext';
+import { getLabStatCopy, type LabStatCopy } from '@/lib/lab-stat-copy';
 import { getGradingCopy } from '@/lib/grading-copy';
 import { getToastCopy } from '@/lib/toast-copy';
 import { BodySchematic } from '@/components/body-schematic';
@@ -18,14 +19,15 @@ export default function ProjectGrading() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const { customStandard, language } = useSettings();
+  const ls: LabStatCopy = getLabStatCopy(language);
   const gradingCopy = getGradingCopy(language);
   const tc = getToastCopy(language);
 
   if (!projectHook) {
     return (
       <div className="flex flex-col items-center justify-center py-24 text-center">
-        <h2 className="text-2xl font-serif font-bold mb-4">Project Not Found</h2>
-        <Button onClick={() => setLocation('/')}>Return to Dashboard</Button>
+        <h2 className="text-2xl font-serif font-bold mb-4">{ls.projectNotFound}</h2>
+        <Button onClick={() => setLocation('/')}>{ls.returnToDashboard}</Button>
       </div>
     );
   }

@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
+import { getLabStatCopy, type LabStatCopy } from '@/lib/lab-stat-copy';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -77,6 +78,7 @@ function BoolField({ id, label, value, onChange }: {
 
 export function TestKnitDeskCard({ project }: { project: PatternProject }) {
   const { language } = useSettings();
+  const ls: LabStatCopy = getLabStatCopy(language);
   const handle = useMemo(
     () => projectStorage<TestKnitInputs>('testknit', project.id || '', []),
     [project.id],
@@ -180,12 +182,12 @@ export function TestKnitDeskCard({ project }: { project: PatternProject }) {
                 <Badge variant="outline" className="justify-center">{t.size}</Badge>
                 <div className="relative">
                   <Input value={t.handle} onChange={(e) => updateTester(idx, { handle: e.target.value })}
-                    placeholder="handle / name" className="h-8 text-xs" />
+                    placeholder={ls.handleNamePlaceholder} className="h-8 text-xs" />
                 </div>
                 <div className="relative">
                   <Input type="number" min={0} step={0.01} value={t.ratePerYard}
                     onChange={(e) => updateTester(idx, { ratePerYard: Number(e.target.value) || 0 })}
-                    placeholder="$/yd" className="h-8 text-xs pr-6" />
+                    placeholder={ls.dollarPerYdPlaceholder} className="h-8 text-xs pr-6" />
                   <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-muted-foreground">
                     $/yd{t.ratePerYard === 0 ? ' (unpaid)' : ''}
                   </span>
@@ -193,7 +195,7 @@ export function TestKnitDeskCard({ project }: { project: PatternProject }) {
                 <div className="relative">
                   <Input type="number" min={0} step={1} value={t.yarnSupport}
                     onChange={(e) => updateTester(idx, { yarnSupport: Number(e.target.value) || 0 })}
-                    placeholder="yarn $" className="h-8 text-xs" />
+                    placeholder={ls.yarnDollarPlaceholder} className="h-8 text-xs" />
                 </div>
                 <select value={t.status}
                   onChange={(e) => updateTester(idx, { status: e.target.value as TesterInput['status'] })}
@@ -214,25 +216,25 @@ export function TestKnitDeskCard({ project }: { project: PatternProject }) {
 
         {/* Paid-rate band + economics */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <NumField id="tk-samplerate" label="Sample-knitter rate" value={stored.ratePerYard}
+          <NumField id="tk-samplerate" label={ls.sampleKnitterRate} value={stored.ratePerYard}
             min={0} max={1} step={0.01} onChange={(n) => patch({ ratePerYard: Math.min(1, n) })} suffix="$/yd" />
-          <NumField id="tk-deadline" label="Deadline" value={stored.deadlineDays}
+          <NumField id="tk-deadline" label={ls.deadline} value={stored.deadlineDays}
             min={1} max={90} onChange={(n) => patch({ deadlineDays: Math.min(90, Math.max(1, n)) })} suffix="days" />
-          <NumField id="tk-feedback" label="Feedback due" value={stored.feedbackDays}
+          <NumField id="tk-feedback" label={ls.feedbackDue} value={stored.feedbackDays}
             min={1} max={30} onChange={(n) => patch({ feedbackDays: Math.min(30, Math.max(1, n)) })} suffix="days" />
-          <NumField id="tk-sampleknitters" label="Paid sample knitters" value={stored.sampleKnitters}
+          <NumField id="tk-sampleknitters" label={ls.paidSampleKnitters} value={stored.sampleKnitters}
             min={0} max={20} onChange={(n) => patch({ sampleKnitters: Math.min(20, n) })} />
         </div>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-          <BoolField id="tk-free" label="Free final pattern" value={stored.freeFinalPattern}
+          <BoolField id="tk-free" label={ls.freeFinalPattern} value={stored.freeFinalPattern}
             onChange={(b) => patch({ freeFinalPattern: b })} />
-          <BoolField id="tk-social" label="Social feature" value={stored.socialFeature}
+          <BoolField id="tk-social" label={ls.socialFeature} value={stored.socialFeature}
             onChange={(b) => patch({ socialFeature: b })} />
-          <BoolField id="tk-early" label="Early access" value={stored.earlyAccess}
+          <BoolField id="tk-early" label={ls.earlyAccess} value={stored.earlyAccess}
             onChange={(b) => patch({ earlyAccess: b })} />
-          <NumField id="tk-extra" label="Extra pattern value" value={stored.extraPatternValue}
+          <NumField id="tk-extra" label={ls.extraPatternValue} value={stored.extraPatternValue}
             min={0} step={1} onChange={(n) => patch({ extraPatternValue: n })} suffix="$" />
-          <NumField id="tk-yarnsupp" label="Yarn support / unpaid" value={stored.yarnSupportPerTester}
+          <NumField id="tk-yarnsupp" label={ls.yarnSupportUnpaid} value={stored.yarnSupportPerTester}
             min={0} step={1} onChange={(n) => patch({ yarnSupportPerTester: n })} suffix="$" />
         </div>
         <p className="text-xs text-muted-foreground">

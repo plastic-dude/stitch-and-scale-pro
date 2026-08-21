@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { getLabStatCopy, type LabStatCopy } from '@/lib/lab-stat-copy';
 import { useSettings } from '@/context/SettingsContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -94,6 +95,7 @@ export function YarnLicensingLabCard({ project }: { project: PatternProject }) {
   const handle = useMemo(() => projectStorage<StoredState>('yarn-licensing', project.id, [STORAGE_KEY]), [project.id]);
   const [input, setInput] = useState<YarnLicensingInput>(() => loadStored(handle));
   const { language } = useSettings();
+  const ls: LabStatCopy = getLabStatCopy(language);
   const copyText = YARN_LICENSING_COPY[language];
 
   useEffect(() => {
@@ -171,7 +173,7 @@ export function YarnLicensingLabCard({ project }: { project: PatternProject }) {
           <h3 className="text-sm font-semibold flex items-center gap-1.5"><Layers className="size-4" />Your costs &amp; baseline</h3>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
             <NumField id="yl-hours" label={copyText.yourDesignSampleHours} value={input.designHours} onChange={n => set('designHours', Math.max(1, n))} min={1} step={0.5} suffix="hrs" />
-            <NumField id="yl-rate" label="Your hourly rate" value={input.hourlyRate} onChange={n => set('hourlyRate', Math.max(1, n))} min={1} suffix="$/hr" />
+            <NumField id="yl-rate" label={ls.yourHourlyRate} value={input.hourlyRate} onChange={n => set('hourlyRate', Math.max(1, n))} min={1} suffix="$/hr" />
             <NumField id="yl-baseline" label={copyText.selfPublishBaselineMonthFrom} value={input.ownMonthlyRevenue} onChange={n => set('ownMonthlyRevenue', Math.max(0, n))} min={0} suffix="$" />
           </div>
         </section>
@@ -179,18 +181,18 @@ export function YarnLicensingLabCard({ project }: { project: PatternProject }) {
         <section className="space-y-3">
           <h3 className="text-sm font-semibold flex items-center gap-1.5"><Package className="size-4" />What the deal is actually worth</h3>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            <StatBox label="Flat fee received" value={fmt$(result.flatEV)} tone={result.flatEV > 0 ? 'good' : 'bad'} />
-            <StatBox label="Royalty stream (term total)" value={fmt$(result.royaltyEV)} tone={result.royaltyEV > 0 ? 'good' : 'default'} />
-            <StatBox label="Royalty after risk haircut" value={`${fmt$(result.royaltyEVRiskAdjusted)} (${(result.reachDiscount * 100).toFixed(0)}% risk cut)`} tone={result.royaltyEVRiskAdjusted > result.flatEV ? 'good' : 'warn'} />
-            <StatBox label="Yarn goods + paid services" value={fmt$(result.yarnGoodsEV + result.servicesEV)} tone={result.yarnGoodsEV + result.servicesEV > 0 ? 'good' : 'default'} />
-            <StatBox label="Total offer value" value={fmt$(result.totalOfferEV)} tone="default" />
-            <StatBox label="Your time cost" value={fmt$(result.yourTimeCost)} tone="warn" />
-            <StatBox label="Exclusivity drag (own shop)" value={fmt$(result.exclusivityDrag)} tone={result.exclusivityDrag > 0 ? 'bad' : 'default'} />
-            <StatBox label="Net vs your time + drag" value={fmt$(result.netEV)} tone={result.netEV > 0 ? 'good' : 'bad'} />
-            <StatBox label="Your own-shop baseline (same window)" value={fmt$(result.baselineEV)} tone={result.totalOfferEV >= result.baselineEV ? 'good' : 'warn'} />
-            <StatBox label="Offer in years of your baseline" value={result.yearsOfBaselineEarnings.toFixed(2) + ' yrs'} tone={result.yearsOfBaselineEarnings >= 1 ? 'good' : 'warn'} />
-            <StatBox label="Min flat to say yes" value={fmt$(Math.max(result.minFlatToJustify, 0))} tone="default" />
-            <StatBox label="Min royalty to say yes" value={`${result.minRoyaltyPct.toFixed(1)}%`} tone="default" />
+            <StatBox label={ls.flatFeeReceived} value={fmt$(result.flatEV)} tone={result.flatEV > 0 ? 'good' : 'bad'} />
+            <StatBox label={ls.royaltyStreamTermTotal} value={fmt$(result.royaltyEV)} tone={result.royaltyEV > 0 ? 'good' : 'default'} />
+            <StatBox label={ls.royaltyAfterRiskHaircut} value={`${fmt$(result.royaltyEVRiskAdjusted)} (${(result.reachDiscount * 100).toFixed(0)}% risk cut)`} tone={result.royaltyEVRiskAdjusted > result.flatEV ? 'good' : 'warn'} />
+            <StatBox label={ls.yarnGoodsPaidServices} value={fmt$(result.yarnGoodsEV + result.servicesEV)} tone={result.yarnGoodsEV + result.servicesEV > 0 ? 'good' : 'default'} />
+            <StatBox label={ls.totalOfferValue} value={fmt$(result.totalOfferEV)} tone="default" />
+            <StatBox label={ls.yourTimeCost} value={fmt$(result.yourTimeCost)} tone="warn" />
+            <StatBox label={ls.exclusivityDragOwnShop} value={fmt$(result.exclusivityDrag)} tone={result.exclusivityDrag > 0 ? 'bad' : 'default'} />
+            <StatBox label={ls.netVsTimeAndDrag} value={fmt$(result.netEV)} tone={result.netEV > 0 ? 'good' : 'bad'} />
+            <StatBox label={ls.ownShopBaselineSameWindow} value={fmt$(result.baselineEV)} tone={result.totalOfferEV >= result.baselineEV ? 'good' : 'warn'} />
+            <StatBox label={ls.offerInYearsOfBaseline} value={result.yearsOfBaselineEarnings.toFixed(2) + ' yrs'} tone={result.yearsOfBaselineEarnings >= 1 ? 'good' : 'warn'} />
+            <StatBox label={ls.minFlatToSayYes} value={fmt$(Math.max(result.minFlatToJustify, 0))} tone="default" />
+            <StatBox label={ls.minRoyaltyToSayYes} value={`${result.minRoyaltyPct.toFixed(1)}%`} tone="default" />
           </div>
           {result.netEV < 0 && (
             <p className="text-xs text-muted-foreground">A negative net means the brand is asking you to subsidize their product — the same design earns more sitting in your own shop over the same window.</p>

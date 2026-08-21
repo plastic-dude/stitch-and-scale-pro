@@ -1,4 +1,5 @@
 import { TESTKNIT_SLOT_COPY } from '@/lib/testknit-slot-copy';
+import { getLabStatCopy, type LabStatCopy } from '@/lib/lab-stat-copy';
 import { useMemo, useState } from "react";
 import { useSettings } from '@/context/SettingsContext';
 import { AlertTriangle, BadgeCheck, BadgeX, HelpCircle, Info, Lightbulb, RefreshCw } from "lucide-react";
@@ -131,6 +132,7 @@ function StatBox(props: { label: string; value: string; tone?: "good" | "warn" |
 export function TestKnitSlotLabCard({ project }: { project: PatternProject }) {
   const [input, setInput] = useState<TestKnitInput>(() => loadStored(project));
   const { language } = useSettings();
+  const ls: LabStatCopy = getLabStatCopy(language);
   const copyText = TESTKNIT_SLOT_COPY[language];
 
   const result: TestKnitResult = useMemo(() => analyzeTestKnit(input), [input]);
@@ -306,7 +308,7 @@ export function TestKnitSlotLabCard({ project }: { project: PatternProject }) {
               onChange={(v) => set("designerMgmtHoursPerWeek", v)}
             />
             <NumField
-              label="Your hourly rate"
+              label={ls.yourHourlyRate}
               value={input.designerHourlyRate}
               step={5}
               prefix="$"
@@ -331,7 +333,7 @@ export function TestKnitSlotLabCard({ project }: { project: PatternProject }) {
               onChange={(v) => set("socialProofLiftPct", Math.min(50, v))}
             />
             <NumField
-              label="Pattern price"
+              label={ls.patternPrice}
               value={input.launchPrice}
               step={1}
               prefix="$"
@@ -389,33 +391,33 @@ export function TestKnitSlotLabCard({ project }: { project: PatternProject }) {
 
       <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-6">
         <StatBox
-          label="Free pool net"
+          label={ls.freePoolNet}
           value={fmt$(result.baseFreeRow.netOutcome)}
           hint={`${Math.round(result.baseFreeRow.churnAdjustedSlots)} slots lost to ghosting`}
         />
         <StatBox
-          label="Best paid model net"
+          label={ls.bestPaidModelNet}
           value={fmt$(result.rows.reduce((a, b) => (b.netOutcome > a.netOutcome ? b : a), result.rows[0]).netOutcome)}
           hint={`Recommended: ${recommendedLabel}`}
         />
         <StatBox
-          label="Size coverage (free)"
+          label={ls.sizeCoverageFree}
           value={`${Math.round(result.baseFreeRow.sizeCoverage * 100)}%`}
           tone={result.baseFreeRow.sizeCoverage >= 0.9 ? "good" : "warn"}
           hint={copyText.shareOfSizesWith}
         />
         <StatBox
-          label="Errors caught"
+          label={ls.errorsCaught}
           value={`${result.errorCatchValueTotal.toFixed(0)} worth`}
           hint={`${result.baseFreeRow.expectedErrorsCaught.toFixed(1)} expected error points`}
         />
         <StatBox
-          label="Your time cost"
+          label={ls.yourTimeCost}
           value={fmt$(result.designerTimeCost)}
           hint={`${result.totalDesignerTimeHours.toFixed(0)} h of management`}
         />
         <StatBox
-          label="Paid slots"
+          label={ls.paidSlots}
           value={`${result.paidSlotsCount}`}
           hint={`${result.ghostedSlots} free slots ghost at ${Math.round(input.ghostRate * 100)}%`}
         />

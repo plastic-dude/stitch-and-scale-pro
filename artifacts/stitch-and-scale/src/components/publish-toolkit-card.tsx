@@ -10,6 +10,7 @@
  * currently charges $40–65/pattern to have done by hand.
  */
 import React from 'react';
+import { getLabStatCopy, type LabStatCopy } from '@/lib/lab-stat-copy';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -64,6 +65,7 @@ export function PublishToolkitCard({
 }) {
   const { toast } = useToast();
   const { language } = useSettings();
+  const ls: LabStatCopy = getLabStatCopy(language);
   const tc = getToastCopy(language);
 
   const [platform, setPlatform] = React.useState<typeof PLATFORM_LIST[number]>('ravelry');
@@ -330,7 +332,7 @@ export function PublishToolkitCard({
             <div className="space-y-1.5">
               <Label className="text-xs">Tagline (optional)</Label>
               <Input
-                placeholder="e.g. A modern take on the classic gansey"
+                placeholder={ls.publishPitchPlaceholder}
                 value={tagline}
                 onChange={(e) => setTagline(e.target.value)}
                 data-testid="publish-tagline-input"
@@ -388,7 +390,7 @@ export function PublishToolkitCard({
           <Textarea
             value={notesDraft}
             onChange={(e) => setNotesDraft(e.target.value)}
-            placeholder="A relaxed crewneck worked flat and seamed, with drop shoulders and deep ribbing."
+            placeholder={ls.publishDesignPitchPlaceholder}
             className="min-h-24"
             data-testid="publish-notes-textarea"
           />

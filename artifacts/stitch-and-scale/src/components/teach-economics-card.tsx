@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
+import { getLabStatCopy, type LabStatCopy } from '@/lib/lab-stat-copy';
 import { projectStorage, type ProjectStorageHandle } from '@/lib/storage-lib';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -90,6 +91,7 @@ export function TeachEconomicsCard({ project: _project }: { project: PatternProj
 
   const { toast } = useToast();
   const { language } = useSettings();
+  const ls: LabStatCopy = getLabStatCopy(language);
   const tc = getToastCopy(language);
 
   const [stored, setStored] = useState<StoredTeach>(() => loadStored(handle));
@@ -198,36 +200,36 @@ export function TeachEconomicsCard({ project: _project }: { project: PatternProj
             <NumField id="teach-ticket" label={isCourse ? 'Standard price (whole offer)' : 'Price per session'}
               value={stored.input.ticketPrice} min={0} step={5}
               onChange={(n) => patchInput({ ticketPrice: n })} suffix="$" />
-            <NumField id="teach-hours" label="Production hours (total)" value={stored.input.prepHours}
+            <NumField id="teach-hours" label={ls.productionHoursTotal} value={stored.input.prepHours}
               min={0} step={2} onChange={(n) => patchInput({ prepHours: n })} suffix="h" />
-            <NumField id="teach-list" label="Email list size" value={stored.input.emailListSize}
+            <NumField id="teach-list" label={ls.emailListSize} value={stored.input.emailListSize}
               min={0} onChange={(n) => patchInput({ emailListSize: n })} />
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <NumField id="teach-rate" label="Your hourly rate" value={stored.input.hourlyRate}
+            <NumField id="teach-rate" label={ls.yourHourlyRate} value={stored.input.hourlyRate}
               min={0} step={5} onChange={(n) => patchInput({ hourlyRate: n })} suffix="$" />
-            <NumField id="teach-pattern-rate" label="Pattern hourly rate" value={stored.input.patternHourlyRate}
+            <NumField id="teach-pattern-rate" label={ls.patternHourlyRate} value={stored.input.patternHourlyRate}
               min={0} step={1} onChange={(n) => patchInput({ patternHourlyRate: n })} suffix="$" />
-            <NumField id="teach-platform-cost" label="Platform/tooling / month" value={stored.input.platformMonthlyCost}
+            <NumField id="teach-platform-cost" label={ls.platformToolingPerMonth} value={stored.input.platformMonthlyCost}
               min={0} step={1} onChange={(n) => patchInput({ platformMonthlyCost: n })} suffix="$" />
-            <NumField id="teach-platform-months" label="Tooling runway (months)" value={stored.input.platformMonths}
+            <NumField id="teach-platform-months" label={ls.toolingRunwayMonths} value={stored.input.platformMonths}
               min={0} max={36} onChange={(n) => patchInput({ platformMonths: Math.min(36, n) })} />
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <NumField id="teach-materials" label="Materials / travel out-of-pocket" value={stored.input.materialCost}
+            <NumField id="teach-materials" label={ls.materialsTravelOutOfPocket} value={stored.input.materialCost}
               min={0} step={5} onChange={(n) => patchInput({ materialCost: n })} suffix="$" />
-            <NumField id="teach-hosted-hours" label="Hours per session"
+            <NumField id="teach-hosted-hours" label={ls.hoursPerSession}
               value={stored.input.hostedHoursPerSession ?? 4} min={1} max={12}
               onChange={(n) => patchInput({ hostedHoursPerSession: Math.min(12, Math.max(1, n)) })} suffix="h" />
-            <NumField id="teach-hosted-sessions" label="Sessions"
+            <NumField id="teach-hosted-sessions" label={ls.sessions}
               value={stored.input.hostedSessions ?? 1} min={1} max={10}
               onChange={(n) => patchInput({ hostedSessions: Math.min(10, Math.max(1, n)) })} />
-            <NumField id="teach-students" label="Expected students (0 = project from list)" value={stored.input.expectedStudents}
+            <NumField id="teach-students" label={ls.expectedStudentsZeroProject} value={stored.input.expectedStudents}
               min={0} onChange={(n) => patchInput({ expectedStudents: n })} />
-            <NumField id="teach-conversion" label="List conversion" value={stored.input.listConversion}
+            <NumField id="teach-conversion" label={ls.listConversion} value={stored.input.listConversion}
               min={0} max={0.1} step={0.005}
               onChange={(n) => patchInput({ listConversion: Math.min(0.1, n) })} suffix="rate" />
-            <NumField id="teach-refunds" label="Refund rate" value={stored.input.refundRate}
+            <NumField id="teach-refunds" label={ls.refundRate} value={stored.input.refundRate}
               min={0} max={0.5} step={0.01}
               onChange={(n) => patchInput({ refundRate: Math.min(0.5, n) })} suffix="share" />
           </div>
@@ -376,7 +378,7 @@ export function TeachEconomicsCard({ project: _project }: { project: PatternProj
                 Price per student (grassroots) instead of flat fee
               </Label>
               {hostedMode && (
-                <NumField id="teach-grad-students" label="Students" value={gradStudents}
+                <NumField id="teach-grad-students" label={ls.studentsCount} value={gradStudents}
                   min={0} max={40} onChange={(n) => setGradStudents(Math.min(40, n))} />
               )}
             </div>
@@ -444,19 +446,19 @@ export function TeachEconomicsCard({ project: _project }: { project: PatternProj
             30% minutes pool averaging ~$200/mo, Udemy's share eroding to 15–20%, hosted days at $300–1,000).
           </p>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <NumField id="pc-buyers" label="Expected students / buyers" value={pcBuyers} min={0} step={10}
+            <NumField id="pc-buyers" label={ls.expectedStudentsBuyers} value={pcBuyers} min={0} step={10}
               onChange={setPcBuyers} />
-            <NumField id="pc-tooling" label="Platform / tooling cost (lifetime)" value={pcPlatformCost} min={0} step={12}
+            <NumField id="pc-tooling" label={ls.platformToolingCostLifetime} value={pcPlatformCost} min={0} step={12}
               onChange={setPcPlatformCost} suffix="$" />
-            <NumField id="pc-seats" label="Seats per class slot" value={pcSeatsPerSlot} min={1} max={60}
+            <NumField id="pc-seats" label={ls.seatsPerClassSlot} value={pcSeatsPerSlot} min={1} max={60}
               onChange={(n) => setPcSeatsPerSlot(Math.min(60, Math.max(1, n)))} />
-            <NumField id="pc-pool" label="Platform membership revenue / yr" value={pcPoolRevenue} min={0} step={1000000}
+            <NumField id="pc-pool" label={ls.platformMembershipRevenueYr} value={pcPoolRevenue} min={0} step={1000000}
               onChange={setPcPoolRevenue} suffix="$" />
-            <NumField id="pc-minshare" label="Your minutes share (0.00013 ≈ $260/mo at an $8M pool)" value={pcMinutesShare} min={0} max={1} step={0.0001}
+            <NumField id="pc-minshare" label={ls.yourMinutesShare} value={pcMinutesShare} min={0} max={1} step={0.0001}
               onChange={setPcMinutesShare} />
-            <NumField id="pc-roys" label="Royalty runway (months)" value={pcRoyaltyMonths} min={1} max={60}
+            <NumField id="pc-roys" label={ls.royaltyRunwayMonths} value={pcRoyaltyMonths} min={1} max={60}
               onChange={(n) => setPcRoyaltyMonths(Math.max(1, n))} />
-            <NumField id="pc-share" label="Platform share (after coupons)" value={pcPlatformShare} min={0} max={1} step={0.01}
+            <NumField id="pc-share" label={ls.platformShareAfterCoupons} value={pcPlatformShare} min={0} max={1} step={0.01}
               onChange={setPcPlatformShare} />
           </div>
           <div className={`rounded-lg border p-3 ${verdictColor(platformCompare.verdict)}`}>

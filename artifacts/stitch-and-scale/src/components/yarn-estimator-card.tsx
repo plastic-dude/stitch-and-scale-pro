@@ -1,5 +1,7 @@
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useSettings } from '@/context/SettingsContext';
+import { getYarnEstimatorCopy } from '@/lib/yarn-estimator-copy';
 import { NativeSelect } from '@/components/ui/native-select';
 import { YarnWeight, YARN_WEIGHTS, YARN_WEIGHT_LABELS, YARN_WEIGHT_NEEDLES, YARN_WEIGHT_DATA, estimateYarn } from '@/lib/yarn-estimator';
 import { PatternProject } from '@/lib/grading-engine';
@@ -16,6 +18,8 @@ import { cn } from '@/lib/utils';
  * and never as a substitute for the designer's swatch-based final math.
  */
 export function YarnEstimatorCard({ project }: { project: PatternProject }) {
+  const { language } = useSettings();
+  const yec = getYarnEstimatorCopy(language);
   const [weight, setWeight] = React.useState<YarnWeight>(() => {
     const candidate = (project.yarnWeight as YarnWeight) || null;
     return candidate && YARN_WEIGHTS.includes(candidate) ? candidate : 'worsted';
@@ -29,16 +33,13 @@ export function YarnEstimatorCard({ project }: { project: PatternProject }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="font-serif flex items-center gap-2">Yarn Requirement Estimate</CardTitle>
-        <CardDescription>
-          Estimated yardage for the {project.baseSize} base size, per the Craft Yarn Council weight system.
-          A first-pass planning figure — always confirm against your own swatch before publishing.
-        </CardDescription>
+        <CardTitle className="font-serif flex items-center gap-2">{yec.yarnRequirementEstimate}</CardTitle>
+        <CardDescription>{yec.yardageDescription.replace('{size}', project.baseSize)}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-end gap-4">
           <div className="flex-1 max-w-xs">
-            <label htmlFor="yarn-weight-select" className="text-xs text-muted-foreground mb-1 block">Yarn weight</label>
+            <label htmlFor="yarn-weight-select" className="text-xs text-muted-foreground mb-1 block">{yec.yarnWeight}</label>
             <NativeSelect
               id="yarn-weight-select"
               value={weight}
@@ -58,28 +59,28 @@ export function YarnEstimatorCard({ project }: { project: PatternProject }) {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="bg-muted/40 rounded-lg p-4 text-center">
             <div className="text-2xl font-mono font-bold text-foreground">{estimate.totalYards.toLocaleString()}</div>
-            <div className="text-xs text-muted-foreground mt-1">yards ({estimate.totalMeters.toLocaleString()} m)</div>
+            <div className="text-xs text-muted-foreground mt-1">{yec.yardsMeters.replace('{n}', estimate.totalMeters.toLocaleString())}</div>
           </div>
           <div className="bg-muted/40 rounded-lg p-4 text-center">
             <div className="text-2xl font-mono font-bold text-foreground">{estimate.skeins100g}</div>
-            <div className="text-xs text-muted-foreground mt-1">× 100g skeins (min.)</div>
+            <div className="text-xs text-muted-foreground mt-1">{yec.skeins100gMin}</div>
           </div>
           <div className="bg-muted/40 rounded-lg p-4 text-center">
             <div className="text-2xl font-mono font-bold text-foreground">{estimate.fabricAreaSqIn.toLocaleString()}</div>
-            <div className="text-xs text-muted-foreground mt-1">sq in of fabric (base size)</div>
+            <div className="text-xs text-muted-foreground mt-1">{yec.sqInOfFabricBase}</div>
           </div>
         </div>
 
         <div>
-          <h3 className="text-sm font-medium mb-2">Compare across weights</h3>
+          <h3 className="text-sm font-medium mb-2">{yec.compareAcrossWeights}</h3>
           <div className="overflow-x-auto">
             <table className="w-full text-sm text-left whitespace-nowrap">
               <thead>
                 <tr className="text-xs text-muted-foreground border-b border-border">
-                  <th className="px-2 py-2 font-medium">Weight</th>
-                  <th className="px-3 py-2 text-right font-medium">Yards</th>
-                  <th className="px-3 py-2 text-right font-medium">Meters</th>
-                  <th className="px-3 py-2 text-right font-medium">100g skeins</th>
+                  <th className="px-2 py-2 font-medium">{yec.thWeight}</th>
+                  <th className="px-3 py-2 text-right font-medium">{yec.thYards}</th>
+                  <th className="px-3 py-2 text-right font-medium">{yec.thMeters}</th>
+                  <th className="px-3 py-2 text-right font-medium">{yec.th100gSkeins}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
@@ -96,11 +97,7 @@ export function YarnEstimatorCard({ project }: { project: PatternProject }) {
           </div>
         </div>
 
-        <p className="text-[11px] text-muted-foreground leading-relaxed">
-          Estimate computed from the graded base-size dimensions ({estimate.fabricAreaSqIn.toLocaleString()} sq in of fabric)
-          scaled by the CYC reference gauge for the selected weight. Graded-up sizes (L–5XL) need roughly
-          proportionally more yardage — use this panel after grading if you want per-size totals.
-        </p>
+        <p className="text-[11px] text-muted-foreground leading-relaxed">{yec.footerNote.replace('{area}', estimate.fabricAreaSqIn.toLocaleString())}</p>
       </CardContent>
     </Card>
   );

@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect, useCallback } from 'react';
+import { getLabStatCopy, type LabStatCopy } from '@/lib/lab-stat-copy';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -101,6 +102,7 @@ function NumField({ id, label, value, onChange, min = 0, max, step = 1, suffix }
 export function PartnerEconomicsCard({ project }: { project: PatternProject }) {
   const { toast } = useToast();
   const { language } = useSettings();
+  const ls: LabStatCopy = getLabStatCopy(language);
   const partnerCopy = PARTNER_COPY[language];
   const projectId = project.id || '';
   const [stored, setStored] = useState<StoredPartner>(() => loadStored(projectId));
@@ -360,7 +362,7 @@ export function PartnerEconomicsCard({ project }: { project: PatternProject }) {
                   {label}
                 </label>
               ))}
-              <NumField id="partner-portfolio" label="Published patterns in portfolio"
+              <NumField id="partner-portfolio" label={ls.publishedPatternsPortfolio}
                 value={stored.pitch.portfolioPatterns} onChange={(n) => patchPitch({ portfolioPatterns: n })} />
             </div>
             {pitchResult.gaps.length > 0 && (
@@ -406,7 +408,7 @@ export function PartnerEconomicsCard({ project }: { project: PatternProject }) {
                   <div className="flex items-center gap-2">
                     <Input value={p.company}
                       onChange={(e) => updatePitch(p.id, { company: e.target.value })}
-                      placeholder="Yarn company / dyer / shop" className="h-8 min-h-11 text-sm" />
+                      placeholder={ls.partnerCompanyDyerShop} className="h-8 min-h-11 text-sm" />
                     <Select value={p.status} onValueChange={(v) => updatePitch(p.id, { status: v as PitchStatus })}>
                       <SelectTrigger className="h-8 min-h-11 w-36 text-sm"><SelectValue /></SelectTrigger>
                       <SelectContent>
@@ -416,20 +418,20 @@ export function PartnerEconomicsCard({ project }: { project: PatternProject }) {
                       </SelectContent>
                     </Select>
                     <Button variant="ghost" size="icon" className="h-8 min-h-11 w-8 text-muted-foreground hover:text-destructive"
-                      onClick={() => removePitch(p.id)} aria-label="Remove pitch">
+                      onClick={() => removePitch(p.id)} aria-label={ls.removePitch}>
                       <Trash2 className="h-3.5 w-3.5" />
                     </Button>
                   </div>
                   <div className="grid grid-cols-2 gap-2">
                     <Input type="date" value={p.dueDate}
                       onChange={(e) => updatePitch(p.id, { dueDate: e.target.value })}
-                      className="h-8 text-sm" aria-label="Due date" />
-                    <NumField id={`pitch-amount-${p.id}`} label="Amount ($)" value={p.amount} min={0}
+                      className="h-8 text-sm" aria-label={ls.dueDate} />
+                    <NumField id={`pitch-amount-${p.id}`} label={ls.amountDollars} value={p.amount} min={0}
                       onChange={(n) => updatePitch(p.id, { amount: n })} suffix="$" />
                   </div>
                   <Textarea value={p.notes}
                     onChange={(e) => updatePitch(p.id, { notes: e.target.value })}
-                    placeholder="Notes — yarn received, deliverables owed, next deadline…"
+                    placeholder={ls.partnerNotesPlaceholder}
                     className="text-sm min-h-14" />
                 </div>
               ))}

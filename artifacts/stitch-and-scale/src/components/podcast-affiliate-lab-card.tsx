@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
+import { getLabStatCopy, type LabStatCopy } from '@/lib/lab-stat-copy';
 import { useSettings } from '@/context/SettingsContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -94,6 +95,7 @@ export function PodcastAffiliateLabCard({ project }: { project: PatternProject }
   const handle = useMemo(() => projectStorage<StoredState>('podcast-affiliate', project.id, [STORAGE_KEY]), [project.id]);
   const [input, setInput] = useState<PodcastInput>(() => loadStored(handle));
   const { language } = useSettings();
+  const ls: LabStatCopy = getLabStatCopy(language);
   const copyText = PODCAST_AFFILIATE_COPY[language];
 
   useEffect(() => {
@@ -132,7 +134,7 @@ export function PodcastAffiliateLabCard({ project }: { project: PatternProject }
             <NumField id="pa-downloads" label={copyText.downloadsPerEpisode} value={input.downloadsPerEpisode} onChange={n => set('downloadsPerEpisode', Math.max(0, n))} min={0} />
             <NumField id="pa-eps" label={copyText.episodesPerMonth} value={input.episodesPerMonth} onChange={n => set('episodesPerMonth', Math.max(1, Math.min(30, n)))} min={1} max={30} />
             <NumField id="pa-hours" label={copyText.productionHoursPerEpisode} value={input.productionHoursPerEpisode} onChange={n => set('productionHoursPerEpisode', Math.max(0.5, n))} min={0.5} step={0.5} suffix="hrs" />
-            <NumField id="pa-rate" label="Opportunity rate" value={input.hourlyRate} onChange={n => set('hourlyRate', Math.max(1, n))} suffix="$/hr" />
+            <NumField id="pa-rate" label={ls.opportunityRate} value={input.hourlyRate} onChange={n => set('hourlyRate', Math.max(1, n))} suffix="$/hr" />
             <NumField id="pa-setup" label={copyText.oneOffSetupCostsMic} value={input.setupCosts} onChange={n => set('setupCosts', Math.max(0, n))} suffix="$" />
             <NumField id="pa-monthly" label={copyText.recurringMonthlyCostsHosting} value={input.monthlyCosts} onChange={n => set('monthlyCosts', Math.max(0, n))} suffix="$/mo" />
           </div>
@@ -165,7 +167,7 @@ export function PodcastAffiliateLabCard({ project }: { project: PatternProject }
                   <Label htmlFor={`pa-name-${i}`} className="text-xs">Program</Label>
                   <Input id={`pa-name-${i}`} value={p.name}
                     onChange={e => setProgram(i, { name: e.target.value })}
-                    className="text-sm" placeholder="e.g. LoveCrafts (15%)" />
+                    className="text-sm" placeholder={ls.affilPlaceholder} />
                 </div>
                 <NumField id={`pa-com-${i}`} label={copyText.commission} value={p.commission * 100} onChange={n => setProgram(i, { commission: Math.max(0, Math.min(1, n / 100)) })} min={0} max={100} step={1} suffix="%" />
                 <NumField id={`pa-clicks-${i}`} label={copyText.clicksPerEpisode} value={p.clicksPerEpisode} onChange={n => setProgram(i, { clicksPerEpisode: Math.max(0, n) })} min={0} />
@@ -188,10 +190,10 @@ export function PodcastAffiliateLabCard({ project }: { project: PatternProject }
         <section className="space-y-3">
           <h3 className="text-sm font-semibold flex items-center gap-1.5"><Radio className="size-4" />Lane comparison</h3>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            <StatBox label="CPM — net / month" value={fmt$(cpm.netMonthly)} tone={programLaneTone(cpm.netMonthly)} />
-            <StatBox label="Flat fees — net / month" value={fmt$(flat.netMonthly)} tone={programLaneTone(flat.netMonthly)} />
-            <StatBox label="Affiliate — net / month" value={fmt$(aff.netMonthly)} tone={programLaneTone(aff.netMonthly)} />
-            <StatBox label="Best lane $/hr" value={best.effectiveHourly.toFixed(1)} tone={best.effectiveHourly >= input.hourlyRate ? 'good' : best.effectiveHourly >= 35 ? 'warn' : 'bad'} />
+            <StatBox label={ls.cpmNetPerMonth} value={fmt$(cpm.netMonthly)} tone={programLaneTone(cpm.netMonthly)} />
+            <StatBox label={ls.flatFeesNetPerMonth} value={fmt$(flat.netMonthly)} tone={programLaneTone(flat.netMonthly)} />
+            <StatBox label={ls.affiliateNetPerMonth} value={fmt$(aff.netMonthly)} tone={programLaneTone(aff.netMonthly)} />
+            <StatBox label={ls.bestLanePerHr} value={best.effectiveHourly.toFixed(1)} tone={best.effectiveHourly >= input.hourlyRate ? 'good' : best.effectiveHourly >= 35 ? 'warn' : 'bad'} />
           </div>
           <div className="overflow-x-auto rounded-md border">
             <table className="w-full text-xs">
@@ -218,10 +220,10 @@ export function PodcastAffiliateLabCard({ project }: { project: PatternProject }
             </table>
           </div>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-            <StatBox label="CPM benchmark band" value={`$${result.cpmBenchmarkLow}–$${result.cpmBenchmarkHigh}`} />
-            <StatBox label="Fair flat-fee equivalent per read" value={fmt$(result.flatFeeEquivalent)} />
-            <StatBox label="CPM break-even audience" value={`${Math.round(result.cpmBreakEvenDownloads).toLocaleString()} downloads/ep`} tone={input.downloadsPerEpisode >= result.cpmBreakEvenDownloads ? 'good' : 'warn'} />
-            <StatBox label="Best monthly net (all lanes combined)" value={fmt$(result.lanes.reduce((s, l) => s + l.netMonthly, 0))} tone={result.lanes.reduce((s, l) => s + l.netMonthly, 0) >= 0 ? 'good' : 'bad'} />
+            <StatBox label={ls.cpmBenchmarkBand} value={`$${result.cpmBenchmarkLow}–$${result.cpmBenchmarkHigh}`} />
+            <StatBox label={ls.fairFlatFeePerRead} value={fmt$(result.flatFeeEquivalent)} />
+            <StatBox label={ls.cpmBreakEvenAudience} value={`${Math.round(result.cpmBreakEvenDownloads).toLocaleString()} downloads/ep`} tone={input.downloadsPerEpisode >= result.cpmBreakEvenDownloads ? 'good' : 'warn'} />
+            <StatBox label={ls.bestMonthlyNetAllLanes} value={fmt$(result.lanes.reduce((s, l) => s + l.netMonthly, 0))} tone={result.lanes.reduce((s, l) => s + l.netMonthly, 0) >= 0 ? 'good' : 'bad'} />
           </div>
           {result.lanes.length === 0 && (
             <p className="text-xs text-muted-foreground">Enter your downloads per episode and episode cadence for the lab to model the three lanes.</p>

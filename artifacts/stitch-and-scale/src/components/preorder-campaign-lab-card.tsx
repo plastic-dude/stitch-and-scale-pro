@@ -1,4 +1,7 @@
 import { useMemo, useState, useEffect } from 'react';
+import { getLabStatCopy, type LabStatCopy } from '@/lib/lab-stat-copy';
+import { useSettings } from '@/context/SettingsContext';
+import { PREORDER_CAMPAIGN_COPY, type PreorderCampaignCopy } from '@/lib/preorder-campaign-copy';
 import {
   Card,
   CardContent,
@@ -101,6 +104,9 @@ export function PreorderCampaignLabCard({
 }: {
   project: PatternProject;
 }) {
+  const { language } = useSettings();
+  const ls: LabStatCopy = getLabStatCopy(language);
+  const pc: PreorderCampaignCopy = PREORDER_CAMPAIGN_COPY[language] ?? PREORDER_CAMPAIGN_COPY.en;
   const handle = useMemo<ProjectStorageHandle<PreorderCampaignInput>>(
     () => projectStorage<PreorderCampaignInput>('preorder', project.id, [STORAGE_KEY]),
     [project.id],
@@ -146,7 +152,7 @@ export function PreorderCampaignLabCard({
         <CardContent className="space-y-5">
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
             <NumField
-              label="Garment price ($)"
+              label={pc.garmentPriceLabel}
               value={input.itemPrice}
               onChange={(v) => set({ itemPrice: v })}
               min={1}
@@ -154,7 +160,7 @@ export function PreorderCampaignLabCard({
               prefix="$"
             />
             <NumField
-              label="Early-bird price ($)"
+              label={ls.earlyBirdPriceDollar}
               value={input.earlyBirdPrice}
               onChange={(v) => set({ earlyBirdPrice: v })}
               min={1}
@@ -162,26 +168,26 @@ export function PreorderCampaignLabCard({
               prefix="$"
             />
             <PctField
-              label="Early-bird share"
+              label={pc.earlyBirdShare}
               value={input.earlyBirdShare}
               onChange={(v) => set({ earlyBirdShare: v })}
               step={0.05}
             />
             <PctField
-              label="Platform fee"
+              label={pc.platformFee}
               value={input.platformFeePct}
               onChange={(v) => set({ platformFeePct: v })}
               step={0.005}
             />
             <NumField
-              label="Campaign days"
+              label={pc.campaignDays}
               value={input.campaignDays}
               onChange={(v) => set({ campaignDays: v })}
               min={1}
               suffix="d"
             />
             <NumField
-              label="Lead time"
+              label={pc.leadTime}
               value={input.leadTimeDays}
               onChange={(v) => set({ leadTimeDays: v })}
               min={0}
@@ -223,21 +229,21 @@ export function PreorderCampaignLabCard({
         <CardContent>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
             <NumField
-              label="Materials / unit"
+              label={pc.materialsPerUnit}
               value={input.materialsPerUnit}
               onChange={(v) => set({ materialsPerUnit: v })}
               step={1}
               prefix="$"
             />
             <NumField
-              label="Knit hrs / unit"
+              label={pc.knitHrsPerUnit}
               value={input.knitHoursPerUnit}
               onChange={(v) => set({ knitHoursPerUnit: v })}
               step={0.25}
               suffix="h"
             />
             <NumField
-              label="Labor rate"
+              label={pc.laborRate}
               value={input.laborRate}
               onChange={(v) => set({ laborRate: v })}
               min={1}
@@ -245,33 +251,33 @@ export function PreorderCampaignLabCard({
               suffix="/hr"
             />
             <NumField
-              label="Fixed series costs"
+              label={pc.fixedSeriesCosts}
               value={input.fixedSeriesCosts}
               onChange={(v) => set({ fixedSeriesCosts: v })}
               step={50}
               prefix="$"
             />
             <NumField
-              label="Fulfillment hrs / unit"
+              label={pc.fulfillmentHrsPerUnit}
               value={input.fulfillmentHoursPerUnit}
               onChange={(v) => set({ fulfillmentHoursPerUnit: v })}
               step={0.1}
               suffix="h"
             />
             <NumField
-              label="Shipping / unit"
+              label={pc.shippingPerUnit}
               value={input.shippingPerUnit}
               onChange={(v) => set({ shippingPerUnit: v })}
               prefix="$"
             />
             <PctField
-              label="Safety margin"
+              label={pc.safetyMargin}
               value={input.safetyMarginPct}
               onChange={(v) => set({ safetyMarginPct: v })}
               step={0.05}
             />
             <PctField
-              label="Buffer stock"
+              label={pc.bufferStock}
               value={input.bufferShare}
               onChange={(v) => set({ bufferShare: v })}
               step={0.01}
@@ -296,31 +302,31 @@ export function PreorderCampaignLabCard({
         <CardContent>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
             <NumField
-              label="Email list size"
+              label={pc.emailListSize}
               value={input.emailListSize}
               onChange={(v) => set({ emailListSize: v })}
               step={50}
             />
             <PctField
-              label="Email → order"
+              label={ls.emailToOrder}
               value={input.emailConversion}
               onChange={(v) => set({ emailConversion: v })}
               step={0.005}
             />
             <NumField
-              label="Waitlist size"
+              label={pc.waitlistSize}
               value={input.waitlistSize}
               onChange={(v) => set({ waitlistSize: v })}
               step={10}
             />
             <PctField
-              label="Waitlist → order"
+              label={ls.waitlistToOrder}
               value={input.waitlistConversion}
               onChange={(v) => set({ waitlistConversion: v })}
               step={0.01}
             />
             <NumField
-              label="Social expected orders"
+              label={pc.socialExpectedOrders}
               value={input.socialExpectedOrders}
               onChange={(v) => set({ socialExpectedOrders: v })}
               step={1}
@@ -356,7 +362,7 @@ export function PreorderCampaignLabCard({
           {input.useThreshold && (
             <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
               <PctField
-                label="Threshold share of predicted"
+                label={pc.thresholdShareOfPredicted}
                 value={input.thresholdShareOfPredicted}
                 onChange={(v) => set({ thresholdShareOfPredicted: v })}
                 step={0.05}

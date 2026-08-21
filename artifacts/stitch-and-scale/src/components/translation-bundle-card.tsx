@@ -18,6 +18,7 @@
  * Persists inputs in localStorage under a project-scoped key.
  */
 import React, { useMemo, useState, useEffect } from 'react';
+import { getLabStatCopy, type LabStatCopy } from '@/lib/lab-stat-copy';
 import { projectStorage, type ProjectStorageHandle } from '@/lib/storage-lib';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -72,7 +73,7 @@ function loadStored(handle: ProjectStorageHandle<StoredState>): StoredState {
   return {};
 }
 
-function CopyLine({ text, tc }: { text: string; tc: ToastCopy }) {
+function CopyLine({ text, tc, ls }: { text: string; tc: ToastCopy; ls: LabStatCopy }) {
   const { toast } = useToast();
   const [copied, setCopied] = React.useState(false);
   const copy = async () => {
@@ -87,7 +88,7 @@ function CopyLine({ text, tc }: { text: string; tc: ToastCopy }) {
   };
   return (
     <div className="flex items-center gap-2">
-      <Button variant="outline" size="sm" onClick={copy} aria-label="Copy text">
+      <Button variant="outline" size="sm" onClick={copy} aria-label={ls.copyText}>
         <ClipboardCopy className="w-3.5 h-3.5 mr-1" /> {copied ? 'Copied!' : 'Copy'}
       </Button>
     </div>
@@ -114,6 +115,7 @@ export function TranslationBundleCard({ project }: { project: PatternProject }) 
   const handle = useMemo(() => projectStorage<StoredState>('translate', project.id, ['stitch-and-scale-translation-bundle'], { partition: true }), [project.id]);
   const { toast } = useToast();
   const { language } = useSettings();
+  const ls: LabStatCopy = getLabStatCopy(language);
   const tc = getToastCopy(language);
 
   const stored = React.useMemo(() => loadStored(handle), [handle]);
@@ -211,7 +213,7 @@ export function TranslationBundleCard({ project }: { project: PatternProject }) 
       min={min}
       max={max}
       step={step}
-      placeholder="0"
+      placeholder={ls.zeroPlaceholder}
       value={Number.isFinite(v) ? v : 0}
       onChange={e => {
         const n = parseFloat(e.target.value);
@@ -381,7 +383,7 @@ export function TranslationBundleCard({ project }: { project: PatternProject }) 
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             <div className="space-y-1">
               <Label className="text-xs text-muted-foreground">My pattern name</Label>
-              <Input value={patternName} onChange={e => setPatternName(e.target.value)} placeholder="e.g. Calyx Pullover" />
+              <Input value={patternName} onChange={e => setPatternName(e.target.value)} placeholder={ls.patternNamePlaceholder} />
             </div>
             <div className="space-y-1">
               <Label className="text-xs text-muted-foreground">My retail price ($)</Label>
@@ -445,7 +447,7 @@ export function TranslationBundleCard({ project }: { project: PatternProject }) 
                 size="sm"
                 disabled={partners.length >= 3}
                 onClick={addPartner}
-                aria-label="Add partner pattern"
+                aria-label={ls.addPartnerPattern}
               >
                 + Partner pattern{partners.length >= 3 ? ' (max 3)' : ''}
               </Button>
@@ -462,7 +464,7 @@ export function TranslationBundleCard({ project }: { project: PatternProject }) 
                   <Input
                     value={p.name}
                     onChange={e => updatePartner(i, { name: e.target.value })}
-                    placeholder="e.g. Luna Wrap"
+                    placeholder={ls.lunaWrapPlaceholder}
                     aria-label={`Partner pattern ${i + 1} name`}
                   />
                 </div>
@@ -529,7 +531,7 @@ export function TranslationBundleCard({ project }: { project: PatternProject }) 
             <pre className="text-xs whitespace-pre-wrap rounded-lg bg-secondary/30 p-3 border border-border max-h-64 overflow-y-auto">
               {pitch}
             </pre>
-            <CopyLine text={pitch} tc={tc} />
+            <CopyLine text={pitch} tc={tc}  ls={ls} />
           </div>
         </div>
       </CardContent>

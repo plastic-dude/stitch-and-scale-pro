@@ -16,6 +16,7 @@
  * roster survives reloads until cloud storage arrives.
  */
 import React, { useMemo, useState, useEffect } from 'react';
+import { getLabStatCopy, type LabStatCopy } from '@/lib/lab-stat-copy';
 import { projectStorage, type ProjectStorageHandle } from '@/lib/storage-lib';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -68,6 +69,7 @@ export function TestKnitCard({ project }: { project: PatternProject }) {
 
   const { toast } = useToast();
   const { language } = useSettings();
+  const ls: LabStatCopy = getLabStatCopy(language);
   const tc = getToastCopy(language);
 
   const sizes = gradedSizes(project);
@@ -160,7 +162,7 @@ export function TestKnitCard({ project }: { project: PatternProject }) {
                   setSlotsPerSize(n);
                   persist(buildRoster(project, { slotsPerSize: n }));
                 }}
-                aria-label="slots per size"
+                aria-label={ls.slotsPerSize}
               >
                 {[1, 2, 3, 4].map(n => (
                   <option key={n} value={n}>{n} tester{n > 1 ? 's' : ''} / size</option>
@@ -170,7 +172,7 @@ export function TestKnitCard({ project }: { project: PatternProject }) {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs">Yarn weight for yardage check</Label>
-              <NativeSelect value={weight} onChange={e => setWeight(e.target.value as YarnWeight)} aria-label="yarn weight">
+              <NativeSelect value={weight} onChange={e => setWeight(e.target.value as YarnWeight)} aria-label={ls.yarnWeightAria}>
                 {YARN_WEIGHTS.map(w => (
                   <option key={w} value={w}>{YARN_WEIGHT_LABELS[w]}</option>
                 ))}
@@ -178,7 +180,7 @@ export function TestKnitCard({ project }: { project: PatternProject }) {
             </div>
             <div className="space-y-1.5">
               <Label className="text-xs">Lead time (weeks)</Label>
-              <NativeSelect value={String(leadWeeks)} onChange={e => setLeadWeeks(Number(e.target.value))} aria-label="lead weeks">
+              <NativeSelect value={String(leadWeeks)} onChange={e => setLeadWeeks(Number(e.target.value))} aria-label={ls.leadWeeks}>
                 {[4, 6, 8, 10, 12, 16].map(n => (
                   <option key={n} value={n}>{n} weeks</option>
                 ))}
@@ -242,7 +244,7 @@ export function TestKnitCard({ project }: { project: PatternProject }) {
                         <Input
                           value={slot.name}
                           onChange={e => setSlot(slot.id, { name: e.target.value })}
-                          placeholder="Tester name"
+                          placeholder={ls.testerName}
                           className="h-8"
                           data-testid={`input-slot-name-${slot.id}`}
                         />
@@ -264,7 +266,7 @@ export function TestKnitCard({ project }: { project: PatternProject }) {
                           min={0}
                           value={slot.actualYards ?? ''}
                           onChange={e => setSlot(slot.id, { actualYards: e.target.value ? Number(e.target.value) : undefined })}
-                          placeholder="— yd"
+                          placeholder={ls.ydPlaceholder}
                           className="h-8 w-24"
                           data-testid={`input-slot-yards-${slot.id}`}
                         />
@@ -283,7 +285,7 @@ export function TestKnitCard({ project }: { project: PatternProject }) {
                         <Input
                           value={slot.feedback}
                           onChange={e => setSlot(slot.id, { feedback: e.target.value })}
-                          placeholder="Notes per tester"
+                          placeholder={ls.notesPerTester}
                           className="h-8"
                           data-testid={`input-slot-feedback-${slot.id}`}
                         />
@@ -341,7 +343,7 @@ export function TestKnitCard({ project }: { project: PatternProject }) {
             <Input
               value={incentive}
               onChange={e => setIncentive(e.target.value)}
-              placeholder="e.g. Plus a $10 gift card to my yarn sponsor"
+              placeholder={ls.testKnitRewardPlaceholder}
               className="h-9"
             />
           </div>

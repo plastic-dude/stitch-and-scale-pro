@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useToast } from '@/hooks/use-toast';
 import { useSettings } from '@/context/SettingsContext';
 import { getToastCopy } from '@/lib/toast-copy';
+import { getYarnBuyCopy } from '@/lib/yarn-buy-copy';
 import { ShoppingBasket, AlertTriangle, ShieldCheck, Package, CircleDollarSign } from 'lucide-react';
 import { PatternProject } from '@/lib/grading-engine';
 
@@ -50,6 +51,7 @@ export function YarnBuyCalculatorCard({ project }: { project: PatternProject }) 
   const { toast } = useToast();
   const { language } = useSettings();
   const tc = getToastCopy(language);
+  const ybc = getYarnBuyCopy(language);
 
   const projectId = project.id || '';
   const STORAGE_KEY = 'stitch-and-scale-yarnbuy-';
@@ -131,9 +133,9 @@ export function YarnBuyCalculatorCard({ project }: { project: PatternProject }) 
         {/* Yarn choice */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <Label className="text-xs">Quick-load a market-standard yarn (edit the numbers to match your ball band)</Label>
+            <Label className="text-xs">{ybc.quickLoadLabel}</Label>
             <Select onValueChange={(v) => chooseYarn(parseInt(v, 10))}>
-              <SelectTrigger className="w-72"><SelectValue placeholder="Pick a yarn..." /></SelectTrigger>
+              <SelectTrigger className="w-72"><SelectValue placeholder={ybc.pickAYarn} /></SelectTrigger>
               <SelectContent>
                 {yarnOptions.map((y, i) => (
                   <SelectItem key={y.name} value={String(i)}>
@@ -145,7 +147,7 @@ export function YarnBuyCalculatorCard({ project }: { project: PatternProject }) 
           </div>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
             <div className="space-y-1.5">
-              <Label className="text-xs">Yarn weight</Label>
+              <Label className="text-xs">{ybc.yarnWeight}</Label>
               <Select value={stored.weight} onValueChange={(v) => patch({ weight: v as YarnWeight })}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -157,25 +159,25 @@ export function YarnBuyCalculatorCard({ project }: { project: PatternProject }) 
               <p className="text-[11px] text-muted-foreground">Needles: {YARN_WEIGHT_NEEDLES[stored.weight]}</p>
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs">Yardage per skein (ball band)</Label>
+              <Label className="text-xs">{ybc.yardagePerSkein}</Label>
               <Input type="number" min={1} value={stored.skeinYardage}
                 placeholder="e.g. 220"
                 onChange={(e) => patch({ skeinYardage: e.target.value })} />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs">Price per skein</Label>
+              <Label className="text-xs">{ybc.pricePerSkein}</Label>
               <Input type="number" min={0} step={0.01} value={stored.skeinPrice}
                 placeholder="e.g. 14.99"
                 onChange={(e) => patch({ skeinPrice: e.target.value })} />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs">Stash of this yarn (grams)</Label>
+              <Label className="text-xs">{ybc.stashOfThisYarn}</Label>
               <Input type="number" min={0} value={stored.stashGrams}
                 placeholder="0"
                 onChange={(e) => patch({ stashGrams: e.target.value })} />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs">Grams per skein</Label>
+              <Label className="text-xs">{ybc.gramsPerSkein}</Label>
               <Input type="number" min={1} value={stored.skeinGrams}
                 placeholder="100"
                 onChange={(e) => patch({ skeinGrams: e.target.value })} />
@@ -183,9 +185,9 @@ export function YarnBuyCalculatorCard({ project }: { project: PatternProject }) 
           </div>
           <div className="flex items-center gap-2">
             <Switch checked={stored.swatchConfirmed} onCheckedChange={(c) => patch({ swatchConfirmed: c })} />
-            <Label className="text-xs">Swatch confirmed before buying</Label>
+            <Label className="text-xs">{ybc.swatchConfirmedBefore}</Label>
             <span className="text-xs text-muted-foreground">
-              — a confirmed swatch holds the buffer at the documented 10% floor.
+              {ybc.swatchConfirmedNote}
             </span>
           </div>
         </div>
@@ -194,38 +196,38 @@ export function YarnBuyCalculatorCard({ project }: { project: PatternProject }) 
         {plan.invalid ? (
           <div className="rounded-lg border border-destructive/40 bg-destructive/10 p-4 text-sm flex items-start gap-2">
             <AlertTriangle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />
-            <span>Enter the yardage and price from your yarn's ball band to price the buy list — yardage per skein is the only number that matters here.</span>
+            <span>ybc.enterYardageAndPrice</span>
           </div>
         ) : (
           <>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="rounded-lg border bg-muted/30 p-4">
-                <div className="text-xs text-muted-foreground">Base yardage ({project.baseSize} base size)</div>
+                <div className="text-xs text-muted-foreground">{ybc.baseYardageLabel.replace("{size}", project.baseSize)}</div>
                 <div className="text-2xl font-bold">{Math.round(plan.baseYards).toLocaleString()} yd</div>
               </div>
               <div className="rounded-lg border bg-muted/30 p-4">
                 <div className="text-xs text-muted-foreground flex items-center gap-1">
-                  <ShieldCheck className="h-3 w-3" /> Target with risk buffer ({fmtPct(plan.bufferPct)})
+                  <ShieldCheck className="h-3 w-3" /> {ybc.targetWithRiskBuffer.replace("{pct}", fmtPct(plan.bufferPct))}
                 </div>
                 <div className="text-2xl font-bold">{Math.round(plan.targetYards).toLocaleString()} yd</div>
               </div>
               <div className="rounded-lg border bg-muted/30 p-4">
                 <div className="text-xs text-muted-foreground flex items-center gap-1">
-                  <Package className="h-3 w-3" /> Skeins to buy, one dye lot
+                  {ybc.skeinsToBuyLabel}
                 </div>
                 <div className="text-2xl font-bold">{plan.skeinsToBuy}</div>
                 {plan.stashSkeins > 0 && (
-                  <div className="text-xs text-emerald-700 mt-1">−{plan.stashSkeins} covered by stash ({plan.stashSkeinsExact} skein eq.)</div>
+                  <div className="text-xs text-emerald-700 mt-1">−{plan.stashSkeins} {ybc.coveredByStash.replace("{exact}", String(plan.stashSkeinsExact))}</div>
                 )}
               </div>
               <div className="rounded-lg border bg-muted/30 p-4">
                 <div className="text-xs text-muted-foreground flex items-center gap-1">
-                  <CircleDollarSign className="h-3 w-3" /> Buy-list cost
+                  {ybc.buyListCost}
                 </div>
                 <div className="text-2xl font-bold">{fmt$(plan.totalCost)}</div>
                 {plan.costPerSizeLow !== null && plan.costPerSizeHigh !== null && (
                   <div className="text-xs text-muted-foreground mt-1">
-                    {fmt$(plan.costPerSizeLow)}–{fmt$(plan.costPerSizeHigh)} across grades
+                    ybc.acrossGrades
                   </div>
                 )}
               </div>
@@ -234,7 +236,7 @@ export function YarnBuyCalculatorCard({ project }: { project: PatternProject }) 
             {/* Buffer transparency */}
             <div className="rounded-lg border p-4 space-y-2">
               <div className="font-semibold text-sm flex items-center gap-2">
-                <ShieldCheck className="h-4 w-4 text-sky-600" /> Risk buffer — why {fmtPct(plan.bufferPct)}%
+                {ybc.riskBufferWhy.replace("{pct}", fmtPct(plan.bufferPct))}
               </div>
               <ul className="text-sm space-y-1">
                 {plan.bufferReasons.map((r) => (
@@ -254,9 +256,7 @@ export function YarnBuyCalculatorCard({ project }: { project: PatternProject }) 
               <div className="rounded-lg border border-emerald-500/40 bg-emerald-500/10 p-4 text-sm flex items-start gap-2">
                 <Package className="h-4 w-4 text-emerald-700 shrink-0 mt-0.5" />
                 <span>
-                  <strong>Buy one extra skein of this same dye lot as insurance.</strong> Standard pro
-                  practice: a same-lot spare keeps the project repairable and re-sellable. Unopened
-                  lots hold resale value on Ravelry and Etsy yarn groups.
+                  <strong>{ybc.buyOneExtraSkein}</strong> {ybc.extraSkeinBody}
                 </span>
               </div>
             )}
@@ -264,33 +264,33 @@ export function YarnBuyCalculatorCard({ project }: { project: PatternProject }) 
               <div className="rounded-lg border border-amber-500/40 bg-amber-500/10 p-4 text-sm flex items-start gap-2">
                 <AlertTriangle className="h-4 w-4 text-amber-700 shrink-0 mt-0.5" />
                 <span>
-                  Your stash covers {plan.stashSkeins} skein{plan.stashSkeins === 1 ? '' : 's'}; the remaining{" "}
-                  {plan.stashShortfallYards.toLocaleString()} yd still need a same-dye-lot purchase —
-                  buy the shortfall in one go, not piecemeal.
+                  {ybc.stashMessage
+                    .replace('{n}', String(plan.stashSkeins))
+                    .replace('{pl}', plan.stashSkeins === 1 ? '' : 's')
+                    .replace('{yd}', plan.stashShortfallYards.toLocaleString())}
                 </span>
               </div>
             )}
 
             <div className="rounded-lg border bg-muted/30 p-4 text-xs text-muted-foreground">
               <p className="mb-1">
-                <strong className="text-foreground">Buy list:</strong> {plan.skeinsToBuy} skein{plan.skeinsToBuy === 1 ? '' : 's'} ×{" "}
-                {stored.skeinYardage || '?'} yd ({stored.weight}) = {Math.round(plan.targetYards).toLocaleString()} yd target, {fmt$(plan.totalCost)} total.
+                <strong className="text-foreground">{ybc.buyListPrefix}</strong> {plan.skeinsToBuy} {ybc.skeinWord.replace('{pl}', plan.skeinsToBuy === 1 ? '' : 's')} ×{" "}
+                {stored.skeinYardage || '?'} yd ({stored.weight}) = {Math.round(plan.targetYards).toLocaleString()} yd target, {fmt$(plan.totalCost)} {ybc.buyListTotal.replace('{total}', fmt$(plan.totalCost))}
               </p>
               <p>
-                Base-size estimate ({Math.round(plan.baseYards).toLocaleString()} yd) is graded for {project.baseSize};
+                {ybc.baseSizeNote
+                  .replace('{yd}', Math.round(plan.baseYards).toLocaleString())
+                  .replace('{size}', project.baseSize)}{" "}
                 {plan.costPerSizeLow !== null && plan.costPerSizeHigh !== null
-                  ? ` larger sizes run up to ${fmt$(plan.costPerSizeHigh)}.`
-                  : ' confirm against the size you will actually release.'}{" "}
-                Always confirm yardage against your own swatch — the ball band is truth, the model is a plan.
+                  ? ybc.largerSizesUpTo.replace('{max}', fmt$(plan.costPerSizeHigh))
+                  : ybc.confirmSizeAndSwatch}
               </p>
             </div>
           </>
         )}
 
         <p className="text-xs text-muted-foreground">
-          Sources: the 10–15% buffer rule is published buying guidance (Mary Maxim, 2026);
-          dye lots cannot be re-ordered once depleted (Lion Brand support); stash offsets round
-          down to whole skeins because a partial skein still requires a full same-lot purchase.
+          {ybc.sources}
         </p>
       </CardContent>
     </Card>

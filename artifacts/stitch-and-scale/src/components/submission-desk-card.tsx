@@ -1,4 +1,6 @@
 import { useMemo, useState, useEffect } from 'react';
+import { useSettings } from '@/context/SettingsContext';
+import { getLabStatCopy, type LabStatCopy } from '@/lib/lab-stat-copy';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -94,6 +96,8 @@ function NumField({ id, label, value, onChange, min = 0, max, step = 1, suffix }
 }
 
 export function SubmissionDeskCard({ project }: { project: PatternProject }) {
+  const { language } = useSettings();
+  const ls: LabStatCopy = getLabStatCopy(language);
   const handle = useMemo(
     () => projectStorage<SubmissionInput>('submissions', project.id || '', []),
     [project.id],
@@ -164,35 +168,35 @@ export function SubmissionDeskCard({ project }: { project: PatternProject }) {
 
         {/* Money side */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <NumField id="sub-fee" label="Flat fee the offer pays" value={stored.fee}
+          <NumField id="sub-fee" label={ls.flatFeeOfferPays} value={stored.fee}
             min={0} step={50} onChange={(n) => patch({ fee: n })} suffix="$" />
-          <NumField id="sub-exclusivity" label="Exclusivity window" value={stored.exclusivityMonths}
+          <NumField id="sub-exclusivity" label={ls.exclusivityWindow} value={stored.exclusivityMonths}
             min={0} max={24} onChange={(n) => patch({ exclusivityMonths: Math.min(24, n) })} suffix="mo" />
-          <NumField id="sub-yarn" label="Yarn support value" value={stored.yarnSupportValue}
+          <NumField id="sub-yarn" label={ls.yarnSupportValue} value={stored.yarnSupportValue}
             min={0} step={5} onChange={(n) => patch({ yarnSupportValue: n })} suffix="$" />
-          <NumField id="sub-royalty" label="Royalty share (box deals)" value={stored.royaltyPct}
+          <NumField id="sub-royalty" label={ls.royaltyShareBoxDeals} value={stored.royaltyPct}
             min={0} max={100} step={0.5} onChange={(n) => patch({ royaltyPct: Math.min(100, n) })} suffix="%" />
         </div>
 
         {/* Costs side */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <NumField id="sub-sample" label="Sample cost (you fund)" value={stored.sampleCost}
+          <NumField id="sub-sample" label={ls.sampleCostYouFund} value={stored.sampleCost}
             min={0} step={5} onChange={(n) => patch({ sampleCost: n })} suffix="$" />
-          <NumField id="sub-model" label="Model / photography (you fund)" value={stored.modelCost}
+          <NumField id="sub-model" label={ls.modelPhotographyYouFund} value={stored.modelCost}
             min={0} step={5} onChange={(n) => patch({ modelCost: n })} suffix="$" />
-          <NumField id="sub-techedit" label="Tech editing (you fund)" value={stored.techEditCost}
+          <NumField id="sub-techedit" label={ls.techEditingYouFund} value={stored.techEditCost}
             min={0} step={5} onChange={(n) => patch({ techEditCost: n })} suffix="$" />
-          <NumField id="sub-price" label="Own-store pattern price" value={stored.patternPrice}
+          <NumField id="sub-price" label={ls.ownStorePatternPrice} value={stored.patternPrice}
             min={0} step={0.5} onChange={(n) => patch({ patternPrice: n })} suffix="$" />
         </div>
 
         {/* Labour + own store */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <NumField id="sub-hours" label="Your total hours" value={stored.labourHours}
+          <NumField id="sub-hours" label={ls.yourTotalHours} value={stored.labourHours}
             min={0} onChange={(n) => patch({ labourHours: n })} suffix="hrs" />
-          <NumField id="sub-rate" label="Your hourly rate (floor)" value={stored.hourlyRate}
+          <NumField id="sub-rate" label={ls.yourHourlyRateFloor} value={stored.hourlyRate}
             min={0} step={1} onChange={(n) => patch({ hourlyRate: n })} suffix="$/hr" />
-          <NumField id="sub-weekly" label="Weekly own-store sales (copies)" value={stored.weeklyOwnSales}
+          <NumField id="sub-weekly" label={ls.weeklyOwnStoreSalesCopies} value={stored.weeklyOwnSales}
             min={0} step={0.5} onChange={(n) => patch({ weeklyOwnSales: n })} suffix="wk" />
         </div>
 
