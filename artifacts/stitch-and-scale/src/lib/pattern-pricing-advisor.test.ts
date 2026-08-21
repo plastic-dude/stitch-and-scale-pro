@@ -200,3 +200,36 @@ describe('advisePrice — bands', () => {
     expect(advice.bands[1].high).toBeGreaterThan(10);
   });
 });
+
+// CHK-147: QUEUE-012 shared validation layer — quarantine regression tests.
+// No calculated recommendation may be derived from invalid input; every
+// invalid numeric input must return a quarantined advisory, never a number.
+describe('advisePrice — validation quarantine (CHK-147)', () => {
+  it('quarantines a negative current price with no recommendation', () => {
+    const advice = advisePrice(baseInputs({ currentPrice: -5 }));
+    expect(Number.isFinite(advice.recommendedPrice)).toBe(false);
+    expect(advice.bands).toEqual([]);
+    expect(advice.reasoning[0]).toMatch(/^Validation — /);
+  });
+
+  it('quarantines negative hours and a negative hourly rate', () => {
+    expect(advisePrice(baseInputs({ hoursWorked: -20 })).recommendedPrice).toBeNaN();
+    expect(advisePrice(baseInputs({ hourlyRate: -25 })).recommendedPrice).toBeNaN();
+  });
+
+  it('quarantines an implausibly large money value above the 1e9 ceiling', () => {
+    const advice = advisePrice(baseInputs({ hourlyRate: 1e12 }));
+    expect(advice.reasoning[0]).toContain('Validation —');
+  });
+
+  it('quarantines a zero size count', () => {
+    const advice = advisePrice(baseInputs({ sizeCount: 0 }));
+    expect(advice.reasoning[0]).toMatch(/^Validation — /);
+  });
+
+  it('accepts zero cost and zero current price as valid (legit designer states)', () => {
+    const advice = advisePrice(baseInputs({ hoursWorked: 0, hourlyRate: 0, currentPrice: 0 }));
+    expect(Number.isFinite(advice.recommendedPrice)).toBe(true);
+    expect(advice.bands).toHaveLength(3);
+  });
+});

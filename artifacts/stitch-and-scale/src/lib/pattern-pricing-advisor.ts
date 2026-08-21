@@ -34,6 +34,52 @@
 
 import { PatternProject, ALL_SIZES } from '@/lib/grading-engine';
 import { PLATFORMS, PLATFORM_LABELS, platformNet } from '@/lib/pattern-income-calculator';
+import { safeNumber } from '@/lib/numeric-guard';
+import {
+  invalidSummary,
+  isInputValid,
+  validateInputs,
+  type ValidationResult,
+} from '@/lib/validate-field';
+
+/**
+ * QUEUE-012 shared validation layer: every numeric input to the advisor is
+ * checked here. When invalid, advisePrice returns a quarantined advisory —
+ * no price recommendation is derived from invalid input (extended audit E-01).
+ */
+export const PRICING_INPUT_SPECS = {
+  sizeCount: { type: 'count' as const, min: 1, max: 20, label: 'Size count' },
+  hoursWorked: { type: 'money' as const, label: 'Hours worked' },
+  hourlyRate: { type: 'money' as const, label: 'Hourly rate' },
+  currentPrice: { type: 'money' as const, label: 'Current price' },
+} as const;
+
+export type PricingInputErrors = ValidationResult[];
+
+/**
+ * Validate the pricing inputs. Call sites render invalidSummary(errors) when
+ * !isInputValid(errors); the quarantined advice suppresses the point
+ * recommendation and reasoning.
+ */
+export function validatePricingInputs(inputs: PricingInputs): PricingInputErrors {
+  return validateInputs(
+    PRICING_INPUT_SPECS,
+    inputs as unknown as Record<string, unknown>,
+  ) as unknown as PricingInputErrors;
+}
+
+/** Quarantined advice: no recommendation may be derived from invalid input. */
+function quarantinedAdvice(reason: string): PricingAdvice {
+  return {
+    bands: [],
+    recommendedPrice: NaN,
+    justifiers: [],
+    underpriced: false,
+    costPlusFloor: 0,
+    volumeScenarios: [],
+    reasoning: [`Validation — ${reason}`],
+  };
+}
 
 export type ItemType = 'sweater' | 'cardigan' | 'hat' | 'scarf' | 'shawl' | 'socks' | 'mitts' | 'other';
 
@@ -156,6 +202,10 @@ function anchorPrice(raw: number): number {
  * monetization story is tested without any UI.
  */
 export function advisePrice(inputs: PricingInputs): PricingAdvice {
+  // QUEUE-012 gate: no calculated recommendation from invalid input.
+  const errors = validatePricingInputs(inputs);
+  if (!isInputValid(errors)) return quarantinedAdvice(invalidSummary(errors));
+
   const justifiers: PriceJustifier[] = [];
   const band = baseBand(inputs.itemType, inputs.marketTarget);
   let effectPoints = 0; // each +1 shifts the recommended point one anchor step up
@@ -187,7 +237,12 @@ export function advisePrice(inputs: PricingInputs): PricingAdvice {
   // Size inclusivity: every graded size is real engineering work, and
   // size-inclusive patterns are explicitly cited as worth more
   // (r/BitchEatingCrafters Mar 2025, One Wild Designs 2024).
-  const sizeEffect = Math.min(SIZE_COUNT_MAX_EFFECTS, Math.max(0, inputs.sizeCount - 2));
+  const sizeCountN = safeNumber(inputs.sizeCount, 0);
+  if (sizeCountN === null) return quarantinedAdvice('Size count is not a valid number.');
+  const sizeEffect = Math.min(
+    SIZE_COUNT_MAX_EFFECTS,
+    Math.max(0, sizeCountN - 2),
+  );
   if (sizeEffect > 0) {
     justifiers.push({
       factor: `Size range: ${inputs.sizeCount} sizes`,
@@ -243,7 +298,11 @@ export function advisePrice(inputs: PricingInputs): PricingAdvice {
   // (cost ÷ lifetime sales) exceeds the current price, the designer is
   // structurally underpricing this pattern.
   const lifetimeSales = 150;
-  const timeCost = Math.max(0, inputs.hoursWorked) * Math.max(0, inputs.hourlyRate);
+  const hoursN = safeNumber(inputs.hoursWorked, 0);
+  const rateN = safeNumber(inputs.hourlyRate, 0);
+  if (hoursN === null) return quarantinedAdvice('Hours worked is not a valid number.');
+  if (rateN === null) return quarantinedAdvice('Hourly rate is not a valid number.');
+  const timeCost = Math.max(0, hoursN) * Math.max(0, rateN);
   const costPlusFloor = timeCost > 0
     ? Math.round((timeCost / lifetimeSales) * 100) / 100
     : 0;

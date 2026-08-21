@@ -16,7 +16,9 @@ import {
   SKILL_LEVEL_LABELS,
   sizeCountForProject,
   advisePrice,
+  validatePricingInputs,
 } from '@/lib/pattern-pricing-advisor';
+import { isInputValid, invalidSummary } from '@/lib/validate-field';
 
 /**
  * Pattern Pricing Advisor — tells the designer what this specific pattern
@@ -45,6 +47,21 @@ export function PricingAdvisorCard({ project }: { project: PatternProject }) {
   const [hourlyRate, setHourlyRate] = React.useState('25');
   const [currentPrice, setCurrentPrice] = React.useState('8.00');
   const [marketTarget, setMarketTarget] = React.useState<string>('standard');
+
+  // QUEUE-012 shared validation layer: validate the RAW string values before
+  // any parsing — invalid input must never silently coerce into a number.
+  const inputErrors = validatePricingInputs({
+    itemType: itemType as never,
+    skillLevel: skillLevel as never,
+    sizeCount: sizeCountForProject(project),
+    techEdited,
+    testKnitted,
+    hoursWorked: hoursWorked,
+    hourlyRate: hourlyRate,
+    currentPrice: currentPrice,
+    marketTarget: marketTarget as 'standard' | 'premium',
+  } as never);
+  const inputsInvalid = !isInputValid(inputErrors);
 
   const hoursNum = Math.max(0, parseFloat(hoursWorked) || 0);
   const rateNum = Math.max(0, parseFloat(hourlyRate) || 0);
@@ -131,9 +148,18 @@ export function PricingAdvisorCard({ project }: { project: PatternProject }) {
           </label>
         </div>
 
+        {inputsInvalid && (
+          <div className="rounded-lg border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive" data-testid="pricing-validation-errors">
+            {invalidSummary(inputErrors).split('\n').map((line: string, i: number) => (
+              <div key={i}>• {line}</div>
+            ))}
+          </div>
+        )}
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="bg-muted/40 rounded-lg p-4 text-center flex-1">
-            <div className="text-2xl font-mono font-bold text-foreground">${advice.recommendedPrice.toFixed(2)}</div>
+            <div className="text-2xl font-mono font-bold text-foreground">
+              {inputsInvalid || !Number.isFinite(advice.recommendedPrice) ? '—' : `$${advice.recommendedPrice.toFixed(2)}`}
+            </div>
             <div className="text-xs text-muted-foreground mt-1">{copyText.recommended}</div>
           </div>
           <div className="bg-muted/40 rounded-lg p-4 text-center flex-1">
@@ -184,7 +210,7 @@ export function PricingAdvisorCard({ project }: { project: PatternProject }) {
               <thead>
                 <tr className="text-xs text-muted-foreground border-b border-border">
                   <th className="px-2 py-2 font-medium">{copyText.volume}</th>
-                  {Object.keys(advice.volumeScenarios[0].platformNets).map(p => (
+                  {advice.volumeScenarios.length === 0 ? null : Object.keys(advice.volumeScenarios[0].platformNets).map(p => (
                     <th key={p} className="px-3 py-2 text-right font-medium">{PLATFORM_LABELS[p as keyof typeof PLATFORM_LABELS]}</th>
                   ))}
                 </tr>
