@@ -6,6 +6,7 @@ import {
   parseMcpBody,
   type McpJsonRpcResponse,
 } from '../artifacts/stitch-and-scale/src/lib/mcp-server.js';
+import { MCP_SUPPORTED_PROTOCOL_VERSIONS } from '../artifacts/stitch-and-scale/src/lib/mcp-contract.js';
 
 const WINDOW_MS = 60_000;
 const MAX_REQUESTS_PER_WINDOW = 60;
@@ -119,7 +120,7 @@ async function handleMcpRequest(request: Request): Promise<Response> {
     return response;
   }
   const protocolVersion = request.headers.get('mcp-protocol-version');
-  if (protocolVersion && protocolVersion !== '2026-07-28') {
+  if (protocolVersion && !(MCP_SUPPORTED_PROTOCOL_VERSIONS as readonly string[]).includes(protocolVersion)) {
     return jsonResponse(400, rpcError(-32005, 'Unsupported MCP protocol version.'), origin);
   }
   const contentType = request.headers.get('content-type') ?? '';

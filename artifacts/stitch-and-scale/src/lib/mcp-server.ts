@@ -1,11 +1,16 @@
 import { assessMcpProject } from './mcp-intake.js';
 import {
+  compareMcpStandards,
   explainMcpGrade,
+  getMcpPrompt,
+  getMcpPromptDefinitions,
+  getMcpResourceDefinitions,
   getMcpToolDefinitions,
   MCP_CONTRACT_VERSION,
   MCP_PROTOCOL_VERSION,
   MCP_SERVER_NAME,
   MCP_SERVER_VERSION,
+  readMcpResource,
   runMcpGrading,
   validateMcpProject,
   type McpGradeOutput,
@@ -39,7 +44,7 @@ export interface McpJsonRpcError {
 
 export type McpJsonRpcResponse = McpJsonRpcSuccess | McpJsonRpcError;
 
-const SERVER_INSTRUCTIONS = 'Read-only Stitch & Scale grading tools. The server never saves, publishes, shares, or changes a project. The caller must supply the project snapshot explicitly.';
+const SERVER_INSTRUCTIONS = 'Read-only Stitch & Scale grading, comparison, and calculation tools, plus static reference resources and explain prompts. The server never saves, publishes, shares, or changes a project. The caller must supply the project or ledger snapshot explicitly.';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -82,7 +87,11 @@ function toolProject(params: unknown): unknown | null {
 export function mcpInitializeResult() {
   return {
     protocolVersion: MCP_PROTOCOL_VERSION,
-    capabilities: { tools: { listChanged: false } },
+    capabilities: {
+      tools: { listChanged: false },
+      resources: { listChanged: false, subscribe: false },
+      prompts: { listChanged: false },
+    },
     serverInfo: { name: MCP_SERVER_NAME, version: MCP_SERVER_VERSION },
     instructions: SERVER_INSTRUCTIONS,
   };
@@ -105,6 +114,27 @@ export function dispatchMcpRequest(request: McpJsonRpcRequest): McpJsonRpcRespon
       return success(request, {});
     case 'tools/list':
       return success(request, { tools: getMcpToolDefinitions() });
+    case 'resources/list':
+      return success(request, { resources: getMcpResourceDefinitions() });
+    case 'resources/read': {
+      if (!isRecord(request.params) || typeof request.params.uri !== 'string') {
+        return invalidParams(request, 'resources/read requires a uri.');
+      }
+      const resource = readMcpResource(request.params.uri);
+      if (!resource) return error(request, -32602, `Unknown resource: ${request.params.uri}.`);
+      return success(request, { contents: [resource] });
+    }
+    case 'prompts/list':
+      return success(request, { prompts: getMcpPromptDefinitions() });
+    case 'prompts/get': {
+      if (!isRecord(request.params) || typeof request.params.name !== 'string') {
+        return invalidParams(request, 'prompts/get requires a name.');
+      }
+      const promptArgs = isRecord(request.params.arguments) ? request.params.arguments : {};
+      const prompt = getMcpPrompt(request.params.name, promptArgs);
+      if (!prompt) return error(request, -32601, `Unknown prompt: ${request.params.name}.`);
+      return success(request, prompt);
+    }
     case 'tools/call': {
       if (!isRecord(request.params) || typeof request.params.name !== 'string') {
         return invalidParams(request, 'tools/call requires a tool name.');
@@ -140,6 +170,17 @@ export function dispatchMcpRequest(request: McpJsonRpcRequest): McpJsonRpcRespon
         }
         const output = explainMcpGrade({ intent: args.intent as McpExplainInput['intent'], grade: args.grade as unknown as McpGradeOutput });
         return success(request, { content: [{ type: 'text', text: JSON.stringify(output) }], structuredContent: output, isError: false });
+      }
+      if (name === 'grading.compare_standards') {
+        const project = toolProject(request.params.arguments);
+        if (project === null) return invalidParams(request, 'grading.compare_standards requires arguments.project.');
+        const output = compareMcpStandards(project);
+        const isComparison = 'rows' in output;
+        return success(request, {
+          content: [{ type: 'text', text: JSON.stringify(output) }],
+          structuredContent: output,
+          isError: !isComparison || ('valid' in output && !output.valid),
+        });
       }
       if (name === 'export.pattern_pdf' || name === 'export.project_book_pdf' || name === 'export.brag_card') {
         return error(request, -32006, 'This tool creates a binary artifact and must be dispatched through the asynchronous MCP transport.');
