@@ -36,3 +36,18 @@ Fresh Vercel evidence:
 - This rules out the `{ fetch }` shape alone as the remaining cause of the live 500. The next diagnosis must target module initialization or a dependency loaded before `handleMcpRequest` runs.
 
 - Official Vercel runtime configuration documentation states that a non-framework project must add `"type": "module"` to `package.json` or use `.mjs` extensions for JavaScript Functions. The repository root package currently has no `type` field while the Vercel API source uses ESM imports and a Web Standard handler. This is the leading explanation for a successful build followed by `FUNCTION_INVOCATION_FAILED` on every `/api/mcp` request. Source: https://vercel.com/docs/functions/configuring-functions/runtime
+
+
+## Final deployment verification evidence (2026-08-21)
+
+Official Vercel redeploy reference: https://vercel.com/docs/rest-api/deployments/create-a-new-deployment. It documents `POST /v13/deployments` with an existing `deploymentId` to trigger a fresh build.
+
+Commit `ce23e49` initially failed on Vercel with `lint_or_type_error`: `artifacts/stitch-and-scale/src/lib/brag-card.ts` required explicit `.js` specifiers under NodeNext. Commit `0eabc01` fixed those imports, but Vercel then reported unresolved aliases in `brag-copy.ts`; commit `3edb0d7` replaced those aliases with explicit relative `.js` imports. Vercel then reported the remaining `receipt-lab.ts` alias; commit `ef416ca` replaced it with `./numeric-guard.js`.
+
+Local evidence after `ef416ca`: root TypeScript passed, app TypeScript passed, focused MCP/Brag Card tests passed (5 files, 34 tests), full Vitest passed (175 files, 2,275 tests), and the production Vite build passed.
+
+Vercel deployment `dpl_GG4p7rweRfbLkVsxCz6rsihnSNAP` for `ef416ca` reached READY. A redeploy with `POST /v13/deployments` using that deployment ID returned `dpl_Dd8NFbQputVUoKZCzv4hiuQxQ9cw`, which also reached READY.
+
+Production checks immediately after redeploy: `GET /api/mcp` without an Origin returned 405 as intended. A request carrying the public Origin returned 403 origin-not-allowed for both OPTIONS and POST, indicating the current public origin is not yet reflected in `MCP_ALLOWED_ORIGIN` on the deployed function; this remains an active configuration issue to resolve. The earlier pre-configuration POST without auth returned 503 with the explicit MCP-disabled message, proving the endpoint was then fail-closed when `MCP_API_KEY` was absent.
+
+The project environment API accepted creation of production-scoped `MCP_API_KEY` and `MCP_ALLOWED_ORIGIN` variables with HTTP 201, but the redeployment from an existing deployment still returned 403 for the configured Origin. A fresh Git-source production deployment is required to ensure the current project environment snapshot is loaded rather than relying on an older deployment snapshot.
