@@ -6,6 +6,12 @@ import { Input } from '@/components/ui/input';
 import { Link, useLocation } from 'wouter';
 import { Search, Plus, Calendar, Scissors, Layers, ChevronRight, PenTool, Info, X, MoreVertical, Copy, Download, Upload, Trash2, CheckCircle2, Loader2, FileSpreadsheet } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+// CHK-155: rename validation mirrors the workspace + wizard so a stuck name
+// can never survive a save through any surface.
+const DASHBOARD_NAME_MAX = 80;
+function dashboardNormalizeName(raw: string): string {
+  return raw.replace(/\s+/g, ' ').trim();
+}
 import { de } from 'date-fns/locale/de';
 import { es } from 'date-fns/locale/es';
 import { fr } from 'date-fns/locale/fr';
@@ -29,6 +35,15 @@ import {
   AlertDialogAction,
   AlertDialogCancel,
 } from '@/components/ui/alert-dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import type { PatternProject } from '@/lib/grading-engine';
 import { useSettings } from '@/context/SettingsContext';
@@ -46,7 +61,7 @@ function isProjectGraded(project: { sections?: Array<{ measurements?: unknown[] 
 }
 
 export default function Dashboard() {
-  const { projects, duplicateProject, deleteProject, importProject } = useProjects();
+  const { projects, createProject, duplicateProject, updateProject, deleteProject, importProject } = useProjects();
   const { toast } = useToast();
   const { language } = useSettings();
   const copy = DASHBOARD_COPY[language];
@@ -66,6 +81,45 @@ export default function Dashboard() {
     localStorage.setItem('hide-storage-warning', 'true');
   };
   const [, setLocation] = useLocation();
+
+  // CHK-155: per-card rename so any persisted name (QA-seeded or not) is
+  // editable right from the dashboard card menu.
+  const [renameTarget, setRenameTarget] = React.useState<PatternProject | null>(null);
+  const [renameDraftName, setRenameDraftName] = React.useState('');
+  const openRenameCard = (e: React.MouseEvent, project: PatternProject) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setRenameDraftName(project.name);
+    setRenameTarget(project);
+  };
+  const commitRenameCard = () => {
+    if (!renameTarget) return;
+    const next = dashboardNormalizeName(renameDraftName);
+    if (!next) {
+      toast({ title: copy.renameFailed, description: copy.renameEmpty });
+      return;
+    }
+    if (next === renameTarget.name) {
+      setRenameTarget(null);
+      return;
+    }
+    if (next.length > DASHBOARD_NAME_MAX) {
+      toast({ title: copy.renameFailed, description: `Max ${DASHBOARD_NAME_MAX} characters` });
+      return;
+    }
+    const live = projects.find(p => p.id === renameTarget.id);
+    if (!live) {
+      setRenameTarget(null);
+      return;
+    }
+    try {
+      updateProject({ ...live, name: next, updatedAt: new Date().toISOString() });
+      toast({ title: copy.renameSaved, description: next });
+      setRenameTarget(null);
+    } catch {
+      toast({ title: copy.renameFailed });
+    }
+  };
 
   const handleDuplicate = (e: React.MouseEvent, id: string, name: string) => {
     e.preventDefault();
@@ -296,6 +350,10 @@ export default function Dashboard() {
                         <DropdownMenuItem onClick={(e) => handleExport(e, project)} data-testid={`menuitem-export-${project.id}`}>
                           <Download className="w-4 h-4 mr-2" />
                           {copy.exportJson}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={(e) => openRenameCard(e, project)} data-testid={`menuitem-rename-${project.id}`}>
+                          <PenTool className="w-4 h-4 mr-2" />
+                          {copy.renameAction}
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem

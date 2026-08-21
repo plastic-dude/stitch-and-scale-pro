@@ -20,6 +20,14 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { NativeSelect } from '@/components/ui/native-select';
@@ -32,6 +40,12 @@ import { useToast } from '@/hooks/use-toast';
 import { useSettings } from '@/context/SettingsContext';
 import { getLabStatCopy, type LabStatCopy } from '@/lib/lab-stat-copy';
 import { getWorkspaceCopy, workspaceGaugeByline, STS_UNIT, ROWS_UNIT } from '@/lib/workspace-copy';
+// CHK-155: every persisted project name passes through these rules, so a
+// project seeded by QA (e.g. "Localization Audit") can always be renamed.
+const PROJECT_NAME_MAX = 80;
+function normalizeProjectName(raw: string): string {
+  return raw.replace(/\s+/g, ' ').trim();
+}
 import { getToastCopy } from '@/lib/toast-copy';
 // CHK-094 bundle fix: lab cards are lazy-loaded on first tab activation.
 // LAB maps each tab value to a dynamic import (each card is a named export,
@@ -394,7 +408,39 @@ export default function ProjectWorkspace() {
     );
   }
 
-  const { project, updateProject } = projectHook;
+    const { project, updateProject } = projectHook;
+
+  // CHK-155: every project name is editable — a stuck QA-seeded name must
+  // never be the last word on a project. Validation mirrors the wizard.
+  const [renameOpen, setRenameOpen] = React.useState(false);
+  const [renameDraft, setRenameDraft] = React.useState('');
+  const openRename = () => {
+    setRenameDraft(project.name);
+    setRenameOpen(true);
+  };
+  const commitRename = () => {
+    const next = normalizeProjectName(renameDraft);
+    if (!next) {
+      toast({ title: copy.renameFailed, description: copy.renameEmpty });
+      return;
+    }
+    if (next === project.name) {
+      toast({ title: copy.renameSame });
+      setRenameOpen(false);
+      return;
+    }
+    if (next.length > PROJECT_NAME_MAX) {
+      toast({ title: copy.renameFailed, description: `Max ${PROJECT_NAME_MAX} characters` });
+      return;
+    }
+    try {
+      updateProject({ ...project, name: next, updatedAt: new Date().toISOString() });
+      toast({ title: copy.renameSaved, description: next });
+      setRenameOpen(false);
+    } catch {
+      toast({ title: copy.renameFailed });
+    }
+  };
 
   const [notesDraft, setNotesDraft] = React.useState(project.description || '');
   const notesDirty = notesDraft !== (project.description || '');
@@ -971,6 +1017,15 @@ export default function ProjectWorkspace() {
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-3 mb-1">
             <h1 className="text-2xl sm:text-3xl font-serif font-bold text-foreground">{project.name}</h1>
+            <button
+              type="button"
+              onClick={openRename}
+              className="inline-flex items-center justify-center w-8 h-8 rounded-md text-muted-foreground/70 hover:text-foreground hover:bg-background/80 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              aria-label={copy.renameProject}
+              data-testid="button-rename-project"
+            >
+              <Edit2 className="w-4 h-4" />
+            </button>
             <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-accent/20 text-accent uppercase tracking-wider">
               {project.baseSize}
             </span>
@@ -996,6 +1051,37 @@ export default function ProjectWorkspace() {
         </div>
       </div>
 
+      {/* CHK-155: project-name rename dialog */}
+      <Dialog open={renameOpen} onOpenChange={setRenameOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="font-serif">{copy.renameDialogTitle}</DialogTitle>
+            <DialogDescription>
+              {copy.renameProject}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2 pt-2">
+            <Label htmlFor="project-name-input">{t('workflow.newProject.patternName')}</Label>
+            <Input
+              id="project-name-input"
+              value={renameDraft}
+              onChange={(e) => setRenameDraft(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') commitRename();
+                if (e.key === 'Escape') setRenameOpen(false);
+              }}
+              maxLength={PROJECT_NAME_MAX}
+              autoFocus
+              data-testid="input-rename-project"
+            />
+            <p className="text-xs text-muted-foreground">{`${renameDraft.length} / ${PROJECT_NAME_MAX}`}</p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setRenameOpen(false)}>{copy.renameCancel}</Button>
+            <Button onClick={commitRename} data-testid="button-rename-save">{copy.renameSave}</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         {/* CHK-125: the group-chip row was rendering at ALL widths — on
             desktop it sat directly above the flat 79-tab strip and made it

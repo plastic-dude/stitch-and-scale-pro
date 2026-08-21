@@ -39,6 +39,22 @@ describe('Dashboard copy catalogue', () => {
     expect(DASHBOARD_COPY.pt.sizeLabel.replace('{0}', '42')).toBe('Tamanho 42');
   });
 
+  it('rename keys exist in every locale and are translated outside English (CHK-155)', () => {
+    const keys = ['renameAction', 'renameSaved', 'renameFailed', 'renameEmpty'] as const;
+    expect(Object.keys(DASHBOARD_COPY)).toHaveLength(5);
+    for (const locale of Object.values(DASHBOARD_COPY)) {
+      for (const key of keys) expect(locale[key], key).toBeTruthy();
+    }
+    for (const locale of ['de', 'fr', 'es', 'pt'] as const) {
+      for (const key of keys) {
+        expect(DASHBOARD_COPY[locale][key]).not.toBe(DASHBOARD_COPY.en[key]);
+      }
+      expect(DASHBOARD_COPY[locale].renameAction).not.toBe('Rename');
+    }
+    expect(DASHBOARD_COPY.de.renameAction).toBe('Umbenennen');
+    expect(DASHBOARD_COPY.de.renameSaved).toBe('Muster umbenannt');
+  });
+
   it('non-English locales override the English card-action fallbacks (QA 51-A)', () => {
     for (const locale of ['de', 'fr', 'es', 'pt'] as const) {
       expect(DASHBOARD_COPY[locale].duplicateAction).not.toBe('Duplicate');
