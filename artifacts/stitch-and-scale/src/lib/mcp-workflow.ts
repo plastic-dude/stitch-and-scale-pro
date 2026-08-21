@@ -4,9 +4,11 @@ import {
   normalizeMcpProject,
   runMcpGrading,
   type McpGradeOutput,
-  type McpValidationIssue,
   type McpValidationOutput,
 } from './mcp-contract.js';
+import { assessMcpProject } from './mcp-intake.js';
+export { assessMcpProject } from './mcp-intake.js';
+export type { McpIntakeOutput } from './mcp-intake.js';
 import { isMcpGradeOutput } from './mcp-contract.js';
 import { getPdfLabels } from './pdf/labels.js';
 import { type PatternProject } from './grading-engine.js';
@@ -16,15 +18,6 @@ const MAX_EXPORT_BYTES = 3 * 1024 * 1024;
 const DEFAULT_LOCALE = 'en';
 
 type ExportLocale = 'en' | 'de' | 'fr' | 'es' | 'pt';
-
-export interface McpIntakeOutput {
-  schemaVersion: number;
-  ready: boolean;
-  project: PatternProject | null;
-  issues: McpValidationIssue[];
-  nextQuestions: string[];
-  instruction: string;
-}
 
 export interface McpPdfApprovalRequired {
   schemaVersion: number;
@@ -87,37 +80,6 @@ function safeFilename(raw: unknown, projectName: string): string {
     || 'stitch-and-scale-grading-report';
   const normalized = candidate.replace(/-+\./g, '.').toLowerCase();
   return normalized.endsWith('.pdf') ? normalized : `${normalized}.pdf`;
-}
-
-function questionForIssue(issue: McpValidationIssue): string {
-  const path = issue.path;
-  if (path === 'name') return 'What should this pattern be called?';
-  if (path === 'author') return 'What designer name should appear on the pattern?';
-  if (path === 'baseSize') return 'Which base size is the pattern drafted from?';
-  if (path === 'gauge.stitchesPer4In') return 'How many stitches are in 4 inches (or the selected gauge unit)?';
-  if (path === 'gauge.rowsPer4In') return 'How many rows are in 4 inches (or the selected gauge unit)?';
-  if (path === 'gauge.unit') return 'Is the gauge recorded in inches or centimetres?';
-  if (path === 'sections') return 'Add at least one section with one measurement to grade the pattern.';
-  if (path.startsWith('sections[') && path.endsWith('.name')) return 'What is the name of this pattern section?';
-  if (path.includes('.measurements')) return 'Provide a measurement label, grading key, type, and base value for this section.';
-  if (path === 'customStandardSnapshot') return 'Provide the frozen custom sizing chart before using the Custom standard.';
-  return `Please correct ${path}.`;
-}
-
-export function assessMcpProject(raw: unknown): McpIntakeOutput {
-  const normalized = normalizeMcpProject(raw);
-  const errors = normalized.issues.filter(issue => issue.severity === 'error');
-  const nextQuestions = Array.from(new Set(errors.map(questionForIssue))).slice(0, 8);
-  return {
-    schemaVersion: MCP_CONTRACT_VERSION,
-    ready: errors.length === 0,
-    project: normalized.project,
-    issues: normalized.issues.slice(0, 100),
-    nextQuestions,
-    instruction: errors.length === 0
-      ? 'The supplied snapshot is ready for deterministic grading. Ask the user to confirm the grading scope before running it.'
-      : 'Ask only for the missing or invalid fields listed above. Do not guess measurements, gauge, units, sizes, or standards.',
-  };
 }
 
 function asciiSafe(value: unknown): string {

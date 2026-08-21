@@ -1,4 +1,4 @@
-import { assessMcpProject, prepareMcpPdfExport } from './mcp-workflow.js';
+import { assessMcpProject } from './mcp-intake.js';
 import {
   explainMcpGrade,
   getMcpToolDefinitions,
@@ -156,6 +156,7 @@ export async function dispatchMcpRequestAsync(request: McpJsonRpcRequest): Promi
   if (!isRecord(args) || !Object.prototype.hasOwnProperty.call(args, 'project')) {
     return invalidParams(request, 'export.pattern_pdf requires arguments.project.');
   }
+  const { prepareMcpPdfExport } = await import('./mcp-workflow.js');
   const output = await prepareMcpPdfExport(args);
   if ('data' in output && output.ready) {
     const { data, ...metadata } = output;
