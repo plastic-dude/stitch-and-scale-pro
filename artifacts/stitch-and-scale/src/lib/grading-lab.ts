@@ -46,7 +46,8 @@ export type LabFlagCode =
   | 'G-05' // oversized ease combined with an inelastic fiber family warning
   | 'G-06' // gauge entered below a sanity floor (unrealistic swatch)
   | 'G-07' // size count below the inclusive-floor recommendation (XS-5XL practice)
-  | 'G-08'; // unit/gauge mismatch: cm-project gauge in imperial convention
+  | 'G-08' // unit/gauge mismatch: cm-project gauge in imperial convention
+  | 'G-09'; // integrity: a measurement carries an impossible base value (non-finite or not strictly positive)
 
 export interface LabFlag {
   code: LabFlagCode;
@@ -88,6 +89,22 @@ function bustMeasurement(project: PatternProject) {
     .find(m => m.gradingKey === 'bust');
 }
 
+/**
+ * G-09 integrity gate (audit 2026-08-21, F-01/F-02): a measurement whose
+ * baseValue is non-finite or not strictly positive can never grade to a
+ * sensible physical value — the whole graded set is only as trustworthy as
+ * its worst measurement, so this blocks the verdict outright.
+ */
+function invalidMeasurements(project: PatternProject): Array<{ label: string; baseValue: number }> {
+  const bad: Array<{ label: string; baseValue: number }> = [];
+  for (const section of project.sections) {
+    for (const m of section.measurements) {
+      if (!Number.isFinite(m.baseValue) || m.baseValue <= 0) bad.push({ label: m.label, baseValue: m.baseValue });
+    }
+  }
+  return bad;
+}
+
 function bustPhysicalCmAt(project: PatternProject, sizeIndex: number): number | null {
   const graded = gradeWholeProject(project);
   for (const section of graded) {
@@ -108,6 +125,25 @@ export function analyzeGrading(project: PatternProject): LabResult {
 
   const graded = gradeWholeProject(project);
   const totalSizes = ALL_SIZES.length;
+
+  // G-09: integrity first — impossible base values anywhere in the project
+  // invalidate the whole graded set (audit 2026-08-21, F-01/F-02).
+  const bad = invalidMeasurements(project);
+  if (bad.length > 0) {
+    const shown = bad.slice(0, 3).map(b => `“${b.label}” (${b.baseValue})`).join(', ');
+    const more = bad.length > 3 ? ` (+${bad.length - 3} more)` : '';
+    flags.push({
+      code: 'G-09', severity: 'error',
+      title: 'A measurement cannot grade: impossible base value',
+      detail: `${bad.length} measurement(s) carry a base value that is zero, negative, or not a number: ${shown}${more}. Every graded count is multiplied from these values, so the whole set must be corrected — a negative or zero physical dimension cannot exist on a body.`,
+    });
+    // With an integrity failure there is nothing meaningful to grade.
+    return {
+      sizeChecks: [], gradedSizeCount: 0, gradedBustEaseCm: null, easeBand: null,
+      flags, freelanceCost: { min: 0, max: 0 }, verdict: 'blocked',
+      verdictReason: `${bad.length} measurement(s) carry an impossible base value — fix them before grading.`,
+    };
+  }
   const gradedSizeCount = graded.length > 0 && graded[0].measurements.length > 0
     ? graded[0].measurements[0].gradedValues.length : 0;
 

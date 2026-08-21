@@ -149,6 +149,14 @@ export function parseMeasurementsCSV(text: string): CSVImportResult {
       errors.push(`Row ${rowNum}: "${baseValueRaw}" isn't a valid number for Base Value.`);
       return;
     }
+    // CHK-144 integrity gate (audit 2026-08-21, F-01): a base value must be a
+    // strictly positive, finite number. Zero and negative dimensions grade to
+    // impossible stitch counts, so this path rejects them rather than the
+    // NaN-only check that existed before.
+    if (!Number.isFinite(baseValue) || baseValue <= 0) {
+      errors.push(`Row ${rowNum}: "${baseValueRaw}" must be a positive number for Base Value.`);
+      return;
+    }
 
     const parseRounding = (
       modeRaw: string, multRaw: string, remRaw: string, label: 'Stitch' | 'Row'

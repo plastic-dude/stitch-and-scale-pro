@@ -426,10 +426,20 @@ export default function ProjectWorkspace() {
     toast({ title: tc.sectionDeletedTitle, description: tc.sectionDeletedDescription });
   };
 
+  // CHK-144 integrity gate (audit 2026-08-21, F-01): impossible base
+  // values (negative, zero, non-finite) can never grade to a sensible
+  // physical value — the form rejects them with a field-specific error
+  // instead of silently persisting a corrupt measurement.
   const handleAddMeasurement = (sectionId: string) => {
-    if (!mLabel.trim() || !mBaseValue) return;
+    const rawBase = mBaseValue.trim();
+    const parsedBase = parseFloat(rawBase);
+    if (!mLabel.trim() || !Number.isFinite(parsedBase) || parsedBase <= 0) {
+      const rejected = tc.invalidMeasurementValue(mLabel.trim() || '…', rawBase || '–');
+      toast({ title: rejected, variant: 'destructive' });
+      return;
+    }
 
-    const measurement = updatedMeasurement();
+    const measurement = updatedMeasurement(parsedBase);
 
     updateProject({
       ...project,
@@ -536,12 +546,15 @@ export default function ProjectWorkspace() {
   // Save then either adds (new) or updates in place (edit) - the measurement
   // id is preserved in edit mode so graded tables and PDF references survive.
   const isEditingThisSection = isEditing && editingMeasurement!.sectionId === (addingMeasurementTo ?? '');
-  const updatedMeasurement = (): SectionMeasurement => ({
+  // parsedBase (guarded by handleAddMeasurement) is used directly — the old
+  // `|| 0` coercion here could still have written a zero into the model for
+  // empty or non-numeric input paths (audit 2026-08-21, F-01).
+  const updatedMeasurement = (parsedBase: number): SectionMeasurement => ({
     id: isEditingThisSection ? editingMeasurement!.measurementId : generateId(),
     label: mLabel.trim(),
     measurementType: mType,
     gradingKey: mKey,
-    baseValue: parseFloat(mBaseValue) || 0,
+    baseValue: parsedBase,
     stitchRepeat: mStitchMode === 'multiple' && mStitchRepeat ? parseInt(mStitchRepeat) : undefined,
     stitchRemainder: mStitchMode === 'multiple' && mStitchRemainder ? parseInt(mStitchRemainder) : undefined,
     stitchParity: mStitchMode === 'even' || mStitchMode === 'odd' ? mStitchMode : undefined,

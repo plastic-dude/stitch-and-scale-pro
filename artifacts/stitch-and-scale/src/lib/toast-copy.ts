@@ -93,6 +93,8 @@ export interface ToastCopy {
   updated: string;
   /** `Copy failed — select the text manually.` */
   copyFailedSelectManually: string;
+  /** CHK-144 (audit 2026-08-21, F-01): toast title when a base value cannot be saved. `${label} could not be saved: ${raw} is not a valid positive number. A physical dimension cannot be zero or negative.` */
+  invalidMeasurementValue: (label: string, raw: string) => string;
 }
 
 const COPY: Record<LanguageCode, ToastCopy> = {
@@ -167,6 +169,7 @@ const COPY: Record<LanguageCode, ToastCopy> = {
 
     updated: 'updated',
     copyFailedSelectManually: 'updated',
+    invalidMeasurementValue: (label, raw) => `Measurement “${label}” could not be saved: ${raw} is not a valid positive number. A physical dimension cannot be zero or negative.`,
 
   },
   de: {
@@ -240,6 +243,7 @@ const COPY: Record<LanguageCode, ToastCopy> = {
 
     updated: 'aktualisiert',
     copyFailedSelectManually: 'copy fehlgeschlagen — bitte markiere den Text selbst.',
+    invalidMeasurementValue: (label, raw) => `Maß „${label}“ konnte nicht gespeichert werden: ${raw} ist keine gültige positive Zahl. Eine physische Abmessung kann nicht null oder negativ sein.`,
 
   },
   fr: {
@@ -314,6 +318,7 @@ const COPY: Record<LanguageCode, ToastCopy> = {
 
     updated: 'mis à jour',
     copyFailedSelectManually: 'copie échouée — sélectionnez le texte manuellement.',
+    invalidMeasurementValue: (label, raw) => `La mesure « ${label} » n’a pas pu être enregistrée : ${raw} n’est pas un nombre positif valide. Une dimension physique ne peut pas être nulle ou négative.`,
 
   },
   es: {
@@ -387,6 +392,7 @@ const COPY: Record<LanguageCode, ToastCopy> = {
 
     updated: 'actualizado',
     copyFailedSelectManually: 'no se pudo copiar — selecciona el texto manualmente.',
+    invalidMeasurementValue: (label, raw) => `La medida « ${label} » no pudo guardarse: ${raw} no es un número positivo válido. Una dimensión física no puede ser nula o negativa.`,
 
   },
   pt: {
@@ -460,6 +466,7 @@ const COPY: Record<LanguageCode, ToastCopy> = {
 
     updated: 'atualizado',
     copyFailedSelectManually: 'cópia falhou — selecione o texto manualmente.',
+    invalidMeasurementValue: (label, raw) => `A medida « ${label} » não pode ser guardada: ${raw} não é um número positivo válido. Uma dimensão física não pode ser nula ou negativa.`,
 
   },
 };

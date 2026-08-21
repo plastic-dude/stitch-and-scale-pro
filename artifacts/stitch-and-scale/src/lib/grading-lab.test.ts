@@ -166,6 +166,36 @@ describe('grading-lab', () => {
     expect(steps[0]).toBeGreaterThan(0);
   });
 
+  // CHK-144 integrity gate (audit 2026-08-21, F-01/F-02): impossible base
+  // values must block the whole graded set and raise the G-09 error flag
+  // instead of silently producing garbage stitch counts.
+  for (const [tag, badBase] of [
+    ['negative', -5] as const,
+    ['zero', 0] as const,
+    ['non-finite (Infinity)', Infinity] as const,
+  ] as const) {
+    it(`G-09 blocks the set when a measurement base value is ${tag} (${badBase})`, () => {
+      const r = analyzeGrading(makeProject({ sections: [{
+        id: 'body', name: 'Body', measurements: [{ id: 'bust', label: 'Bust circumference',
+          measurementType: 'circumference', gradingKey: 'bust', baseValue: badBase,
+          stitchRepeat: 6, stitchRemainder: 2 }] }] }));
+      expect(r.verdict).toBe('blocked');
+      const g09 = r.flags.find(f => f.code === 'G-09');
+      expect(g09).toBeDefined();
+      expect(g09!.severity).toBe('error');
+      expect(g09!.title.toLowerCase()).toContain('impossible base value');
+      expect(r.gradedSizeCount).toBe(0);
+      expect(r.sizeChecks).toEqual([]);
+      expect(r.freelanceCost).toEqual({ min: 0, max: 0 });
+      expect(r.verdictReason).toMatch(/impossible base value/i);
+    });
+  }
+  it('a strictly positive base value still grades cleanly (G-09 stays quiet)', () => {
+    const r = analyzeGrading(makeProject());
+    expect(r.flags.find(f => f.code === 'G-09')).toBeUndefined();
+    expect(r.verdict).toBe('ready');
+  });
+
   it('size checks cover all nine sizes with physical values in cm', () => {
     const r = analyzeGrading(makeProject());
     expect(r.sizeChecks.length).toBe(9);
