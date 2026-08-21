@@ -97,7 +97,7 @@ export interface ToastCopy {
   invalidMeasurementValue: (label: string, raw: string) => string;
 }
 
-const COPY: Record<LanguageCode, ToastCopy> = {
+export const COPY: Record<LanguageCode, ToastCopy> = {
   en: {
     copied: 'Copied',
     copiedDescription: 'Paste it wherever the campaign runs.',

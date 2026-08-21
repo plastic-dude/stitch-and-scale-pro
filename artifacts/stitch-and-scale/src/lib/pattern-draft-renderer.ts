@@ -135,3 +135,69 @@ export function renderDraft(
 
 /** Convenience wrapper for callers that need the draft rendered to text. */
 export type DraftResolver = (draft: string) => string;
+
+export interface DraftIssue {
+  token: string;
+  type: 'unresolved' | 'malformed';
+  message: string;
+}
+
+/**
+ * Validates a draft for unresolved or malformed tokens.
+ * Returns a list of issues found.
+ */
+export function validateDraft(
+  draft: string,
+  project: PatternProject,
+  customStandard: any | undefined,
+): DraftIssue[] {
+  if (!draft) return [];
+  const issues: DraftIssue[] = [];
+  const standards = resolveProjectStandards(project, customStandard);
+  const graded = gradePattern(project, standards) as GradingResult;
+  
+  const tokens = draft.match(/\{([A-Za-z][A-Za-z0-9._-]*)\}/g) || [];
+  
+  for (const full of tokens) {
+    const key = full.slice(1, -1);
+    
+    // Check if token can be resolved
+    let resolved = false;
+    if (key === 'Name' || key === 'Author' || key === 'Yardage') {
+      resolved = true;
+    } else if (key.match(/^Gauge\.(stitches|rows)$/)) {
+      resolved = true;
+    } else {
+      const sizeMatch = key.match(/^Size\.([a-zA-Z0-9-]+)(?:\.([a-zA-Z0-9-]+))?(?:\.(stitch|row))?$/);
+      if (sizeMatch) {
+        const first = sizeMatch[1];
+        const second = sizeMatch[2];
+        const isSizeKey = (s: string): s is SizeKey => (ALL_SIZES as string[]).includes(s);
+        
+        let gradingKey = second && isSizeKey(first) ? second : first;
+        
+        // Check if grading key exists in project
+        const keyExists = project.sections.some(s => 
+          s.measurements.some(m => m.gradingKey === gradingKey)
+        );
+        if (keyExists) resolved = true;
+      }
+    }
+    
+    if (!resolved) {
+      issues.push({
+        token: full,
+        type: 'unresolved',
+        message: `Unresolved token: ${full}`
+      });
+    }
+  }
+  
+  return issues;
+}
+
+export interface DraftIssue {
+  token: string;
+  type: 'unresolved' | 'malformed';
+  message: string;
+}
