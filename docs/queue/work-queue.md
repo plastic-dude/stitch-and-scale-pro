@@ -51,6 +51,7 @@
 | 43 | QUEUE-036 | Data Lifecycle Controls: Implement "Delete all local data" (Danger Zone) with double-confirmation and "Restore Preview" metadata display to prevent accidental data loss and improve trust. | MAJOR | done | CHK-179: `4b9b46b`; implementation complete |
 | 44 | QUEUE-037 | Audit F-10-Perf (MAJOR) — Initial JS chunk exceeds performance budget (~600KB); implement lab-card-level lazy loading to reduce main bundle size and improve mobile TTI. | MAJOR | done | CHK-180: aff1652; optimized via manual chunking and locale splitting |
 | 45 | QUEUE-038 | Priority 0: Release Integrity (CRITICAL) — Enhance `prod-smoke.mjs` with deep integrity checks: exercise project creation, verify export flow, and capture console/network failures. | CRITICAL | done | CHK-181: 071d936; implemented deep smoke checks, modal exercise, and failure capture |
+| 46 | QUEUE-039 | Priority 1: Revision Snapshots (MAJOR) — Implement named snapshots, snapshot notes, and restore flow to provide a durable audit trail for pattern revisions. | MAJOR | in-progress | CHK-182: SHA-PENDING; implementing snapshots schema, storage, and UI |
 
 ## Run ledger
 | Run (date) | Item worked | Gates | Commit | Next item |

@@ -80,6 +80,22 @@ export interface WorkspaceCopy {
   sectionPlaceholder: string;
   notesPlaceholder: string;
   labsCount: (count: number) => string;
+  snapshotsTitle: string;
+  snapshotsDescription: string;
+  createSnapshot: string;
+  snapshotName: string;
+  snapshotNote: string;
+  snapshotPlaceholder: string;
+  restoreSnapshot: string;
+  deleteSnapshot: string;
+  confirmRestoreSnapshot: (name: string) => string;
+  confirmRestoreSnapshotBody: string;
+  confirmDeleteSnapshot: (name: string) => string;
+  confirmDeleteSnapshotBody: string;
+  snapshotCreated: string;
+  snapshotRestored: string;
+  snapshotDeleted: string;
+  noSnapshots: string;
 }
 
 const COPY: Record<LanguageCode, WorkspaceCopy> = {
@@ -109,7 +125,7 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     circumferenceFull: 'Circunferência (total)',
     widthHalf: 'Largura (metade)',
     length: 'Comprimento',
-    directNoGrading: 'Direto (sem graduação)',
+    directNoGrading: 'Direct (no grading)',
     deleteSection: 'Delete section',
     editMeasurement: (label) => `Edit measurement ${label}`,
     deleteMeasurement: (label) => `Delete measurement ${label}`,
@@ -163,6 +179,22 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     sectionPlaceholder: 'e.g. Body, Sleeves, Neckline',
     notesPlaceholder: 'e.g. Worked flat, seamed at the side. Blocks generously — swatch and block before committing to a size.',
     labsCount: (count) => `${count} labs`,
+    snapshotsTitle: 'Revision History',
+    snapshotsDescription: 'Save named snapshots of your project to create an audit trail or restore previous versions.',
+    createSnapshot: 'Create Snapshot',
+    snapshotName: 'Snapshot Name',
+    snapshotNote: 'Notes (optional)',
+    snapshotPlaceholder: 'e.g. Pre-Test Knit, Post-Tech Edit',
+    restoreSnapshot: 'Restore',
+    deleteSnapshot: 'Delete',
+    confirmRestoreSnapshot: (name) => `Restore "${name}"?`,
+    confirmRestoreSnapshotBody: 'This will replace your current workspace data with this snapshot. Your current snapshots history will be preserved.',
+    confirmDeleteSnapshot: (name) => `Delete snapshot "${name}"?`,
+    confirmDeleteSnapshotBody: 'This snapshot will be permanently removed from your revision history. This cannot be undone.',
+    snapshotCreated: 'Snapshot created',
+    snapshotRestored: 'Snapshot restored',
+    snapshotDeleted: 'Snapshot deleted',
+    noSnapshots: 'No snapshots yet. Create one to start your audit trail.',
   },
   de: {
     by: 'Von',
@@ -244,6 +276,22 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     sectionPlaceholder: 'z.B. Körper, Ärmel, Ausschnitt',
     notesPlaceholder: 'z.B. Flach gestrickt, an der Seite zusammengefügt. Dehnt sich beim Waschen — Probe waschen und spannen.',
     labsCount: (count) => `${count} Labore`,
+    snapshotsTitle: 'Versionsverlauf',
+    snapshotsDescription: 'Speichere benannte Schnappschüsse deines Projekts, um einen Prüfpfad zu erstellen oder frühere Versionen wiederherzustellen.',
+    createSnapshot: 'Schnappschuss erstellen',
+    snapshotName: 'Name des Schnappschusses',
+    snapshotNote: 'Notizen (optional)',
+    snapshotPlaceholder: 'z.B. Vor dem Teststricken, Nach dem Tech-Edit',
+    restoreSnapshot: 'Wiederherstellen',
+    deleteSnapshot: 'Löschen',
+    confirmRestoreSnapshot: (name) => `„${name}" wiederherstellen?`,
+    confirmRestoreSnapshotBody: 'Dies ersetzt deine aktuellen Arbeitsbereichsdaten durch diesen Schnappschuss. Dein bisheriger Versionsverlauf bleibt erhalten.',
+    confirmDeleteSnapshot: (name) => `Schnappschuss „${name}" löschen?`,
+    confirmDeleteSnapshotBody: 'Dieser Schnappschuss wird dauerhaft aus deinem Versionsverlauf entfernt. Dies kann nicht rückgängig gemacht werden.',
+    snapshotCreated: 'Schnappschuss erstellt',
+    snapshotRestored: 'Schnappschuss wiederhergestellt',
+    snapshotDeleted: 'Schnappschuss gelöscht',
+    noSnapshots: 'Noch keine Schnappschüsse. Erstelle einen, um deinen Prüfpfad zu beginnen.',
   },
   fr: {
     by: 'Par',
@@ -325,6 +373,22 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     sectionPlaceholder: 'ex. Corps, Manches, Encolure',
     notesPlaceholder: 'ex. Tricoté à plat, assemblé sur le côté. Se détend au blocage — lavez et bloquez votre échantillon.',
     labsCount: (count) => `${count} labos`,
+    snapshotsTitle: 'Historique des révisions',
+    snapshotsDescription: 'Enregistrez des instantanés nommés de votre projet pour créer une piste d\'audit ou restaurer des versions précédentes.',
+    createSnapshot: 'Créer un instantané',
+    snapshotName: 'Nom de l\'instantané',
+    snapshotNote: 'Notes (optionnel)',
+    snapshotPlaceholder: 'ex: Avant test, Après édition technique',
+    restoreSnapshot: 'Restaurer',
+    deleteSnapshot: 'Supprimer',
+    confirmRestoreSnapshot: (name) => `Restaurer « ${name} » ?`,
+    confirmRestoreSnapshotBody: 'Cela remplacera vos données de travail actuelles par cet instantané. Votre historique d\'instantanés actuel sera préservé.',
+    confirmDeleteSnapshot: (name) => `Supprimer l'instantané « ${name} » ?`,
+    confirmDeleteSnapshotBody: 'Cet instantané sera définitivement supprimé de votre historique de révision. Cette action est irréversible.',
+    snapshotCreated: 'Instantané créé',
+    snapshotRestored: 'Instantané restauré',
+    snapshotDeleted: 'Instantané supprimé',
+    noSnapshots: 'Aucun instantané pour le moment. Créez-en un pour commencer votre piste d\'audit.',
   },
   es: {
     by: 'Por',
@@ -406,6 +470,22 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     sectionPlaceholder: 'p. ej. Cuerpo, Mangas, Escote',
     notesPlaceholder: 'p. ej. Tejido en plano, cosido en el lateral. Estira al bloquear: lava y bloquea tu muestra.',
     labsCount: (count) => `${count} laboratorios`,
+    snapshotsTitle: 'Historial de revisiones',
+    snapshotsDescription: 'Guarda instantáneas con nombre de tu proyecto para crear un registro de auditoría o restaurar versiones anteriores.',
+    createSnapshot: 'Crear instantánea',
+    snapshotName: 'Nombre de la instantánea',
+    snapshotNote: 'Notas (opcional)',
+    snapshotPlaceholder: 'p. ej., Antes del test, Después de la edición técnica',
+    restoreSnapshot: 'Restaurar',
+    deleteSnapshot: 'Eliminar',
+    confirmRestoreSnapshot: (name) => `¿Restaurar "${name}"?`,
+    confirmRestoreSnapshotBody: 'Esto reemplazará los datos actuales de tu espacio de trabajo con esta instantánea. Se conservará el historial de instantáneas actual.',
+    confirmDeleteSnapshot: (name) => `¿Eliminar instantánea "${name}"?`,
+    confirmDeleteSnapshotBody: 'Esta instantánea se eliminará permanentemente de tu historial de revisiones. Esta acción no se puede deshacer.',
+    snapshotCreated: 'Instantánea creada',
+    snapshotRestored: 'Instantánea restaurada',
+    snapshotDeleted: 'Instantánea eliminada',
+    noSnapshots: 'Aún no hay instantáneas. Crea una para comenzar tu registro de auditoría.',
   },
   pt: {
     by: 'Por',
@@ -487,6 +567,22 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     sectionPlaceholder: 'ex. Corpo, Mangas, Decote',
     notesPlaceholder: 'ex. Trabalhado em plano, costurado na lateral. Estica ao bloquear — lave e bloqueie a sua amostra.',
     labsCount: (count) => `${count} laboratórios`,
+    snapshotsTitle: 'Histórico de Revisões',
+    snapshotsDescription: 'Salve instantâneos nomeados do seu projeto para criar uma trilha de auditoria ou restaurar versões anteriores.',
+    createSnapshot: 'Criar Instantâneo',
+    snapshotName: 'Nome do Instantâneo',
+    snapshotNote: 'Notas (opcional)',
+    snapshotPlaceholder: 'ex: Antes do teste, Após edição técnica',
+    restoreSnapshot: 'Restaurar',
+    deleteSnapshot: 'Eliminar',
+    confirmRestoreSnapshot: (name) => `Restaurar "${name}"?`,
+    confirmRestoreSnapshotBody: 'Isto substituirá os dados atuais do seu espaço de trabalho por este instantâneo. O seu histórico de instantâneos atual será preservado.',
+    confirmDeleteSnapshot: (name) => `Eliminar instantâneo "${name}"?`,
+    confirmDeleteSnapshotBody: 'Este instantâneo será removido permanentemente do seu histórico de revisões. Esta ação não pode ser desfeita.',
+    snapshotCreated: 'Instantâneo criado',
+    snapshotRestored: 'Instantâneo restaurado',
+    snapshotDeleted: 'Instantâneo eliminado',
+    noSnapshots: 'Ainda não existem instantâneos. Crie um para começar a sua trilha de auditoria.',
   },
 };
 
@@ -522,3 +618,5 @@ export function workspaceGaugeByline(locale: string, gauge: { stitchesPer4In: nu
   if (!gauge.stitchesPer4In || !gauge.rowsPer4In) return `—${sts} × —${rows} / ${unit}`;
   return `${gauge.stitchesPer4In}${sts} × ${gauge.rowsPer4In}${rows} / ${unit}`;
 }
+
+export const useWorkspaceCopy = (lang: LanguageCode) => COPY[lang];

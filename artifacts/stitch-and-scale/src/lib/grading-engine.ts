@@ -50,6 +50,15 @@ export interface HumanReviewRecord {
   reviewedAt: string;
 }
 
+export interface ProjectSnapshot {
+  id: string;
+  name: string;
+  createdAt: string;
+  note: string;
+  /** The full project state at the moment of snapshot. */
+  data: Omit<PatternProject, 'snapshots'>;
+}
+
 export interface PatternProject {
   id: string;
   name: string;
@@ -74,6 +83,8 @@ export interface PatternProject {
   customStandardSnapshot?: StandardsTable;
   /** Explicit human-review state; absent on legacy projects until a reviewer records one. */
   humanReview?: HumanReviewRecord;
+  /** Revision snapshots — named snapshots for an audit trail. */
+  snapshots?: ProjectSnapshot[];
 }
 
 export interface GradedMeasurement {

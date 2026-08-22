@@ -23,7 +23,10 @@ type ProjectsAction =
   | { type: 'CREATE'; payload: PatternProject }
   | { type: 'UPDATE'; payload: PatternProject }
   | { type: 'DELETE'; payload: string }
-  | { type: 'DUPLICATE'; payload: string };
+  | { type: 'DUPLICATE'; payload: string }
+  | { type: 'CREATE_SNAPSHOT'; payload: { projectId: string; name: string; note: string } }
+  | { type: 'RESTORE_SNAPSHOT'; payload: { projectId: string; snapshotId: string } }
+  | { type: 'DELETE_SNAPSHOT'; payload: { projectId: string; snapshotId: string } };
 
 export type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
 
@@ -34,6 +37,9 @@ interface ProjectsContextType {
   deleteProject: (id: string) => void;
   duplicateProject: (id: string) => void;
   importProject: (project: PatternProject) => void;
+  createSnapshot: (projectId: string, name: string, note: string) => void;
+  restoreSnapshot: (projectId: string, snapshotId: string) => void;
+  deleteSnapshot: (projectId: string, snapshotId: string) => void;
   saveStatus: SaveStatus;
   recovered: boolean;
   dismissRecovery: () => void;
@@ -82,6 +88,48 @@ function projectsReducer(state: PatternProject[], action: ProjectsAction): Patte
           : undefined,
       };
       newState = [...state, duplicated];
+      break;
+    case 'CREATE_SNAPSHOT':
+      newState = state.map(p => {
+        if (p.id !== action.payload.projectId) return p;
+        const { snapshots, ...data } = p;
+        const newSnapshot = {
+          id: generateId(),
+          name: action.payload.name,
+          note: action.payload.note,
+          createdAt: new Date().toISOString(),
+          data: JSON.parse(JSON.stringify(data)),
+        };
+        return {
+          ...p,
+          snapshots: [newSnapshot, ...(p.snapshots || [])],
+          updatedAt: new Date().toISOString(),
+        };
+      });
+      break;
+    case 'RESTORE_SNAPSHOT':
+      newState = state.map(p => {
+        if (p.id !== action.payload.projectId) return p;
+        const snapshot = p.snapshots?.find(s => s.id === action.payload.snapshotId);
+        if (!snapshot) return p;
+        // Restore project data but preserve the snapshots history itself.
+        return {
+          ...snapshot.data,
+          id: p.id, // Ensure id stays consistent
+          snapshots: p.snapshots,
+          updatedAt: new Date().toISOString(),
+        };
+      });
+      break;
+    case 'DELETE_SNAPSHOT':
+      newState = state.map(p => {
+        if (p.id !== action.payload.projectId) return p;
+        return {
+          ...p,
+          snapshots: (p.snapshots || []).filter(s => s.id !== action.payload.snapshotId),
+          updatedAt: new Date().toISOString(),
+        };
+      });
       break;
     default:
       return state;
@@ -182,6 +230,10 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
   const updateProject = (project: PatternProject) => dispatch({ type: 'UPDATE', payload: project });
   const deleteProject = (id: string) => dispatch({ type: 'DELETE', payload: id });
   const duplicateProject = (id: string) => dispatch({ type: 'DUPLICATE', payload: id });
+  const createSnapshot = (projectId: string, name: string, note: string) => dispatch({ type: 'CREATE_SNAPSHOT', payload: { projectId, name, note } });
+  const restoreSnapshot = (projectId: string, snapshotId: string) => dispatch({ type: 'RESTORE_SNAPSHOT', payload: { projectId, snapshotId } });
+  const deleteSnapshot = (projectId: string, snapshotId: string) => dispatch({ type: 'DELETE_SNAPSHOT', payload: { projectId, snapshotId } });
+
   // Import a single project from an exported JSON file — always assigns a
   // fresh id so it can never silently collide with or overwrite an existing
   // project, even if the file was exported from this same workspace.
@@ -193,7 +245,11 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
   if (!isLoaded) return null; // Prevent rendering before state loads
 
   return (
-    <ProjectsContext.Provider value={{ projects, createProject, updateProject, deleteProject, duplicateProject, importProject, saveStatus, recovered, dismissRecovery }}>
+    <ProjectsContext.Provider value={{ 
+      projects, createProject, updateProject, deleteProject, duplicateProject, importProject, 
+      createSnapshot, restoreSnapshot, deleteSnapshot,
+      saveStatus, recovered, dismissRecovery 
+    }}>
       {children}
     </ProjectsContext.Provider>
   );
@@ -223,7 +279,7 @@ export function makeDemoProject(langOrTimestamp: any = 'en', nowOverride?: strin
 }
 
 export function useProject(id?: string) {
-  const { projects, createProject, updateProject, deleteProject } = useProjects();
+  const { projects, createProject, updateProject, deleteProject, createSnapshot, restoreSnapshot, deleteSnapshot } = useProjects();
   if (!id) return null;
   const existing = projects.find(p => p.id === id);
 
@@ -236,6 +292,9 @@ export function useProject(id?: string) {
       project: demo,
       updateProject: (p: PatternProject) => updateProject(p),
       deleteProject: () => deleteProject(DEMO_PROJECT_ID),
+      createSnapshot: (name: string, note: string) => createSnapshot(DEMO_PROJECT_ID, name, note),
+      restoreSnapshot: (snapshotId: string) => restoreSnapshot(DEMO_PROJECT_ID, snapshotId),
+      deleteSnapshot: (snapshotId: string) => deleteSnapshot(DEMO_PROJECT_ID, snapshotId),
     };
   }
 
@@ -245,5 +304,8 @@ export function useProject(id?: string) {
     project: existing,
     updateProject: (p: PatternProject) => updateProject(p),
     deleteProject: () => deleteProject(existing.id),
+    createSnapshot: (name: string, note: string) => createSnapshot(existing.id, name, note),
+    restoreSnapshot: (snapshotId: string) => restoreSnapshot(existing.id, snapshotId),
+    deleteSnapshot: (snapshotId: string) => deleteSnapshot(existing.id, snapshotId),
   };
 }

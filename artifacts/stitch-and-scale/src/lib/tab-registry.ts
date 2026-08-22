@@ -40,6 +40,7 @@ export const TAB_REGISTRY: TabRegistryEntry[] = [
   { value: "preview", label: "Preview", group: "design" },
   { value: "yarn", label: "Yarn", group: "design" },
   { value: "notes", label: "Notes", group: "design" },
+  { value: "snapshots", label: "Snapshots", group: "design", icon: "History" },
   { value: "income", label: "Income", group: "pricing" },
   { value: "draft", label: "Draft", group: "design" },
   { value: "pricing", label: "Pricing", group: "pricing" },
