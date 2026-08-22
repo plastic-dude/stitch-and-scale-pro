@@ -19,6 +19,7 @@
 | 72 | QUEUE-057 | Wholesale follow-up: durable local records for yarn shop orders | MAJOR | done | CHK-201: Durable wholesale records + localized UI + storage seam |
 | 73 | QUEUE-058 | Reconcile navigator lab counts and verify search/favorites integration | MINOR | done | CHK-202: Dynamic lab counts + hook violation fixes + tab integrity verified |
 | 74 | QUEUE-059 | Branding Audit: logo usage, footer attribution, and EMLUX positioning | MINOR | done | CHK-203: Branding standardized + EMLUX positioning + QA localization fixes |
+| 75 | QUEUE-060 | Revenue & Growth: pricing strategy, model selection, and experiments | MINOR | done | CHK-204: Evidence-led revenue planner + growth pillars + five-locale UI |
 
 ## Run ledger
 | Run (date) | Item worked | Gates | Commit | Next item |
@@ -47,3 +48,4 @@
 | 58 | 2026-08-22 | QUEUE-037 | done | aff1652 | QUEUE-038 |
 | 80 | 2026-08-22 (CHK-202) | QUEUE-058 (MINOR) — Navigator Reconciliation | tsc clean; vitest 2,422/2,422; build green; dynamic lab counts + hook violation fixes | 5f8c954 | QUEUE-059 |
 | 81 | 2026-08-22 (CHK-203) | QUEUE-059 (MINOR) — Branding Audit | tsc clean; vitest 2,422/2,422; build green; branding standardized + EMLUX positioning + QA fixes | be7f767 | QUEUE-060 |
+| 82 | 2026-08-22 (CHK-204) | QUEUE-060 (MINOR) — Revenue & Growth | tsc clean; vitest 2,425/2,425; build green; evidence-led revenue planner + growth pillars + localized UI | 890c5ed | QUEUE-061 |

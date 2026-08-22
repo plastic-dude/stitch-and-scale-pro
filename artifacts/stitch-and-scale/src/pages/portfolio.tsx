@@ -41,6 +41,7 @@ import { Coins, Download, ListChecks, Package, Rocket, Target, TrendingUp } from
 import { useSettings } from '@/context/SettingsContext';
 import { PORTFOLIO_COPY, type PortfolioCopy } from '@/lib/portfolio-copy';
 import { normalizeProjectBookFilename, projectBookPrintTitle, renderProjectBookDocument } from '@/lib/project-book-export';
+import { RevenueGrowthPanel } from '@/components/revenue-growth-panel';
 
 const DEFAULT_INPUTS: PortfolioInputs = {
   itemType: 'sweater',
@@ -431,6 +432,8 @@ export default function PortfolioPage() {
           </div>
         </CardContent>
       </Card>
+
+      <RevenueGrowthPanel />
 
       {/* Footnote */}
       <div className="text-[11px] text-muted-foreground space-y-1 border-t border-border/60 pt-3">
