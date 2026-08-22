@@ -11,7 +11,7 @@
 | `research_question` | Can the exact owner-provided Google Drive bundle be preserved in the repository and made a mandatory, fail-closed source for recurring application agents? |
 | `sources_consulted` | Owner-provided Google Drive download; all 15 files listed below; project constitution; standing orders; Main Worker, Reviewer, and Crawler playbooks; schedule/completion instructions; source-bundle README and manifest |
 | `archive_sha256` | `c19b71cdd06d250326d80eddc27685cbb627f91b03d85a624f0bb4894ba2a082` |
-| `archive_size` | 63,248 bytes |
+| `archive_size` | 63,358 bytes |
 | `raw_source_count` | 15 files; 146,799 uncompressed bytes |
 | `integrity_gate` | `node scripts/verify-source-bundle-context.mjs` → `SOURCE_BUNDLE_CONTEXT_VERIFIED archive=c19b71cdd06d250326d80eddc27685cbb627f91b03d85a624f0bb4894ba2a082 files=15` |
 
