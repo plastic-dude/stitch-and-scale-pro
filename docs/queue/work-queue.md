@@ -2,6 +2,15 @@
 
 **Canonical file for the 15-minute loop firings.** This file is the single source of truth for "what is next." Every firing reads it first, works the first `queued` entry, updates statuses inline, and appends a ledger line. Owner directive 2026-08-19: firings continue this queue from the start, never restart from scratch.
 
+## OWNER DIRECTIVE 2026-08-22 — READ FIRST, RESEARCH-ONLY, DO NOT IMPLEMENT
+
+**Status: `queued` (research pass 1 of 2).** Topic: soothing, non-manipulative recognition/gamification for real milestones in the normal usage flow (grading a pattern, exporting a PDF, and other genuine accomplishments) — related to but distinct from Brag Cards. Full brief, design constraints, and current-state hypothesis: `docs/research/soothing-recognition-gamification-2026-08-22.md`.
+
+**This entry is research-only. Do not write any application code, copy strings, or storage schema against it yet.** The brief requires two independent research passes, on two separate scheduled firings, before any implementation ticket may be opened:
+
+- **Pass 1 (this firing):** re-verify the brief's §5 touchpoint table against the live code at current HEAD (file paths, line numbers, exact success signals) and note anything the brief missed. Log as `docs/leader-notes/cycle-<date>-<chk>-soothing-recognition-pass1.md`. When done, set this entry's status to `pass-1-done` and re-queue it for a *second, later* firing rather than closing it — the second pass must not happen in the same firing as the first.
+- **Pass 2 (a later firing):** stress-test every surviving touchpoint against the brief's §4 design principles, draft the 5-locale copy and a `storage-lib.ts`-style schema sketch, and log as `docs/leader-notes/cycle-<date>-<chk>-soothing-recognition-pass2.md`. Only after this log lands should a numbered `QUEUE-` implementation item be opened, scoped to a single touchpoint.
+
 ## Queue entries (walking order)
 
 | # | id | Description | Severity | Status | Evidence / notes |
