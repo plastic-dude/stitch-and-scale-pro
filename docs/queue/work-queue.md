@@ -4,12 +4,12 @@
 
 ## OWNER DIRECTIVE 2026-08-22 — READ FIRST, RESEARCH-ONLY, DO NOT IMPLEMENT
 
-**Status: `queued` (research pass 1 of 2).** Topic: soothing, non-manipulative recognition/gamification for real milestones in the normal usage flow (grading a pattern, exporting a PDF, and other genuine accomplishments) — related to but distinct from Brag Cards. Full brief, design constraints, and current-state hypothesis: `docs/research/soothing-recognition-gamification-2026-08-22.md`.
+**Status: `pass-1-done` (re-queued for research pass 2 on a later firing).** Topic: soothing, non-manipulative recognition/gamification for real milestones in the normal usage flow (grading a pattern, exporting a PDF, and other genuine accomplishments) — related to but distinct from Brag Cards. Full brief, design constraints, and current-state hypothesis: `docs/research/soothing-recognition-gamification-2026-08-22.md`. Pass 1 evidence: `docs/leader-notes/cycle-2026-08-22-CHK-212-soothing-recognition-pass1.md`.
 
 **This entry is research-only. Do not write any application code, copy strings, or storage schema against it yet.** The brief requires two independent research passes, on two separate scheduled firings, before any implementation ticket may be opened:
 
-- **Pass 1 (this firing):** re-verify the brief's §5 touchpoint table against the live code at current HEAD (file paths, line numbers, exact success signals) and note anything the brief missed. Log as `docs/leader-notes/cycle-<date>-<chk>-soothing-recognition-pass1.md`. When done, set this entry's status to `pass-1-done` and re-queue it for a *second, later* firing rather than closing it — the second pass must not happen in the same firing as the first.
-- **Pass 2 (a later firing):** stress-test every surviving touchpoint against the brief's §4 design principles, draft the 5-locale copy and a `storage-lib.ts`-style schema sketch, and log as `docs/leader-notes/cycle-<date>-<chk>-soothing-recognition-pass2.md`. Only after this log lands should a numbered `QUEUE-` implementation item be opened, scoped to a single touchpoint.
+- **Pass 1 (completed in CHK-212):** re-verified the brief's §5 touchpoint table against the live code at the audited HEAD (file paths, line numbers, exact success signals) and recorded corrections in `docs/leader-notes/cycle-2026-08-22-CHK-212-soothing-recognition-pass1.md`. This entry is now `pass-1-done` and remains re-queued for a *second, later* firing rather than closed — the second pass must not happen in the same firing as the first.
+- **Pass 2 (next later firing; still research-only):** stress-test every surviving touchpoint against the brief's §4 design principles, draft the 5-locale copy and a `storage-lib.ts`-style schema sketch, and log as `docs/leader-notes/cycle-<date>-<chk>-soothing-recognition-pass2.md`. Only after this log lands should a numbered `QUEUE-` implementation item be opened, scoped to a single touchpoint.
 
 ## Queue entries (walking order)
 
@@ -67,4 +67,5 @@
 | 78 | QUEUE-063 | CI/CD & Locale Matrix: Automated translation parity check and build-time localization gate | done | CHK-207 | CHK-207: Automated parity gate green; standardized 80+ copy modules. |
 | 79 | QUEUE-064 | Mobile Resilience: Fix onboarding footer overlap and deep-link recovery | MAJOR | done | CHK-208: Fixed 390x844 footer overlap + repaired deep-link recovery handlers + localized recovery UI. |
 | 87 | 2026-08-22 (CHK-209) | QUEUE-065 (MAJOR) — Localization & Parity | tsc clean; vitest 2,515/2,515; build green; fixed remaining English + onboarding tour parity | ef4c1bf | done |
+| 88 | 2026-08-22 (CHK-212) | OWNER DIRECTIVE — soothing recognition Pass 1 | research-only; current source anchors re-verified; implementation correctly held | 656f5f3 | pass-1-done; re-queued for later Pass 2 |
 | 80 | QUEUE-065 | Localization Brutality IV and Onboarding Parity | MAJOR | done | CHK-209: Localized grading labels, CSV headers, and demo names; fixed onboarding tour parity + mobile clearance. |
