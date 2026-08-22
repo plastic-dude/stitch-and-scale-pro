@@ -71,7 +71,7 @@ export default function Landing() {
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
           <div className="flex items-center gap-2.5">
             <img
-              src="/favicon.png"
+              src="/favicon-192.png"
               alt="Stitch & Scale"
               className="h-8 w-8 rounded-md object-cover shadow-sm"
             />
@@ -243,7 +243,7 @@ export default function Landing() {
       <footer className="mx-auto max-w-6xl px-4 py-8">
         <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-muted-foreground">
           <div className="flex items-center gap-2">
-            <img src="/favicon.png" alt="" aria-hidden="true" className="h-4 w-4 rounded-sm object-cover" />
+            <img src="/favicon-192.png" alt="" aria-hidden="true" className="h-4 w-4 rounded-sm object-cover" />
             <span>{copy.footerToolkit}</span>
           </div>
           <div>

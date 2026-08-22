@@ -491,7 +491,7 @@ function brandMark(size: number, customLogo?: string): string {
   if (customLogo) {
     return `<img src="${esc(customLogo)}" alt="" width="${size}" height="${size}" style="width:${size}px;height:${size}px;object-fit:contain;display:block;flex-shrink:0;" />`;
   }
-  return `<img src="/favicon.png" alt="" width="${size}" height="${size}" style="width:${size}px;height:${size}px;border-radius:${Math.round(size * 0.16)}px;object-fit:cover;display:block;flex-shrink:0;" />`;
+  return `<img src="/favicon-192.png" alt="" width="${size}" height="${size}" style="width:${size}px;height:${size}px;border-radius:${Math.round(size * 0.16)}px;object-fit:cover;display:block;flex-shrink:0;" />`;
 }
 
 function esc(s: string): string {

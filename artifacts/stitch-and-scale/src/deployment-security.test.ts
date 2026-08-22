@@ -52,4 +52,20 @@ describe('Deployment Security (F-13, F-14)', () => {
     const faviconPath = join(rootDir, 'artifacts', 'stitch-and-scale', 'public', 'favicon-32.png');
     expect(statSync(faviconPath).size).toBeLessThan(16 * 1024);
   });
+
+  it('runtime branding avoids loading the oversized source favicon', () => {
+    const sourcePaths = [
+      join(rootDir, 'artifacts', 'stitch-and-scale', 'src', 'components', 'shell.tsx'),
+      join(rootDir, 'artifacts', 'stitch-and-scale', 'src', 'pages', 'landing.tsx'),
+      join(rootDir, 'artifacts', 'stitch-and-scale', 'src', 'lib', 'pdf', 'renderer.ts'),
+    ];
+    for (const sourcePath of sourcePaths) {
+      const source = readFileSync(sourcePath, 'utf-8');
+      expect(source).not.toContain('/favicon.png');
+      expect(source).toContain('/favicon-192.png');
+    }
+
+    const faviconPath = join(rootDir, 'artifacts', 'stitch-and-scale', 'public', 'favicon-192.png');
+    expect(statSync(faviconPath).size).toBeLessThan(64 * 1024);
+  });
 });
