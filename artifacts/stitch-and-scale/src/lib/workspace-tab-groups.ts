@@ -123,6 +123,7 @@ export const TAB_GROUPS: Record<string, TabGroup> = {
   // CHK-091 — Brag Cards: shareable stat cards, launch group.
   bragcard: "launch",
   payback: "pricing",
+  samples: "business",
 };
 
 export function groupFor(tabValue: string): TabGroup {

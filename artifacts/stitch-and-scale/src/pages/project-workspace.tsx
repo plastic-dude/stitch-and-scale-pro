@@ -125,6 +125,7 @@ const LAB = {
   podcastaffiliate: React.lazy(cardLazy(() => import('@/components/podcast-affiliate-lab-card'))),
   magazinesubmission: React.lazy(cardLazy(() => import('@/components/magazine-submission-lab-card'))),
   pricingpsychology: React.lazy(cardLazy(() => import('@/components/pricing-psychology-lab-card'))),
+  samples: React.lazy(cardLazy(() => import('@/components/sample-tracker-card'))),
   podpatterns: React.lazy(cardLazy(() => import('@/components/pod-patterns-lab-card'))),
   marketplacetakerate: React.lazy(cardLazy(() => import('@/components/marketplace-takerate-lab-card'))),
   boxinclusion: React.lazy(cardLazy(() => import('@/components/box-inclusion-lab-card'))),
@@ -166,10 +167,10 @@ class LabErrorBoundary extends React.Component<
   }
 }
 
-function LazyPanel({ loader, project }: { loader: React.LazyExoticComponent<any>; project: any }): React.ReactElement {
+function LazyPanel({ loader, project, ...props }: { loader: React.LazyExoticComponent<any>; project: any } & Record<string, any>): React.ReactElement {
   const { language } = useSettings();
   const copy = getWorkspaceCopy(language);
-  const Lab = loader as React.ComponentType<{ project: any }>;
+  const Lab = loader as React.ComponentType<{ project: any } & Record<string, any>>;
   const errorFallback = (
     <Card className="my-8 border-destructive/20 bg-destructive/5">
       <CardContent className="pt-6 text-center">
@@ -196,7 +197,7 @@ function LazyPanel({ loader, project }: { loader: React.LazyExoticComponent<any>
   return (
     <LabErrorBoundary fallback={errorFallback}>
       <React.Suspense fallback={<div className="py-10 text-center text-sm text-muted-foreground">{copy.loadingLab}</div>}>
-        <Lab project={project} />
+        <Lab project={project} {...props} />
       </React.Suspense>
     </LabErrorBoundary>
   );
@@ -847,6 +848,15 @@ export default function ProjectWorkspace() {
       case 'publish': return <LazyPanel loader={LAB.publish} project={project} />;
       case 'testknit': return <LazyPanel loader={LAB.testknit} project={project} />;
       case 'techedit': return <LazyPanel loader={LAB.techedit} project={project} />;
+      case 'samples': return (
+        <LazyPanel 
+          loader={LAB.samples} 
+          project={project}
+          addSample={projectHook?.addSample}
+          updateSample={projectHook?.updateSample}
+          deleteSample={projectHook?.deleteSample}
+        />
+      );
       case 'finish': return <LazyPanel loader={LAB.finish} project={project} />;
       case 'deals': return <LazyPanel loader={LAB.deals} project={project} />;
       case 'launch': return <LazyPanel loader={LAB.launch} project={project} />;
@@ -916,14 +926,15 @@ export default function ProjectWorkspace() {
       case 'designledger': return <LazyPanel loader={LAB.designledger} project={project} />;
       case 'bragcard': return <LazyPanel loader={LAB.bragcard} project={project} />;
       case 'payback': return <LazyPanel loader={LAB.payback} project={project} />;
-      case 'testarchive': {
-        const TestKnitArchiveCard = LAB.testarchive as React.ComponentType<any>;
-        return (
-          <React.Suspense fallback={<div className="py-10 text-center text-sm text-muted-foreground">{copy.loadingLab}</div>}>
-            <TestKnitArchiveCard project={project} />
-          </React.Suspense>
-        );
-      }
+      case 'testarchive': return (
+        <LazyPanel 
+          loader={LAB.testarchive} 
+          project={project}
+          addRound={projectHook?.addTestKnitRound}
+          updateRound={projectHook?.updateTestKnitRound}
+          deleteRound={projectHook?.deleteTestKnitRound}
+        />
+      );
       case 'snapshots': {
         const Snapshots = LAB.snapshots as React.ComponentType<any>;
         return (

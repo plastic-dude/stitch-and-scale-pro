@@ -121,6 +121,8 @@ export function normalizeProjectRecord(
       ? value.collaborationRoster
       : undefined,
     assets: Array.isArray(value.assets) ? value.assets : undefined,
+    testKnitRounds: Array.isArray(value.testKnitRounds) ? value.testKnitRounds : undefined,
+    samples: Array.isArray(value.samples) ? value.samples : undefined,
     isArchived: typeof value.isArchived === 'boolean' ? value.isArchived : undefined,
   };
 }

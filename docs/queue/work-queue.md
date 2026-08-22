@@ -14,10 +14,12 @@
 | 67 | QUEUE-052 | Priority 0 Gap 3: Rendered-artifact publication inspection | MAJOR | done | CHK-196: Storage seam + Inspection UI + Localized reports |
 | 68 | QUEUE-053 | Priority 1 Gap 4: Technical-editor defect ledger | MAJOR | done | CHK-197: Schema expansion + Five-locale UI + Lifecycle logic + Verified Gates |
 | 69 | QUEUE-054 | Priority 1 Gap 5: Test-knit rounds and archival records | MAJOR | done | CHK-198: Durable records for test-knit rounds + localized archive UI + storage seam |
+| 70 | QUEUE-055 | Priority 1 Gap 6: Sample tracker for physical design assets | MAJOR | done | CHK-199: Storage seam + SampleTracker UI + Five-locale localization |
 
 ## Run ledger
 | Run (date) | Item worked | Gates | Commit | Next item |
 |---|---|---|---|---|
+| 77 | 2026-08-22 (CHK-199) | QUEUE-055 (MAJOR) — Sample Tracker | tsc clean; vitest 2,417/2,417; build green; storage seam + SampleTracker UI + browser verified | cac0762d30d890dfc052595d655f718e26a09e95 | QUEUE-056 |
 | 76 | 2026-08-22 (CHK-198) | QUEUE-054 (MAJOR) — Test-Knit Archive | tsc clean; vitest 2,417/2,417; build green; storage seam + localized UI + browser verified | 3b36e1a64a862e6081220498a39a26686258219d | QUEUE-055 |
 | 75 | 2026-08-22 (CHK-197) | QUEUE-053 (MAJOR) — Defect Ledger | tsc clean; vitest 2,413/2,413; build green; five-locale UI + lifecycle + tab fix | 43b545466d279beb495ae526e8f538c4ae8a5fca | QUEUE-054 |
 | 74 | 2026-08-22 (CHK-196) | QUEUE-052 (MAJOR) — Artifact Inspection | tsc clean; vitest green; build green; storage seam + inspection UI + localized reports | 99e8620b0b31032ebcdf6a13cabcc1bb8cf1a3be | QUEUE-053 |

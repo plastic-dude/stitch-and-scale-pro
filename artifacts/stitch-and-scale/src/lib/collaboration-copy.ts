@@ -51,6 +51,21 @@ export interface CollaborationCopy {
   cancelled: string;
   saveRound: string;
   roundUpdated: string;
+  sampleTracker: string;
+  addSample: string;
+  labelLabel: string;
+  borrowerLabel: string;
+  loanDateLabel: string;
+  returnDueDateLabel: string;
+  notesLabel: string;
+  noSamples: string;
+  deleteSampleConfirm: string;
+  sampleUpdated: string;
+  loaned: string;
+  returned: string;
+  sold: string;
+  lost: string;
+  planned: string;
 }
 
 export const COLLABORATION_COPY: Record<LanguageCode, CollaborationCopy> = {
@@ -105,6 +120,21 @@ export const COLLABORATION_COPY: Record<LanguageCode, CollaborationCopy> = {
     cancelled: 'Cancelled',
     saveRound: 'Save Round',
     roundUpdated: 'Test-knit round updated',
+    sampleTracker: 'Sample Tracker',
+    addSample: 'Add Sample',
+    labelLabel: 'Label',
+    borrowerLabel: 'Borrower',
+    loanDateLabel: 'Loan Date',
+    returnDueDateLabel: 'Return Due Date',
+    notesLabel: 'Notes',
+    noSamples: 'No physical samples recorded.',
+    deleteSampleConfirm: 'Are you sure you want to delete this sample record?',
+    sampleUpdated: 'Sample record updated',
+    loaned: 'Loaned',
+    returned: 'Returned',
+    sold: 'Sold',
+    lost: 'Lost',
+    planned: 'Planned',
   },
   de: {
     title: 'Zusammenarbeit',
@@ -157,6 +187,21 @@ export const COLLABORATION_COPY: Record<LanguageCode, CollaborationCopy> = {
     cancelled: 'Abgebrochen',
     saveRound: 'Runde speichern',
     roundUpdated: 'Teststrick-Runde aktualisiert',
+    sampleTracker: 'Proben-Tracker',
+    addSample: 'Probe hinzufügen',
+    labelLabel: 'Bezeichnung',
+    borrowerLabel: 'Ausleiher',
+    loanDateLabel: 'Leihdatum',
+    returnDueDateLabel: 'Rückgabedatum',
+    notesLabel: 'Notizen',
+    noSamples: 'Keine physischen Proben aufgezeichnet.',
+    deleteSampleConfirm: 'Bist du sicher, dass du diesen Probendatensatz löschen möchtest?',
+    sampleUpdated: 'Probendatensatz aktualisiert',
+    loaned: 'Ausgeliehen',
+    returned: 'Zurückgegeben',
+    sold: 'Verkauft',
+    lost: 'Verloren',
+    planned: 'Geplant',
   },
   fr: {
     title: 'Collaboration',
@@ -209,6 +254,21 @@ export const COLLABORATION_COPY: Record<LanguageCode, CollaborationCopy> = {
     cancelled: 'Annulé',
     saveRound: 'Enregistrer le tour',
     roundUpdated: 'Ronde de test de tricot mise à jour',
+    sampleTracker: 'Suivi des échantillons',
+    addSample: 'Ajouter un échantillon',
+    labelLabel: 'Étiquette',
+    borrowerLabel: 'Emprunteur',
+    loanDateLabel: 'Date de prêt',
+    returnDueDateLabel: 'Date de retour prévue',
+    notesLabel: 'Notes',
+    noSamples: 'Aucun échantillon physique enregistré.',
+    deleteSampleConfirm: 'Êtes-vous sûr de vouloir supprimer ce dossier d\'échantillon ?',
+    sampleUpdated: 'Dossier d\'échantillon mis à jour',
+    loaned: 'Prêté',
+    returned: 'Retourné',
+    sold: 'Vendu',
+    lost: 'Perdu',
+    planned: 'Prévu',
   },
   es: {
     title: 'Colaboración',
@@ -261,6 +321,21 @@ export const COLLABORATION_COPY: Record<LanguageCode, CollaborationCopy> = {
     cancelled: 'Cancelado',
     saveRound: 'Guardar ronda',
     roundUpdated: 'Ronda de prueba de tejido actualizada',
+    sampleTracker: 'Seguimiento de muestras',
+    addSample: 'Agregar muestra',
+    labelLabel: 'Etiqueta',
+    borrowerLabel: 'Prestatario',
+    loanDateLabel: 'Fecha de préstamo',
+    returnDueDateLabel: 'Fecha de devolución prevista',
+    notesLabel: 'Notas',
+    noSamples: 'No se han registrado muestras físicas.',
+    deleteSampleConfirm: '¿Estás seguro de que deseas eliminar este registro de muestra?',
+    sampleUpdated: 'Registro de muestra actualizado',
+    loaned: 'Prestado',
+    returned: 'Devuelto',
+    sold: 'Vendido',
+    lost: 'Perdido',
+    planned: 'Planificado',
   },
   pt: {
     title: 'Colaboração',
@@ -313,5 +388,20 @@ export const COLLABORATION_COPY: Record<LanguageCode, CollaborationCopy> = {
     cancelled: 'Cancelado',
     saveRound: 'Salvar rodada',
     roundUpdated: 'Rodada de teste de tricô atualizada',
+    sampleTracker: 'Rastreador de amostras',
+    addSample: 'Adicionar amostra',
+    labelLabel: 'Etiqueta',
+    borrowerLabel: 'Emprestador',
+    loanDateLabel: 'Data de empréstimo',
+    returnDueDateLabel: 'Data de devolução prevista',
+    notesLabel: 'Notas',
+    noSamples: 'Nenhuma amostra física registrada.',
+    deleteSampleConfirm: 'Tem certeza de que deseja excluir este registro de amostra?',
+    sampleUpdated: 'Registro de amostra atualizado',
+    loaned: 'Emprestado',
+    returned: 'Devolvido',
+    sold: 'Vendido',
+    lost: 'Perdido',
+    planned: 'Planejado',
   },
 };

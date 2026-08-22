@@ -267,6 +267,8 @@ export interface PatternProject {
   draftContent?: PatternDocumentContent;
   /** Test-knit rounds: durable records of physical testing rounds. */
   testKnitRounds?: TestKnitRound[];
+  /** Sample tracker: durable records of physical samples. */
+  samples?: ProjectSample[];
 }
 
 export interface ProjectAsset {
@@ -294,6 +296,22 @@ export interface TestKnitRound {
   status: TestKnitStatus;
   observations?: string;
   followUp?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type SampleStatus = 'planned' | 'in-progress' | 'loaned' | 'returned' | 'sold' | 'lost';
+
+export interface ProjectSample {
+  id: string;
+  label: string;
+  size: SizeKey;
+  location?: string;
+  borrower?: string;
+  loanDate?: string;
+  returnDueDate?: string;
+  status: SampleStatus;
+  notes?: string;
   createdAt: string;
   updatedAt: string;
 }
