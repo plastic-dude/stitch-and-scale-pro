@@ -34,6 +34,7 @@ This was a trust-boundary defect in a real export flow. The correction preserves
 | Local four-width mobile smoke | Passed at 320/360/390/430px, including onboarding, dashboard, new project, workspace, export preflight, Grading Lab, and Design Ledger |
 | Local Design Ledger route smoke | Passed at 390px: opened All Labs → Design Ledger → Export, clicked Download CSV, observed request-only toast, and confirmed no horizontal overflow |
 | Active production four-width mobile smoke | Passed as baseline evidence only; active alias was not serving commit `03365ac` |
+| Active production MCP/origin probe | Passed as baseline: routes `/`, `/settings`, sample workspace, and PDF all 200; favicon 200/48,605 bytes; GET 405; active-origin OPTIONS 204 with `POST, OPTIONS` and `Authorization, Content-Type, MCP-Protocol-Version`; authenticated `tools/list` 200 with 8 canonical tools; forbidden alternate origin 403 / `-32001` |
 | Code-bearing Vercel preview | READY, deployment `dpl_FU8iVr2dMoSkAowwGaZaXyRegF9p`, SHA `03365ac597ef763afcd09322f2a13ae82cb3ae77`, target null, Git preview alias only |
 | Production deployment attempt | Blocked: `api-deployments-free`, more than 100 deployments in the free-tier daily window |
 | Promotion attempt | Blocked by the same Vercel resource limit; no alias was manually assigned |
