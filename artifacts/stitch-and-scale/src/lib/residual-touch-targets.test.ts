@@ -65,6 +65,20 @@ describe("residual mobile touch-target guards", () => {
     );
   });
 
+  it("keeps Assets actions discoverable and at least 44px on touch devices", () => {
+    const assets = source("../components/assets-panel.tsx");
+
+    expect(assets).toContain('<Button onClick={() => setIsAdding(true)} className="gap-2 min-h-11">');
+    expect(assets).toContain('<Button variant="ghost" className="min-h-11" onClick={() => setIsAdding(false)}>');
+    expect(assets).toContain('<Button className="min-h-11" onClick={handleSave}');
+    expect(assets).toContain('opacity-100 sm:opacity-0 sm:group-hover:opacity-100 focus-within:opacity-100');
+    expect(assets).toContain('className="h-8 w-8 min-h-11 min-w-11 rounded-full" aria-label={copy.viewAsset}');
+    expect(assets).toContain('aria-label={copy.downloadAsset}');
+    expect(assets).toContain('className="h-7 w-7 min-h-11 min-w-11 text-muted-foreground hover:text-destructive shrink-0"');
+    expect(assets).toContain('aria-label={copy.deleteAsset}');
+    expect(assets).not.toContain('opacity-0 group-hover:opacity-100');
+  });
+
   it("keeps the shared Radix Sheet close affordance at least 44px", () => {
     const sheet = source("../components/ui/sheet.tsx");
 

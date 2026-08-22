@@ -9,6 +9,9 @@ describe('Asset Management Logic', () => {
       expect(ASSETS_COPY[lang]).toBeDefined();
       expect(ASSETS_COPY[lang].assetsTitle).toBeDefined();
       expect(ASSETS_COPY[lang].addAsset).toBeDefined();
+      expect(ASSETS_COPY[lang].viewAsset).toBeDefined();
+      expect(ASSETS_COPY[lang].downloadAsset).toBeDefined();
+      expect(ASSETS_COPY[lang].deleteAsset).toBeDefined();
     });
   });
 

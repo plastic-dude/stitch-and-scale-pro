@@ -105,7 +105,7 @@ export default function AssetsPanel({ project, addAsset, deleteAsset }: AssetsPa
             </CardTitle>
             <CardDescription>{copy.assetsDescription}</CardDescription>
           </div>
-          <Button onClick={() => setIsAdding(true)} className="gap-2">
+          <Button onClick={() => setIsAdding(true)} className="gap-2 min-h-11">
             <Plus className="h-4 w-4" />
             {copy.addAsset}
           </Button>
@@ -163,8 +163,8 @@ export default function AssetsPanel({ project, addAsset, deleteAsset }: AssetsPa
             </div>
 
             <div className="flex justify-end gap-2 pt-2">
-              <Button variant="ghost" onClick={() => setIsAdding(false)}>{ASSETS_COPY[language].renameCancel || 'Cancel'}</Button>
-              <Button onClick={handleSave} disabled={!fileData || !newAsset.label}>{ASSETS_COPY[language].renameSave || 'Save'}</Button>
+              <Button variant="ghost" className="min-h-11" onClick={() => setIsAdding(false)}>{ASSETS_COPY[language].renameCancel || 'Cancel'}</Button>
+              <Button className="min-h-11" onClick={handleSave} disabled={!fileData || !newAsset.label}>{ASSETS_COPY[language].renameSave || 'Save'}</Button>
             </div>
           </div>
         )}
@@ -190,12 +190,12 @@ export default function AssetsPanel({ project, addAsset, deleteAsset }: AssetsPa
                       alt={asset.label} 
                       className="w-full h-full object-cover transition-transform group-hover:scale-105" 
                     />
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                      <Button size="icon" variant="secondary" className="h-8 w-8 rounded-full" onClick={() => window.open(asset.dataUrl)}>
+                    <div className="absolute inset-0 bg-black/40 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 focus-within:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                      <Button size="icon" variant="secondary" className="h-8 w-8 min-h-11 min-w-11 rounded-full" aria-label={copy.viewAsset} onClick={() => window.open(asset.dataUrl)}>
                         <Eye className="h-4 w-4" />
                       </Button>
-                      <a href={asset.dataUrl} download={asset.filename}>
-                        <Button size="icon" variant="secondary" className="h-8 w-8 rounded-full">
+                      <a href={asset.dataUrl} download={asset.filename} aria-label={copy.downloadAsset}>
+                        <Button size="icon" variant="secondary" className="h-8 w-8 min-h-11 min-w-11 rounded-full" aria-label={copy.downloadAsset}>
                           <Download className="h-4 w-4" />
                         </Button>
                       </a>
@@ -223,7 +223,8 @@ export default function AssetsPanel({ project, addAsset, deleteAsset }: AssetsPa
                     <Button 
                       variant="ghost" 
                       size="icon" 
-                      className="h-7 w-7 text-muted-foreground hover:text-destructive shrink-0"
+                      className="h-7 w-7 min-h-11 min-w-11 text-muted-foreground hover:text-destructive shrink-0"
+                      aria-label={copy.deleteAsset}
                       onClick={() => {
                         if (confirm(copy.confirmDelete)) deleteAsset(asset.id);
                       }}
