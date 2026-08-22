@@ -21,7 +21,7 @@
 ## Run ledger
 | Run (date) | Item worked | Gates | Commit | Next item |
 |---|---|---|---|---|
-| 79 | 2026-08-22 (CHK-201) | QUEUE-057 (MAJOR) — Wholesale Follow-up | tsc clean; vitest 2,422/2,422; build green; durable wholesale records + localized UI + storage seam | SHA-PENDING | QUEUE-058 |
+| 79 | 2026-08-22 (CHK-201) | QUEUE-057 (MAJOR) — Wholesale Follow-up | tsc clean; vitest 2,422/2,422; build green; durable wholesale records + localized UI + storage seam | 6faeb67 | QUEUE-058 |
 | 78 | 2026-08-22 (CHK-200) | QUEUE-056 (MAJOR) — Submission Records | tsc clean; vitest 2,422/2,422; build green; durable submissions records + localized UI + dialog crash fix | 50785a1 | QUEUE-057 |
 | 77 | 2026-08-22 (CHK-199) | QUEUE-055 (MAJOR) — Sample Tracker | tsc clean; vitest 2,417/2,417; build green; storage seam + SampleTracker UI + browser verified | cac0762d30d890dfc052595d655f718e26a09e95 | QUEUE-056 |
 | 76 | 2026-08-22 (CHK-198) | QUEUE-054 (MAJOR) — Test-Knit Archive | tsc clean; vitest 2,417/2,417; build green; storage seam + localized UI + browser verified | 3b36e1a64a862e6081220498a39a26686258219d | QUEUE-055 |
