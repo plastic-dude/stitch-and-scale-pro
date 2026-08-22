@@ -138,6 +138,15 @@ export interface WorkspaceCopy {
   publicationMetadataDescription: string;
   publicationMetadataSizes: string;
   publicationMetadataGauge: string;
+  compilerTitle: string;
+  compilerDescription: string;
+  compilerCompile: string;
+  compilerValid: string;
+  compilerInvalid: string;
+  compilerContradictions: string;
+  compilerNoContradictions: string;
+  compilerSeverityWarning: string;
+  compilerSeverityError: string;
 }
 
 const COPY: Record<LanguageCode, WorkspaceCopy> = {
@@ -198,9 +207,9 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     draftIssueMalformed: 'Malformed',
     draftIssueMissingData: 'Missing data',
     allLabs: 'All labs',
-    labsTitle: 'The 79 labs',
+    labsTitle: 'The 83 labs',
     labsDescription: 'All tools in this pattern, grouped so nothing falls off-screen.',
-    allLabsAriaLabel: 'Open grouped list of the 79 work labs',
+    allLabsAriaLabel: 'Open grouped list of the 83 work labs',
     sourceMethodology: 'Source: Session-35 Research',
     methodologyTeach: 'Flagship course pricing based on Pip & Pin ($548), Kneedles & Life ($99–125), and market median analysis. Workshop rates from 2026 fiber retreat audit.',
     methodologyKal: 'Ravelry record data (Jan 2025); mystery KAL timing benchmarks from 43 tracked launches; average sweater production cost ($155) from independent designer survey.',
@@ -278,6 +287,15 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     publicationMetadataDescription: 'Description',
     publicationMetadataSizes: 'Sizes',
     publicationMetadataGauge: 'Gauge',
+    compilerTitle: 'Pattern Compiler',
+    compilerDescription: 'End-to-end mathematical validation and contradiction checking across all pattern surfaces.',
+    compilerCompile: 'Compile & Validate',
+    compilerValid: 'Mathematical Integrity Verified',
+    compilerInvalid: 'Contradictions Detected',
+    compilerContradictions: 'Contradictions',
+    compilerNoContradictions: 'No mathematical contradictions detected.',
+    compilerSeverityWarning: 'Warning',
+    compilerSeverityError: 'Error',
   },
   de: {
     by: 'Von',
@@ -336,9 +354,9 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     draftIssueMalformed: 'Fehlerhaft',
     draftIssueMissingData: 'Fehlende Daten',
     allLabs: 'Alle Labs',
-    labsTitle: 'Die 79 Labs',
+    labsTitle: 'Die 83 Labs',
     labsDescription: 'Alle Werkzeuge in diesem Muster, gruppiert, damit nichts vom Bildschirm rutscht.',
-    allLabsAriaLabel: 'Gruppierte Liste der 79 Arbeits-Labs öffnen',
+    allLabsAriaLabel: 'Gruppierte Liste der 83 Arbeits-Labs öffnen',
     sourceMethodology: 'Quelle: Session-35 Forschung',
     methodologyTeach: 'Preise für Flaggschiff-Kurse basierend auf Pip & Pin (548 $), Kneedles & Life (99–125 $) und Marktmedian-Analyse. Workshop-Raten aus dem Fiber-Retreat-Audit 2026.',
     methodologyKal: 'Ravelry-Rekorddaten (Jan 2025); Mystery-KAL-Timing-Benchmarks von 43 verfolgten Launches; durchschnittliche Pullover-Produktionskosten (155 $) aus Umfrage unter unabhängigen Designern.',
@@ -416,6 +434,15 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     publicationMetadataDescription: 'Beschreibung',
     publicationMetadataSizes: 'Größen',
     publicationMetadataGauge: 'Maschenprobe',
+    compilerTitle: 'Muster-Compiler',
+    compilerDescription: 'End-to-End mathematische Validierung und Widerspruchsprüfung über alle Musterflächen hinweg.',
+    compilerCompile: 'Kompilieren & Validieren',
+    compilerValid: 'Mathematische Integrität verifiziert',
+    compilerInvalid: 'Widersprüche erkannt',
+    compilerContradictions: 'Widersprüche',
+    compilerNoContradictions: 'Keine mathematischen Widersprüche erkannt.',
+    compilerSeverityWarning: 'Warnung',
+    compilerSeverityError: 'Fehler',
   },
   fr: {
     by: 'Par',
@@ -474,9 +501,9 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     draftIssueMalformed: 'Mal formé',
     draftIssueMissingData: 'Données manquantes',
     allLabs: 'Tous les labs',
-    labsTitle: 'Les 79 labs',
+    labsTitle: 'Les 83 labs',
     labsDescription: 'Tous les outils de ce patron, groupés pour que rien ne sorte de l\'écran.',
-    allLabsAriaLabel: 'Ouvrir la liste groupée des 79 labos de travail',
+    allLabsAriaLabel: 'Ouvrir la liste groupée des 83 labos de travail',
     sourceMethodology: 'Source : Recherche Session-35',
     methodologyTeach: 'Tarification des cours phares basée sur Pip & Pin (548 $), Kneedles & Life (99–125 $) et l\'analyse de la médiane du marché. Tarifs des ateliers issus de l\'audit des retraites fibre 2026.',
     methodologyKal: 'Données records Ravelry (janv. 2025) ; repères de timing KAL mystère issus de 43 lancements suivis ; coût moyen de production d\'un pull (155 $) selon une enquête auprès de designers indépendants.',
@@ -554,6 +581,15 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     publicationMetadataDescription: 'Description',
     publicationMetadataSizes: 'Tailles',
     publicationMetadataGauge: 'Échantillon',
+    compilerTitle: 'Compilateur de patrons',
+    compilerDescription: 'Validation mathématique de bout en bout et vérification des contradictions sur toutes les surfaces du patron.',
+    compilerCompile: 'Compiler & Valider',
+    compilerValid: 'Intégrité mathématique vérifiée',
+    compilerInvalid: 'Contradictions détectées',
+    compilerContradictions: 'Contradictions',
+    compilerNoContradictions: 'Aucune contradiction mathématique détectée.',
+    compilerSeverityWarning: 'Avertissement',
+    compilerSeverityError: 'Erreur',
   },
   es: {
     by: 'Por',
@@ -612,9 +648,9 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     draftIssueMalformed: 'Mal formado',
     draftIssueMissingData: 'Faltan datos',
     allLabs: 'Todos los labs',
-    labsTitle: 'Los 79 labs',
+    labsTitle: 'Los 83 labs',
     labsDescription: 'Todas las herramientas de este patrón, agrupadas para que nada quede fuera de pantalla.',
-    allLabsAriaLabel: 'Abrir la lista agrupada de los 79 laboratorios del espacio de trabajo',
+    allLabsAriaLabel: 'Abrir la lista agrupada de los 83 laboratorios del espacio de trabajo',
     sourceMethodology: 'Fuente: Investigación Sesión-35',
     methodologyTeach: 'Precios de cursos insignia basados en Pip & Pin (548 $), Kneedles & Life (99–125 $) y análisis de la mediana del mercado. Tarifas de talleres del auditoría de retiros de fibra 2026.',
     methodologyKal: 'Datos récord de Ravelry (ene 2025); benchmarks de tiempo de KAL misteriosos de 43 lanzamientos seguidos; promedio de costo de producción de suéteres (155 $) de encuesta a diseñadores independientes.',
@@ -692,6 +728,15 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     publicationMetadataDescription: 'Descripción',
     publicationMetadataSizes: 'Tallas',
     publicationMetadataGauge: 'Tensión',
+    compilerTitle: 'Compilador de patrones',
+    compilerDescription: 'Validación matemática de extremo a extremo y comprobación de contradicciones en todas las superficies del patrón.',
+    compilerCompile: 'Compilar y Validar',
+    compilerValid: 'Integridad matemática verificada',
+    compilerInvalid: 'Contradicciones detectadas',
+    compilerContradictions: 'Contradicciones',
+    compilerNoContradictions: 'No se han detectado contradicciones matemáticas.',
+    compilerSeverityWarning: 'Advertencia',
+    compilerSeverityError: 'Error',
   },
   pt: {
     by: 'Por',
@@ -750,9 +795,9 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     draftIssueMalformed: 'Malformado',
     draftIssueMissingData: 'Dados ausentes',
     allLabs: 'Todos os labs',
-    labsTitle: 'Os 79 labs',
+    labsTitle: 'Os 83 labs',
     labsDescription: 'Todas as ferramentas deste padrão, agrupadas para que nada fique fora do ecrã.',
-    allLabsAriaLabel: 'Abrir a lista agrupada dos 79 laboratórios do trabalho',
+    allLabsAriaLabel: 'Abrir a lista agrupada dos 83 laboratórios do trabalho',
     sourceMethodology: 'Fonte: Investigação Sessão-35',
     methodologyTeach: 'Preços de cursos emblemáticos baseados em Pip & Pin (548 $), Kneedles & Life (99–125 $) e análise da mediana do mercado. Tarifas de workshops da auditoria de retiros de fibra 2026.',
     methodologyKal: 'Dados recorde da Ravelry (jan 2025); benchmarks de tempo de KAL mistério de 43 lançamentos acompanhados; média do custo de produção de camisolas (155 $) de inquérito a designers independentes.',
@@ -830,6 +875,15 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     publicationMetadataDescription: 'Descrição',
     publicationMetadataSizes: 'Tamanhos',
     publicationMetadataGauge: 'Amostra',
+    compilerTitle: 'Compilador de moldes',
+    compilerDescription: 'Validação matemática de ponta a ponta e verificação de contradições em todas as superfícies do molde.',
+    compilerCompile: 'Compilar e Validar',
+    compilerValid: 'Integridade matemática verificada',
+    compilerInvalid: 'Contradições detetadas',
+    compilerContradictions: 'Contradições',
+    compilerNoContradictions: 'Nenhuma contradição matemática detetada.',
+    compilerSeverityWarning: 'Aviso',
+    compilerSeverityError: 'Erro',
   },
 };
 

@@ -8,7 +8,7 @@
 // array drives both the strip and the content rendering.
 //
 // Invariants enforced by count-drift.test.ts (CHK-087): TAB_REGISTRY must
-// contain exactly 82 entries (77 at CHK-087, +1 for Brag Cards at CHK-091, +1 for Snapshots at CHK-182, +1 for Readiness at CHK-184, +1 for Packages at CHK-185), every value must be a real TAB_GROUPS key,
+// contain exactly 83 entries (77 at CHK-087, +1 for Brag Cards at CHK-091, +1 for Snapshots at CHK-182, +1 for Readiness at CHK-184, +1 for Packages at CHK-185, +1 for Compiler at CHK-186), every value must be a real TAB_GROUPS key,
 // and every entry must render a real content panel. A dev-time assertion
 // below fails loudly at render if registry and classification ever drift.
 //
@@ -123,6 +123,7 @@ export const TAB_REGISTRY: TabRegistryEntry[] = [
   // existing strip ordering stays untouched.
   { value: "bragcard", label: "Brag Cards", group: "launch", icon: "Send" },
   { value: "payback", label: "Payback Lab", group: "pricing", icon: "TrendingUp" },
+  { value: "compiler", label: "Compiler", group: "design", icon: "ShieldCheck" },
 ];
 
 // Dev-time invariants — these fail loudly before a misregistered tab can
@@ -137,8 +138,8 @@ export function assertTabRegistryIntegrity(): void {
     "TAB_REGISTRY (" + TAB_REGISTRY.length + ") does not match TAB_GROUPS (" + Object.keys(TAB_GROUPS).length + ")",
   );
   console.assert(
-    TAB_REGISTRY.length === 82,
-    "TAB_REGISTRY count is " + TAB_REGISTRY.length + ", expected 82"
+    TAB_REGISTRY.length === 83,
+    "TAB_REGISTRY count is " + TAB_REGISTRY.length + ", expected 83"
   );
   for (const t of TAB_REGISTRY) {
     console.assert(

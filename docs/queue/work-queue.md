@@ -59,7 +59,8 @@
 ## Run ledger
 | Run (date) | Item worked | Gates | Commit | Next item |
 |---|---|---|---|---|
-| 63 | 2026-08-22 (CHK-185) | QUEUE-042 (MAJOR) — Pattern Publication Package | tsc clean; vitest 2,336/2,336; build green; 82 labs total; live verified | 66f259421326bba6599eb6699ab8b49f641590a0 | END OF QUEUE |
+| 64 | 2026-08-22 (CHK-186) | QUEUE-043 (MAJOR) — Pattern Compiler | tsc clean; vitest 2,341/2,341; build green; 83 labs total; full 5-locale validation | e3db71d8095a71cf1e1d7ed023bf7ecdbef9bf8e | END OF QUEUE |
+| 63 | 2026-08-22 (CHK-185) | QUEUE-042 (MAJOR) — Pattern Publication Package | tsc clean; vitest 2,336/2,336; build green; 82 labs total; live verified | 66f259421326bba6599eb6699ab8b49f641590a0 | QUEUE-043 |
 | 62 | 2026-08-22 | QUEUE-041 | done | b4da4086bbb3254fc75d1639b00f0c9f70dee5b2 | CHK-184: Pattern Publication Readiness Contract |
 | 61 | 2026-08-22 | QUEUE-040 | done | 053121a896535ea3c219d9224a4bc965710ad087 | CHK-183: Fix Revision Snapshots integration in ProjectWorkspace |
 | 60 | 2026-08-22 | QUEUE-039 | tsc, vitest, build | cf78702 | QUEUE-040 |

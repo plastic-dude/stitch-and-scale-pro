@@ -92,9 +92,9 @@ describe('tab-navigator copy (localized strings)', () => {
     for (const code of ['en', 'de', 'fr', 'es', 'pt'] as const) {
       const copy = mod.NAVIGATOR_COPY[code];
       expect(copy.allLabs, `locale ${code}`).toBeTruthy();
-      expect(copy.labsTitle, `locale ${code}`).toContain('82');
+      expect(copy.labsTitle, `locale ${code}`).toContain('83');
       expect(copy.labsDescription, `locale ${code}`).toBeTruthy();
-      expect(copy.allLabsAriaLabel, `locale ${code}`).toContain('82');
+      expect(copy.allLabsAriaLabel, `locale ${code}`).toContain('83');
     }
   });
 

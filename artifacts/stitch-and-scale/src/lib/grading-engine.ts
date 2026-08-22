@@ -90,6 +90,32 @@ export interface PublicationArtifact {
   revisionId?: string;
 }
 
+export interface Contradiction {
+  id: string;
+  severity: 'warning' | 'error';
+  source: string;
+  target: string;
+  message: string;
+  code: string;
+}
+
+export interface CompilerIR {
+  version: string;
+  metadata: {
+    title: string;
+    author: string;
+    copyright: string;
+    gauge: Gauge;
+    sizes: SizeKey[];
+  };
+  gradedData: GradingResult;
+  validation: {
+    contradictions: Contradiction[];
+    isValid: boolean;
+    compiledAt: string;
+  };
+}
+
 export interface PublicationPackage {
   id: string;
   version: string;
@@ -104,6 +130,8 @@ export interface PublicationPackage {
     gauge: Gauge;
   };
   artifacts: PublicationArtifact[];
+  /** Compiled Intermediate Representation for validation. */
+  compilerIR?: CompilerIR;
   publishedAt?: string;
   createdAt: string;
   updatedAt: string;
