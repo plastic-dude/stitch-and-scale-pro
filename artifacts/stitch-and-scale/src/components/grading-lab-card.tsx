@@ -49,6 +49,10 @@ export function GradingLabCard({ project }: { project: PatternProject }) {
     const observation = observeFirstCleanGrade(project, observedResult, recognitionState);
     if (!observation.event) return;
 
+    // Persist synchronously through the canonical project-scoped handle as well as
+    // React state. The explicit observation must survive any pending hydration
+    // effect; otherwise an empty initial ledger can overwrite the new evidence.
+    recognitionStorage.write(observation.state);
     setRecognitionState(observation.state);
     if (!recognitionEnabled) return;
 

@@ -14,6 +14,17 @@ function StorageProbe({ projectId }: { projectId: string }) {
   return <output data-testid="marker">{state.marker}</output>;
 }
 
+function WritableStorageProbe({ projectId }: { projectId: string }) {
+  const handle = useProjectStorage<FixtureState>('hook-test', projectId);
+  const [state, setState] = useProjectStorageState(handle, (raw) => raw ?? { marker: 'empty' });
+  return (
+    <>
+      <output data-testid="marker">{state.marker}</output>
+      <button type="button" onClick={() => setState({ marker: 'updated' })}>Update</button>
+    </>
+  );
+}
+
 function renderProbe(root: Root, projectId: string) {
   act(() => {
     root.render(<StorageProbe projectId={projectId} />);
@@ -46,6 +57,22 @@ describe('useProjectStorageState project-key hydration', () => {
 
     expect(container.querySelector('[data-testid="marker"]')?.textContent).toBe('beta');
     expect(JSON.parse(localStorage.getItem('stitch-and-scale-hook-test-beta') ?? '{}')).toEqual({ marker: 'beta' });
+  });
+
+  it('persists an immediate user-triggered state update as the new scoped value', () => {
+    container = document.createElement('div');
+    document.body.appendChild(container);
+    root = createRoot(container);
+
+    act(() => {
+      root!.render(<WritableStorageProbe projectId="click-project" />);
+    });
+    act(() => {
+      container!.querySelector('button')?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+
+    expect(container.querySelector('[data-testid="marker"]')?.textContent).toBe('updated');
+    expect(JSON.parse(localStorage.getItem('stitch-and-scale-hook-test-click-project') ?? '{}')).toEqual({ marker: 'updated' });
   });
 });
 

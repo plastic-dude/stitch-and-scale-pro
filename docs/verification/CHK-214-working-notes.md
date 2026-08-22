@@ -86,3 +86,29 @@ After positioning the actual document scroll and tab strip, a real browser click
 The live write trace showed that the genuine browser click displayed the Q066 toast but produced only empty-state writes. The canonical `useProjectStorageState` hook was hardened so a mounted card hydrates a changed scoped key before persistence; the previous project state cannot overwrite the new project key during the transition. A happy-dom regression covers the alpha-to-beta project switch and confirms the beta ledger remains intact.
 
 The focused Q066, recognition, locale-parity, and storage-hook tests passed: 101 tests. The full Vitest suite passed: 2,535 tests across 214 files. Application and root typechecks passed. The production build passed in 5.03 seconds with the six known nonfatal sourcemap-location warnings. `git diff --check`, the source-bundle verifier (`c19b71cdd06d250326d80eddc27685cbb627f91b03d85a624f0bb4894ba2a082`), and the protected invention-brief hash (`5a7668a95841e7e74fc2dcf702cf1ffa94deed06d7029116919dcc0489b609ce`) passed. The outer gate command’s final status aggregation emitted a shell error because `PIPESTATUS` was evaluated after the pipeline context had closed; the individual quality commands completed successfully, as shown by their summaries and the successful build/integrity markers.
+
+## Post-fix production promotion and trust-boundary checks
+
+Vercel deployment `dpl_9DqeRg7RH57oCWuTtA57Ndz8eWPg` is `READY`, target `production`, and carries commit `7f86fcd9040f1c96862561875260120441e96f68`. Its aliases include the active `stitch-and-scale-pro-api-server.vercel.app`, the team alias, and the Git-main alias. The public root, `/settings`, `/project/audit-week-31`, and `/project/audit-week-31/pdf` each returned HTTP 200. `favicon-192.png` returned HTTP 200 at 48,605 bytes. The index-loaded bundle includes `recognitionEnabled` and `Show quiet acknowledgments`; the Q066 Grading Lab symbols are lazy-loaded and were verified earlier in the dedicated route chunk, so their absence from the shell-only bundle scan is not treated as a defect.
+
+Fresh MCP checks remained healthy: GET `/api/mcp` 405; allowed OPTIONS 204 with exact active origin and expected method/header declarations; authenticated `tools/list` 200 with the canonical eight tools; forbidden origin 403 with JSON-RPC code `-32001`. The active origin remains the API-server Vercel alias; the alternate short alias is not accepted.
+
+The newly promoted browser initially rendered the project and Grading Lab baseline correctly. A subsequent page scroll command reported no scroll container, and a DOM probe then found the Grading Lab button unmounted after the tab state changed. No application error or production claim is inferred from that browser-state transition; the final pointer-level check must remount the tab and target the visible action again.
+
+## Decisive post-fix production interaction
+
+After deployment `dpl_9DqeRg7RH57oCWuTtA57Ndz8eWPg` reached `READY`, the exact production route was reloaded and the Grading Lab was selected through the visible tab strip. The card rendered the clean nine-size `Ready` result and the explicit `Check grading` action. A real browser click on that action displayed the private `First clean grade` toast with the approved calm text and an explicit `Dismiss` control. This confirms the deployed post-fix user path reaches the intended acknowledgment surface. The project-scoped ledger should be checked once more after the real click before Q066 is marked complete.
+
+## Post-fix ledger recheck
+
+The post-fix real browser click visibly displayed the private acknowledgment toast and its `Dismiss` control. A subsequent safe browser inspection of `stitch-and-scale-recognition-audit-week-31` still returned `{"version":1,"events":[]}` and no active toast. Therefore the UI acknowledgment path is confirmed, but durable event persistence is not yet confirmed after the storage-hook safeguard. Q066 remains open pending diagnosis; no completion or production-readiness claim is made.
+
+## Decisive runtime trace
+
+A temporary self-removing `Storage.prototype.setItem` trace was installed, followed by a genuine browser click on the visible production `Check grading` button. The approved toast appeared with `Dismiss`, proving the explicit observed-result branch ran. The trace recorded two writes to `stitch-and-scale-recognition-audit-week-31`, both exactly `{"version":1,"events":[]}`; no populated event payload was written and the final key remained empty. This isolates the remaining defect to the React storage-state update/persistence lifecycle. It is not an eligibility failure, a missing Q066 bundle, or a synthetic-click artifact. Q066 remains unverified until this is fixed and retested.
+
+## Post-fix full quality gate
+
+After adding the synchronous canonical project-storage write at the explicit grading boundary, the full gate passed: **214 Vitest files / 2,536 tests**, app typecheck, root typecheck, production build, `git diff --check`, source-bundle verification, and the protected invention-brief SHA-256 check. The build completed in 5.11 seconds and emitted the repository’s six known nonfatal sourcemap-location warnings for `tooltip.tsx`, `dropdown-menu.tsx`, `label.tsx`, `select.tsx`, `sheet.tsx`, and `progress.tsx`; these are recorded rather than misreported as warning-free.
+
+The source bundle verifier again confirmed archive SHA-256 `c19b71cdd06d250326d80eddc27685cbb627f91b03d85a624f0bb4894ba2a082` with all 15 raw files present. The protected brief remained SHA-256 `5a7668a95841e7e74fc2dcf702cf1ffa94deed06d7029116919dcc0489b609ce`.
