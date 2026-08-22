@@ -123,6 +123,14 @@ export interface PublicationArtifact {
   revisionId?: string;
 }
 
+export interface PatternDocumentContent {
+  sections: Array<{ id: string; name: string; steps: string[] }>;
+  abbreviations: Array<{ term: string; definition: string }>;
+  construction: string[];
+  finishing: string;
+  care: string;
+}
+
 export interface Contradiction {
   id: string;
   severity: 'warning' | 'error';
@@ -162,6 +170,8 @@ export interface PublicationPackage {
     sizes: SizeKey[];
     gauge: Gauge;
   };
+  /** The fully assembled and frozen pattern content at the time of publication. */
+  compiledContent?: PatternDocumentContent;
   artifacts: PublicationArtifact[];
   /** Compiled Intermediate Representation for validation. */
   compilerIR?: CompilerIR;
@@ -225,6 +235,8 @@ export interface PatternProject {
   collaborationRoster?: CollaborationMember[];
   /** Assets: project-level attachments (photos, swatches, schematics). */
   assets?: ProjectAsset[];
+  /** Pattern composition draft — the working version of the pattern document. */
+  draftContent?: PatternDocumentContent;
 }
 
 export interface ProjectAsset {

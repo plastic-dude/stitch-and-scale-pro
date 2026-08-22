@@ -40,6 +40,7 @@ import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useSettings } from '@/context/SettingsContext';
 import { FitGovernancePanel } from '@/components/fit-governance-panel';
+import { CompositionPanel } from '@/components/composition-panel';
 
 import { FIT_GOVERNANCE_COPY } from '@/lib/fit-governance-copy';
 import { useProjectStorage, useProjectStorageState } from '@/lib/storage-lib';
@@ -97,6 +98,7 @@ const LAB = {
   submissions: React.lazy(cardLazy(() => import('@/components/submission-desk-card'))),
   gradinglab: React.lazy(cardLazy(() => import('@/components/grading-lab-card'))),
   chartlab: React.lazy(cardLazy(() => import('@/components/chart-lab-card'))),
+  composition: CompositionPanel,
   testdesk: React.lazy(cardLazy(() => import('@/components/testknit-desk-card'))),
   lookbook: React.lazy(cardLazy(() => import('@/components/lookbook-desk-card'))),
   specsheet: React.lazy(cardLazy(() => import('@/components/spec-sheet-lab-card'))),
@@ -819,6 +821,7 @@ export default function ProjectWorkspace() {
       case 'yarn': return <LazyPanel loader={LAB.yarn} project={project} />;
       case 'income': return <LazyPanel loader={LAB.income} project={project} />;
       case 'draft': return <LazyPanel loader={LAB.draft} project={project} />;
+      case 'composition': return <CompositionPanel />;
       case 'pricing': return <LazyPanel loader={LAB.pricing} project={project} />;
       case 'collaboration': {
         const Collaboration = LAB.collaboration as React.ComponentType<any>;

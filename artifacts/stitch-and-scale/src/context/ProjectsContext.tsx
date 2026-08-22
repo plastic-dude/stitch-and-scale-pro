@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useReducer, useRef, useState } from 'react';
 import { get, set } from 'idb-keyval';
-import { type PatternProject, generateId, type PublicationPackage, type PublicationArtifact, type EaseProfileReference, type SizingStandardMetadata, type CollaborationMember, type ReadinessStage, type ReadinessIssue, type ReadinessComment } from '@/lib/grading-engine';
+import { type PatternProject, generateId, type PublicationPackage, type PublicationArtifact, type EaseProfileReference, type SizingStandardMetadata, type CollaborationMember, type ReadinessStage, type ReadinessIssue, type ReadinessComment, type PatternDocumentContent } from '@/lib/grading-engine';
 export type { PatternProject };
 import { getSampleCrewNeckSweater } from '@/lib/sample-projects';
 import { LanguageCode } from '@/lib/i18n';
@@ -50,7 +50,9 @@ export type ProjectsAction =
   | { type: 'ADD_ISSUE_COMMENT'; payload: { projectId: string; stage: ReadinessStage; issueId: string; comment: ReadinessComment } }
   | { type: 'ADD_ASSET'; payload: { projectId: string; asset: any } }
   | { type: 'DELETE_ASSET'; payload: { projectId: string; assetId: string } }
-  | { type: 'UPDATE_ASSET'; payload: { projectId: string; assetId: string; patch: any } };
+  | { type: 'UPDATE_ASSET'; payload: { projectId: string; assetId: string; patch: any } }
+  | { type: 'SET_DRAFT_CONTENT'; payload: { projectId: string; content: PatternDocumentContent } }
+  | { type: 'COMPILE_PACKAGE'; payload: { projectId: string; packageId: string; content: PatternDocumentContent } };
 
 export type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
 
@@ -82,6 +84,8 @@ interface ProjectsContextType {
   addAsset: (projectId: string, asset: any) => void;
   deleteAsset: (projectId: string, assetId: string) => void;
   updateAsset: (projectId: string, assetId: string, patch: any) => void;
+  setDraftContent: (projectId: string, content: PatternDocumentContent) => void;
+  compilePackage: (projectId: string, packageId: string, content: PatternDocumentContent) => void;
   saveStatus: SaveStatus;
   recovered: boolean;
   dismissRecovery: () => void;
@@ -355,6 +359,22 @@ export function projectsReducer(state: PatternProject[], action: ProjectsAction)
         updatedAt: new Date().toISOString()
       } : p);
       break;
+    case 'SET_DRAFT_CONTENT':
+      newState = state.map(p => p.id === action.payload.projectId ? {
+        ...p,
+        draftContent: action.payload.content,
+        updatedAt: new Date().toISOString()
+      } : p);
+      break;
+    case 'COMPILE_PACKAGE':
+      newState = state.map(p => p.id === action.payload.projectId ? {
+        ...p,
+        publicationPackages: (p.publicationPackages || []).map(pkg => 
+          pkg.id === action.payload.packageId ? { ...pkg, compiledContent: action.payload.content, status: 'review', updatedAt: new Date().toISOString() } : pkg
+        ),
+        updatedAt: new Date().toISOString()
+      } : p);
+      break;
     default:
       return state;
   }
@@ -498,6 +518,8 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
       addCollaborator, updateCollaborator, deleteCollaborator,
       addReadinessIssue, updateReadinessIssue, addIssueComment,
       addAsset, deleteAsset, updateAsset,
+      setDraftContent: (projectId: string, content: PatternDocumentContent) => dispatch({ type: 'SET_DRAFT_CONTENT', payload: { projectId, content } }),
+      compilePackage: (projectId: string, packageId: string, content: PatternDocumentContent) => dispatch({ type: 'COMPILE_PACKAGE', payload: { projectId, packageId, content } }),
       saveStatus, recovered, dismissRecovery 
     }}>
       {children}
@@ -536,7 +558,8 @@ export function useProject(id?: string) {
     setFitGovernance,
     addCollaborator, updateCollaborator, deleteCollaborator,
     addReadinessIssue, updateReadinessIssue, addIssueComment,
-    addAsset, deleteAsset, updateAsset
+    addAsset, deleteAsset, updateAsset,
+    setDraftContent, compilePackage
   } = useProjects();
   if (!id) return null;
   const existing = projects.find(p => p.id === id);
@@ -568,6 +591,8 @@ export function useProject(id?: string) {
       addAsset: (asset: any) => addAsset(DEMO_PROJECT_ID, asset),
       deleteAsset: (assetId: string) => deleteAsset(DEMO_PROJECT_ID, assetId),
       updateAsset: (assetId: string, patch: any) => updateAsset(DEMO_PROJECT_ID, assetId, patch),
+      setDraftContent: (content: PatternDocumentContent) => setDraftContent(DEMO_PROJECT_ID, content),
+      compilePackage: (packageId: string, content: PatternDocumentContent) => compilePackage(DEMO_PROJECT_ID, packageId, content),
     };
   }
 
@@ -594,6 +619,8 @@ export function useProject(id?: string) {
     addIssueComment: (stage: ReadinessStage, issueId: string, comment: ReadinessComment) => addIssueComment(id, stage, issueId, comment),
     addAsset: (asset: any) => addAsset(id, asset),
     deleteAsset: (assetId: string) => deleteAsset(id, assetId),
-    updateAsset: (assetId: string, patch: any) => updateAsset(id, assetId, patch),
-  };
-}
+      updateAsset: (assetId: string, patch: any) => updateAsset(id, assetId, patch),
+      setDraftContent: (content: PatternDocumentContent) => setDraftContent(id, content),
+      compilePackage: (packageId: string, content: PatternDocumentContent) => compilePackage(id, packageId, content),
+    };
+  }

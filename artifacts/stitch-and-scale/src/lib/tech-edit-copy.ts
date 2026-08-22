@@ -72,6 +72,28 @@ export interface TechEditCopy {
   findingGa11Detail: string;
   findingGa12Title: string;
   findingGa12Detail: string;
+  
+  // Pattern Composition
+  compositionTitle: string;
+  compositionDescription: string;
+  compositionCompile: string;
+  compositionCompiling: string;
+  compositionReview: string;
+  compositionDraft: string;
+  compositionLastCompiled: (date: string) => string;
+  compositionNoCompile: string;
+  compositionSectionName: string;
+  compositionAddSection: string;
+  compositionAddStep: string;
+  compositionStepPlaceholder: string;
+  compositionSectionPlaceholder: string;
+  compositionAbbreviations: string;
+  compositionGlossary: string;
+  compositionConstruction: string;
+  compositionFinishing: string;
+  compositionCare: string;
+  compositionTermPlaceholder: string;
+  compositionDefPlaceholder: string;
 }
 
 const en: TechEditCopy = {
@@ -153,6 +175,27 @@ const en: TechEditCopy = {
   findingGa11Detail: 'At least one measurement rounds its row count, but rows/4in is unset. Row counts will be computed with zero gauge — every length in the pattern is silently wrong. Enter the row gauge before publishing.',
   findingGa12Title: 'Pattern has a single section',
   findingGa12Detail: 'Most garments have at least a body and sleeves. If this pattern is genuinely one piece (scarf, cowl), ignore this; otherwise add sections before the publish readiness check.',
+  
+  compositionTitle: 'Pattern Composition',
+  compositionDescription: 'Assemble the written instructions, abbreviations, and finishing notes for the final publication.',
+  compositionCompile: 'Compile Pattern',
+  compositionCompiling: 'Compiling...',
+  compositionReview: 'Ready for Review',
+  compositionDraft: 'Draft',
+  compositionLastCompiled: (d) => `Last compiled: ${d}`,
+  compositionNoCompile: 'Not compiled yet',
+  compositionSectionName: 'Section Name',
+  compositionAddSection: 'Add Section',
+  compositionAddStep: 'Add Step',
+  compositionStepPlaceholder: 'Write instruction step...',
+  compositionSectionPlaceholder: 'e.g. Back, Left Sleeve...',
+  compositionAbbreviations: 'Abbreviations',
+  compositionGlossary: 'Glossary',
+  compositionConstruction: 'Construction Sequence',
+  compositionFinishing: 'Finishing',
+  compositionCare: 'Care Notes',
+  compositionTermPlaceholder: 'Term',
+  compositionDefPlaceholder: 'Definition',
 };
 
 const de: TechEditCopy = {
@@ -235,6 +278,27 @@ const de: TechEditCopy = {
   findingGa11Detail: 'Mindestens ein Maß rundet seine Reihenzahl, aber Reihen/10 cm sind nicht gesetzt. Reihenzahlen werden mit einer Maschenprobe von Null berechnet — jede Länge im Muster ist stillschweigend falsch. Gib die Reihenprobe vor der Veröffentlichung ein.',
   findingGa12Title: 'Muster hat nur einen Abschnitt',
   findingGa12Detail: 'Die meisten Kleidungsstücke haben mindestens einen Körper und Ärmel. Wenn dieses Muster wirklich aus einem Teil besteht (Schal, Loop), ignoriere dies; andernfalls füge Abschnitte vor dem Veröffentlichungs-Check hinzu.',
+  
+  compositionTitle: 'Muster-Zusammenstellung',
+  compositionDescription: 'Stelle die schriftlichen Anweisungen, Abkürzungen und Fertigstellungshinweise für die endgültige Veröffentlichung zusammen.',
+  compositionCompile: 'Muster kompilieren',
+  compositionCompiling: 'Kompiliere...',
+  compositionReview: 'Bereit zur Prüfung',
+  compositionDraft: 'Entwurf',
+  compositionLastCompiled: (d) => `Zuletzt kompiliert: ${d}`,
+  compositionNoCompile: 'Noch nicht kompiliert',
+  compositionSectionName: 'Abschnittsname',
+  compositionAddSection: 'Abschnitt hinzufügen',
+  compositionAddStep: 'Schritt hinzufügen',
+  compositionStepPlaceholder: 'Anweisungsschritt schreiben...',
+  compositionSectionPlaceholder: 'z.B. Rückenteil, Linker Ärmel...',
+  compositionAbbreviations: 'Abkürzungen',
+  compositionGlossary: 'Glossar',
+  compositionConstruction: 'Konstruktionsablauf',
+  compositionFinishing: 'Fertigstellung',
+  compositionCare: 'Pflegehinweise',
+  compositionTermPlaceholder: 'Begriff',
+  compositionDefPlaceholder: 'Definition',
 };
 
 const fr: TechEditCopy = {
@@ -317,6 +381,27 @@ const fr: TechEditCopy = {
   findingGa11Detail: 'Au moins une mesure arrondit son compte de rangs, mais les rangs/10 cm ne sont pas définis. Les comptes de rangs seront calculés avec un échantillon nul — chaque longueur du patron est silencieusement fausse. Saisissez l\'échantillon de rangs avant de publier.',
   findingGa12Title: 'Le patron n\'a qu\'une seule section',
   findingGa12Detail: 'La plupart des vêtements ont au moins un corps et des manches. Si ce patron est réellement d\'une seule pièce (écharpe, col), ignorez ceci ; sinon ajoutez des sections avant le contrôle final.',
+  
+  compositionTitle: 'Composition du patron',
+  compositionDescription: 'Assemblez les instructions écrites, les abréviations et les notes de finition pour la publication finale.',
+  compositionCompile: 'Compiler le patron',
+  compositionCompiling: 'Compilation...',
+  compositionReview: 'Prêt pour révision',
+  compositionDraft: 'Brouillon',
+  compositionLastCompiled: (d) => `Dernière compilation : ${d}`,
+  compositionNoCompile: 'Pas encore compilé',
+  compositionSectionName: 'Nom de la section',
+  compositionAddSection: 'Ajouter une section',
+  compositionAddStep: 'Ajouter une étape',
+  compositionStepPlaceholder: 'Écrire l\'étape d\'instruction...',
+  compositionSectionPlaceholder: 'ex: Dos, Manche gauche...',
+  compositionAbbreviations: 'Abréviations',
+  compositionGlossary: 'Glossaire',
+  compositionConstruction: 'Séquence de construction',
+  compositionFinishing: 'Finitions',
+  compositionCare: 'Entretien',
+  compositionTermPlaceholder: 'Terme',
+  compositionDefPlaceholder: 'Définition',
 };
 
 const es: TechEditCopy = {
@@ -399,6 +484,27 @@ const es: TechEditCopy = {
   findingGa11Detail: 'Al menos una medida redondea su conteo de vueltas, pero las vueltas/10 cm no están establecidas. Los conteos de vueltas se calcularán con una muestra de cero — cada largo en el patrón es silenciosamente incorrecto. Introduzca la muestra de vueltas antes de publicar.',
   findingGa12Title: 'El patrón tiene una sola sección',
   findingGa12Detail: 'La mayoría de las prendas tienen al menos un cuerpo y mangas. Si este patrón es realmente de una sola pieza (bufanda, cuello), ignore esto; de lo contrario, añada secciones antes de la comprobación final.',
+  
+  compositionTitle: 'Composición del patrón',
+  compositionDescription: 'Reúna las instrucciones escritas, las abreviaturas y las notas de acabado para la publicación final.',
+  compositionCompile: 'Compilar patrón',
+  compositionCompiling: 'Compilando...',
+  compositionReview: 'Listo para revisión',
+  compositionDraft: 'Borrador',
+  compositionLastCompiled: (d) => `Última compilación: ${d}`,
+  compositionNoCompile: 'Aún no compilado',
+  compositionSectionName: 'Nombre de la sección',
+  compositionAddSection: 'Añadir sección',
+  compositionAddStep: 'Añadir paso',
+  compositionStepPlaceholder: 'Escribir paso de instrucción...',
+  compositionSectionPlaceholder: 'p. ej. Espalda, Manga izquierda...',
+  compositionAbbreviations: 'Abreviaturas',
+  compositionGlossary: 'Glosario',
+  compositionConstruction: 'Secuencia de construcción',
+  compositionFinishing: 'Acabado',
+  compositionCare: 'Cuidado',
+  compositionTermPlaceholder: 'Término',
+  compositionDefPlaceholder: 'Definición',
 };
 
 const pt: TechEditCopy = {
@@ -481,6 +587,27 @@ const pt: TechEditCopy = {
   findingGa11Detail: 'Pelo menos uma medida arredonda a sua contagem de voltas, mas as voltas/10 cm não estão definidas. As contagens de voltas serão calculadas com uma amostra de zero — cada comprimento no modelo está silenciosamente errado. Insira a amostra de voltas antes de publicar.',
   findingGa12Title: 'O modelo tem uma única secção',
   findingGa12Detail: 'A maioria das peças tem pelo menos um corpo e mangas. Se este modelo for genuinamente de uma só peça (cachecol, gola), ignore isto; caso contrário, adicione secções antes da verificação final.',
+  
+  compositionTitle: 'Composição do padrão',
+  compositionDescription: 'Reúna as instruções escritas, abreviaturas e notas de acabamento para a publicação final.',
+  compositionCompile: 'Compilar padrão',
+  compositionCompiling: 'Compilando...',
+  compositionReview: 'Pronto para revisão',
+  compositionDraft: 'Rascunho',
+  compositionLastCompiled: (d) => `Última compilação: ${d}`,
+  compositionNoCompile: 'Ainda não compilado',
+  compositionSectionName: 'Nome da secção',
+  compositionAddSection: 'Adicionar secção',
+  compositionAddStep: 'Adicionar passo',
+  compositionStepPlaceholder: 'Escrever passo de instrução...',
+  compositionSectionPlaceholder: 'ex: Costas, Manga esquerda...',
+  compositionAbbreviations: 'Abreviaturas',
+  compositionGlossary: 'Glossário',
+  compositionConstruction: 'Sequência de construção',
+  compositionFinishing: 'Acabamento',
+  compositionCare: 'Cuidados',
+  compositionTermPlaceholder: 'Termo',
+  compositionDefPlaceholder: 'Definição',
 };
 
 export const TECH_EDIT_COPY: Record<LanguageCode, TechEditCopy> = {

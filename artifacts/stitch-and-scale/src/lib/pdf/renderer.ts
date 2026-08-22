@@ -9,7 +9,7 @@
 //   openPrintWindow(html, `${project.name}.pdf`);
 
 import type { ResolvedTheme } from './themes';
-import type { PatternProject, GradingResult, GradedSection, SizeKey } from '@/lib/grading-engine';
+import type { PatternProject, GradingResult, GradedSection, SizeKey, PatternDocumentContent } from '@/lib/grading-engine';
 import { ALL_SIZES } from '@/lib/grading-engine';
 import { isValidLanguageCode } from '@/lib/i18n';
 import { getPdfLabels } from './labels';
@@ -25,6 +25,9 @@ export interface RenderContext {
   locale?: string;
   /** Optional publication template id shown in the provenance footer. */
   templateId?: string;
+  /** The fully assembled pattern content to render. If present, the renderer
+   *  will use this authoritative content instead of deriving from the project. */
+  compiledContent?: PatternDocumentContent;
   /** A designer's own logo, as a data: URI - replaces the Stitch & Scale
    *  mark on the cover when present. Compressed/resized client-side before
    *  it ever reaches here (see compressImageToDataUrl in the upload UI). */
@@ -34,7 +37,7 @@ export interface RenderContext {
 // ─── Document Entry Point ─────────────────────────────────────────────────────
 
 export function renderDocument(ctx: RenderContext): string {
-  const { theme, pattern, gradingResult, includeCover = true, includeGaugeSummary = true, includeNotes = true, customLogo, locale = 'en', templateId } = ctx;
+  const { theme, pattern, gradingResult, includeCover = true, includeGaugeSummary = true, includeNotes = true, customLogo, locale = 'en', templateId, compiledContent } = ctx;
   const labels = getPdfLabels(locale);
   // CHK-122: document language must follow the export locale — a German (or
   // de/fr/es/pt) pattern export previously rendered <html lang="en">, which is
@@ -44,6 +47,14 @@ export function renderDocument(ctx: RenderContext): string {
 
   const coverHtml  = includeCover ? renderCover(theme, pattern, customLogo, labels) : '';
   const tocHtml    = gradingResult.length > 0 ? renderTOC(theme, gradingResult, includeGaugeSummary, labels) : '';
+  
+  // Compiled content assembly
+  const abbreviationsHtml = compiledContent?.abbreviations.length ? renderAbbreviations(theme, compiledContent.abbreviations, labels) : '';
+  const constructionHtml = compiledContent?.construction ? renderCareNotes(theme, compiledContent.construction.join('\n'), labels.construction) : '';
+  const instructionsHtml = compiledContent?.sections.map((s: any) => renderInstructionSection(theme, s)).join('') || '';
+  const finishingHtml = compiledContent?.finishing ? renderCareNotes(theme, compiledContent.finishing, labels.finishing) : '';
+  const careHtml = compiledContent?.care ? renderCareNotes(theme, compiledContent.care, labels.care) : '';
+
   const materialsHtml = includeGaugeSummary ? renderMaterials(theme, pattern, includeNotes, labels) : '';
   const sectionsHtml  = gradingResult.map((s, i) => renderSection(theme, s, pattern, i, labels)).join('');
 
@@ -71,11 +82,16 @@ export function renderDocument(ctx: RenderContext): string {
 <body>
 ${renderWatermark(theme)}
 ${theme.gridLineColor ? renderBlueprintGrid(theme) : ''}
-${coverHtml}
-${tocHtml ? `<div class="page">${tocHtml}</div>` : ''}
-${materialsHtml ? `<div class="page">${materialsHtml}</div>` : ''}
-${sectionsHtml}
-${renderFixedFooter(theme, pattern)}
+    ${coverHtml}
+    ${tocHtml ? `<div class="page">${tocHtml}</div>` : ''}
+    ${abbreviationsHtml}
+    ${materialsHtml ? `<div class="page">${materialsHtml}</div>` : ''}
+    ${constructionHtml}
+    ${instructionsHtml}
+    ${sectionsHtml}
+    ${finishingHtml}
+    ${careHtml}
+    ${renderFixedFooter(theme, pattern)}
 ${renderProvenanceFooter(theme, pattern, gradingResult, safeLang, templateId ?? 'stitch-and-scale-default')}
 </body>
 </html>`;
@@ -507,4 +523,51 @@ function luxuryMeta(t: ResolvedTheme, label: string, value: string, rightBorder:
 
 function warmBadge(t: ResolvedTheme, text: string): string {
   return `<span style="display:inline-block;padding:6px 13px;background:${t.accent}18;border:1px solid ${t.accent}40;border-radius:${t.badgeRadius};font-size:11.5px;color:${t.accent};font-family:${t.bodyFont};">${esc(text)}</span>`;
+}
+
+// ─── Compiled Content Renderers ───────────────────────────────────────────────
+
+function renderAbbreviations(t: ResolvedTheme, items: Array<{ term: string; definition: string }>, labels: any): string {
+  return `<div class="page avoid">
+    ${sectionHeader(t, labels.abbreviations || 'Abbreviations', 99)}
+    <dl style="display: grid; grid-template-columns: auto 1fr; gap: 8px 24px; font-family: ${t.bodyFont};">
+      ${items.map(item => `<dt style="font-weight: 700; color: ${t.accent};">${esc(item.term)}</dt><dd style="margin: 0; color: ${t.textColor};">${esc(item.definition)}</dd>`).join('')}
+    </dl>
+  </div>`;
+}
+
+function renderGlossary(t: ResolvedTheme, items: Array<{ term: string; definition: string }>, labels: any): string {
+  return `<div class="page avoid">
+    ${sectionHeader(t, labels.glossary || 'Glossary', 99)}
+    <dl style="display: grid; grid-template-columns: auto 1fr; gap: 8px 24px; font-family: ${t.bodyFont};">
+      ${items.map(item => `<dt style="font-weight: 700; color: ${t.textColor};">${esc(item.term)}</dt><dd style="margin: 0; color: ${t.mutedTextColor};">${esc(item.definition)}</dd>`).join('')}
+    </dl>
+  </div>`;
+}
+
+function renderSequence(t: ResolvedTheme, steps: string[], title: string): string {
+  return `<div class="page avoid">
+    ${sectionHeader(t, title, 99)}
+    <ol style="padding-left: 1.5em; color: ${t.textColor}; font-family: ${t.bodyFont};">
+      ${steps.map(step => `<li style="margin-bottom: 8px;">${esc(step)}</li>`).join('')}
+    </ol>
+  </div>`;
+}
+
+function renderInstructionSection(t: ResolvedTheme, section: { name: string; steps: string[] }): string {
+  return `<div class="page">
+    ${sectionHeader(t, section.name, 1)}
+    <div style="font-family: ${t.bodyFont}; color: ${t.textColor}; line-height: 1.7;">
+      ${section.steps.map(step => `<p style="margin-bottom: 12px;">${esc(step)}</p>`).join('')}
+    </div>
+  </div>`;
+}
+
+function renderCareNotes(t: ResolvedTheme, notes: string, title: string): string {
+  return `<div class="page avoid">
+    ${sectionHeader(t, title, 99)}
+    <div style="padding: 14px; background: ${t.tableStripeBg}; border-radius: ${t.badgeRadius}; font-family: ${t.bodyFont}; color: ${t.textColor};">
+      ${esc(notes)}
+    </div>
+  </div>`;
 }
