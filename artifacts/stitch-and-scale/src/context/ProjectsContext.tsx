@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useReducer, useRef, useState } from 'react';
 import { get, set } from 'idb-keyval';
-import { type PatternProject, generateId, type PublicationPackage, type PublicationArtifact } from '@/lib/grading-engine';
+import { type PatternProject, generateId, type PublicationPackage, type PublicationArtifact, type EaseProfileReference, type SizingStandardMetadata } from '@/lib/grading-engine';
 export type { PatternProject };
 import { getSampleCrewNeckSweater } from '@/lib/sample-projects';
 import { LanguageCode } from '@/lib/i18n';
@@ -34,7 +34,8 @@ type ProjectsAction =
   | { type: 'ADD_PUBLICATION_ARTIFACT'; payload: { projectId: string; packageId: string; artifact: PublicationArtifact } }
   | { type: 'BATCH_DELETE'; payload: string[] }
   | { type: 'BATCH_ARCHIVE'; payload: { ids: string[]; archived: boolean } }
-  | { type: 'BATCH_TAG'; payload: { ids: string[]; tags: string[] } };
+  | { type: 'BATCH_TAG'; payload: { ids: string[]; tags: string[] } }
+  | { type: 'SET_FIT_GOVERNANCE'; payload: { projectId: string; easeProfile?: EaseProfileReference; standardMetadata?: SizingStandardMetadata } };
 
 export type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
 
@@ -56,6 +57,7 @@ interface ProjectsContextType {
   batchDelete: (ids: string[]) => void;
   batchArchive: (ids: string[], archived: boolean) => void;
   batchTag: (ids: string[], tags: string[]) => void;
+  setFitGovernance: (projectId: string, easeProfile?: EaseProfileReference, standardMetadata?: SizingStandardMetadata) => void;
   saveStatus: SaveStatus;
   recovered: boolean;
   dismissRecovery: () => void;
@@ -222,6 +224,18 @@ function projectsReducer(state: PatternProject[], action: ProjectsAction): Patte
           : p
       );
       break;
+    case 'SET_FIT_GOVERNANCE':
+      newState = state.map(p => 
+        p.id === action.payload.projectId 
+          ? { 
+              ...p, 
+              easeProfile: action.payload.easeProfile, 
+              standardMetadata: action.payload.standardMetadata, 
+              updatedAt: new Date().toISOString() 
+            } 
+          : p
+      );
+      break;
     default:
       return state;
   }
@@ -332,6 +346,8 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
   const batchDelete = (ids: string[]) => dispatch({ type: 'BATCH_DELETE', payload: ids });
   const batchArchive = (ids: string[], archived: boolean) => dispatch({ type: 'BATCH_ARCHIVE', payload: { ids, archived } });
   const batchTag = (ids: string[], tags: string[]) => dispatch({ type: 'BATCH_TAG', payload: { ids, tags } });
+  const setFitGovernance = (projectId: string, easeProfile?: EaseProfileReference, standardMetadata?: SizingStandardMetadata) => 
+    dispatch({ type: 'SET_FIT_GOVERNANCE', payload: { projectId, easeProfile, standardMetadata } });
 
   // Import a single project from an exported JSON file — always assigns a
   // fresh id so it can never silently collide with or overwrite an existing
@@ -348,7 +364,8 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
       projects, createProject, updateProject, deleteProject, duplicateProject, importProject, 
       createSnapshot, restoreSnapshot, deleteSnapshot, updateContract,
       createPublicationPackage, updatePublicationPackage, deletePublicationPackage, addPublicationArtifact,
-      batchDelete, batchArchive, batchTag,
+      batchDelete, batchArchive,       batchTag,
+      setFitGovernance,
       saveStatus, recovered, dismissRecovery 
     }}>
       {children}
@@ -383,7 +400,7 @@ export function useProject(id?: string) {
   const { 
     projects, createProject, updateProject, deleteProject, 
     createSnapshot, restoreSnapshot, deleteSnapshot, updateContract,
-    createPublicationPackage, updatePublicationPackage, deletePublicationPackage, addPublicationArtifact
+    createPublicationPackage, updatePublicationPackage, deletePublicationPackage, addPublicationArtifact, setFitGovernance
   } = useProjects();
   if (!id) return null;
   const existing = projects.find(p => p.id === id);
@@ -405,6 +422,7 @@ export function useProject(id?: string) {
       updatePublicationPackage: (pkg: any) => updatePublicationPackage(DEMO_PROJECT_ID, pkg),
       deletePublicationPackage: (packageId: string) => deletePublicationPackage(DEMO_PROJECT_ID, packageId),
       addPublicationArtifact: (packageId: string, artifact: PublicationArtifact) => addPublicationArtifact(DEMO_PROJECT_ID, packageId, artifact),
+      setFitGovernance: (ease?: EaseProfileReference, meta?: SizingStandardMetadata) => setFitGovernance(DEMO_PROJECT_ID, ease, meta),
     };
   }
 
@@ -422,5 +440,6 @@ export function useProject(id?: string) {
     updatePublicationPackage: (pkg: any) => updatePublicationPackage(existing.id, pkg),
     deletePublicationPackage: (packageId: string) => deletePublicationPackage(existing.id, packageId),
     addPublicationArtifact: (packageId: string, artifact: PublicationArtifact) => addPublicationArtifact(existing.id, packageId, artifact),
+    setFitGovernance: (ease?: EaseProfileReference, meta?: SizingStandardMetadata) => setFitGovernance(existing.id, ease, meta),
   };
 }

@@ -6,6 +6,20 @@ export type GradingKey = 'bust' | 'waist' | 'hip' | 'upperArm' | 'lowerArm' | 'w
 export type SizingStandard = 'CYC' | 'UK' | 'EN13402' | 'Japanese' | 'Korean' | 'Chinese' | 'Australian' | 'Custom';
 export type StandardsTable = Record<SizeKey, Record<GradingKey, number>>;
 
+export interface SizingStandardMetadata {
+  id: SizingStandard;
+  version: string;
+  source: string;
+  lastVerified: string;
+  isInclusive: boolean;
+}
+
+export interface EaseProfileReference {
+  id: string;
+  category: 'very-close' | 'close' | 'standard' | 'relaxed' | 'oversized';
+  customOffsets?: Partial<Record<GradingKey, number>>;
+}
+
 export interface Gauge {
   stitchesPer4In: number;
   rowsPer4In: number;
@@ -182,6 +196,10 @@ export interface PatternProject {
   tags?: string[];
   /** Archive status for multi-project management. */
   isArchived?: boolean;
+  /** Fit governance: ease profile applied to this project. */
+  easeProfile?: EaseProfileReference;
+  /** Fit governance: source metadata for the sizing standard. */
+  standardMetadata?: SizingStandardMetadata;
 }
 
 export interface GradedMeasurement {
@@ -243,6 +261,14 @@ export const GRADING_KEY_LABELS: Record<GradingKey, string> = {
 // never CYC-sourced to begin with - flagged here honestly rather than
 // silently implying they now carry the same verification as the rest of
 // this table just because they sit in the same object.
+export const CYC_METADATA: SizingStandardMetadata = {
+  id: 'CYC',
+  version: '2018 (Current)',
+  source: 'Craft Yarn Council (craftyarncouncil.com)',
+  lastVerified: '2026-08-22',
+  isInclusive: true,
+};
+
 export const SIZE_STANDARDS: StandardsTable = {
   XS: { bust:29, waist:23.5, hip:33.5, upperArm:9.75, lowerArm:9, wrist:5.5, shoulder:14.25, neckCircumference:13.5, backLength:16.5, sleeveLength:16.5, thigh:21.5, calf:13, ankle:8.5, armholeDepth:6.25 },
   S:  { bust:33, waist:25.75, hip:35.5, upperArm:10.25, lowerArm:9.5, wrist:6, shoulder:14.75, neckCircumference:14, backLength:17, sleeveLength:17, thigh:22.5, calf:13.5, ankle:9, armholeDepth:6.75 },

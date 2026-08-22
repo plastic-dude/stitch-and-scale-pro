@@ -59,6 +59,8 @@
 | 51 | QUEUE-044 | Priority 1: Multi-project operations — Batch selection, filtering, tagging, and bulk export with per-project failure reporting. | MAJOR | done | CHK-187: `5c7e907`; implemented batch selection, filtering, bulk export, and batch delete/archive. |
 | 52 | QUEUE-045 | Priority 1 Gap 8: Export lifecycle and artifact quality controls | MAJOR | done | CHK-189: preflight gates + artifact history |
 | 53 | QUEUE-046 | Priority 1 Gap 9: PWA lifecycle maturity (update prompt, offline/online status) | MAJOR | done | CHK-190: update prompt + offline status |
+| 54 | QUEUE-047 | Priority 1 Gap 6: Stronger sizing and fit governance (Sourced standards, versioning, ease profiles) | MAJOR | done | CHK-191: governance panel + ease profiles |
+| 55 | QUEUE-048 | Collaborative technical editing and test knitting (Reviewers, assignments, issue tracking) | MAJOR | queued | |
 
 ## Run ledger
 | Run (date) | Item worked | Gates | Commit | Next item |

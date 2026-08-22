@@ -21,6 +21,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import {
   Dialog,
+  DialogTrigger,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -34,10 +35,12 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { generateId, PatternSection, SectionMeasurement, MeasurementType, GradingKey, GRADING_KEY_LABELS, ALL_SIZES, gradePattern, resolveProjectStandards } from '@/lib/grading-engine';
-import { Plus, Edit2, Trash2, Table as TableIcon, Copy, ChevronDown, ChevronRight, Calculator } from 'lucide-react';
+import { Plus, Edit2, Trash2, Table as TableIcon, Copy, ChevronDown, ChevronRight, Calculator, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useSettings } from '@/context/SettingsContext';
+import { FitGovernancePanel } from '@/components/fit-governance-panel';
+import { FIT_GOVERNANCE_COPY } from '@/lib/fit-governance-copy';
 import { useProjectStorage, useProjectStorageState } from '@/lib/storage-lib';
 import { getWorkspaceCopy, workspaceGaugeByline, STS_UNIT, ROWS_UNIT } from '@/lib/workspace-copy';
 import { getToastCopy } from '@/lib/toast-copy';
@@ -217,7 +220,8 @@ export default function ProjectWorkspace() {
     createPublicationPackage,
     updatePublicationPackage,
     deletePublicationPackage,
-    addPublicationArtifact
+    addPublicationArtifact,
+    setFitGovernance
   } = projectHook;
   const copy = getWorkspaceCopy(currentLanguage);
   const tc = getToastCopy(currentLanguage);
@@ -949,6 +953,20 @@ export default function ProjectWorkspace() {
               {t('workspace.header.exportPdf')}
             </Link>
           </Button>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline" size="sm">
+                <Settings className="w-4 h-4 mr-2" />
+                {FIT_GOVERNANCE_COPY[currentLanguage]?.title || 'Fit Governance'}
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <FitGovernancePanel 
+                project={project} 
+                onUpdate={(ease, metadata) => setFitGovernance(ease, metadata)} 
+              />
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
 
