@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams, useLocation } from 'wouter';
 import { useProject, useProjects } from '@/context/ProjectsContext';
-import { GRADING_KEY_LABELS, ALL_SIZES, gradePattern, resolveProjectStandards, type PatternProject } from '@/lib/grading-engine';
+import { ALL_SIZES, gradePattern, resolveProjectStandards, type PatternProject } from '@/lib/grading-engine';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Copy, Download, Printer, FileCheck2, Upload, Loader2, FileText } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -114,14 +114,14 @@ export default function ProjectGrading() {
   );
 
   const handleCopyTable = () => {
-    let tsv = `Measurement\t${ALL_SIZES.join('\t')}\n`;
+    let tsv = `${gradingCopy.measurementHeader}\t${ALL_SIZES.join('\t')}\n`;
     gradingResults.forEach(section => {
       tsv += `${section.sectionName.toUpperCase()}\n`;
       section.measurements.forEach(m => {
         const rowData = ALL_SIZES.map(size => {
           const val = m.gradedValues.find(v => v.size === size);
-          let str = `${val?.stitchCount} sts`;
-          if (val?.rowCount !== undefined) str += ` / ${val.rowCount} rows`;
+          let str = `${val?.stitchCount} ${gradingCopy.stitches.toLowerCase()}`;
+          if (val?.rowCount !== undefined) str += ` / ${val.rowCount} ${gradingCopy.rowsLabel.toLowerCase()}`;
           return str;
         });
         tsv += `${m.label}\t${rowData.join('\t')}\n`;
@@ -137,7 +137,14 @@ export default function ProjectGrading() {
   };
 
   const handleDownloadCSV = () => {
-    const csv = buildGradingCsv(gradingResults, project.gauge?.unit || 'in');
+    const csv = buildGradingCsv(gradingResults, project.gauge?.unit || 'in', {
+      section: gradingCopy.csvSection,
+      measurement: gradingCopy.csvMeasurement,
+      property: gradingCopy.csvProperty,
+      stitches: gradingCopy.stitches,
+      rows: gradingCopy.rowsLabel,
+      physical: gradingCopy.csvPhysical
+    });
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -161,20 +168,20 @@ export default function ProjectGrading() {
     <div id="sas-print-sheet" className="animate-in fade-in duration-500 mx-auto pb-24 print:pb-0 print:m-0 print:p-0">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-8 print:hidden">
         <Button variant="ghost" className="pl-0 text-muted-foreground hover:text-foreground self-start" onClick={() => setLocation(`/project/${project.id}`)} data-testid="button-back-to-project">
-          <ArrowLeft className="w-4 h-4 mr-2" /> Back to Project
+          <ArrowLeft className="w-4 h-4 mr-2" /> {gradingCopy.backToProject}
         </Button>
         <div className="flex gap-2 flex-wrap">
           <Button variant="outline" size="sm" onClick={handleCopyTable} disabled={!hasData} className="rounded-full bg-background" data-testid="button-copy-table">
-            <Copy className="w-4 h-4 mr-2" /> Copy TSV
+            <Copy className="w-4 h-4 mr-2" /> {gradingCopy.copyTsv}
           </Button>
           <Button variant="outline" size="sm" onClick={handleDownloadCSV} disabled={!hasData} className="rounded-full bg-background" data-testid="button-download-csv">
-            <Download className="w-4 h-4 mr-2" /> CSV
+            <Download className="w-4 h-4 mr-2" /> {gradingCopy.downloadCsv}
           </Button>
           <Button variant="outline" size="sm" onClick={handleDownloadHandoff} disabled={!hasData} className="rounded-full bg-background" data-testid="button-download-handoff">
             <FileCheck2 className="w-4 h-4 mr-2" /> {handoffCopy.download}
           </Button>
           <Button size="sm" onClick={handlePrint} disabled={!hasData} className="bg-primary hover:bg-primary/90 rounded-full px-6 shadow-sm" data-testid="button-print">
-            <Printer className="w-4 h-4 mr-2" /> Print Sheet
+            <Printer className="w-4 h-4 mr-2" /> {gradingCopy.printSheet}
           </Button>
         </div>
       </div>
@@ -203,10 +210,10 @@ export default function ProjectGrading() {
         <div className="p-8 sm:p-12 border-b border-border bg-gradient-to-br from-background to-secondary/10 print:from-white print:to-white">
           <div className="max-w-4xl">
             <h1 className="text-4xl sm:text-5xl font-serif font-bold text-foreground mb-4 tracking-tight print:text-black">{project.name}</h1>
-            <p className="text-xl text-muted-foreground mb-8 font-medium print:text-gray-600">Drafted by {project.author}</p>
+            <p className="text-xl text-muted-foreground mb-8 font-medium print:text-gray-600">{gradingCopy.draftedBy} {project.author}</p>
             <div className="flex flex-wrap gap-4 text-sm">
               <div className="bg-primary/10 text-primary border border-primary/20 px-4 py-2 rounded-lg print:border-gray-300 print:text-black">
-                <span className="opacity-70 text-xs uppercase tracking-wider block mb-0.5">Base Size</span>
+                <span className="opacity-70 text-xs uppercase tracking-wider block mb-0.5">{gradingCopy.baseSize}</span>
                 <span className="font-bold text-lg">{project.baseSize}</span>
               </div>
               <div className="bg-background border border-border px-4 py-2 rounded-lg shadow-sm print:border-gray-300 print:shadow-none">
@@ -237,7 +244,7 @@ export default function ProjectGrading() {
                     <thead className="bg-muted/20 text-muted-foreground print:bg-white print:text-gray-600">
                       <tr>
                         <th className="p-4 sm:px-12 py-4 font-semibold border-r border-border/50 w-72 min-w-[240px] text-xs uppercase tracking-wider align-bottom print:border-gray-300" scope="col">
-                          Measurement
+                          {gradingCopy.measurementHeader}
                         </th>
                         {ALL_SIZES.map(size => (
                           <th key={size} className={cn(
@@ -258,9 +265,9 @@ export default function ProjectGrading() {
                               <td className="p-4 sm:px-12 py-5 border-r border-border/50 print:border-gray-300" rowSpan={hasRows ? 2 : 1}>
                                 <div className="font-serif text-lg font-bold text-foreground print:text-black leading-tight">{m.label}</div>
                                 <div className="text-[11px] font-medium text-muted-foreground mt-1.5 uppercase tracking-wider flex items-center gap-1.5 print:text-gray-500">
-                                  <span>{m.measurementType}</span>
+                                  <span>{gradingCopy.gradingKeys[m.gradingKey] || m.gradingKey}</span>
                                   <span className="w-1 h-1 rounded-full bg-border"></span>
-                                  <span>{GRADING_KEY_LABELS[m.gradingKey]}</span>
+                                  <span>{m.measurementType}</span>
                                 </div>
                               </td>
                               {ALL_SIZES.map(size => {
@@ -276,7 +283,7 @@ export default function ProjectGrading() {
                                         {val?.stitchCount} <span className="text-[10px] sm:text-xs font-sans font-medium text-muted-foreground -ml-0.5 print:text-gray-500">{gradingCopy.stitches.toLowerCase()}</span>
                                       </div>
                                       {val && val.stitchCount !== val.exactStitchCount && (
-                                        <div className="text-[9px] text-muted-foreground/60 font-mono" title="Exact value before rounding">
+                                        <div className="text-[9px] text-muted-foreground/60 font-mono" title={gradingCopy.exactValueTooltip}>
                                           {val.exactStitchCount}
                                         </div>
                                       )}
@@ -305,7 +312,7 @@ export default function ProjectGrading() {
                                           {val?.rowCount} <span className="text-[9px] font-sans font-medium text-muted-foreground/70 -ml-0.5 print:text-gray-500">{gradingCopy.rowsLabel.toLowerCase()}</span>
                                         </div>
                                         {val?.rowCount !== undefined && val.exactRowCount !== undefined && val.rowCount !== val.exactRowCount && (
-                                          <div className="text-[9px] text-muted-foreground/50 font-mono" title="Exact value before rounding">
+                                          <div className="text-[9px] text-muted-foreground/50 font-mono" title={gradingCopy.exactValueTooltip}>
                                             {val.exactRowCount}
                                           </div>
                                         )}

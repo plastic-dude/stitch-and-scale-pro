@@ -7,8 +7,8 @@ describe('Onboarding Footer Spacing (F-10)', () => {
   const source = fs.readFileSync(sourcePath, 'utf8');
 
   it('reserves bottom space for the fixed mobile footer', () => {
-    // Q64: increased bottom padding to pb-40 for better mobile clearance
-    expect(source).toContain('pb-40 sm:pb-10');
+    // Q65: increased bottom padding to pb-48 for better mobile clearance
+    expect(source).toContain('pb-48 sm:pb-10');
   });
 
   it('uses fixed positioning with safe-area padding for the footer', () => {

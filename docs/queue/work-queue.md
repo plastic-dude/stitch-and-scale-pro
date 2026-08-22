@@ -57,3 +57,5 @@
 | 77 | QUEUE-062 | Data Integrity & Validation: Impossible measurement guard and global integrity gate | CRITICAL | done | CHK-206: Nested normalization + publication integrity gate + calculator quarantine. |
 | 78 | QUEUE-063 | CI/CD & Locale Matrix: Automated translation parity check and build-time localization gate | done | CHK-207 | CHK-207: Automated parity gate green; standardized 80+ copy modules. |
 | 79 | QUEUE-064 | Mobile Resilience: Fix onboarding footer overlap and deep-link recovery | MAJOR | done | CHK-208: Fixed 390x844 footer overlap + repaired deep-link recovery handlers + localized recovery UI. |
+| 87 | 2026-08-22 (CHK-209) | QUEUE-065 (MAJOR) — Localization & Parity | tsc clean; vitest 2,515/2,515; build green; fixed remaining English + onboarding tour parity | ef4c1bf | done |
+| 80 | QUEUE-065 | Localization Brutality IV and Onboarding Parity | MAJOR | done | CHK-209: Localized grading labels, CSV headers, and demo names; fixed onboarding tour parity + mobile clearance. |

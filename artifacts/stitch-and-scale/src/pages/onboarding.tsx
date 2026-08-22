@@ -302,8 +302,8 @@ function StepWorkspaceTour() {
   const tourKeys = [
     ['workflow.onboarding.tour.dashboard', 'workflow.onboarding.tour.dashboardDescription'],
     ['workflow.onboarding.tour.search', 'workflow.onboarding.tour.searchDescription'],
-    ['workflow.onboarding.tour.measurements', 'workflow.onboarding.tour.measurementsDescription'],
-    ['workflow.onboarding.tour.preview', 'workflow.onboarding.tour.previewDescription'],
+    ['workspace.tab.notes', 'workspace.editor.notesDescription'],
+    ['workspace.tab.preview', 'workflow.onboarding.tour.previewDescription'],
     ['workflow.onboarding.tour.integrity', 'workflow.onboarding.tour.integrityDescription'],
   ] as const;
   return (
@@ -551,7 +551,7 @@ export default function OnboardingOverlay() {
       {step === 1 && <InstallBanner trigger="onboarding" />}
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto px-4 sm:px-8 pt-10 pb-40 sm:pb-10 flex items-start justify-center">
+      <div className="flex-1 overflow-y-auto px-4 sm:px-8 pt-10 pb-48 sm:pb-10 flex items-start justify-center">
         <div className="w-full max-w-xl">
           <AnimatePresence mode="wait" custom={direction}>
             <motion.div
