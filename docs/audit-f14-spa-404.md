@@ -18,7 +18,7 @@ We have pinned the client-side 404 behavior via `src/spa-404-route.test.ts`. The
 | **Onboarding Gate** | Verified | Onboarding overlay is suppressed on 404 routes (CHK-126) |
 
 ### 2. Server-Side Fallback
-To mitigate the "200-for-missing-paths" issue, we have hardened `vercel.json` to exclude known assets and API paths from the SPA rewrite. This ensures that a missing asset (e.g., a missing image in `/assets/`) returns a true HTTP 404 from the Vercel edge rather than the SPA shell.
+To mitigate the "200-for-missing-paths" issue, we have hardened `vercel.json` to exclude known assets and API paths from the SPA rewrite. Because this project sets `cleanUrls: true`, the SPA destination is `/` rather than `/index.html`; this is the clean-URL-safe form of serving the built entry point. This ensures that a missing asset (e.g., a missing image in `/assets/`) returns a true HTTP 404 from the Vercel edge rather than the SPA shell.
 
 ```json
 {
@@ -26,7 +26,7 @@ To mitigate the "200-for-missing-paths" issue, we have hardened `vercel.json` to
     { "source": "/manifest.webmanifest", "destination": "/manifest.webmanifest" },
     { "source": "/manifest.json", "destination": "/manifest.json" },
     { "source": "/sw.js", "destination": "/sw.js" },
-    { "source": "/:path((?!api(?:/|$)|assets(?:/|$)|manifest\\.json|manifest\\.webmanifest|sw\\.js|favicon\\.ico|robots\\.txt).*)", "destination": "/index.html" }
+    { "source": "/:path((?!api(?:/|$)|assets(?:/|$)|manifest\\.json|manifest\\.webmanifest|sw\\.js|favicon\\.ico|robots\\.txt).*)", "destination": "/" }
   ],
   "cleanUrls": true,
   "trailingSlash": false

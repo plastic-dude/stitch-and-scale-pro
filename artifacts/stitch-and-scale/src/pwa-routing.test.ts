@@ -12,7 +12,7 @@ describe('PWA Routing Configuration', () => {
     const manifestWebmanifest = rewrites.find((r: any) => r.source === '/manifest.webmanifest');
     const manifestJson = rewrites.find((r: any) => r.source === '/manifest.json');
     const swJs = rewrites.find((r: any) => r.source === '/sw.js');
-    const spaCatchAll = rewrites.find((r: any) => r.destination === '/index.html');
+    const spaCatchAll = rewrites.find((r: any) => r.destination === '/');
     
     expect(manifestWebmanifest).toBeDefined();
     expect(manifestWebmanifest.destination).toBe('/manifest.webmanifest');
@@ -24,7 +24,8 @@ describe('PWA Routing Configuration', () => {
     expect(swJs.destination).toBe('/sw.js');
     
     expect(spaCatchAll).toBeDefined();
-    expect(spaCatchAll.destination).toBe('/index.html');
+    expect(spaCatchAll.destination).toBe('/');
+    expect(vercelJson.cleanUrls).toBe(true);
     
     // Ensure manifest rewrites come BEFORE the SPA catch-all
     const manifestIndex = rewrites.indexOf(manifestWebmanifest);

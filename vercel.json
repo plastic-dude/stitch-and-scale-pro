@@ -19,7 +19,7 @@
     { "source": "/manifest.webmanifest", "destination": "/manifest.webmanifest" },
     { "source": "/manifest.json", "destination": "/manifest.json" },
     { "source": "/sw.js", "destination": "/sw.js" },
-    { "source": "/:path((?!api(?:/|$)|assets(?:/|$)|manifest\\.json|manifest\\.webmanifest|sw\\.js|favicon\\.ico|robots\\.txt).*)", "destination": "/index.html" }
+    { "source": "/:path((?!api(?:/|$)|assets(?:/|$)|manifest\\.json|manifest\\.webmanifest|sw\\.js|favicon\\.ico|robots\\.txt).*)", "destination": "/" }
   ],
   "cleanUrls": true,
   "trailingSlash": false

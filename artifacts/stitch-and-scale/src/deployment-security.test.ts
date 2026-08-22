@@ -23,8 +23,9 @@ describe('Deployment Security (F-13, F-14)', () => {
     const source = readFileSync(join(rootDir, 'vercel.json'), 'utf-8');
     const config = JSON.parse(source);
     
-    const spaRewrite = config.rewrites.find((r: any) => r.destination === '/index.html');
+    const spaRewrite = config.rewrites.find((r: any) => r.destination === '/');
     expect(spaRewrite).toBeDefined();
+    expect(config.cleanUrls).toBe(true);
     expect(spaRewrite.source).toContain('/:path(');
     expect(spaRewrite.source).toContain('?!api');
     expect(spaRewrite.source).toContain('api(?:/|$)');
