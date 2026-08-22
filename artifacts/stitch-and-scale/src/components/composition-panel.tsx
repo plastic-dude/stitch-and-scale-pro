@@ -15,6 +15,7 @@ export const CompositionPanel: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const projectHook = useProject(id);
   const { language } = useSettings();
+  const [compiling, setCompiling] = useState(false);
 
   if (!projectHook) return null;
   const { project, setDraftContent, compilePackage } = projectHook;
@@ -27,8 +28,6 @@ export const CompositionPanel: React.FC = () => {
     finishing: '',
     care: ''
   };
-
-  const [compiling, setCompiling] = useState(false);
 
   const updateContent = (patch: Partial<PatternDocumentContent>) => {
     setDraftContent({ ...content, ...patch });

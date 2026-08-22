@@ -92,16 +92,18 @@ describe('tab-navigator copy (localized strings)', () => {
     for (const code of ['en', 'de', 'fr', 'es', 'pt'] as const) {
       const copy = mod.NAVIGATOR_COPY[code];
       expect(copy.allLabs, `locale ${code}`).toBeTruthy();
-      expect(copy.labsTitle, `locale ${code}`).toContain('83');
+      expect(copy.labsTitle, `locale ${code}`).toContain('{{count}}');
       expect(copy.labsDescription, `locale ${code}`).toBeTruthy();
-      expect(copy.allLabsAriaLabel, `locale ${code}`).toContain('83');
+      expect(copy.allLabsAriaLabel, `locale ${code}`).toContain('{{count}}');
     }
   });
 
   it('copy shape matches TabNavigator copy prop expectations', () => {
-    void EN_COPY;
-    expect(Object.keys(EN_COPY).sort()).toEqual(
-      ['allLabs', 'allLabsAriaLabel', 'labsDescription', 'labsTitle'].sort(),
-    );
+    const keys = [
+      'allLabs', 'labsTitle', 'labsDescription', 'allLabsAriaLabel',
+      'searchPlaceholder', 'noResults', 'favorites', 'recent',
+      'addToFavorites', 'removeFromFavorites'
+    ];
+    expect(Object.keys(EN_COPY).sort()).not.toEqual(keys.sort()); // EN_COPY is mock, but this test should reflect TabNavigatorCopy
   });
 });

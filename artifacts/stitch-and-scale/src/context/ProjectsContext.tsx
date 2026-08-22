@@ -728,9 +728,10 @@ export function useProject(id?: string) {
   if (!id) return null;
   const existing = projects.find(p => p.id === id);
 
+  const { language } = useSettings();
+  
   // CHK-119: first visit to the demo id with no stored project seeds the demo.
   if (!existing && id === DEMO_PROJECT_ID) {
-    const { language } = useSettings();
     const demo = makeDemoProject(language);
     createProject(demo);
     return {

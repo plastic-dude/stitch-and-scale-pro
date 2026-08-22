@@ -214,36 +214,30 @@ export default function ProjectWorkspace() {
   const projectHook = useProject(id);
   const { language: currentLanguage, t, customStandard } = useSettings();
   const { toast } = useToast();
-  
-  if (!projectHook) {
-    return <div className="flex items-center justify-center min-h-[400px]">{t('workspace.loading')}</div>;
-  }
 
-  const { 
-    project, 
-    updateProject, 
-    createSnapshot, 
-    restoreSnapshot, 
-    deleteSnapshot,
-    createPublicationPackage,
-    updatePublicationPackage,
-    deletePublicationPackage,
-    addPublicationArtifact,
-    inspectArtifact,
-    setFitGovernance,
-    addCollaborator,
-    updateCollaborator,
-    deleteCollaborator,
-    addAsset,
-    deleteAsset,
-    updateAsset,
-    addSubmission,
-    updateSubmission,
-    deleteSubmission,
-    addWholesaleOrder,
-    updateWholesaleOrder,
-    deleteWholesaleOrder,
-  } = projectHook;
+  const project = projectHook?.project;
+  const updateProject = projectHook?.updateProject;
+  const createSnapshot = projectHook?.createSnapshot;
+  const restoreSnapshot = projectHook?.restoreSnapshot;
+  const deleteSnapshot = projectHook?.deleteSnapshot;
+  const createPublicationPackage = projectHook?.createPublicationPackage;
+  const updatePublicationPackage = projectHook?.updatePublicationPackage;
+  const deletePublicationPackage = projectHook?.deletePublicationPackage;
+  const addPublicationArtifact = projectHook?.addPublicationArtifact;
+  const inspectArtifact = projectHook?.inspectArtifact;
+  const setFitGovernance = projectHook?.setFitGovernance;
+  const addCollaborator = projectHook?.addCollaborator;
+  const updateCollaborator = projectHook?.updateCollaborator;
+  const deleteCollaborator = projectHook?.deleteCollaborator;
+  const addAsset = projectHook?.addAsset;
+  const deleteAsset = projectHook?.deleteAsset;
+  const updateAsset = projectHook?.updateAsset;
+  const addSubmission = projectHook?.addSubmission;
+  const updateSubmission = projectHook?.updateSubmission;
+  const deleteSubmission = projectHook?.deleteSubmission;
+  const addWholesaleOrder = projectHook?.addWholesaleOrder;
+  const updateWholesaleOrder = projectHook?.updateWholesaleOrder;
+  const deleteWholesaleOrder = projectHook?.deleteWholesaleOrder;
   const copy = getWorkspaceCopy(currentLanguage);
   const tc = getToastCopy(currentLanguage);
 
@@ -252,7 +246,7 @@ export default function ProjectWorkspace() {
   // CHK-162 (QUEUE-019): Favorites and recents tracking
   const favHandle = useProjectStorage<string[]>(
     'favorites',
-    project.id,
+    project?.id || 'placeholder',
     ['stitch-and-scale-favorites']
   );
   const [favorites, setFavorites] = useProjectStorageState<string[]>(
@@ -262,7 +256,7 @@ export default function ProjectWorkspace() {
 
   const recentHandle = useProjectStorage<string[]>(
     'recent-labs',
-    project.id,
+    project?.id || 'placeholder',
     ['stitch-and-scale-recent-labs']
   );
   const [recentLabs, setRecentLabs] = useProjectStorageState<string[]>(
@@ -314,15 +308,15 @@ export default function ProjectWorkspace() {
   const [renameDraft, setRenameDraft] = React.useState('');
 
   // CHK-132: notes persistence
-  const [notesDraft, setNotesDraft] = React.useState(project.description ?? '');
-  const notesDirty = notesNeedSave(project, notesDraft);
+  const [notesDraft, setNotesDraft] = React.useState('');
+  const notesDirty = project ? notesNeedSave(project, notesDraft) : false;
   
   React.useEffect(() => {
     if (project) setNotesDraft(project.description ?? '');
-  }, [project.id]);
+  }, [project?.id, project]);
 
   const persistNotes = React.useCallback(() => {
-    if (!project || !notesDirty) return false;
+    if (!project || !updateProject || !notesDirty) return false;
     updateProject(withNotes(project, notesDraft));
     return true;
   }, [project, notesDraft, notesDirty, updateProject]);
@@ -347,11 +341,12 @@ export default function ProjectWorkspace() {
   };
 
   const openRename = () => {
-    setRenameDraft(project.name ?? '');
+    setRenameDraft(project?.name ?? '');
     setRenameOpen(true);
   };
 
   const commitRename = () => {
+    if (!project || !updateProject) return;
     const next = normalizeProjectName(renameDraft);
     if (!next) {
       toast({ title: copy.renameEmpty, variant: 'destructive' });
@@ -373,6 +368,7 @@ export default function ProjectWorkspace() {
   };
 
   const handleAddSection = () => {
+    if (!project || !updateProject) return;
     setMTouched(prev => ({ ...prev, section: true }));
     if (!newSectionName.trim()) return;
     const newSection: PatternSection = {
@@ -390,6 +386,7 @@ export default function ProjectWorkspace() {
   };
 
   const handleDeleteSection = (sectionId: string) => {
+    if (!project || !updateProject) return;
     updateProject({
       ...project,
       sections: project.sections.filter((s: PatternSection) => s.id !== sectionId)
@@ -421,6 +418,7 @@ export default function ProjectWorkspace() {
   };
 
   const handleUndoDelete = (stash: { sectionId: string, measurement: SectionMeasurement }) => {
+    if (!project || !updateProject) return;
     updateProject({
       ...project,
       sections: project.sections.map((s: PatternSection) => {
@@ -436,6 +434,7 @@ export default function ProjectWorkspace() {
   };
 
   const handleAddMeasurement = (sectionId: string) => {
+    if (!project || !updateProject) return;
     setMTouched({ label: true, value: true });
     if (!validateMeasurementForm()) return;
     
@@ -481,9 +480,11 @@ export default function ProjectWorkspace() {
   };
 
   const handleDeleteMeasurement = (sectionId: string, measurementId: string) => {
+    if (!project) return;
     const section = project.sections.find((s: PatternSection) => s.id === sectionId);
     const measurement = section?.measurements.find((m: SectionMeasurement) => m.id === measurementId);
     if (!measurement) return;
+    if (!project || !updateProject) return;
     updateProject({
       ...project,
       sections: project.sections.map((s: PatternSection) => {
@@ -513,6 +514,7 @@ export default function ProjectWorkspace() {
   };
 
   const handleEditMeasurement = (sectionId: string, measurementId: string) => {
+    if (!project) return;
     const measurement = project.sections
       .find((s: PatternSection) => s.id === sectionId)
       ?.measurements.find((m: SectionMeasurement) => m.id === measurementId);
@@ -536,9 +538,10 @@ export default function ProjectWorkspace() {
     setMRowRemainder(measurement.rowRemainder !== undefined ? String(measurement.rowRemainder) : '');
   };
 
-  const gradingResults = gradePattern(project, resolveProjectStandards(project, customStandard));
+  const gradingResults = project ? gradePattern(project, resolveProjectStandards(project, customStandard)) : null;
 
   function TabPanel({ value }: { value: string }): React.ReactElement {
+    if (!project) return <>{value}</>;
     switch (value) {
       case 'sections': return (
         <div className="space-y-6">
@@ -746,7 +749,7 @@ export default function ProjectWorkspace() {
             <CardDescription>{t('workspace.editor.previewDescription')}</CardDescription>
           </CardHeader>
           <CardContent>
-            {gradingResults.length === 0 || gradingResults.every((s: any) => s.measurements.length === 0) ? (
+            {!gradingResults || gradingResults.length === 0 || gradingResults.every((s: any) => s.measurements.length === 0) ? (
               <div className="py-20 text-center text-muted-foreground">
                 <Calculator className="w-12 h-12 mx-auto mb-4 opacity-20" />
                 <p>{t('workspace.editor.previewEmpty')}</p>
@@ -845,9 +848,9 @@ export default function ProjectWorkspace() {
           <React.Suspense fallback={<div className="py-10 text-center text-sm text-muted-foreground">{copy.loadingLab}</div>}>
             <Collaboration 
               project={project} 
-              onAddMember={(m: any) => addCollaborator(m)}
-              onUpdateMember={(mid: string, p: any) => updateCollaborator(mid, p)}
-              onDeleteMember={(mid: string) => deleteCollaborator(mid)}
+              onAddMember={(m: any) => addCollaborator?.(m)}
+              onUpdateMember={(mid: string, p: any) => updateCollaborator?.(mid, p)}
+              onDeleteMember={(mid: string) => deleteCollaborator?.(mid)}
             />
           </React.Suspense>
         );
@@ -1006,6 +1009,10 @@ export default function ProjectWorkspace() {
     }
   }
 
+  if (!projectHook || !project) {
+    return <div className="flex items-center justify-center min-h-[400px]">{t('workspace.loading')}</div>;
+  }
+
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
       
@@ -1055,7 +1062,7 @@ export default function ProjectWorkspace() {
             <DialogContent className="sm:max-w-md">
               <FitGovernancePanel 
                 project={project} 
-                onUpdate={(ease, metadata) => setFitGovernance(ease, metadata)} 
+                onUpdate={(ease, metadata) => setFitGovernance?.(ease, metadata)} 
               />
             </DialogContent>
           </Dialog>

@@ -17,6 +17,7 @@
 | 70 | QUEUE-055 | Priority 1 Gap 6: Sample tracker for physical design assets | MAJOR | done | CHK-199: Storage seam + SampleTracker UI + Five-locale localization |
 | 71 | QUEUE-056 | Priority 1 Gap 7: Submission pipeline for outlet deadlines | MAJOR | done | CHK-200: Durable submissions records + UI verification + Context crash fix |
 | 72 | QUEUE-057 | Wholesale follow-up: durable local records for yarn shop orders | MAJOR | done | CHK-201: Durable wholesale records + localized UI + storage seam |
+| 73 | QUEUE-058 | Reconcile navigator lab counts and verify search/favorites integration | MINOR | in-progress | Stale '83 labs' hardcoded strings in navigator copy; verify mobile search/favorites persistence. |
 
 ## Run ledger
 | Run (date) | Item worked | Gates | Commit | Next item |

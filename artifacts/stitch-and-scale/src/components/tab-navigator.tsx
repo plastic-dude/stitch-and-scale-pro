@@ -158,6 +158,10 @@ export function TabNavigator({
     // scrolls the new panel into view via the existing TabPanel autofocus.
   };
 
+  const labCount = TAB_REGISTRY.length;
+  const labsTitle = copy.labsTitle.replace('{{count}}', labCount.toString());
+  const allLabsAriaLabel = copy.allLabsAriaLabel.replace('{{count}}', labCount.toString());
+
   if (!isDesktop) {
     return (
       <div className={className}>
@@ -167,7 +171,7 @@ export function TabNavigator({
               variant="outline"
               size="sm"
               className="w-full gap-2 bg-card border-border text-sm h-11"
-              aria-label={copy.allLabsAriaLabel}
+              aria-label={allLabsAriaLabel}
               data-testid="tab-navigator-trigger"
             >
               <ListTree className="h-4 w-4" />
@@ -176,7 +180,7 @@ export function TabNavigator({
           </SheetTrigger>
           <SheetContent side="bottom" className="max-h-[90vh] flex flex-col p-0 rounded-t-xl overflow-hidden">
             <SheetHeader className="p-4 pb-2 text-left">
-              <SheetTitle className="font-serif text-lg">{copy.labsTitle}</SheetTitle>
+              <SheetTitle className="font-serif text-lg">{labsTitle}</SheetTitle>
               <SheetDescription className="text-xs">{copy.labsDescription}</SheetDescription>
             </SheetHeader>
 
@@ -331,7 +335,7 @@ export function TabNavigator({
           variant="outline"
           size="sm"
           className="gap-2 bg-card border-border h-11 shrink-0"
-          aria-label={copy.allLabsAriaLabel}
+          aria-label={allLabsAriaLabel}
           data-testid="tab-navigator-trigger"
         >
           <ListTree className="h-4 w-4" />
