@@ -34,6 +34,29 @@ describe('project normalization', () => {
     });
   });
 
+  it('repairs invalid timestamps before render and sort consumers see them', () => {
+    const project = normalizeProjectRecord(legacyRecord({
+      createdAt: 'not-a-date',
+      updatedAt: 'also-not-a-date',
+    }), NOW);
+
+    expect(project).toMatchObject({
+      createdAt: NOW,
+      updatedAt: NOW,
+    });
+    expect(Number.isFinite(Date.parse(project!.createdAt))).toBe(true);
+    expect(Number.isFinite(Date.parse(project!.updatedAt))).toBe(true);
+
+    const fallbackProject = normalizeProjectRecord(legacyRecord({
+      createdAt: 'not-a-date',
+      updatedAt: undefined,
+    }), 'also-not-a-date');
+    expect(fallbackProject).toMatchObject({
+      createdAt: '1970-01-01T00:00:00.000Z',
+      updatedAt: '1970-01-01T00:00:00.000Z',
+    });
+  });
+
   it('uses deterministic safe defaults for malformed collections and enum fields', () => {
     const project = normalizeProjectRecord(legacyRecord({
       gauge: null,

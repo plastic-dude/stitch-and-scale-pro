@@ -48,7 +48,10 @@ function nonEmptyString(value: unknown, fallback: string): string {
 }
 
 function dateString(value: unknown, fallback: string): string {
-  return typeof value === 'string' && value.trim().length > 0 ? value : fallback;
+  if (typeof value === 'string' && value.trim().length > 0 && Number.isFinite(Date.parse(value))) {
+    return value;
+  }
+  return fallback;
 }
 
 function normalizeGauge(value: unknown): Gauge {
@@ -81,6 +84,7 @@ export function normalizeProjectRecord(
 ): PatternProject | null {
   if (!isRecord(value)) return null;
 
+  const safeNow = dateString(now, new Date(0).toISOString());
   const rawName = nonEmptyString(value.name, 'Untitled pattern');
   const rawAuthor = typeof value.author === 'string' ? value.author : '';
   const baseSize = VALID_SIZES.includes(value.baseSize as SizeKey)
@@ -101,8 +105,8 @@ export function normalizeProjectRecord(
     baseSize,
     gauge: normalizeGauge(value.gauge),
     sections: normalizeSections(value.sections),
-    createdAt: dateString(value.createdAt, now),
-    updatedAt: dateString(value.updatedAt, dateString(value.createdAt, now)),
+    createdAt: dateString(value.createdAt, safeNow),
+    updatedAt: dateString(value.updatedAt, dateString(value.createdAt, safeNow)),
     description: typeof value.description === 'string' ? value.description : undefined,
     sizingStandard,
     yarnWeight,
