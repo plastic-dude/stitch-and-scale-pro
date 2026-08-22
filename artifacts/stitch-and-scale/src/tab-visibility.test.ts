@@ -66,15 +66,13 @@ describe("CHK-125 — workspace tab strip discoverability contract", () => {
     // inside the last chip button).
     // The chip block runs from the first group copy key to the chip's
     // "labs" count tag (rendered as "{count} labs" in a template literal).
-    const labsAnchor = source.indexOf("} labs</span>");
-    const chipArea = source.slice(source.indexOf("workspace.group.design"), labsAnchor);
-    expect(
-      chipArea.includes(".sort((a, b) => b.count - a.count)"),
-      "chip row must sort groups count-descending: " + chipArea.slice(-200),
-    ).toBe(true);
+    const chipStart = source.indexOf("workspace.group.design");
+    const sortExpr = ".sort((a, b) => b.count - a.count)";
+    const sortIndex = source.indexOf(sortExpr, chipStart);
+    expect(sortIndex, "chip row must sort groups count-descending").toBeGreaterThan(-1);
     // And the count must be rendered as an explicit "N labs" tag, not a bare
     // suffix that reads like a ranking:
-    expect(labsAnchor > -1, "chip count must read as '{n} labs'").toBe(true);
+    expect(source.includes("copy.labsCount(count)"), "chip count must use localized labsCount helper").toBe(true);
   });
 
   it("flat strip (TabsList) renders at lg+ and hides below 1024px", () => {

@@ -52,6 +52,31 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, 'dist/public'),
     emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom', 'wouter', 'lucide-react', 'date-fns'],
+          'vendor-ui': [
+            '@radix-ui/react-tabs',
+            '@radix-ui/react-dialog',
+            '@radix-ui/react-alert-dialog',
+            '@radix-ui/react-dropdown-menu',
+            '@radix-ui/react-label',
+            '@radix-ui/react-toast',
+          ],
+          'lib-i18n': [
+            path.resolve(import.meta.dirname, 'src/lib/i18n.ts'),
+            path.resolve(import.meta.dirname, 'src/lib/lab-stat-copy.ts'),
+            path.resolve(import.meta.dirname, 'src/lib/workspace-copy.ts'),
+            path.resolve(import.meta.dirname, 'src/lib/settings-copy.ts'),
+          ],
+          'lib-engine': [
+            path.resolve(import.meta.dirname, 'src/lib/grading-engine.ts'),
+            path.resolve(import.meta.dirname, 'src/lib/storage-lib.ts'),
+          ],
+        },
+      },
+    },
   },
   server: {
     port,

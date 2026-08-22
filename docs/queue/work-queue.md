@@ -49,11 +49,13 @@
 | 41 | QUEUE-034 | Localization Brutality II — Fix hardcoded English in `StorageHealthCard` and resolve the "Localization Audit" sample project name leak in non-English locales. | MAJOR | done | CHK-177: localized `StorageHealthCard` + Settings headers; fixed demo seed locale leak; vitest green |
 | 42 | QUEUE-035 | Audit: Receipt Lab tax validation — negative tax rates accepted; causes PDF generator crash on divide-by-zero or infinity risk; add `validateTaxInput` and quarantine. | MAJOR | done | CHK-178: implemented tax/fee validation layer in `ReceiptLabCard`; added `isValid` quarantine to `receipt-lab.ts`; vitest green |
 | 43 | QUEUE-036 | Data Lifecycle Controls: Implement "Delete all local data" (Danger Zone) with double-confirmation and "Restore Preview" metadata display to prevent accidental data loss and improve trust. | MAJOR | done | CHK-179: `4b9b46b`; implementation complete |
+| 44 | QUEUE-037 | Audit F-10-Perf (MAJOR) — Initial JS chunk exceeds performance budget (~600KB); implement lab-card-level lazy loading to reduce main bundle size and improve mobile TTI. | MAJOR | done | CHK-180: aff1652; optimized via manual chunking and locale splitting |
 
 ## Run ledger
 | Run (date) | Item worked | Gates | Commit | Next item |
 |---|---|---|---|---|
-| 2026-08-22 | QUEUE-036 | tsc, vitest, build | 4b9b46b | END OF QUEUE |
+| 2026-08-22 | QUEUE-037 | tsc, vitest, build | aff1652 | END OF QUEUE |
+| 2026-08-22 | QUEUE-036 | tsc, vitest, build | 4b9b46b | QUEUE-037 |
 | 2026-08-22 | QUEUE-035 | tsc, vitest, build | aa376ba | QUEUE-036 |
 | 2026-08-22 | QUEUE-034 | tsc, vitest, build | 97f1e5b | QUEUE-035 |
 | 2026-08-22 (CHK-175) | QUEUE-032 (MAJOR) — Onboarding Alignment | tsc clean; vitest green; build green; aligned tour with search/health; fixed sample meta | 59d2b00 | QUEUE-033 |

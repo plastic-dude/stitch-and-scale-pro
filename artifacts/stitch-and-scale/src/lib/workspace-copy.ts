@@ -90,15 +90,15 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     returnDashboard: 'Return to dashboard',
     undo: 'Undo',
     noSections: 'No sections yet',
-    emptySectionDesc: 'Divide your pattern into logical sections (back, front, sleeves) to start adding measurements.',
-    addFirstSection: 'Add the first section',
+    emptySectionDesc: 'Divide your pattern into logical sections (e.g. Back, Front, Sleeves) to start adding measurements.',
+    addFirstSection: 'Add First Section',
     keepIt: 'Keep it',
     confirmDeleteSectionNamed: (name) => `Delete section ${name}?`,
-    confirmDeleteSectionBody: (count) => `This removes the section and all its ${count} measurements. It cannot be undone — ensure no other items (PDF, test notes) still reference them.`,
-    confirmDeleteSectionAction: 'Delete section',
+    confirmDeleteSectionBody: (count) => `This removes the section and all ${count} of its measurements. It cannot be undone — ensure no other items (PDF, test notes) still reference them.`,
+    confirmDeleteSectionAction: 'Delete Section',
     confirmDeleteMeasurementNamed: (label) => `Delete "${label}"?`,
     confirmDeleteMeasurementBody: 'The measurement disappears immediately, but an Undo button appears in the notification for 8 seconds if it was a mistake.',
-    confirmDeleteMeasurementAction: 'Delete measurement',
+    confirmDeleteMeasurementAction: 'Delete Measurement',
     measurement: 'Measurement',
     type: 'Type',
     gradingBase: 'Grading base',
@@ -201,8 +201,8 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     renameSave: 'Speichern',
     renameCancel: 'Abbrechen',
     renameSaved: 'Projekt umbenannt',
-    renameFailed: 'Neuer Name konnte nicht gespeichert werden',
-    renameEmpty: 'Name darf nicht leer sein',
+    renameFailed: 'Der neue Name konnte nicht gespeichert werden',
+    renameEmpty: 'Der Name darf nicht leer sein',
     renameSame: 'Nichts geändert',
     addMeasurement: 'Maß hinzufügen',
     fieldRequired: 'Dieses Feld ist erforderlich',
@@ -514,9 +514,11 @@ export const ROWS_UNIT: Record<LanguageCode, string> = {
 };
 
 export function workspaceGaugeByline(locale: string, gauge: { stitchesPer4In: number | null | undefined; rowsPer4In: number | null | undefined; unit?: string } | null | undefined): string {
-  const code = locale.toLowerCase().split('-')[0] as LanguageCode;
+  const code = (locale || 'en').toLowerCase().split('-')[0] as LanguageCode;
   const sts = STS_UNIT[code] ?? STS_UNIT.en;
   const rows = ROWS_UNIT[code] ?? ROWS_UNIT.en;
-  if (!gauge || !gauge.stitchesPer4In || !gauge.rowsPer4In) return '';
-  return `${gauge.stitchesPer4In} ${sts} / ${gauge.rowsPer4In} ${rows}`;
+  const unit = gauge?.unit === 'cm' ? '4cm' : '4in';
+  if (!gauge) return code === 'en' ? 'sts × rows' : 'M × R';
+  if (!gauge.stitchesPer4In || !gauge.rowsPer4In) return `—${sts} × —${rows} / ${unit}`;
+  return `${gauge.stitchesPer4In}${sts} × ${gauge.rowsPer4In}${rows} / ${unit}`;
 }
