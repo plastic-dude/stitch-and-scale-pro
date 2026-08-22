@@ -6,7 +6,7 @@ import { copyTextOrThrow } from '@/lib/clipboard';
 // craft-fair sellers handwrite or skip receipts, and custom-order sellers
 // run their funnel through DMs + WhatsApp payment proof. The receipt here is
 // a styled card that works as a native-looking image in WhatsApp / Signal /
-// iMessage (copy / save / share via the Web Share API where supported), plus
+// iMessage (copy / share via the Web Share API where supported, plus screenshot guidance), plus
 // a printable PDF path via window.print, and a monthly ledger behind it.
 import { useCallback, useMemo, useRef, useState } from "react";
 import {
@@ -14,7 +14,7 @@ import {
   CalendarDays,
   Check,
   Copy,
-  Download,
+  Camera,
   FileText,
   HelpCircle,
   Printer,
@@ -352,12 +352,8 @@ export function ReceiptLabCard(props: { project: PatternProject }) {
     await copyReceiptText();
   }
 
-  async function saveReceiptImage() {
-    // No external screenshot library — the card itself is a styled div; the
-    // designer screenshots the card (phone-native on mobile, Cmd+Shift+4 on
-    // desktop) OR uses the text copy. We offer a print-based PNG via canvas
-    // capture of the styled card using the browser's own tooling is not
-    // available without a dependency, so we keep the promise honest:
+  function showScreenshotGuidance() {
+    // This control opens guidance only; it does not generate or save an image.
     toast({
       title: copy.screenshotTitle,
       description: copy.screenshotDescription,
@@ -619,19 +615,19 @@ export function ReceiptLabCard(props: { project: PatternProject }) {
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="flex flex-wrap gap-2">
-                  <Button onClick={shareReceipt} size="sm" disabled={!result.isComplete}>
+                  <Button onClick={shareReceipt} size="sm" className="min-h-11" disabled={!result.isComplete}>
                     <Share2 className="h-4 w-4 mr-1.5" /> {copied ? copy.copied : copy.copyShare}
                   </Button>
-                  <Button variant="outline" size="sm" onClick={saveReceiptImage}>
-                    <Download className="h-4 w-4 mr-1.5" /> {copy.saveImage}
+                  <Button variant="outline" size="sm" className="min-h-11" onClick={showScreenshotGuidance}>
+                    <Camera className="h-4 w-4 mr-1.5" /> {copy.screenshotGuide}
                   </Button>
-                  <Button variant="outline" size="sm" onClick={() => window.print()}>
+                  <Button variant="outline" size="sm" className="min-h-11" onClick={() => window.print()}>
                     <Printer className="h-4 w-4 mr-1.5" /> {copy.printPdf}
                   </Button>
-                  <Button variant="outline" size="sm" onClick={saveSale}>
+                  <Button variant="outline" size="sm" className="min-h-11" onClick={saveSale}>
                     <Check className="h-4 w-4 mr-1.5" /> {copy.saveLedger}
                   </Button>
-                  <Button variant="ghost" size="sm" onClick={resetDraft}>
+                  <Button variant="ghost" size="sm" className="min-h-11" onClick={resetDraft}>
                     {copy.reset}
                   </Button>
                 </div>
