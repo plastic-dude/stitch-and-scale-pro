@@ -168,3 +168,9 @@ The fresh asset-size audit confirms the previously recorded performance concern:
 No application-code change is safe to start in this firing. QUEUE-067 is intentionally queued research-only and requires a separate brief plus two research passes; open PRs #70, #71, and #72 are unmerged proposals and cannot be silently adopted. The evidence update is therefore documentation-only, with Q066 left closed and all broader release risks explicitly retained.
 
 ---
+
+## External deployment-method note — 2026-08-22 continuation
+
+The authenticated MCP probe initially returned 401 because the project-wide Vercel environment listing exposed encrypted ciphertext rather than the usable secret value. The official Vercel endpoint for retrieving one project environment variable by ID is `GET /v1/projects/{idOrName}/env/{id}`; the production-scoped `MCP_API_KEY` variable returned `decrypted: true` through that documented endpoint and was used only in memory/a protected temporary file for the probe, then removed. The official source is [Vercel: Retrieve the decrypted value of an environment variable of a project by id](https://vercel.com/docs/rest-api/projects/retrieve-the-decrypted-value-of-an-environment-variable-of-a-project-by-id). Vercel’s [Sensitive environment variables](https://vercel.com/docs/environment-variables/sensitive-environment-variables) guidance also states that sensitive values are non-readable once created; no secret value was written to Git or this evidence note.
+
+---

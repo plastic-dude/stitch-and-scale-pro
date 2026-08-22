@@ -59,6 +59,10 @@ The owner’s broader point is retained: **social sharing and media-oriented out
 
 That future track should focus on voluntary sharing of verified project outputs, media-ready previews, and portfolio/community distribution. It should require private-by-default consent, user review before any share or post, truthful provenance, accessible previews and alt text, selective redaction of private project details, clear export/share status, and no automatic posting. It should not introduce engagement counters, streaks, coercive prompts, or claims that an export, publication, sale, or social post succeeded when the application cannot prove that outcome.
 
+## Documentation deployment parity
+
+After the documentation-only audit commit `4e901da`, Vercel created deployment `dpl_FNSeqkESLUoEMuCxoMCzkCd3oVSv`, which reached `READY` but has no deployment target and only a Git-preview alias. It must not be manually assigned to production. The active production alias remains served by deployment `dpl_3HiUpupLgAwzxS3CLi2xNXHysbg3`, `READY`, target `production`, with exact deployed implementation SHA `55491be9d26017e806ecbf4d9c0b44d3d7790b8f`; that tested implementation release remains the production source of truth for Q066. The later documentation commits are not claimed to be production-served, and no alias was manually assigned.
+
 ## Residual risks and publication posture
 
 Q066 itself has passed its implementation and live interaction gates. This does **not** establish overall publication readiness for the entire product. The repository still has known nonfatal sourcemap warnings, oversized role-specific public visual assets, limitations in proving a user saved a native print-dialog PDF binary, and the broader requirement for fresh dedicated visual evidence of every export surface. Those risks remain outside Q066 and should stay visible in the next release checklist.
