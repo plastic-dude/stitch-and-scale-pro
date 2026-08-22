@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { AlertTriangle, Copy, Check, PenLine } from 'lucide-react';
+import { AlertTriangle, Copy, Check, PenLine, Grid3X3, Type, Eraser, Settings2 } from 'lucide-react';
 import { PatternProject } from '@/lib/grading-engine';
 import { useSettings } from '@/context/SettingsContext';
 import { getChartCopy, getChartFlagDetail } from '@/lib/chart-copy';
@@ -18,13 +18,25 @@ import {
   rowStitchTotal,
   type ChartRowDef,
   validateChartInputs,
+  gridRowToDef,
+  type VisualChartGrid,
 } from '@/lib/chart-lab';
 import { invalidSummary, isInputValid } from '@/lib/validate-field';
+import { cn } from '@/lib/utils';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface ChartLabState {
   rows: ChartRowDef[];
   gradedStitchCount: string;
+  grid?: VisualChartGrid;
+  mode?: 'visual' | 'text';
 }
+
+const DEFAULT_GRID: VisualChartGrid = {
+  width: 10,
+  height: 10,
+  cells: Array(10).fill(0).map(() => Array(10).fill('blank')),
+};
 
 const DEFAULT_STATE: ChartLabState = {
   rows: [
@@ -37,6 +49,8 @@ const DEFAULT_STATE: ChartLabState = {
     },
   ],
   gradedStitchCount: '',
+  grid: DEFAULT_GRID,
+  mode: 'text',
 };
 
 const verdictColor = (v: string) =>
@@ -76,8 +90,42 @@ export function ChartLabCard({ project }: { project: PatternProject }) {
     [state],
   );
 
+  const [activeSymbol, setActiveSymbol] = useState(CYC_SYMBOLS[0].id);
+
   const patchRow = (idx: number, patch: Partial<ChartRowDef>) =>
     setState((s) => ({ ...s, rows: s.rows.map((r, i) => (i === idx ? { ...r, ...patch } : r)) }));
+
+  const syncGridToRows = (grid: VisualChartGrid) => {
+    const newRows = grid.cells.map((cells, i) => gridRowToDef(i, cells)).reverse();
+    setState(s => ({ ...s, rows: newRows }));
+  };
+
+  const handleCellClick = (rowIdx: number, colIdx: number) => {
+    if (!state.grid) return;
+    const newCells = state.grid.cells.map((row, r) => 
+      r === rowIdx ? row.map((cell, c) => c === colIdx ? activeSymbol : cell) : row
+    );
+    const newGrid = { ...state.grid, cells: newCells };
+    setState(s => ({ ...s, grid: newGrid }));
+    syncGridToRows(newGrid);
+  };
+
+  const clearGrid = () => {
+    if (!state.grid) return;
+    const newGrid = { ...state.grid, cells: state.grid.cells.map(r => r.fill('blank')) };
+    setState(s => ({ ...s, grid: newGrid }));
+    syncGridToRows(newGrid);
+  };
+
+  const resizeGrid = (w: number, h: number) => {
+    if (!state.grid) return;
+    const newCells = Array(h).fill(0).map((_, r) => 
+      Array(w).fill(0).map((_, c) => state.grid?.cells[r]?.[c] ?? 'blank')
+    );
+    const newGrid = { width: w, height: h, cells: newCells };
+    setState(s => ({ ...s, grid: newGrid }));
+    syncGridToRows(newGrid);
+  };
 
   const setSymbolCount = (idx: number, symbolId: string, count: number) => {
     const row = state.rows[idx];
@@ -113,6 +161,13 @@ export function ChartLabCard({ project }: { project: PatternProject }) {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
+        <Tabs value={state.mode || 'text'} onValueChange={(v) => setState(s => ({ ...s, mode: v as any }))}>
+          <TabsList className="grid w-full grid-cols-2 mb-4">
+            <TabsTrigger value="text" className="gap-2"><Type className="h-4 w-4" /> {copy.modeText}</TabsTrigger>
+            <TabsTrigger value="visual" className="gap-2"><Grid3X3 className="h-4 w-4" /> {copy.modeVisual}</TabsTrigger>
+          </TabsList>
+        </Tabs>
+
         {/* Graded count check */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           <div className="space-y-1.5">
@@ -178,87 +233,167 @@ export function ChartLabCard({ project }: { project: PatternProject }) {
           </p>
         </div>
 
-        {/* CYC symbol gallery */}
-        <div className="space-y-2">
-          <div className="font-semibold text-sm">{copy.symbolKey}</div>
-          <div className="flex flex-wrap gap-2">
-            {CYC_SYMBOLS.map((s) => (
-              <div key={s.id} className="rounded border bg-muted/40 px-2 py-1 text-xs" title={s.name}>
-                <span className="font-mono font-semibold">{s.abbr}</span>
-                <span className="text-muted-foreground ml-1">{s.name}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Row editor */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="font-semibold text-sm">{copy.chartRows}</div>
-            <Button variant="outline" size="sm" onClick={addRow}>{copy.addRow}</Button>
-          </div>
-          {state.rows.map((r, idx) => (
-            <div key={idx} className="rounded-lg border p-4 space-y-3">
-              <div className="flex items-center justify-between gap-2">
-                <div className="text-sm font-medium">{copy.row} {r.row}</div>
-                <div className="flex items-center gap-2">
-                  {state.rows.length > 1 && (
-                    <Button variant="ghost" size="sm" className="text-xs h-7 text-destructive"
-                      onClick={() => removeRow(idx)}>{copy.remove}</Button>
-                  )}
-                </div>
-              </div>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <div className="space-y-1">
-                  <Label className="text-xs">{copy.repeatCount}</Label>
-                  <Input type="number" min={1} value={r.repeatCount}
-                    onChange={(e) => patchRow(idx, { repeatCount: Math.max(1, Number(e.target.value) || 1) })} />
-                </div>
-                <div className="space-y-1">
-                  <Label className="text-xs">{copy.selvedgeBefore}</Label>
-                  <Input type="number" min={0} value={(r.before.find(s => s.symbolId === 'knit')?.count) ?? 0}
-                    onChange={(e) => patchRow(idx, {
-                      before: e.target.value ? [{ symbolId: 'knit', count: Number(e.target.value) }] : [],
-                    })} />
-                </div>
-                <div className="space-y-1">
-                  <Label className="text-xs">{copy.selvedgeAfter}</Label>
-                  <Input type="number" min={0} value={(r.after.find(s => s.symbolId === 'knit')?.count) ?? 0}
-                    onChange={(e) => patchRow(idx, {
-                      after: e.target.value ? [{ symbolId: 'knit', count: Number(e.target.value) }] : [],
-                    })} />
-                </div>
-                <div className="space-y-1">
-                  <Label className="text-xs">{copy.rowTotal}</Label>
-                  <div className="rounded border bg-muted/40 px-2 py-1.5 text-sm font-semibold">
-                    {rowStitchTotal(r)} {copy.stitchUnit}
-                  </div>
-                </div>
-              </div>
-              <div className="space-y-1">
-                <Label className="text-xs">{copy.symbolsInside}</Label>
+        {/* Mode-specific content */}
+        {state.mode === 'visual' ? (
+          <div className="space-y-6 animate-in fade-in duration-300">
+            {/* Visual Editor Toolbar */}
+            <div className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-lg border bg-muted/20">
+              <div className="space-y-2">
+                <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{copy.palette}</div>
                 <div className="flex flex-wrap gap-1.5">
-                  {CYC_SYMBOLS.map((s) => {
-                    const cur = r.symbols.find((x) => x.symbolId === s.id)?.count ?? 0;
-                    return (
-                      <div key={s.id} className="flex items-center gap-1 rounded border bg-muted/20 px-1.5 py-0.5 text-xs">
-                        <span className="font-mono font-semibold" title={s.name}>{s.abbr}</span>
-                        <Button variant="ghost" size="sm" className="h-5 w-5 p-0 text-xs"
-                          onClick={() => setSymbolCount(idx, s.id, cur - 1)}>-</Button>
-                        <span className="w-4 text-center">{cur}</span>
-                        <Button variant="ghost" size="sm" className="h-5 w-5 p-0 text-xs"
-                          onClick={() => setSymbolCount(idx, s.id, cur + 1)}>+</Button>
-                      </div>
-                    );
-                  })}
+                  {CYC_SYMBOLS.map((s) => (
+                    <Button 
+                      key={s.id} 
+                      variant={activeSymbol === s.id ? 'default' : 'outline'} 
+                      size="sm" 
+                      className="h-8 gap-1.5 px-2 text-xs"
+                      onClick={() => setActiveSymbol(s.id)}
+                    >
+                      <span className="font-mono font-bold">{s.abbr}</span>
+                      <span className="hidden sm:inline opacity-70">{s.name}</span>
+                    </Button>
+                  ))}
                 </div>
               </div>
-              <div className="rounded bg-muted/40 p-2.5 text-xs font-mono text-muted-foreground">
-                {rowProse(r)}
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-md border bg-background">
+                  <Settings2 className="h-3.5 w-3.5 text-muted-foreground" />
+                  <Input 
+                    type="number" 
+                    className="h-7 w-12 p-1 text-center text-xs border-none focus-visible:ring-0" 
+                    value={state.grid?.width}
+                    onChange={(e) => resizeGrid(Number(e.target.value), state.grid?.height || 10)}
+                  />
+                  <span className="text-xs text-muted-foreground">×</span>
+                  <Input 
+                    type="number" 
+                    className="h-7 w-12 p-1 text-center text-xs border-none focus-visible:ring-0" 
+                    value={state.grid?.height}
+                    onChange={(e) => resizeGrid(state.grid?.width || 10, Number(e.target.value))}
+                  />
+                </div>
+                <Button variant="ghost" size="sm" onClick={clearGrid} className="text-destructive hover:text-destructive gap-1.5">
+                  <Eraser className="h-4 w-4" /> {copy.clearGrid}
+                </Button>
               </div>
             </div>
-          ))}
-        </div>
+
+            {/* Grid */}
+            <div className="overflow-x-auto pb-4">
+              <div 
+                className="inline-grid gap-px bg-border border rounded-md shadow-inner"
+                style={{ 
+                  gridTemplateColumns: `repeat(${state.grid?.width}, minmax(32px, 1fr))`,
+                  minWidth: '100%'
+                }}
+              >
+                {state.grid?.cells.map((row, r) => 
+                  row.map((cell, c) => {
+                    const symbol = CYC_SYMBOLS.find(s => s.id === cell);
+                    return (
+                      <button
+                        key={`${r}-${c}`}
+                        onClick={() => handleCellClick(r, c)}
+                        className={cn(
+                          "h-10 w-full flex items-center justify-center font-mono font-bold text-sm transition-colors",
+                          "bg-background hover:bg-muted/50 active:bg-muted",
+                          cell !== 'blank' && "bg-primary/5 text-primary"
+                        )}
+                        title={`${symbol?.name} (Row ${state.grid!.height - r}, Col ${c + 1})`}
+                      >
+                        {symbol?.abbr}
+                      </button>
+                    );
+                  })
+                )}
+              </div>
+            </div>
+          </div>
+        ) : (
+          <>
+            {/* CYC symbol gallery */}
+            <div className="space-y-2">
+              <div className="font-semibold text-sm">{copy.symbolKey}</div>
+              <div className="flex flex-wrap gap-2">
+                {CYC_SYMBOLS.map((s) => (
+                  <div key={s.id} className="rounded border bg-muted/40 px-2 py-1 text-xs" title={s.name}>
+                    <span className="font-mono font-semibold">{s.abbr}</span>
+                    <span className="text-muted-foreground ml-1">{s.name}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Row editor */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="font-semibold text-sm">{copy.chartRows}</div>
+                <Button variant="outline" size="sm" onClick={addRow}>{copy.addRow}</Button>
+              </div>
+              {state.rows.map((r, idx) => (
+                <div key={idx} className="rounded-lg border p-4 space-y-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="text-sm font-medium">{copy.row} {r.row}</div>
+                    <div className="flex items-center gap-2">
+                      {state.rows.length > 1 && (
+                        <Button variant="ghost" size="sm" className="text-xs h-7 text-destructive"
+                          onClick={() => removeRow(idx)}>{copy.remove}</Button>
+                      )}
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <div className="space-y-1">
+                      <Label className="text-xs">{copy.repeatCount}</Label>
+                      <Input type="number" min={1} value={r.repeatCount}
+                        onChange={(e) => patchRow(idx, { repeatCount: Math.max(1, Number(e.target.value) || 1) })} />
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-xs">{copy.selvedgeBefore}</Label>
+                      <Input type="number" min={0} value={(r.before.find(s => s.symbolId === 'knit')?.count) ?? 0}
+                        onChange={(e) => patchRow(idx, {
+                          before: e.target.value ? [{ symbolId: 'knit', count: Number(e.target.value) }] : [],
+                        })} />
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-xs">{copy.selvedgeAfter}</Label>
+                      <Input type="number" min={0} value={(r.after.find(s => s.symbolId === 'knit')?.count) ?? 0}
+                        onChange={(e) => patchRow(idx, {
+                          after: e.target.value ? [{ symbolId: 'knit', count: Number(e.target.value) }] : [],
+                        })} />
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-xs">{copy.rowTotal}</Label>
+                      <div className="rounded border bg-muted/40 px-2 py-1.5 text-sm font-semibold">
+                        {rowStitchTotal(r)} {copy.stitchUnit}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs">{copy.symbolsInside}</Label>
+                    <div className="flex flex-wrap gap-1.5">
+                      {CYC_SYMBOLS.map((s) => {
+                        const cur = r.symbols.find((x) => x.symbolId === s.id)?.count ?? 0;
+                        return (
+                          <div key={s.id} className="flex items-center gap-1 rounded border bg-muted/20 px-1.5 py-0.5 text-xs">
+                            <span className="font-mono font-semibold" title={s.name}>{s.abbr}</span>
+                            <Button variant="ghost" size="sm" className="h-5 w-5 p-0 text-xs"
+                              onClick={() => setSymbolCount(idx, s.id, cur - 1)}>-</Button>
+                            <span className="w-4 text-center">{cur}</span>
+                            <Button variant="ghost" size="sm" className="h-5 w-5 p-0 text-xs"
+                              onClick={() => setSymbolCount(idx, s.id, cur + 1)}>+</Button>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                  <div className="rounded bg-muted/40 p-2.5 text-xs font-mono text-muted-foreground">
+                    {rowProse(r)}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
 
         {/* Pattern prose panel */}
         <div className="space-y-2">

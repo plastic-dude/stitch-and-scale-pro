@@ -54,6 +54,17 @@ export interface ChartRowDef {
   after: { symbolId: string; count: number }[];
 }
 
+/** 
+ * Visual chart grid state. 
+ * Represents a flat 2D grid of symbol IDs.
+ */
+export interface VisualChartGrid {
+  /** Rows from top to bottom (row 1 is at the bottom in knitting charts usually, but array index 0 is top). */
+  cells: string[][];
+  width: number;
+  height: number;
+}
+
 export interface RowAccounting {
   row: number;
   /** Stitches one full repeat block consumes. */
@@ -258,7 +269,12 @@ export function analyzeChartRows(
   };
 }
 
-export const DEFAULT_CHART_INPUT: { rows: ChartRowDef[]; gradedStitchCount: string } = {
+export const DEFAULT_CHART_INPUT: { 
+  rows: ChartRowDef[]; 
+  gradedStitchCount: string;
+  grid?: VisualChartGrid;
+  mode?: 'visual' | 'text';
+} = {
   rows: [
     {
       row: 1,
@@ -269,7 +285,34 @@ export const DEFAULT_CHART_INPUT: { rows: ChartRowDef[]; gradedStitchCount: stri
     },
   ],
   gradedStitchCount: '',
+  mode: 'text',
 };
+
+/** Converts a visual grid row to a compressed ChartRowDef. */
+export function gridRowToDef(rowIdx: number, rowCells: string[]): ChartRowDef {
+  const symbols: { symbolId: string; count: number }[] = [];
+  let currentId = '';
+  let currentCount = 0;
+
+  for (const id of rowCells) {
+    if (id === currentId) {
+      currentCount++;
+    } else {
+      if (currentId) symbols.push({ symbolId: currentId, count: currentCount });
+      currentId = id;
+      currentCount = 1;
+    }
+  }
+  if (currentId) symbols.push({ symbolId: currentId, count: currentCount });
+
+  return {
+    row: rowIdx + 1,
+    symbols,
+    repeatCount: 1, // Visual grid rows are currently 1:1 with graded count
+    before: [],
+    after: [],
+  };
+}
 
 /**
  * Validates Chart Lab inputs (selvedge, repeat count, graded count).
