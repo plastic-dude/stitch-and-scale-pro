@@ -23,6 +23,12 @@ The application TypeScript check passed. The full Vitest suite passed. The produ
 
 The established local CDP mobile smoke passed at 320, 360, 390, and 430px and covered onboarding, dashboard, new project validation, sample workspace, export preflight, Grading Lab, and Design Ledger. No horizontal-overflow or required-control failures were reported.
 
+## Fresh public evidence
+
+Vercel production deployment `dpl_ErTd4xpT4g7vCNwAV4ufMWwLeUSj` reports `target=production`, a READY timestamp, and `meta.githubCommitSha=361b66bb6ecacb2f5dd43b9948e18219da477153`; its aliases include `https://stitch-and-scale-pro-api-server.vercel.app`. The public alias returned HTTP 200 for `/`, `/project/sample-crew-neck-sweater/pdf`, and `/favicon-192.png`; the new asset returned `content-type: image/png` and `content-length: 48605`.
+
+The corrected live MCP smoke passed against the same public alias with protocol `2026-07-28`: GET `/api/mcp` returned 405, allowed-origin OPTIONS returned 204 with the API alias, authenticated `tools/list` returned 200 with the canonical eight-tool order, and a forbidden origin returned 403 with error `-32001`. The alternate `stitch-and-scale-pro.vercel.app` alias currently returns 404 and is not the active browser origin; future custom-domain migration must update `MCP_ALLOWED_ORIGIN` deliberately rather than relying on the default.
+
 ## Residual risk
 
-The production alias must still be promoted to a deployment built from the final commit and then rechecked for the new public asset and deep-link integrity. The smoke workflow does not capture PDF print-dialog binary output. This change reduces runtime image transfer cost but does not address the remaining large `app-logo.png` and OG-image payloads, the known sourcemap warnings, or the broader grading/export publication blockers.
+The smoke workflow does not capture PDF print-dialog binary output. This change reduces runtime image transfer cost but does not address the remaining large `app-logo.png` and OG-image payloads, the known sourcemap warnings, or the broader grading/export publication blockers.
