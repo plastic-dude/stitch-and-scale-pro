@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useReducer, useRef, useState } from 'react';
 import { get, set } from 'idb-keyval';
-import { PatternProject, generateId } from '@/lib/grading-engine';
+import { type PatternProject, generateId } from '@/lib/grading-engine';
+export type { PatternProject };
 import { getSampleCrewNeckSweater } from '@/lib/sample-projects';
 import { LanguageCode } from '@/lib/i18n';
 // CHK-119: landing CTAs link to /project/{DEMO_PROJECT_ID} promising a no-signup

@@ -108,6 +108,11 @@ export interface LabStatCopy {
   notesPlaceholder: string;
   projectNotFound: string;
   returnToDashboard: string;
+  recoveryImportTitle: string;
+  recoveryImportDesc: string;
+  recoveryImportButton: string;
+  recoveryLocalOnlyTitle: string;
+  recoveryLocalOnlyDesc: string;
   baseSize: string;
   gauge: string;
   infiniteValue: string;
@@ -360,6 +365,11 @@ const en: LabStatCopy = {
   notesPlaceholder: 'e.g. Worked flat, seamed at the side. Blocks generously — swatch and block before committing to a size.',
   projectNotFound: 'Project Not Found',
   returnToDashboard: 'Return to Dashboard',
+  recoveryImportTitle: 'Shared this link?',
+  recoveryImportDesc: 'This project might be on another device or browser. If you have a backup file (.json), you can import it now to continue.',
+  recoveryImportButton: 'Import project from file',
+  recoveryLocalOnlyTitle: 'Local-first Privacy',
+  recoveryLocalOnlyDesc: 'Stitch & Scale stores your patterns locally. They don\'t sync automatically between devices unless you export and import them.',
   baseSize: 'Base Size',
   gauge: 'Gauge',
   infiniteValue: 'not reachable',
@@ -612,6 +622,11 @@ const de: LabStatCopy = {
   notesPlaceholder: 'z. B. Flach gestrickt, seitlich genäht. Lässt sich großzügig blocken — vor der Größenwahl maschenproben und blocken.',
   projectNotFound: 'Projekt nicht gefunden',
   returnToDashboard: 'Zum Dashboard zurück',
+  recoveryImportTitle: 'Diesen Link geteilt?',
+  recoveryImportDesc: 'Dieses Projekt befindet sich möglicherweise auf einem anderen Gerät oder Browser. Wenn du eine Backup-Datei (.json) hast, kannst du sie jetzt importieren, um fortzufahren.',
+  recoveryImportButton: 'Projekt aus Datei importieren',
+  recoveryLocalOnlyTitle: 'Lokale Privatsphäre',
+  recoveryLocalOnlyDesc: 'Stitch & Scale speichert deine Muster lokal. Sie werden nicht automatisch zwischen Geräten synchronisiert, es sei denn, du exportierst und importierst sie.',
   baseSize: 'Basisgröße',
   gauge: 'Maschenprobe',
   infiniteValue: 'unerreichbar',
@@ -864,6 +879,11 @@ const fr: LabStatCopy = {
   notesPlaceholder: 'p. ex. Tricoté à plat, cousu sur le côté. Se bloque généreusement — fais un échantillon et bloque avant de choisir la taille.',
   projectNotFound: 'Projet introuvable',
   returnToDashboard: 'Retour au tableau de bord',
+  recoveryImportTitle: 'Lien partagé ?',
+  recoveryImportDesc: 'Ce projet se trouve peut-être sur un autre appareil ou navigateur. Si vous avez un fichier de sauvegarde (.json), vous pouvez l\'importer maintenant pour continuer.',
+  recoveryImportButton: 'Importer le projet depuis un fichier',
+  recoveryLocalOnlyTitle: 'Confidentialité locale',
+  recoveryLocalOnlyDesc: 'Stitch & Scale stocke vos modèles localement. Ils ne se synchronisent pas automatiquement entre les appareils, sauf si vous les exportez et les importez.',
   baseSize: 'Taille de base',
   gauge: 'Échantillon',
   infiniteValue: 'inatteignable',
@@ -1116,6 +1136,11 @@ const es: LabStatCopy = {
   notesPlaceholder: 'p. ej. Tejido plano, con costura lateral. Se bloquea generosamente — haz una muestra y bloquéalo antes de decidir la talla.',
   projectNotFound: 'Proyecto no encontrado',
   returnToDashboard: 'Volver al panel',
+  recoveryImportTitle: '¿Compartiste este enlace?',
+  recoveryImportDesc: 'Este proyecto podría estar en otro dispositivo o navegador. Si tienes un archivo de respaldo (.json), puedes importarlo ahora para continuar.',
+  recoveryImportButton: 'Importar proyecto desde archivo',
+  recoveryLocalOnlyTitle: 'Privacidad local primero',
+  recoveryLocalOnlyDesc: 'Stitch & Scale guarda tus patrones localmente. No se sincronizan automáticamente entre dispositivos a menos que los exportes e importes.',
   baseSize: 'Talla base',
   gauge: 'Muestra',
   infiniteValue: 'inalcanzable',
@@ -1368,6 +1393,11 @@ const pt: LabStatCopy = {
   notesPlaceholder: 'ex.: Tricotado plano, costurado na lateral. Bloqueia com folga — faça uma amostra e bloqueie antes de definir o tamanho.',
   projectNotFound: 'Projeto não encontrado',
   returnToDashboard: 'Voltar ao painel',
+  recoveryImportTitle: 'Compartilhou este link?',
+  recoveryImportDesc: 'Este projeto pode estar em outro dispositivo ou navegador. Se você tiver um arquivo de backup (.json), pode importá-lo agora para continuar.',
+  recoveryImportButton: 'Importar projeto de arquivo',
+  recoveryLocalOnlyTitle: 'Privacidade local primeiro',
+  recoveryLocalOnlyDesc: 'O Stitch & Scale armazena seus padrões localmente. Eles não são sincronizados automaticamente entre dispositivos, a menos que você os exporte e importe.',
   baseSize: 'Tamanho base',
   gauge: 'Amostra',
   infiniteValue: 'inalcançável',

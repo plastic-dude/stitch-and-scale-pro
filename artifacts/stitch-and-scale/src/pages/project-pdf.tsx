@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import { useParams, useLocation } from 'wouter';
-import { useProject } from '@/context/ProjectsContext';
+import { useProject, useProjects, type PatternProject } from '@/context/ProjectsContext';
 import { useSettings } from '@/context/SettingsContext';
 import { gradePattern, resolveProjectStandards } from '@/lib/grading-engine';
 import { THEMES, resolveTheme, type ThemeId } from '@/lib/pdf/themes';
@@ -10,13 +10,14 @@ import { openPrintWindow, getDefaultFilename, sanitizeFilename, detectNamingStyl
 import { compressImageToDataUrl } from '@/lib/image-utils';
 import { getPdfLabels } from '@/lib/pdf/labels';
 import { getWorkspaceCopy } from '@/lib/workspace-copy';
+import { getLabStatCopy } from '@/lib/lab-stat-copy';
 import { validatePublicationPreflight } from '@/lib/publication-quality';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
-import { ArrowLeft, Download, FileText, Eye, Info, X, Loader2, ImagePlus, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, Download, FileText, Eye, Info, X, Loader2, ImagePlus, AlertTriangle, CheckCircle2, Upload } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { getToastCopy } from '@/lib/toast-copy';
@@ -178,6 +179,42 @@ export default function ProjectPdf() {
   const { pdfDefaults, setPdfDefaults, customStandard, language } = useSettings();
   const labels = getPdfLabels(language);
   const copy = getWorkspaceCopy(language);
+  const ls = getLabStatCopy(language);
+  const { importProject } = useProjects();
+  const [isImporting, setIsImporting] = useState(false);
+  const recoveryFileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImportFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+
+    setIsImporting(true);
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const parsed = JSON.parse(reader.result as string);
+        if (!parsed || typeof parsed.name !== 'string' || !Array.isArray(parsed.sections)) {
+          throw new Error('This file doesn\'t look like a Stitch & Scale pattern export.');
+        }
+        importProject(parsed as PatternProject);
+        toast({ title: tc.projectImportedDescription(parsed.name) });
+      } catch (err) {
+        toast({
+          title: ls.projectNotFound,
+          description: err instanceof Error ? err.message : tc.fileCouldNotBeRead,
+          variant: 'destructive',
+        });
+      } finally {
+        setIsImporting(false);
+      }
+    };
+    reader.onerror = () => {
+      toast({ title: ls.projectNotFound, variant: 'destructive' });
+      setIsImporting(false);
+    };
+    reader.readAsText(file);
+  };
 
   // Template / accent
   const [selectedTheme, setSelectedTheme] = useState<ThemeId>(pdfDefaults.themeId);
@@ -339,9 +376,48 @@ export default function ProjectPdf() {
 
   if (!projectHook) {
     return (
-      <div className="flex flex-col items-center justify-center py-24 text-center">
-        <h2 className="text-2xl font-serif font-bold mb-4">{labels.projectNotFound}</h2>
-        <Button onClick={() => setLocation('/')}>{labels.returnDashboard}</Button>
+      <div className="flex flex-col items-center justify-center py-24 px-6 text-center max-w-md mx-auto min-h-[60vh]">
+        <div className="w-16 h-16 rounded-full bg-muted/50 flex items-center justify-center mb-6">
+          <FileText className="w-8 h-8 text-muted-foreground/60" />
+        </div>
+        <h2 className="text-2xl font-serif font-bold mb-3">{ls.projectNotFound}</h2>
+        <p className="text-muted-foreground mb-8 text-sm leading-relaxed">
+          {ls.recoveryImportDesc}
+        </p>
+        
+        <div className="flex flex-col gap-3 w-full">
+          <input
+            ref={recoveryFileInputRef}
+            type="file"
+            accept=".json"
+            onChange={handleImportFile}
+            className="hidden"
+          />
+          <Button 
+            className="w-full gap-2 h-11" 
+            onClick={() => recoveryFileInputRef.current?.click()}
+            disabled={isImporting}
+          >
+            {isImporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+            {ls.recoveryImportButton}
+          </Button>
+          
+          <div className="relative my-2">
+            <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-border/50" /></div>
+            <div className="relative flex justify-center text-[10px] uppercase tracking-widest text-muted-foreground/40 bg-background px-2">OR</div>
+          </div>
+
+          <Button variant="outline" className="w-full h-11" onClick={() => setLocation('/')}>
+            {labels.returnDashboard}
+          </Button>
+        </div>
+
+        <div className="mt-12 pt-8 border-t border-border/40 w-full">
+          <h3 className="text-xs font-semibold text-foreground mb-2">{ls.recoveryLocalOnlyTitle}</h3>
+          <p className="text-[11px] text-muted-foreground leading-normal">
+            {ls.recoveryLocalOnlyDesc}
+          </p>
+        </div>
       </div>
     );
   }
