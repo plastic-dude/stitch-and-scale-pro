@@ -572,7 +572,7 @@ export default function ProjectWorkspace() {
                                 <Badge variant="secondary" className="text-[10px] uppercase font-bold">{m.measurementType}</Badge>
                               </div>
                               <div className="text-xs text-muted-foreground flex items-center gap-2">
-                                <span className="font-mono text-foreground font-bold">{m.baseValue} cm</span>
+                                <span className="font-mono text-foreground font-bold">{m.baseValue} {project.gauge.unit}</span>
                                 <span>•</span>
                                 <span>{(GRADING_KEY_LABELS as any)[m.gradingKey]}</span>
                               </div>
@@ -613,7 +613,7 @@ export default function ProjectWorkspace() {
                                   value={mLabel} 
                                   onChange={e => { setMLabel(e.target.value); if (mTouched.label) validateMeasurementForm(); }} 
                                   onBlur={() => setMTouched(prev => ({ ...prev, label: true }))}
-                                  placeholder="e.g. Bust Circumference" 
+                                  placeholder={copy.measurementPlaceholder} 
                                   className={cn(mErrors.label && mTouched.label && "border-destructive focus-visible:border-destructive")}
                                   aria-invalid={!!(mErrors.label && mTouched.label)}
                                   aria-describedby={mErrors.label && mTouched.label ? "m-label-error" : undefined}
@@ -622,14 +622,14 @@ export default function ProjectWorkspace() {
                                 {mErrors.label && mTouched.label && <p id="m-label-error" className="text-[10px] text-destructive font-medium">{mErrors.label}</p>}
                               </div>
                               <div className="space-y-2">
-                                <Label className={cn(mErrors.value && mTouched.value && "text-destructive")}>{copy.valueRequired} (cm)</Label>
+                                <Label className={cn(mErrors.value && mTouched.value && "text-destructive")}>{copy.valueRequired} ({project.gauge.unit})</Label>
                                 <Input 
                                   type="text" 
                                   inputMode="decimal" 
                                   value={mBaseValue} 
                                   onChange={e => { setMBaseValue(e.target.value); if (mTouched.value) validateMeasurementForm(); }} 
                                   onBlur={() => setMTouched(prev => ({ ...prev, value: true }))}
-                                  placeholder="e.g. 96" 
+                                  placeholder={copy.valuePlaceholder} 
                                   className={cn(mErrors.value && mTouched.value && "border-destructive focus-visible:border-destructive")}
                                   aria-invalid={!!(mErrors.value && mTouched.value)}
                                   aria-describedby={mErrors.value && mTouched.value ? "m-value-error" : undefined}
@@ -681,7 +681,7 @@ export default function ProjectWorkspace() {
                   value={newSectionName} 
                   onChange={e => { setNewSectionName(e.target.value); setMTouched(prev => ({ ...prev, section: true })); }} 
                   onBlur={() => setMTouched(prev => ({ ...prev, section: true }))}
-                  placeholder="e.g. Body, Sleeves, Neckline" 
+                  placeholder={copy.sectionPlaceholder} 
                   className={cn(!newSectionName.trim() && mTouched.section && "border-destructive focus-visible:border-destructive")}
                   aria-invalid={!newSectionName.trim() && mTouched.section}
                   aria-describedby={!newSectionName.trim() && mTouched.section ? "section-name-error" : undefined}
@@ -775,7 +775,7 @@ export default function ProjectWorkspace() {
               value={notesDraft}
               onChange={(e) => setNotesDraft(e.target.value)}
               onBlur={handleSaveNotes}
-              placeholder="e.g. Worked flat, seamed at the side. Blocks generously — swatch and block before committing to a size."
+              placeholder={copy.notesPlaceholder}
               className="min-h-[180px] resize-y"
               data-testid="textarea-notes"
             />
@@ -972,7 +972,7 @@ export default function ProjectWorkspace() {
                   className="rounded-lg border border-border/60 bg-muted/40 px-3 py-2.5 text-xs leading-none font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors min-h-[44px] flex items-center justify-between gap-2"
                 >
                   <span className="truncate">{label}</span>
-                  <span className="text-[11px] text-muted-foreground/80 whitespace-nowrap">{count} labs</span>
+                  <span className="text-[11px] text-muted-foreground/80 whitespace-nowrap">{copy.labsCount(count)}</span>
                 </button>
               );
             })}

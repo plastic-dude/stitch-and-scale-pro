@@ -312,8 +312,7 @@ export default function SettingsPage() {
                     <div className="mt-5 pt-5 border-t border-border/40">
                       <div className="flex items-start justify-between gap-3 mb-4">
                         <p className="text-xs text-muted-foreground leading-relaxed">
-                          Every value starts as a copy of the CYC chart. Edit only where your own patterns
-                          run differently — everything else keeps grading exactly like CYC until you change it.
+                          {copy.customHelper}
                         </p>
                         <Button
                           variant="ghost"
@@ -326,7 +325,7 @@ export default function SettingsPage() {
                           data-testid="button-reset-custom-standard"
                         >
                           <RotateCcw className="w-3.5 h-3.5" />
-                          Reset all
+                          {copy.resetAll}
                         </Button>
                       </div>
 
@@ -388,7 +387,7 @@ export default function SettingsPage() {
                               <span className="text-[11px] text-muted-foreground shrink-0">in</span>
                               {isModified && (
                                 <span className="text-[10px] text-muted-foreground shrink-0" title={copy.cycValue(cycValue)}>
-                                  CYC: {cycValue}"
+                                  {copy.cycValue(cycValue)}
                                 </span>
                               )}
                             </div>
@@ -401,7 +400,7 @@ export default function SettingsPage() {
               </AnimatePresence>
 
               <p className="text-xs text-muted-foreground mt-4 leading-relaxed">
-                Additional international standards (UK, EU, Japanese) will become available through future updates.
+                {copy.futureStandards}
               </p>
             </CardContent>
           </Card>
@@ -455,10 +454,10 @@ export default function SettingsPage() {
             <CardHeader className="bg-secondary/10 border-b border-border/40 pb-5">
               <CardTitle className="font-serif text-xl flex items-center gap-2">
                 <RotateCcw className="w-5 h-5 text-accent" />
-                Onboarding
+                {copy.onboardingTitle}
               </CardTitle>
               <CardDescription className="text-[13px]">
-                Re-run the setup guide to review your workspace configuration.
+                {copy.onboardingDescription}
               </CardDescription>
             </CardHeader>
             <CardContent className="p-6">
@@ -466,7 +465,7 @@ export default function SettingsPage() {
                 <div>
                   <h4 className="font-medium text-foreground">{copy.restartOnboarding}</h4>
                   <p className="text-sm text-muted-foreground mt-1">
-                    Walk through the setup guide again — sizing standard, units, workspace tour.
+                    {copy.restartGuideDescription}
                   </p>
                 </div>
                 <Button
@@ -476,7 +475,7 @@ export default function SettingsPage() {
                   data-testid="button-restart-onboarding"
                 >
                   <RotateCcw className="w-4 h-4 mr-2" />
-                  Restart Guide
+                  {copy.restartGuide}
                 </Button>
               </div>
             </CardContent>
@@ -488,10 +487,10 @@ export default function SettingsPage() {
             <CardHeader className="bg-secondary/10 border-b border-border/40 pb-5">
               <CardTitle className="font-serif text-xl flex items-center gap-2">
                 <Download className="w-5 h-5 text-accent" />
-                Data & Backups
+                {copy.dataTitle}
               </CardTitle>
               <CardDescription className="text-[13px]">
-                Your patterns live right here in this browser — nothing's uploaded unless you choose to. Back them up regularly, just in case.
+                {copy.dataDescription}
               </CardDescription>
             </CardHeader>
             <CardContent className="p-6 space-y-4">
@@ -502,7 +501,7 @@ export default function SettingsPage() {
                 </div>
                 <Button onClick={handleExport} className="shrink-0 rounded-full shadow-sm group-hover:bg-primary/90 transition-colors" data-testid="button-export-data">
                   <Download className="w-4 h-4 mr-2" />
-                  Download Backup
+                  {copy.downloadBackup}
                 </Button>
               </div>
 
@@ -515,7 +514,7 @@ export default function SettingsPage() {
                   <input type="file" accept=".json" className="hidden" ref={fileInputRef} onChange={handleFileChange} />
                   <Button onClick={() => fileInputRef.current?.click()} variant="outline" className="shrink-0 rounded-full border-2 hover:bg-secondary/20" data-testid="button-import-data">
                     <Upload className="w-4 h-4 mr-2" />
-                    Upload File
+                    {copy.uploadFile}
                   </Button>
                 </div>
               </div>

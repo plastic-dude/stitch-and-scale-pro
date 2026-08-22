@@ -75,6 +75,11 @@ export interface WorkspaceCopy {
   healthReady: string;
   healthLoading: string;
   healthError: string;
+  measurementPlaceholder: string;
+  valuePlaceholder: string;
+  sectionPlaceholder: string;
+  notesPlaceholder: string;
+  labsCount: (count: number) => string;
 }
 
 const COPY: Record<LanguageCode, WorkspaceCopy> = {
@@ -153,6 +158,11 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     benchmarkLabel: 'Benchmarks baked in:',
     viewMethodology: 'View methodology',
     methodologyDeals: 'Market deal structures (flat fee vs royalty) based on 2026 designer audit of Stitchcraft Marketing and Who Pays Knitters reports. Lifetime sales estimates derive from median Ravelry performance data (2025).',
+    measurementPlaceholder: 'e.g. Bust Circumference',
+    valuePlaceholder: 'e.g. 96',
+    sectionPlaceholder: 'e.g. Body, Sleeves, Neckline',
+    notesPlaceholder: 'e.g. Worked flat, seamed at the side. Blocks generously — swatch and block before committing to a size.',
+    labsCount: (count) => `${count} labs`,
   },
   de: {
     by: 'Von',
@@ -229,6 +239,11 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     benchmarkLabel: 'Benchmarks inklusive:',
     viewMethodology: 'Methodik ansehen',
     methodologyDeals: 'Marktübliche Deal-Strukturen (Pauschalhonorar vs. Lizenzgebühr) basierend auf dem Designer-Audit 2026 von Stitchcraft Marketing und Who Pays Knitters-Berichten. Geschätzte Lebenszeitverkäufe leiten sich aus Ravelry-Mediandaten (2025) ab.',
+    measurementPlaceholder: 'z.B. Brustumfang',
+    valuePlaceholder: 'z.B. 96',
+    sectionPlaceholder: 'z.B. Körper, Ärmel, Ausschnitt',
+    notesPlaceholder: 'z.B. Flach gestrickt, an der Seite zusammengefügt. Dehnt sich beim Waschen — Probe waschen und spannen.',
+    labsCount: (count) => `${count} Labore`,
   },
   fr: {
     by: 'Par',
@@ -293,8 +308,8 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     sourceMethodology: 'Source : Recherche Session-35',
     methodologyTeach: 'Tarification des cours phares basée sur Pip & Pin (548 $), Kneedles & Life (99–125 $) et l\'analyse de la médiane du marché. Tarifs des ateliers issus de l\'audit des retraites fibre 2026.',
     methodologyKal: 'Données records Ravelry (janv. 2025) ; repères de timing KAL mystère issus de 43 lancements suivis ; coût moyen de production d\'un pull (155 $) selon une enquête auprès de designers indépendants.',
-    methodologySubmissions: 'Plafonds des magazines basés sur les tarifs Laine/Pompom 2026. La structure des coûts suppose des heures de travail standard pour un pull de taille moyenne à 25 $/h.',
-    methodologyTestknit: 'Tranche de tricot de test payée (0,10 $–0,40 $/yard) d\'après les données médianes de Yarnpond. Fréquence du mode d\'échec « ghosting » issue du rapport Fit-to-Stitch 2025.',
+    methodologySubmissions: 'Plafonds des magazines basés sur les tarifs Laine/Pompom 2026. La structure des coûts asume des heures de travail standard pour un pull de taille moyenne à 25 $/h.',
+    methodologyTestknit: 'Fourchette de tricot de test payé (0,10 $–0,40 $/yard) selon les données médianes de Yarnpond. Fréquence du mode d\'échec par abandon du rapport Fit-to-Stitch 2025.',
     loadingLab: 'Chargement du labo...',
     labLoadErrorTitle: 'Échec du chargement du labo',
     labLoadErrorDesc: 'Une erreur s\'est produite lors de l\'affichage de ce labo. Vos données de projet sont en sécurité.',
@@ -305,6 +320,11 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     benchmarkLabel: 'Benchmarks intégrés :',
     viewMethodology: 'Voir la méthodologie',
     methodologyDeals: 'Structures de contrats du marché (forfait vs redevance) basées sur l\'audit des designers 2026 des rapports Stitchcraft Marketing et Who Pays Knitters. Les estimations de ventes à vie proviennent des données médianes de performance Ravelry (2025).',
+    measurementPlaceholder: 'ex. Tour de poitrine',
+    valuePlaceholder: 'ex. 96',
+    sectionPlaceholder: 'ex. Corps, Manches, Encolure',
+    notesPlaceholder: 'ex. Tricoté à plat, assemblé sur le côté. Se détend au blocage — lavez et bloquez votre échantillon.',
+    labsCount: (count) => `${count} labos`,
   },
   es: {
     by: 'Por',
@@ -381,6 +401,11 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     benchmarkLabel: 'Benchmarks incluidos:',
     viewMethodology: 'Ver metodología',
     methodologyDeals: 'Estructuras de acuerdos de mercado (tarifa fija vs regalía) basadas en la auditoría de diseñadores 2026 de los informes de Stitchcraft Marketing y Who Pays Knitters. Las estimaciones de ventas de por vida derivan de los datos de rendimiento medianos de Ravelry (2025).',
+    measurementPlaceholder: 'p. ej. Contorno de pecho',
+    valuePlaceholder: 'p. ej. 96',
+    sectionPlaceholder: 'p. ej. Cuerpo, Mangas, Escote',
+    notesPlaceholder: 'p. ej. Tejido en plano, cosido en el lateral. Estira al bloquear: lava y bloquea tu muestra.',
+    labsCount: (count) => `${count} laboratorios`,
   },
   pt: {
     by: 'Por',
@@ -457,6 +482,11 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     benchmarkLabel: 'Benchmarks incluídos:',
     viewMethodology: 'Ver metodologia',
     methodologyDeals: 'Estruturas de acordos de mercado (taxa fixa vs royalties) baseadas na auditoria de designers 2026 dos relatórios Stitchcraft Marketing e Who Pays Knitters. As estimativas de vendas vitalícias derivam dos dados medianos de desempenho do Ravelry (2025).',
+    measurementPlaceholder: 'ex. Perímetro do peito',
+    valuePlaceholder: 'ex. 96',
+    sectionPlaceholder: 'ex. Corpo, Mangas, Decote',
+    notesPlaceholder: 'ex. Trabalhado em plano, costurado na lateral. Estica ao bloquear — lave e bloqueie a sua amostra.',
+    labsCount: (count) => `${count} laboratórios`,
   },
 };
 

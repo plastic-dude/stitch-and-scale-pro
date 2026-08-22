@@ -35,8 +35,7 @@
 | 27 | QUEUE-020 | Universal Localization II — fix hardcoded "Localization Audit" label; localize Tech-Edit findings, Pricing Psychology, Podcast Affiliate, and POD Patterns labs; localize sample project seeding in onboarding flow | MAJOR | done | CHK-163: all 4 labs refactored, onboarding localized, sample projects seeded per-locale, Tech-Edit audit findings fully localized; evidence in `docs/leader-notes/cycle-2026-08-21-chk163.md` |
 | 28 | QUEUE-021 | Audit F-09 (High) — Draft placeholder policy: inconsistent token failure modes; add pre-export token validation and one error policy | MAJOR | done | CHK-164: fixed non-greedy token resolution, implemented `validateDraft` preflight layer, localized error states in 5 locales; vitest 2,309/2,309 green |
 | 29 | QUEUE-022 | Audit: Chart Lab input validation — selvedge/repeat fields accept negative/zero values without field-level validation | MAJOR | done | CHK-165: implemented `validateChartInputs` shared layer, wired validation UI into `ChartLabCard`, added localized error states; vitest 2,316/2,316 green |
-| 30 | QUEUE-023 | Audit: Income Planner validation — accepts negative prices, zero sales with no invalid state; clean-looking zeros mislead users | MAJOR | done | CHK-166: implemented `validateInputs` for Income Planner, wired validation UI, added localized error states; vitest 2,324/2,324 green |
- MAJOR | done | CHK-166: implemented `validateIncomeInputs` + localized quarantine UI; fixed `validateInputs` key propagation; vitest 2,324/2,324 green |
+| 30 | QUEUE-023 | Audit: Income Planner validation — accepts negative prices, zero sales with no invalid state; clean-looking zeros mislead users | MAJOR | done | CHK-166: implemented `validateIncomeInputs` + localized quarantine UI; fixed `validateInputs` key propagation; vitest 2,324/2,324 green |
 | 31 | QUEUE-024 | Audit: Grading table readability — dense cells, concatenated values in text layer; accessibility risk | MINOR | done | CHK-167: separated stitches/rows into distinct rows, improved numeric alignment, localized labels; vitest 2,313/2,313 green |
 | 32 | QUEUE-025 | Audit F-06 (MAJOR) — Mobile deep links do not represent portable project access; shared grading/PDF links show `Project Not Found` on a fresh device | MAJOR | done | CHK-168: implemented recovery/import UI for missing projects on deep-link subroutes; vitest green |
 | 33 | QUEUE-026 | Audit F-10 (MINOR) — Sticky mobile onboarding footer obscures content; commitments card hidden behind fixed bottom bar | MINOR | done | CHK-169: implemented fixed mobile footer with backdrop-blur and safe-area padding; vitest green |
@@ -44,8 +43,13 @@
 | 35 | QUEUE-028 | Audit F-12 (MINOR) — Professional benchmark claims lack visible methodology; source/assumptions for freelance rates and inclusive sizing are opaque | MINOR | done | CHK-171: integrated `BenchmarkFooter` across 4 cards; localized methodology strings in 5 locales; added methodology research documentation; vitest green |
 | 36 | QUEUE-029 | Audit F-12-Rescue (MAJOR) — Live release integrity: blank public deployment (#root empty); missing production smoke gate and rollback proof | MAJOR | done | CHK-172: implemented `prod-smoke.mjs` gate, `HealthIndicator` app-shell state, and 5-locale status strings; vitest green |
 | 37 | QUEUE-030 | Audit F-13 (MINOR) — Wildcard CORS and origin policy; production MCP serverless function configuration mismatch | MINOR | done | CHK-173: hardened CORS in `vercel.json` (POST/OPTIONS only) and `api/mcp.ts` (comma-separated allowlist + default fallback); vitest green |
+| 38 | QUEUE-031 | Localization Brutality: Audit all locales for English leaks (placeholders, tooltips, sample projects, error states) and fix them. | MAJOR | IN-PROGRESS | |
+| 39 | QUEUE-032 | Onboarding Alignment: Sync onboarding wizard with current feature set and branding. | QUEUED | | |
 
 ## Run ledger
+| Run (date) | Item worked | Gates | Commit | Next item |
+|---|---|---|---|---|
+| 2026-08-22 (CHK-174) | QUEUE-031 (MAJOR) — Localization Brutality | tsc clean; vitest 2,330/2,330; build green; fixed English leaks in Settings, Workspace, and Tech-Edit; localized sample projects | PENDING | QUEUE-032 |
 | 2026-08-22 (CHK-173) | QUEUE-030 (MINOR) — CORS hardening | tsc clean; vitest 2,326/2,326; build green; hardened origin policy in `vercel.json` and `api/mcp.ts` | 78c7858e0775dcb2bf219a1280fb3bb37930b461 | END OF QUEUE |
 | 2026-08-22 (CHK-172) | QUEUE-029 (MAJOR) — Release integrity | tsc clean; vitest 2,326/2,326; build green; 4 new tests; smoke script `scripts/prod-smoke.mjs` | a66b840c75f0d38e87aa44531caf46ce4259cf75 | QUEUE-030 |
 | 2026-08-22 (CHK-171) | QUEUE-028 (MINOR) — Benchmark methodology | tsc clean; vitest 2,322/2,322; build green; 4 new tests; research log `docs/leader-notes/cycle-2026-08-22-methodology-research.md` | b623c9380873d8c4ac96861c61e30b5ad474f51e | QUEUE-029 |
@@ -54,9 +58,6 @@
 | 2026-08-22 (CHK-168) | QUEUE-025 (MAJOR) — Deep-link recovery UI | tsc clean; vitest 2,315/2,315; build green; 2 new tests | 1d4101f | QUEUE-026 |
 | 2026-08-22 (CHK-167) | QUEUE-024 (MAJOR) — Grading table readability | tsc clean; vitest 2,313/2,313; build green; 3 new tests; cycle log `docs/leader-notes/cycle-2026-08-22-chk167.md` | c545ad8 | QUEUE-025 |
 | 2026-08-22 (CHK-166) | QUEUE-023 (MAJOR) — Income Planner Validation | tsc clean; vitest 2,324/2,324; build green; 8 new tests | e292363 | QUEUE-024 |
-
-| Run (date) | Item worked | Gates | Commit | Next item |
-|---|---|---|---|---|
 | 2026-08-21 (CHK-149) | QUEUE-018 (MAJOR) — onboarding truth audit | tsc clean; vitest 2,130/2,130; build green; live EN+DE onboarding evidence; cycle log `docs/leader-notes/cycle-2026-08-21-chk149.md` | 6eed6c1daffdd13dd5e9fd90ed4094994983ea3b | QUEUE-005 (#52 legend overcount eyes-check) |
 | 2026-08-21 (CHK-150) | QUEUE-005 (MINOR, closed) — #52 workspace legend overcount | tsc clean; vitest 2,130/2,130; build green; evidence `docs/evidence/chk150-w{360,390,430}-legend.png`; cycle log `docs/leader-notes/cycle-2026-08-21-chk150.md` | a18641f14dd10219381630b1bcdb69167c3037be | QUEUE-006 (S160 migration repro) |
 | 2026-08-21 (CHK-153) | QUEUE-013 (MAJOR, closed) — PDF export stuck | tsc clean; vitest 2,160/2,160; build green; cycle log `docs/leader-notes/cycle-2026-08-21-chk153.md` | a2934ad768f914d3587f4517c7826217c62d275c | QUEUE-014 (F-05 filename sanitization + F-08 Chart Lab false-positive Ready, MINOR) |
@@ -71,9 +72,8 @@
 | 2026-08-21 (CHK-158) | QUEUE-016 (NITPICK) — IA & security hardening | tsc clean; vitest 2,274/2,274; build green; cycle log `docs/leader-notes/cycle-2026-08-21-chk158.md` | 7750f4d | QUEUE-017-COPY (paste-ready copy quarantine) |
 | 2026-08-21 (CHK-159) | QUEUE-017-COPY (MAJOR) — paste-ready copy quarantine | tsc clean; vitest 2,287/2,287; build green; cycle log `docs/leader-notes/cycle-2026-08-21-chk159.md` | e470119 | QUEUE-017-BOUND (error boundaries for lazy modules) |
 | 2026-08-21 (CHK-160) | QUEUE-017-BOUND (MINOR) — lab-level error boundaries | tsc clean; vitest 2,290/2,290; build green; cycle log `docs/leader-notes/cycle-2026-08-21-chk160.md` | e546fccc4789ba357caa344138295dea04758ba9 | QUEUE-017-TXN (persistence transparency) |
-| 2026-08-21 (CHK-161) | QUEUE-017-TXN (MINOR) — persistence transparency | tsc clean; vitest 2,304/2,304; build green; cycle log `docs/leader-notes/cycle-2026-08-21-chk161.md` | 390d5591e611a4757469894e2af1b3679a2e3ff9 | QUEUE-019 (P1: mobile search/recent/favorites) |
+| 2026-08-21 (CHK-161) | QUEUE-017-TXN (MINOR) — persistence transparency | tsc clean; vitest 2,304/2,304; build green; cycle log `docs/leader-notes/cycle-2026-08-21-chk162.md` | 390d5591e611a4757469894e2af1b3679a2e3ff9 | QUEUE-019 (P1: mobile search/recent/favorites) |
 | 2026-08-21 (CHK-162) | QUEUE-019 (MAJOR) — Mobile search & favorites | tsc clean; vitest 4/4 passed; build green; cycle log `docs/leader-notes/cycle-2026-08-21-chk162.md` | f2dc2707a2cce7e718b1270dc7482f2e4c3b0f18 | QUEUE-020 (Universal Localization II) |
 | 2026-08-21 (CHK-163) | QUEUE-020 (MAJOR) — Universal Localization II | tsc clean; vitest 2,297/2,297; build green; 6 new tests; cycle log `docs/leader-notes/cycle-2026-08-21-chk163.md` | 06aa57d61d12a84bcd64f1b72b6c5b66fe8c1c4f | QUEUE-021 |
 | 2026-08-22 (CHK-164) | QUEUE-021 (MAJOR) — Audit F-09: Draft placeholder policy | tsc clean; vitest 2,309/2,309; build green; fixed F-09 parser + CHK-163 regressions | ff9d107 | QUEUE-022 |
 | 2026-08-22 (CHK-165) | QUEUE-022 (MAJOR) — Audit: Chart Lab input validation | tsc clean; vitest 2,316/2,316; build green; implemented validateChartInputs + localized UI errors | f170453 | END OF QUEUE |
-
