@@ -62,6 +62,9 @@ export interface HumanReviewRecord {
   reviewerName: string;
   note: string;
   reviewedAt: string;
+  /** Present when a prior approval was invalidated by a later source edit. */
+  invalidatedAt?: string;
+  invalidationReason?: string;
 }
 
 export type ReadinessSeverity = 'nitpick' | 'minor' | 'major' | 'critical';
@@ -162,6 +165,10 @@ export interface PublicationPackage {
   artifacts: PublicationArtifact[];
   /** Compiled Intermediate Representation for validation. */
   compilerIR?: CompilerIR;
+  /** True when source inputs changed after this package was created or approved. */
+  stale?: boolean;
+  staleAt?: string;
+  staleReason?: string;
   publishedAt?: string;
   createdAt: string;
   updatedAt: string;
@@ -210,7 +217,7 @@ export interface PatternProject {
   tags?: string[];
   /** Archive status for multi-project management. */
   isArchived?: boolean;
-  /** Fit governance: ease profile applied to this project. */
+  /** Fit governance: declared ease intent for this project; grading math remains unchanged until fit diagnostics consume it. */
   easeProfile?: EaseProfileReference;
   /** Fit governance: source metadata for the sizing standard. */
   standardMetadata?: SizingStandardMetadata;

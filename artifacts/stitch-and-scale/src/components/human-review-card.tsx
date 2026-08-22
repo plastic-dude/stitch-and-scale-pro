@@ -84,6 +84,12 @@ export function HumanReviewCard({ project, updateProject, readiness, audit }: Hu
         <p className="mt-1 text-muted-foreground">{approvalBlocked ? copy.automatedNeedsWork : copy.automatedClean}</p>
       </div>
 
+      {project.humanReview?.invalidatedAt && (
+        <div className="mt-4 rounded-xl border border-amber-500/40 bg-amber-500/10 p-4 text-sm text-amber-900 dark:text-amber-200" role="status" aria-live="polite">
+          <p className="font-semibold">{copy.sourceChangedNotice}</p>
+        </div>
+      )}
+
       <div className="mt-5 grid gap-4 sm:grid-cols-2">
         <label className="text-sm font-medium text-foreground">
           {copy.reviewerLabel}

@@ -21,12 +21,13 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { de, fr, es, ptBR } from 'date-fns/locale';
-import { 
-  type PatternProject, 
+import {
+  type PatternProject,
   type PublicationPackage,
   type PublicationArtifact,
-  generateId 
+  generateId,
 } from '@/lib/grading-engine';
+import { canClaimPublicationReady } from '@/lib/publication-integrity';
 
 const dateLocales = { de, fr, es, pt: ptBR, en: undefined };
 
@@ -70,7 +71,7 @@ export function ProjectPackageCard({
       id: generateId(),
       version: packageVersion,
       status: 'draft',
-      readinessVerdict: project.publicationContract?.isReady ? 'ready' : 'pending',
+      readinessVerdict: canClaimPublicationReady(project) ? 'ready' : 'pending',
       authoritativeMetadata: {
         title: packageName,
         author: project.author || 'Unknown',
@@ -194,7 +195,12 @@ export function ProjectPackageCard({
                   <span className="text-[10px] text-muted-foreground">
                     {formatDate(pkg.createdAt)}
                   </span>
-                  {pkg.readinessVerdict === 'ready' && (
+                  {pkg.stale ? (
+                    <Badge variant="outline" className="border-amber-300 bg-amber-500/10 text-amber-700 text-[9px] h-4 px-1 shadow-none" title={pkg.staleReason}>
+                      <AlertTriangle className="h-2.5 w-2.5 mr-1" />
+                      {copy.publicationPackageStale}
+                    </Badge>
+                  ) : pkg.readinessVerdict === 'ready' && (
                     <Badge className="bg-green-500/10 text-green-600 border-green-200 text-[9px] h-4 px-1 shadow-none">
                       <ShieldCheck className="h-2.5 w-2.5 mr-1" />
                       {copy.healthReady.toUpperCase()}

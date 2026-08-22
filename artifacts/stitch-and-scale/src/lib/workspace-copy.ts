@@ -126,6 +126,7 @@ export interface WorkspaceCopy {
   publicationAuthoritativeMetadata: string;
   publicationArtifacts: string;
   publicationNoPackages: string;
+  publicationPackageStale: string;
   publicationPackageCreated: string;
   publicationPackageUpdated: string;
   publicationPackageDeleted: string;
@@ -291,6 +292,7 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     publicationAuthoritativeMetadata: 'Authoritative Metadata',
     publicationArtifacts: 'Artifacts',
     publicationNoPackages: 'No publication packages yet. Create one to freeze an authoritative version.',
+    publicationPackageStale: 'Stale — source changed; re-run checks and review before export',
     publicationPackageCreated: 'Publication package created',
     publicationPackageUpdated: 'Publication package updated',
     publicationPackageDeleted: 'Publication package deleted',
@@ -454,6 +456,7 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     publicationAuthoritativeMetadata: 'Autoritative Metadaten',
     publicationArtifacts: 'Artefakte',
     publicationNoPackages: 'Noch keine Veröffentlichungspakete. Erstelle eines, um eine verbindliche Version einzufrieren.',
+    publicationPackageStale: 'Veraltet — Quelle geändert; vor dem Export Prüfungen und Review erneut ausführen',
     publicationPackageCreated: 'Veröffentlichungspaket erstellt',
     publicationPackageUpdated: 'Veröffentlichungspaket aktualisiert',
     publicationPackageDeleted: 'Veröffentlichungspaket gelöscht',
@@ -617,6 +620,7 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     publicationAuthoritativeMetadata: 'Métadonnées officielles',
     publicationArtifacts: 'Artefacts',
     publicationNoPackages: 'Aucun package de publication pour le moment. Créez-en un pour figer une version officielle.',
+    publicationPackageStale: 'Obsolète — source modifiée ; relancez les contrôles et la revue avant export',
     publicationPackageCreated: 'Package de publication créé',
     publicationPackageUpdated: 'Package de publication mis à jour',
     publicationPackageDeleted: 'Package de publication supprimé',
@@ -780,6 +784,7 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     publicationAuthoritativeMetadata: 'Metadatos autorizados',
     publicationArtifacts: 'Artefactos',
     publicationNoPackages: 'Aún no hay paquetes de publicación. Cree uno para congelar una versión autorizada.',
+    publicationPackageStale: 'Obsoleto — la fuente cambió; vuelva a ejecutar las comprobaciones y la revisión antes de exportar',
     publicationPackageCreated: 'Paquete de publicación creado',
     publicationPackageUpdated: 'Paquete de publicación actualizado',
     publicationPackageDeleted: 'Paquete de publicación eliminado',
@@ -943,6 +948,7 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     publicationAuthoritativeMetadata: 'Metadados Autoritativos',
     publicationArtifacts: 'Artefactos',
     publicationNoPackages: 'Ainda não existem pacotes de publicação. Crie um para congelar uma versão autoritativa.',
+    publicationPackageStale: 'Obsoleto — a fonte mudou; execute as verificações e a revisão novamente antes de exportar',
     publicationPackageCreated: 'Pacote de publicação criado',
     publicationPackageUpdated: 'Pacote de publicação atualizado',
     publicationPackageDeleted: 'Pacote de publicação eliminado',

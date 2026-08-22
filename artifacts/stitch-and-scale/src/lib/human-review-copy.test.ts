@@ -11,6 +11,14 @@ describe('human review copy', () => {
       expect(copy.statusLabels['changes-requested']).toBeTruthy();
       expect(copy.statusLabels.approved).toBeTruthy();
       expect(copy.approve).toBeTruthy();
+      expect(copy.sourceChangedNotice).toBeTruthy();
+    }
+  });
+
+  it('keeps the invalidation notice translated outside English', () => {
+    const english = getHumanReviewCopy('en').sourceChangedNotice;
+    for (const locale of ['de', 'fr', 'es', 'pt']) {
+      expect(getHumanReviewCopy(locale).sourceChangedNotice).not.toBe(english);
     }
   });
 

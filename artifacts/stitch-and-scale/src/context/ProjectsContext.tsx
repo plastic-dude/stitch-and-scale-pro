@@ -16,9 +16,14 @@ import { LanguageCode } from '@/lib/i18n';
 // writer. A single writer now: both paths persist through the seam helper.
 import { writeProjects } from '@/lib/storage-lib';
 import { ORIGIN_MIGRATION_RESTORED_EVENT } from '@/lib/origin-migration';
+import {
+  hasPublicationSourceChanged,
+  invalidatePublicationState,
+  normalizePublicationPackage,
+} from '@/lib/publication-integrity';
 import { useSettings } from './SettingsContext';
 
-type ProjectsAction = 
+export type ProjectsAction =
   | { type: 'INIT'; payload: PatternProject[] }
   | { type: 'CREATE'; payload: PatternProject }
   | { type: 'UPDATE'; payload: PatternProject }
@@ -85,7 +90,7 @@ const SESSION_KEY = 'stitch-and-scale-session-flag';
 
 const ProjectsContext = createContext<ProjectsContextType | undefined>(undefined);
 
-function projectsReducer(state: PatternProject[], action: ProjectsAction): PatternProject[] {
+export function projectsReducer(state: PatternProject[], action: ProjectsAction): PatternProject[] {
   let newState: PatternProject[];
   switch (action.type) {
     case 'INIT':
@@ -94,7 +99,14 @@ function projectsReducer(state: PatternProject[], action: ProjectsAction): Patte
       newState = [...state, action.payload];
       break;
     case 'UPDATE':
-      newState = state.map(p => p.id === action.payload.id ? { ...action.payload, updatedAt: new Date().toISOString() } : p);
+      newState = state.map(p => {
+        if (p.id !== action.payload.id) return p;
+        const now = new Date().toISOString();
+        const next = { ...action.payload, updatedAt: now };
+        return hasPublicationSourceChanged(p, next)
+          ? invalidatePublicationState(next, now)
+          : next;
+      });
       break;
     case 'DELETE':
       newState = state.filter(p => p.id !== action.payload);
@@ -123,7 +135,7 @@ function projectsReducer(state: PatternProject[], action: ProjectsAction): Patte
           ? JSON.parse(JSON.stringify(toDuplicate.customStandardSnapshot))
           : undefined,
       };
-      newState = [...state, duplicated];
+      newState = [...state, invalidatePublicationState(duplicated)];
       break;
     case 'CREATE_SNAPSHOT':
       newState = state.map(p => {
@@ -149,12 +161,13 @@ function projectsReducer(state: PatternProject[], action: ProjectsAction): Patte
         const snapshot = p.snapshots?.find(s => s.id === action.payload.snapshotId);
         if (!snapshot) return p;
         // Restore project data but preserve the snapshots history itself.
-        return {
+        const now = new Date().toISOString();
+        return invalidatePublicationState({
           ...snapshot.data,
           id: p.id, // Ensure id stays consistent
           snapshots: p.snapshots,
-          updatedAt: new Date().toISOString(),
-        };
+          updatedAt: now,
+        }, now);
       });
       break;
     case 'DELETE_SNAPSHOT':
@@ -182,7 +195,10 @@ function projectsReducer(state: PatternProject[], action: ProjectsAction): Patte
         if (p.id !== action.payload.projectId) return p;
         return {
           ...p,
-          publicationPackages: [action.payload.pkg, ...(p.publicationPackages || [])],
+          publicationPackages: [
+            normalizePublicationPackage(p, action.payload.pkg),
+            ...(p.publicationPackages || []),
+          ],
           updatedAt: new Date().toISOString(),
         };
       });
@@ -192,8 +208,10 @@ function projectsReducer(state: PatternProject[], action: ProjectsAction): Patte
         if (p.id !== action.payload.projectId) return p;
         return {
           ...p,
-          publicationPackages: (p.publicationPackages || []).map(pkg => 
-            pkg.id === action.payload.pkg.id ? action.payload.pkg : pkg
+          publicationPackages: (p.publicationPackages || []).map(pkg =>
+            pkg.id === action.payload.pkg.id
+              ? normalizePublicationPackage(p, action.payload.pkg, pkg)
+              : pkg,
           ),
           updatedAt: new Date().toISOString(),
         };
@@ -243,16 +261,19 @@ function projectsReducer(state: PatternProject[], action: ProjectsAction): Patte
       );
       break;
     case 'SET_FIT_GOVERNANCE':
-      newState = state.map(p => 
-        p.id === action.payload.projectId 
-          ? { 
-              ...p, 
-              easeProfile: action.payload.easeProfile, 
-              standardMetadata: action.payload.standardMetadata, 
-              updatedAt: new Date().toISOString() 
-            } 
-          : p
-      );
+      newState = state.map(p => {
+        if (p.id !== action.payload.projectId) return p;
+        const now = new Date().toISOString();
+        const next = {
+          ...p,
+          easeProfile: action.payload.easeProfile,
+          standardMetadata: action.payload.standardMetadata,
+          updatedAt: now,
+        };
+        return hasPublicationSourceChanged(p, next)
+          ? invalidatePublicationState(next, now)
+          : next;
+      });
       break;
     case 'ADD_COLLABORATOR':
       newState = state.map(p => p.id === action.payload.projectId ? { ...p, collaborationRoster: [...(p.collaborationRoster || []), action.payload.member], updatedAt: new Date().toISOString() } : p);

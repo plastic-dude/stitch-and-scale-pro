@@ -17,6 +17,7 @@ export interface HumanReviewCopy {
   reset: string;
   approvedNeedsClean: string;
   saved: string;
+  sourceChangedNotice: string;
   statusLabels: Record<HumanReviewStatus, string>;
 }
 
@@ -37,6 +38,7 @@ const COPY: Record<LanguageCode, HumanReviewCopy> = {
     reset: 'Clear review record',
     approvedNeedsClean: 'Resolve automated errors before approving a handoff.',
     saved: 'Review record saved',
+    sourceChangedNotice: 'This approval was invalidated because publication source data changed. Review the updated project and approve it again.',
     statusLabels: { 'not-reviewed': 'Not reviewed', 'in-review': 'In review', 'changes-requested': 'Changes requested', approved: 'Human approved' },
   },
   de: {
@@ -55,6 +57,7 @@ const COPY: Record<LanguageCode, HumanReviewCopy> = {
     reset: 'Prüfprotokoll löschen',
     approvedNeedsClean: 'Behebe automatische Fehler vor der Freigabe.',
     saved: 'Prüfprotokoll gespeichert',
+    sourceChangedNotice: 'Diese Freigabe wurde ungültig, weil sich veröffentlichungsrelevante Projektdaten geändert haben. Prüfe das aktualisierte Projekt und gib es erneut frei.',
     statusLabels: { 'not-reviewed': 'Nicht geprüft', 'in-review': 'In Prüfung', 'changes-requested': 'Änderungen angefordert', approved: 'Menschlich freigegeben' },
   },
   fr: {
@@ -73,6 +76,7 @@ const COPY: Record<LanguageCode, HumanReviewCopy> = {
     reset: 'Effacer la revue',
     approvedNeedsClean: 'Corrigez les erreurs automatiques avant d’approuver la remise.',
     saved: 'Suivi de revue enregistré',
+    sourceChangedNotice: 'Cette approbation a été invalidée car les données sources de publication ont changé. Revoyez le projet mis à jour et approuvez-le à nouveau.',
     statusLabels: { 'not-reviewed': 'Non vérifié', 'in-review': 'En revue', 'changes-requested': 'Corrections demandées', approved: 'Approuvé par une personne' },
   },
   es: {
@@ -91,6 +95,7 @@ const COPY: Record<LanguageCode, HumanReviewCopy> = {
     reset: 'Borrar registro',
     approvedNeedsClean: 'Resuelve los errores automáticos antes de aprobar la entrega.',
     saved: 'Registro de revisión guardado',
+    sourceChangedNotice: 'Esta aprobación se invalidó porque cambiaron los datos fuente de la publicación. Revisa el proyecto actualizado y apruébalo de nuevo.',
     statusLabels: { 'not-reviewed': 'Sin revisar', 'in-review': 'En revisión', 'changes-requested': 'Cambios solicitados', approved: 'Aprobada por una persona' },
   },
   pt: {
@@ -109,6 +114,7 @@ const COPY: Record<LanguageCode, HumanReviewCopy> = {
     reset: 'Limpar registo',
     approvedNeedsClean: 'Resolva os erros automáticos antes de aprovar a entrega.',
     saved: 'Registo de revisão guardado',
+    sourceChangedNotice: 'Esta aprovação foi invalidada porque os dados de origem da publicação mudaram. Reveja o projeto atualizado e aprove-o novamente.',
     statusLabels: { 'not-reviewed': 'Não revista', 'in-review': 'Em revisão', 'changes-requested': 'Alterações pedidas', approved: 'Aprovada por uma pessoa' },
   },
 };
