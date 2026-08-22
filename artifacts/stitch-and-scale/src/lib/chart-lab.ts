@@ -13,6 +13,8 @@
  * drafting with proper repeat arithmetic (n×rep + remainder + borders).
  */
 
+import { type ValidationResult, validateField } from './validate-field';
+
 /** CYC standardized knit chart symbols (craftyarncouncil.com/standards/knit-chart-symbols). */
 export interface ChartSymbol {
   id: string;
@@ -268,3 +270,40 @@ export const DEFAULT_CHART_INPUT: { rows: ChartRowDef[]; gradedStitchCount: stri
   ],
   gradedStitchCount: '',
 };
+
+/**
+ * Validates Chart Lab inputs (selvedge, repeat count, graded count).
+ * Note: individual symbol counts are currently driven by +/- buttons,
+ * but the validator handles them if they were to become raw inputs.
+ */
+export function validateChartInputs(state: { rows: ChartRowDef[]; gradedStitchCount: string }): ValidationResult[] {
+  const errors: ValidationResult[] = [];
+  
+  // 1. Graded count (optional, but must be positive if given)
+  if (state.gradedStitchCount.trim() !== '') {
+    errors.push(validateField({ type: 'positive', label: 'Graded count', required: false }, state.gradedStitchCount, 'gradedStitchCount'));
+  }
+
+  // 2. Per-row validation
+  state.rows.forEach((r, i) => {
+    const rowLabel = `Row ${r.row}`;
+    
+    // Repeat count must be strictly positive (min 1)
+    errors.push(validateField({ type: 'count', min: 1, label: `${rowLabel} repeat count` }, r.repeatCount, `rows.${i}.repeatCount`));
+    
+    // Selvedges must be non-negative counts
+    r.before.forEach((s, j) => {
+      errors.push(validateField({ type: 'count', label: `${rowLabel} selvedge before` }, s.count, `rows.${i}.before.${j}.count`));
+    });
+    r.after.forEach((s, j) => {
+      errors.push(validateField({ type: 'count', label: `${rowLabel} selvedge after` }, s.count, `rows.${i}.after.${j}.count`));
+    });
+
+    // Symbols inside repeat (non-negative counts)
+    r.symbols.forEach((s, j) => {
+      errors.push(validateField({ type: 'count', label: `${rowLabel} symbol count` }, s.count, `rows.${i}.symbols.${j}.count`));
+    });
+  });
+
+  return errors.filter(e => !e.ok);
+}

@@ -17,7 +17,9 @@ import {
   rowProse,
   rowStitchTotal,
   type ChartRowDef,
+  validateChartInputs,
 } from '@/lib/chart-lab';
+import { invalidSummary, isInputValid } from '@/lib/validate-field';
 
 interface ChartLabState {
   rows: ChartRowDef[];
@@ -66,6 +68,9 @@ export function ChartLabCard({ project }: { project: PatternProject }) {
     handle.write(state);
   }, [state, handle]);
 
+  const inputErrors = useMemo(() => validateChartInputs(state), [state]);
+  const inputsInvalid = !isInputValid(inputErrors);
+
   const result = useMemo(
     () => analyzeChartRows(state.rows, state.gradedStitchCount ? Number(state.gradedStitchCount) : null),
     [state],
@@ -91,6 +96,7 @@ export function ChartLabCard({ project }: { project: PatternProject }) {
 
   const proseText = result.proseRows.map((p) => p.text).join('\n');
   const copyProse = async () => {
+    if (inputsInvalid) return;
     await copyTextOrThrow(proseText);
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
@@ -122,6 +128,19 @@ export function ChartLabCard({ project }: { project: PatternProject }) {
           </div>
         </div>
 
+        {/* Validation summary */}
+        {inputsInvalid && (
+          <div className="rounded-lg border border-destructive/40 bg-destructive/5 p-4 space-y-2">
+            <div className="flex items-center gap-2 font-semibold text-destructive text-sm">
+              <AlertTriangle className="h-4 w-4" />
+              {copy.verdictLabels.blocked} — {copy.invalidInputsTitle || 'Invalid inputs'}
+            </div>
+            <div className="text-xs text-destructive/80 whitespace-pre-line leading-relaxed">
+              {invalidSummary(inputErrors)}
+            </div>
+          </div>
+        )}
+
         {/* KPI tiles */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="rounded-lg border bg-muted/30 p-4">
@@ -143,14 +162,20 @@ export function ChartLabCard({ project }: { project: PatternProject }) {
           <div className="rounded-lg border bg-muted/30 p-4">
             <div className="text-xs text-muted-foreground">{copy.verdict}</div>
             <div className="mt-1">
-              <Badge className={`${verdictColor(result.verdict)} uppercase`}>{copy.verdictLabels[result.verdict]}</Badge>
+              <Badge className={`${verdictColor(inputsInvalid ? 'blocked' : result.verdict)} uppercase`}>
+                {copy.verdictLabels[inputsInvalid ? 'blocked' : result.verdict]}
+              </Badge>
             </div>
           </div>
         </div>
 
         {/* Verdict banner */}
-        <div className={`rounded-lg border p-4 ${verdictColor(result.verdict)}`}>
-          <p className="text-sm">{result.verdictReason}</p>
+        <div className={`rounded-lg border p-4 ${verdictColor(inputsInvalid ? 'blocked' : result.verdict)}`}>
+          <p className="text-sm">
+            {inputsInvalid 
+              ? (copy.invalidInputsReason || 'Please fix the highlighted input errors before the chart can be validated.')
+              : result.verdictReason}
+          </p>
         </div>
 
         {/* CYC symbol gallery */}
@@ -239,13 +264,13 @@ export function ChartLabCard({ project }: { project: PatternProject }) {
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <div className="font-semibold text-sm">{copy.proseTitle}</div>
-            <Button variant="outline" size="sm" onClick={copyProse} className="gap-1">
+            <Button variant="outline" size="sm" onClick={copyProse} className="gap-1" disabled={inputsInvalid}>
               {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
               {copied ? copy.copied : copy.copyProse}
             </Button>
           </div>
-          <Textarea value={proseText} readOnly rows={Math.max(4, result.proseRows.length + 1)}
-            className="font-mono text-xs" />
+          <Textarea value={inputsInvalid ? '—' : proseText} readOnly rows={Math.max(4, result.proseRows.length + 1)}
+            className={`font-mono text-xs ${inputsInvalid ? 'opacity-50 grayscale' : ''}`} />
         </div>
 
         {/* Flags */}

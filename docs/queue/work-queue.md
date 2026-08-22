@@ -34,7 +34,7 @@
 | 26 | QUEUE-019 | Mobile-maker navigation (P1) — 79-lab drawer discovery: category scanning is too slow on mobile; add search and "recent" or "favorite" lab access to the lab drawer; ensure 44px touch targets for search/favorites; regression-gate by search-discovery.test.tsx | MAJOR | done | CHK-162: Implemented search, favorites (max 12), and recents (max 8) in `TabNavigator`; persisted via `useProjectStorageState`; localized search/fav strings in 5 locales; 4 regression tests in `search-discovery.test.tsx` |
 | 27 | QUEUE-020 | Universal Localization II — fix hardcoded "Localization Audit" label; localize Tech-Edit findings, Pricing Psychology, Podcast Affiliate, and POD Patterns labs; localize sample project seeding in onboarding flow | MAJOR | done | CHK-163: all 4 labs refactored, onboarding localized, sample projects seeded per-locale, Tech-Edit audit findings fully localized; evidence in `docs/leader-notes/cycle-2026-08-21-chk163.md` |
 | 28 | QUEUE-021 | Audit F-09 (High) — Draft placeholder policy: inconsistent token failure modes; add pre-export token validation and one error policy | MAJOR | done | CHK-164: fixed non-greedy token resolution, implemented `validateDraft` preflight layer, localized error states in 5 locales; vitest 2,309/2,309 green |
-| 29 | QUEUE-022 | Audit: Chart Lab input validation — selvedge/repeat fields accept negative/zero values without field-level validation | MAJOR | queued | Evidence in `docs/leader-notes/audit-2026-08-21-notes.md` |
+| 29 | QUEUE-022 | Audit: Chart Lab input validation — selvedge/repeat fields accept negative/zero values without field-level validation | MAJOR | done | CHK-165: implemented `validateChartInputs` shared layer, wired validation UI into `ChartLabCard`, added localized error states; vitest 2,316/2,316 green |
 
 ## Run ledger
 
@@ -58,4 +58,5 @@
 | 2026-08-21 (CHK-162) | QUEUE-019 (MAJOR) — Mobile search & favorites | tsc clean; vitest 4/4 passed; build green; cycle log `docs/leader-notes/cycle-2026-08-21-chk162.md` | f2dc2707a2cce7e718b1270dc7482f2e4c3b0f18 | QUEUE-020 (Universal Localization II) |
 | 2026-08-21 (CHK-163) | QUEUE-020 (MAJOR) — Universal Localization II | tsc clean; vitest 2,297/2,297; build green; 6 new tests; cycle log `docs/leader-notes/cycle-2026-08-21-chk163.md` | 06aa57d61d12a84bcd64f1b72b6c5b66fe8c1c4f | QUEUE-021 |
 | 2026-08-22 (CHK-164) | QUEUE-021 (MAJOR) — Audit F-09: Draft placeholder policy | tsc clean; vitest 2,309/2,309; build green; fixed F-09 parser + CHK-163 regressions | ff9d107 | QUEUE-022 |
+| 2026-08-22 (CHK-165) | QUEUE-022 (MAJOR) — Audit: Chart Lab input validation | tsc clean; vitest 2,316/2,316; build green; implemented validateChartInputs + localized UI errors | f170453 | END OF QUEUE |
 

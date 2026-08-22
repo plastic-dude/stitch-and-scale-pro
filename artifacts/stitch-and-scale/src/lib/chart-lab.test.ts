@@ -5,6 +5,7 @@ import {
   rowProse,
   rowStitchTotal,
   DEFAULT_CHART_INPUT,
+  validateChartInputs,
   type ChartRowDef,
 } from './chart-lab';
 
@@ -234,5 +235,75 @@ describe('DEFAULT_CHART_INPUT sanity', () => {
     const rows = DEFAULT_CHART_INPUT.rows;
     // before 1 k + (k2tog 2 + yo 1 + k 1) × 1 + after 1 k = 1 + 4 + 1 = 6
     expect(rowStitchTotal(rows[0])).toBe(6);
+  });
+});
+
+describe('validateChartInputs', () => {
+  it('detects negative graded count', () => {
+    const state = { rows: [], gradedStitchCount: '-10' };
+    const errors = validateChartInputs(state);
+    expect(errors.length).toBe(1);
+    expect(errors[0].code).toBe('not-positive');
+  });
+
+  it('detects zero graded count (strictly positive required)', () => {
+    const state = { rows: [], gradedStitchCount: '0' };
+    const errors = validateChartInputs(state);
+    expect(errors.length).toBe(1);
+    expect(errors[0].code).toBe('not-positive');
+  });
+
+  it('detects non-integer repeat count', () => {
+    const state = { 
+      rows: [row({ row: 1, repeatCount: 1.5 })], 
+      gradedStitchCount: '20' 
+    };
+    const errors = validateChartInputs(state);
+    expect(errors.length).toBe(1);
+    expect(errors[0].code).toBe('not-integer');
+  });
+
+  it('detects negative repeat count', () => {
+    const state = { 
+      rows: [row({ row: 1, repeatCount: -1 })], 
+      gradedStitchCount: '20' 
+    };
+    const errors = validateChartInputs(state);
+    // Should fail both negative and below-min (1)
+    expect(errors.some(e => e.code === 'negative' || e.code === 'below-min')).toBe(true);
+  });
+
+  it('detects negative selvedge counts', () => {
+    const state = { 
+      rows: [row({ 
+        row: 1, 
+        before: [{ symbolId: 'knit', count: -5 }],
+        after: [{ symbolId: 'knit', count: 0 }] 
+      })], 
+      gradedStitchCount: '20' 
+    };
+    const errors = validateChartInputs(state);
+    expect(errors.length).toBe(1);
+    expect(errors[0].code).toBe('negative');
+  });
+
+  it('passes on valid inputs', () => {
+    const state = { 
+      rows: [row({ 
+        row: 1, 
+        repeatCount: 10,
+        before: [{ symbolId: 'knit', count: 2 }],
+        after: [{ symbolId: 'knit', count: 2 }] 
+      })], 
+      gradedStitchCount: '20' 
+    };
+    const errors = validateChartInputs(state);
+    expect(errors.length).toBe(0);
+  });
+
+  it('passes on empty graded count (optional)', () => {
+    const state = { rows: [], gradedStitchCount: '' };
+    const errors = validateChartInputs(state);
+    expect(errors.length).toBe(0);
   });
 });
