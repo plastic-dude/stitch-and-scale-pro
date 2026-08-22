@@ -2,14 +2,15 @@
 
 **Canonical file for the 15-minute loop firings.** This file is the single source of truth for "what is next." Every firing reads it first, works the first `queued` entry, updates statuses inline, and appends a ledger line. Owner directive 2026-08-19: firings continue this queue from the start, never restart from scratch.
 
-## OWNER DIRECTIVE 2026-08-22 — READ FIRST, RESEARCH-ONLY, DO NOT IMPLEMENT
+## OWNER DIRECTIVE 2026-08-22 — READ FIRST, TWO-PASS RESEARCH COMPLETE, IMPLEMENT ONE TOUCHPOINT ONLY
 
-**Status: `pass-1-done` (re-queued for research pass 2 on a later firing).** Topic: soothing, non-manipulative recognition/gamification for real milestones in the normal usage flow (grading a pattern, exporting a PDF, and other genuine accomplishments) — related to but distinct from Brag Cards. Full brief, design constraints, and current-state hypothesis: `docs/research/soothing-recognition-gamification-2026-08-22.md`. Pass 1 evidence: `docs/leader-notes/cycle-2026-08-22-CHK-212-soothing-recognition-pass1.md`.
+**Status: `pass-2-done`; next item is one narrow implementation only.** Topic: soothing, non-manipulative recognition/gamification for real milestones in the normal usage flow (grading a pattern, exporting a PDF, and other genuine accomplishments) — related to but distinct from Brag Cards. Full brief and design constraints: `docs/research/soothing-recognition-gamification-2026-08-22.md`. Pass 1 evidence: `docs/leader-notes/cycle-2026-08-22-CHK-212-soothing-recognition-pass1.md`. Pass 2 evidence: `docs/leader-notes/cycle-2026-08-22-CHK-213-soothing-recognition-pass2.md`.
 
-**This entry is research-only. Do not write any application code, copy strings, or storage schema against it yet.** The brief requires two independent research passes, on two separate scheduled firings, before any implementation ticket may be opened:
+**The two required research passes are complete. Do not broaden the queued work into a recognition system, engagement counter, export claim, or second touchpoint.** The next implementation is limited to the single item below:
 
-- **Pass 1 (completed in CHK-212):** re-verified the brief's §5 touchpoint table against the live code at the audited HEAD (file paths, line numbers, exact success signals) and recorded corrections in `docs/leader-notes/cycle-2026-08-22-CHK-212-soothing-recognition-pass1.md`. This entry is now `pass-1-done` and remains re-queued for a *second, later* firing rather than closed — the second pass must not happen in the same firing as the first.
-- **Pass 2 (next later firing; still research-only):** stress-test every surviving touchpoint against the brief's §4 design principles, draft the 5-locale copy and a `storage-lib.ts`-style schema sketch, and log as `docs/leader-notes/cycle-<date>-<chk>-soothing-recognition-pass2.md`. Only after this log lands should a numbered `QUEUE-` implementation item be opened, scoped to a single touchpoint.
+- **Pass 1 (completed in CHK-212):** re-verified the brief's §5 touchpoint table against live code and recorded corrections in `docs/leader-notes/cycle-2026-08-22-CHK-212-soothing-recognition-pass1.md`.
+- **Pass 2 (completed in CHK-213):** stress-tested every surviving touchpoint against §4, drafted five-locale copy, and sketched a `storage-lib.ts`-compatible schema in `docs/leader-notes/cycle-2026-08-22-CHK-213-soothing-recognition-pass2.md`.
+- **Implementation boundary:** only `QUEUE-066` is now eligible. It covers first clean grade recognition, and must not include counters, streaks, print/PDF success claims, inclusive-sizing recognition, onboarding recognition, Brag Card integration, or any other touchpoint.
 
 ## Queue entries (walking order)
 
@@ -68,4 +69,6 @@
 | 79 | QUEUE-064 | Mobile Resilience: Fix onboarding footer overlap and deep-link recovery | MAJOR | done | CHK-208: Fixed 390x844 footer overlap + repaired deep-link recovery handlers + localized recovery UI. |
 | 87 | 2026-08-22 (CHK-209) | QUEUE-065 (MAJOR) — Localization & Parity | tsc clean; vitest 2,515/2,515; build green; fixed remaining English + onboarding tour parity | ef4c1bf | done |
 | 88 | 2026-08-22 (CHK-212) | OWNER DIRECTIVE — soothing recognition Pass 1 | research-only; current source anchors re-verified; implementation correctly held | 656f5f3 | pass-1-done; re-queued for later Pass 2 |
+| 89 | 2026-08-22 (CHK-213) | OWNER DIRECTIVE — soothing recognition Pass 2 | research-only; six-touchpoint stress test + five-locale copy + storage schema; no application code | pending | QUEUE-066 — first clean grade only |
 | 80 | QUEUE-065 | Localization Brutality IV and Onboarding Parity | MAJOR | done | CHK-209: Localized grading labels, CSV headers, and demo names; fixed onboarding tour parity + mobile clearance. |
+| 81 | QUEUE-066 | Soothing recognition: first clean grade only | MINOR | queued | CHK-213: Pass 2 complete. Implement one project-scoped, localized, private, non-blocking acknowledgment after a newly observed genuine `ready` result; no counters, streaks, export claims, or other touchpoints. |
