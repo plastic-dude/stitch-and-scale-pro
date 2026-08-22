@@ -124,6 +124,7 @@ export function normalizeProjectRecord(
     testKnitRounds: Array.isArray(value.testKnitRounds) ? value.testKnitRounds : undefined,
     samples: Array.isArray(value.samples) ? value.samples : undefined,
     submissions: Array.isArray(value.submissions) ? value.submissions : undefined,
+    wholesaleOrders: Array.isArray(value.wholesaleOrders) ? value.wholesaleOrders : undefined,
     isArchived: typeof value.isArchived === 'boolean' ? value.isArchived : undefined,
   };
 }

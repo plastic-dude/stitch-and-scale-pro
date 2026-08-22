@@ -271,6 +271,8 @@ export interface PatternProject {
   samples?: ProjectSample[];
   /** Submission pipeline: durable records for outlet submissions. */
   submissions?: ProjectSubmission[];
+  /** Wholesale follow-up: durable records for wholesale orders. */
+  wholesaleOrders?: WholesaleOrder[];
 }
 
 export interface ProjectAsset {
@@ -326,6 +328,22 @@ export interface ProjectSubmission {
   deadline?: string;
   submittedDate?: string;
   outcome: SubmissionStatus;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type WholesaleOrderStatus = 'planned' | 'invoiced' | 'shipped' | 'paid' | 'cancelled';
+
+export interface WholesaleOrder {
+  id: string;
+  account: string;
+  orderId?: string;
+  invoiceId?: string;
+  terms?: string;
+  dueDate?: string;
+  status: WholesaleOrderStatus;
+  paymentFollowUp?: string;
   notes?: string;
   createdAt: string;
   updatedAt: string;

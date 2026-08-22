@@ -126,6 +126,7 @@ const LAB = {
   magazinesubmission: React.lazy(cardLazy(() => import('@/components/magazine-submission-lab-card'))),
   pricingpsychology: React.lazy(cardLazy(() => import('@/components/pricing-psychology-lab-card'))),
   samples: React.lazy(cardLazy(() => import('@/components/sample-tracker-card'))),
+  wholesalefollowup: React.lazy(cardLazy(() => import('@/components/wholesale-followup-card'))),
   podpatterns: React.lazy(cardLazy(() => import('@/components/pod-patterns-lab-card'))),
   marketplacetakerate: React.lazy(cardLazy(() => import('@/components/marketplace-takerate-lab-card'))),
   boxinclusion: React.lazy(cardLazy(() => import('@/components/box-inclusion-lab-card'))),
@@ -239,6 +240,9 @@ export default function ProjectWorkspace() {
     addSubmission,
     updateSubmission,
     deleteSubmission,
+    addWholesaleOrder,
+    updateWholesaleOrder,
+    deleteWholesaleOrder,
   } = projectHook;
   const copy = getWorkspaceCopy(currentLanguage);
   const tc = getToastCopy(currentLanguage);
@@ -858,6 +862,15 @@ export default function ProjectWorkspace() {
           addSample={projectHook?.addSample}
           updateSample={projectHook?.updateSample}
           deleteSample={projectHook?.deleteSample}
+        />
+      );
+      case 'wholesale-followup': return (
+        <LazyPanel 
+          loader={LAB.wholesalefollowup} 
+          project={project}
+          addWholesaleOrder={addWholesaleOrder}
+          updateWholesaleOrder={updateWholesaleOrder}
+          deleteWholesaleOrder={deleteWholesaleOrder}
         />
       );
       case 'finish': return <LazyPanel loader={LAB.finish} project={project} />;

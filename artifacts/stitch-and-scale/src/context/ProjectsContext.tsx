@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useReducer, useRef, useState } from 'react';
 import { get, set } from 'idb-keyval';
-import { type PatternProject, generateId, type PublicationPackage, type PublicationArtifact, type ArtifactInspectionReport, type EaseProfileReference, type SizingStandardMetadata, type CollaborationMember, type ReadinessStage, type ReadinessIssue, type ReadinessComment, type PatternDocumentContent, type TestKnitRound, type ProjectSample, type ProjectSubmission } from '@/lib/grading-engine';
+import { type PatternProject, generateId, type PublicationPackage, type PublicationArtifact, type ArtifactInspectionReport, type EaseProfileReference, type SizingStandardMetadata, type CollaborationMember, type ReadinessStage, type ReadinessIssue, type ReadinessComment, type PatternDocumentContent, type TestKnitRound, type ProjectSample, type ProjectSubmission, type WholesaleOrder } from '@/lib/grading-engine';
 export type { PatternProject };
 import { getSampleCrewNeckSweater } from '@/lib/sample-projects';
 import { LanguageCode } from '@/lib/i18n';
@@ -63,7 +63,10 @@ export type ProjectsAction =
   | { type: 'DELETE_SAMPLE'; payload: { projectId: string; sampleId: string } }
   | { type: 'ADD_SUBMISSION'; payload: { projectId: string; submission: ProjectSubmission } }
   | { type: 'UPDATE_SUBMISSION'; payload: { projectId: string; submissionId: string; patch: Partial<ProjectSubmission> } }
-  | { type: 'DELETE_SUBMISSION'; payload: { projectId: string; submissionId: string } };
+  | { type: 'DELETE_SUBMISSION'; payload: { projectId: string; submissionId: string } }
+  | { type: 'ADD_WHOLESALE_ORDER'; payload: { projectId: string; order: WholesaleOrder } }
+  | { type: 'UPDATE_WHOLESALE_ORDER'; payload: { projectId: string; orderId: string; patch: Partial<WholesaleOrder> } }
+  | { type: 'DELETE_WHOLESALE_ORDER'; payload: { projectId: string; orderId: string } };
 
 export type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
 
@@ -107,6 +110,9 @@ interface ProjectsContextType {
   addSubmission: (projectId: string, submission: ProjectSubmission) => void;
   updateSubmission: (projectId: string, submissionId: string, patch: Partial<ProjectSubmission>) => void;
   deleteSubmission: (projectId: string, submissionId: string) => void;
+  addWholesaleOrder: (projectId: string, order: WholesaleOrder) => void;
+  updateWholesaleOrder: (projectId: string, orderId: string, patch: Partial<WholesaleOrder>) => void;
+  deleteWholesaleOrder: (projectId: string, orderId: string) => void;
   saveStatus: SaveStatus;
   recovered: boolean;
   dismissRecovery: () => void;
@@ -488,6 +494,29 @@ export function projectsReducer(state: PatternProject[], action: ProjectsAction)
         updatedAt: new Date().toISOString()
       } : p);
       break;
+    case 'ADD_WHOLESALE_ORDER':
+      newState = state.map(p => p.id === action.payload.projectId ? {
+        ...p,
+        wholesaleOrders: [action.payload.order, ...(p.wholesaleOrders || [])],
+        updatedAt: new Date().toISOString()
+      } : p);
+      break;
+    case 'UPDATE_WHOLESALE_ORDER':
+      newState = state.map(p => p.id === action.payload.projectId ? {
+        ...p,
+        wholesaleOrders: (p.wholesaleOrders || []).map(o => 
+          o.id === action.payload.orderId ? { ...o, ...action.payload.patch, updatedAt: new Date().toISOString() } : o
+        ),
+        updatedAt: new Date().toISOString()
+      } : p);
+      break;
+    case 'DELETE_WHOLESALE_ORDER':
+      newState = state.map(p => p.id === action.payload.projectId ? {
+        ...p,
+        wholesaleOrders: (p.wholesaleOrders || []).filter(o => o.id !== action.payload.orderId),
+        updatedAt: new Date().toISOString()
+      } : p);
+      break;
     default:
       return state;
   }
@@ -613,6 +642,9 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
     const addSubmission = (projectId: string, submission: ProjectSubmission) => dispatch({ type: 'ADD_SUBMISSION', payload: { projectId, submission } });
     const updateSubmission = (projectId: string, submissionId: string, patch: Partial<ProjectSubmission>) => dispatch({ type: 'UPDATE_SUBMISSION', payload: { projectId, submissionId, patch } });
     const deleteSubmission = (projectId: string, submissionId: string) => dispatch({ type: 'DELETE_SUBMISSION', payload: { projectId, submissionId } });
+    const addWholesaleOrder = (projectId: string, order: WholesaleOrder) => dispatch({ type: 'ADD_WHOLESALE_ORDER', payload: { projectId, order } });
+    const updateWholesaleOrder = (projectId: string, orderId: string, patch: Partial<WholesaleOrder>) => dispatch({ type: 'UPDATE_WHOLESALE_ORDER', payload: { projectId, orderId, patch } });
+    const deleteWholesaleOrder = (projectId: string, orderId: string) => dispatch({ type: 'DELETE_WHOLESALE_ORDER', payload: { projectId, orderId } });
 
   // Import a single project from an exported JSON file — always assigns a
   // fresh id so it can never silently collide with or overwrite an existing
@@ -644,6 +676,7 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
       addTestKnitRound, updateTestKnitRound, deleteTestKnitRound,
       addSample, updateSample, deleteSample,
       addSubmission, updateSubmission, deleteSubmission,
+      addWholesaleOrder, updateWholesaleOrder, deleteWholesaleOrder,
       setDraftContent: (projectId: string, content: PatternDocumentContent) => dispatch({ type: 'SET_DRAFT_CONTENT', payload: { projectId, content } }),
       compilePackage: (projectId: string, packageId: string, content: PatternDocumentContent) => dispatch({ type: 'COMPILE_PACKAGE', payload: { projectId, packageId, content } }),
       saveStatus, recovered, dismissRecovery 
@@ -689,6 +722,7 @@ export function useProject(id?: string) {
     addTestKnitRound, updateTestKnitRound, deleteTestKnitRound,
     addSample, updateSample, deleteSample,
     addSubmission, updateSubmission, deleteSubmission,
+    addWholesaleOrder, updateWholesaleOrder, deleteWholesaleOrder,
     setDraftContent, compilePackage
   } = useProjects();
   if (!id) return null;
@@ -731,6 +765,9 @@ export function useProject(id?: string) {
       addSubmission: (submission: ProjectSubmission) => addSubmission(DEMO_PROJECT_ID, submission),
       updateSubmission: (submissionId: string, patch: Partial<ProjectSubmission>) => updateSubmission(DEMO_PROJECT_ID, submissionId, patch),
       deleteSubmission: (submissionId: string) => deleteSubmission(DEMO_PROJECT_ID, submissionId),
+      addWholesaleOrder: (order: WholesaleOrder) => addWholesaleOrder(DEMO_PROJECT_ID, order),
+      updateWholesaleOrder: (orderId: string, patch: Partial<WholesaleOrder>) => updateWholesaleOrder(DEMO_PROJECT_ID, orderId, patch),
+      deleteWholesaleOrder: (orderId: string) => deleteWholesaleOrder(DEMO_PROJECT_ID, orderId),
       setDraftContent: (content: PatternDocumentContent) => setDraftContent(DEMO_PROJECT_ID, content),
       compilePackage: (packageId: string, content: PatternDocumentContent) => compilePackage(DEMO_PROJECT_ID, packageId, content),
     };
@@ -767,10 +804,13 @@ export function useProject(id?: string) {
     addSample: (sample: ProjectSample) => addSample(id, sample),
     updateSample: (sampleId: string, patch: Partial<ProjectSample>) => updateSample(id, sampleId, patch),
     deleteSample: (sampleId: string) => deleteSample(id, sampleId),
-    addSubmission: (submission: ProjectSubmission) => addSubmission(id, submission),
-    updateSubmission: (submissionId: string, patch: Partial<ProjectSubmission>) => updateSubmission(id, submissionId, patch),
-    deleteSubmission: (submissionId: string) => deleteSubmission(id, submissionId),
-    setDraftContent: (content: PatternDocumentContent) => setDraftContent(id, content),
+      addSubmission: (submission: ProjectSubmission) => addSubmission(id, submission),
+      updateSubmission: (submissionId: string, patch: Partial<ProjectSubmission>) => updateSubmission(id, submissionId, patch),
+      deleteSubmission: (submissionId: string) => deleteSubmission(id, submissionId),
+      addWholesaleOrder: (order: WholesaleOrder) => addWholesaleOrder(id, order),
+      updateWholesaleOrder: (orderId: string, patch: Partial<WholesaleOrder>) => updateWholesaleOrder(id, orderId, patch),
+      deleteWholesaleOrder: (orderId: string) => deleteWholesaleOrder(id, orderId),
+      setDraftContent: (content: PatternDocumentContent) => setDraftContent(id, content),
     compilePackage: (packageId: string, content: PatternDocumentContent) => compilePackage(id, packageId, content),
   };
 }

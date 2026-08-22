@@ -79,6 +79,20 @@ export interface CollaborationCopy {
   withdrawn: string;
   cancel: string;
   editSubmission: string;
+  wholesaleFollowUp: string;
+  addWholesaleOrder: string;
+  accountLabel: string;
+  orderIdLabel: string;
+  invoiceIdLabel: string;
+  termsLabel: string;
+  paymentFollowUpLabel: string;
+  noWholesaleOrders: string;
+  deleteWholesaleOrderConfirm: string;
+  wholesaleOrderUpdated: string;
+  invoiced: string;
+  shipped: string;
+  paid: string;
+  editWholesaleOrder: string;
 }
 
 export const COLLABORATION_COPY: Record<LanguageCode, CollaborationCopy> = {
@@ -161,6 +175,20 @@ export const COLLABORATION_COPY: Record<LanguageCode, CollaborationCopy> = {
     withdrawn: 'Withdrawn',
     cancel: 'Cancel',
     editSubmission: 'Edit Submission',
+    wholesaleFollowUp: 'Wholesale Follow-up',
+    addWholesaleOrder: 'Add Wholesale Order',
+    accountLabel: 'Account',
+    orderIdLabel: 'Order ID',
+    invoiceIdLabel: 'Invoice ID',
+    termsLabel: 'Terms',
+    paymentFollowUpLabel: 'Payment Follow-up',
+    noWholesaleOrders: 'No wholesale orders recorded.',
+    deleteWholesaleOrderConfirm: 'Are you sure you want to delete this wholesale order?',
+    wholesaleOrderUpdated: 'Wholesale order updated',
+    invoiced: 'Invoiced',
+    shipped: 'Shipped',
+    paid: 'Paid',
+    editWholesaleOrder: 'Edit Wholesale Order',
   },
   de: {
     title: 'Zusammenarbeit',
@@ -241,6 +269,20 @@ export const COLLABORATION_COPY: Record<LanguageCode, CollaborationCopy> = {
     withdrawn: 'Zurückgezogen',
     cancel: 'Abbrechen',
     editSubmission: 'Einreichung bearbeiten',
+    wholesaleFollowUp: 'Großhandels-Nachverfolgung',
+    addWholesaleOrder: 'Großhandelsbestellung hinzufügen',
+    accountLabel: 'Konto',
+    orderIdLabel: 'Bestell-ID',
+    invoiceIdLabel: 'Rechnungs-ID',
+    termsLabel: 'Bedingungen',
+    paymentFollowUpLabel: 'Zahlungs-Nachverfolgung',
+    noWholesaleOrders: 'Keine Großhandelsbestellungen aufgezeichnet.',
+    deleteWholesaleOrderConfirm: 'Bist du sicher, dass du diese Großhandelsbestellung löschen möchtest?',
+    wholesaleOrderUpdated: 'Großhandelsbestellung aktualisiert',
+    invoiced: 'Fakturiert',
+    shipped: 'Versandt',
+    paid: 'Bezahlt',
+    editWholesaleOrder: 'Großhandelsbestellung bearbeiten',
   },
   fr: {
     title: 'Collaboration',
@@ -321,6 +363,20 @@ export const COLLABORATION_COPY: Record<LanguageCode, CollaborationCopy> = {
     withdrawn: 'Retiré',
     cancel: 'Annuler',
     editSubmission: 'Modifier la soumission',
+    wholesaleFollowUp: 'Suivi de vente en gros',
+    addWholesaleOrder: 'Ajouter une commande en gros',
+    accountLabel: 'Compte',
+    orderIdLabel: 'ID de commande',
+    invoiceIdLabel: 'ID de facture',
+    termsLabel: 'Conditions',
+    paymentFollowUpLabel: 'Suivi de paiement',
+    noWholesaleOrders: 'Aucune commande en gros enregistrée.',
+    deleteWholesaleOrderConfirm: 'Êtes-vous sûr de vouloir supprimer cette commande en gros ?',
+    wholesaleOrderUpdated: 'Commande en gros mise à jour',
+    invoiced: 'Facturé',
+    shipped: 'Expédié',
+    paid: 'Payé',
+    editWholesaleOrder: 'Modifier la commande en gros',
   },
   es: {
     title: 'Colaboración',
@@ -401,6 +457,20 @@ export const COLLABORATION_COPY: Record<LanguageCode, CollaborationCopy> = {
     withdrawn: 'Retirado',
     cancel: 'Cancelar',
     editSubmission: 'Editar envío',
+    wholesaleFollowUp: 'Seguimiento de venta al por mayor',
+    addWholesaleOrder: 'Agregar pedido al por mayor',
+    accountLabel: 'Cuenta',
+    orderIdLabel: 'ID de pedido',
+    invoiceIdLabel: 'ID de factura',
+    termsLabel: 'Términos',
+    paymentFollowUpLabel: 'Seguimiento de pago',
+    noWholesaleOrders: 'No se han registrado pedidos al por mayor.',
+    deleteWholesaleOrderConfirm: '¿Estás seguro de que deseas eliminar este pedido al por mayor?',
+    wholesaleOrderUpdated: 'Pedido al por mayor actualizado',
+    invoiced: 'Facturado',
+    shipped: 'Enviado',
+    paid: 'Pagado',
+    editWholesaleOrder: 'Editar pedido al por mayor',
   },
   pt: {
     title: 'Colaboração',
@@ -481,5 +551,19 @@ export const COLLABORATION_COPY: Record<LanguageCode, CollaborationCopy> = {
     withdrawn: 'Retirado',
     cancel: 'Cancelar',
     editSubmission: 'Editar submissão',
+    wholesaleFollowUp: 'Acompanhamento de atacado',
+    addWholesaleOrder: 'Adicionar pedido de atacado',
+    accountLabel: 'Conta',
+    orderIdLabel: 'ID do pedido',
+    invoiceIdLabel: 'ID da fatura',
+    termsLabel: 'Termos',
+    paymentFollowUpLabel: 'Acompanhamento de pagamento',
+    noWholesaleOrders: 'Nenhum pedido de atacado registrado.',
+    deleteWholesaleOrderConfirm: 'Tem certeza de que deseja excluir este pedido de atacado?',
+    wholesaleOrderUpdated: 'Pedido de atacado atualizado',
+    invoiced: 'Faturado',
+    shipped: 'Enviado',
+    paid: 'Pago',
+    editWholesaleOrder: 'Editar pedido de atacado',
   },
 };

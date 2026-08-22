@@ -8,7 +8,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { DEMO_PROJECT_ID, makeDemoProject, projectsReducer } from './ProjectsContext';
 import { SAMPLE_CREW_NECK_SWEATER } from '@/lib/sample-projects';
-import type { PatternProject, ProjectSubmission } from '@/lib/grading-engine';
+import type { PatternProject, ProjectSubmission, WholesaleOrder } from '@/lib/grading-engine';
 
 const PROJECTS_CONTEXT_SOURCE = fs.readFileSync(
   path.resolve(__dirname, 'ProjectsContext.tsx'),
@@ -150,5 +150,83 @@ describe('QUEUE-056: submission record reducer actions', () => {
 
     expect(newState[0].submissions).toHaveLength(1);
     expect(newState[0].submissions?.[0].outlet).toBe('Knitty');
+  });
+});
+
+describe('QUEUE-057: wholesale order record reducer actions', () => {
+  const baseProject: PatternProject = {
+    id: 'p1',
+    name: 'Test Project',
+    author: 'Author',
+    baseSize: 'M',
+    gauge: { stitchesPer4In: 20, rowsPer4In: 28, unit: 'in' },
+    sections: [],
+    createdAt: '2026-08-20T00:00:00.000Z',
+    updatedAt: '2026-08-20T00:00:00.000Z',
+  };
+
+  const testOrder: WholesaleOrder = {
+    id: 'w1',
+    account: 'Local Yarn Shop',
+    orderId: 'ORD-001',
+    status: 'planned',
+    createdAt: '2026-08-20T10:00:00.000Z',
+    updatedAt: '2026-08-20T10:00:00.000Z',
+  };
+
+  it('ADD_WHOLESALE_ORDER prepends a new record and updates project timestamp', () => {
+    const state = [baseProject];
+    const newState = projectsReducer(state, {
+      type: 'ADD_WHOLESALE_ORDER',
+      payload: { projectId: 'p1', order: testOrder }
+    });
+
+    expect(newState[0].wholesaleOrders).toHaveLength(1);
+    expect(newState[0].wholesaleOrders?.[0]).toEqual(testOrder);
+    expect(new Date(newState[0].updatedAt).getTime()).toBeGreaterThan(new Date(baseProject.updatedAt).getTime());
+  });
+
+  it('UPDATE_WHOLESALE_ORDER patches an existing record and updates both timestamps', () => {
+    const projectWithOrder = { ...baseProject, wholesaleOrders: [testOrder] };
+    const state = [projectWithOrder];
+    const newState = projectsReducer(state, {
+      type: 'UPDATE_WHOLESALE_ORDER',
+      payload: { 
+        projectId: 'p1', 
+        orderId: 'w1', 
+        patch: { status: 'invoiced', invoiceId: 'INV-001', dueDate: '2026-09-20' } 
+      }
+    });
+
+    const updated = newState[0].wholesaleOrders?.[0];
+    expect(updated?.status).toBe('invoiced');
+    expect(updated?.invoiceId).toBe('INV-001');
+    expect(new Date(updated!.updatedAt).getTime()).toBeGreaterThan(new Date(testOrder.updatedAt).getTime());
+    expect(new Date(newState[0].updatedAt).getTime()).toBeGreaterThan(new Date(baseProject.updatedAt).getTime());
+  });
+
+  it('DELETE_WHOLESALE_ORDER removes a record by id', () => {
+    const projectWithOrder = { ...baseProject, wholesaleOrders: [testOrder] };
+    const state = [projectWithOrder];
+    const newState = projectsReducer(state, {
+      type: 'DELETE_WHOLESALE_ORDER',
+      payload: { projectId: 'p1', orderId: 'w1' }
+    });
+
+    expect(newState[0].wholesaleOrders).toHaveLength(0);
+  });
+
+  it('normalization preserves wholesaleOrders array during INIT', () => {
+    const rawProject = {
+      ...baseProject,
+      wholesaleOrders: [testOrder]
+    };
+    const newState = projectsReducer([], {
+      type: 'INIT',
+      payload: [rawProject as any]
+    });
+
+    expect(newState[0].wholesaleOrders).toHaveLength(1);
+    expect(newState[0].wholesaleOrders?.[0].account).toBe('Local Yarn Shop');
   });
 });

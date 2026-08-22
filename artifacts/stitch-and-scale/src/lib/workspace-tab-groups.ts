@@ -124,6 +124,7 @@ export const TAB_GROUPS: Record<string, TabGroup> = {
   bragcard: "launch",
   payback: "pricing",
   samples: "business",
+  "wholesale-followup": "business",
 };
 
 export function groupFor(tabValue: string): TabGroup {
