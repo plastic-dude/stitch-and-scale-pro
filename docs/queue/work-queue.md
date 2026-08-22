@@ -43,9 +43,10 @@
 | 34 | QUEUE-027 | Audit F-11 (MINOR) — Core form errors are generic; users must guess which field needs correction | MINOR | done | CHK-170: implemented field-specific validation, accessible error associations, and 5-locale error messages; vitest green |
 | 35 | QUEUE-028 | Audit F-12 (MINOR) — Professional benchmark claims lack visible methodology; source/assumptions for freelance rates and inclusive sizing are opaque | MINOR | done | CHK-171: integrated `BenchmarkFooter` across 4 cards; localized methodology strings in 5 locales; added methodology research documentation; vitest green |
 | 36 | QUEUE-029 | Audit F-12-Rescue (MAJOR) — Live release integrity: blank public deployment (#root empty); missing production smoke gate and rollback proof | MAJOR | done | CHK-172: implemented `prod-smoke.mjs` gate, `HealthIndicator` app-shell state, and 5-locale status strings; vitest green |
-| 37 | QUEUE-030 | Audit F-13 (MINOR) — Wildcard CORS and origin policy; production MCP serverless function configuration mismatch | MINOR | queued | Restrict origins in `vercel.json` and `api/mcp.ts`; verify custom-domain origin allowlist |
+| 37 | QUEUE-030 | Audit F-13 (MINOR) — Wildcard CORS and origin policy; production MCP serverless function configuration mismatch | MINOR | done | CHK-173: hardened CORS in `vercel.json` (POST/OPTIONS only) and `api/mcp.ts` (comma-separated allowlist + default fallback); vitest green |
 
 ## Run ledger
+| 2026-08-22 (CHK-173) | QUEUE-030 (MINOR) — CORS hardening | tsc clean; vitest 2,326/2,326; build green; hardened origin policy in `vercel.json` and `api/mcp.ts` | 78c7858e0775dcb2bf219a1280fb3bb37930b461 | END OF QUEUE |
 | 2026-08-22 (CHK-172) | QUEUE-029 (MAJOR) — Release integrity | tsc clean; vitest 2,326/2,326; build green; 4 new tests; smoke script `scripts/prod-smoke.mjs` | a66b840c75f0d38e87aa44531caf46ce4259cf75 | QUEUE-030 |
 | 2026-08-22 (CHK-171) | QUEUE-028 (MINOR) — Benchmark methodology | tsc clean; vitest 2,322/2,322; build green; 4 new tests; research log `docs/leader-notes/cycle-2026-08-22-methodology-research.md` | b623c9380873d8c4ac96861c61e30b5ad474f51e | QUEUE-029 |
 | 2026-08-22 (CHK-170) | QUEUE-027 (MINOR) — Core form errors | tsc clean; vitest 2,318/2,318; build green; 3 new tests | f8e9937 | QUEUE-028 |

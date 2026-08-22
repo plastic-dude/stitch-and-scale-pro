@@ -49,8 +49,9 @@ function authorized(request: Request): boolean {
 function allowedOrigin(request: Request): string {
   const requestOrigin = request.headers.get('origin');
   if (!requestOrigin) return '';
-  const configured = process.env.MCP_ALLOWED_ORIGIN?.trim();
-  return configured && requestOrigin === configured ? configured : '';
+  const configured = process.env.MCP_ALLOWED_ORIGIN?.trim() || 'https://stitch-and-scale-pro.vercel.app';
+  const allowed = configured.split(',').map(o => o.trim()).filter(Boolean);
+  return allowed.includes(requestOrigin) ? requestOrigin : '';
 }
 
 function responseHeaders(origin = '', allow = ''): Headers {

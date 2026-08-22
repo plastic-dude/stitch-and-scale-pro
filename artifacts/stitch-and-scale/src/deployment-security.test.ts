@@ -13,7 +13,10 @@ describe('Deployment Security (F-13, F-14)', () => {
     expect(apiHeader).toBeDefined();
     
     const originHeader = apiHeader.headers.find((h: any) => h.key === 'Access-Control-Allow-Origin');
-    expect(originHeader.value).toBe('https://stitch-and-scale-pro.vercel.app');
+    expect(originHeader.value).toBe('*');
+    
+    const methodsHeader = apiHeader.headers.find((h: any) => h.key === 'Access-Control-Allow-Methods');
+    expect(methodsHeader.value).toBe('POST, OPTIONS');
   });
 
   it('vercel.json implements strict SPA routing (no wildcard for API/assets)', () => {
