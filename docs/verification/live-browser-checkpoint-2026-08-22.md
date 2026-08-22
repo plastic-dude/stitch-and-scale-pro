@@ -17,3 +17,7 @@ At 07:36 UTC, only the sandbox browser stores were modified. The original localS
 
 ## Restoration confirmation
 The sandbox fixture was removed by restoring the original serialized localStorage and IndexedDB values from sessionStorage, then reloading. The browser returned to the original populated 58-project dashboard. This confirms the live malformed-data replay was reversible and did not leave a test record behind.
+
+## Post-8eeeab6 routing recheck — 2026-08-22
+
+The public alias `https://stitch-and-scale-pro-api-server.vercel.app/project/sample-crew-neck-sweater` was checked twice in a fresh browser state after the exact-main deployment attempt. Both checks returned Vercel `404: NOT_FOUND` with the same error ID prefix `cle1::zgckh-1787384964605-6b7fb4ba6985`. The root alias remains reachable, but the new `vercel.json` SPA fallback is not live because the target=production deployment of `8eeeab6` returned HTTP 402 `payment_required` / `api-deployments-free-per-day`.
