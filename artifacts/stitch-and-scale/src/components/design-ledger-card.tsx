@@ -335,6 +335,7 @@ export function DesignLedgerCard(props: { project: PatternProject }) {
                 />
                 <Button
                   size="sm"
+                  className="min-h-11"
                   onClick={() => {
                     if (!designName.trim()) {
                       toast({ title: copy.nameRequired, description: copy.nameRequiredDescription });
@@ -436,6 +437,7 @@ export function DesignLedgerCard(props: { project: PatternProject }) {
                 </div>
                 <Button
                   size="sm"
+                  className="min-h-11"
                   onClick={() => {
                     const amount = parseFloat(expAmount);
                     if (!(amount > 0)) {
@@ -492,7 +494,7 @@ export function DesignLedgerCard(props: { project: PatternProject }) {
                           <td className="py-1.5">
                             <button
                               aria-label={copy.removeCost}
-                              className="text-muted-foreground hover:text-destructive"
+                              className="min-h-11 min-w-11 text-muted-foreground hover:text-destructive"
                               onClick={() => {
                                 persist({ ...state, expenses: removeExpense(state.expenses, e.id) });
                                 toast({ title: copy.costRemoved });
@@ -514,10 +516,10 @@ export function DesignLedgerCard(props: { project: PatternProject }) {
                 {copy.exportDescription}
               </p>
               <div className="flex flex-wrap gap-2">
-                <Button size="sm" variant="secondary" onClick={exportCsv}>
+                <Button size="sm" variant="secondary" className="min-h-11" onClick={exportCsv}>
                   <FileSpreadsheet className="h-4 w-4 mr-1" /> {copy.downloadCsv}
                 </Button>
-                <Button size="sm" variant="secondary" onClick={copySummary}>
+                <Button size="sm" variant="secondary" className="min-h-11" onClick={copySummary}>
                   <Copy className="h-4 w-4 mr-1" /> {copy.copySummary}
                 </Button>
               </div>
@@ -583,7 +585,7 @@ function DesignRow(props: {
         )}
         <button
           aria-label={copy.removeDesign}
-          className="ml-auto text-muted-foreground hover:text-destructive"
+          className="ml-auto min-h-11 min-w-11 text-muted-foreground hover:text-destructive"
           onClick={onRemove}
         >
           <Trash2 className="h-3.5 w-3.5" />
@@ -601,7 +603,7 @@ function DesignRow(props: {
           onBlur={commitNotes}
         />
         {!noteSet && notes !== design.notes && (
-          <Button size="sm" variant="ghost" onClick={commitNotes}>
+          <Button size="sm" variant="ghost" className="min-h-11" onClick={commitNotes}>
             {copy.saveNotes}
           </Button>
         )}

@@ -56,6 +56,27 @@ describe("residual mobile touch-target guards", () => {
     );
     expect(sheet).toContain('<span className="sr-only">Close</span>');
   });
+
+  it("keeps Design Ledger production-control actions at least 44px", () => {
+    const ledger = source("../components/design-ledger-card.tsx");
+
+    expect(ledger.match(/className="min-h-11"/g)?.length).toBeGreaterThanOrEqual(5);
+    expect(ledger).toContain(
+      '<Button size="sm" variant="secondary" className="min-h-11" onClick={exportCsv}>',
+    );
+    expect(ledger).toContain(
+      '<Button size="sm" variant="secondary" className="min-h-11" onClick={copySummary}>',
+    );
+    expect(ledger).toContain(
+      'className="min-h-11 min-w-11 text-muted-foreground hover:text-destructive"',
+    );
+    expect(ledger).toContain(
+      'className="ml-auto min-h-11 min-w-11 text-muted-foreground hover:text-destructive"',
+    );
+    expect(ledger).toContain(
+      '<Button size="sm" variant="ghost" className="min-h-11" onClick={commitNotes}>',
+    );
+  });
 });
 
 
