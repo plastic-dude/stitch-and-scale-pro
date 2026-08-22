@@ -61,7 +61,7 @@ That future track should focus on voluntary sharing of verified project outputs,
 
 ## Documentation deployment parity
 
-After the documentation-only audit commit `4e901da`, Vercel created deployment `dpl_FNSeqkESLUoEMuCxoMCzkCd3oVSv`, which reached `READY` but has no deployment target and only a Git-preview alias. It must not be manually assigned to production. The active production alias remains served by deployment `dpl_3HiUpupLgAwzxS3CLi2xNXHysbg3`, `READY`, target `production`, with exact deployed implementation SHA `55491be9d26017e806ecbf4d9c0b44d3d7790b8f`; that tested implementation release remains the production source of truth for Q066. The later documentation commits are not claimed to be production-served, and no alias was manually assigned.
+After the documentation-only audit commit `4e901da`, Vercel created deployment `dpl_FNSeqkESLUoEMuCxoMCzkCd3oVSv`, which reached `READY` but has no deployment target and only a Git-preview alias. It must not be manually assigned to production. The final evidence commit `eb1e507` is now `origin/main`; a bounded post-push Vercel poll did not show a deployment for that SHA. The active production alias remains served by deployment `dpl_3HiUpupLgAwzxS3CLi2xNXHysbg3`, `READY`, target `production`, with exact deployed implementation SHA `55491be9d26017e806ecbf4d9c0b44d3d7790b8f`; that tested implementation release remains the production source of truth for Q066. The later documentation commits are not claimed to be production-served, and no alias was manually assigned.
 
 ## Residual risks and publication posture
 

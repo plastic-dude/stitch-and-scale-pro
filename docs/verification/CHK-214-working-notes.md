@@ -174,3 +174,13 @@ No application-code change is safe to start in this firing. QUEUE-067 is intenti
 The authenticated MCP probe initially returned 401 because the project-wide Vercel environment listing exposed encrypted ciphertext rather than the usable secret value. The official Vercel endpoint for retrieving one project environment variable by ID is `GET /v1/projects/{idOrName}/env/{id}`; the production-scoped `MCP_API_KEY` variable returned `decrypted: true` through that documented endpoint and was used only in memory/a protected temporary file for the probe, then removed. The official source is [Vercel: Retrieve the decrypted value of an environment variable of a project by id](https://vercel.com/docs/rest-api/projects/retrieve-the-decrypted-value-of-an-environment-variable-of-a-project-by-id). Vercel’s [Sensitive environment variables](https://vercel.com/docs/environment-variables/sensitive-environment-variables) guidance also states that sensitive values are non-readable once created; no secret value was written to Git or this evidence note.
 
 ---
+
+## Final post-push deployment parity — 2026-08-22 continuation
+
+After `eb1e507d6b2c6c9a1737ee087606f586b54c9e05` was pushed to both the audit branch and `main`, a bounded Vercel deployment-list poll found no deployment for that SHA. The earlier documentation deployment `dpl_FNSeqkESLUoEMuCxoMCzkCd3oVSv` for `4e901daf22962e1923c7864fc61372c9e1f6db93` is `READY` but target-null with only a Git-preview alias. No target or alias was assigned manually. The active production deployment remains `dpl_3HiUpupLgAwzxS3CLi2xNXHysbg3`, `READY`, target `production`, exact commit `55491be9d26017e806ecbf4d9c0b44d3d7790b8f`, with alias `https://stitch-and-scale-pro-api-server.vercel.app`.
+
+The fresh active-alias checks returned 200 for `/`, `/settings`, `/project/audit-week-31`, and `/project/audit-week-31/pdf`; `favicon-192.png` returned 200 with 48,605 bytes. MCP returned GET 405; allowed-origin OPTIONS 204 with exact origin and `POST, OPTIONS` / `Authorization, Content-Type, MCP-Protocol-Version`; authenticated `tools/list` returned 200 under `MCP-Protocol-Version: 2026-07-28` with the canonical eight tools; the alternate short origin returned 403 with JSON-RPC code `-32001`. The initial 401 was a probe credential-retrieval mistake caused by using encrypted project-list ciphertext; it was corrected through Vercel’s documented per-variable decrypt endpoint and does not represent a production failure.
+
+This confirms live Q066 behavior on the tested implementation release, not exact current-HEAD-to-production parity and not overall publication readiness.
+
+---
