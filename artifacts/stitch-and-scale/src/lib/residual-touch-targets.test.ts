@@ -48,6 +48,23 @@ describe("residual mobile touch-target guards", () => {
     );
   });
 
+  it("keeps Project Grading export and print actions at least 44px", () => {
+    const grading = source("../pages/project-grading.tsx");
+
+    expect(grading).toContain(
+      'className="rounded-full bg-background min-h-11" data-testid="button-copy-table"',
+    );
+    expect(grading).toContain(
+      'className="rounded-full bg-background min-h-11" data-testid="button-download-csv"',
+    );
+    expect(grading).toContain(
+      'className="rounded-full bg-background min-h-11" data-testid="button-download-handoff"',
+    );
+    expect(grading).toContain(
+      'className="bg-primary hover:bg-primary/90 rounded-full px-6 shadow-sm min-h-11" data-testid="button-print"',
+    );
+  });
+
   it("keeps the shared Radix Sheet close affordance at least 44px", () => {
     const sheet = source("../components/ui/sheet.tsx");
 

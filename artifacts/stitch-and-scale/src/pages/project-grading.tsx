@@ -171,16 +171,16 @@ export default function ProjectGrading() {
           <ArrowLeft className="w-4 h-4 mr-2" /> {gradingCopy.backToProject}
         </Button>
         <div className="flex gap-2 flex-wrap">
-          <Button variant="outline" size="sm" onClick={handleCopyTable} disabled={!hasData} className="rounded-full bg-background" data-testid="button-copy-table">
+          <Button variant="outline" size="sm" onClick={handleCopyTable} disabled={!hasData} className="rounded-full bg-background min-h-11" data-testid="button-copy-table">
             <Copy className="w-4 h-4 mr-2" /> {gradingCopy.copyTsv}
           </Button>
-          <Button variant="outline" size="sm" onClick={handleDownloadCSV} disabled={!hasData} className="rounded-full bg-background" data-testid="button-download-csv">
+          <Button variant="outline" size="sm" onClick={handleDownloadCSV} disabled={!hasData} className="rounded-full bg-background min-h-11" data-testid="button-download-csv">
             <Download className="w-4 h-4 mr-2" /> {gradingCopy.downloadCsv}
           </Button>
-          <Button variant="outline" size="sm" onClick={handleDownloadHandoff} disabled={!hasData} className="rounded-full bg-background" data-testid="button-download-handoff">
+          <Button variant="outline" size="sm" onClick={handleDownloadHandoff} disabled={!hasData} className="rounded-full bg-background min-h-11" data-testid="button-download-handoff">
             <FileCheck2 className="w-4 h-4 mr-2" /> {handoffCopy.download}
           </Button>
-          <Button size="sm" onClick={handlePrint} disabled={!hasData} className="bg-primary hover:bg-primary/90 rounded-full px-6 shadow-sm" data-testid="button-print">
+          <Button size="sm" onClick={handlePrint} disabled={!hasData} className="bg-primary hover:bg-primary/90 rounded-full px-6 shadow-sm min-h-11" data-testid="button-print">
             <Printer className="w-4 h-4 mr-2" /> {gradingCopy.printSheet}
           </Button>
         </div>
