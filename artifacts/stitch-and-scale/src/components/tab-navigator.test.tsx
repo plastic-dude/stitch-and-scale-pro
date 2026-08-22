@@ -98,12 +98,13 @@ describe('tab-navigator copy (localized strings)', () => {
     }
   });
 
-  it('copy shape matches TabNavigator copy prop expectations', () => {
+  it('copy shape matches TabNavigator copy prop expectations', async () => {
+    const mod = await import('@/lib/tab-navigator-copy');
     const keys = [
       'allLabs', 'labsTitle', 'labsDescription', 'allLabsAriaLabel',
       'searchPlaceholder', 'noResults', 'favorites', 'recent',
       'addToFavorites', 'removeFromFavorites'
     ];
-    expect(Object.keys(EN_COPY).sort()).not.toEqual(keys.sort()); // EN_COPY is mock, but this test should reflect TabNavigatorCopy
+    expect(Object.keys(mod.NAVIGATOR_COPY.en).sort()).toEqual(keys.sort());
   });
 });

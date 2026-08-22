@@ -24,15 +24,15 @@ export function RevenueGrowthPanel() {
       <CardContent>
         <Tabs defaultValue="pricing" className="w-full">
           <TabsList className="grid w-full grid-cols-3 mb-6">
-            <TabsTrigger value="pricing" className="flex items-center gap-2">
+            <TabsTrigger value="pricing" className="flex items-center gap-2 min-h-[44px]">
               <Coins className="w-4 h-4" />
               <span className="hidden sm:inline">{copy.tabPricing}</span>
             </TabsTrigger>
-            <TabsTrigger value="growth" className="flex items-center gap-2">
+            <TabsTrigger value="growth" className="flex items-center gap-2 min-h-[44px]">
               <Rocket className="w-4 h-4" />
               <span className="hidden sm:inline">{copy.tabGrowth}</span>
             </TabsTrigger>
-            <TabsTrigger value="metrics" className="flex items-center gap-2">
+            <TabsTrigger value="metrics" className="flex items-center gap-2 min-h-[44px]">
               <Target className="w-4 h-4" />
               <span className="hidden sm:inline">{copy.tabMetrics}</span>
             </TabsTrigger>
