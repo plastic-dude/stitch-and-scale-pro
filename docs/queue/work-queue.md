@@ -17,7 +17,7 @@
 | 70 | QUEUE-055 | Priority 1 Gap 6: Sample tracker for physical design assets | MAJOR | done | CHK-199: Storage seam + SampleTracker UI + Five-locale localization |
 | 71 | QUEUE-056 | Priority 1 Gap 7: Submission pipeline for outlet deadlines | MAJOR | done | CHK-200: Durable submissions records + UI verification + Context crash fix |
 | 72 | QUEUE-057 | Wholesale follow-up: durable local records for yarn shop orders | MAJOR | done | CHK-201: Durable wholesale records + localized UI + storage seam |
-| 73 | QUEUE-058 | Reconcile navigator lab counts and verify search/favorites integration | MINOR | in-progress | Stale '83 labs' hardcoded strings in navigator copy; verify mobile search/favorites persistence. |
+| 73 | QUEUE-058 | Reconcile navigator lab counts and verify search/favorites integration | MINOR | done | CHK-202: Dynamic lab counts + hook violation fixes + tab integrity verified |
 
 ## Run ledger
 | Run (date) | Item worked | Gates | Commit | Next item |
@@ -44,3 +44,4 @@
 | 60 | 2026-08-22 | QUEUE-039 | done | cf78702 | QUEUE-040 |
 | 59 | 2026-08-22 | QUEUE-038 | done | 071d936 | QUEUE-039 |
 | 58 | 2026-08-22 | QUEUE-037 | done | aff1652 | QUEUE-038 |
+| 80 | 2026-08-22 (CHK-202) | QUEUE-058 (MINOR) — Navigator Reconciliation | tsc clean; vitest 2,422/2,422; build green; dynamic lab counts + hook violation fixes | 5f8c954 | QUEUE-059 |
