@@ -51,27 +51,29 @@
 | 43 | QUEUE-036 | Data Lifecycle Controls: Implement "Delete all local data" (Danger Zone) with double-confirmation and "Restore Preview" metadata display to prevent accidental data loss and improve trust. | MAJOR | done | CHK-179: `4b9b46b`; implementation complete |
 | 44 | QUEUE-037 | Audit F-10-Perf (MAJOR) — Initial JS chunk exceeds performance budget (~600KB); implement lab-card-level lazy loading to reduce main bundle size and improve mobile TTI. | MAJOR | done | CHK-180: aff1652; optimized via manual chunking and locale splitting |
 | 45 | QUEUE-038 | Priority 0: Release Integrity (CRITICAL) — Enhance `prod-smoke.mjs` with deep integrity checks: exercise project creation, verify export flow, and capture console/network failures. | CRITICAL | done | CHK-181: 071d936; implemented deep smoke checks, modal exercise, and failure capture |
-| 46 | QUEUE-039 | Priority 1: Revision Snapshots (MAJOR) — Implement named snapshots, snapshot notes, and restore flow to provide a durable audit trail for pattern revisions. | MAJOR | in-progress | CHK-182: SHA-PENDING; implementing snapshots schema, storage, and UI |
+| 46 | QUEUE-039 | Priority 1: Revision Snapshots (MAJOR) — Implement named snapshots, snapshot notes, and restore flow to provide a durable audit trail for pattern revisions. | MAJOR | done | CHK-182: cf78702; implemented snapshots schema, storage, and UI |
+| 47 | QUEUE-040 | CHK-183: Fix Revision Snapshots integration omission in ProjectWorkspace and strengthen tests | MAJOR | done | Wired snapshots panel with destructured callbacks; fixed TS nullability; 4 regression tests; gates green |
 
 ## Run ledger
 | Run (date) | Item worked | Gates | Commit | Next item |
-|---|---|---|---|---|
-| 2026-08-22 | QUEUE-038 | tsc, vitest, build | 071d936 | END OF QUEUE |
-| 2026-08-22 | QUEUE-037 | tsc, vitest, build | aff1652 | QUEUE-038 |
-| 2026-08-22 | QUEUE-036 | tsc, vitest, build | 4b9b46b | QUEUE-037 |
-| 2026-08-22 | QUEUE-035 | tsc, vitest, build | aa376ba | QUEUE-036 |
-| 2026-08-22 | QUEUE-034 | tsc, vitest, build | 97f1e5b | QUEUE-035 |
-| 2026-08-22 (CHK-175) | QUEUE-032 (MAJOR) — Onboarding Alignment | tsc clean; vitest green; build green; aligned tour with search/health; fixed sample meta | 59d2b00 | QUEUE-033 |
-| 2026-08-22 (CHK-176) | QUEUE-033 (MINOR) — SPA 404 state | tsc clean; vitest green; build green; pinned 404 contract; docs/audit-f14-spa-404.md | 7d4f3b3 | END OF QUEUE |
-| 2026-08-22 (CHK-174) | QUEUE-031 (MAJOR) — Localization Brutality | tsc clean; vitest 2,330/2,330; build green; fixed English leaks in Settings, Workspace, and Tech-Edit; localized sample projects | 5504d3f | QUEUE-032 |
-| 2026-08-22 (CHK-173) | QUEUE-030 (MINOR) — CORS hardening | tsc clean; vitest 2,326/2,326; build green; hardened origin policy in `vercel.json` and `api/mcp.ts` | 78c7858e0775dcb2bf219a1280fb3bb37930b461 | END OF QUEUE |
-| 2026-08-22 (CHK-172) | QUEUE-029 (MAJOR) — Release integrity | tsc clean; vitest 2,326/2,326; build green; 4 new tests; smoke script `scripts/prod-smoke.mjs` | a66b840c75f0d38e87aa44531caf46ce4259cf75 | QUEUE-030 |
-| 2026-08-22 (CHK-171) | QUEUE-028 (MINOR) — Benchmark methodology | tsc clean; vitest 2,322/2,322; build green; 4 new tests; research log `docs/leader-notes/cycle-2026-08-22-methodology-research.md` | b623c9380873d8c4ac96861c61e30b5ad474f51e | QUEUE-029 |
-| 2026-08-22 (CHK-170) | QUEUE-027 (MINOR) — Core form errors | tsc clean; vitest 2,318/2,318; build green; 3 new tests | f8e9937 | QUEUE-028 |
-| 2026-08-22 (CHK-169) | QUEUE-026 (MINOR) — Mobile onboarding footer | tsc clean; vitest 2,315/2,315; build green; 3 new tests | 19c4706 | QUEUE-027 |
-| 2026-08-22 (CHK-168) | QUEUE-025 (MAJOR) — Deep-link recovery UI | tsc clean; vitest 2,315/2,315; build green; 2 new tests | 1d4101f | QUEUE-026 |
-| 2026-08-22 (CHK-167) | QUEUE-024 (MAJOR) — Grading table readability | tsc clean; vitest 2,313/2,313; build green; 3 new tests; cycle log `docs/leader-notes/cycle-2026-08-22-chk167.md` | c545ad8 | QUEUE-025 |
-| 2026-08-22 (CHK-166) | QUEUE-023 (MAJOR) — Income Planner Validation | tsc clean; vitest 2,324/2,324; build green; 8 new tests | e292363 | QUEUE-024 |
+|---|---|---|---|---| 61 | 2026-08-22 | QUEUE-040 | tsc, vitest, build | 053121a896535ea3c219d9224a4bc965710ad087 | END OF QUEUE |
+| 60 | 2026-08-22 | QUEUE-039 | tsc, vitest, build | cf78702 | QUEUE-040 |
+| 59 | 2026-08-22 | QUEUE-038 | tsc, vitest, build | 071d936 | QUEUE-039 |
+| 58 | 2026-08-22 | QUEUE-037 | tsc, vitest, build | aff1652 | QUEUE-038 |
+| 57 | 2026-08-22 | QUEUE-036 | tsc, vitest, build | 4b9b46b | QUEUE-037 |
+| 56 | 2026-08-22 | QUEUE-035 | tsc, vitest, build | aa376ba | QUEUE-036 |
+| 55 | 2026-08-22 | QUEUE-034 | tsc, vitest, build | 97f1e5b | QUEUE-035 |
+| 54 | 2026-08-22 (CHK-175) | QUEUE-032 (MAJOR) — Onboarding Alignment | tsc clean; vitest green; build green; aligned tour with search/health; fixed sample meta | 59d2b00 | QUEUE-033 |
+| 53 | 2026-08-22 (CHK-176) | QUEUE-033 (MINOR) — SPA 404 state | tsc clean; vitest green; build green; pinned 404 contract; docs/audit-f14-spa-404.md | 7d4f3b3 | END OF QUEUE |
+| 52 | 2026-08-22 (CHK-174) | QUEUE-031 (MAJOR) — Localization Brutality | tsc clean; vitest 2,330/2,330; build green; fixed English leaks in Settings, Workspace, and Tech-Edit; localized sample projects | 5504d3f | QUEUE-032 |
+| 51 | 2026-08-22 (CHK-173) | QUEUE-030 (MINOR) — CORS hardening | tsc clean; vitest 2,326/2,326; build green; hardened origin policy in `vercel.json` and `api/mcp.ts` | 78c7858e0775dcb2bf219a1280fb3bb37930b461 | END OF QUEUE |
+| 50 | 2026-08-22 (CHK-172) | QUEUE-029 (MAJOR) — Release integrity | tsc clean; vitest 2,326/2,326; build green; 4 new tests; smoke script `scripts/prod-smoke.mjs` | a66b840c75f0d38e87aa44531caf46ce4259cf75 | QUEUE-030 |
+| 49 | 2026-08-22 (CHK-171) | QUEUE-028 (MINOR) — Benchmark methodology | tsc clean; vitest 2,322/2,322; build green; 4 new tests; research log `docs/leader-notes/cycle-2026-08-22-methodology-research.md` | b623c9380873d8c4ac96861c61e30b5ad474f51e | QUEUE-029 |
+| 48 | 2026-08-22 (CHK-170) | QUEUE-027 (MINOR) — Core form errors | tsc clean; vitest 2,318/2,318; build green; 3 new tests | f8e9937 | QUEUE-028 |
+| 47 | 2026-08-22 (CHK-169) | QUEUE-026 (MINOR) — Mobile onboarding footer | tsc clean; vitest 2,315/2,315; build green; 3 new tests | 19c4706 | QUEUE-027 |
+| 46 | 2026-08-22 (CHK-168) | QUEUE-025 (MAJOR) — Deep-link recovery UI | tsc clean; vitest 2,315/2,315; build green; 2 new tests | 1d4101f | QUEUE-026 |
+| 45 | 2026-08-22 (CHK-167) | QUEUE-024 (MAJOR) — Grading table readability | tsc clean; vitest 2,313/2,313; build green; 3 new tests; cycle log `docs/leader-notes/cycle-2026-08-22-chk167.md` | c545ad8 | QUEUE-025 |
+| 44 | 2026-08-22 (CHK-166) | QUEUE-023 (MAJOR) — Income Planner Validation | tsc clean; vitest 2,324/2,324; build green; 8 new tests | e292363 | QUEUE-024 |
 | 2026-08-21 (CHK-149) | QUEUE-018 (MAJOR) — onboarding truth audit | tsc clean; vitest 2,130/2,130; build green; live EN+DE onboarding evidence; cycle log `docs/leader-notes/cycle-2026-08-21-chk149.md` | 6eed6c1daffdd13dd5e9fd90ed4094994983ea3b | QUEUE-005 (#52 legend overcount eyes-check) |
 | 2026-08-21 (CHK-150) | QUEUE-005 (MINOR, closed) — #52 workspace legend overcount | tsc clean; vitest 2,130/2,130; build green; evidence `docs/evidence/chk150-w{360,390,430}-legend.png`; cycle log `docs/leader-notes/cycle-2026-08-21-chk150.md` | a18641f14dd10219381630b1bcdb69167c3037be | QUEUE-006 (S160 migration repro) |
 | 2026-08-21 (CHK-153) | QUEUE-013 (MAJOR, closed) — PDF export stuck | tsc clean; vitest 2,160/2,160; build green; cycle log `docs/leader-notes/cycle-2026-08-21-chk153.md` | a2934ad768f914d3587f4517c7826217c62d275c | QUEUE-014 (F-05 filename sanitization + F-08 Chart Lab false-positive Ready, MINOR) |

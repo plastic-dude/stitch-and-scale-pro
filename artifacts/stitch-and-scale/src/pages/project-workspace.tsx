@@ -132,6 +132,7 @@ const LAB = {
   designledger: React.lazy(cardLazy(() => import('@/components/design-ledger-card'))),
   bragcard: React.lazy(cardLazy(() => import('@/components/brag-card-card'))),
   payback: React.lazy(cardLazy(() => import('@/components/payback-lab-card'))),
+  snapshots: React.lazy(cardLazy(() => import('@/components/project-snapshots-card'))),
 };
 
 class LabErrorBoundary extends React.Component<
@@ -205,7 +206,7 @@ export default function ProjectWorkspace() {
     return <div className="flex items-center justify-center min-h-[400px]">{t('workspace.loading')}</div>;
   }
 
-  const { project, updateProject } = projectHook;
+  const { project, updateProject, createSnapshot, restoreSnapshot, deleteSnapshot } = projectHook;
   const copy = getWorkspaceCopy(currentLanguage);
   const tc = getToastCopy(currentLanguage);
 
@@ -866,6 +867,19 @@ export default function ProjectWorkspace() {
       case 'designledger': return <LazyPanel loader={LAB.designledger} project={project} />;
       case 'bragcard': return <LazyPanel loader={LAB.bragcard} project={project} />;
       case 'payback': return <LazyPanel loader={LAB.payback} project={project} />;
+      case 'snapshots': {
+        const Snapshots = LAB.snapshots as React.ComponentType<any>;
+        return (
+          <React.Suspense fallback={<div className="py-10 text-center text-sm text-muted-foreground">{copy.loadingLab}</div>}>
+            <Snapshots 
+              project={project} 
+              createSnapshot={createSnapshot}
+              restoreSnapshot={restoreSnapshot}
+              deleteSnapshot={deleteSnapshot}
+            />
+          </React.Suspense>
+        );
+      }
       default: return <>{value}</>;
     }
   }
