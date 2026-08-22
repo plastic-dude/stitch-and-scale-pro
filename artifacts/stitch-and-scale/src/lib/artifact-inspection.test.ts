@@ -1,4 +1,10 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+// Reducer tests should not attempt browser-only persistence. The production reducer
+// still exercises writeProjects; this suite isolates its pure state transition.
+vi.mock('@/lib/storage-lib', () => ({
+  writeProjects: vi.fn(() => Promise.resolve()),
+}));
+
 import { projectsReducer } from '@/context/ProjectsContext';
 import {
   artifactQualitySnapshot,
