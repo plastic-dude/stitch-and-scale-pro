@@ -59,12 +59,15 @@ function StepWelcome() {
   const { t } = useSettings();
   return (
     <div className="flex flex-col items-center text-center max-w-md mx-auto">
-      <img
-        src="/app-logo.png"
-        alt="Stitch & Scale"
-        className="w-28 h-28 rounded-3xl object-cover mb-8 shadow-xl"
-        style={{ rotate: '2deg' }}
-      />
+      <picture>
+        <source srcSet="/app-logo.webp" type="image/webp" />
+        <img
+          src="/app-logo.png"
+          alt="Stitch & Scale"
+          className="w-28 h-28 rounded-3xl object-cover mb-8 shadow-xl"
+          style={{ rotate: '2deg' }}
+        />
+      </picture>
       <h1 className="text-4xl font-serif font-semibold text-foreground mb-4 tracking-tight leading-tight">
         {t('workflow.welcome.title')}
       </h1>
@@ -525,7 +528,10 @@ export default function OnboardingOverlay() {
           (mobile audit CHK-126: 29x24 overlap at 360px). */}
       <div className="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-border/30 sm:pr-28">
         <div className="flex items-center gap-2.5">
-          <img src="/app-logo.png" alt="Stitch & Scale" className="w-7 h-7 rounded-lg object-cover" />
+          <picture>
+            <source srcSet="/app-logo.webp" type="image/webp" />
+            <img src="/app-logo.png" alt="Stitch & Scale" className="w-7 h-7 rounded-lg object-cover" />
+          </picture>
           <span className="font-serif font-bold text-base tracking-tight hidden sm:inline">Stitch & Scale</span>
         </div>
 

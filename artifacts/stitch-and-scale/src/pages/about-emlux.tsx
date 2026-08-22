@@ -84,7 +84,10 @@ export default function AboutEmlux() {
           animate={{ scale: 1, opacity: 1 }}
           className="inline-block p-3 rounded-2xl bg-primary/5 border border-primary/10 mb-4"
         >
-          <img src="/app-logo.png" alt="Stitch & Scale" className="w-16 h-16 object-contain grayscale opacity-70" />
+          <picture>
+            <source srcSet="/app-logo.webp" type="image/webp" />
+            <img src="/app-logo.png" alt="Stitch & Scale" className="w-16 h-16 object-contain grayscale opacity-70" />
+          </picture>
         </motion.div>
         <h1 className="text-5xl font-serif font-bold tracking-tight text-foreground">{copy.title}</h1>
         <p className="text-xl text-muted-foreground font-medium">{copy.subtitle}</p>

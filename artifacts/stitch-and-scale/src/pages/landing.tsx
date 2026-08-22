@@ -99,11 +99,14 @@ export default function Landing() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <img
-            src="/app-logo.png"
-            alt="Stitch & Scale"
-            className="mx-auto mb-6 h-24 w-24 rounded-2xl object-cover shadow-sm sm:h-28 sm:w-28"
-          />
+          <picture>
+            <source srcSet="/app-logo.webp" type="image/webp" />
+            <img
+              src="/app-logo.png"
+              alt="Stitch & Scale"
+              className="mx-auto mb-6 h-24 w-24 rounded-2xl object-cover shadow-sm sm:h-28 sm:w-28"
+            />
+          </picture>
           <p className="mb-4 inline-flex items-center gap-1.5 rounded-full border bg-muted/50 px-3 py-1 text-xs font-medium text-muted-foreground">
             <Package className="h-3.5 w-3.5" />
             {copy.audience}

@@ -68,4 +68,21 @@ describe('Deployment Security (F-13, F-14)', () => {
     const faviconPath = join(rootDir, 'artifacts', 'stitch-and-scale', 'public', 'favicon-192.png');
     expect(statSync(faviconPath).size).toBeLessThan(64 * 1024);
   });
+
+  it('active app-logo consumers prefer the lossless WebP payload with a PNG fallback', () => {
+    const sourcePaths = [
+      join(rootDir, 'artifacts', 'stitch-and-scale', 'src', 'pages', 'about-emlux.tsx'),
+      join(rootDir, 'artifacts', 'stitch-and-scale', 'src', 'pages', 'dashboard.tsx'),
+      join(rootDir, 'artifacts', 'stitch-and-scale', 'src', 'pages', 'landing.tsx'),
+      join(rootDir, 'artifacts', 'stitch-and-scale', 'src', 'pages', 'onboarding.tsx'),
+    ];
+    for (const sourcePath of sourcePaths) {
+      const source = readFileSync(sourcePath, 'utf-8');
+      expect(source).toContain('srcSet="/app-logo.webp"');
+      expect(source).toContain('src="/app-logo.png"');
+    }
+
+    const webpPath = join(rootDir, 'artifacts', 'stitch-and-scale', 'public', 'app-logo.webp');
+    expect(statSync(webpPath).size).toBeLessThan(450 * 1024);
+  });
 });
