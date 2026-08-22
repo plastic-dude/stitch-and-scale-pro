@@ -1,9 +1,9 @@
 import React from 'react';
 import { useParams, useLocation } from 'wouter';
-import { useProject } from '@/context/ProjectsContext';
-import { GRADING_KEY_LABELS, ALL_SIZES, gradePattern, resolveProjectStandards } from '@/lib/grading-engine';
+import { useProject, useProjects } from '@/context/ProjectsContext';
+import { GRADING_KEY_LABELS, ALL_SIZES, gradePattern, resolveProjectStandards, type PatternProject } from '@/lib/grading-engine';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Copy, Download, Printer, FileCheck2 } from 'lucide-react';
+import { ArrowLeft, Copy, Download, Printer, FileCheck2, Upload, Loader2, FileText } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useSettings } from '@/context/SettingsContext';
@@ -32,12 +32,74 @@ export default function ProjectGrading() {
   const gradingCopy = getGradingCopy(language);
   const tc = getToastCopy(language);
   const handoffCopy = getHandoffCopy(language);
+  const { importProject } = useProjects();
+  const [isImporting, setIsImporting] = React.useState(false);
+  const recoveryFileInputRef = React.useRef<HTMLInputElement>(null);
+
+  const handleImportFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (recoveryFileInputRef.current) recoveryFileInputRef.current.value = '';
+    if (!file) return;
+    setIsImporting(true);
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const parsed = JSON.parse(event.target?.result as string);
+        if (!parsed.name || !parsed.sections) throw new Error('Invalid format');
+        importProject(parsed as PatternProject);
+        toast({ title: tc.projectImportedDescription(parsed.name) });
+      } catch (err) {
+        toast({ title: ls.projectNotFound, description: tc.fileCouldNotBeRead, variant: 'destructive' });
+      } finally {
+        setIsImporting(false);
+      }
+    };
+    reader.readAsText(file);
+  };
 
   if (!projectHook) {
     return (
-      <div className="flex flex-col items-center justify-center py-24 text-center">
-        <h2 className="text-2xl font-serif font-bold mb-4">{ls.projectNotFound}</h2>
-        <Button onClick={() => setLocation('/')}>{ls.returnToDashboard}</Button>
+      <div className="flex flex-col items-center justify-center py-24 px-6 text-center max-w-md mx-auto min-h-[60vh]">
+        <div className="w-16 h-16 rounded-full bg-muted/50 flex items-center justify-center mb-6">
+          <FileText className="w-8 h-8 text-muted-foreground/60" />
+        </div>
+        <h2 className="text-2xl font-serif font-bold mb-3">{ls.projectNotFound}</h2>
+        <p className="text-muted-foreground mb-8 text-sm leading-relaxed">
+          {ls.recoveryImportDesc}
+        </p>
+        
+        <div className="flex flex-col gap-3 w-full">
+          <input
+            ref={recoveryFileInputRef}
+            type="file"
+            accept=".json"
+            onChange={handleImportFile}
+            className="hidden"
+          />
+          <Button 
+            className="w-full gap-2 h-11" 
+            onClick={() => recoveryFileInputRef.current?.click()}
+            disabled={isImporting}
+          >
+            {isImporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+            {ls.recoveryImportButton}
+          </Button>
+          
+          <div className="relative my-2">
+            <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-border/50" /></div>
+          </div>
+
+          <Button variant="outline" className="w-full h-11" onClick={() => setLocation('/')}>
+            {ls.returnToDashboard}
+          </Button>
+        </div>
+
+        <div className="mt-12 pt-8 border-t border-border/40 w-full">
+          <h3 className="text-xs font-semibold text-foreground mb-2">{ls.recoveryLocalOnlyTitle}</h3>
+          <p className="text-[11px] text-muted-foreground leading-normal">
+            {ls.recoveryLocalOnlyDesc}
+          </p>
+        </div>
       </div>
     );
   }

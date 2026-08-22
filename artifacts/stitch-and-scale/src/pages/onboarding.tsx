@@ -551,7 +551,7 @@ export default function OnboardingOverlay() {
       {step === 1 && <InstallBanner trigger="onboarding" />}
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto px-4 sm:px-8 pt-10 pb-32 sm:pb-10 flex items-start justify-center">
+      <div className="flex-1 overflow-y-auto px-4 sm:px-8 pt-10 pb-40 sm:pb-10 flex items-start justify-center">
         <div className="w-full max-w-xl">
           <AnimatePresence mode="wait" custom={direction}>
             <motion.div
@@ -584,7 +584,7 @@ export default function OnboardingOverlay() {
 
       {/* Footer nav — hidden on steps that have their own CTAs */}
       {step !== 6 && step !== 7 && (
-        <div className="fixed bottom-0 left-0 right-0 px-6 pt-4 pb-6 sm:pb-4 border-t border-border/30 flex items-center justify-between bg-background/95 backdrop-blur-sm pb-[env(safe-area-inset-bottom,16px)] z-50">
+        <div className="fixed bottom-0 left-0 right-0 px-6 pt-4 pb-6 sm:pb-4 border-t border-border/30 flex items-center justify-between bg-background/95 backdrop-blur-sm pb-[max(env(safe-area-inset-bottom),1.5rem)] z-50">
           <Button
             variant="ghost"
             size="sm"
@@ -609,7 +609,7 @@ export default function OnboardingOverlay() {
 
       {/* Keyboard nav for step 6 / 7 back button */}
       {(step === 6 || step === 7) && (
-        <div className="fixed bottom-0 left-0 right-0 px-6 pt-4 pb-6 sm:pb-4 border-t border-border/30 flex items-center justify-start bg-background/95 backdrop-blur-sm pb-[env(safe-area-inset-bottom,16px)] z-50">
+        <div className="fixed bottom-0 left-0 right-0 px-6 pt-4 pb-6 sm:pb-4 border-t border-border/30 flex items-center justify-start bg-background/95 backdrop-blur-sm pb-[max(env(safe-area-inset-bottom),1.5rem)] z-50">
           <Button
             variant="ghost"
             size="sm"
