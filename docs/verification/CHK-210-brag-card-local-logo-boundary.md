@@ -27,12 +27,12 @@ The production build continues to emit six known non-fatal Vite sourcemap-locati
 
 ### Fresh public and mobile evidence
 
-The public production alias `https://stitch-and-scale-pro-api-server.vercel.app` currently returned HTTP 200 for `/`, `/project/sample-crew-neck-sweater`, and `/project/sample-crew-neck-sweater/pdf`. The fresh multi-width smoke completed successfully at 320, 360, 390, and 430 pixels and covered onboarding, dashboard, new project, sample workspace, export preflight, Grading Lab, and Design Ledger. No horizontal-overflow failure was reported.
+The public production alias `https://stitch-and-scale-pro-api-server.vercel.app` currently returned HTTP 200 for `/`, `/project/sample-crew-neck-sweater`, and `/project/sample-crew-neck-sweater/pdf`. Vercel reports promoted production deployment `dpl_3pJVjTLHXHuZG8zmjsreeuMC5MAS` with exact Git SHA `65d21d095843a83d856dc5b76d2b41670f0d8c63`, matching this verified commit. The fresh multi-width smoke completed successfully at 320, 360, 390, and 430 pixels and covered onboarding, dashboard, new project, sample workspace, export preflight, Grading Lab, and Design Ledger. No horizontal-overflow failure was reported.
 
 The public MCP smoke remained healthy: GET returned the expected 405 JSON-RPC response, allowed-origin OPTIONS returned 204, authenticated `tools/list` returned 200 with the canonical eight-tool order, and a forbidden origin returned 403 with error `-32001`.
 
 ### Residual limitations
 
-The current mobile smoke does not fully exercise Brag Card rendering and PNG download on every target width; that remains a follow-up evidence gap. Native browser print dialogs still prevent automated binary PDF capture in this environment. The public production alias is serving the current origin/main deployment at SHA `4d4878dd2c468ba6340fb871eef0c83480e1b6d3` before this local change, so this Brag Card fix is not yet live until a new production deployment is created and promoted.
+The current mobile smoke does not fully exercise Brag Card rendering and PNG download on every target width; that remains a follow-up evidence gap. Native browser print dialogs still prevent automated binary PDF capture in this environment.
 
-**Verdict: VERIFIED LOCALLY; PENDING PRODUCTION PROMOTION**
+**Verdict: VERIFIED AND PROMOTED; FOLLOW-UP UI EVIDENCE REMAINS**
