@@ -5,6 +5,7 @@ import { useProjects } from "@/context/ProjectsContext"
 import { AutosaveIndicator } from "@/components/autosave-indicator"
 import { analyzeProjectValidity } from "@/lib/project-validity"
 import { StorageBadge } from "@/components/storage-badge"
+import { HealthIndicator } from "@/components/health-indicator"
 const InstallBanner = React.lazy(() =>
   import("@/components/install-banner").then(({ InstallBanner }) => ({ default: InstallBanner })),
 )
@@ -71,9 +72,14 @@ export function Shell({ children }: { children: React.ReactNode }) {
             </span>
           </Link>
 
-          <div className="hidden sm:flex items-center gap-2">
-            <StorageBadge />
-            <AutosaveIndicator status={saveStatus} validity={validity} />
+          <div className="hidden sm:flex items-center gap-4">
+            <div className="flex items-center gap-2 border-r border-border/40 pr-4">
+              <HealthIndicator />
+            </div>
+            <div className="flex items-center gap-2">
+              <StorageBadge />
+              <AutosaveIndicator status={saveStatus} validity={validity} />
+            </div>
           </div>
           
           <nav className="flex items-center gap-1 sm:gap-4">

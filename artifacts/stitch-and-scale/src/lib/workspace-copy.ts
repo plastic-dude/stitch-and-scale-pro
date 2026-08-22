@@ -72,6 +72,9 @@ export interface WorkspaceCopy {
   labLoadErrorTitle: string;
   labLoadErrorDesc: string;
   retry: string;
+  healthReady: string;
+  healthLoading: string;
+  healthError: string;
 }
 
 const COPY: Record<LanguageCode, WorkspaceCopy> = {
@@ -144,6 +147,9 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     labLoadErrorTitle: 'Lab failed to load',
     labLoadErrorDesc: 'An error occurred while rendering this lab. Your project data is safe.',
     retry: 'Retry',
+    healthReady: 'Release ready',
+    healthLoading: 'Verifying release…',
+    healthError: 'Release mismatch',
     benchmarkLabel: 'Benchmarks baked in:',
     viewMethodology: 'View methodology',
     methodologyDeals: 'Market deal structures (flat fee vs royalty) based on 2026 designer audit of Stitchcraft Marketing and Who Pays Knitters reports. Lifetime sales estimates derive from median Ravelry performance data (2025).',
@@ -216,7 +222,10 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     loadingLab: 'Labor wird geladen...',
     labLoadErrorTitle: 'Labor konnte nicht geladen werden',
     labLoadErrorDesc: 'Beim Rendern dieses Labors ist ein Fehler aufgetreten. Deine Projektdaten sind sicher.',
-    retry: 'Erneut versuchen',
+    retry: 'Wiederholen',
+    healthReady: 'Release bereit',
+    healthLoading: 'Verifiziere Release…',
+    healthError: 'Release-Fehler',
     benchmarkLabel: 'Benchmarks inklusive:',
     viewMethodology: 'Methodik ansehen',
     methodologyDeals: 'Marktübliche Deal-Strukturen (Pauschalhonorar vs. Lizenzgebühr) basierend auf dem Designer-Audit 2026 von Stitchcraft Marketing und Who Pays Knitters-Berichten. Geschätzte Lebenszeitverkäufe leiten sich aus Ravelry-Mediandaten (2025) ab.',
@@ -290,6 +299,9 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     labLoadErrorTitle: 'Échec du chargement du labo',
     labLoadErrorDesc: 'Une erreur s\'est produite lors de l\'affichage de ce labo. Vos données de projet sont en sécurité.',
     retry: 'Réessayer',
+    healthReady: 'Version prête',
+    healthLoading: 'Vérification de la version…',
+    healthError: 'Erreur de version',
     benchmarkLabel: 'Benchmarks intégrés :',
     viewMethodology: 'Voir la méthodologie',
     methodologyDeals: 'Structures de contrats du marché (forfait vs redevance) basées sur l\'audit des designers 2026 des rapports Stitchcraft Marketing et Who Pays Knitters. Les estimations de ventes à vie proviennent des données médianes de performance Ravelry (2025).',
@@ -363,6 +375,9 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     labLoadErrorTitle: 'Error al cargar el lab',
     labLoadErrorDesc: 'Ocurrió un error al renderizar este lab. Los datos de su proyecto están seguros.',
     retry: 'Reintentar',
+    healthReady: 'Versión lista',
+    healthLoading: 'Verificando versión…',
+    healthError: 'Error de versión',
     benchmarkLabel: 'Benchmarks incluidos:',
     viewMethodology: 'Ver metodología',
     methodologyDeals: 'Estructuras de acuerdos de mercado (tarifa fija vs regalía) basadas en la auditoría de diseñadores 2026 de los informes de Stitchcraft Marketing y Who Pays Knitters. Las estimaciones de ventas de por vida derivan de los datos de rendimiento medianos de Ravelry (2025).',
@@ -436,6 +451,9 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     labLoadErrorTitle: 'Falha ao carregar o laboratório',
     labLoadErrorDesc: 'Ocorreu um erro ao processar este laboratório. Os dados do seu projeto estão seguros.',
     retry: 'Tentar novamente',
+    healthReady: 'Versão pronta',
+    healthLoading: 'Verificando versão…',
+    healthError: 'Erro de versão',
     benchmarkLabel: 'Benchmarks incluídos:',
     viewMethodology: 'Ver metodologia',
     methodologyDeals: 'Estruturas de acordos de mercado (taxa fixa vs royalties) baseadas na auditoria de designers 2026 dos relatórios Stitchcraft Marketing e Who Pays Knitters. As estimativas de vendas vitalícias derivam dos dados medianos de desempenho do Ravelry (2025).',
