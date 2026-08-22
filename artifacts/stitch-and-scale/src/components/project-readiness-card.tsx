@@ -8,7 +8,10 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useSettings } from '@/context/SettingsContext';
 import { useWorkspaceCopy } from '@/lib/workspace-copy';
-import { CheckCircle2, AlertCircle, Clock, Plus, Trash2, ShieldCheck, UserCheck } from 'lucide-react';
+import { useProject } from '@/context/ProjectsContext';
+import { CheckCircle2, AlertCircle, Clock, Plus, Trash2, ShieldCheck, UserCheck, MessageSquare, Send, Calendar, MapPin, User, AlertTriangle, Info, ShieldAlert } from 'lucide-react';
+import { COLLABORATION_COPY } from '@/lib/collaboration-copy';
+import { ReadinessComment, ReadinessIssueStatus } from '@/lib/grading-engine';
 import {
   Dialog,
   DialogContent,
@@ -50,6 +53,13 @@ export function ProjectReadinessCard({ project, updateContract }: ProjectReadine
   const [issueDescription, setIssueDescription] = useState('');
   const [issueSeverity, setIssueSeverity] = useState<ReadinessSeverity>('minor');
   const [issueEvidence, setIssueEvidence] = useState('');
+  const [issueLocation, setIssueLocation] = useState('');
+  const [issueAssignee, setIssueAssignee] = useState('');
+  const [issueDueDate, setIssueDueDate] = useState('');
+
+  const [commentText, setCommentText] = useState('');
+  const [activeIssue, setActiveIssue] = useState<{ stage: ReadinessStage; issueId: string } | null>(null);
+  const colCopy = COLLABORATION_COPY[language];
 
   const contract: PublicationContract = project.publicationContract || {
     version: '1.0.0',
@@ -71,74 +81,57 @@ export function ProjectReadinessCard({ project, updateContract }: ProjectReadine
     }
   };
 
+  const projectDispatchers = useProject(project.id);
+
   const handleAddIssue = () => {
-    if (!activeStage || !issueDescription.trim()) return;
+    if (!activeStage || !issueDescription.trim() || !projectDispatchers) return;
 
     const newIssue: ReadinessIssue = {
       id: generateId(),
       severity: issueSeverity,
       description: issueDescription,
       evidence: issueEvidence || undefined,
+      location: issueLocation || undefined,
+      assignee: issueAssignee || undefined,
+      dueDate: issueDueDate || undefined,
       status: 'open',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
+      comments: []
     };
 
-    const newSignOffs = contract.signOffs.map(s => {
-      if (s.stage === activeStage) {
-        return {
-          ...s,
-          issues: [...s.issues, newIssue],
-          status: 'blocked' as const,
-        };
-      }
-      return s;
-    });
-
-    const newContract: PublicationContract = {
-      ...contract,
-      signOffs: newSignOffs,
-      isReady: false,
-      updatedAt: new Date().toISOString(),
-    };
-
-    updateContract(newContract);
+    projectDispatchers.addReadinessIssue(activeStage, newIssue);
     setIssueDescription('');
     setIssueEvidence('');
+    setIssueLocation('');
+    setIssueAssignee('');
+    setIssueDueDate('');
     setIssueSeverity('minor');
     setIsIssueDialogOpen(false);
     toast({ title: copy.readinessContractUpdated });
   };
 
-  const handleToggleIssueStatus = (stage: ReadinessStage, issueId: string) => {
-    const newSignOffs = contract.signOffs.map(s => {
-      if (s.stage === stage) {
-        const newIssues = s.issues.map(i => {
-          if (i.id === issueId) {
-            const nextStatus: any = i.status === 'open' ? 'fixed' : i.status === 'fixed' ? 'verified' : 'open';
-            return { ...i, status: nextStatus, updatedAt: new Date().toISOString() };
-          }
-          return i;
-        });
-        
-        // Auto-update stage status based on issues
-        const allResolved = newIssues.every(i => i.status === 'verified');
-        const nextStatus: ReadinessStageStatus = allResolved ? (s.approver ? 'ready' : 'pending') : 'blocked';
-        return {
-          ...s,
-          issues: newIssues,
-          status: nextStatus,
-        };
-      }
-      return s;
-    });
+  const handleAddComment = (stage: ReadinessStage, issueId: string) => {
+    if (!commentText.trim() || !projectDispatchers) return;
+    const comment: ReadinessComment = {
+      id: generateId(),
+      author: 'Designer',
+      text: commentText,
+      createdAt: new Date().toISOString()
+    };
+    
+    projectDispatchers.addIssueComment(stage, issueId, comment);
+    setCommentText('');
+  };
 
-    updateContract({
-      ...contract,
-      signOffs: newSignOffs,
-      isReady: newSignOffs.every(s => s.status === 'ready'),
-      updatedAt: new Date().toISOString(),
-    });
+  const handleToggleIssueStatus = (stage: ReadinessStage, issueId: string) => {
+    if (!projectDispatchers) return;
+    const signOff = contract.signOffs.find(s => s.stage === stage);
+    const issue = signOff?.issues.find(i => i.id === issueId);
+    if (!issue) return;
+
+    const nextStatus: ReadinessIssueStatus = issue.status === 'open' ? 'fixed' : issue.status === 'fixed' ? 'verified' : 'open';
+    projectDispatchers.updateReadinessIssue(stage, issueId, { status: nextStatus });
   };
 
   const handleSignOff = (stage: ReadinessStage) => {
@@ -255,30 +248,94 @@ export function ProjectReadinessCard({ project, updateContract }: ProjectReadine
                 <p className="text-xs text-muted-foreground opacity-60 italic">{copy.readinessNoIssues}</p>
               ) : (
                 signOff.issues.map((issue) => (
-                  <div 
-                    key={issue.id} 
-                    className={`flex items-start justify-between p-2.5 border rounded-lg bg-white shadow-sm transition-all cursor-pointer hover:border-primary/30 ${issue.status === 'verified' ? 'opacity-50 grayscale' : ''}`}
-                    onClick={() => handleToggleIssueStatus(signOff.stage, issue.id)}
-                  >
-                    <div className="flex gap-3">
-                      <div className={`mt-0.5 p-1 rounded-md border ${getSeverityColor(issue.severity)}`}>
-                        <AlertCircle className="h-3.5 w-3.5" />
-                      </div>
-                      <div className="space-y-1">
-                        <p className={`text-sm leading-tight ${issue.status === 'verified' ? 'line-through' : ''}`}>
-                          {issue.description}
-                        </p>
-                        <div className="flex items-center gap-2">
-                          <Badge variant="outline" className="text-[9px] px-1.5 py-0 h-4 uppercase tracking-tighter">
-                            {issue.status}
-                          </Badge>
-                          <span className="text-[9px] text-muted-foreground">
-                            {formatDate(issue.updatedAt)}
-                          </span>
+                  <React.Fragment key={issue.id}>
+                    <div 
+                      className={`flex items-start justify-between p-2.5 border rounded-lg bg-white shadow-sm transition-all cursor-pointer hover:border-primary/30 ${issue.status === 'verified' ? 'opacity-50 grayscale' : ''}`}
+                      onClick={() => handleToggleIssueStatus(signOff.stage, issue.id)}
+                    >
+                      <div className="flex gap-3">
+                        <div className={`mt-0.5 p-1 rounded-md border ${getSeverityColor(issue.severity)}`}>
+                          <AlertCircle className="h-3.5 w-3.5" />
+                        </div>
+                        <div className="space-y-1">
+                          <p className={`text-sm leading-tight ${issue.status === 'verified' ? 'line-through' : ''}`}>
+                            {issue.description}
+                          </p>
+                          <div className="flex flex-wrap items-center gap-2">
+                            <Badge variant="outline" className="text-[9px] px-1.5 py-0 h-4 uppercase tracking-tighter">
+                              {issue.status}
+                            </Badge>
+                            {issue.location && (
+                              <span className="text-[9px] text-muted-foreground flex items-center gap-0.5">
+                                <MapPin className="h-2 w-2" /> {issue.location}
+                              </span>
+                            )}
+                            {issue.assignee && (
+                              <span className="text-[9px] text-muted-foreground flex items-center gap-0.5">
+                                <User className="h-2 w-2" /> {issue.assignee}
+                              </span>
+                            )}
+                            {issue.dueDate && (
+                              <span className="text-[9px] text-amber-600 font-medium flex items-center gap-0.5">
+                                <Calendar className="h-2 w-2" /> {issue.dueDate}
+                              </span>
+                            )}
+                            <span className="text-[9px] text-muted-foreground">
+                              {formatDate(issue.updatedAt)}
+                            </span>
+                          </div>
                         </div>
                       </div>
+                      
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-8 w-8 text-muted-foreground relative"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveIssue(activeIssue?.issueId === issue.id ? null : { stage: signOff.stage, issueId: issue.id });
+                        }}
+                      >
+                        <MessageSquare className="h-4 w-4" />
+                        {issue.comments && issue.comments.length > 0 && (
+                          <span className="absolute -top-1 -right-1 bg-primary text-white text-[8px] rounded-full h-3 w-3 flex items-center justify-center">
+                            {issue.comments.length}
+                          </span>
+                        )}
+                      </Button>
                     </div>
-                  </div>
+
+                    {activeIssue?.issueId === issue.id && (
+                      <div className="ml-8 mt-2 space-y-2 border-l-2 border-muted pl-3 pb-2 animate-in slide-in-from-top-1 duration-200">
+                        {(issue.comments || []).map(comment => (
+                          <div key={comment.id} className="text-[11px] space-y-0.5">
+                            <div className="flex items-center justify-between">
+                              <span className="font-semibold">{comment.author}</span>
+                              <span className="text-[9px] text-muted-foreground">{formatDate(comment.createdAt)}</span>
+                            </div>
+                            <p className="text-muted-foreground">{comment.text}</p>
+                          </div>
+                        ))}
+                        <div className="flex items-center gap-2 pt-1">
+                          <Input 
+                            placeholder={colCopy.commentPlaceholder} 
+                            className="h-7 text-[11px]" 
+                            value={commentText}
+                            onChange={e => setCommentText(e.target.value)}
+                            onKeyDown={e => e.key === 'Enter' && handleAddComment(signOff.stage, issue.id)}
+                          />
+                          <Button 
+                            size="icon" 
+                            className="h-7 w-7 shrink-0" 
+                            onClick={() => handleAddComment(signOff.stage, issue.id)}
+                            disabled={!commentText.trim()}
+                          >
+                            <Send className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                  </React.Fragment>
                 ))
               )}
             </div>
@@ -316,6 +373,35 @@ export function ProjectReadinessCard({ project, updateContract }: ProjectReadine
                     <SelectItem value="critical">{copy.readinessIssueSeverityCritical}</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="issue-location">{colCopy.locationLabel}</Label>
+                  <Input
+                    id="issue-location"
+                    placeholder="e.g. Body › Bust"
+                    value={issueLocation}
+                    onChange={(e) => setIssueLocation(e.target.value)}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="issue-assignee">{colCopy.assigneeLabel}</Label>
+                  <Input
+                    id="issue-assignee"
+                    placeholder="e.g. Jane Doe"
+                    value={issueAssignee}
+                    onChange={(e) => setIssueAssignee(e.target.value)}
+                  />
+                </div>
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="issue-due">{colCopy.dueDateLabel}</Label>
+                <Input
+                  id="issue-due"
+                  type="date"
+                  value={issueDueDate}
+                  onChange={(e) => setIssueDueDate(e.target.value)}
+                />
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="issue-evidence">Evidence (optional)</Label>

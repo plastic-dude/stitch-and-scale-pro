@@ -124,6 +124,7 @@ export const TAB_REGISTRY: TabRegistryEntry[] = [
   { value: "bragcard", label: "Brag Cards", group: "launch", icon: "Send" },
   { value: "payback", label: "Payback Lab", group: "pricing", icon: "TrendingUp" },
   { value: "compiler", label: "Compiler", group: "design", icon: "ShieldCheck" },
+  { value: "collaboration", label: "Collaboration", group: "fit", icon: "Users" },
 ];
 
 /** Canonical number of workspace labs exposed by the product. */
@@ -141,8 +142,8 @@ export function assertTabRegistryIntegrity(): void {
     "TAB_REGISTRY (" + TAB_REGISTRY.length + ") does not match TAB_GROUPS (" + Object.keys(TAB_GROUPS).length + ")",
   );
   console.assert(
-    TAB_REGISTRY.length === 83,
-    "TAB_REGISTRY count is " + TAB_REGISTRY.length + ", expected 83"
+    TAB_REGISTRY.length === 84,
+    "TAB_REGISTRY count is " + TAB_REGISTRY.length + ", expected 84"
   );
   for (const t of TAB_REGISTRY) {
     console.assert(

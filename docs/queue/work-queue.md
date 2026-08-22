@@ -60,11 +60,13 @@
 | 52 | QUEUE-045 | Priority 1 Gap 8: Export lifecycle and artifact quality controls | MAJOR | done | CHK-189: preflight gates + artifact history |
 | 53 | QUEUE-046 | Priority 1 Gap 9: PWA lifecycle maturity (update prompt, offline/online status) | MAJOR | done | CHK-190: update prompt + offline status |
 | 54 | QUEUE-047 | Priority 1 Gap 6: Stronger sizing and fit governance (Sourced standards, versioning, ease profiles) | MAJOR | done | CHK-191: governance panel + ease profiles |
-| 55 | QUEUE-048 | Collaborative technical editing and test knitting (Reviewers, assignments, issue tracking) | MAJOR | queued | |
+| 55 | QUEUE-048 | Collaborative technical editing and test knitting (Reviewers, assignments, issue tracking) | MAJOR | done | CHK-192: Collaboration roster + issue tracking |
 
 ## Run ledger
 | Run (date) | Item worked | Gates | Commit | Next item |
-| 68 | 2026-08-22 (CHK-190) | QUEUE-046 (MAJOR) — PWA lifecycle maturity | tsc clean; vitest 4/4; build green; update prompt + offline status | 78ccbc8cfddd255a50252796760f3492f25eaf07 | END OF QUEUE |
+| 68 | 2026-08-22 (CHK-190) | QUEUE-046 (MAJOR) — PWA lifecycle maturity | tsc clean; vitest 4/4; build green; update prompt + offline status | 78ccbc8cfddd255a50252796760f3492f25eaf07 | QUEUE-047 |
+| 69 | 2026-08-22 (CHK-191) | QUEUE-047 (MAJOR) — Fit governance | tsc clean; vitest 2,341/2,341; build green; governance panel + ease profiles | 1284ced19dd6d55d580e7b2ff0782b4fecf9f4be | QUEUE-048 |
+| 70 | 2026-08-22 (CHK-192) | QUEUE-048 (MAJOR) — Collaboration | tsc clean; vitest 2,343/2,343; build green; roster + enhanced issue tracking | 1284ced19dd6d55d580e7b2ff0782b4fecf9f4be | END OF QUEUE |
 |---|---|---|---|---|
 | 65 | 2026-08-22 (CHK-187) | QUEUE-044 (MAJOR) — Multi-project operations | 748b26a6efb0eb3dd26a6d01438b0ef491886235 | CHK-187: Batch selection, filtering, bulk export | QUEUE-045 |
 | 66 | 2026-08-22 (CHK-188) | Localization Brutality III — Final Tech-Edit Audit leak fix | 0a2503d5356dd5a73a82983e90c6e18eaa7b9cf6 | CHK-188: Tech-Edit Audit localization | END OF QUEUE |

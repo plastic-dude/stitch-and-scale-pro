@@ -76,8 +76,22 @@ export interface ReadinessIssue {
   evidence?: string;
   correction?: string;
   status: ReadinessIssueStatus;
+  /** Anchored location, e.g. "Body › Bust" or "Compiler" */
+  location?: string;
+  /** Assigned user or role */
+  assignee?: string;
+  /** Optional due date in ISO format */
+  dueDate?: string;
+  comments?: ReadinessComment[];
   createdAt: string;
   updatedAt: string;
+}
+
+export interface ReadinessComment {
+  id: string;
+  author: string;
+  text: string;
+  createdAt: string;
 }
 
 export interface ReadinessSignOff {
@@ -200,6 +214,20 @@ export interface PatternProject {
   easeProfile?: EaseProfileReference;
   /** Fit governance: source metadata for the sizing standard. */
   standardMetadata?: SizingStandardMetadata;
+  /** Collaboration: roster of invited reviewers and testers. */
+  collaborationRoster?: CollaborationMember[];
+}
+
+export type CollaborationRole = 'editor' | 'tester' | 'viewer';
+
+export interface CollaborationMember {
+  id: string;
+  name: string;
+  role: CollaborationRole;
+  email?: string;
+  invitedAt: string;
+  joinedAt?: string;
+  status: 'invited' | 'active' | 'completed' | 'ghosted';
 }
 
 export interface GradedMeasurement {

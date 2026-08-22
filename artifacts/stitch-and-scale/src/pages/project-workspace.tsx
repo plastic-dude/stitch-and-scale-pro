@@ -40,6 +40,7 @@ import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { useSettings } from '@/context/SettingsContext';
 import { FitGovernancePanel } from '@/components/fit-governance-panel';
+
 import { FIT_GOVERNANCE_COPY } from '@/lib/fit-governance-copy';
 import { useProjectStorage, useProjectStorageState } from '@/lib/storage-lib';
 import { getWorkspaceCopy, workspaceGaugeByline, STS_UNIT, ROWS_UNIT } from '@/lib/workspace-copy';
@@ -138,6 +139,7 @@ const LAB = {
   snapshots: React.lazy(cardLazy(() => import('@/components/project-snapshots-card'))),
   readiness: React.lazy(cardLazy(() => import('@/components/project-readiness-card'))),
   packages: React.lazy(cardLazy(() => import('@/components/project-package-card'))),
+  collaboration: React.lazy(cardLazy(() => import('@/components/collaboration-panel'))),
 };
 
 class LabErrorBoundary extends React.Component<
@@ -221,7 +223,10 @@ export default function ProjectWorkspace() {
     updatePublicationPackage,
     deletePublicationPackage,
     addPublicationArtifact,
-    setFitGovernance
+    setFitGovernance,
+    addCollaborator,
+    updateCollaborator,
+    deleteCollaborator,
   } = projectHook;
   const copy = getWorkspaceCopy(currentLanguage);
   const tc = getToastCopy(currentLanguage);
@@ -811,6 +816,19 @@ export default function ProjectWorkspace() {
       case 'income': return <LazyPanel loader={LAB.income} project={project} />;
       case 'draft': return <LazyPanel loader={LAB.draft} project={project} />;
       case 'pricing': return <LazyPanel loader={LAB.pricing} project={project} />;
+      case 'collaboration': {
+        const Collaboration = LAB.collaboration as React.ComponentType<any>;
+        return (
+          <React.Suspense fallback={<div className="py-10 text-center text-sm text-muted-foreground">{copy.loadingLab}</div>}>
+            <Collaboration 
+              project={project} 
+              onAddMember={(m: any) => addCollaborator(m)}
+              onUpdateMember={(mid: string, p: any) => updateCollaborator(mid, p)}
+              onDeleteMember={(mid: string) => deleteCollaborator(mid)}
+            />
+          </React.Suspense>
+        );
+      }
       case 'publish': return <LazyPanel loader={LAB.publish} project={project} />;
       case 'testknit': return <LazyPanel loader={LAB.testknit} project={project} />;
       case 'techedit': return <LazyPanel loader={LAB.techedit} project={project} />;
