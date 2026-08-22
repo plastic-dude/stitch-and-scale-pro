@@ -35,6 +35,13 @@ self.addEventListener('activate', (event) => {
   );
 });
 
+// Message handler for updates
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
+
 // Fetch strategy:
 // - Navigation requests (HTML): network-first, fall back to cached shell
 // - Same-origin assets (JS/CSS/fonts): stale-while-revalidate

@@ -145,6 +145,8 @@
   --tracking-normal: 0em;
   --spacing: 0.25rem;
 
+  --animate-spin-slow: spin 3s linear infinite;
+
   /* Auto-computed opaque borders */
   --sidebar-primary-border: hsl(from hsl(var(--sidebar-primary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
   --sidebar-accent-border:  hsl(from hsl(var(--sidebar-accent))  h s calc(l + var(--opaque-button-border-intensity)) / alpha);

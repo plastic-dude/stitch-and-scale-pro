@@ -6,6 +6,7 @@ import { AutosaveIndicator } from "@/components/autosave-indicator"
 import { analyzeProjectValidity } from "@/lib/project-validity"
 import { StorageBadge } from "@/components/storage-badge"
 import { HealthIndicator } from "@/components/health-indicator"
+import { PwaStatusBanner } from "@/components/pwa-status-banner"
 const InstallBanner = React.lazy(() =>
   import("@/components/install-banner").then(({ InstallBanner }) => ({ default: InstallBanner })),
 )
@@ -59,6 +60,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-[100dvh] min-w-0 flex flex-col bg-background text-foreground transition-colors duration-200">
+      <PwaStatusBanner />
       <header className="sticky top-0 z-30 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5 no-underline group">

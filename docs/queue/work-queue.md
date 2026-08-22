@@ -57,10 +57,12 @@
 | 49 | QUEUE-042 | Priority 1: Pattern Publication Package — Define and implement the `Pattern Publication Package` with authoritative metadata, instruction resolution, and artifact governance. | MAJOR | done | CHK-185: `6aa86f0492b6d945a9cfbe0e6ac37fb0a51f6c1e`; implemented metadata freezing and artifact tracking |
 | 50 | QUEUE-043 | Priority 0: Pattern Compiler — Mathematical-to-instruction validation via Intermediate Representation (IR) and contradiction checking. | MAJOR | done | CHK-186: `5e4cc734b326f6022d877704ae3d5dfb339a69a7`; implemented compiler engine and validation UI |
 | 51 | QUEUE-044 | Priority 1: Multi-project operations — Batch selection, filtering, tagging, and bulk export with per-project failure reporting. | MAJOR | done | CHK-187: `5c7e907`; implemented batch selection, filtering, bulk export, and batch delete/archive. |
-| 52 | QUEUE-045 | Priority 1 Gap 8: Export lifecycle and artifact quality controls | MAJOR | in-progress | CHK-189 |
+| 52 | QUEUE-045 | Priority 1 Gap 8: Export lifecycle and artifact quality controls | MAJOR | done | CHK-189: preflight gates + artifact history |
+| 53 | QUEUE-046 | Priority 1 Gap 9: PWA lifecycle maturity (update prompt, offline/online status) | MAJOR | done | CHK-190: update prompt + offline status |
 
 ## Run ledger
 | Run (date) | Item worked | Gates | Commit | Next item |
+| 68 | 2026-08-22 (CHK-190) | QUEUE-046 (MAJOR) — PWA lifecycle maturity | tsc clean; vitest 4/4; build green; update prompt + offline status | 78ccbc8cfddd255a50252796760f3492f25eaf07 | END OF QUEUE |
 |---|---|---|---|---|
 | 65 | 2026-08-22 (CHK-187) | QUEUE-044 (MAJOR) — Multi-project operations | 748b26a6efb0eb3dd26a6d01438b0ef491886235 | CHK-187: Batch selection, filtering, bulk export | QUEUE-045 |
 | 66 | 2026-08-22 (CHK-188) | Localization Brutality III — Final Tech-Edit Audit leak fix | 0a2503d5356dd5a73a82983e90c6e18eaa7b9cf6 | CHK-188: Tech-Edit Audit localization | END OF QUEUE |
