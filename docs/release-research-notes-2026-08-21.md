@@ -78,3 +78,10 @@ Commit `53b9cee` was created after staged whitespace validation and pushed to bo
 Fresh Git-source production deployment `dpl_2VnNosNsZ8Cn9PsAVWvj5jnAY2i2` was created from full commit `53b9ceea7a440fe25f80b0bc156c29a2371384d6` and reached READY. Public alias checks passed: GET `/api/mcp` returned 405; allowed-origin OPTIONS returned 204; authenticated JSON-RPC `tools/list` returned 200 with all eight tools in canonical order: `project.intake`, `project.validate`, `grading.run`, `grading.explain`, `export.pattern_pdf`, `export.project_book_pdf`, `export.brag_card`, `calculate.marketplace_take_rate`; rejected-origin POST returned 403 with MCP error `-32001`. The deployment-specific URL is protected by Vercel and returned 302/401, so the public alias is the authoritative release check.
 
 The pre-sync stash remains temporarily retained as a recovery precaution and contains only the already-committed pre-sync audit patch; no credentials or `/home/ubuntu/first_novel_invention_brief.md` were modified.
+
+
+## Exact-main release integrity recheck — 2026-08-22
+
+The repository was rechecked against origin before release: origin/main had advanced from the audit branch’s `6aa86f0` to agent commit `5e4cc73`; the audit branch was fast-forwarded safely, its patch was reapplied, and the resulting correction was committed as `53b9cee`. The evidence-only follow-up commit `d3abf16` was then pushed to both the audit branch and `main`, leaving no uncommitted changes or recovery stashes.
+
+To eliminate any ambiguity between the verified code commit and the current main tip, a fresh Git-source production deployment was created from full commit `d3abf163a29a79a780e4a6f29c4dd00de8315762`: deployment `dpl_9qG2w7A2oSfzwpgHzk5GuPVBPifw` reached READY. The public alias remained healthy after this exact-main deployment: GET `/api/mcp` returned 405, allowed-origin OPTIONS returned 204, authenticated JSON-RPC `tools/list` returned 200 with eight tools in canonical order, and a disallowed origin returned 403 with MCP error `-32001`.
