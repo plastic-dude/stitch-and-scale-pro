@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useReducer, useRef, useState } from 'react';
+import React, { createContext, useContext, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { get, set } from 'idb-keyval';
 import { type PatternProject, generateId, type PublicationPackage, type PublicationArtifact, type ArtifactInspectionReport, type EaseProfileReference, type SizingStandardMetadata, type CollaborationMember, type ReadinessStage, type ReadinessIssue, type ReadinessComment, type PatternDocumentContent, type TestKnitRound, type ProjectSample, type ProjectSubmission, type WholesaleOrder } from '@/lib/grading-engine';
 export type { PatternProject };
@@ -725,93 +725,70 @@ export function useProject(id?: string) {
     addWholesaleOrder, updateWholesaleOrder, deleteWholesaleOrder,
     setDraftContent, compilePackage
   } = useProjects();
-  if (!id) return null;
-  const existing = projects.find(p => p.id === id);
-
   const { language } = useSettings();
-  
-  // CHK-119: first visit to the demo id with no stored project seeds the demo.
-  if (!existing && id === DEMO_PROJECT_ID) {
-    const demo = makeDemoProject(language);
-    createProject(demo);
-    return {
-      project: demo,
-      updateProject: (p: PatternProject) => updateProject(p),
-      deleteProject: () => deleteProject(DEMO_PROJECT_ID),
-      createSnapshot: (name: string, note: string) => createSnapshot(DEMO_PROJECT_ID, name, note),
-      restoreSnapshot: (snapshotId: string) => restoreSnapshot(DEMO_PROJECT_ID, snapshotId),
-      deleteSnapshot: (snapshotId: string) => deleteSnapshot(DEMO_PROJECT_ID, snapshotId),
-      updateContract: (contract: any) => updateContract(DEMO_PROJECT_ID, contract),
-      createPublicationPackage: (pkg: any) => createPublicationPackage(DEMO_PROJECT_ID, pkg),
-      updatePublicationPackage: (pkg: any) => updatePublicationPackage(DEMO_PROJECT_ID, pkg),
-      deletePublicationPackage: (packageId: string) => deletePublicationPackage(DEMO_PROJECT_ID, packageId),
-      addPublicationArtifact: (packageId: string, artifact: PublicationArtifact) => addPublicationArtifact(DEMO_PROJECT_ID, packageId, artifact),
-      inspectArtifact: (packageId: string, artifactId: string, report: ArtifactInspectionReport) => inspectArtifactFn(DEMO_PROJECT_ID, packageId, artifactId, report),
-      setFitGovernance: (ease?: EaseProfileReference, meta?: SizingStandardMetadata) => setFitGovernance(DEMO_PROJECT_ID, ease, meta),
-      addCollaborator: (member: CollaborationMember) => addCollaborator(DEMO_PROJECT_ID, member),
-      updateCollaborator: (memberId: string, patch: Partial<CollaborationMember>) => updateCollaborator(DEMO_PROJECT_ID, memberId, patch),
-      deleteCollaborator: (memberId: string) => deleteCollaborator(DEMO_PROJECT_ID, memberId),
-      addReadinessIssue: (stage: ReadinessStage, issue: ReadinessIssue) => addReadinessIssue(DEMO_PROJECT_ID, stage, issue),
-      updateReadinessIssue: (stage: ReadinessStage, issueId: string, patch: Partial<ReadinessIssue>) => updateReadinessIssue(DEMO_PROJECT_ID, stage, issueId, patch),
-      addIssueComment: (stage: ReadinessStage, issueId: string, comment: ReadinessComment) => addIssueComment(DEMO_PROJECT_ID, stage, issueId, comment),
-    addAsset: (asset: any) => addAsset(DEMO_PROJECT_ID, asset),
-      deleteAsset: (assetId: string) => deleteAsset(DEMO_PROJECT_ID, assetId),
-      updateAsset: (assetId: string, patch: any) => updateAsset(DEMO_PROJECT_ID, assetId, patch),
-      addTestKnitRound: (round: TestKnitRound) => addTestKnitRound(DEMO_PROJECT_ID, round),
-      updateTestKnitRound: (roundId: string, patch: Partial<TestKnitRound>) => updateTestKnitRound(DEMO_PROJECT_ID, roundId, patch),
-      deleteTestKnitRound: (roundId: string) => deleteTestKnitRound(DEMO_PROJECT_ID, roundId),
-      addSample: (sample: ProjectSample) => addSample(DEMO_PROJECT_ID, sample),
-      updateSample: (sampleId: string, patch: Partial<ProjectSample>) => updateSample(DEMO_PROJECT_ID, sampleId, patch),
-      deleteSample: (sampleId: string) => deleteSample(DEMO_PROJECT_ID, sampleId),
-      addSubmission: (submission: ProjectSubmission) => addSubmission(DEMO_PROJECT_ID, submission),
-      updateSubmission: (submissionId: string, patch: Partial<ProjectSubmission>) => updateSubmission(DEMO_PROJECT_ID, submissionId, patch),
-      deleteSubmission: (submissionId: string) => deleteSubmission(DEMO_PROJECT_ID, submissionId),
-      addWholesaleOrder: (order: WholesaleOrder) => addWholesaleOrder(DEMO_PROJECT_ID, order),
-      updateWholesaleOrder: (orderId: string, patch: Partial<WholesaleOrder>) => updateWholesaleOrder(DEMO_PROJECT_ID, orderId, patch),
-      deleteWholesaleOrder: (orderId: string) => deleteWholesaleOrder(DEMO_PROJECT_ID, orderId),
-      setDraftContent: (content: PatternDocumentContent) => setDraftContent(DEMO_PROJECT_ID, content),
-      compilePackage: (packageId: string, content: PatternDocumentContent) => compilePackage(DEMO_PROJECT_ID, packageId, content),
-    };
-  }
+  const existing = id ? projects.find(p => p.id === id) : undefined;
+  const demoCandidate = useMemo(
+    () => (!existing && id === DEMO_PROJECT_ID ? makeDemoProject(language) : null),
+    [existing, id, language],
+  );
+  const demoSeedRequested = useRef(false);
 
-  if (!existing) return null;
+  // CHK-119/CHK-225: a direct demo route is an explicit request, but the
+  // provider dispatch must happen after render. Returning the stable candidate
+  // immediately keeps the workspace/grading/PDF routes usable while the local
+  // first persistence update lands. The ref also makes this safe in React
+  // StrictMode, where effects are intentionally replayed in development.
+  useEffect(() => {
+    if (!demoCandidate) {
+      demoSeedRequested.current = false;
+      return;
+    }
+    if (demoSeedRequested.current) return;
+    demoSeedRequested.current = true;
+    createProject(demoCandidate);
+  }, [createProject, demoCandidate]);
+
+  if (!id) return null;
+  const project = existing ?? demoCandidate;
+  if (!project) return null;
+  const projectId = project.id;
 
   return {
-    project: existing,
+    project,
     updateProject: (p: PatternProject) => updateProject(p),
-    deleteProject: () => deleteProject(id),
-    createSnapshot: (name: string, note: string) => createSnapshot(id, name, note),
-    restoreSnapshot: (snapshotId: string) => restoreSnapshot(id, snapshotId),
-    deleteSnapshot: (snapshotId: string) => deleteSnapshot(id, snapshotId),
-    updateContract: (contract: any) => updateContract(id, contract),
-    createPublicationPackage: (pkg: any) => createPublicationPackage(id, pkg),
-    updatePublicationPackage: (pkg: any) => updatePublicationPackage(id, pkg),
-    deletePublicationPackage: (packageId: string) => deletePublicationPackage(id, packageId),
-    addPublicationArtifact: (packageId: string, artifact: PublicationArtifact) => addPublicationArtifact(id, packageId, artifact),
-    inspectArtifact: (packageId: string, artifactId: string, report: ArtifactInspectionReport) => inspectArtifactFn(id, packageId, artifactId, report),
-    setFitGovernance: (ease?: EaseProfileReference, meta?: SizingStandardMetadata) => setFitGovernance(id, ease, meta),
-    addCollaborator: (member: CollaborationMember) => addCollaborator(id, member),
-    updateCollaborator: (memberId: string, patch: Partial<CollaborationMember>) => updateCollaborator(id, memberId, patch),
-    deleteCollaborator: (memberId: string) => deleteCollaborator(id, memberId),
-    addReadinessIssue: (stage: ReadinessStage, issue: ReadinessIssue) => addReadinessIssue(id, stage, issue),
-    updateReadinessIssue: (stage: ReadinessStage, issueId: string, patch: Partial<ReadinessIssue>) => updateReadinessIssue(id, stage, issueId, patch),
-    addIssueComment: (stage: ReadinessStage, issueId: string, comment: ReadinessComment) => addIssueComment(id, stage, issueId, comment),
-    addAsset: (asset: any) => addAsset(id, asset),
-    deleteAsset: (assetId: string) => deleteAsset(id, assetId),
-    updateAsset: (assetId: string, patch: any) => updateAsset(id, assetId, patch),
-    addTestKnitRound: (round: TestKnitRound) => addTestKnitRound(id, round),
-    updateTestKnitRound: (roundId: string, patch: Partial<TestKnitRound>) => updateTestKnitRound(id, roundId, patch),
-    deleteTestKnitRound: (roundId: string) => deleteTestKnitRound(id, roundId),
-    addSample: (sample: ProjectSample) => addSample(id, sample),
-    updateSample: (sampleId: string, patch: Partial<ProjectSample>) => updateSample(id, sampleId, patch),
-    deleteSample: (sampleId: string) => deleteSample(id, sampleId),
-      addSubmission: (submission: ProjectSubmission) => addSubmission(id, submission),
-      updateSubmission: (submissionId: string, patch: Partial<ProjectSubmission>) => updateSubmission(id, submissionId, patch),
-      deleteSubmission: (submissionId: string) => deleteSubmission(id, submissionId),
-      addWholesaleOrder: (order: WholesaleOrder) => addWholesaleOrder(id, order),
-      updateWholesaleOrder: (orderId: string, patch: Partial<WholesaleOrder>) => updateWholesaleOrder(id, orderId, patch),
-      deleteWholesaleOrder: (orderId: string) => deleteWholesaleOrder(id, orderId),
-      setDraftContent: (content: PatternDocumentContent) => setDraftContent(id, content),
-    compilePackage: (packageId: string, content: PatternDocumentContent) => compilePackage(id, packageId, content),
+    deleteProject: () => deleteProject(projectId),
+    createSnapshot: (name: string, note: string) => createSnapshot(projectId, name, note),
+    restoreSnapshot: (snapshotId: string) => restoreSnapshot(projectId, snapshotId),
+    deleteSnapshot: (snapshotId: string) => deleteSnapshot(projectId, snapshotId),
+    updateContract: (contract: any) => updateContract(projectId, contract),
+    createPublicationPackage: (pkg: any) => createPublicationPackage(projectId, pkg),
+    updatePublicationPackage: (pkg: any) => updatePublicationPackage(projectId, pkg),
+    deletePublicationPackage: (packageId: string) => deletePublicationPackage(projectId, packageId),
+    addPublicationArtifact: (packageId: string, artifact: PublicationArtifact) => addPublicationArtifact(projectId, packageId, artifact),
+    inspectArtifact: (packageId: string, artifactId: string, report: ArtifactInspectionReport) => inspectArtifactFn(projectId, packageId, artifactId, report),
+    setFitGovernance: (ease?: EaseProfileReference, meta?: SizingStandardMetadata) => setFitGovernance(projectId, ease, meta),
+    addCollaborator: (member: CollaborationMember) => addCollaborator(projectId, member),
+    updateCollaborator: (memberId: string, patch: Partial<CollaborationMember>) => updateCollaborator(projectId, memberId, patch),
+    deleteCollaborator: (memberId: string) => deleteCollaborator(projectId, memberId),
+    addReadinessIssue: (stage: ReadinessStage, issue: ReadinessIssue) => addReadinessIssue(projectId, stage, issue),
+    updateReadinessIssue: (stage: ReadinessStage, issueId: string, patch: Partial<ReadinessIssue>) => updateReadinessIssue(projectId, stage, issueId, patch),
+    addIssueComment: (stage: ReadinessStage, issueId: string, comment: ReadinessComment) => addIssueComment(projectId, stage, issueId, comment),
+    addAsset: (asset: any) => addAsset(projectId, asset),
+    deleteAsset: (assetId: string) => deleteAsset(projectId, assetId),
+    updateAsset: (assetId: string, patch: any) => updateAsset(projectId, assetId, patch),
+    addTestKnitRound: (round: TestKnitRound) => addTestKnitRound(projectId, round),
+    updateTestKnitRound: (roundId: string, patch: Partial<TestKnitRound>) => updateTestKnitRound(projectId, roundId, patch),
+    deleteTestKnitRound: (roundId: string) => deleteTestKnitRound(projectId, roundId),
+    addSample: (sample: ProjectSample) => addSample(projectId, sample),
+    updateSample: (sampleId: string, patch: Partial<ProjectSample>) => updateSample(projectId, sampleId, patch),
+    deleteSample: (sampleId: string) => deleteSample(projectId, sampleId),
+    addSubmission: (submission: ProjectSubmission) => addSubmission(projectId, submission),
+    updateSubmission: (submissionId: string, patch: Partial<ProjectSubmission>) => updateSubmission(projectId, submissionId, patch),
+    deleteSubmission: (submissionId: string) => deleteSubmission(projectId, submissionId),
+    addWholesaleOrder: (order: WholesaleOrder) => addWholesaleOrder(projectId, order),
+    updateWholesaleOrder: (orderId: string, patch: Partial<WholesaleOrder>) => updateWholesaleOrder(projectId, orderId, patch),
+    deleteWholesaleOrder: (orderId: string) => deleteWholesaleOrder(projectId, orderId),
+    setDraftContent: (content: PatternDocumentContent) => setDraftContent(projectId, content),
+    compilePackage: (packageId: string, content: PatternDocumentContent) => compilePackage(projectId, packageId, content),
   };
 }
