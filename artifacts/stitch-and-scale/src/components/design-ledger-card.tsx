@@ -197,8 +197,10 @@ export function DesignLedgerCard(props: { project: PatternProject }) {
     a.href = url;
     a.download = "design-ledger.csv";
     a.click();
-    URL.revokeObjectURL(url);
-    toast({ title: copy.export, description: copy.csvDownloaded });
+    // The click only requests a browser download; delay cleanup so the browser
+    // has a chance to consume the object URL without claiming the file was saved.
+    window.setTimeout(() => URL.revokeObjectURL(url), 0);
+    toast({ title: copy.export, description: copy.csvDownloadRequested });
   };
 
   const copySummary = async () => {
