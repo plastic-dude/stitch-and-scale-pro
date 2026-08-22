@@ -56,12 +56,14 @@
 | 48 | QUEUE-041 | Priority 0: Pattern Publication Readiness Contract — Define and implement a formal publication readiness checklist and state (readiness for tech-edit, test-knit, and final publication) with a compiled readiness verdict. | CRITICAL | done | CHK-184: `b4da4086bbb3254fc75d1639b00f0c9f70dee5b2`; implemented readiness schema, storage, UI, and localization |
 | 49 | QUEUE-042 | Priority 1: Pattern Publication Package — Define and implement the `Pattern Publication Package` with authoritative metadata, instruction resolution, and artifact governance. | MAJOR | done | CHK-185: `6aa86f0492b6d945a9cfbe0e6ac37fb0a51f6c1e`; implemented metadata freezing and artifact tracking |
 | 50 | QUEUE-043 | Priority 0: Pattern Compiler — Mathematical-to-instruction validation via Intermediate Representation (IR) and contradiction checking. | MAJOR | done | CHK-186: `5e4cc734b326f6022d877704ae3d5dfb339a69a7`; implemented compiler engine and validation UI |
-| 51 | QUEUE-044 | Priority 1: Multi-project operations — Batch selection, filtering, tagging, and bulk export with per-project failure reporting. | MAJOR | in-progress | Implementing multi-select UI and batch processing logic |
+| 51 | QUEUE-044 | Priority 1: Multi-project operations — Batch selection, filtering, tagging, and bulk export with per-project failure reporting. | MAJOR | done | CHK-187: `5c7e907`; implemented batch selection, filtering, bulk export, and batch delete/archive. |
+| 52 | QUEUE-045 | Priority 1 Gap 8: Export lifecycle and artifact quality controls | MAJOR | queued | |
 
 ## Run ledger
 | Run (date) | Item worked | Gates | Commit | Next item |
 |---|---|---|---|---|
-| 65 | 2026-08-22 (CHK-187) | QUEUE-044 (MAJOR) — Multi-project operations | 748b26a6efb0eb3dd26a6d01438b0ef491886235 | CHK-187: Batch selection, filtering, bulk export | END OF QUEUE |
+| 65 | 2026-08-22 (CHK-187) | QUEUE-044 (MAJOR) — Multi-project operations | 748b26a6efb0eb3dd26a6d01438b0ef491886235 | CHK-187: Batch selection, filtering, bulk export | QUEUE-045 |
+| 66 | 2026-08-22 (CHK-188) | Localization Brutality III — Final Tech-Edit Audit leak fix | 0a2503d5356dd5a73a82983e90c6e18eaa7b9cf6 | CHK-188: Tech-Edit Audit localization | END OF QUEUE |
 | 64 | 2026-08-22 (CHK-186) | QUEUE-043 (MAJOR) — Pattern Compiler | tsc clean; vitest 2,341/2,341; build green; 83 labs total; full 5-locale validation | 5e4cc73 | QUEUE-044 |
 | 63 | 2026-08-22 (CHK-185) | QUEUE-042 (MAJOR) — Pattern Publication Package | tsc clean; vitest 2,336/2,336; build green; 82 labs total; live verified | 66f259421326bba6599eb6699ab8b49f641590a0 | QUEUE-043 |
 | 62 | 2026-08-22 | QUEUE-041 | done | b4da4086bbb3254fc75d1639b00f0c9f70dee5b2 | CHK-184: Pattern Publication Readiness Contract |

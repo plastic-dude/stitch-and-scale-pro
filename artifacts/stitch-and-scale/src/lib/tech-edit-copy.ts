@@ -157,7 +157,7 @@ const en: TechEditCopy = {
 
 const de: TechEditCopy = {
   ...en,
-  title: 'Self Tech-Edit Audit',
+  title: 'Self Tech-Edit-Audit',
   description: 'Eine Zahlen-Vorprüfung, bevor ein menschlicher Editor das Muster sieht — Editoren berechnen 20–40 $/Std. bei ~10 Tagen Bearbeitungszeit. Jeder gelöste Befund spart bares Geld.',
   verdictClean: 'Sauber — die Zahlenprüfung war erfolgreich',
   verdictCheck: 'Einen Blick wert',
@@ -208,7 +208,7 @@ const de: TechEditCopy = {
   findingGa03Title: 'Größenprogression ist nicht monoton',
   findingGa03Detail: (s, v, u) => `Die physischen Werte über ${s} sind: ${v} ${u}. Kleidungsstücke sollten mit der Größe wachsen (oder gleich bleiben) — prüfe, ob der Gradierungsschlüssel oder Typ korrekt ist.`,
   findingGa04Title: (p, s) => `Maschenzahl um ${p}% vom Bruttoziel (${s}) abgewichen`,
-  findingGa04Detail: (r, raw) => `Gerundet auf ${r} Maschen vs. ${raw} Brutto. Der Rapport/Parität des Maschenmusters erzwingt eine Abweichung vom Zielmaß — prüfe die Passform bei dieser Größe.`,
+  findingGa04Detail: (r, raw) => `Gerundet auf ${r} Maschen vs. ${raw} Brutto. Die Rapport-/Paritätsvorgabe des Maschenmusters zieht die Zahl vom Zielmaß weg — prüfe die fertige Passform in dieser Größe.`,
   findingGa04bTitle: (p, s) => `Reihenzahl um ${p}% vom Bruttoziel (${s}) abgewichen`,
   findingGa04bDetail: (r, raw) => `Gerundet auf ${r} Reihen vs. ${raw} Brutto. Längentoleranz ist meist unkritisch, aber prüfe, ob das Maß wichtig ist (z. B. Armlochtiefe).`,
   findingGa05Title: (r) => `Maschenrapport von ${r} hat keine Auswirkung`,
@@ -239,7 +239,7 @@ const de: TechEditCopy = {
 
 const fr: TechEditCopy = {
   ...en,
-  title: 'Self Tech-Edit Audit',
+  title: 'Audit d’auto-révision technique',
   description: 'Une vérification des chiffres avant qu\'un éditeur humain ne voie le modèle — les éditeurs facturent 20–40 $/h avec un délai de ~10 jours. Chaque problème résolu est de l\'argent économisé.',
   verdictClean: 'Propre — la vérification des chiffres a réussi',
   verdictCheck: 'Vaut le coup d\'œil',
@@ -321,7 +321,7 @@ const fr: TechEditCopy = {
 
 const es: TechEditCopy = {
   ...en,
-  title: 'Auto-auditoría técnica',
+  title: 'Auditoría de autoedición técnica',
   description: 'Una revisión de números antes de que un editor humano vea el patrón — los editores cobran 20–40 $/h con una demora de ~10 días. Cada hallazgo resuelto es dinero ahorrado.',
   verdictClean: 'Limpio — la revisión de números fue exitosa',
   verdictCheck: 'Vale la pena revisar',
@@ -358,7 +358,7 @@ const es: TechEditCopy = {
   outstandingItemsLabel: (n) => `Temas pendientes (${n}):`,
   prosePassLabel: 'Lo que aún necesito de ti (la revisión de texto):',
   prosePassDetails: 'consistencia de estilo/abreviaturas, claridad de instrucciones, ortografía, coherencia con gráficos/esquemas.',
-  savingsNote: (p) => `Resuelve los ${p} hallazgo(s) pendiente(s) antes de que un editor humano toque el patrón — cada uno que no tengan que encontrar es tiempo facturable ahorrado.`,
+  savingsNote: (p) => `Resuelve los ${p} temas pendientes antes de que un editor humano toque el patrón — cada punto que no tengan que encontrar es tiempo facturable ahorrado.`,
   cleanSavingsNote: 'La revisión de números está limpia — un editor pagado puede ahora enfocarse puramente en el texto (estilo, abreviaturas, claridad), que es la mitad de la factura que realmente necesita ojos humanos.',
   marketNotePending: (p, low, high, h, s, sw, d) => `Los editores cobran $${low}–$${high}/h por esta revisión (~${h}h para ${s} ${sw}) y hay una escasez real — los patrones esperan ~${d} días en cola. Resuelve los hallazgos primero para negociar el rango bajo.`,
   marketNoteClean: (low, high, h, s, sw, d) => `Un editor humano cobraría entre $${low} y $${high} por las mismas ${h}h de aritmética, a $20–$40/h — y la mayoría añadiría un recargo por talla. La revisión de números es totalmente automatizable; su error es cobrar tarifas por hora por aritmética.`,
@@ -403,7 +403,7 @@ const es: TechEditCopy = {
 
 const pt: TechEditCopy = {
   ...en,
-  title: 'Auto-auditoria técnica',
+  title: 'Auditoria de autoedição técnica',
   description: 'Uma revisão de números antes de um editor humano ver o modelo — os editores cobram 20–40 $/h com uma demora de ~10 dias. Cada problema resolvido é dinheiro poupado.',
   verdictClean: 'Limpo — a revisão de números foi bem-sucedida',
   verdictCheck: 'Vale a pena rever',
@@ -429,9 +429,9 @@ const pt: TechEditCopy = {
   auditScoreLabel: (s, v) => `Pontuação de auto-auditoria técnica: ${s}/100 (${v.toUpperCase()})`,
   alreadyCheckedLabel: 'Já verificado automaticamente (revisão de números):',
   checkedItems: [
-    'validade da amostra',
+    'valididade da amostra',
     'monotonia da progressão de tamanhos em todos os tamanhos gradados',
-    'arredondamento de malhas/voltas vs restrições de repetição e paridade',
+    'arredondamento de malhas/voltas vs restrições de repetição e paridad',
     'plausibilidade da contagem de malhas em cada tamanho',
     'consistência entre chave de gradação e tipo (largura/comprimento/cirunferência)',
     'valores base vs padrão corporal para o tamanho base',
@@ -443,7 +443,7 @@ const pt: TechEditCopy = {
   savingsNote: (p) => `Resolva o(s) ${p} problema(s) pendente(s) antes de um editor humano tocar no modelo — cada um que não tiverem de encontrar é tempo faturável poupado.`,
   cleanSavingsNote: 'A revisão de números está limpa — um editor pago pode agora focar-se puramente no texto (estilo, abreviaturas, clareza), que é a metade da fatura que realmente precisa de olhos humanos.',
   marketNotePending: (p, low, high, h, s, sw, d) => `Os editores cobram $${low}–$${high}/h por esta revisão (~${h}h para ${s} ${sw}) e há uma escassez real — os modelos esperam ~${d} dias na fila. Resolva os problemas primeiro para negociar o valor baixo.`,
-  marketNoteClean: (low, high, h, s, sw, d) => `Um editor humano cobraria entre $${low} e $${high} pelas mesmas ${h}h de aritmética, a $20–$40/h — e a maioria adicionaria uma taxa por tamanho. A revisão de números é totalmente automatizável; o erro deles é cobrar taxas horárias por aritmética.`,
+  marketNoteClean: (low, high, h, s, sw, d) => `Um editor humano cobraria entre $${low} e $${high} pelas mesmas ${h}h de aritmética, a $20–$40/h — e a maioria adicionaria uma taxa por tamanho. A revisão de números é totalmente automatizada; o erro deles é cobrar taxas horárias por aritmética.`,
 
   findingGa01Title: 'Amostra não definida — todos os números abaixo não são fiáveis',
   findingGa01Detail: 'Defina as malhas/voltas por 10 cm na amostra do projeto. Um editor técnico não pode verificar os cálculos sem isso, nem um testador. Este é o primeiro item em qualquer lista de verificação pré-auditoria.',
@@ -464,7 +464,7 @@ const pt: TechEditCopy = {
   findingGa05cTitle: 'Paridade e repetição definidas — a paridade ganha',
   findingGa05cDetail: 'Quando ambas estão definidas, o arredondamento por paridade tem precedência. Mantenha a restrição que realmente rege esta medida.',
   findingGa06Title: (s) => `Contagem de malhas zero ou negativa no tamanho ${s}`,
-  findingGa06Detail: (c) => `A contagem de malhas arredondada é ${c}. Uma contagem tão pequena costuma significar que o valor base, a amostra ou a chave de gradação estão errados para esta medida.`,
+  findingGa06Detail: (c) => `A contagem de malhas arredondada é ${c}. Um contagem tão pequena costuma significar que o valor base, a amostra ou a chave de gradação estão errados para esta medida.`,
   findingGa07Title: 'Chave de comprimento graduada como uma largura',
   findingGa07Detail: (l, k) => `${l} utiliza a chave ${k} (um comprimento) com o tipo "largura", o que reduz o valor a metade ao graduar. Se esta medida deve ser um comprimento, defina o seu tipo como "comprimento" ou "direto".`,
   findingGa08Title: 'Nenhum tamanho graduado',
