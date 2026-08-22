@@ -2,6 +2,7 @@ import React from 'react';
 import { useSettings } from '@/context/SettingsContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Download, Upload, Moon, Sun, Monitor, Ruler, Settings as SettingsIcon, RotateCcw, Layers, Check, UserRound, Globe2, AtSign, Copyright } from 'lucide-react';
@@ -22,7 +23,7 @@ export default function SettingsPage() {
     sizingStandard, setSizingStandard, customStandard, setCustomStandardValue, resetCustomStandard,
     studioProfile, updateStudioProfile,
     pdfDefaults, setPdfDefaults,
-    language, setLanguage,
+    language, setLanguage, recognitionEnabled, setRecognitionEnabled,
   } = useSettings();
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const logoInputRef = React.useRef<HTMLInputElement>(null);
@@ -260,6 +261,32 @@ export default function SettingsPage() {
               <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
                 {language === getInitialLanguage() ? t('settings.language.detected') : `${t('settings.language.manual')}: ${languageLabel(language)}`}
               </p>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }}>
+          <Card className="border-border/60 shadow-sm overflow-hidden rounded-2xl">
+            <CardHeader className="bg-secondary/10 border-b border-border/40 pb-5">
+              <CardTitle className="font-serif text-xl">{copy.recognitionTitle}</CardTitle>
+              <CardDescription className="text-[13px]">{copy.recognitionDescription}</CardDescription>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between gap-4 rounded-xl border border-border/60 bg-secondary/10 p-4">
+                <div className="min-w-0">
+                  <Label htmlFor="recognition-enabled">{copy.recognitionToggle}</Label>
+                  <p id="recognition-enabled-description" className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                    {copy.recognitionDescription}
+                  </p>
+                </div>
+                <Switch
+                  id="recognition-enabled"
+                  checked={recognitionEnabled}
+                  onCheckedChange={setRecognitionEnabled}
+                  aria-describedby="recognition-enabled-description"
+                  data-testid="switch-recognition-enabled"
+                />
+              </div>
             </CardContent>
           </Card>
         </motion.div>

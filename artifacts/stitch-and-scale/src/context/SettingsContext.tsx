@@ -57,6 +57,8 @@ interface SettingsState {
   onboardingCompleted: boolean;
   /** Interface language. Auto-detected once, then persisted after explicit choice. */
   language: LanguageCode;
+  /** Controls only private recognition presentation; stored evidence is retained when false. */
+  recognitionEnabled: boolean;
 }
 
 interface SettingsContextType extends SettingsState {
@@ -73,6 +75,7 @@ interface SettingsContextType extends SettingsState {
   wipeAllData:            () => Promise<void>;
   setOnboardingCompleted: (completed: boolean) => void;
   setLanguage:           (language: LanguageCode) => void;
+  setRecognitionEnabled: (enabled: boolean) => void;
   t:                     (key: TranslationKey, variables?: TranslationVariables) => string;
   getCopy:               () => SettingsCopy;
 }
@@ -102,6 +105,7 @@ const defaultSettings: SettingsState = {
   studioProfile: { ...DEFAULT_STUDIO_PROFILE },
   onboardingCompleted: false,
   language: getInitialLanguage(),
+  recognitionEnabled: true,
 };
 
 // ─── Context ──────────────────────────────────────────────────────────────────
@@ -125,6 +129,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       return {
         ...defaultSettings,
         ...parsed,
+        recognitionEnabled: typeof parsed.recognitionEnabled === 'boolean' ? parsed.recognitionEnabled : defaultSettings.recognitionEnabled,
         pdfDefaults: { ...DEFAULT_PDF_DEFAULTS, ...(parsed.pdfDefaults ?? {}) },
         customStandard: mergedCustomStandard,
         studioProfile: { ...DEFAULT_STUDIO_PROFILE, ...(parsed.studioProfile ?? {}) },
@@ -166,6 +171,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     setSettings(s => ({ ...s, studioProfile: { ...s.studioProfile, ...patch } }));
   const setOnboardingCompleted = (onboardingCompleted: boolean)  => setSettings(s => ({ ...s, onboardingCompleted }));
   const setLanguage = (language: LanguageCode) => setSettings(s => ({ ...s, language }));
+  const setRecognitionEnabled = (recognitionEnabled: boolean) => setSettings(s => ({ ...s, recognitionEnabled }));
   const t = (key: TranslationKey, variables?: TranslationVariables) => translate(settings.language, key, variables);
   const getCopy = () => getSettingsCopy(settings.language);
 
@@ -191,6 +197,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         return {
           ...current,
           ...result.settings,
+          recognitionEnabled: typeof result.settings.recognitionEnabled === 'boolean' ? result.settings.recognitionEnabled : current.recognitionEnabled,
           pdfDefaults: { ...DEFAULT_PDF_DEFAULTS, ...(result.settings.pdfDefaults && typeof result.settings.pdfDefaults === 'object' ? result.settings.pdfDefaults : {}) },
           customStandard: mergedCustomStandard,
           studioProfile: { ...DEFAULT_STUDIO_PROFILE, ...(result.settings.studioProfile && typeof result.settings.studioProfile === 'object' ? result.settings.studioProfile : {}) },
@@ -225,6 +232,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       updateStudioProfile,
       setOnboardingCompleted,
       setLanguage,
+      setRecognitionEnabled,
       t,
       getCopy,
       exportData,

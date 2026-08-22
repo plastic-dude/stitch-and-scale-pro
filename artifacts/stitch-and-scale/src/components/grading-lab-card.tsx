@@ -5,7 +5,12 @@ import { Button } from '@/components/ui/button';
 import { AlertTriangle, FlaskConical, RotateCw } from 'lucide-react';
 import { PatternProject } from '@/lib/grading-engine';
 import { useSettings } from '@/context/SettingsContext';
+import { ToastAction } from '@/components/ui/toast';
+import { useToast } from '@/hooks/use-toast';
 import { getGradingCopy, getGradingFlagDetail } from '@/lib/grading-copy';
+import { getRecognitionCopy } from '@/lib/recognition-copy';
+import { normalizeRecognitionState, observeFirstCleanGrade, type ProjectRecognitionStateV1 } from '@/lib/recognition';
+import { useProjectStorage, useProjectStorageState } from '@/lib/storage-lib';
 import { analyzeGrading, EASE_BANDS, type LabResult } from '@/lib/grading-lab';
 
 const fmtCm = (n: number) => `${n.toFixed(1)}cm`;
@@ -26,9 +31,37 @@ const flagColor = (s: 'error' | 'warn' | 'info') =>
 export function GradingLabCard({ project }: { project: PatternProject }) {
   // Pure analysis over the project's live sections — no stored inputs; the lab is a read-through,
   // so it stays stateless and survives the cloud-migration untouched.
-  const { language } = useSettings();
+  const { language, recognitionEnabled } = useSettings();
   const copy = getGradingCopy(language);
+  const recognitionCopy = getRecognitionCopy(language);
+  const { toast } = useToast();
   const result = useMemo(() => analyzeGrading(project), [project]);
+  const recognitionStorage = useProjectStorage<ProjectRecognitionStateV1>('recognition', project.id);
+  const [recognitionState, setRecognitionState] = useProjectStorageState(
+    recognitionStorage,
+    normalizeRecognitionState,
+  );
+
+  const handleCheckGrading = () => {
+    // This is the deliberate observation boundary. Rendering the read-through
+    // verdict, opening the lab, or editing the project never records evidence.
+    const observedResult = analyzeGrading(project);
+    const observation = observeFirstCleanGrade(project, observedResult, recognitionState);
+    if (!observation.event) return;
+
+    setRecognitionState(observation.state);
+    if (!recognitionEnabled) return;
+
+    toast({
+      title: recognitionCopy.cleanGradeTitle,
+      description: recognitionCopy.cleanGradeBody(observation.event.sizeCount),
+      action: (
+        <ToastAction altText={recognitionCopy.cleanGradeDismiss}>
+          {recognitionCopy.cleanGradeDismiss}
+        </ToastAction>
+      ),
+    });
+  };
 
   return (
     <Card>
@@ -145,9 +178,13 @@ export function GradingLabCard({ project }: { project: PatternProject }) {
         <p className="text-xs text-muted-foreground">
           {copy.benchmarks}
         </p>
-        <Button variant="outline" size="sm"
-          onClick={() => window.location.reload()}>
-          <RotateCw className="h-3.5 w-3.5 mr-1.5" /> {copy.rerun}
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleCheckGrading}
+          data-testid="button-check-grading"
+        >
+          <RotateCw className="h-3.5 w-3.5 mr-1.5" /> {recognitionCopy.checkGrading}
         </Button>
       </CardContent>
     </Card>

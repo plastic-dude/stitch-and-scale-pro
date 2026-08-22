@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import * as landing from './landing-copy';
 import * as grading from './grading-copy';
+import * as recognition from './recognition-copy';
 import * as chart from './chart-copy';
 import * as workspace from './workspace-copy';
 import * as settings from './settings-copy';
@@ -89,6 +90,7 @@ describe('I18n Locale Parity', () => {
   // Add all copy files here as they are created
   checkParity(landing, 'landing-copy.ts');
   checkParity(grading, 'grading-copy.ts');
+  checkParity(recognition, 'recognition-copy.ts');
   checkParity(chart, 'chart-copy.ts');
   checkParity(workspace, 'workspace-copy.ts');
   checkParity(settings, 'settings-copy.ts');
