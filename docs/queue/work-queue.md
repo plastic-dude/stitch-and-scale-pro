@@ -35,8 +35,11 @@
 | 27 | QUEUE-020 | Universal Localization II — fix hardcoded "Localization Audit" label; localize Tech-Edit findings, Pricing Psychology, Podcast Affiliate, and POD Patterns labs; localize sample project seeding in onboarding flow | MAJOR | done | CHK-163: all 4 labs refactored, onboarding localized, sample projects seeded per-locale, Tech-Edit audit findings fully localized; evidence in `docs/leader-notes/cycle-2026-08-21-chk163.md` |
 | 28 | QUEUE-021 | Audit F-09 (High) — Draft placeholder policy: inconsistent token failure modes; add pre-export token validation and one error policy | MAJOR | done | CHK-164: fixed non-greedy token resolution, implemented `validateDraft` preflight layer, localized error states in 5 locales; vitest 2,309/2,309 green |
 | 29 | QUEUE-022 | Audit: Chart Lab input validation — selvedge/repeat fields accept negative/zero values without field-level validation | MAJOR | done | CHK-165: implemented `validateChartInputs` shared layer, wired validation UI into `ChartLabCard`, added localized error states; vitest 2,316/2,316 green |
+| 30 | QUEUE-023 | Audit: Income Planner validation — accepts negative prices, zero sales with no invalid state; clean-looking zeros mislead users | MAJOR | done | CHK-166: implemented `validateIncomeInputs` + localized quarantine UI; fixed `validateInputs` key propagation; vitest 2,324/2,324 green |
+| 31 | QUEUE-024 | Audit: Grading table readability — dense cells, concatenated values in text layer; accessibility risk | MINOR | queued | Audit P2/F-11; improve cell spacing and text-layer clarity |
 
 ## Run ledger
+| 2026-08-22 (CHK-166) | QUEUE-023 (MAJOR) — Income Planner Validation | tsc clean; vitest 2,324/2,324; build green; 8 new tests | e292363d4b7041c11a0d2dc3eb8aa77ad2af244c | QUEUE-024 |
 
 | Run (date) | Item worked | Gates | Commit | Next item |
 |---|---|---|---|---|

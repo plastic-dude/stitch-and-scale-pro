@@ -3,7 +3,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { NativeSelect } from '@/components/ui/native-select';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { PlatformId, PLATFORMS, PLATFORM_LABELS, platformNet, breakeven } from '@/lib/pattern-income-calculator';
+import {
+  PlatformId,
+  PLATFORMS,
+  PLATFORM_LABELS,
+  platformNet,
+  breakeven,
+  validateIncomeInputs,
+} from '@/lib/pattern-income-calculator';
+import { isInputValid, invalidSummary } from '@/lib/validate-field';
+import { AlertTriangle } from 'lucide-react';
 import { PatternProject } from '@/lib/grading-engine';
 import { cn } from '@/lib/utils';
 import { useSettings } from '@/context/SettingsContext';
@@ -30,10 +39,16 @@ export function IncomeCalculatorCard({ project }: { project: PatternProject }) {
   const [designHours, setDesignHours] = React.useState('20');
   const [hourlyRate, setHourlyRate] = React.useState('25');
 
-  const priceNum = Math.max(0, parseFloat(price) || 0);
-  const salesNum = Math.max(0, parseInt(monthlySales) || 0);
-  const hoursNum = Math.max(0, parseFloat(designHours) || 0);
-  const rateNum = Math.max(0, parseFloat(hourlyRate) || 0);
+  const inputErrors = React.useMemo(
+    () => validateIncomeInputs({ price, monthlySales, designHours, hourlyRate }),
+    [price, monthlySales, designHours, hourlyRate],
+  );
+  const inputsInvalid = !isInputValid(inputErrors);
+
+  const priceNum = parseFloat(price) || 0;
+  const salesNum = parseInt(monthlySales) || 0;
+  const hoursNum = parseFloat(designHours) || 0;
+  const rateNum = parseFloat(hourlyRate) || 0;
 
   const net = platformNet(platform, priceNum, salesNum);
   const be = breakeven(platform, priceNum, salesNum, hoursNum, rateNum);
@@ -57,6 +72,18 @@ export function IncomeCalculatorCard({ project }: { project: PatternProject }) {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
+        {inputsInvalid && (
+          <div className="rounded-lg border border-destructive/40 bg-destructive/5 p-4 space-y-2">
+            <div className="flex items-center gap-2 font-semibold text-destructive text-sm">
+              <AlertTriangle className="h-4 w-4" />
+              {copy.invalidInputsTitle || 'Invalid inputs'}
+            </div>
+            <div className="text-xs text-destructive/80 whitespace-pre-line leading-relaxed">
+              {invalidSummary(inputErrors)}
+            </div>
+          </div>
+        )}
+
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div>
             <Label htmlFor="income-price" className="text-xs text-muted-foreground mb-1 block">{copy.price}</Label>
@@ -93,26 +120,31 @@ export function IncomeCalculatorCard({ project }: { project: PatternProject }) {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div className="bg-muted/40 rounded-lg p-4 text-center">
-            <div className="text-2xl font-mono font-bold text-foreground">${net.netRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+          <div className={cn("bg-muted/40 rounded-lg p-4 text-center transition-opacity", inputsInvalid && "opacity-50 grayscale")}>
+            <div className="text-2xl font-mono font-bold text-foreground">
+              {inputsInvalid ? '—' : `$${net.netRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+            </div>
             <div className="text-xs text-muted-foreground mt-1">{copy.netMonth} ({platform})</div>
           </div>
-          <div className="bg-muted/40 rounded-lg p-4 text-center">
+          <div className={cn("bg-muted/40 rounded-lg p-4 text-center transition-opacity", inputsInvalid && "opacity-50 grayscale")}>
             <div className="text-2xl font-mono font-bold text-foreground">
-              {Number.isFinite(be.salesToBreakEven) ? Math.round(be.salesToBreakEven).toLocaleString() : '—'}
+              {inputsInvalid ? '—' : (Number.isFinite(be.salesToBreakEven) ? Math.round(be.salesToBreakEven).toLocaleString() : '—')}
             </div>
             <div className="text-xs text-muted-foreground mt-1">{copy.breakEven}</div>
           </div>
-          <div className="bg-muted/40 rounded-lg p-4 text-center">
-            <div className="text-2xl font-mono font-bold text-foreground">${be.annualizedNet.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+          <div className={cn("bg-muted/40 rounded-lg p-4 text-center transition-opacity", inputsInvalid && "opacity-50 grayscale")}>
+            <div className="text-2xl font-mono font-bold text-foreground">
+              {inputsInvalid ? '—' : `$${be.annualizedNet.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+            </div>
             <div className="text-xs text-muted-foreground mt-1">{copy.annualized}</div>
           </div>
         </div>
 
         <div>
           <h3 className="text-sm font-medium mb-2">{copy.compare}</h3>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm text-left whitespace-nowrap">
+                  <div className={cn("overflow-x-auto transition-opacity", inputsInvalid && "opacity-50 grayscale")}>
+          <table className="w-full text-sm text-left whitespace-nowrap">
+
               <thead>
                 <tr className="text-xs text-muted-foreground border-b border-border">
                   <th className="px-2 py-2 font-medium">{copy.platformHead}</th>
@@ -124,8 +156,12 @@ export function IncomeCalculatorCard({ project }: { project: PatternProject }) {
                 {comparisonRows.map(row => (
                   <tr key={row.platform} className={cn("hover:bg-muted/30", row.platform === platform && "bg-primary/5")}>
                     <td className="px-2 py-2.5 font-medium">{PLATFORM_LABELS[row.platform]}</td>
-                    <td className="px-3 py-2.5 text-right font-mono">${row.netRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                    <td className="px-3 py-2.5 text-right font-mono text-muted-foreground">{row.effectiveFeePct}%</td>
+                    <td className="px-3 py-2.5 text-right font-mono">
+                      {inputsInvalid ? '—' : `$${row.netRevenue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                    </td>
+                    <td className="px-3 py-2.5 text-right font-mono text-muted-foreground">
+                      {inputsInvalid ? '—' : `${row.effectiveFeePct}%`}
+                    </td>
                   </tr>
                 ))}
               </tbody>

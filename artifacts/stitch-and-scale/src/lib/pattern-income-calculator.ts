@@ -1,3 +1,5 @@
+import { type ValidationResult, type FieldSpecMap, validateInputs } from './validate-field';
+
 /**
  * Pattern income calculator — revenue planning for designers selling patterns.
  *
@@ -143,3 +145,39 @@ export function breakeven(
 }
 
 export const PLATFORMS: PlatformId[] = ['ravelry', 'etsy', 'ribblr', 'payhip'];
+
+export interface IncomeInputs {
+  price: string;
+  monthlySales: string;
+  designHours: string;
+  hourlyRate: string;
+}
+
+export const INCOME_INPUT_SPECS: FieldSpecMap<IncomeInputs> = {
+  price: { type: 'positive', label: 'Pattern price' },
+  monthlySales: { type: 'count', label: 'Monthly sales', min: 0 },
+  designHours: { type: 'count', label: 'Design hours', min: 0 },
+  hourlyRate: { type: 'rate', label: 'Hourly rate', min: 0 },
+};
+
+export function validateIncomeInputs(input: IncomeInputs): ValidationResult[] {
+  return validateInputs(INCOME_INPUT_SPECS, input as unknown as Record<string, unknown>);
+}
+
+export interface IncomeQuarantine {
+  quarantined: boolean;
+  net: Record<PlatformId, PlatformNet>;
+  break: Record<PlatformId, BreakevenResult>;
+}
+
+export const INCOME_QUARANTINE: IncomeQuarantine = {
+  quarantined: true,
+  net: PLATFORMS.reduce((acc, id) => ({
+    ...acc,
+    [id]: { netRevenue: 0, totalFees: 0, netPerSale: 0, effectiveFeePct: 0 },
+  }), {} as Record<PlatformId, PlatformNet>),
+  break: PLATFORMS.reduce((acc, id) => ({
+    ...acc,
+    [id]: { salesToBreakEven: 0, monthsToBreakEven: 0, annualizedNet: 0 },
+  }), {} as Record<PlatformId, BreakevenResult>),
+};

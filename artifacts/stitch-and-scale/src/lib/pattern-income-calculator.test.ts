@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { platformNet, breakeven, PLATFORMS } from './pattern-income-calculator';
+import { platformNet, breakeven, PLATFORMS, validateIncomeInputs, IncomeInputs } from './pattern-income-calculator';
 
 describe('platformNet', () => {
   it('returns net revenue below gross for every platform at $8 / 50 sales', () => {
@@ -62,5 +62,107 @@ describe('breakeven', () => {
     const b = breakeven('etsy', 5, 0, 10, 20);
     expect(b.monthsToBreakEven).toBe(0);
     expect(b.salesToBreakEven).toBeGreaterThan(0);
+  });
+});
+
+describe('validateIncomeInputs', () => {
+  it('detects negative price', () => {
+    const input: IncomeInputs = {
+      price: '-5.00',
+      monthlySales: '10',
+      designHours: '10',
+      hourlyRate: '25'
+    };
+    const errors = validateIncomeInputs(input);
+    const priceError = errors.find(e => e.field === 'price');
+    expect(priceError?.ok).toBe(false);
+    expect(priceError?.code).toBe('not-positive');
+  });
+
+  it('detects zero price (strictly positive required)', () => {
+    const input: IncomeInputs = {
+      price: '0',
+      monthlySales: '10',
+      designHours: '10',
+      hourlyRate: '25'
+    };
+    const errors = validateIncomeInputs(input);
+    const priceError = errors.find(e => e.field === 'price');
+    expect(priceError?.ok).toBe(false);
+    expect(priceError?.code).toBe('not-positive');
+  });
+
+  it('detects negative sales', () => {
+    const input: IncomeInputs = {
+      price: '8.00',
+      monthlySales: '-1',
+      designHours: '10',
+      hourlyRate: '25'
+    };
+    const errors = validateIncomeInputs(input);
+    const salesError = errors.find(e => e.field === 'monthlySales');
+    expect(salesError?.ok).toBe(false);
+    expect(salesError?.code).toBe('negative');
+  });
+
+  it('detects non-integer sales', () => {
+    const input: IncomeInputs = {
+      price: '8.00',
+      monthlySales: '10.5',
+      designHours: '10',
+      hourlyRate: '25'
+    };
+    const errors = validateIncomeInputs(input);
+    const salesError = errors.find(e => e.field === 'monthlySales');
+    expect(salesError?.ok).toBe(false);
+    expect(salesError?.code).toBe('not-integer');
+  });
+
+  it('detects negative hours', () => {
+    const input: IncomeInputs = {
+      price: '8.00',
+      monthlySales: '10',
+      designHours: '-5',
+      hourlyRate: '25'
+    };
+    const errors = validateIncomeInputs(input);
+    const hoursError = errors.find(e => e.field === 'designHours');
+    expect(hoursError?.ok).toBe(false);
+    expect(hoursError?.code).toBe('negative');
+  });
+
+  it('detects negative rate', () => {
+    const input: IncomeInputs = {
+      price: '8.00',
+      monthlySales: '10',
+      designHours: '10',
+      hourlyRate: '-25'
+    };
+    const errors = validateIncomeInputs(input);
+    const rateError = errors.find(e => e.field === 'hourlyRate');
+    expect(rateError?.ok).toBe(false);
+    expect(rateError?.code).toBe('negative');
+  });
+
+  it('passes on valid inputs', () => {
+    const input: IncomeInputs = {
+      price: '8.00',
+      monthlySales: '10',
+      designHours: '10',
+      hourlyRate: '25'
+    };
+    const errors = validateIncomeInputs(input);
+    expect(errors.every(e => e.ok)).toBe(true);
+  });
+
+  it('passes on zero sales/hours/rate (allowed minima)', () => {
+    const input: IncomeInputs = {
+      price: '8.00',
+      monthlySales: '0',
+      designHours: '0',
+      hourlyRate: '0'
+    };
+    const errors = validateIncomeInputs(input);
+    expect(errors.every(e => e.ok)).toBe(true);
   });
 });
