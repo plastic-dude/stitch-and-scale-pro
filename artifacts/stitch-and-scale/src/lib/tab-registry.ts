@@ -115,6 +115,7 @@ export const TAB_REGISTRY: TabRegistryEntry[] = [
   { value: "wholesale-pricelist", label: "Wholesale Price List Lab", group: "channels", icon: "ClipboardList" },
   { value: "intl-pricing", label: "Intl Pricing Lab", group: "pricing", icon: "Globe" },
   { value: "testknitlab", label: "Test Knit Lab", group: "fit", icon: "Users" },
+  { value: "testarchive", label: "Test Knit Archive", group: "fit", icon: "Archive" },
   { value: "gaugefit", label: "Gauge & Fit", group: "fit", icon: "Ruler" },
   { value: "receiptlab", label: "Receipt Lab", group: "pricing", icon: "ReceiptText" },
   { value: "designledger", label: "Design Ledger", group: "business", icon: "BookMarked" },
@@ -144,8 +145,8 @@ export function assertTabRegistryIntegrity(): void {
     "TAB_REGISTRY (" + TAB_REGISTRY.length + ") does not match TAB_GROUPS (" + Object.keys(TAB_GROUPS).length + ")",
   );
   console.assert(
-    TAB_REGISTRY.length === 86,
-    "TAB_REGISTRY count is " + TAB_REGISTRY.length + ", expected 86"
+    TAB_REGISTRY.length === 87,
+    "TAB_REGISTRY count is " + TAB_REGISTRY.length + ", expected 87"
   );
   for (const t of TAB_REGISTRY) {
     console.assert(

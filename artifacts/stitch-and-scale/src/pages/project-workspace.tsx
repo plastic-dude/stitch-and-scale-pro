@@ -133,6 +133,7 @@ const LAB = {
   wholesalepricelist: React.lazy(cardLazy(() => import('@/components/wholesale-pricelist-lab-card'))),
   intlpricing: React.lazy(cardLazy(() => import('@/components/intl-pricing-lab-card'))),
   testknitlab: React.lazy(cardLazy(() => import('@/components/testknit-slot-lab-card'))),
+  testarchive: React.lazy(cardLazy(() => import('@/components/testknit-archive-card'))),
   gaugefit: React.lazy(cardLazy(() => import('@/components/gauge-fit-translator-card'))),
   receiptlab: React.lazy(cardLazy(() => import('@/components/receipt-lab-card'))),
   designledger: React.lazy(cardLazy(() => import('@/components/design-ledger-card'))),
@@ -915,6 +916,14 @@ export default function ProjectWorkspace() {
       case 'designledger': return <LazyPanel loader={LAB.designledger} project={project} />;
       case 'bragcard': return <LazyPanel loader={LAB.bragcard} project={project} />;
       case 'payback': return <LazyPanel loader={LAB.payback} project={project} />;
+      case 'testarchive': {
+        const TestKnitArchiveCard = LAB.testarchive as React.ComponentType<any>;
+        return (
+          <React.Suspense fallback={<div className="py-10 text-center text-sm text-muted-foreground">{copy.loadingLab}</div>}>
+            <TestKnitArchiveCard project={project} />
+          </React.Suspense>
+        );
+      }
       case 'snapshots': {
         const Snapshots = LAB.snapshots as React.ComponentType<any>;
         return (

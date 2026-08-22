@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useReducer, useRef, useState } from 'react';
 import { get, set } from 'idb-keyval';
-import { type PatternProject, generateId, type PublicationPackage, type PublicationArtifact, type ArtifactInspectionReport, type EaseProfileReference, type SizingStandardMetadata, type CollaborationMember, type ReadinessStage, type ReadinessIssue, type ReadinessComment, type PatternDocumentContent } from '@/lib/grading-engine';
+import { type PatternProject, generateId, type PublicationPackage, type PublicationArtifact, type ArtifactInspectionReport, type EaseProfileReference, type SizingStandardMetadata, type CollaborationMember, type ReadinessStage, type ReadinessIssue, type ReadinessComment, type PatternDocumentContent, type TestKnitRound } from '@/lib/grading-engine';
 export type { PatternProject };
 import { getSampleCrewNeckSweater } from '@/lib/sample-projects';
 import { LanguageCode } from '@/lib/i18n';
@@ -54,7 +54,10 @@ export type ProjectsAction =
   | { type: 'DELETE_ASSET'; payload: { projectId: string; assetId: string } }
   | { type: 'UPDATE_ASSET'; payload: { projectId: string; assetId: string; patch: any } }
   | { type: 'SET_DRAFT_CONTENT'; payload: { projectId: string; content: PatternDocumentContent } }
-  | { type: 'COMPILE_PACKAGE'; payload: { projectId: string; packageId: string; content: PatternDocumentContent } };
+  | { type: 'COMPILE_PACKAGE'; payload: { projectId: string; packageId: string; content: PatternDocumentContent } }
+  | { type: 'ADD_TEST_KNIT_ROUND'; payload: { projectId: string; round: TestKnitRound } }
+  | { type: 'UPDATE_TEST_KNIT_ROUND'; payload: { projectId: string; roundId: string; patch: Partial<TestKnitRound> } }
+  | { type: 'DELETE_TEST_KNIT_ROUND'; payload: { projectId: string; roundId: string } };
 
 export type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
 
@@ -89,6 +92,9 @@ interface ProjectsContextType {
   updateAsset: (projectId: string, assetId: string, patch: any) => void;
   setDraftContent: (projectId: string, content: PatternDocumentContent) => void;
   compilePackage: (projectId: string, packageId: string, content: PatternDocumentContent) => void;
+  addTestKnitRound: (projectId: string, round: TestKnitRound) => void;
+  updateTestKnitRound: (projectId: string, roundId: string, patch: Partial<TestKnitRound>) => void;
+  deleteTestKnitRound: (projectId: string, roundId: string) => void;
   saveStatus: SaveStatus;
   recovered: boolean;
   dismissRecovery: () => void;
@@ -403,6 +409,27 @@ export function projectsReducer(state: PatternProject[], action: ProjectsAction)
         updatedAt: new Date().toISOString()
       } : p);
       break;
+    case 'ADD_TEST_KNIT_ROUND':
+      newState = state.map(p => p.id === action.payload.projectId ? {
+        ...p,
+        testKnitRounds: [action.payload.round, ...(p.testKnitRounds || [])],
+        updatedAt: new Date().toISOString()
+      } : p);
+      break;
+    case 'UPDATE_TEST_KNIT_ROUND':
+      newState = state.map(p => p.id === action.payload.projectId ? {
+        ...p,
+        testKnitRounds: (p.testKnitRounds || []).map(r => r.id === action.payload.roundId ? { ...r, ...action.payload.patch, updatedAt: new Date().toISOString() } : r),
+        updatedAt: new Date().toISOString()
+      } : p);
+      break;
+    case 'DELETE_TEST_KNIT_ROUND':
+      newState = state.map(p => p.id === action.payload.projectId ? {
+        ...p,
+        testKnitRounds: (p.testKnitRounds || []).filter(r => r.id !== action.payload.roundId),
+        updatedAt: new Date().toISOString()
+      } : p);
+      break;
     default:
       return state;
   }
@@ -516,9 +543,12 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
   const addReadinessIssue = (projectId: string, stage: ReadinessStage, issue: ReadinessIssue) => dispatch({ type: 'ADD_READINESS_ISSUE', payload: { projectId, stage, issue } });
   const updateReadinessIssue = (projectId: string, stage: ReadinessStage, issueId: string, patch: Partial<ReadinessIssue>) => dispatch({ type: 'UPDATE_READINESS_ISSUE', payload: { projectId, stage, issueId, patch } });
   const addIssueComment = (projectId: string, stage: ReadinessStage, issueId: string, comment: ReadinessComment) => dispatch({ type: 'ADD_ISSUE_COMMENT', payload: { projectId, stage, issueId, comment } });
-  const addAsset = (projectId: string, asset: any) => dispatch({ type: 'ADD_ASSET', payload: { projectId, asset } });
-  const deleteAsset = (projectId: string, assetId: string) => dispatch({ type: 'DELETE_ASSET', payload: { projectId, assetId } });
-  const updateAsset = (projectId: string, assetId: string, patch: any) => dispatch({ type: 'UPDATE_ASSET', payload: { projectId, assetId, patch } });
+    const addAsset = (projectId: string, asset: any) => dispatch({ type: 'ADD_ASSET', payload: { projectId, asset } });
+    const deleteAsset = (projectId: string, assetId: string) => dispatch({ type: 'DELETE_ASSET', payload: { projectId, assetId } });
+    const updateAsset = (projectId: string, assetId: string, patch: any) => dispatch({ type: 'UPDATE_ASSET', payload: { projectId, assetId, patch } });
+    const addTestKnitRound = (projectId: string, round: TestKnitRound) => dispatch({ type: 'ADD_TEST_KNIT_ROUND', payload: { projectId, round } });
+    const updateTestKnitRound = (projectId: string, roundId: string, patch: Partial<TestKnitRound>) => dispatch({ type: 'UPDATE_TEST_KNIT_ROUND', payload: { projectId, roundId, patch } });
+    const deleteTestKnitRound = (projectId: string, roundId: string) => dispatch({ type: 'DELETE_TEST_KNIT_ROUND', payload: { projectId, roundId } });
 
   // Import a single project from an exported JSON file — always assigns a
   // fresh id so it can never silently collide with or overwrite an existing
@@ -547,6 +577,7 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
       addCollaborator, updateCollaborator, deleteCollaborator,
       addReadinessIssue, updateReadinessIssue, addIssueComment,
       addAsset, deleteAsset, updateAsset,
+      addTestKnitRound, updateTestKnitRound, deleteTestKnitRound,
       setDraftContent: (projectId: string, content: PatternDocumentContent) => dispatch({ type: 'SET_DRAFT_CONTENT', payload: { projectId, content } }),
       compilePackage: (projectId: string, packageId: string, content: PatternDocumentContent) => dispatch({ type: 'COMPILE_PACKAGE', payload: { projectId, packageId, content } }),
       saveStatus, recovered, dismissRecovery 
@@ -589,6 +620,7 @@ export function useProject(id?: string) {
     addCollaborator, updateCollaborator, deleteCollaborator,
     addReadinessIssue, updateReadinessIssue, addIssueComment,
     addAsset, deleteAsset, updateAsset,
+    addTestKnitRound, updateTestKnitRound, deleteTestKnitRound,
     setDraftContent, compilePackage
   } = useProjects();
   if (!id) return null;
@@ -619,9 +651,12 @@ export function useProject(id?: string) {
       addReadinessIssue: (stage: ReadinessStage, issue: ReadinessIssue) => addReadinessIssue(DEMO_PROJECT_ID, stage, issue),
       updateReadinessIssue: (stage: ReadinessStage, issueId: string, patch: Partial<ReadinessIssue>) => updateReadinessIssue(DEMO_PROJECT_ID, stage, issueId, patch),
       addIssueComment: (stage: ReadinessStage, issueId: string, comment: ReadinessComment) => addIssueComment(DEMO_PROJECT_ID, stage, issueId, comment),
-      addAsset: (asset: any) => addAsset(DEMO_PROJECT_ID, asset),
+    addAsset: (asset: any) => addAsset(DEMO_PROJECT_ID, asset),
       deleteAsset: (assetId: string) => deleteAsset(DEMO_PROJECT_ID, assetId),
       updateAsset: (assetId: string, patch: any) => updateAsset(DEMO_PROJECT_ID, assetId, patch),
+      addTestKnitRound: (round: TestKnitRound) => addTestKnitRound(DEMO_PROJECT_ID, round),
+      updateTestKnitRound: (roundId: string, patch: Partial<TestKnitRound>) => updateTestKnitRound(DEMO_PROJECT_ID, roundId, patch),
+      deleteTestKnitRound: (roundId: string) => deleteTestKnitRound(DEMO_PROJECT_ID, roundId),
       setDraftContent: (content: PatternDocumentContent) => setDraftContent(DEMO_PROJECT_ID, content),
       compilePackage: (packageId: string, content: PatternDocumentContent) => compilePackage(DEMO_PROJECT_ID, packageId, content),
     };
@@ -651,8 +686,11 @@ export function useProject(id?: string) {
     addIssueComment: (stage: ReadinessStage, issueId: string, comment: ReadinessComment) => addIssueComment(id, stage, issueId, comment),
     addAsset: (asset: any) => addAsset(id, asset),
     deleteAsset: (assetId: string) => deleteAsset(id, assetId),
-      updateAsset: (assetId: string, patch: any) => updateAsset(id, assetId, patch),
-      setDraftContent: (content: PatternDocumentContent) => setDraftContent(id, content),
-      compilePackage: (packageId: string, content: PatternDocumentContent) => compilePackage(id, packageId, content),
-    };
-  }
+    updateAsset: (assetId: string, patch: any) => updateAsset(id, assetId, patch),
+    addTestKnitRound: (round: TestKnitRound) => addTestKnitRound(id, round),
+    updateTestKnitRound: (roundId: string, patch: Partial<TestKnitRound>) => updateTestKnitRound(id, roundId, patch),
+    deleteTestKnitRound: (roundId: string) => deleteTestKnitRound(id, roundId),
+    setDraftContent: (content: PatternDocumentContent) => setDraftContent(id, content),
+    compilePackage: (packageId: string, content: PatternDocumentContent) => compilePackage(id, packageId, content),
+  };
+}

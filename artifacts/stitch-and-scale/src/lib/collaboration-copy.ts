@@ -28,6 +28,29 @@ export interface CollaborationCopy {
   dispositionLabel: string;
   resolutionLabel: string;
   statusNeedsTestKnit: string;
+  testKnitRounds: string;
+  addRound: string;
+  testerLabel: string;
+  sizeLabel: string;
+  gaugeLabel: string;
+  yarnLabel: string;
+  startDateLabel: string;
+  endDateLabel: string;
+  observationsLabel: string;
+  followUpLabel: string;
+  noRounds: string;
+  deleteRoundConfirm: string;
+  testKnitArchive: string;
+  testKnitArchiveDescription: string;
+  noRoundsYet: string;
+  noRoundsDescription: string;
+  startFirstRound: string;
+  testers: string;
+  viewDetails: string;
+  recordRoundDescription: string;
+  cancelled: string;
+  saveRound: string;
+  roundUpdated: string;
 }
 
 export const COLLABORATION_COPY: Record<LanguageCode, CollaborationCopy> = {
@@ -59,6 +82,29 @@ export const COLLABORATION_COPY: Record<LanguageCode, CollaborationCopy> = {
     dispositionLabel: 'Disposition',
     resolutionLabel: 'Resolution Note',
     statusNeedsTestKnit: 'Needs Test Knit',
+    testKnitRounds: 'Test-Knit Rounds',
+    addRound: 'Add Round',
+    testerLabel: 'Tester',
+    sizeLabel: 'Size',
+    gaugeLabel: 'Gauge',
+    yarnLabel: 'Yarn',
+    startDateLabel: 'Start Date',
+    endDateLabel: 'End Date',
+    observationsLabel: 'Observations',
+    followUpLabel: 'Follow-up',
+    noRounds: 'No test-knit rounds recorded.',
+    deleteRoundConfirm: 'Are you sure you want to delete this test-knit round?',
+    testKnitArchive: 'Test-Knit Archive',
+    testKnitArchiveDescription: 'Durable history of physical testing rounds.',
+    noRoundsYet: 'No rounds yet',
+    noRoundsDescription: 'Record your first test-knit round to start building a history of physical testing for this pattern.',
+    startFirstRound: 'Start First Round',
+    testers: 'Testers',
+    viewDetails: 'View Details',
+    recordRoundDescription: 'Record a physical testing round for this design.',
+    cancelled: 'Cancelled',
+    saveRound: 'Save Round',
+    roundUpdated: 'Test-knit round updated',
   },
   de: {
     title: 'Zusammenarbeit',
@@ -88,6 +134,29 @@ export const COLLABORATION_COPY: Record<LanguageCode, CollaborationCopy> = {
     dispositionLabel: 'Entscheidung',
     resolutionLabel: 'Lösungshinweis',
     statusNeedsTestKnit: 'Test-Stricken erforderlich',
+    testKnitRounds: 'Test-Strick-Runden',
+    addRound: 'Runde hinzufügen',
+    testerLabel: 'Tester',
+    sizeLabel: 'Größe',
+    gaugeLabel: 'Maschenprobe',
+    yarnLabel: 'Garn',
+    startDateLabel: 'Startdatum',
+    endDateLabel: 'Enddatum',
+    observationsLabel: 'Beobachtungen',
+    followUpLabel: 'Nachverfolgung',
+    noRounds: 'Keine Test-Strick-Runden aufgezeichnet.',
+    deleteRoundConfirm: 'Bist du sicher, dass du diese Test-Strick-Runde löschen möchtest?',
+    testKnitArchive: 'Teststrick-Archiv',
+    testKnitArchiveDescription: 'Dauerhafte Historie physischer Testrunden.',
+    noRoundsYet: 'Noch keine Runden',
+    noRoundsDescription: 'Erfasse deine erste Teststrick-Runde, um eine Historie der physischen Tests für dieses Muster aufzubauen.',
+    startFirstRound: 'Erste Runde starten',
+    testers: 'Tester',
+    viewDetails: 'Details anzeigen',
+    recordRoundDescription: 'Erfasse eine physische Testrunde für dieses Design.',
+    cancelled: 'Abgebrochen',
+    saveRound: 'Runde speichern',
+    roundUpdated: 'Teststrick-Runde aktualisiert',
   },
   fr: {
     title: 'Collaboration',
@@ -117,6 +186,29 @@ export const COLLABORATION_COPY: Record<LanguageCode, CollaborationCopy> = {
     dispositionLabel: 'Disposition',
     resolutionLabel: 'Note de résolution',
     statusNeedsTestKnit: 'Nécessite un test de tricot',
+    testKnitRounds: 'Rondes de test de tricot',
+    addRound: 'Ajouter une ronde',
+    testerLabel: 'Testeur',
+    sizeLabel: 'Taille',
+    gaugeLabel: 'Échantillon',
+    yarnLabel: 'Fil',
+    startDateLabel: 'Date de début',
+    endDateLabel: 'Date de fin',
+    observationsLabel: 'Observations',
+    followUpLabel: 'Suivi',
+    noRounds: 'Aucune ronde de test de tricot enregistrée.',
+    deleteRoundConfirm: 'Êtes-vous sûr de vouloir supprimer cette ronde de test de tricot ?',
+    testKnitArchive: 'Archive des tests de tricot',
+    testKnitArchiveDescription: 'Historique durable des tours d\'essais physiques.',
+    noRoundsYet: 'Pas encore de rondes',
+    noRoundsDescription: 'Enregistrez votre première ronde de test de tricot pour commencer à construire un historique des tests physiques pour ce modèle.',
+    startFirstRound: 'Démarrer la première ronde',
+    testers: 'Testeurs',
+    viewDetails: 'Voir les détails',
+    recordRoundDescription: 'Enregistrez un tour d\'essai physique pour ce modèle.',
+    cancelled: 'Annulé',
+    saveRound: 'Enregistrer le tour',
+    roundUpdated: 'Ronde de test de tricot mise à jour',
   },
   es: {
     title: 'Colaboración',
@@ -146,6 +238,29 @@ export const COLLABORATION_COPY: Record<LanguageCode, CollaborationCopy> = {
     dispositionLabel: 'Disposición',
     resolutionLabel: 'Nota de resolución',
     statusNeedsTestKnit: 'Necesita prueba de tejido',
+    testKnitRounds: 'Rondas de prueba de tejido',
+    addRound: 'Agregar ronda',
+    testerLabel: 'Probador',
+    sizeLabel: 'Talla',
+    gaugeLabel: 'Muestra',
+    yarnLabel: 'Hilo',
+    startDateLabel: 'Fecha de inicio',
+    endDateLabel: 'Fecha de finalización',
+    observationsLabel: 'Observaciones',
+    followUpLabel: 'Seguimiento',
+    noRounds: 'No se han registrado rondas de prueba de tejido.',
+    deleteRoundConfirm: '¿Estás seguro de que deseas eliminar esta ronda de prueba de tejido?',
+    testKnitArchive: 'Archivo de pruebas de tejido',
+    testKnitArchiveDescription: 'Historial duradero de rondas de pruebas físicas.',
+    noRoundsYet: 'Aún no hay rondas',
+    noRoundsDescription: 'Registra tu primera ronda de prueba de tejido para comenzar a construir un historial de pruebas físicas para este patrón.',
+    startFirstRound: 'Comenzar primera ronda',
+    testers: 'Probadores',
+    viewDetails: 'Ver detalles',
+    recordRoundDescription: 'Registra una ronda de prueba física para este diseño.',
+    cancelled: 'Cancelado',
+    saveRound: 'Guardar ronda',
+    roundUpdated: 'Ronda de prueba de tejido actualizada',
   },
   pt: {
     title: 'Colaboração',
@@ -175,5 +290,28 @@ export const COLLABORATION_COPY: Record<LanguageCode, CollaborationCopy> = {
     dispositionLabel: 'Disposição',
     resolutionLabel: 'Nota de resolução',
     statusNeedsTestKnit: 'Necessita teste de tricô',
+    testKnitRounds: 'Rodadas de teste de tricô',
+    addRound: 'Adicionar rodada',
+    testerLabel: 'Testador',
+    sizeLabel: 'Tamanho',
+    gaugeLabel: 'Amostra',
+    yarnLabel: 'Fio',
+    startDateLabel: 'Data de início',
+    endDateLabel: 'Data de término',
+    observationsLabel: 'Observações',
+    followUpLabel: 'Acompanhamento',
+    noRounds: 'Nenhuma rodada de teste de tricô registrada.',
+    deleteRoundConfirm: 'Tem certeza de que deseja excluir esta rodada de teste de tricô?',
+    testKnitArchive: 'Arquivo de testes de tricô',
+    testKnitArchiveDescription: 'Histórico durável de rodadas de testes físicos.',
+    noRoundsYet: 'Ainda não há rodadas',
+    noRoundsDescription: 'Registre sua primeira rodada de teste de tricô para começar a construir um histórico de testes físicos para este padrão.',
+    startFirstRound: 'Iniciar primeira rodada',
+    testers: 'Testadores',
+    viewDetails: 'Ver detalhes',
+    recordRoundDescription: 'Registre uma rodada de teste físico para este design.',
+    cancelled: 'Cancelado',
+    saveRound: 'Salvar rodada',
+    roundUpdated: 'Rodada de teste de tricô atualizada',
   },
 };

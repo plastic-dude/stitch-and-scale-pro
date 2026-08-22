@@ -265,6 +265,8 @@ export interface PatternProject {
   assets?: ProjectAsset[];
   /** Pattern composition draft — the working version of the pattern document. */
   draftContent?: PatternDocumentContent;
+  /** Test-knit rounds: durable records of physical testing rounds. */
+  testKnitRounds?: TestKnitRound[];
 }
 
 export interface ProjectAsset {
@@ -277,6 +279,23 @@ export interface ProjectAsset {
   dataUrl: string; // Base64 for local-first storage
   category: 'photo' | 'swatch' | 'schematic' | 'evidence' | 'other';
   createdAt: string;
+}
+
+export type TestKnitStatus = 'planned' | 'in-progress' | 'completed' | 'ghosted' | 'cancelled';
+
+export interface TestKnitRound {
+  id: string;
+  testerName: string;
+  size: SizeKey;
+  gauge?: Gauge;
+  yarn?: string;
+  startDate?: string;
+  endDate?: string;
+  status: TestKnitStatus;
+  observations?: string;
+  followUp?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export type CollaborationRole = 'editor' | 'tester' | 'viewer';

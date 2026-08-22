@@ -51,6 +51,7 @@ export const TAB_GROUPS: Record<string, TabGroup> = {
   testknit: "fit",
   techedit: "fit",
   testknitlab: "fit",
+  testarchive: "fit",
   submissions: "fit",
   gaugefit: "fit",
   inclusive: "fit",
