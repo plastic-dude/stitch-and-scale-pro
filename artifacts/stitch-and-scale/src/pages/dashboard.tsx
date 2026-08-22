@@ -195,9 +195,10 @@ export default function Dashboard() {
 
   const allTags = Array.from(new Set(projects.flatMap(p => p.tags || []))).sort();
   
+  const normalizedSearch = search.toLowerCase();
   const filteredProjects = projects
     .filter(p => {
-      const matchesSearch = p.name.toLowerCase().includes(search.toLowerCase()) || p.author.toLowerCase().includes(search.toLowerCase());
+      const matchesSearch = (p.name ?? '').toLowerCase().includes(normalizedSearch) || (p.author ?? '').toLowerCase().includes(normalizedSearch);
       const matchesArchive = showArchived ? p.isArchived : !p.isArchived;
       const matchesTag = !tagFilter || (p.tags || []).includes(tagFilter);
       return matchesSearch && matchesArchive && matchesTag;

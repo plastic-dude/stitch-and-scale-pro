@@ -21,6 +21,7 @@ import {
   invalidatePublicationState,
   normalizePublicationPackage,
 } from '@/lib/publication-integrity';
+import { normalizeProjectRecord, normalizeProjectRecords } from '@/lib/project-normalization';
 import { useSettings } from './SettingsContext';
 
 export type ProjectsAction =
@@ -94,20 +95,26 @@ export function projectsReducer(state: PatternProject[], action: ProjectsAction)
   let newState: PatternProject[];
   switch (action.type) {
     case 'INIT':
-      return action.payload;
-    case 'CREATE':
-      newState = [...state, action.payload];
+      return normalizeProjectRecords(action.payload);
+    case 'CREATE': {
+      const project = normalizeProjectRecord(action.payload);
+      if (!project) return state;
+      newState = [...state, project];
       break;
-    case 'UPDATE':
+    }
+    case 'UPDATE': {
+      const project = normalizeProjectRecord(action.payload);
+      if (!project) return state;
       newState = state.map(p => {
-        if (p.id !== action.payload.id) return p;
+        if (p.id !== project.id) return p;
         const now = new Date().toISOString();
-        const next = { ...action.payload, updatedAt: now };
+        const next = { ...project, updatedAt: now };
         return hasPublicationSourceChanged(p, next)
           ? invalidatePublicationState(next, now)
           : next;
       });
       break;
+    }
     case 'DELETE':
       newState = state.filter(p => p.id !== action.payload);
       break;
@@ -398,12 +405,7 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
         }
 
         if (parsed) {
-          const migrated = parsed.map((p: any) => ({
-            ...p,
-            gauge: p.gauge || { stitchesPer4In: 0, rowsPer4In: 0, unit: 'in' },
-            sections: p.sections || []
-          }));
-          dispatch({ type: 'INIT', payload: migrated });
+          dispatch({ type: 'INIT', payload: normalizeProjectRecords(parsed) });
         }
       } catch (e) {
         console.error('Failed to load projects', e);
@@ -473,10 +475,16 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
   // Import a single project from an exported JSON file — always assigns a
   // fresh id so it can never silently collide with or overwrite an existing
   // project, even if the file was exported from this same workspace.
-  const importProject = (project: PatternProject) => dispatch({
-    type: 'CREATE',
-    payload: { ...project, id: generateId(), createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
-  });
+  const importProject = (project: PatternProject) => {
+    const now = new Date().toISOString();
+    const imported = normalizeProjectRecord({
+      ...project,
+      id: generateId(),
+      createdAt: now,
+      updatedAt: now,
+    }, now);
+    if (imported) dispatch({ type: 'CREATE', payload: imported });
+  };
 
   if (!isLoaded) return null; // Prevent rendering before state loads
 

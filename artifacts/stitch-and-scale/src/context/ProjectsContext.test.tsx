@@ -6,7 +6,7 @@
 import { describe, it, expect } from 'vitest';
 import fs from 'node:fs';
 import path from 'node:path';
-import { DEMO_PROJECT_ID, makeDemoProject } from './ProjectsContext';
+import { DEMO_PROJECT_ID, makeDemoProject, projectsReducer } from './ProjectsContext';
 import { SAMPLE_CREW_NECK_SWEATER } from '@/lib/sample-projects';
 
 const PROJECTS_CONTEXT_SOURCE = fs.readFileSync(
@@ -18,6 +18,30 @@ describe('ProjectsProvider render integrity', () => {
   it('renders only its children after the Provider opening tag', () => {
     expect(PROJECTS_CONTEXT_SOURCE).not.toContain('],path:');
     expect(PROJECTS_CONTEXT_SOURCE).toMatch(/<ProjectsContext\.Provider[\s\S]*>\s*\{children\}/);
+  });
+});
+
+describe('legacy project hydration', () => {
+  it('normalizes missing required display fields at the reducer boundary', () => {
+    const hydrated = projectsReducer([], {
+      type: 'INIT',
+      payload: [{
+        id: 'legacy-project',
+        name: undefined,
+        author: undefined,
+        baseSize: 'M',
+        gauge: { stitchesPer4In: 20, rowsPer4In: 28, unit: 'in' },
+        sections: [],
+        createdAt: '2026-08-20T00:00:00.000Z',
+        updatedAt: undefined,
+      } as never],
+    });
+
+    expect(hydrated[0]).toMatchObject({
+      name: 'Untitled pattern',
+      author: '',
+      updatedAt: '2026-08-20T00:00:00.000Z',
+    });
   });
 });
 
