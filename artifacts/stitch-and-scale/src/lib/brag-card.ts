@@ -97,6 +97,20 @@ export const BRAG_CARD_STYLES: { id: BragCardStyle; label: string }[] = [
 
 /** Optional identity layered onto the generated social artifact. The logo is
  * intentionally a local data URI: Brag Cards never fetch remote brand assets. */
+export const MAX_BRAG_CARD_LOGO_LENGTH = 200_000;
+
+/**
+ * Brag Cards are rendered locally and must never make an export depend on a
+ * remote asset. Keep the same bounded data-URI contract used by the MCP
+ * artifact path so imported or legacy settings cannot taint a canvas export.
+ */
+export function isLocalBragCardLogo(value: unknown): value is string {
+  return typeof value === "string"
+    && value.trim().length > 0
+    && value.trim().length <= MAX_BRAG_CARD_LOGO_LENGTH
+    && /^data:image\//i.test(value.trim());
+}
+
 export interface BragCardBranding {
   studioName?: string;
   customLogo?: string;
@@ -379,8 +393,8 @@ function applyBragBranding(svg: string, branding?: BragCardBranding): string {
   if (!branding) return svg;
   const wordmark = branding.studioName?.trim() || "STITCH & SCALE";
   let branded = svg.replace(/STITCH &amp; SCALE/g, esc(wordmark));
-  const logo = branding.customLogo?.trim();
-  const logoMarkup = logo && /^(data:image\/|https?:\/\/)/i.test(logo)
+  const logo = isLocalBragCardLogo(branding.customLogo) ? branding.customLogo.trim() : undefined;
+  const logoMarkup = logo
     ? `<image href="${esc(logo)}" x="910" y="62" width="108" height="108" preserveAspectRatio="xMidYMid meet"/>`
     : "";
   const legal = [branding.socialHandle?.trim(), branding.copyrightNotice?.trim()].filter(Boolean).join(" · ");

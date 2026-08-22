@@ -12,6 +12,7 @@ import { prepareMcpPdfExport } from './mcp-workflow.js';
 import {
   buildBragCardSvg,
   computeBragStats,
+  isLocalBragCardLogo,
   type BragCardBranding,
   type BragCardInput,
   type BragCardStyle,
@@ -243,7 +244,7 @@ export async function prepareMcpBragCardExport(input: Record<string, unknown>): 
   if (input.userApproved !== true) return { schemaVersion: MCP_CONTRACT_VERSION, ready: false, requiresUserApproval: true, message: 'Ask the user to confirm the supplied ledger, template, style, branding, filename, and SVG creation before calling this tool with userApproved=true.' };
   const accent = typeof input.accent === 'string' && /^#[0-9a-fA-F]{6}$/.test(input.accent) ? input.accent : '#b65b50';
   const rawBranding = isRecord(input.branding) ? input.branding : {};
-  const logo = typeof rawBranding.customLogo === 'string' && rawBranding.customLogo.startsWith('data:image/') && rawBranding.customLogo.length <= 200_000 ? rawBranding.customLogo : undefined;
+  const logo = isLocalBragCardLogo(rawBranding.customLogo) ? rawBranding.customLogo.trim() : undefined;
   const branding: BragCardBranding = { studioName: text(rawBranding.studioName, card.studioName), socialHandle: text(rawBranding.socialHandle, '', 80), copyrightNotice: text(rawBranding.copyrightNotice, '', 120), customLogo: logo };
   const stats = computeBragStats(card);
   const copy = getBragCardCopy(locale);

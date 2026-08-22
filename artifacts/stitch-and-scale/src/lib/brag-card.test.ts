@@ -3,6 +3,7 @@ import {
   buildBragCaption,
   buildBragCardSvg,
   computeBragStats,
+  isLocalBragCardLogo,
 } from "./brag-card";
 import type { MonthlyLedgerRow } from "./receipt-lab";
 import { getBragCardCopy } from "./brag-copy";
@@ -176,6 +177,30 @@ describe("buildBragCardSvg", () => {
       "#d87093",
     );
     expect(svg).toContain(">4 profitable months<");
+  });
+
+  it("accepts only bounded local image data URIs for logos", () => {
+    expect(isLocalBragCardLogo("data:image/svg+xml;base64,PHN2Zy8+")).toBe(true);
+    expect(isLocalBragCardLogo("https://example.com/logo.png")).toBe(false);
+    expect(isLocalBragCardLogo(`data:image/png;base64,${"a".repeat(200_000)}`)).toBe(false);
+  });
+
+  it("strips remote and oversized logos from the final SVG artifact", () => {
+    const base = {
+      totalRevenue: 130,
+      totalSales: 9,
+      totalProfit: 40,
+      publishedCount: 2,
+      revenuePerSale: 14.44,
+      bestMonth: undefined,
+      bestMonthProfit: 0,
+      profitMonths: 4,
+      profitRatio: 80,
+    };
+    const remote = buildBragCardSvg(base, "USD", "income", "North Loop", "#d87093", "editorial", undefined, { customLogo: "https://example.com/logo.png" });
+    const oversized = buildBragCardSvg(base, "USD", "income", "North Loop", "#d87093", "editorial", undefined, { customLogo: `data:image/png;base64,${"a".repeat(200_000)}` });
+    expect(remote).not.toContain("<image ");
+    expect(oversized).not.toContain("<image ");
   });
 
   it("applies configured studio branding to the final SVG artifact", () => {

@@ -15,6 +15,7 @@ import { useCallback, useMemo, useRef, useState } from "react";
 import {
   buildBragCaption,
   computeBragStats,
+  isLocalBragCardLogo,
   type BragCardBranding,
   type BragCardStyle,
   type BragCardTemplate,
@@ -126,7 +127,7 @@ export function BragCardCard(props: { project: PatternProject }) {
   const displayStudio = (nameOverride || studioName || profileStudioName || copy.studioPlaceholder).trim();
   const branding = useMemo<BragCardBranding>(() => ({
     studioName: displayStudio,
-    customLogo: pdfDefaults.customLogo,
+    customLogo: isLocalBragCardLogo(pdfDefaults.customLogo) ? pdfDefaults.customLogo.trim() : undefined,
     socialHandle: studioProfile.socialHandle,
     copyrightNotice: studioProfile.copyrightNotice,
   }), [displayStudio, pdfDefaults.customLogo, studioProfile.socialHandle, studioProfile.copyrightNotice]);
@@ -392,7 +393,7 @@ function BragCardPreview(props: { stats: ReturnType<typeof computeBragStats>; cu
       style={{ background: pal.bg, position: "relative" }}
       aria-label={`Brag card preview: ${c.headline}`}
     >
-      {branding.customLogo && /^(data:image\/|https?:\/\/)/i.test(branding.customLogo) ? <img src={branding.customLogo} alt="" className="absolute right-3 top-3 z-10 h-10 w-10 rounded-md object-contain" /> : null}
+      {isLocalBragCardLogo(branding.customLogo) ? <img src={branding.customLogo} alt="" className="absolute right-3 top-3 z-10 h-10 w-10 rounded-md object-contain" /> : null}
       {style === "navy" ? <div className="absolute rounded-full" style={{ width: "22%", height: "22%", right: "-4%", top: "-4%", background: accent, opacity: 0.10 }} /> : null}
       {style === "navy" ? <div className="absolute rounded-full" style={{ width: "18%", height: "18%", left: "-3%", bottom: "-3%", background: "#e8b4b8", opacity: 0.08 }} /> : null}
       {style === "editorial" ? <div className="absolute inset-3 rounded-none" style={{ border: "2px solid " + pal.rule }} /> : null}
