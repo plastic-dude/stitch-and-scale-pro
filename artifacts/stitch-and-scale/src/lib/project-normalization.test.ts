@@ -109,4 +109,24 @@ describe('project normalization', () => {
     expect(projects[0].id).not.toBe(projects[1].id);
     expect(projects.every((project) => project.name && typeof project.author === 'string')).toBe(true);
   });
+
+  it('normalizes nested sections and measurements', () => {
+    const p = normalizeProjectRecord({
+      sections: [
+        {
+          id: 's1',
+          name: ' ',
+          measurements: [
+            { id: 'm1', label: 'Bust', baseValue: -5, measurementType: 'circumference' },
+            { id: 'm2', label: ' ', baseValue: 40, measurementType: 'invalid' },
+          ],
+        },
+      ],
+    });
+
+    expect(p?.sections[0].name).toBe('Unnamed section');
+    expect(p?.sections[0].measurements[0].baseValue).toBe(0);
+    expect(p?.sections[0].measurements[1].label).toBe('Unnamed measurement');
+    expect(p?.sections[0].measurements[1].measurementType).toBe('circumference');
+  });
 });

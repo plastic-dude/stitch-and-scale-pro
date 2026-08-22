@@ -4,6 +4,10 @@ import type {
   PatternSection,
   SizeKey,
   SizingStandard,
+  SectionMeasurement,
+  MeasurementType,
+  GradingKey,
+  RoundingParity,
 } from './grading-engine';
 
 const VALID_SIZES: readonly SizeKey[] = [
@@ -67,8 +71,56 @@ function normalizeGauge(value: unknown): Gauge {
   };
 }
 
+function normalizeMeasurements(value: unknown): SectionMeasurement[] {
+  if (!Array.isArray(value)) return [];
+  return value
+    .map((m) => {
+      if (!isRecord(m)) return null;
+      const baseValue = typeof m.baseValue === 'number' && Number.isFinite(m.baseValue) && m.baseValue > 0
+        ? m.baseValue
+        : 0; // 0 is the 'impossible' marker that G-09 will catch
+
+      return {
+        ...m,
+        id: nonEmptyString(m.id, `m-${Math.random().toString(36).slice(2, 9)}`),
+        label: nonEmptyString(m.label, 'Unnamed measurement'),
+        measurementType: ['width', 'circumference', 'length', 'direct'].includes(m.measurementType as string)
+          ? m.measurementType as MeasurementType
+          : 'circumference',
+        gradingKey: typeof m.gradingKey === 'string' ? m.gradingKey as GradingKey : 'bust',
+        baseValue,
+        stitchRepeat: typeof m.stitchRepeat === 'number' && Number.isFinite(m.stitchRepeat) && m.stitchRepeat > 0
+          ? m.stitchRepeat
+          : undefined,
+        rowRepeat: typeof m.rowRepeat === 'number' && Number.isFinite(m.rowRepeat) && m.rowRepeat > 0
+          ? m.rowRepeat
+          : undefined,
+        stitchRemainder: typeof m.stitchRemainder === 'number' && Number.isFinite(m.stitchRemainder)
+          ? m.stitchRemainder
+          : undefined,
+        rowRemainder: typeof m.rowRemainder === 'number' && Number.isFinite(m.rowRemainder)
+          ? m.rowRemainder
+          : undefined,
+        stitchParity: ['even', 'odd'].includes(m.stitchParity as string) ? m.stitchParity as RoundingParity : undefined,
+        rowParity: ['even', 'odd'].includes(m.rowParity as string) ? m.rowParity as RoundingParity : undefined,
+      } as SectionMeasurement;
+    })
+    .filter((m): m is SectionMeasurement => m !== null);
+}
+
 function normalizeSections(value: unknown): PatternSection[] {
-  return Array.isArray(value) ? value as PatternSection[] : [];
+  if (!Array.isArray(value)) return [];
+  return value
+    .map((s) => {
+      if (!isRecord(s)) return null;
+      return {
+        ...s,
+        id: nonEmptyString(s.id, `s-${Math.random().toString(36).slice(2, 9)}`),
+        name: nonEmptyString(s.name, 'Unnamed section'),
+        measurements: normalizeMeasurements(s.measurements),
+      } as PatternSection;
+    })
+    .filter((s): s is PatternSection => s !== null);
 }
 
 /**

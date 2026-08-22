@@ -124,11 +124,27 @@ export function hasPublicationSourceChanged(
 }
 
 /**
+ * True when the project is structurally valid (no impossible measurements).
+ * F-01/F-02: a project with impossible data is never ready for publication.
+ */
+export function isProjectIntegrityClean(project: PatternProject): boolean {
+  return project.sections.every((section) =>
+    section.measurements.every((m) =>
+      typeof m.baseValue === 'number' && Number.isFinite(m.baseValue) && m.baseValue > 0,
+    ),
+  );
+}
+
+/**
  * A package may claim ready only when every formal stage and the human review
  * record are current. This stays fail-closed for legacy or partially migrated
  * records whose top-level `isReady` flag is inconsistent with their sign-offs.
+ *
+ * F-02: the gate is now strictly tied to project integrity.
  */
 export function canClaimPublicationReady(project: PatternProject): boolean {
+  if (!isProjectIntegrityClean(project)) return false;
+
   const contract = project.publicationContract;
   const signOffsAreReady = Boolean(
     contract &&
