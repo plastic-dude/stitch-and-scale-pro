@@ -163,8 +163,8 @@ export function ChartLabCard({ project }: { project: PatternProject }) {
       <CardContent className="space-y-6">
         <Tabs value={state.mode || 'text'} onValueChange={(v) => setState(s => ({ ...s, mode: v as any }))}>
           <TabsList className="grid w-full grid-cols-2 mb-4">
-            <TabsTrigger value="text" className="min-h-11 gap-2"><Type className="h-4 w-4" /> {copy.modeText}</TabsTrigger>
-            <TabsTrigger value="visual" className="min-h-11 gap-2"><Grid3X3 className="h-4 w-4" /> {copy.modeVisual}</TabsTrigger>
+            <TabsTrigger value="text" className="gap-2 min-h-11"><Type className="h-4 w-4" /> {copy.modeText}</TabsTrigger>
+            <TabsTrigger value="visual" className="gap-2 min-h-11"><Grid3X3 className="h-4 w-4" /> {copy.modeVisual}</TabsTrigger>
           </TabsList>
         </Tabs>
 
