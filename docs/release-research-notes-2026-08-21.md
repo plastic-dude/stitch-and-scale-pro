@@ -85,3 +85,8 @@ The pre-sync stash remains temporarily retained as a recovery precaution and con
 The repository was rechecked against origin before release: origin/main had advanced from the audit branch’s `6aa86f0` to agent commit `5e4cc73`; the audit branch was fast-forwarded safely, its patch was reapplied, and the resulting correction was committed as `53b9cee`. The evidence-only follow-up commit `d3abf16` was then pushed to both the audit branch and `main`, leaving no uncommitted changes or recovery stashes.
 
 To eliminate any ambiguity between the verified code commit and the current main tip, a fresh Git-source production deployment was created from full commit `d3abf163a29a79a780e4a6f29c4dd00de8315762`: deployment `dpl_9qG2w7A2oSfzwpgHzk5GuPVBPifw` reached READY. The public alias remained healthy after this exact-main deployment: GET `/api/mcp` returned 405, allowed-origin OPTIONS returned 204, authenticated JSON-RPC `tools/list` returned 200 with eight tools in canonical order, and a disallowed origin returned 403 with MCP error `-32001`.
+
+
+## Final exact-main deployment — 2026-08-22
+
+After the release-evidence commit advanced main to `4213e10189114cfd87aed928764d1f53998bd2b9` (`4213e10`, documentation-only), a final Git-source production deployment was created from that exact main tip: `dpl_6a7o1ZMvp3aX6rUuzxr5ZBMyqCZJ`, which reached READY. The public alias smoke test immediately afterward remained green: GET `/api/mcp` 405, allowed-origin OPTIONS 204, authenticated `tools/list` 200 with eight canonical tools, and rejected-origin POST 403 with error `-32001`. This closes the exact-main release-integrity loop; the deployed application code is the same verified code as `53b9cee`, while the later commits contain only release evidence.
