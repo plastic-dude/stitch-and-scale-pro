@@ -9,6 +9,7 @@ import {
 // which persists to IndexedDB AND localStorage atomically.
 import { downloadOriginMigrationPackage, restoreOriginMigrationPackage, type MigrationRestoreResult, type OriginMigrationPackage } from '@/lib/origin-migration';
 import { getInitialLanguage, translate, type LanguageCode, type TranslationKey, type TranslationVariables } from '@/lib/i18n';
+import { getSettingsCopy, type SettingsCopy } from '@/lib/settings-copy';
 import { DEFAULT_STUDIO_PROFILE, type StudioProfile } from '@/lib/studio-profile-copy';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -72,6 +73,7 @@ interface SettingsContextType extends SettingsState {
   setOnboardingCompleted: (completed: boolean) => void;
   setLanguage:           (language: LanguageCode) => void;
   t:                     (key: TranslationKey, variables?: TranslationVariables) => string;
+  getCopy:               () => SettingsCopy;
 }
 
 // ─── Defaults ─────────────────────────────────────────────────────────────────
@@ -164,6 +166,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const setOnboardingCompleted = (onboardingCompleted: boolean)  => setSettings(s => ({ ...s, onboardingCompleted }));
   const setLanguage = (language: LanguageCode) => setSettings(s => ({ ...s, language }));
   const t = (key: TranslationKey, variables?: TranslationVariables) => translate(settings.language, key, variables);
+  const getCopy = () => getSettingsCopy(settings.language);
 
   const exportData = () => downloadOriginMigrationPackage(
     `stitch-and-scale-origin-migration-${new Date().toISOString().split('T')[0]}.json`,
@@ -212,6 +215,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       setOnboardingCompleted,
       setLanguage,
       t,
+      getCopy,
       exportData,
       importData,
     }}>

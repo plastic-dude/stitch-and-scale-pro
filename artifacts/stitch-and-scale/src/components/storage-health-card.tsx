@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ShieldCheck, AlertTriangle, RefreshCcw, Download, History, Database } from 'lucide-react';
+import { ShieldCheck, AlertTriangle, RefreshCcw, History, Database } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useSettings } from '@/context/SettingsContext';
 import { getToastCopy } from '@/lib/toast-copy';
@@ -15,8 +15,9 @@ function formatKB(bytes: number): string {
 
 export default function StorageHealthCard() {
   const { toast } = useToast();
-  const { language } = useSettings();
+  const { language, getCopy } = useSettings();
   const tc = getToastCopy(language);
+  const copy = getCopy();
 
   const [report, setReport] = React.useState<AuditReport | null>(null);
   const [busy, setBusy] = React.useState(false);
@@ -56,10 +57,10 @@ export default function StorageHealthCard() {
       <CardHeader className="bg-secondary/10 border-b border-border/40 pb-5">
         <CardTitle className="font-serif text-xl flex items-center gap-2">
           <ShieldCheck className="w-5 h-5 text-accent" />
-          Storage Health
+          {copy.storageHealthTitle}
         </CardTitle>
         <CardDescription className="text-[13px]">
-          Where your patterns live, whether both copies agree, and when you last backed up.
+          {copy.storageHealthDesc}
         </CardDescription>
       </CardHeader>
       <CardContent className="p-6 space-y-5">
@@ -67,25 +68,25 @@ export default function StorageHealthCard() {
           <div className="rounded-xl border border-border/50 p-4 space-y-1">
             <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
               <Database className="w-3.5 h-3.5" />
-              Browser storage
+              {copy.browserStorage}
             </div>
             <div className="font-mono text-lg font-bold text-foreground">
               {formatKB(report.localStorageBytes)}
             </div>
             <div className="text-xs text-muted-foreground">
-              {report.localStorageProjectCount} project{report.localStorageProjectCount === 1 ? '' : 's'}
+              {report.localStorageProjectCount === 1 ? copy.projectCount(report.localStorageProjectCount) : copy.projectsCount(report.localStorageProjectCount)}
             </div>
           </div>
           <div className="rounded-xl border border-border/50 p-4 space-y-1">
             <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
               <Database className="w-3.5 h-3.5" />
-              Offline cache
+              {copy.offlineCache}
             </div>
             <div className="font-mono text-lg font-bold text-foreground">
               {formatKB(report.idbBytes)}
             </div>
             <div className="text-xs text-muted-foreground">
-              {report.idbProjectCount} project{report.idbProjectCount === 1 ? '' : 's'}
+              {report.idbProjectCount === 1 ? copy.projectCount(report.idbProjectCount) : copy.projectsCount(report.idbProjectCount)}
             </div>
           </div>
         </div>
@@ -99,12 +100,12 @@ export default function StorageHealthCard() {
             )}
             <div className="min-w-0">
               <div className="text-sm font-medium text-foreground">
-                {report.inSync ? 'Stores in sync' : 'Stores out of sync'}
+                {report.inSync ? copy.storesInSync : copy.storesOutOfSync}
               </div>
               <div className="text-xs text-muted-foreground">
                 {report.inSync
-                  ? 'Both locations hold the same projects.'
-                  : 'The two copies differ — reconcile to make them match.'}
+                  ? copy.syncSuccess
+                  : copy.syncDiff}
               </div>
             </div>
           </div>
@@ -117,7 +118,7 @@ export default function StorageHealthCard() {
             data-testid="button-reconcile-stores"
           >
             <RefreshCcw className={cn('w-3.5 h-3.5', busy && 'animate-spin')} />
-            Reconcile
+            {copy.reconcile}
           </Button>
         </div>
 
@@ -127,29 +128,27 @@ export default function StorageHealthCard() {
             <div className="min-w-0">
               <div className="text-sm font-medium text-foreground">
                 {report.daysSinceBackup === null
-                  ? 'Never backed up'
-                  : report.daysSinceBackup > 7
-                    ? `${report.daysSinceBackup} days since last backup`
-                    : report.daysSinceBackup === 0
-                      ? 'Backed up today'
-                      : `Backed up ${report.daysSinceBackup} day${report.daysSinceBackup === 1 ? '' : 's'} ago`}
+                  ? copy.neverBackedUp
+                  : report.daysSinceBackup === 0
+                    ? copy.backedUpToday
+                    : report.daysSinceBackup === 1
+                      ? copy.backedUpDay(report.daysSinceBackup)
+                      : copy.backedUpDays(report.daysSinceBackup)}
               </div>
               <div className="text-xs text-muted-foreground">
                 {report.lastExportedAt
                   ? new Date(report.lastExportedAt).toLocaleString()
-                  : 'Exports are stored as JSON files — download one to be safe.'}
+                  : copy.backupInstruction}
               </div>
             </div>
           </div>
           {report.daysSinceBackup !== null && report.daysSinceBackup > 7 && (
-            <Badge variant="destructive" className="shrink-0">Overdue</Badge>
+            <Badge variant="destructive" className="shrink-0">{copy.backupOverdue}</Badge>
           )}
         </div>
 
         <p className="text-xs text-muted-foreground leading-relaxed">
-          Stitch &amp; Scale keeps two independent copies of your work on this device — each can
-          recover the other. A backup file is still your true insurance: it's the one copy you
-          control outside the browser.
+          {copy.backupInsurance}
         </p>
       </CardContent>
     </Card>

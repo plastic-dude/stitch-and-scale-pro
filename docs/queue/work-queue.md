@@ -46,10 +46,12 @@
 | 38 | QUEUE-031 | Localization Brutality: Audit all locales for English leaks (placeholders, tooltips, sample projects, error states) and fix them. | MAJOR | done | CHK-174: fixed leaks in Settings, Workspace, and Tech-Edit; localized findings fr/es/pt; vitest 2,330/2,330 green |
 | 39 | QUEUE-032 | Onboarding Alignment: Sync onboarding wizard with current feature set and branding. | MAJOR | done | CHK-175; vitest green; `onboarding-alignment.test.ts` |
 | 40 | QUEUE-033 | Audit F-14 (MINOR) — SPA 200-for-missing-paths; add client-side 404 state and route guard. | MINOR | done | CHK-176: pinned client-side 404 contract + localization; hardened `vercel.json` rewrite exclusions; vitest green |
+| 41 | QUEUE-034 | Localization Brutality II — Fix hardcoded English in `StorageHealthCard` and resolve the "Localization Audit" sample project name leak in non-English locales. | MAJOR | done | CHK-177: localized `StorageHealthCard` + Settings headers; fixed demo seed locale leak; vitest green |
 
 ## Run ledger
 | Run (date) | Item worked | Gates | Commit | Next item |
 |---|---|---|---|---|
+| 2026-08-22 | QUEUE-034 | tsc, vitest, build | 97f1e5b | QUEUE-035 |
 | 2026-08-22 (CHK-175) | QUEUE-032 (MAJOR) — Onboarding Alignment | tsc clean; vitest green; build green; aligned tour with search/health; fixed sample meta | 59d2b00 | QUEUE-033 |
 | 2026-08-22 (CHK-176) | QUEUE-033 (MINOR) — SPA 404 state | tsc clean; vitest green; build green; pinned 404 contract; docs/audit-f14-spa-404.md | 7d4f3b3 | END OF QUEUE |
 | 2026-08-22 (CHK-174) | QUEUE-031 (MAJOR) — Localization Brutality | tsc clean; vitest 2,330/2,330; build green; fixed English leaks in Settings, Workspace, and Tech-Edit; localized sample projects | 5504d3f | QUEUE-032 |

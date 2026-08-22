@@ -16,6 +16,7 @@ import { LanguageCode } from '@/lib/i18n';
 // writer. A single writer now: both paths persist through the seam helper.
 import { writeProjects } from '@/lib/storage-lib';
 import { ORIGIN_MIGRATION_RESTORED_EVENT } from '@/lib/origin-migration';
+import { useSettings } from './SettingsContext';
 
 type ProjectsAction = 
   | { type: 'INIT'; payload: PatternProject[] }
@@ -228,7 +229,8 @@ export function useProject(id?: string) {
 
   // CHK-119: first visit to the demo id with no stored project seeds the demo.
   if (!existing && id === DEMO_PROJECT_ID) {
-    const demo = makeDemoProject(); // Default to 'en' or detected locale
+    const { language } = useSettings();
+    const demo = makeDemoProject(language);
     createProject(demo);
     return {
       project: demo,

@@ -231,7 +231,7 @@ export default function SettingsPage() {
             <CardHeader className="bg-secondary/10 border-b border-border/40 pb-5">
               <CardTitle className="font-serif text-xl flex items-center gap-2">
                 <Ruler className="w-5 h-5 text-accent" />
-                Measurement Defaults
+                {copy.unitsTitle}
               </CardTitle>
               <CardDescription className="text-[13px]">{copy.unitsDescription}</CardDescription>
             </CardHeader>
@@ -264,7 +264,7 @@ export default function SettingsPage() {
             <CardHeader className="bg-secondary/10 border-b border-border/40 pb-5">
               <CardTitle className="font-serif text-xl flex items-center gap-2">
                 <Layers className="w-5 h-5 text-accent" />
-                Sizing Standard
+                {copy.gradingTitle}
               </CardTitle>
               <CardDescription className="text-[13px]">{copy.gradingDescription}</CardDescription>
             </CardHeader>
@@ -384,7 +384,7 @@ export default function SettingsPage() {
                                 className="flex-1 min-w-0 bg-transparent text-sm font-medium text-foreground outline-none"
                                 data-testid={`input-custom-${size}-${editingKey}`}
                               />
-                              <span className="text-[11px] text-muted-foreground shrink-0">in</span>
+                              <span className="text-[11px] text-muted-foreground shrink-0">{unit}</span>
                               {isModified && (
                                 <span className="text-[10px] text-muted-foreground shrink-0" title={copy.cycValue(cycValue)}>
                                   {copy.cycValue(cycValue)}
