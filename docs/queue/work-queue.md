@@ -38,13 +38,13 @@
 | 30 | QUEUE-023 | Audit: Income Planner validation — accepts negative prices, zero sales with no invalid state; clean-looking zeros mislead users | MAJOR | done | CHK-166: implemented `validateInputs` for Income Planner, wired validation UI, added localized error states; vitest 2,324/2,324 green |
  MAJOR | done | CHK-166: implemented `validateIncomeInputs` + localized quarantine UI; fixed `validateInputs` key propagation; vitest 2,324/2,324 green |
 | 31 | QUEUE-024 | Audit: Grading table readability — dense cells, concatenated values in text layer; accessibility risk | MINOR | done | CHK-167: separated stitches/rows into distinct rows, improved numeric alignment, localized labels; vitest 2,313/2,313 green |
-| 32 | QUEUE-025 | Audit F-06 (MAJOR) — Mobile deep links do not represent portable project access; shared grading/PDF links show `Project Not Found` on a fresh device | MAJOR | in-progress |
- Provide localized recovery/import UI for missing projects on deep-link subroutes |
-| 33 | QUEUE-026 | Audit F-10 (MINOR) — Sticky mobile onboarding footer obscures content; commitments card hidden behind fixed bottom bar | MINOR | queued | Needs safe-area/padding adjustments in onboarding layout to prevent footer overlap |
+| 32 | QUEUE-025 | Audit F-06 (MAJOR) — Mobile deep links do not represent portable project access; shared grading/PDF links show `Project Not Found` on a fresh device | MAJOR | done | CHK-168: implemented recovery/import UI for missing projects on deep-link subroutes; vitest green |
+| 33 | QUEUE-026 | Audit F-10 (MINOR) — Sticky mobile onboarding footer obscures content; commitments card hidden behind fixed bottom bar | MINOR | in-progress | Needs safe-area/padding adjustments in onboarding layout to prevent footer overlap |
 | 34 | QUEUE-027 | Audit F-11 (MINOR) — Core form errors are generic; users must guess which field needs correction | MINOR | queued | Needs field-specific validation messages and accessible associations in core project forms |
 | 35 | QUEUE-028 | Audit F-12 (MINOR) — Professional benchmark claims lack visible methodology; source/assumptions for freelance rates and inclusive sizing are opaque | MINOR | queued | Needs methodology tooltips or expanded benchmark footers with cited assumptions and sources |
 
 ## Run ledger
+| 2026-08-22 (CHK-168) | QUEUE-025 (MAJOR) — Deep-link recovery UI | tsc clean; vitest 2,315/2,315; build green; 2 new tests | 1d4101f | QUEUE-026 |
 | 2026-08-22 (CHK-167) | QUEUE-024 (MAJOR) — Grading table readability | tsc clean; vitest 2,313/2,313; build green; 3 new tests; cycle log `docs/leader-notes/cycle-2026-08-22-chk167.md` | c545ad8 | QUEUE-025 |
 | 2026-08-22 (CHK-166) | QUEUE-023 (MAJOR) — Income Planner Validation | tsc clean; vitest 2,324/2,324; build green; 8 new tests | e292363 | QUEUE-024 |
 
