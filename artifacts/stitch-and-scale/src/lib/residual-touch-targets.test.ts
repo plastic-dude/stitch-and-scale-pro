@@ -34,6 +34,20 @@ describe("residual mobile touch-target guards", () => {
     );
   });
 
+  it("keeps Brag Card caption, share, and download actions at least 44px", () => {
+    const bragCards = source("../components/brag-card-card.tsx");
+
+    expect(bragCards).toContain(
+      '<Button size="sm" className="min-h-11" onClick={copyCaption} disabled={!hasData}>',
+    );
+    expect(bragCards).toContain(
+      '<Button size="sm" variant="outline" className="min-h-11" onClick={shareNative} disabled={!hasData}>',
+    );
+    expect(bragCards).toContain(
+      '<Button size="sm" variant="outline" className="min-h-11" onClick={downloadPng} disabled={!hasData}>',
+    );
+  });
+
   it("keeps the shared Radix Sheet close affordance at least 44px", () => {
     const sheet = source("../components/ui/sheet.tsx");
 

@@ -318,15 +318,15 @@ export function BragCardCard(props: { project: PatternProject }) {
           <Label className="text-xs font-medium">{copy.captionLabel}</Label>
           <Textarea value={caption.caption} readOnly className="min-h-20 text-sm" />
           <div className="flex flex-wrap gap-2">
-            <Button size="sm" onClick={copyCaption} disabled={!hasData}>
+            <Button size="sm" className="min-h-11" onClick={copyCaption} disabled={!hasData}>
               <Copy className="h-4 w-4 mr-1" />
               {copy.copyCaption}
             </Button>
-            <Button size="sm" variant="outline" onClick={shareNative} disabled={!hasData}>
+            <Button size="sm" variant="outline" className="min-h-11" onClick={shareNative} disabled={!hasData}>
               <Share2 className="h-4 w-4 mr-1" />
               {copy.share}
             </Button>
-            <Button size="sm" variant="outline" onClick={downloadPng} disabled={!hasData}>
+            <Button size="sm" variant="outline" className="min-h-11" onClick={downloadPng} disabled={!hasData}>
               <Download className="h-4 w-4 mr-1" />
               {copy.download}
             </Button>
