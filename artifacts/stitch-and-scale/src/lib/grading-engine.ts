@@ -81,6 +81,14 @@ export interface ReadinessIssue {
   status: ReadinessIssueStatus;
   /** Anchored location, e.g. "Body › Bust" or "Compiler" */
   location?: string;
+  /** Affected sizes, if applicable */
+  affectedSizes?: SizeKey[];
+  /** How to reproduce the issue */
+  reproductionState?: string;
+  /** Designer's decision on the issue */
+  disposition?: 'accepted' | 'rejected' | 'deferred';
+  /** How the issue was resolved */
+  resolutionNote?: string;
   /** Assigned user or role */
   assignee?: string;
   /** Optional due date in ISO format */
@@ -112,6 +120,23 @@ export interface PublicationContract {
   updatedAt: string;
 }
 
+export interface ArtifactInspectionReport {
+  pageCount?: number;
+  hasBlankPages?: boolean;
+  hasTitle?: boolean;
+  hasHeadings?: boolean;
+  hasTableContinuity?: boolean;
+  hasCharts?: boolean;
+  hasSchematics?: boolean;
+  rendererVersion: string;
+  templateId: string;
+  locale: string;
+  inspectedAt: string;
+  inspector: 'automated' | 'human';
+  verdict: 'pass' | 'fail' | 'warning';
+  notes?: string;
+}
+
 export interface PublicationArtifact {
   id: string;
   type: 'pdf' | 'csv' | 'json' | 'image';
@@ -121,6 +146,7 @@ export interface PublicationArtifact {
   qualitySnapshot?: 'pass' | 'fail' | 'pending' | 'blocked';
   url?: string;
   revisionId?: string;
+  inspectionReport?: ArtifactInspectionReport;
 }
 
 export interface PatternDocumentContent {

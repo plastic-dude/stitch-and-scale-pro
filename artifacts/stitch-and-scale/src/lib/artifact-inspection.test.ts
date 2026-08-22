@@ -1,0 +1,106 @@
+import { describe, expect, it } from 'vitest';
+import { projectsReducer } from '@/context/ProjectsContext';
+import { 
+  type PatternProject, 
+  type PublicationPackage, 
+  type PublicationArtifact, 
+  type ArtifactInspectionReport 
+} from './grading-engine';
+
+function testProject(): PatternProject {
+  return {
+    id: 'p1',
+    name: 'Test Project',
+    author: 'Designer',
+    baseSize: 'M',
+    gauge: { stitchesPer4In: 20, rowsPer4In: 28, unit: 'in' },
+    sections: [],
+    updatedAt: new Date().toISOString(),
+    publicationPackages: [
+      {
+        id: 'pkg1',
+        version: '1.0.0',
+        status: 'draft',
+        readinessVerdict: 'pending',
+        authoritativeMetadata: {
+          title: 'Test Pkg',
+          author: 'Designer',
+          copyright: '© 2026',
+          description: '',
+          sizes: ['M'],
+          gauge: { stitchesPer4In: 20, rowsPer4In: 28, unit: 'in' },
+        },
+        artifacts: [
+          {
+            id: 'art1',
+            type: 'pdf',
+            label: 'Pattern PDF',
+            filename: 'pattern.pdf',
+            timestamp: new Date().toISOString(),
+          }
+        ],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      }
+    ]
+  };
+}
+
+describe('artifact inspection logic', () => {
+  it('applies inspection report and updates quality snapshot', () => {
+    const project = testProject();
+    const report: ArtifactInspectionReport = {
+      pageCount: 12,
+      hasBlankPages: false,
+      hasTitle: true,
+      hasHeadings: true,
+      hasTableContinuity: true,
+      rendererVersion: '1.0.0',
+      templateId: 'standard',
+      locale: 'en',
+      inspectedAt: new Date().toISOString(),
+      inspector: 'human',
+      verdict: 'pass',
+      notes: 'Looks great.'
+    };
+
+    const [updated] = projectsReducer([project], {
+      type: 'INSPECT_ARTIFACT',
+      payload: { 
+        projectId: 'p1', 
+        packageId: 'pkg1', 
+        artifactId: 'art1', 
+        report 
+      }
+    });
+
+    const artifact = updated.publicationPackages![0].artifacts[0];
+    expect(artifact.inspectionReport).toEqual(report);
+    expect(artifact.qualitySnapshot).toBe('pass');
+  });
+
+  it('sets quality snapshot to fail when verdict is fail', () => {
+    const project = testProject();
+    const report: ArtifactInspectionReport = {
+      rendererVersion: '1.0.0',
+      templateId: 'standard',
+      locale: 'en',
+      inspectedAt: new Date().toISOString(),
+      inspector: 'human',
+      verdict: 'fail',
+    };
+
+    const [updated] = projectsReducer([project], {
+      type: 'INSPECT_ARTIFACT',
+      payload: { 
+        projectId: 'p1', 
+        packageId: 'pkg1', 
+        artifactId: 'art1', 
+        report 
+      }
+    });
+
+    const artifact = updated.publicationPackages![0].artifacts[0];
+    expect(artifact.qualitySnapshot).toBe('fail');
+  });
+});

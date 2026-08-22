@@ -165,6 +165,22 @@ export interface WorkspaceCopy {
   confirmBatchDeleteBody: string;
   confirmBatchArchive: (count: number) => string;
   confirmBatchUnarchive: (count: number) => string;
+  inspectionTitle: string;
+  inspectionPageCount: string;
+  inspectionBlankPages: string;
+  inspectionTitlePresent: string;
+  inspectionHeadingsCorrect: string;
+  inspectionTableContinuity: string;
+  inspectionChartsPresent: string;
+  inspectionSchematicsPresent: string;
+  inspectionFinalVerdict: string;
+  inspectionNotes: string;
+  inspectionNotesPlaceholder: string;
+  inspectionSaveReport: string;
+  inspectionReportSaved: string;
+  inspectionVerdictPass: string;
+  inspectionVerdictWarning: string;
+  inspectionVerdictFail: string;
 }
 
 const COPY: Record<LanguageCode, WorkspaceCopy> = {
@@ -331,6 +347,22 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     confirmBatchDeleteBody: 'These projects will be permanently removed from your local storage. This cannot be undone.',
     confirmBatchArchive: (count) => `Archive ${count} projects?`,
     confirmBatchUnarchive: (count) => `Unarchive ${count} projects?`,
+    inspectionTitle: 'Artifact Inspection',
+    inspectionPageCount: 'Page Count',
+    inspectionBlankPages: 'Blank Pages Detected?',
+    inspectionTitlePresent: 'Title Present?',
+    inspectionHeadingsCorrect: 'Headings Correct?',
+    inspectionTableContinuity: 'Table Continuity?',
+    inspectionChartsPresent: 'Charts Present?',
+    inspectionSchematicsPresent: 'Schematics Present?',
+    inspectionFinalVerdict: 'Final Verdict',
+    inspectionNotes: 'Inspection Notes',
+    inspectionNotesPlaceholder: 'Observations about pagination, font rendering, or structural integrity...',
+    inspectionSaveReport: 'Save Report',
+    inspectionReportSaved: 'Inspection report saved',
+    inspectionVerdictPass: 'Pass',
+    inspectionVerdictWarning: 'Warning',
+    inspectionVerdictFail: 'Fail',
   },
   de: {
     by: 'Von',
@@ -495,6 +527,22 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     confirmBatchDeleteBody: 'Diese Projekte werden dauerhaft aus deinem lokalen Speicher entfernt. Dies kann nicht rückgängig gemacht werden.',
     confirmBatchArchive: (count) => `${count} Projekte archivieren?`,
     confirmBatchUnarchive: (count) => `${count} Projekte dearchivieren?`,
+    inspectionTitle: 'Artefakt-Prüfung',
+    inspectionPageCount: 'Seitenzahl',
+    inspectionBlankPages: 'Leere Seiten erkannt?',
+    inspectionTitlePresent: 'Titel vorhanden?',
+    inspectionHeadingsCorrect: 'Überschriften korrekt?',
+    inspectionTableContinuity: 'Tabellenkontinuität?',
+    inspectionChartsPresent: 'Diagramme vorhanden?',
+    inspectionSchematicsPresent: 'Schemata vorhanden?',
+    inspectionFinalVerdict: 'Abschlussurteil',
+    inspectionNotes: 'Prüfnotizen',
+    inspectionNotesPlaceholder: 'Beobachtungen zur Paginierung, Schriftdarstellung oder strukturellen Integrität...',
+    inspectionSaveReport: 'Bericht speichern',
+    inspectionReportSaved: 'Prüfbericht gespeichert',
+    inspectionVerdictPass: 'Bestanden',
+    inspectionVerdictWarning: 'Warnung',
+    inspectionVerdictFail: 'Nicht bestanden',
   },
   fr: {
     by: 'Par',
@@ -659,6 +707,22 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     confirmBatchDeleteBody: 'Ces projets seront définitivement supprimés de votre stockage local. Cette action est irréversible.',
     confirmBatchArchive: (count) => `Archiver ${count} projets ?`,
     confirmBatchUnarchive: (count) => `Désarchiver ${count} projets ?`,
+    inspectionTitle: 'Inspection de l\'artefact',
+    inspectionPageCount: 'Nombre de pages',
+    inspectionBlankPages: 'Pages blanches détectées ?',
+    inspectionTitlePresent: 'Titre présent ?',
+    inspectionHeadingsCorrect: 'Titres corrects ?',
+    inspectionTableContinuity: 'Continuité des tableaux ?',
+    inspectionChartsPresent: 'Diagrammes présents ?',
+    inspectionSchematicsPresent: 'Schémas présents ?',
+    inspectionFinalVerdict: 'Verdict final',
+    inspectionNotes: 'Notes d\'inspection',
+    inspectionNotesPlaceholder: 'Observations sur la pagination, le rendu des polices ou l\'intégrité structurelle...',
+    inspectionSaveReport: 'Enregistrer le rapport',
+    inspectionReportSaved: 'Rapport d\'inspection enregistré',
+    inspectionVerdictPass: 'Réussite',
+    inspectionVerdictWarning: 'Avertissement',
+    inspectionVerdictFail: 'Échec',
   },
   es: {
     by: 'Por',
@@ -823,6 +887,22 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     confirmBatchDeleteBody: 'Estos proyectos se eliminarán permanentemente de su almacenamiento local. Esta acción no se puede deshacer.',
     confirmBatchArchive: (count) => `¿Archivar ${count} proyectos?`,
     confirmBatchUnarchive: (count) => `¿Desarchivar ${count} proyectos?`,
+    inspectionTitle: 'Inspección del artefacto',
+    inspectionPageCount: 'Número de páginas',
+    inspectionBlankPages: '¿Páginas en blanco detectadas?',
+    inspectionTitlePresent: '¿Título presente?',
+    inspectionHeadingsCorrect: '¿Encabezados correctos?',
+    inspectionTableContinuity: '¿Continuidad de tablas?',
+    inspectionChartsPresent: '¿Gráficos presentes?',
+    inspectionSchematicsPresent: '¿Esquemas presentes?',
+    inspectionFinalVerdict: 'Veredicto final',
+    inspectionNotes: 'Notas de inspección',
+    inspectionNotesPlaceholder: 'Observaciones sobre la paginación, el renderizado de fuentes o la integridad estructural...',
+    inspectionSaveReport: 'Guardar informe',
+    inspectionReportSaved: 'Informe de inspección guardado',
+    inspectionVerdictPass: 'Aprobado',
+    inspectionVerdictWarning: 'Advertencia',
+    inspectionVerdictFail: 'Fallido',
   },
   pt: {
     by: 'Por',
@@ -977,6 +1057,22 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     batchActions: 'Ações em lote',
     batchDelete: 'Excluir',
     batchArchive: 'Arquivar',
+    inspectionTitle: 'Inspeção do artefacto',
+    inspectionPageCount: 'Número de páginas',
+    inspectionBlankPages: 'Páginas em branco detetadas?',
+    inspectionTitlePresent: 'Título presente?',
+    inspectionHeadingsCorrect: 'Cabeçalhos corretos?',
+    inspectionTableContinuity: 'Continuidade das tabelas?',
+    inspectionChartsPresent: 'Gráficos presentes?',
+    inspectionSchematicsPresent: 'Esquemas presentes?',
+    inspectionFinalVerdict: 'Veredicto final',
+    inspectionNotes: 'Notas de inspeção',
+    inspectionNotesPlaceholder: 'Observações sobre a paginação, renderização de fontes ou integridade estrutural...',
+    inspectionSaveReport: 'Guardar relatório',
+    inspectionReportSaved: 'Relatório de inspeção guardado',
+    inspectionVerdictPass: 'Aprovado',
+    inspectionVerdictWarning: 'Aviso',
+    inspectionVerdictFail: 'Reprovado',
     batchUnarchive: 'Desarquivar',
     batchTag: 'Etiquetar',
     batchExport: 'Exportar (JSON)',

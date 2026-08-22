@@ -56,6 +56,10 @@ export function ProjectReadinessCard({ project, updateContract }: ProjectReadine
   const [issueLocation, setIssueLocation] = useState('');
   const [issueAssignee, setIssueAssignee] = useState('');
   const [issueDueDate, setIssueDueDate] = useState('');
+  const [issueAffectedSizes, setIssueAffectedSizes] = useState<string[]>([]);
+  const [issueReproduction, setIssueReproduction] = useState('');
+  const [issueDisposition, setIssueDisposition] = useState<'accepted' | 'rejected' | 'deferred'>('accepted');
+  const [issueResolutionNote, setIssueResolutionNote] = useState('');
 
   const [commentText, setCommentText] = useState('');
   const [activeIssue, setActiveIssue] = useState<{ stage: ReadinessStage; issueId: string } | null>(null);
@@ -92,6 +96,10 @@ export function ProjectReadinessCard({ project, updateContract }: ProjectReadine
       description: issueDescription,
       evidence: issueEvidence || undefined,
       location: issueLocation || undefined,
+      affectedSizes: issueAffectedSizes.length > 0 ? issueAffectedSizes as any : undefined,
+      reproductionState: issueReproduction || undefined,
+      disposition: issueDisposition,
+      resolutionNote: issueResolutionNote || undefined,
       assignee: issueAssignee || undefined,
       dueDate: issueDueDate || undefined,
       status: 'open',
@@ -104,6 +112,10 @@ export function ProjectReadinessCard({ project, updateContract }: ProjectReadine
     setIssueDescription('');
     setIssueEvidence('');
     setIssueLocation('');
+    setIssueAffectedSizes([]);
+    setIssueReproduction('');
+    setIssueDisposition('accepted');
+    setIssueResolutionNote('');
     setIssueAssignee('');
     setIssueDueDate('');
     setIssueSeverity('minor');

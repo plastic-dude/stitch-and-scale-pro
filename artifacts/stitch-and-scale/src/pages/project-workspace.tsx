@@ -226,6 +226,7 @@ export default function ProjectWorkspace() {
     updatePublicationPackage,
     deletePublicationPackage,
     addPublicationArtifact,
+    inspectArtifact,
     setFitGovernance,
     addCollaborator,
     updateCollaborator,
@@ -931,6 +932,7 @@ export default function ProjectWorkspace() {
               updatePublicationPackage={updatePublicationPackage}
               deletePublicationPackage={deletePublicationPackage}
               addPublicationArtifact={addPublicationArtifact}
+              inspectArtifact={inspectArtifact}
             />
           </React.Suspense>
         );

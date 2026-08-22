@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useReducer, useRef, useState } from 'react';
 import { get, set } from 'idb-keyval';
-import { type PatternProject, generateId, type PublicationPackage, type PublicationArtifact, type EaseProfileReference, type SizingStandardMetadata, type CollaborationMember, type ReadinessStage, type ReadinessIssue, type ReadinessComment, type PatternDocumentContent } from '@/lib/grading-engine';
+import { type PatternProject, generateId, type PublicationPackage, type PublicationArtifact, type ArtifactInspectionReport, type EaseProfileReference, type SizingStandardMetadata, type CollaborationMember, type ReadinessStage, type ReadinessIssue, type ReadinessComment, type PatternDocumentContent } from '@/lib/grading-engine';
 export type { PatternProject };
 import { getSampleCrewNeckSweater } from '@/lib/sample-projects';
 import { LanguageCode } from '@/lib/i18n';
@@ -38,6 +38,7 @@ export type ProjectsAction =
   | { type: 'UPDATE_PUBLICATION_PACKAGE'; payload: { projectId: string; pkg: any } }
   | { type: 'DELETE_PUBLICATION_PACKAGE'; payload: { projectId: string; packageId: string } }
   | { type: 'ADD_PUBLICATION_ARTIFACT'; payload: { projectId: string; packageId: string; artifact: PublicationArtifact } }
+  | { type: 'INSPECT_ARTIFACT'; payload: { projectId: string; packageId: string; artifactId: string; report: ArtifactInspectionReport } }
   | { type: 'BATCH_DELETE'; payload: string[] }
   | { type: 'BATCH_ARCHIVE'; payload: { ids: string[]; archived: boolean } }
   | { type: 'BATCH_TAG'; payload: { ids: string[]; tags: string[] } }
@@ -71,6 +72,7 @@ interface ProjectsContextType {
   updatePublicationPackage: (projectId: string, pkg: any) => void;
   deletePublicationPackage: (projectId: string, packageId: string) => void;
   addPublicationArtifact: (projectId: string, packageId: string, artifact: PublicationArtifact) => void;
+  inspectArtifact: (projectId: string, packageId: string, artifactId: string, report: ArtifactInspectionReport) => void;
   batchDelete: (ids: string[]) => void;
   batchArchive: (ids: string[], archived: boolean) => void;
   batchTag: (ids: string[], tags: string[]) => void;
@@ -248,6 +250,28 @@ export function projectsReducer(state: PatternProject[], action: ProjectsAction)
           publicationPackages: (p.publicationPackages || []).map(pkg => 
             pkg.id === action.payload.packageId 
               ? { ...pkg, artifacts: [action.payload.artifact, ...(pkg.artifacts || [])], updatedAt: new Date().toISOString() }
+              : pkg
+          ),
+          updatedAt: new Date().toISOString(),
+        };
+      });
+      break;
+    case 'INSPECT_ARTIFACT':
+      newState = state.map(p => {
+        if (p.id !== action.payload.projectId) return p;
+        return {
+          ...p,
+          publicationPackages: (p.publicationPackages || []).map(pkg => 
+            pkg.id === action.payload.packageId 
+              ? { 
+                  ...pkg, 
+                  artifacts: (pkg.artifacts || []).map(a => 
+                    a.id === action.payload.artifactId 
+                      ? { ...a, inspectionReport: action.payload.report, qualitySnapshot: action.payload.report.verdict === 'fail' ? 'fail' : 'pass' }
+                      : a
+                  ),
+                  updatedAt: new Date().toISOString() 
+                }
               : pkg
           ),
           updatedAt: new Date().toISOString(),
@@ -512,7 +536,8 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
     <ProjectsContext.Provider value={{ 
       projects, createProject, updateProject, deleteProject, duplicateProject, importProject, 
       createSnapshot, restoreSnapshot, deleteSnapshot, updateContract,
-      createPublicationPackage, updatePublicationPackage, deletePublicationPackage, addPublicationArtifact,
+      createPublicationPackage, updatePublicationPackage, deletePublicationPackage,       addPublicationArtifact,
+      inspectArtifact: (projectId: string, packageId: string, artifactId: string, report: ArtifactInspectionReport) => dispatch({ type: 'INSPECT_ARTIFACT', payload: { projectId, packageId, artifactId, report } }),
       batchDelete, batchArchive,       batchTag,
       setFitGovernance,
       addCollaborator, updateCollaborator, deleteCollaborator,
@@ -555,6 +580,7 @@ export function useProject(id?: string) {
     projects, createProject, updateProject, deleteProject, 
     createSnapshot, restoreSnapshot, deleteSnapshot, updateContract,
     createPublicationPackage, updatePublicationPackage, deletePublicationPackage, addPublicationArtifact, 
+    inspectArtifact: inspectArtifactFn,
     setFitGovernance,
     addCollaborator, updateCollaborator, deleteCollaborator,
     addReadinessIssue, updateReadinessIssue, addIssueComment,
@@ -581,6 +607,7 @@ export function useProject(id?: string) {
       updatePublicationPackage: (pkg: any) => updatePublicationPackage(DEMO_PROJECT_ID, pkg),
       deletePublicationPackage: (packageId: string) => deletePublicationPackage(DEMO_PROJECT_ID, packageId),
       addPublicationArtifact: (packageId: string, artifact: PublicationArtifact) => addPublicationArtifact(DEMO_PROJECT_ID, packageId, artifact),
+      inspectArtifact: (packageId: string, artifactId: string, report: ArtifactInspectionReport) => inspectArtifactFn(DEMO_PROJECT_ID, packageId, artifactId, report),
       setFitGovernance: (ease?: EaseProfileReference, meta?: SizingStandardMetadata) => setFitGovernance(DEMO_PROJECT_ID, ease, meta),
       addCollaborator: (member: CollaborationMember) => addCollaborator(DEMO_PROJECT_ID, member),
       updateCollaborator: (memberId: string, patch: Partial<CollaborationMember>) => updateCollaborator(DEMO_PROJECT_ID, memberId, patch),
@@ -610,6 +637,7 @@ export function useProject(id?: string) {
     updatePublicationPackage: (pkg: any) => updatePublicationPackage(id, pkg),
     deletePublicationPackage: (packageId: string) => deletePublicationPackage(id, packageId),
     addPublicationArtifact: (packageId: string, artifact: PublicationArtifact) => addPublicationArtifact(id, packageId, artifact),
+    inspectArtifact: (packageId: string, artifactId: string, report: ArtifactInspectionReport) => inspectArtifactFn(id, packageId, artifactId, report),
     setFitGovernance: (ease?: EaseProfileReference, meta?: SizingStandardMetadata) => setFitGovernance(id, ease, meta),
     addCollaborator: (member: CollaborationMember) => addCollaborator(id, member),
     updateCollaborator: (memberId: string, patch: Partial<CollaborationMember>) => updateCollaborator(id, memberId, patch),

@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useSettings } from '@/context/SettingsContext';
 import { getWorkspaceCopy, workspaceGaugeByline, type LanguageCode } from '@/lib/workspace-copy';
-import { Package, Plus, Trash2, FileText, Download, ShieldCheck, History, CheckCircle2, AlertTriangle, Clock } from 'lucide-react';
+import { Package, Plus, Trash2, FileText, Download, ShieldCheck, History, CheckCircle2, AlertTriangle, Clock, FileSearch } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
   Dialog,
@@ -18,6 +18,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { ProjectArtifactInspectionCard } from './project-artifact-inspection-card';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 import { de, fr, es, ptBR } from 'date-fns/locale';
@@ -37,6 +38,7 @@ interface ProjectPackageCardProps {
   updatePublicationPackage: (pkg: PublicationPackage) => void;
   deletePublicationPackage: (packageId: string) => void;
   addPublicationArtifact: (packageId: string, artifact: PublicationArtifact) => void;
+  inspectArtifact: (packageId: string, artifactId: string, report: any) => void;
 }
 
 export function ProjectPackageCard({ 
@@ -44,7 +46,8 @@ export function ProjectPackageCard({
   createPublicationPackage, 
   updatePublicationPackage, 
   deletePublicationPackage,
-  addPublicationArtifact
+  addPublicationArtifact,
+  inspectArtifact
 }: ProjectPackageCardProps) {
   const { language } = useSettings();
   const copy = getWorkspaceCopy(language);
@@ -53,6 +56,7 @@ export function ProjectPackageCard({
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [packageName, setPackageName] = useState('');
   const [packageVersion, setPackageVersion] = useState('1.0.0');
+  const [inspectingArtifact, setInspectingArtifact] = useState<{ pkgId: string, artifact: PublicationArtifact } | null>(null);
 
   const packages = project.publicationPackages || [];
 
@@ -103,6 +107,19 @@ export function ProjectPackageCard({
 
   return (
     <Card className="h-full flex flex-col">
+      {inspectingArtifact && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="w-full max-w-2xl">
+            <ProjectArtifactInspectionCard 
+              project={project}
+              packageId={inspectingArtifact.pkgId}
+              artifact={inspectingArtifact.artifact}
+              onInspect={(report) => inspectArtifact(inspectingArtifact.pkgId, inspectingArtifact.artifact.id, report)}
+              onClose={() => setInspectingArtifact(null)}
+            />
+          </div>
+        </div>
+      )}
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <div className="space-y-1">
           <CardTitle className="text-xl flex items-center gap-2">
@@ -261,9 +278,19 @@ export function ProjectPackageCard({
                               </div>
                             </div>
                           </div>
-                          <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-foreground shrink-0">
-                            <Download className="h-3 w-3" />
-                          </Button>
+                          <div className="flex items-center gap-1 shrink-0">
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="h-6 w-6 text-muted-foreground hover:text-primary"
+                              onClick={() => setInspectingArtifact({ pkgId: pkg.id, artifact: art })}
+                            >
+                              <FileSearch className="h-3 w-3" />
+                            </Button>
+                            <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-foreground">
+                              <Download className="h-3 w-3" />
+                            </Button>
+                          </div>
                         </div>
                       ))}
                     </div>
