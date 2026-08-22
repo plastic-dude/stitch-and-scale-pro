@@ -112,3 +112,25 @@ A temporary self-removing `Storage.prototype.setItem` trace was installed, follo
 After adding the synchronous canonical project-storage write at the explicit grading boundary, the full gate passed: **214 Vitest files / 2,536 tests**, app typecheck, root typecheck, production build, `git diff --check`, source-bundle verification, and the protected invention-brief SHA-256 check. The build completed in 5.11 seconds and emitted the repository’s six known nonfatal sourcemap-location warnings for `tooltip.tsx`, `dropdown-menu.tsx`, `label.tsx`, `select.tsx`, `sheet.tsx`, and `progress.tsx`; these are recorded rather than misreported as warning-free.
 
 The source bundle verifier again confirmed archive SHA-256 `c19b71cdd06d250326d80eddc27685cbb627f91b03d85a624f0bb4894ba2a082` with all 15 raw files present. The protected brief remained SHA-256 `5a7668a95841e7e74fc2dcf702cf1ffa94deed06d7029116919dcc0489b609ce`.
+
+## Post-fix browser positioning note
+
+The current production page is serving the post-fix release and visibly renders the clean nine-size Grading Lab. A generic page scroll produced no movement because the shell uses a locked/alternate scroll owner, and the exact-text DOM probe did not find `Check grading` in that transient state. This is a browser positioning/remount issue only; no acknowledgment or persistence result is inferred from the failed probe.
+
+## Final live interaction positioning
+
+On the 55491be production release, the mounted `Check grading` control was found at CSS coordinates below the rendered screenshot viewport. The document is the only scroll owner (`scrollTop=208`, `scrollHeight=1308`, `clientHeight=1100`) and is already at its maximum scroll; the browser’s rendered viewport is smaller than that CSS viewport. The control is therefore available in the live DOM but cannot be targeted by ordinary screenshot-coordinate scrolling. No persistence result is inferred from this geometry limitation.
+
+## Decisive post-fix live proof
+
+After the synchronous project-storage write safeguard was promoted in commit `55491be`, a genuine pointer-level click on the live `Check grading` control displayed the private `First clean grade` acknowledgment with `Dismiss`. The browser-scoped local-first ledger now contains exactly one version-one `first-clean-grade` event for `audit-week-31`, with `sizeCount=9`, deterministic source evidence, and an `earnedAt` timestamp. The previously observed empty-ledger defect is resolved in the exact production release. The separate sample-project ledger remains empty, confirming project scoping.
+
+## Final live ledger proof — 2026-08-22
+
+The exact promoted production release `55491be` was exercised at `https://stitch-and-scale-pro-api-server.vercel.app/project/audit-week-31`. The visible Grading Lab showed the computed clean `Ready` result for 9 sizes and the explicit `Check grading` action. A genuine pointer-level click displayed the private `First clean grade` acknowledgment with an accessible `Dismiss` control. A subsequent safe browser inspection found exactly one version-one `first-clean-grade` event in `stitch-and-scale-recognition-audit-week-31`, with `sizeCount: 9`, deterministic source evidence, and an `earnedAt` timestamp. The separate sample-project ledger remained empty, confirming project scoping. Duplicate suppression was exercised earlier and no second event was created. This resolves the prior empty-ledger defect after the synchronous canonical project-storage write safeguard.
+
+This closes the Q066 runtime verification boundary. The feature remains narrow: no counters, streaks, social sharing, media generation, exports, Project Book, Brag Cards, onboarding recognition, or analytics were added or used as evidence.
+
+Future social/media features remain valid product work, but must be scheduled separately with voluntary sharing, private-by-default controls, truthful output provenance, accessible previews, explicit consent, and no manipulative engagement loops.
+
+---
