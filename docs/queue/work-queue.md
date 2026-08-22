@@ -45,13 +45,13 @@
 | 37 | QUEUE-030 | Audit F-13 (MINOR) — Wildcard CORS and origin policy; production MCP serverless function configuration mismatch | MINOR | done | CHK-173: hardened CORS in `vercel.json` (POST/OPTIONS only) and `api/mcp.ts` (comma-separated allowlist + default fallback); vitest green |
 | 38 | QUEUE-031 | Localization Brutality: Audit all locales for English leaks (placeholders, tooltips, sample projects, error states) and fix them. | MAJOR | done | CHK-174: fixed leaks in Settings, Workspace, and Tech-Edit; localized findings fr/es/pt; vitest 2,330/2,330 green |
 | 39 | QUEUE-032 | Onboarding Alignment: Sync onboarding wizard with current feature set and branding. | MAJOR | done | CHK-175; vitest green; `onboarding-alignment.test.ts` |
-| 40 | QUEUE-033 | Audit F-14 (MINOR) — SPA 200-for-missing-paths; add client-side 404 state and route guard. | MINOR | in-progress | |
+| 40 | QUEUE-033 | Audit F-14 (MINOR) — SPA 200-for-missing-paths; add client-side 404 state and route guard. | MINOR | done | CHK-176: pinned client-side 404 contract + localization; hardened `vercel.json` rewrite exclusions; vitest green |
 
 ## Run ledger
 | Run (date) | Item worked | Gates | Commit | Next item |
 |---|---|---|---|---|
 | 2026-08-22 (CHK-175) | QUEUE-032 (MAJOR) — Onboarding Alignment | tsc clean; vitest green; build green; aligned tour with search/health; fixed sample meta | 59d2b00 | QUEUE-033 |
-| 2026-08-22 (CHK-176) | QUEUE-033 (MINOR) — SPA 404 state | PENDING | SHA-PENDING | END OF QUEUE |
+| 2026-08-22 (CHK-176) | QUEUE-033 (MINOR) — SPA 404 state | tsc clean; vitest green; build green; pinned 404 contract; docs/audit-f14-spa-404.md | 7d4f3b3 | END OF QUEUE |
 | 2026-08-22 (CHK-174) | QUEUE-031 (MAJOR) — Localization Brutality | tsc clean; vitest 2,330/2,330; build green; fixed English leaks in Settings, Workspace, and Tech-Edit; localized sample projects | 5504d3f | QUEUE-032 |
 | 2026-08-22 (CHK-173) | QUEUE-030 (MINOR) — CORS hardening | tsc clean; vitest 2,326/2,326; build green; hardened origin policy in `vercel.json` and `api/mcp.ts` | 78c7858e0775dcb2bf219a1280fb3bb37930b461 | END OF QUEUE |
 | 2026-08-22 (CHK-172) | QUEUE-029 (MAJOR) — Release integrity | tsc clean; vitest 2,326/2,326; build green; 4 new tests; smoke script `scripts/prod-smoke.mjs` | a66b840c75f0d38e87aa44531caf46ce4259cf75 | QUEUE-030 |

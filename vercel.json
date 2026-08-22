@@ -20,5 +20,7 @@
     { "source": "/manifest.json", "destination": "/manifest.json" },
     { "source": "/sw.js", "destination": "/sw.js" },
     { "source": "/((?!api|manifest.json|manifest.webmanifest|sw.js|assets|favicon.ico|robots.txt).*)$", "destination": "/index.html" }
-  ]
+  ],
+  "cleanUrls": true,
+  "trailingSlash": false
 }
