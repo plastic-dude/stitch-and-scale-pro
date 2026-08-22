@@ -27,7 +27,10 @@ type ProjectsAction =
   | { type: 'CREATE_SNAPSHOT'; payload: { projectId: string; name: string; note: string } }
   | { type: 'RESTORE_SNAPSHOT'; payload: { projectId: string; snapshotId: string } }
   | { type: 'DELETE_SNAPSHOT'; payload: { projectId: string; snapshotId: string } }
-  | { type: 'UPDATE_CONTRACT'; payload: { projectId: string; contract: any } };
+  | { type: 'UPDATE_CONTRACT'; payload: { projectId: string; contract: any } }
+  | { type: 'CREATE_PUBLICATION_PACKAGE'; payload: { projectId: string; pkg: any } }
+  | { type: 'UPDATE_PUBLICATION_PACKAGE'; payload: { projectId: string; pkg: any } }
+  | { type: 'DELETE_PUBLICATION_PACKAGE'; payload: { projectId: string; packageId: string } };
 
 export type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
 
@@ -42,6 +45,9 @@ interface ProjectsContextType {
   restoreSnapshot: (projectId: string, snapshotId: string) => void;
   deleteSnapshot: (projectId: string, snapshotId: string) => void;
   updateContract: (projectId: string, contract: any) => void;
+  createPublicationPackage: (projectId: string, pkg: any) => void;
+  updatePublicationPackage: (projectId: string, pkg: any) => void;
+  deletePublicationPackage: (projectId: string, packageId: string) => void;
   saveStatus: SaveStatus;
   recovered: boolean;
   dismissRecovery: () => void;
@@ -139,6 +145,40 @@ function projectsReducer(state: PatternProject[], action: ProjectsAction): Patte
         return {
           ...p,
           publicationContract: action.payload.contract,
+          updatedAt: new Date().toISOString(),
+        };
+      });
+      break;
+    case 'CREATE_PUBLICATION_PACKAGE':
+      newState = state.map(p => {
+        if (p.id !== action.payload.projectId) return p;
+        return {
+          ...p,
+          publicationPackages: [action.payload.pkg, ...(p.publicationPackages || [])],
+          updatedAt: new Date().toISOString(),
+        };
+      });
+      break;
+    case 'UPDATE_PUBLICATION_PACKAGE':
+      newState = state.map(p => {
+        if (p.id !== action.payload.projectId) return p;
+        return {
+          ...p,
+          publicationPackages: (p.publicationPackages || []).map(pkg => 
+            pkg.id === action.payload.pkg.id ? action.payload.pkg : pkg
+          ),
+          updatedAt: new Date().toISOString(),
+        };
+      });
+      break;
+    case 'DELETE_PUBLICATION_PACKAGE':
+      newState = state.map(p => {
+        if (p.id !== action.payload.projectId) return p;
+        return {
+          ...p,
+          publicationPackages: (p.publicationPackages || []).filter(pkg => 
+            pkg.id !== action.payload.packageId
+          ),
           updatedAt: new Date().toISOString(),
         };
       });
@@ -246,6 +286,9 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
   const restoreSnapshot = (projectId: string, snapshotId: string) => dispatch({ type: 'RESTORE_SNAPSHOT', payload: { projectId, snapshotId } });
   const deleteSnapshot = (projectId: string, snapshotId: string) => dispatch({ type: 'DELETE_SNAPSHOT', payload: { projectId, snapshotId } });
   const updateContract = (projectId: string, contract: any) => dispatch({ type: 'UPDATE_CONTRACT', payload: { projectId, contract } });
+  const createPublicationPackage = (projectId: string, pkg: any) => dispatch({ type: 'CREATE_PUBLICATION_PACKAGE', payload: { projectId, pkg } });
+  const updatePublicationPackage = (projectId: string, pkg: any) => dispatch({ type: 'UPDATE_PUBLICATION_PACKAGE', payload: { projectId, pkg } });
+  const deletePublicationPackage = (projectId: string, packageId: string) => dispatch({ type: 'DELETE_PUBLICATION_PACKAGE', payload: { projectId, packageId } });
 
   // Import a single project from an exported JSON file — always assigns a
   // fresh id so it can never silently collide with or overwrite an existing
@@ -261,6 +304,7 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
     <ProjectsContext.Provider value={{ 
       projects, createProject, updateProject, deleteProject, duplicateProject, importProject, 
       createSnapshot, restoreSnapshot, deleteSnapshot, updateContract,
+      createPublicationPackage, updatePublicationPackage, deletePublicationPackage,
       saveStatus, recovered, dismissRecovery 
     }}>
       {children}
@@ -292,7 +336,11 @@ export function makeDemoProject(langOrTimestamp: any = 'en', nowOverride?: strin
 }
 
 export function useProject(id?: string) {
-  const { projects, createProject, updateProject, deleteProject, createSnapshot, restoreSnapshot, deleteSnapshot, updateContract } = useProjects();
+  const { 
+    projects, createProject, updateProject, deleteProject, 
+    createSnapshot, restoreSnapshot, deleteSnapshot, updateContract,
+    createPublicationPackage, updatePublicationPackage, deletePublicationPackage
+  } = useProjects();
   if (!id) return null;
   const existing = projects.find(p => p.id === id);
 
@@ -309,6 +357,9 @@ export function useProject(id?: string) {
       restoreSnapshot: (snapshotId: string) => restoreSnapshot(DEMO_PROJECT_ID, snapshotId),
       deleteSnapshot: (snapshotId: string) => deleteSnapshot(DEMO_PROJECT_ID, snapshotId),
       updateContract: (contract: any) => updateContract(DEMO_PROJECT_ID, contract),
+      createPublicationPackage: (pkg: any) => createPublicationPackage(DEMO_PROJECT_ID, pkg),
+      updatePublicationPackage: (pkg: any) => updatePublicationPackage(DEMO_PROJECT_ID, pkg),
+      deletePublicationPackage: (packageId: string) => deletePublicationPackage(DEMO_PROJECT_ID, packageId),
     };
   }
 
@@ -322,5 +373,8 @@ export function useProject(id?: string) {
     restoreSnapshot: (snapshotId: string) => restoreSnapshot(existing.id, snapshotId),
     deleteSnapshot: (snapshotId: string) => deleteSnapshot(existing.id, snapshotId),
     updateContract: (contract: any) => updateContract(existing.id, contract),
+    createPublicationPackage: (pkg: any) => createPublicationPackage(existing.id, pkg),
+    updatePublicationPackage: (pkg: any) => updatePublicationPackage(existing.id, pkg),
+    deletePublicationPackage: (packageId: string) => deletePublicationPackage(existing.id, packageId),
   };
 }

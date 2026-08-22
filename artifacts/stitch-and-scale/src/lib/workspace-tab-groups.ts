@@ -42,6 +42,7 @@ export const TAB_GROUPS: Record<string, TabGroup> = {
   notes: "design",
   snapshots: "design",
   readiness: "design",
+  packages: "design",
   "yarn-licensing": "design",
   // Sizing & Fit
   testknit: "fit",

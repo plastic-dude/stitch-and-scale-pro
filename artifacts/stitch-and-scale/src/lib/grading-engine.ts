@@ -81,6 +81,34 @@ export interface PublicationContract {
   updatedAt: string;
 }
 
+export interface PublicationArtifact {
+  id: string;
+  type: 'pdf' | 'csv' | 'json' | 'image';
+  label: string;
+  url: string;
+  createdAt: string;
+  revisionId?: string;
+}
+
+export interface PublicationPackage {
+  id: string;
+  version: string;
+  status: 'draft' | 'review' | 'published' | 'archived';
+  readinessVerdict: ReadinessStageStatus;
+  authoritativeMetadata: {
+    title: string;
+    author: string;
+    copyright: string;
+    description: string;
+    sizes: SizeKey[];
+    gauge: Gauge;
+  };
+  artifacts: PublicationArtifact[];
+  publishedAt?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface ProjectSnapshot {
   id: string;
   name: string;
@@ -118,6 +146,8 @@ export interface PatternProject {
   snapshots?: ProjectSnapshot[];
   /** Publication readiness contract — formal sign-off trail. */
   publicationContract?: PublicationContract;
+  /** Publication packages — versioned authoritative releases. */
+  publicationPackages?: PublicationPackage[];
 }
 
 export interface GradedMeasurement {

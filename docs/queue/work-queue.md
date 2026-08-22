@@ -54,12 +54,14 @@
 | 46 | QUEUE-039 | Priority 1: Revision Snapshots (MAJOR) — Implement named snapshots, snapshot notes, and restore flow to provide a durable audit trail for pattern revisions. | MAJOR | done | CHK-182: cf78702; implemented snapshots schema, storage, and UI |
 | 47 | QUEUE-040 | CHK-183: Fix Revision Snapshots integration omission in ProjectWorkspace and strengthen tests | MAJOR | done | Wired snapshots panel with destructured callbacks; fixed TS nullability; 4 regression tests; gates green |
 | 48 | QUEUE-041 | Priority 0: Pattern Publication Readiness Contract — Define and implement a formal publication readiness checklist and state (readiness for tech-edit, test-knit, and final publication) with a compiled readiness verdict. | CRITICAL | done | CHK-184: `b4da4086bbb3254fc75d1639b00f0c9f70dee5b2`; implemented readiness schema, storage, UI, and localization |
+| 49 | QUEUE-042 | Priority 1: Pattern Publication Package — Define and implement the `Pattern Publication Package` with authoritative metadata, instruction resolution, and artifact governance. | MAJOR | in-progress | Defining publication package schema and authoritative content resolution |
 
 ## Run ledger
 | Run (date) | Item worked | Gates | Commit | Next item |
 |---|---|---|---|---|
-| 62 | 2026-08-22 | QUEUE-041 | tsc, vitest, build | b4da4086bbb3254fc75d1639b00f0c9f70dee5b2 | END OF QUEUE |
-| 61 | 2026-08-22 | QUEUE-040 | tsc, vitest, build | 053121a896535ea3c219d9224a4bc965710ad087 | END OF QUEUE |
+| 63 | 2026-08-22 (CHK-185) | QUEUE-042 (MAJOR) — Pattern Publication Package | tsc clean; vitest 2,336/2,336; build green; 82 labs total; live verified | 66f259421326bba6599eb6699ab8b49f641590a0 | END OF QUEUE |
+| 62 | 2026-08-22 | QUEUE-041 | done | b4da4086bbb3254fc75d1639b00f0c9f70dee5b2 | CHK-184: Pattern Publication Readiness Contract |
+| 61 | 2026-08-22 | QUEUE-040 | done | 053121a896535ea3c219d9224a4bc965710ad087 | CHK-183: Fix Revision Snapshots integration in ProjectWorkspace |
 | 60 | 2026-08-22 | QUEUE-039 | tsc, vitest, build | cf78702 | QUEUE-040 |
 | 59 | 2026-08-22 | QUEUE-038 | tsc, vitest, build | 071d936 | QUEUE-039 |
 | 58 | 2026-08-22 | QUEUE-037 | tsc, vitest, build | aff1652 | QUEUE-038 |

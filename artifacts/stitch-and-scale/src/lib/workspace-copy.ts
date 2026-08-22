@@ -1,4 +1,5 @@
 import type { LanguageCode } from './i18n';
+export type { LanguageCode };
 
 export interface WorkspaceCopy {
   draftIssueUnresolved: string;
@@ -114,6 +115,29 @@ export interface WorkspaceCopy {
   readinessIssueSeverityCritical: string;
   readinessContractUpdated: string;
   readinessApprovedBy: (name: string, date: string) => string;
+  publicationPackageTitle: string;
+  publicationPackageDescription: string;
+  publicationCreatePackage: string;
+  publicationPackageName: string;
+  publicationPackageVersion: string;
+  publicationPackageStatus: string;
+  publicationPackageVerdict: string;
+  publicationAuthoritativeMetadata: string;
+  publicationArtifacts: string;
+  publicationNoPackages: string;
+  publicationPackageCreated: string;
+  publicationPackageUpdated: string;
+  publicationPackageDeleted: string;
+  publicationStatusDraft: string;
+  publicationStatusReview: string;
+  publicationStatusPublished: string;
+  publicationStatusArchived: string;
+  publicationMetadataTitle: string;
+  publicationMetadataAuthor: string;
+  publicationMetadataCopyright: string;
+  publicationMetadataDescription: string;
+  publicationMetadataSizes: string;
+  publicationMetadataGauge: string;
 }
 
 const COPY: Record<LanguageCode, WorkspaceCopy> = {
@@ -231,6 +255,29 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     readinessIssueSeverityCritical: 'Critical',
     readinessContractUpdated: 'Readiness contract updated',
     readinessApprovedBy: (name, date) => `Approved by ${name} on ${date}`,
+    publicationPackageTitle: 'Publication Packages',
+    publicationPackageDescription: 'Versioned authoritative releases of your pattern with locked metadata and artifacts.',
+    publicationCreatePackage: 'Create Package',
+    publicationPackageName: 'Package Name',
+    publicationPackageVersion: 'Version',
+    publicationPackageStatus: 'Status',
+    publicationPackageVerdict: 'Readiness Verdict',
+    publicationAuthoritativeMetadata: 'Authoritative Metadata',
+    publicationArtifacts: 'Artifacts',
+    publicationNoPackages: 'No publication packages yet. Create one to freeze an authoritative version.',
+    publicationPackageCreated: 'Publication package created',
+    publicationPackageUpdated: 'Publication package updated',
+    publicationPackageDeleted: 'Publication package deleted',
+    publicationStatusDraft: 'Draft',
+    publicationStatusReview: 'In Review',
+    publicationStatusPublished: 'Published',
+    publicationStatusArchived: 'Archived',
+    publicationMetadataTitle: 'Title',
+    publicationMetadataAuthor: 'Author',
+    publicationMetadataCopyright: 'Copyright',
+    publicationMetadataDescription: 'Description',
+    publicationMetadataSizes: 'Sizes',
+    publicationMetadataGauge: 'Gauge',
   },
   de: {
     by: 'Von',
@@ -346,6 +393,29 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     readinessIssueSeverityCritical: 'Kritisch',
     readinessContractUpdated: 'Bereitschaftsvertrag aktualisiert',
     readinessApprovedBy: (name, date) => `Freigegeben von ${name} am ${date}`,
+    publicationPackageTitle: 'Veröffentlichungspakete',
+    publicationPackageDescription: 'Versionierte autoritative Versionen deines Musters mit gesperrten Metadaten und Artefakten.',
+    publicationCreatePackage: 'Paket erstellen',
+    publicationPackageName: 'Paketname',
+    publicationPackageVersion: 'Version',
+    publicationPackageStatus: 'Status',
+    publicationPackageVerdict: 'Bereitschaftsurteil',
+    publicationAuthoritativeMetadata: 'Autoritative Metadaten',
+    publicationArtifacts: 'Artefakte',
+    publicationNoPackages: 'Noch keine Veröffentlichungspakete. Erstelle eines, um eine verbindliche Version einzufrieren.',
+    publicationPackageCreated: 'Veröffentlichungspaket erstellt',
+    publicationPackageUpdated: 'Veröffentlichungspaket aktualisiert',
+    publicationPackageDeleted: 'Veröffentlichungspaket gelöscht',
+    publicationStatusDraft: 'Entwurf',
+    publicationStatusReview: 'In Prüfung',
+    publicationStatusPublished: 'Veröffentlicht',
+    publicationStatusArchived: 'Archiviert',
+    publicationMetadataTitle: 'Titel',
+    publicationMetadataAuthor: 'Autor',
+    publicationMetadataCopyright: 'Copyright',
+    publicationMetadataDescription: 'Beschreibung',
+    publicationMetadataSizes: 'Größen',
+    publicationMetadataGauge: 'Maschenprobe',
   },
   fr: {
     by: 'Par',
@@ -461,6 +531,29 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     readinessIssueSeverityCritical: 'Critique',
     readinessContractUpdated: 'Contrat de disponibilité mis à jour',
     readinessApprovedBy: (name, date) => `Approuvé par ${name} le ${date}`,
+    publicationPackageTitle: 'Packages de publication',
+    publicationPackageDescription: 'Versions officielles de votre patron avec métadonnées et artefacts verrouillés.',
+    publicationCreatePackage: 'Créer un package',
+    publicationPackageName: 'Nom du package',
+    publicationPackageVersion: 'Version',
+    publicationPackageStatus: 'Statut',
+    publicationPackageVerdict: 'Verdict de préparation',
+    publicationAuthoritativeMetadata: 'Métadonnées officielles',
+    publicationArtifacts: 'Artefacts',
+    publicationNoPackages: 'Aucun package de publication pour le moment. Créez-en un pour figer une version officielle.',
+    publicationPackageCreated: 'Package de publication créé',
+    publicationPackageUpdated: 'Package de publication mis à jour',
+    publicationPackageDeleted: 'Package de publication supprimé',
+    publicationStatusDraft: 'Brouillon',
+    publicationStatusReview: 'En révision',
+    publicationStatusPublished: 'Publié',
+    publicationStatusArchived: 'Archivé',
+    publicationMetadataTitle: 'Titre',
+    publicationMetadataAuthor: 'Auteur',
+    publicationMetadataCopyright: 'Droit d\'auteur',
+    publicationMetadataDescription: 'Description',
+    publicationMetadataSizes: 'Tailles',
+    publicationMetadataGauge: 'Échantillon',
   },
   es: {
     by: 'Por',
@@ -576,6 +669,29 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     readinessIssueSeverityCritical: 'Crítico',
     readinessContractUpdated: 'Contrato de disponibilidad actualizado',
     readinessApprovedBy: (name, date) => `Aprobado por ${name} el ${date}`,
+    publicationPackageTitle: 'Paquetes de publicación',
+    publicationPackageDescription: 'Versiones autorizadas de su patrón con metadatos y artefactos bloqueados.',
+    publicationCreatePackage: 'Crear paquete',
+    publicationPackageName: 'Nombre del paquete',
+    publicationPackageVersion: 'Versión',
+    publicationPackageStatus: 'Estado',
+    publicationPackageVerdict: 'Veredicto de preparación',
+    publicationAuthoritativeMetadata: 'Metadatos autorizados',
+    publicationArtifacts: 'Artefactos',
+    publicationNoPackages: 'Aún no hay paquetes de publicación. Cree uno para congelar una versión autorizada.',
+    publicationPackageCreated: 'Paquete de publicación creado',
+    publicationPackageUpdated: 'Paquete de publicación actualizado',
+    publicationPackageDeleted: 'Paquete de publicación eliminado',
+    publicationStatusDraft: 'Borrador',
+    publicationStatusReview: 'En revisión',
+    publicationStatusPublished: 'Publicado',
+    publicationStatusArchived: 'Archivado',
+    publicationMetadataTitle: 'Título',
+    publicationMetadataAuthor: 'Autor',
+    publicationMetadataCopyright: 'Derechos de autor',
+    publicationMetadataDescription: 'Descripción',
+    publicationMetadataSizes: 'Tallas',
+    publicationMetadataGauge: 'Tensión',
   },
   pt: {
     by: 'Por',
@@ -691,6 +807,29 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     readinessIssueSeverityCritical: 'Crítico',
     readinessContractUpdated: 'Contrato de prontidão atualizado',
     readinessApprovedBy: (name, date) => `Aprovado por ${name} em ${date}`,
+    publicationPackageTitle: 'Pacotes de Publicação',
+    publicationPackageDescription: 'Versões autoritativas do seu padrão com metadados e artefactos bloqueados.',
+    publicationCreatePackage: 'Criar Pacote',
+    publicationPackageName: 'Nome do Pacote',
+    publicationPackageVersion: 'Versão',
+    publicationPackageStatus: 'Status',
+    publicationPackageVerdict: 'Veredicto de Prontidão',
+    publicationAuthoritativeMetadata: 'Metadados Autoritativos',
+    publicationArtifacts: 'Artefactos',
+    publicationNoPackages: 'Ainda não existem pacotes de publicação. Crie um para congelar uma versão autoritativa.',
+    publicationPackageCreated: 'Pacote de publicação criado',
+    publicationPackageUpdated: 'Pacote de publicação atualizado',
+    publicationPackageDeleted: 'Pacote de publicação eliminado',
+    publicationStatusDraft: 'Rascunho',
+    publicationStatusReview: 'Em Revisão',
+    publicationStatusPublished: 'Publicado',
+    publicationStatusArchived: 'Arquivado',
+    publicationMetadataTitle: 'Título',
+    publicationMetadataAuthor: 'Autor',
+    publicationMetadataCopyright: 'Copyright',
+    publicationMetadataDescription: 'Descrição',
+    publicationMetadataSizes: 'Tamanhos',
+    publicationMetadataGauge: 'Amostra',
   },
 };
 

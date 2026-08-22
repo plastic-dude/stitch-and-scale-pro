@@ -134,6 +134,7 @@ const LAB = {
   payback: React.lazy(cardLazy(() => import('@/components/payback-lab-card'))),
   snapshots: React.lazy(cardLazy(() => import('@/components/project-snapshots-card'))),
   readiness: React.lazy(cardLazy(() => import('@/components/project-readiness-card'))),
+  packages: React.lazy(cardLazy(() => import('@/components/project-package-card'))),
 };
 
 class LabErrorBoundary extends React.Component<
@@ -207,7 +208,16 @@ export default function ProjectWorkspace() {
     return <div className="flex items-center justify-center min-h-[400px]">{t('workspace.loading')}</div>;
   }
 
-  const { project, updateProject, createSnapshot, restoreSnapshot, deleteSnapshot } = projectHook;
+  const { 
+    project, 
+    updateProject, 
+    createSnapshot, 
+    restoreSnapshot, 
+    deleteSnapshot,
+    createPublicationPackage,
+    updatePublicationPackage,
+    deletePublicationPackage
+  } = projectHook;
   const copy = getWorkspaceCopy(currentLanguage);
   const tc = getToastCopy(currentLanguage);
 
@@ -877,6 +887,19 @@ export default function ProjectWorkspace() {
               createSnapshot={createSnapshot}
               restoreSnapshot={restoreSnapshot}
               deleteSnapshot={deleteSnapshot}
+            />
+          </React.Suspense>
+        );
+      }
+      case 'packages': {
+        const Packages = LAB.packages as React.ComponentType<any>;
+        return (
+          <React.Suspense fallback={<div className="py-10 text-center text-sm text-muted-foreground">{copy.loadingLab}</div>}>
+            <Packages 
+              project={project} 
+              createPublicationPackage={createPublicationPackage}
+              updatePublicationPackage={updatePublicationPackage}
+              deletePublicationPackage={deletePublicationPackage}
             />
           </React.Suspense>
         );
