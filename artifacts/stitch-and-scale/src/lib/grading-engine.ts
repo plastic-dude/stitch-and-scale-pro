@@ -269,6 +269,8 @@ export interface PatternProject {
   testKnitRounds?: TestKnitRound[];
   /** Sample tracker: durable records of physical samples. */
   samples?: ProjectSample[];
+  /** Submission pipeline: durable records for outlet submissions. */
+  submissions?: ProjectSubmission[];
 }
 
 export interface ProjectAsset {
@@ -311,6 +313,19 @@ export interface ProjectSample {
   loanDate?: string;
   returnDueDate?: string;
   status: SampleStatus;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type SubmissionStatus = 'planned' | 'submitted' | 'accepted' | 'rejected' | 'withdrawn';
+
+export interface ProjectSubmission {
+  id: string;
+  outlet: string;
+  deadline?: string;
+  submittedDate?: string;
+  outcome: SubmissionStatus;
   notes?: string;
   createdAt: string;
   updatedAt: string;

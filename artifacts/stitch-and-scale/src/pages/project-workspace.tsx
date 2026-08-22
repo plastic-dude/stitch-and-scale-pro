@@ -75,7 +75,7 @@ const LAB = {
   transbundle: React.lazy(cardLazy(() => import('@/components/translation-bundle-card'))),
   patternclub: React.lazy(cardLazy(() => import('@/components/pattern-club-card'))),
   kits: React.lazy(cardLazy(() => import('@/components/kit-economics-card'))),
-  pipeline: React.lazy(cardLazy(() => import('@/components/submission-pipeline-card'))),
+  pipeline: React.lazy(cardLazy(() => import('@/components/submission-planner-card'))),
   kalroi: React.lazy(cardLazy(() => import('@/components/kal-roi-card'))),
   channels: React.lazy(cardLazy(() => import('@/components/channel-funnel-card'))),
   clubrev: React.lazy(cardLazy(() => import('@/components/club-revenue-card'))),
@@ -95,7 +95,7 @@ const LAB = {
   partners: React.lazy(cardLazy(() => import('@/components/partner-economics-card'))),
   yarnbuy: React.lazy(cardLazy(() => import('@/components/yarn-buy-calculator-card'))),
   kal: React.lazy(cardLazy(() => import('@/components/kal-planner-card'))),
-  submissions: React.lazy(cardLazy(() => import('@/components/submission-desk-card'))),
+  submissions: React.lazy(cardLazy(() => import('@/components/submission-pipeline-card'))),
   gradinglab: React.lazy(cardLazy(() => import('@/components/grading-lab-card'))),
   chartlab: React.lazy(cardLazy(() => import('@/components/chart-lab-card'))),
   composition: CompositionPanel,
@@ -236,6 +236,9 @@ export default function ProjectWorkspace() {
     addAsset,
     deleteAsset,
     updateAsset,
+    addSubmission,
+    updateSubmission,
+    deleteSubmission,
   } = projectHook;
   const copy = getWorkspaceCopy(currentLanguage);
   const tc = getToastCopy(currentLanguage);
@@ -884,7 +887,16 @@ export default function ProjectWorkspace() {
       case 'partners': return <LazyPanel loader={LAB.partners} project={project} />;
       case 'yarnbuy': return <LazyPanel loader={LAB.yarnbuy} project={project} />;
       case 'kal': return <LazyPanel loader={LAB.kal} project={project} />;
-      case 'submissions': return <LazyPanel loader={LAB.submissions} project={project} />;
+      case 'submissions':
+        return (
+          <LazyPanel 
+            loader={LAB.submissions} 
+            project={project} 
+            addSubmission={addSubmission}
+            updateSubmission={updateSubmission}
+            deleteSubmission={deleteSubmission}
+          />
+        );
       case 'gradinglab': return <LazyPanel loader={LAB.gradinglab} project={project} />;
       case 'chartlab': return <LazyPanel loader={LAB.chartlab} project={project} />;
       case 'testdesk': return <LazyPanel loader={LAB.testdesk} project={project} />;

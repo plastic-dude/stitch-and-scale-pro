@@ -8,6 +8,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { DEMO_PROJECT_ID, makeDemoProject, projectsReducer } from './ProjectsContext';
 import { SAMPLE_CREW_NECK_SWEATER } from '@/lib/sample-projects';
+import type { PatternProject, ProjectSubmission } from '@/lib/grading-engine';
 
 const PROJECTS_CONTEXT_SOURCE = fs.readFileSync(
   path.resolve(__dirname, 'ProjectsContext.tsx'),
@@ -71,5 +72,83 @@ describe('CHK-119 demo seed', () => {
   it('a fresh seed never collides with the stored samples', () => {
     expect(makeDemoProject().id).not.toBe(SAMPLE_CREW_NECK_SWEATER.id);
     expect(makeDemoProject().id).not.toBe('sample-basic-beanie');
+  });
+});
+
+describe('QUEUE-056: submission record reducer actions', () => {
+  const baseProject: PatternProject = {
+    id: 'p1',
+    name: 'Test Project',
+    author: 'Author',
+    baseSize: 'M',
+    gauge: { stitchesPer4In: 20, rowsPer4In: 28, unit: 'in' },
+    sections: [],
+    createdAt: '2026-08-20T00:00:00.000Z',
+    updatedAt: '2026-08-20T00:00:00.000Z',
+  };
+
+  const testSubmission: ProjectSubmission = {
+    id: 's1',
+    outlet: 'Knitty',
+    deadline: '2026-09-01',
+    outcome: 'planned',
+    createdAt: '2026-08-20T10:00:00.000Z',
+    updatedAt: '2026-08-20T10:00:00.000Z',
+  };
+
+  it('ADD_SUBMISSION prepends a new record and updates project timestamp', () => {
+    const state = [baseProject];
+    const newState = projectsReducer(state, {
+      type: 'ADD_SUBMISSION',
+      payload: { projectId: 'p1', submission: testSubmission }
+    });
+
+    expect(newState[0].submissions).toHaveLength(1);
+    expect(newState[0].submissions?.[0]).toEqual(testSubmission);
+    expect(new Date(newState[0].updatedAt).getTime()).toBeGreaterThan(new Date(baseProject.updatedAt).getTime());
+  });
+
+  it('UPDATE_SUBMISSION patches an existing record and updates both timestamps', () => {
+    const projectWithSubmission = { ...baseProject, submissions: [testSubmission] };
+    const state = [projectWithSubmission];
+    const newState = projectsReducer(state, {
+      type: 'UPDATE_SUBMISSION',
+      payload: { 
+        projectId: 'p1', 
+        submissionId: 's1', 
+        patch: { outcome: 'submitted', submittedDate: '2026-08-21' } 
+      }
+    });
+
+    const updated = newState[0].submissions?.[0];
+    expect(updated?.outcome).toBe('submitted');
+    expect(updated?.submittedDate).toBe('2026-08-21');
+    expect(new Date(updated!.updatedAt).getTime()).toBeGreaterThan(new Date(testSubmission.updatedAt).getTime());
+    expect(new Date(newState[0].updatedAt).getTime()).toBeGreaterThan(new Date(baseProject.updatedAt).getTime());
+  });
+
+  it('DELETE_SUBMISSION removes a record by id', () => {
+    const projectWithSubmission = { ...baseProject, submissions: [testSubmission] };
+    const state = [projectWithSubmission];
+    const newState = projectsReducer(state, {
+      type: 'DELETE_SUBMISSION',
+      payload: { projectId: 'p1', submissionId: 's1' }
+    });
+
+    expect(newState[0].submissions).toHaveLength(0);
+  });
+
+  it('normalization preserves submissions array during INIT', () => {
+    const rawProject = {
+      ...baseProject,
+      submissions: [testSubmission]
+    };
+    const newState = projectsReducer([], {
+      type: 'INIT',
+      payload: [rawProject as any]
+    });
+
+    expect(newState[0].submissions).toHaveLength(1);
+    expect(newState[0].submissions?.[0].outlet).toBe('Knitty');
   });
 });

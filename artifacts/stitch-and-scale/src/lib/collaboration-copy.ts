@@ -66,6 +66,19 @@ export interface CollaborationCopy {
   sold: string;
   lost: string;
   planned: string;
+  submissionPipeline: string;
+  addSubmission: string;
+  outletLabel: string;
+  deadlineLabel: string;
+  submittedDateLabel: string;
+  outcomeLabel: string;
+  noSubmissions: string;
+  deleteSubmissionConfirm: string;
+  submissionUpdated: string;
+  submitted: string;
+  withdrawn: string;
+  cancel: string;
+  editSubmission: string;
 }
 
 export const COLLABORATION_COPY: Record<LanguageCode, CollaborationCopy> = {
@@ -135,6 +148,19 @@ export const COLLABORATION_COPY: Record<LanguageCode, CollaborationCopy> = {
     sold: 'Sold',
     lost: 'Lost',
     planned: 'Planned',
+    submissionPipeline: 'Submission Pipeline',
+    addSubmission: 'Add Submission',
+    outletLabel: 'Outlet',
+    deadlineLabel: 'Deadline',
+    submittedDateLabel: 'Submitted Date',
+    outcomeLabel: 'Outcome',
+    noSubmissions: 'No submissions recorded.',
+    deleteSubmissionConfirm: 'Are you sure you want to delete this submission record?',
+    submissionUpdated: 'Submission record updated',
+    submitted: 'Submitted',
+    withdrawn: 'Withdrawn',
+    cancel: 'Cancel',
+    editSubmission: 'Edit Submission',
   },
   de: {
     title: 'Zusammenarbeit',
@@ -202,6 +228,19 @@ export const COLLABORATION_COPY: Record<LanguageCode, CollaborationCopy> = {
     sold: 'Verkauft',
     lost: 'Verloren',
     planned: 'Geplant',
+    submissionPipeline: 'Einreichungspipeline',
+    addSubmission: 'Einreichung hinzufügen',
+    outletLabel: 'Outlet',
+    deadlineLabel: 'Frist',
+    submittedDateLabel: 'Eingereicht am',
+    outcomeLabel: 'Ergebnis',
+    noSubmissions: 'Keine Einreichungen aufgezeichnet.',
+    deleteSubmissionConfirm: 'Bist du sicher, dass du diesen Einreichungsdatensatz löschen möchtest?',
+    submissionUpdated: 'Einreichungsdatensatz aktualisiert',
+    submitted: 'Eingereicht',
+    withdrawn: 'Zurückgezogen',
+    cancel: 'Abbrechen',
+    editSubmission: 'Einreichung bearbeiten',
   },
   fr: {
     title: 'Collaboration',
@@ -269,6 +308,19 @@ export const COLLABORATION_COPY: Record<LanguageCode, CollaborationCopy> = {
     sold: 'Vendu',
     lost: 'Perdu',
     planned: 'Prévu',
+    submissionPipeline: 'Pipeline de soumission',
+    addSubmission: 'Ajouter une soumission',
+    outletLabel: 'Point de vente',
+    deadlineLabel: 'Date limite',
+    submittedDateLabel: 'Date de soumission',
+    outcomeLabel: 'Résultat',
+    noSubmissions: 'Aucune soumission enregistrée.',
+    deleteSubmissionConfirm: 'Êtes-vous sûr de vouloir supprimer ce dossier de soumission ?',
+    submissionUpdated: 'Dossier de soumission mis à jour',
+    submitted: 'Soumis',
+    withdrawn: 'Retiré',
+    cancel: 'Annuler',
+    editSubmission: 'Modifier la soumission',
   },
   es: {
     title: 'Colaboración',
@@ -336,6 +388,19 @@ export const COLLABORATION_COPY: Record<LanguageCode, CollaborationCopy> = {
     sold: 'Vendido',
     lost: 'Perdido',
     planned: 'Planificado',
+    submissionPipeline: 'Pipeline de envío',
+    addSubmission: 'Agregar envío',
+    outletLabel: 'Punto de venta',
+    deadlineLabel: 'Fecha límite',
+    submittedDateLabel: 'Fecha de envío',
+    outcomeLabel: 'Resultado',
+    noSubmissions: 'No se han registrado envíos.',
+    deleteSubmissionConfirm: '¿Estás seguro de que deseas eliminar este registro de envío?',
+    submissionUpdated: 'Registro de envío actualizado',
+    submitted: 'Enviado',
+    withdrawn: 'Retirado',
+    cancel: 'Cancelar',
+    editSubmission: 'Editar envío',
   },
   pt: {
     title: 'Colaboração',
@@ -403,5 +468,18 @@ export const COLLABORATION_COPY: Record<LanguageCode, CollaborationCopy> = {
     sold: 'Vendido',
     lost: 'Perdido',
     planned: 'Planejado',
+    submissionPipeline: 'Pipeline de submissão',
+    addSubmission: 'Adicionar submissão',
+    outletLabel: 'Ponto de venda',
+    deadlineLabel: 'Prazo',
+    submittedDateLabel: 'Data de submissão',
+    outcomeLabel: 'Resultado',
+    noSubmissions: 'Nenhuma submissão registrada.',
+    deleteSubmissionConfirm: 'Tem certeza de que deseja excluir este registro de submissão?',
+    submissionUpdated: 'Registro de submissão atualizado',
+    submitted: 'Submetido',
+    withdrawn: 'Retirado',
+    cancel: 'Cancelar',
+    editSubmission: 'Editar submissão',
   },
 };

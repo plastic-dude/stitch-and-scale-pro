@@ -79,7 +79,7 @@ export const TAB_REGISTRY: TabRegistryEntry[] = [
   { value: "gradinglab", label: "Grading Lab", group: "design", icon: "FlaskConical" },
   { value: "chartlab", label: "Chart Lab", group: "design", icon: "PenLine" },
   { value: "testdesk", label: "Test Knit Desk", group: "design", icon: "ClipboardCheck" },
-  { value: "submissions", label: "Submissions", group: "fit" },
+  { value: "submissions", label: "Submissions", group: "fit", icon: "LayoutGrid" },
   { value: "lookbook", label: "Lookbook", group: "design", icon: "Camera" },
   { value: "specsheet", label: "Spec Sheet", group: "design", icon: "FileText" },
   { value: "subdist", label: "Distribution", group: "channels", icon: "Library" },

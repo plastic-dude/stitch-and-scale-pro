@@ -15,6 +15,7 @@
 | 68 | QUEUE-053 | Priority 1 Gap 4: Technical-editor defect ledger | MAJOR | done | CHK-197: Schema expansion + Five-locale UI + Lifecycle logic + Verified Gates |
 | 69 | QUEUE-054 | Priority 1 Gap 5: Test-knit rounds and archival records | MAJOR | done | CHK-198: Durable records for test-knit rounds + localized archive UI + storage seam |
 | 70 | QUEUE-055 | Priority 1 Gap 6: Sample tracker for physical design assets | MAJOR | done | CHK-199: Storage seam + SampleTracker UI + Five-locale localization |
+| 71 | QUEUE-056 | Priority 1 Gap 7: Submission pipeline for outlet deadlines | MAJOR | in-progress | Durable records for outlet submissions (outlet, deadline, submitted date, outcome, notes) |
 
 ## Run ledger
 | Run (date) | Item worked | Gates | Commit | Next item |
