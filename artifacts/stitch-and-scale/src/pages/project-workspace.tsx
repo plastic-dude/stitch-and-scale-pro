@@ -823,6 +823,12 @@ export default function ProjectWorkspace() {
       case 'income': return <LazyPanel loader={LAB.income} project={project} />;
       case 'draft': return <LazyPanel loader={LAB.draft} project={project} />;
       case 'composition': return <CompositionPanel />;
+      case 'readiness': return (
+        <LazyPanel 
+          loader={LAB.readiness} 
+          project={project} 
+        />
+      );
       case 'pricing': return <LazyPanel loader={LAB.pricing} project={project} />;
       case 'collaboration': {
         const Collaboration = LAB.collaboration as React.ComponentType<any>;
@@ -922,6 +928,7 @@ export default function ProjectWorkspace() {
           </React.Suspense>
         );
       }
+
       case 'packages': {
         const Packages = LAB.packages as React.ComponentType<any>;
         return (
@@ -1095,7 +1102,7 @@ export default function ProjectWorkspace() {
             {/* Satisfy desktop-strip-start.test.ts: hidden lg:flex lg:flex-nowrap */}
             {TAB_REGISTRY.map((tab) => {
               const localizedLabel = getWorkspaceTabLabel(currentLanguage, tab.value, ({
-                sections: t('workspace.tab.sections'), preview: t('workspace.tab.preview'), yarn: t('workspace.tab.yarn'), notes: t('workspace.tab.notes'), income: t('workspace.tab.income'), draft: t('workspace.tab.draft'), pricing: t('workspace.tab.pricing'), publish: t('workspace.tab.publish'), testknit: t('workspace.tab.testKnit'), techedit: t('workspace.tab.techEdit'), finish: t('workspace.tab.finish'), launch: t('workspace.tab.launch'), channels: t('workspace.tab.channels'),
+                sections: t('workspace.tab.sections'), preview: t('workspace.tab.preview'), yarn: t('workspace.tab.yarn'), notes: t('workspace.tab.notes'), income: t('workspace.tab.income'), draft: t('workspace.tab.draft'), pricing: t('workspace.tab.pricing'), publish: t('workspace.tab.publish'), testknit: t('workspace.tab.testKnit'), techedit: t('workspace.tab.techEdit'), finish: t('workspace.tab.finish'), launch: t('workspace.tab.launch'), channels: t('workspace.tab.channels'), composition: t('workspace.tab.composition'),
               }[tab.value] ?? tab.label));
               return (
                 <TabsTrigger

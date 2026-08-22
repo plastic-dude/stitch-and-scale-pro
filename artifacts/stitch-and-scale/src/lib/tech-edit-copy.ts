@@ -200,7 +200,7 @@ const en: TechEditCopy = {
 
 const de: TechEditCopy = {
   ...en,
-  title: 'Self Tech-Edit-Audit',
+  title: 'Deine Tech-Edit-Prüfung',
   description: 'Eine Zahlen-Vorprüfung, bevor ein menschlicher Editor das Muster sieht — Editoren berechnen 20–40 $/Std. bei ~10 Tagen Bearbeitungszeit. Jeder gelöste Befund spart bares Geld.',
   verdictClean: 'Sauber — die Zahlenprüfung war erfolgreich',
   verdictCheck: 'Einen Blick wert',
@@ -223,7 +223,7 @@ const de: TechEditCopy = {
   designerLabel: 'Designer',
   baseSizeLabel: 'Basisgröße',
   gaugeLabel: 'Maschenprobe',
-  auditScoreLabel: (s, v) => `Self Tech-Edit Audit Score: ${s}/100 (${v.toUpperCase()})`,
+  auditScoreLabel: (s, v) => `Ergebnis deiner Tech-Edit-Prüfung: ${s}/100 (${v.toUpperCase()})`,
   alreadyCheckedLabel: 'Bereits automatisch geprüft (Zahlenprüfung):',
   checkedItems: [
     'Gültigkeit der Maschenprobe',

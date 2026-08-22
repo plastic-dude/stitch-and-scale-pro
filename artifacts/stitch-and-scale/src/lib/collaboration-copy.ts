@@ -23,6 +23,11 @@ export interface CollaborationCopy {
   comments: string;
   addComment: string;
   commentPlaceholder: string;
+  evidenceLabel: string;
+  reproductionLabel: string;
+  dispositionLabel: string;
+  resolutionLabel: string;
+  statusNeedsTestKnit: string;
 }
 
 export const COLLABORATION_COPY: Record<LanguageCode, CollaborationCopy> = {
@@ -49,6 +54,11 @@ export const COLLABORATION_COPY: Record<LanguageCode, CollaborationCopy> = {
     comments: 'Comments',
     addComment: 'Post Comment',
     commentPlaceholder: 'Write a comment...',
+    evidenceLabel: 'Evidence',
+    reproductionLabel: 'Reproduction',
+    dispositionLabel: 'Disposition',
+    resolutionLabel: 'Resolution Note',
+    statusNeedsTestKnit: 'Needs Test Knit',
   },
   de: {
     title: 'Zusammenarbeit',
@@ -73,6 +83,11 @@ export const COLLABORATION_COPY: Record<LanguageCode, CollaborationCopy> = {
     comments: 'Kommentare',
     addComment: 'Kommentar posten',
     commentPlaceholder: 'Schreibe einen Kommentar...',
+    evidenceLabel: 'Beweis',
+    reproductionLabel: 'Reproduktion',
+    dispositionLabel: 'Entscheidung',
+    resolutionLabel: 'Lösungshinweis',
+    statusNeedsTestKnit: 'Test-Stricken erforderlich',
   },
   fr: {
     title: 'Collaboration',
@@ -97,6 +112,11 @@ export const COLLABORATION_COPY: Record<LanguageCode, CollaborationCopy> = {
     comments: 'Commentaires',
     addComment: 'Publier un commentaire',
     commentPlaceholder: 'Écrire un commentaire...',
+    evidenceLabel: 'Preuve',
+    reproductionLabel: 'Reproduction',
+    dispositionLabel: 'Disposition',
+    resolutionLabel: 'Note de résolution',
+    statusNeedsTestKnit: 'Nécessite un test de tricot',
   },
   es: {
     title: 'Colaboración',
@@ -121,6 +141,11 @@ export const COLLABORATION_COPY: Record<LanguageCode, CollaborationCopy> = {
     comments: 'Comentarios',
     addComment: 'Publicar comentario',
     commentPlaceholder: 'Escribir un comentario...',
+    evidenceLabel: 'Evidencia',
+    reproductionLabel: 'Reproducción',
+    dispositionLabel: 'Disposición',
+    resolutionLabel: 'Nota de resolución',
+    statusNeedsTestKnit: 'Necesita prueba de tejido',
   },
   pt: {
     title: 'Colaboração',
@@ -145,5 +170,10 @@ export const COLLABORATION_COPY: Record<LanguageCode, CollaborationCopy> = {
     comments: 'Comentários',
     addComment: 'Publicar comentário',
     commentPlaceholder: 'Escrever um comentário...',
+    evidenceLabel: 'Evidência',
+    reproductionLabel: 'Reprodução',
+    dispositionLabel: 'Disposição',
+    resolutionLabel: 'Nota de resolução',
+    statusNeedsTestKnit: 'Necessita teste de tricô',
   },
 };

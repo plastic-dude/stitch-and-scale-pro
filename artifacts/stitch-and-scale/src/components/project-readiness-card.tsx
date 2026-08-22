@@ -60,6 +60,7 @@ export function ProjectReadinessCard({ project, updateContract }: ProjectReadine
   const [issueReproduction, setIssueReproduction] = useState('');
   const [issueDisposition, setIssueDisposition] = useState<'accepted' | 'rejected' | 'deferred'>('accepted');
   const [issueResolutionNote, setIssueResolutionNote] = useState('');
+  const [issueSourceRunId, setIssueSourceRunId] = useState('');
 
   const [commentText, setCommentText] = useState('');
   const [activeIssue, setActiveIssue] = useState<{ stage: ReadinessStage; issueId: string } | null>(null);
@@ -100,6 +101,7 @@ export function ProjectReadinessCard({ project, updateContract }: ProjectReadine
       reproductionState: issueReproduction || undefined,
       disposition: issueDisposition,
       resolutionNote: issueResolutionNote || undefined,
+      sourceRunId: issueSourceRunId || undefined,
       assignee: issueAssignee || undefined,
       dueDate: issueDueDate || undefined,
       status: 'open',
@@ -116,6 +118,7 @@ export function ProjectReadinessCard({ project, updateContract }: ProjectReadine
     setIssueReproduction('');
     setIssueDisposition('accepted');
     setIssueResolutionNote('');
+    setIssueSourceRunId('');
     setIssueAssignee('');
     setIssueDueDate('');
     setIssueSeverity('minor');
@@ -142,7 +145,14 @@ export function ProjectReadinessCard({ project, updateContract }: ProjectReadine
     const issue = signOff?.issues.find(i => i.id === issueId);
     if (!issue) return;
 
-    const nextStatus: ReadinessIssueStatus = issue.status === 'open' ? 'fixed' : issue.status === 'fixed' ? 'verified' : 'open';
+    let nextStatus: ReadinessIssueStatus;
+    switch (issue.status) {
+      case 'open': nextStatus = 'fixed'; break;
+      case 'fixed': nextStatus = 'verified'; break;
+      case 'verified': nextStatus = 'needs-test-knit'; break;
+      case 'needs-test-knit': nextStatus = 'open'; break;
+      default: nextStatus = 'open';
+    }
     projectDispatchers.updateReadinessIssue(stage, issueId, { status: nextStatus });
   };
 
@@ -187,6 +197,15 @@ export function ProjectReadinessCard({ project, updateContract }: ProjectReadine
     }
   };
 
+  const getIssueStatusBadge = (status: ReadinessIssueStatus) => {
+    switch (status) {
+      case 'verified': return <Badge variant="outline" className="text-[9px] px-1.5 py-0 h-4 uppercase tracking-tighter bg-green-50 text-green-700 border-green-200">{copy.readinessStatusVerified}</Badge>;
+      case 'fixed': return <Badge variant="outline" className="text-[9px] px-1.5 py-0 h-4 uppercase tracking-tighter bg-blue-50 text-blue-700 border-blue-200">{copy.readinessStatusFixed}</Badge>;
+      case 'needs-test-knit': return <Badge variant="outline" className="text-[9px] px-1.5 py-0 h-4 uppercase tracking-tighter bg-purple-50 text-purple-700 border-purple-200">{colCopy.statusNeedsTestKnit}</Badge>;
+      default: return <Badge variant="outline" className="text-[9px] px-1.5 py-0 h-4 uppercase tracking-tighter">{copy.readinessStatusOpen}</Badge>;
+    }
+  };
+
   const getSeverityColor = (severity: ReadinessSeverity) => {
     switch (severity) {
       case 'critical': return 'text-red-600 bg-red-50 border-red-100';
@@ -209,7 +228,7 @@ export function ProjectReadinessCard({ project, updateContract }: ProjectReadine
         {contract.isReady && (
           <Badge className="bg-green-600 text-white animate-pulse">
             <UserCheck className="h-3.5 w-3.5 mr-1.5" />
-            PUBLICATION READY
+            {copy.readinessPublicationReady}
           </Badge>
         )}
       </CardHeader>
@@ -274,9 +293,17 @@ export function ProjectReadinessCard({ project, updateContract }: ProjectReadine
                             {issue.description}
                           </p>
                           <div className="flex flex-wrap items-center gap-2">
-                            <Badge variant="outline" className="text-[9px] px-1.5 py-0 h-4 uppercase tracking-tighter">
-                              {issue.status}
-                            </Badge>
+                            {getIssueStatusBadge(issue.status)}
+                            {issue.affectedSizes && issue.affectedSizes.length > 0 && (
+                              <Badge variant="outline" className="text-[8px] px-1 h-3.5 bg-accent/10 border-accent/20">
+                                {issue.affectedSizes.join(', ')}
+                              </Badge>
+                            )}
+                            {issue.disposition && issue.disposition !== 'accepted' && (
+                              <Badge variant="outline" className="text-[8px] px-1 h-3.5 bg-orange-50 text-orange-700 border-orange-200 uppercase tracking-tighter">
+                                {issue.disposition === 'rejected' ? copy.readinessDispositionRejected : copy.readinessDispositionDeferred}
+                              </Badge>
+                            )}
                             {issue.location && (
                               <span className="text-[9px] text-muted-foreground flex items-center gap-0.5">
                                 <MapPin className="h-2 w-2" /> {issue.location}
@@ -295,7 +322,41 @@ export function ProjectReadinessCard({ project, updateContract }: ProjectReadine
                             <span className="text-[9px] text-muted-foreground">
                               {formatDate(issue.updatedAt)}
                             </span>
+                            {issue.sourceRunId && (
+                              <Badge variant="outline" className="text-[8px] px-1 h-3.5 bg-blue-50/50 text-blue-600 border-blue-100 font-mono">
+                                RUN: {issue.sourceRunId}
+                              </Badge>
+                            )}
                           </div>
+                          {(issue.evidence || issue.reproductionState || issue.resolutionNote) && (
+                            <div className="mt-2 space-y-1.5 border-t pt-1.5">
+                              {issue.evidence && (
+                                <div className="text-[10px] text-muted-foreground">
+                                  <span className="font-semibold text-[9px] uppercase tracking-wider text-primary/70 mr-1">{colCopy.evidenceLabel}:</span>
+                                  {issue.evidence}
+                                </div>
+                              )}
+                              {issue.reproductionState && (
+                                <div className="text-[10px] text-muted-foreground">
+                                  <span className="font-semibold text-[9px] uppercase tracking-wider text-primary/70 mr-1">{colCopy.reproductionLabel}:</span>
+                                  {issue.reproductionState}
+                                </div>
+                              )}
+                              {issue.resolutionNote && (
+                                <div className="text-[10px] text-green-700 font-medium bg-green-50/50 p-1 rounded">
+                                  <span className="font-semibold text-[9px] uppercase tracking-wider mr-1">{colCopy.resolutionLabel}:</span>
+                                  {issue.resolutionNote}
+                                </div>
+                              )}
+                            </div>
+                          )}
+                          {issue.disposition && issue.disposition !== 'accepted' && (
+                            <div className="mt-1 flex items-center gap-1.5">
+                              <span className="text-[9px] font-bold uppercase text-amber-600 bg-amber-50 px-1 rounded border border-amber-100">
+                                {issue.disposition}
+                              </span>
+                            </div>
+                          )}
                         </div>
                       </div>
                       
@@ -356,24 +417,24 @@ export function ProjectReadinessCard({ project, updateContract }: ProjectReadine
 
         <Dialog open={isIssueDialogOpen} onOpenChange={setIsIssueDialogOpen}>
           <DialogContent>
-            <DialogHeader>
-              <DialogTitle>{copy.readinessAddIssue}</DialogTitle>
-              <DialogDescription>
-                Report a finding or blocker for the {activeStage && getStageLabel(activeStage)} stage.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
+          <DialogHeader>
+            <DialogTitle>{copy.readinessAddIssue}</DialogTitle>
+            <DialogDescription>
+              {activeStage && copy.readinessDialogDescription(getStageLabel(activeStage))}
+            </DialogDescription>
+          </DialogHeader>
+            <div className="grid gap-4 py-4 max-h-[60vh] overflow-y-auto pr-2">
               <div className="grid gap-2">
-                <Label htmlFor="issue-desc">Description</Label>
+                <Label htmlFor="issue-desc">{copy.readinessIssueDescription}</Label>
                 <Input
                   id="issue-desc"
-                  placeholder="e.g. Grading error in XL sleeve cap"
+                  placeholder={copy.readinessIssuePlaceholderDesc}
                   value={issueDescription}
                   onChange={(e) => setIssueDescription(e.target.value)}
                 />
               </div>
               <div className="grid gap-2">
-                <Label>Severity</Label>
+                <Label>{copy.readinessIssueSeverity}</Label>
                 <Select value={issueSeverity} onValueChange={(v: any) => setIssueSeverity(v)}>
                   <SelectTrigger>
                     <SelectValue />
@@ -406,22 +467,87 @@ export function ProjectReadinessCard({ project, updateContract }: ProjectReadine
                   />
                 </div>
               </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="issue-due">{colCopy.dueDateLabel}</Label>
+                  <Input
+                    id="issue-due"
+                    type="date"
+                    value={issueDueDate}
+                    onChange={(e) => setIssueDueDate(e.target.value)}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label>{colCopy.dispositionLabel}</Label>
+                  <Select value={issueDisposition} onValueChange={(v: any) => setIssueDisposition(v)}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="accepted">{copy.readinessDispositionAccepted}</SelectItem>
+                      <SelectItem value="rejected">{copy.readinessDispositionRejected}</SelectItem>
+                      <SelectItem value="deferred">{copy.readinessDispositionDeferred}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
               <div className="grid gap-2">
-                <Label htmlFor="issue-due">{colCopy.dueDateLabel}</Label>
+                <Label>{copy.readinessIssueAffectedSizes}</Label>
+                <div className="flex flex-wrap gap-2 p-2 border rounded-md bg-muted/20">
+                  {['XS', 'S', 'M', 'L', 'XL', '2XL', '3XL', '4XL', '5XL'].map((size: string) => (
+                    <div key={size} className="flex items-center gap-1.5">
+                      <input
+                        type="checkbox"
+                        id={`size-${size}`}
+                        checked={issueAffectedSizes.includes(size)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setIssueAffectedSizes(prev => [...prev, size]);
+                          } else {
+                            setIssueAffectedSizes(prev => prev.filter(s => s !== size));
+                          }
+                        }}
+                        className="h-3.5 w-3.5 rounded border-gray-300 text-primary focus:ring-primary"
+                      />
+                      <Label htmlFor={`size-${size}`} className="text-xs font-normal cursor-pointer">{size}</Label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="issue-reproduction">{colCopy.reproductionLabel}</Label>
                 <Input
-                  id="issue-due"
-                  type="date"
-                  value={issueDueDate}
-                  onChange={(e) => setIssueDueDate(e.target.value)}
+                  id="issue-reproduction"
+                  placeholder={copy.readinessIssuePlaceholderReproduction}
+                  value={issueReproduction}
+                  onChange={(e) => setIssueReproduction(e.target.value)}
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="issue-evidence">Evidence (optional)</Label>
+                <Label htmlFor="issue-evidence">{colCopy.evidenceLabel} ({copy.readinessIssueOptional})</Label>
                 <Textarea
                   id="issue-evidence"
-                  placeholder="Paste relevant stitch counts or measurements..."
+                  placeholder={copy.readinessIssuePlaceholderEvidence}
                   value={issueEvidence}
                   onChange={(e) => setIssueEvidence(e.target.value)}
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="issue-resolution">{colCopy.resolutionLabel} ({copy.readinessIssueOptional})</Label>
+                <Input
+                  id="issue-resolution"
+                  placeholder={copy.readinessIssuePlaceholderResolution}
+                  value={issueResolutionNote}
+                  onChange={(e) => setIssueResolutionNote(e.target.value)}
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="issue-source-run">{copy.readinessIssueSourceRun} ({copy.readinessIssueOptional})</Label>
+                <Input
+                  id="issue-source-run"
+                  placeholder={copy.readinessIssuePlaceholderSourceRun}
+                  value={issueSourceRunId}
+                  onChange={(e) => setIssueSourceRunId(e.target.value)}
                 />
               </div>
             </div>

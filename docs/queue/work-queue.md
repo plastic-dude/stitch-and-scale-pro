@@ -12,10 +12,12 @@
 | 65 | QUEUE-050 | Priority 1 Gap 1: Visual Chart Authoring Layer (Phase 1: Grid, Palette, Symbols) | MAJOR | done | CHK-194: Visual grid editor + palette + grid-to-prose sync |
 | 66 | QUEUE-051 | Priority 1 Gap 2: Pattern composition and compiled document production | MAJOR | done | CHK-195: Storage seam + CompositionPanel + Compiled PDF Renderer + Verified Gates |
 | 67 | QUEUE-052 | Priority 0 Gap 3: Rendered-artifact publication inspection | MAJOR | done | CHK-196: Storage seam + Inspection UI + Localized reports |
+| 68 | QUEUE-053 | Priority 1 Gap 4: Technical-editor defect ledger | MAJOR | done | CHK-197: Schema expansion + Five-locale UI + Lifecycle logic + Verified Gates |
 
 ## Run ledger
 | Run (date) | Item worked | Gates | Commit | Next item |
 |---|---|---|---|---|
+| 75 | 2026-08-22 (CHK-197) | QUEUE-053 (MAJOR) — Defect Ledger | tsc clean; vitest 2,413/2,413; build green; five-locale UI + lifecycle + tab fix | 43b545466d279beb495ae526e8f538c4ae8a5fca | QUEUE-054 |
 | 74 | 2026-08-22 (CHK-196) | QUEUE-052 (MAJOR) — Artifact Inspection | tsc clean; vitest green; build green; storage seam + inspection UI + localized reports | 99e8620b0b31032ebcdf6a13cabcc1bb8cf1a3be | QUEUE-053 |
 | 73 | 2026-08-22 (CHK-195) | QUEUE-051 (MAJOR) — Pattern Composition | tsc clean; vitest green; build green; storage seam + composition UI + compiled renderer | 195fa85cb1e37e00098168d8d371f4590e419f94 | QUEUE-052 |
 | 72 | 2026-08-22 (CHK-194) | QUEUE-050 (MAJOR) — Visual Chart Layer | tsc clean; vitest green; build green; grid editor + symbol palette + grid-to-prose sync | 9c009f6 | QUEUE-051 |

@@ -68,7 +68,7 @@ export interface HumanReviewRecord {
 }
 
 export type ReadinessSeverity = 'nitpick' | 'minor' | 'major' | 'critical';
-export type ReadinessIssueStatus = 'open' | 'fixed' | 'verified';
+export type ReadinessIssueStatus = 'open' | 'fixed' | 'verified' | 'needs-test-knit';
 export type ReadinessStage = 'mathematical' | 'editorial' | 'test-knit' | 'final';
 export type ReadinessStageStatus = 'pending' | 'ready' | 'blocked';
 
@@ -93,6 +93,8 @@ export interface ReadinessIssue {
   assignee?: string;
   /** Optional due date in ISO format */
   dueDate?: string;
+  /** Link to the automated run (e.g. compiler run ID) that found this issue */
+  sourceRunId?: string;
   comments?: ReadinessComment[];
   createdAt: string;
   updatedAt: string;
