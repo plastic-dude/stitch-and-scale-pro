@@ -25,14 +25,19 @@ export function PwaStatusBanner() {
 
   if (updateAvailable) {
     return (
-      <div className="w-full bg-primary text-primary-foreground py-2 px-4 flex items-center justify-between shadow-lg animate-in fade-in slide-in-from-top duration-300">
+      <div
+        role="status"
+        aria-live="polite"
+        className="w-full bg-primary text-primary-foreground py-2 px-4 flex items-center justify-between shadow-lg animate-in fade-in slide-in-from-top duration-300"
+      >
         <div className="flex items-center gap-2 text-sm font-medium">
-          <RefreshCw className="w-4 h-4 animate-spin-slow" />
+          <RefreshCw aria-hidden="true" className="w-4 h-4 animate-spin-slow" />
           <span>{copy.updateAvailable}</span>
         </div>
         <button
+          type="button"
           onClick={applyUpdate}
-          className="bg-background text-foreground px-3 py-1 rounded text-xs font-bold hover:bg-background/90 transition-colors"
+          className="min-h-11 bg-background text-foreground px-3 py-1 rounded text-xs font-bold hover:bg-background/90 transition-colors"
         >
           {copy.updateAction}
         </button>
@@ -42,8 +47,12 @@ export function PwaStatusBanner() {
 
   if (!isOnline) {
     return (
-      <div className="w-full bg-destructive text-destructive-foreground py-2 px-4 flex items-center justify-center gap-2 animate-in fade-in slide-in-from-top duration-300">
-        <WifiOff className="w-4 h-4" />
+      <div
+        role="status"
+        aria-live="polite"
+        className="w-full bg-destructive text-destructive-foreground py-2 px-4 flex items-center justify-center gap-2 animate-in fade-in slide-in-from-top duration-300"
+      >
+        <WifiOff aria-hidden="true" className="w-4 h-4" />
         <span className="text-sm font-medium">{copy.offlineStatus}</span>
       </div>
     );
@@ -51,11 +60,20 @@ export function PwaStatusBanner() {
 
   if (showOnlineToast) {
     return (
-      <div className="w-full bg-emerald-600 text-white py-2 px-4 flex items-center justify-center gap-2 animate-in fade-in slide-in-from-top duration-300">
-        <Wifi className="w-4 h-4" />
+      <div
+        role="status"
+        aria-live="polite"
+        className="w-full bg-emerald-600 text-white py-2 px-4 flex items-center justify-center gap-2 animate-in fade-in slide-in-from-top duration-300"
+      >
+        <Wifi aria-hidden="true" className="w-4 h-4" />
         <span className="text-sm font-medium">{copy.onlineStatus}</span>
-        <button onClick={() => setShowOnlineToast(false)} className="ml-2">
-          <X className="w-3.5 h-3.5" />
+        <button
+          type="button"
+          aria-label={copy.dismiss}
+          onClick={() => setShowOnlineToast(false)}
+          className="ml-2 min-h-11 min-w-11 flex items-center justify-center"
+        >
+          <X aria-hidden="true" className="w-3.5 h-3.5" />
         </button>
       </div>
     );

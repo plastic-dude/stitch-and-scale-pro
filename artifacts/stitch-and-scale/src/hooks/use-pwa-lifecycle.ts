@@ -19,6 +19,11 @@ export function usePwaLifecycle(): PwaLifecycleState {
   );
 
   useEffect(() => {
+    let disposed = false;
+    let observedRegistration: ServiceWorkerRegistration | null = null;
+    let observedInstallingWorker: ServiceWorker | null = null;
+    let refreshing = false;
+
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
     const handleInstallPrompt = (e: any) => {
@@ -29,50 +34,59 @@ export function usePwaLifecycle(): PwaLifecycleState {
       setIsInstalled(true);
       setInstallPromptEvent(null);
     };
+    const handleInstallingStateChange = () => {
+      if (!disposed && observedInstallingWorker?.state === 'installed' && navigator.serviceWorker.controller) {
+        setUpdateAvailable(true);
+      }
+    };
+    const handleUpdateFound = () => {
+      const newWorker = observedRegistration?.installing;
+      if (!newWorker || newWorker === observedInstallingWorker) return;
+      observedInstallingWorker?.removeEventListener('statechange', handleInstallingStateChange);
+      observedInstallingWorker = newWorker;
+      newWorker.addEventListener('statechange', handleInstallingStateChange);
+    };
+    const handleControllerChange = () => {
+      if (!disposed && !refreshing) {
+        refreshing = true;
+        window.location.reload();
+      }
+    };
 
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
     window.addEventListener('beforeinstallprompt', handleInstallPrompt);
     window.addEventListener('appinstalled', handleAppInstalled);
 
-    // Service Worker Update Check
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.ready.then((reg) => {
+        if (disposed) return;
+        observedRegistration = reg;
         setRegistration(reg);
-        
-        // Initial check
+
         if (reg.waiting) {
           setUpdateAvailable(true);
         }
 
-        // Listen for new service worker waiting
-        reg.addEventListener('updatefound', () => {
-          const newSW = reg.installing;
-          if (newSW) {
-            newSW.addEventListener('statechange', () => {
-              if (newSW.state === 'installed' && navigator.serviceWorker.controller) {
-                setUpdateAvailable(true);
-              }
-            });
-          }
-        });
+        reg.addEventListener('updatefound', handleUpdateFound);
+        handleUpdateFound();
       });
 
-      // Listen for controlling service worker change (after skipWaiting)
-      let refreshing = false;
-      navigator.serviceWorker.addEventListener('controllerchange', () => {
-        if (!refreshing) {
-          refreshing = true;
-          window.location.reload();
-        }
-      });
+      navigator.serviceWorker.addEventListener('controllerchange', handleControllerChange);
     }
 
     return () => {
+      disposed = true;
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
       window.removeEventListener('beforeinstallprompt', handleInstallPrompt);
       window.removeEventListener('appinstalled', handleAppInstalled);
+
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.removeEventListener('controllerchange', handleControllerChange);
+      }
+      observedRegistration?.removeEventListener('updatefound', handleUpdateFound);
+      observedInstallingWorker?.removeEventListener('statechange', handleInstallingStateChange);
     };
   }, []);
 

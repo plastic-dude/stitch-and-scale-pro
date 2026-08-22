@@ -4,9 +4,9 @@
 
 const CACHE_NAME = 'sns-shell-v1';
 
-// On install: cache the root document so the app shell loads offline
+// On install: cache the root document so the app shell loads offline.
+// Deliberately remain waiting until the user confirms the update through the app.
 self.addEventListener('install', (event) => {
-  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) =>
       cache.addAll([

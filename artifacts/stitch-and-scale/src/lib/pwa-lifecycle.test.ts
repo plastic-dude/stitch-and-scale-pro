@@ -8,11 +8,14 @@ describe('PWA Lifecycle Maturity (QUEUE-046)', () => {
   const shellPath = path.resolve(__dirname, '../components/shell.tsx');
   const bannerPath = path.resolve(__dirname, '../components/pwa-status-banner.tsx');
 
-  it('service worker handles SKIP_WAITING message', () => {
+  it('service worker handles SKIP_WAITING only after an explicit message', () => {
     const content = fs.readFileSync(swPath, 'utf-8');
-    expect(content).toContain("self.addEventListener('message'");
-    expect(content).toContain("event.data.type === 'SKIP_WAITING'");
-    expect(content).toContain("self.skipWaiting()");
+    const installBlock = content.slice(content.indexOf("self.addEventListener('install'"), content.indexOf('// On activate'));
+    const messageBlock = content.slice(content.indexOf("self.addEventListener('message'"), content.indexOf('// Fetch strategy'));
+
+    expect(installBlock).not.toContain('skipWaiting');
+    expect(messageBlock).toContain("event.data.type === 'SKIP_WAITING'");
+    expect(messageBlock).toContain("self.skipWaiting()");
   });
 
   it('usePwaLifecycle hook tracks online/offline and updates', () => {
@@ -20,8 +23,10 @@ describe('PWA Lifecycle Maturity (QUEUE-046)', () => {
     expect(content).toContain("window.addEventListener('online'");
     expect(content).toContain("window.addEventListener('offline'");
     expect(content).toContain("navigator.serviceWorker.ready");
-    expect(content).toContain("reg.addEventListener('updatefound', () => {");
+    expect(content).toContain("reg.addEventListener('updatefound', handleUpdateFound)");
     expect(content).toContain("registration.waiting.postMessage({ type: 'SKIP_WAITING' })");
+    expect(content).toContain("navigator.serviceWorker.removeEventListener('controllerchange', handleControllerChange)");
+    expect(content).toContain("observedRegistration?.removeEventListener('updatefound', handleUpdateFound)");
   });
 
   it('Shell component mounts PwaStatusBanner', () => {
