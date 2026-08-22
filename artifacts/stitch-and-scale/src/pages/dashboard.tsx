@@ -395,8 +395,8 @@ export default function Dashboard() {
         <div
           className="sts-dashboard-enter flex flex-col items-center justify-center py-32 text-center px-4 max-w-xl mx-auto"
         >
-          <div className="w-24 h-24 rounded-2xl bg-secondary/40 flex items-center justify-center mb-8 text-primary/80 ring-1 ring-border/50 shadow-sm rotate-3">
-            <Layers className="w-10 h-10 -rotate-3" />
+          <div className="w-24 h-24 rounded-2xl bg-secondary/40 flex items-center justify-center mb-8 ring-1 ring-border/50 shadow-sm rotate-3 overflow-hidden">
+            <img src="/app-logo.png" alt="" className="w-full h-full object-cover grayscale opacity-40 -rotate-3" />
           </div>
           <h2 className="text-3xl font-serif font-medium mb-4 text-foreground tracking-tight">{copy.blank}</h2>
           <p className="text-muted-foreground mb-10 leading-relaxed text-[15px]">

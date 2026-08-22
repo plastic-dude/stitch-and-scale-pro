@@ -525,7 +525,7 @@ export default function OnboardingOverlay() {
           (mobile audit CHK-126: 29x24 overlap at 360px). */}
       <div className="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-border/30 sm:pr-28">
         <div className="flex items-center gap-2.5">
-          <img src="/favicon.png" alt="Stitch & Scale" className="w-7 h-7 rounded-md object-cover" />
+          <img src="/app-logo.png" alt="Stitch & Scale" className="w-7 h-7 rounded-lg object-cover" />
           <span className="font-serif font-bold text-base tracking-tight hidden sm:inline">Stitch & Scale</span>
         </div>
 

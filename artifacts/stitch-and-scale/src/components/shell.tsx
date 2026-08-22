@@ -150,7 +150,13 @@ export function Shell({ children }: { children: React.ReactNode }) {
       </nav>
       
       <footer className="border-t py-6 md:py-0 md:h-16 flex items-center justify-center text-sm text-muted-foreground">
-        <p>{t('nav.footerDescription')}</p>
+        <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4">
+          <p>{t('nav.footerDescription')}</p>
+          <span className="hidden md:inline text-border">|</span>
+          <Link href="/about-emlux" className="hover:text-foreground transition-colors underline underline-offset-4">
+            About EMLUX
+          </Link>
+        </div>
       </footer>
     </div>
   )

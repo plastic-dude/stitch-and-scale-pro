@@ -24,6 +24,7 @@ const SettingsPage = lazy(() => import('@/pages/settings'));
 const ProjectPdf = lazy(() => import('@/pages/project-pdf'));
 const ImportCSV = lazy(() => import('@/pages/import-csv'));
 const Portfolio = lazy(() => import('@/pages/portfolio'));
+const AboutEmlux = lazy(() => import('@/pages/about-emlux'));
 
 const NotFound = lazy(() => import('@/pages/not-found'));
 
@@ -41,6 +42,7 @@ export const ROUTES = [
   { path: '/portfolio',                component: Portfolio          },
   // Replit B — PDF Template Rendering Engine
   { path: '/project/:id/pdf',         component: ProjectPdf       },
+  { path: '/about-emlux',             component: AboutEmlux       },
   // ─────────────────────────────────────────────────────────────
 ] as const;
 

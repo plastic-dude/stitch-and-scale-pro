@@ -6,6 +6,7 @@ import { Route, Switch, Router as WouterRouter, useLocation } from 'wouter';
 import { Shell } from '@/components/shell';
 import { ROUTES, NotFound } from '@/routes';
 const Landing = lazy(() => import('@/pages/landing'));
+const AboutEmlux = lazy(() => import('@/pages/about-emlux'));
 import { SettingsProvider, useSettings } from '@/context/SettingsContext';
 import { ProjectsProvider } from '@/context/ProjectsContext';
 const OnboardingOverlay = lazy(() => import('@/pages/onboarding'));
@@ -61,6 +62,7 @@ function Router() {
       <Suspense fallback={<RouteLoadingFallback />}>
         <Switch>
           <Route path="/landing" component={Landing} />
+          <Route path="/about-emlux" component={AboutEmlux} />
           <Route>
             <RouteErrorBoundary copy={routeErrorCopy}>
               <Shell>

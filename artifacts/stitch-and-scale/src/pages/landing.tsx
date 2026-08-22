@@ -249,8 +249,12 @@ export default function Landing() {
           <div>
             {copy.footerLocalFirst}
           </div>
-          <div>
+          <div className="flex items-center gap-4">
             {copy.footerBuiltBy}
+            <span className="text-border">|</span>
+            <Link href="/about-emlux" className="hover:text-foreground transition-colors underline underline-offset-4">
+              About EMLUX
+            </Link>
           </div>
         </div>
       </footer>
