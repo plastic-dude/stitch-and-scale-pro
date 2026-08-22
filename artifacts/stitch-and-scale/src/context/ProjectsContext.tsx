@@ -22,6 +22,7 @@ import {
   normalizePublicationPackage,
 } from '@/lib/publication-integrity';
 import { normalizeProjectRecord, normalizeProjectRecords } from '@/lib/project-normalization';
+import { artifactQualitySnapshot, normalizeArtifactInspectionReport } from '@/lib/artifact-inspection';
 import { useSettings } from './SettingsContext';
 
 export type ProjectsAction =
@@ -267,7 +268,10 @@ export function projectsReducer(state: PatternProject[], action: ProjectsAction)
                   ...pkg, 
                   artifacts: (pkg.artifacts || []).map(a => 
                     a.id === action.payload.artifactId 
-                      ? { ...a, inspectionReport: action.payload.report, qualitySnapshot: action.payload.report.verdict === 'fail' ? 'fail' : 'pass' }
+                      ? (() => {
+                          const report = normalizeArtifactInspectionReport(action.payload.report);
+                          return { ...a, inspectionReport: report, qualitySnapshot: artifactQualitySnapshot(report) };
+                        })()
                       : a
                   ),
                   updatedAt: new Date().toISOString() 

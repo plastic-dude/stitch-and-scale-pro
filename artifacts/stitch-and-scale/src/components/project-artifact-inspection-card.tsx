@@ -9,12 +9,12 @@ import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useSettings } from '@/context/SettingsContext';
 import { getWorkspaceCopy } from '@/lib/workspace-copy';
-import { ShieldCheck, FileSearch, CheckCircle2, XCircle, AlertTriangle, Save } from 'lucide-react';
+import { FileSearch, Save } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { normalizeArtifactInspectionReport } from '@/lib/artifact-inspection';
 import { 
-  type PatternProject, 
-  type PublicationPackage, 
-  type PublicationArtifact, 
+  type PatternProject,
+  type PublicationArtifact,
   type ArtifactInspectionReport 
 } from '@/lib/grading-engine';
 
@@ -37,15 +37,30 @@ export function ProjectArtifactInspectionCard({
   const copy = getWorkspaceCopy(language);
   const { toast } = useToast();
 
-  const [pageCount, setPageCount] = useState<number>(artifact.inspectionReport?.pageCount || 0);
-  const [hasBlankPages, setHasBlankPages] = useState<boolean>(artifact.inspectionReport?.hasBlankPages || false);
-  const [hasTitle, setHasTitle] = useState<boolean>(artifact.inspectionReport?.hasTitle || true);
-  const [hasHeadings, setHasHeadings] = useState<boolean>(artifact.inspectionReport?.hasHeadings || true);
-  const [hasTableContinuity, setHasTableContinuity] = useState<boolean>(artifact.inspectionReport?.hasTableContinuity || true);
-  const [hasCharts, setHasCharts] = useState<boolean>(artifact.inspectionReport?.hasCharts || false);
-  const [hasSchematics, setHasSchematics] = useState<boolean>(artifact.inspectionReport?.hasSchematics || false);
-  const [verdict, setVerdict] = useState<'pass' | 'fail' | 'warning'>(artifact.inspectionReport?.verdict || 'pass');
-  const [notes, setNotes] = useState<string>(artifact.inspectionReport?.notes || '');
+  const [pageCount, setPageCount] = useState<number>(artifact.inspectionReport?.pageCount ?? 0);
+  const [hasBlankPages, setHasBlankPages] = useState<boolean>(artifact.inspectionReport?.hasBlankPages ?? false);
+  const [hasTitle, setHasTitle] = useState<boolean>(artifact.inspectionReport?.hasTitle ?? false);
+  const [hasHeadings, setHasHeadings] = useState<boolean>(artifact.inspectionReport?.hasHeadings ?? false);
+  const [hasTableContinuity, setHasTableContinuity] = useState<boolean>(artifact.inspectionReport?.hasTableContinuity ?? false);
+  const [hasCharts, setHasCharts] = useState<boolean>(artifact.inspectionReport?.hasCharts ?? false);
+  const [hasSchematics, setHasSchematics] = useState<boolean>(artifact.inspectionReport?.hasSchematics ?? false);
+  const [verdict, setVerdict] = useState<'pass' | 'fail' | 'warning'>(artifact.inspectionReport?.verdict ?? 'warning');
+  const [notes, setNotes] = useState<string>(artifact.inspectionReport?.notes ?? '');
+  const effectiveVerdict = normalizeArtifactInspectionReport({
+    pageCount,
+    hasBlankPages,
+    hasTitle,
+    hasHeadings,
+    hasTableContinuity,
+    hasCharts,
+    hasSchematics,
+    rendererVersion: '1.0.0',
+    templateId: 'standard-v1',
+    locale: language,
+    inspectedAt: '',
+    inspector: 'human',
+    verdict,
+  }).verdict;
 
   const handleSave = () => {
     const report: ArtifactInspectionReport = {
@@ -61,7 +76,7 @@ export function ProjectArtifactInspectionCard({
       locale: language,
       inspectedAt: new Date().toISOString(),
       inspector: 'human',
-      verdict,
+      verdict: effectiveVerdict,
       notes: notes.trim() || undefined,
     };
 
@@ -90,8 +105,8 @@ export function ProjectArtifactInspectionCard({
               <CardDescription>{artifact.filename}</CardDescription>
             </div>
           </div>
-          <Badge variant={verdict === 'pass' ? 'default' : verdict === 'fail' ? 'destructive' : 'outline'} className="capitalize">
-            {getVerdictLabel(verdict)}
+          <Badge variant={effectiveVerdict === 'pass' ? 'default' : effectiveVerdict === 'fail' ? 'destructive' : 'outline'} className="capitalize">
+            {getVerdictLabel(effectiveVerdict)}
           </Badge>
         </div>
       </CardHeader>
@@ -142,7 +157,7 @@ export function ProjectArtifactInspectionCard({
 
             <div className="grid gap-2">
               <Label htmlFor="verdict">{copy.inspectionFinalVerdict}</Label>
-              <Select value={verdict} onValueChange={(v: any) => setVerdict(v)}>
+              <Select value={effectiveVerdict} onValueChange={(v: 'pass' | 'fail' | 'warning') => setVerdict(v)}>
                 <SelectTrigger id="verdict">
                   <SelectValue />
                 </SelectTrigger>
