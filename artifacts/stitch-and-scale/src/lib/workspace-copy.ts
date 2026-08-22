@@ -144,6 +144,11 @@ export interface WorkspaceCopy {
   publicationPackageVerdict: string;
   publicationAuthoritativeMetadata: string;
   publicationArtifacts: string;
+  publicationArtifactDownload: string;
+  publicationArtifactDownloadUnavailable: string;
+  publicationArtifactDownloadUnavailableDescription: string;
+  publicationArtifactDownloadRequested: string;
+  publicationArtifactDownloadRequestedDescription: string;
   publicationNoPackages: string;
   publicationPackageStale: string;
   publicationPackageCreated: string;
@@ -345,6 +350,11 @@ export const COPY: Record<LanguageCode, WorkspaceCopy> = {
     publicationPackageVerdict: 'Readiness Verdict',
     publicationAuthoritativeMetadata: 'Authoritative Metadata',
     publicationArtifacts: 'Artifacts',
+    publicationArtifactDownload: 'Download artifact',
+    publicationArtifactDownloadUnavailable: 'Download unavailable',
+    publicationArtifactDownloadUnavailableDescription: 'This record has metadata only. Re-export the artifact from its source page before downloading.',
+    publicationArtifactDownloadRequested: 'Download requested',
+    publicationArtifactDownloadRequestedDescription: 'Your browser was asked to download the artifact. Check your downloads.',
     publicationNoPackages: 'No publication packages yet. Create one to freeze an authoritative version.',
     publicationPackageStale: 'Stale — source changed; re-run checks and review before export',
     publicationPackageCreated: 'Publication package created',
@@ -544,6 +554,11 @@ export const COPY: Record<LanguageCode, WorkspaceCopy> = {
     publicationPackageVerdict: 'Bereitschaftsurteil',
     publicationAuthoritativeMetadata: 'Autoritative Metadaten',
     publicationArtifacts: 'Artefakte',
+    publicationArtifactDownload: 'Artefakt herunterladen',
+    publicationArtifactDownloadUnavailable: 'Download nicht verfügbar',
+    publicationArtifactDownloadUnavailableDescription: 'Dieser Eintrag enthält nur Metadaten. Exportiere das Artefakt erneut von seiner Quellseite, bevor du es herunterlädst.',
+    publicationArtifactDownloadRequested: 'Download angefordert',
+    publicationArtifactDownloadRequestedDescription: 'Dein Browser wurde aufgefordert, das Artefakt herunterzuladen. Prüfe deine Downloads.',
     publicationNoPackages: 'Noch keine Veröffentlichungspakete. Erstelle eines, um eine verbindliche Version einzufrieren.',
     publicationPackageStale: 'Veraltet — Quelle geändert; vor dem Export Prüfungen und Review erneut ausführen',
     publicationPackageCreated: 'Veröffentlichungspaket erstellt',
@@ -743,6 +758,11 @@ export const COPY: Record<LanguageCode, WorkspaceCopy> = {
     publicationPackageVerdict: 'Verdict de préparation',
     publicationAuthoritativeMetadata: 'Métadonnées officielles',
     publicationArtifacts: 'Artefacts',
+    publicationArtifactDownload: 'Télécharger l’artefact',
+    publicationArtifactDownloadUnavailable: 'Téléchargement indisponible',
+    publicationArtifactDownloadUnavailableDescription: 'Cet enregistrement contient uniquement des métadonnées. Exportez à nouveau l’artefact depuis sa page source avant de le télécharger.',
+    publicationArtifactDownloadRequested: 'Téléchargement demandé',
+    publicationArtifactDownloadRequestedDescription: 'Votre navigateur a été invité à télécharger l’artefact. Vérifiez vos téléchargements.',
     publicationNoPackages: 'Aucun package de publication pour le moment. Créez-en un pour figer une version officielle.',
     publicationPackageStale: 'Obsolète — source modifiée ; relancez les contrôles et la revue avant export',
     publicationPackageCreated: 'Package de publication créé',
@@ -942,6 +962,11 @@ export const COPY: Record<LanguageCode, WorkspaceCopy> = {
     publicationPackageVerdict: 'Veredicto de preparación',
     publicationAuthoritativeMetadata: 'Metadatos autorizados',
     publicationArtifacts: 'Artefactos',
+    publicationArtifactDownload: 'Descargar artefacto',
+    publicationArtifactDownloadUnavailable: 'Descarga no disponible',
+    publicationArtifactDownloadUnavailableDescription: 'Este registro solo contiene metadatos. Vuelva a exportar el artefacto desde su página de origen antes de descargarlo.',
+    publicationArtifactDownloadRequested: 'Descarga solicitada',
+    publicationArtifactDownloadRequestedDescription: 'Su navegador recibió la solicitud de descargar el artefacto. Compruebe sus descargas.',
     publicationNoPackages: 'Aún no hay paquetes de publicación. Cree uno para congelar una versión autorizada.',
     publicationPackageStale: 'Obsoleto — la fuente cambió; vuelva a ejecutar las comprobaciones y la revisión antes de exportar',
     publicationPackageCreated: 'Paquete de publicación creado',
@@ -1141,6 +1166,11 @@ export const COPY: Record<LanguageCode, WorkspaceCopy> = {
     publicationPackageVerdict: 'Veredicto de Prontidão',
     publicationAuthoritativeMetadata: 'Metadados Autoritativos',
     publicationArtifacts: 'Artefactos',
+    publicationArtifactDownload: 'Descarregar artefacto',
+    publicationArtifactDownloadUnavailable: 'Transferência indisponível',
+    publicationArtifactDownloadUnavailableDescription: 'Este registo contém apenas metadados. Exporte novamente o artefacto a partir da página de origem antes de o descarregar.',
+    publicationArtifactDownloadRequested: 'Transferência solicitada',
+    publicationArtifactDownloadRequestedDescription: 'O seu navegador recebeu o pedido para descarregar o artefacto. Verifique as suas transferências.',
     publicationNoPackages: 'Ainda não existem pacotes de publicação. Crie um para congelar uma versão autoritativa.',
     publicationPackageStale: 'Obsoleto — a fonte mudou; execute as verificações e a revisão novamente antes de exportar',
     publicationPackageCreated: 'Pacote de publicação criado',

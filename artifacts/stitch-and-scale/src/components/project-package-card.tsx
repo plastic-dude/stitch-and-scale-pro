@@ -32,6 +32,11 @@ import { canClaimPublicationReady } from '@/lib/publication-integrity';
 
 const dateLocales = { de, fr, es, pt: ptBR, en: undefined };
 
+function getArtifactDownloadUrl(artifact: PublicationArtifact): string | null {
+  const url = artifact.url?.trim();
+  return url && /^(?:blob:|data:|https?:)/i.test(url) ? url : null;
+}
+
 interface ProjectPackageCardProps {
   project: PatternProject;
   createPublicationPackage: (pkg: PublicationPackage) => void;
@@ -287,9 +292,43 @@ export function ProjectPackageCard({
                             >
                               <FileSearch className="h-3 w-3" />
                             </Button>
-                            <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-foreground">
-                              <Download className="h-3 w-3" />
-                            </Button>
+                            {(() => {
+                              const downloadUrl = getArtifactDownloadUrl(art);
+                              const label = downloadUrl
+                                ? `${copy.publicationArtifactDownload}: ${art.label}`
+                                : `${copy.publicationArtifactDownloadUnavailable}: ${art.label}`;
+                              return downloadUrl ? (
+                                <Button
+                                  asChild
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-6 w-6 text-muted-foreground hover:text-foreground"
+                                >
+                                  <a
+                                    href={downloadUrl}
+                                    download={art.filename}
+                                    aria-label={label}
+                                    onClick={() => toast({
+                                      title: copy.publicationArtifactDownloadRequested,
+                                      description: copy.publicationArtifactDownloadRequestedDescription,
+                                    })}
+                                  >
+                                    <Download className="h-3 w-3" />
+                                  </a>
+                                </Button>
+                              ) : (
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-6 w-6 text-muted-foreground/40"
+                                  disabled
+                                  aria-label={label}
+                                  title={copy.publicationArtifactDownloadUnavailableDescription}
+                                >
+                                  <Download className="h-3 w-3" />
+                                </Button>
+                              );
+                            })()}
                           </div>
                         </div>
                       ))}
