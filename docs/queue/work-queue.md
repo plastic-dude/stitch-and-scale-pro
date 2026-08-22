@@ -51,5 +51,7 @@
 | 82 | 2026-08-22 (CHK-204) | QUEUE-060 (MINOR) — Revenue & Growth | tsc clean; vitest 2,425/2,425; build green; evidence-led revenue planner + growth pillars + localized UI | 6b66e1d | QUEUE-061 |
 | 83 | 2026-08-22 (CHK-205) | QUEUE-061 (MAJOR) — Navigator Localization | tsc clean; vitest 2,430/2,430; build green; fixed 5 missing labels; fixed touch targets | dc02909 | QUEUE-062 |
 | 84 | 2026-08-22 (CHK-206) | QUEUE-062 (CRITICAL) — Data Integrity | tsc clean; vitest 2,434/2,434; build green; nested normalization + publication gate + calculator quarantine | 5c0ab5a | done |
+| 85 | 2026-08-22 (CHK-207) | QUEUE-063 (MINOR) — I18n Parity | tsc clean; vitest 2,515/2,515; build green; automated parity gate + standardized 80+ copy modules | 0ccb503 | verified |
 | 76 | QUEUE-061 | Lab search, recent, and favorites integration for mobile navigation | MAJOR | done | CHK-205: Audited localization; fixed 5 missing labels in de/fr/es/pt; fixed 44px touch targets. |
 | 77 | QUEUE-062 | Data Integrity & Validation: Impossible measurement guard and global integrity gate | CRITICAL | done | CHK-206: Nested normalization + publication integrity gate + calculator quarantine. |
+| 78 | QUEUE-063 | CI/CD & Locale Matrix: Automated translation parity check and build-time localization gate | done | CHK-207 | CHK-207: Automated parity gate green; standardized 80+ copy modules. |

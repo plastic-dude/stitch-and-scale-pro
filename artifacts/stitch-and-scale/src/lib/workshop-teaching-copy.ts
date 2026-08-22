@@ -109,4 +109,6 @@ const pt:WorkshopTeachingCopy={...en,
   venueOrganizerCut: 'Corte de venue / organizadora',
 };
 
-export const WORKSHOP_TEACHING_COPY:Record<LanguageCode,WorkshopTeachingCopy>={en,de,fr,es,pt};
+export const COPY:Record<LanguageCode,WorkshopTeachingCopy>={en,de,fr,es,pt};
+
+export const WORKSHOP_TEACHING_COPY = COPY;

@@ -1,6 +1,6 @@
 import type { LanguageCode } from '@/lib/i18n';
 
-const MAP: Record<LanguageCode, { testersEmptyState: string }> = {
+export const COPY: Record<LanguageCode, { testersEmptyState: string }> = {
   en: { testersEmptyState: "No testers yet — tap a size button above to add one." },
   de: { testersEmptyState: "Noch keine Tester — tippe oben auf einen Größen-Button, um einen hinzuzufügen." },
   fr: { testersEmptyState: "Aucun testeur pour le moment — touchez un bouton de taille ci-dessus pour en ajouter un." },
@@ -9,5 +9,5 @@ const MAP: Record<LanguageCode, { testersEmptyState: string }> = {
 };
 
 export function testknitDeskTestersEmptyState(language: LanguageCode): string {
-  return MAP[language]?.testersEmptyState ?? MAP.en.testersEmptyState;
+  return COPY[language]?.testersEmptyState ?? COPY.en.testersEmptyState;
 }

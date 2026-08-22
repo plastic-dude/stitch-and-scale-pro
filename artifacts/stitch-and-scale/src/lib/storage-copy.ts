@@ -5,4 +5,6 @@ const de={localOnly:'Nur lokal',aria:'Status und Sicherung des lokalen Speichers
 const fr={localOnly:'Local uniquement',aria:'État du stockage local et sauvegarde',title:'Vos patrons restent uniquement sur cet appareil',warning:'Rien n’est envoyé nulle part. Effacer les données du navigateur, changer d’appareil ou réinstaller ce navigateur supprimera définitivement tout — sauf si vous avez d’abord effectué une sauvegarde.',backup:'Sauvegarder tous les patrons maintenant'};
 const es={localOnly:'Solo local',aria:'Estado del almacenamiento local y copia de seguridad',title:'Tus patrones solo están en este dispositivo',warning:'No se sube nada a ningún sitio. Eso significa que borrar los datos del navegador, cambiar de dispositivo o reinstalarlo eliminará todo permanentemente — salvo que hayas hecho una copia de seguridad.',backup:'Hacer copia de todos los patrones ahora'};
 const pt={localOnly:'Apenas local',aria:'Estado do armazenamento local e cópia de segurança',title:'Os seus padrões vivem apenas neste dispositivo',warning:'Nada é carregado para lado nenhum. Isso também significa que limpar os dados do navegador, mudar de dispositivo ou reinstalá-lo apagará tudo permanentemente — a menos que faça uma cópia de segurança primeiro.',backup:'Fazer cópia de segurança de todos os padrões agora'};
-export const STORAGE_COPY:Record<LanguageCode,StorageCopy>={en,de,fr,es,pt};
+export const COPY:Record<LanguageCode,StorageCopy>={en,de,fr,es,pt};
+
+export const STORAGE_COPY = COPY;

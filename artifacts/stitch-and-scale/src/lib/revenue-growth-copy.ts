@@ -72,4 +72,5 @@ const pt: RevenueGrowthCopy = {
   metricInsight: 'Visão Estratégica',
 };
 
-export const REVENUE_GROWTH_COPY: Record<LanguageCode, RevenueGrowthCopy> = { en, de, fr, es, pt };
+export const COPY: Record<LanguageCode, RevenueGrowthCopy> = { en, de, fr, es, pt };
+export const REVENUE_GROWTH_COPY = COPY;

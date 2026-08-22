@@ -115,4 +115,6 @@ const pt:YarnLicensingCopy={...en,
   yourDesignSampleHours: 'Suas horas de design + amostra',
 };
 
-export const YARN_LICENSING_COPY:Record<LanguageCode,YarnLicensingCopy>={en,de,fr,es,pt};
+export const COPY:Record<LanguageCode,YarnLicensingCopy>={en,de,fr,es,pt};
+
+export const YARN_LICENSING_COPY = COPY;

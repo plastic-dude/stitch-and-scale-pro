@@ -49,4 +49,6 @@ const pt:VideoSocialCopy={...en,
   k34WeekPerPlatform: '3-4/semana por plataforma é a referência.',
 };
 
-export const VIDEO_SOCIAL_COPY:Record<LanguageCode,VideoSocialCopy>={en,de,fr,es,pt};
+export const COPY:Record<LanguageCode,VideoSocialCopy>={en,de,fr,es,pt};
+
+export const VIDEO_SOCIAL_COPY = COPY;

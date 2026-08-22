@@ -1543,7 +1543,9 @@ const pt: LabStatCopy = {
   channelCraftFair: 'Feira / mercado',
 };
 
-export const LAB_STAT_COPY: Record<LanguageCode, LabStatCopy> = { en, de, fr, es, pt };
+export const COPY: Record<LanguageCode, LabStatCopy> = { en, de, fr, es, pt };
 export function getLabStatCopy(language: LanguageCode): LabStatCopy {
   return LAB_STAT_COPY[language] ?? LAB_STAT_COPY.en;
 }
+
+export const LAB_STAT_COPY = COPY;

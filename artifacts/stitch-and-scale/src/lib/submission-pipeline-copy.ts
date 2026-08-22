@@ -63,4 +63,6 @@ const PT: SubmissionPipelineCopy = {
   title: 'Fluxo de submissões', description: 'Registe chamadas, prazos, datas de produção e a economia de uma oferta exclusiva num registo local.', callsTracked: 'Chamadas acompanhadas', addCall: 'Adicionar chamada', noCalls: 'Ainda não há chamadas — adicione uma a partir da página “Call for Submissions” de uma publicação.', untitled: 'Chamada sem título', editView: 'Editar / Ver', callDetails: 'Detalhes da chamada', publicationPlaceholder: 'Nome da publicação', issuePlaceholder: 'Edição ou tema', offerComparison: 'Oferta vs. autopublicação', compareBaseline: 'Comparar com a base própria', submissionPack: 'Pacote de submissão — as seis partes esperadas pelos editores', copyCoverLetter: 'Copiar carta', coverLetter: 'Carta de apresentação', copied: 'Copiado', pasteHint: 'Cole-a onde precisar.', productionRates: 'Os seus ritmos de produção', analysis: 'Análise', notSet: 'não definido', saved: 'Guardado',
 };
 
-export const SUBMISSION_PIPELINE_COPY: Record<LanguageCode, SubmissionPipelineCopy> = { en: EN, de: DE, fr: FR, es: ES, pt: PT };
+export const COPY: Record<LanguageCode, SubmissionPipelineCopy> = { en: EN, de: DE, fr: FR, es: ES, pt: PT };
+
+export const SUBMISSION_PIPELINE_COPY = COPY;

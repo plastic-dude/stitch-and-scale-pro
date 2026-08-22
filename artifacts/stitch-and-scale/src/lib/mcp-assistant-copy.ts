@@ -124,4 +124,6 @@ const pt: McpAssistantCopy = {
   disabledForIncomplete: 'O resumo fica desativado até o projeto ter uma medida.',
 };
 
-export const MCP_ASSISTANT_COPY: Record<LanguageCode, McpAssistantCopy> = { en, de, fr, es, pt };
+export const COPY: Record<LanguageCode, McpAssistantCopy> = { en, de, fr, es, pt };
+
+export const MCP_ASSISTANT_COPY = COPY;

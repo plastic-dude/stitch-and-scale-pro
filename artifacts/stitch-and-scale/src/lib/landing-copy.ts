@@ -34,7 +34,7 @@ export interface LandingCopy {
   footerBuiltBy: string;
 }
 
-const COPY: Record<LanguageCode, LandingCopy> = {
+export const COPY: Record<LanguageCode, LandingCopy> = {
   en: {
     openDemo: 'Open demo', tryFree: 'Try it free', audience: 'For indie knitwear pattern designers',
     heroTitleBefore: 'You can knit anything. Can you', heroTitleEmphasis: 'price',

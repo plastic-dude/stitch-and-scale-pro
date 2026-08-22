@@ -95,7 +95,7 @@ export interface CollaborationCopy {
   editWholesaleOrder: string;
 }
 
-export const COLLABORATION_COPY: Record<LanguageCode, CollaborationCopy> = {
+export const COPY: Record<LanguageCode, CollaborationCopy> = {
   en: {
     title: 'Collaboration',
     roster: 'Team Roster',
@@ -567,3 +567,5 @@ export const COLLABORATION_COPY: Record<LanguageCode, CollaborationCopy> = {
     editWholesaleOrder: 'Editar pedido de atacado',
   },
 };
+
+export const COLLABORATION_COPY = COPY;

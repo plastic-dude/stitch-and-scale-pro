@@ -19,7 +19,7 @@ export interface SettingsCopy {
   confirmRestore: string; cancelRestore: string;
 }
 
-const COPY: Record<LanguageCode, SettingsCopy> = {
+export const COPY: Record<LanguageCode, SettingsCopy> = {
   en: {
     unitsTitle: 'Measurement Defaults', unitsDescription: 'Choose the primary unit for your workspace.', inches: 'Inches', centimeters: 'Centimeters', projectOverride: 'You can override this setting per-project.',
     gradingTitle: 'Sizing Standard', gradingDescription: 'The grading standard your patterns are built from.', cycName: 'Craft Yarn Council', cycDescription: 'The published CYC body-measurement chart.', custom: 'Custom', customDescription: 'Your own measurement chart.',

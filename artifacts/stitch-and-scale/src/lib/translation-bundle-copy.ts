@@ -1,6 +1,6 @@
 import type { LanguageCode } from '@/lib/i18n';
 
-const MAP: Record<LanguageCode, { partnersEmptyState: string }> = {
+export const COPY: Record<LanguageCode, { partnersEmptyState: string }> = {
   en: { partnersEmptyState: "No partners added yet — the bundle is modeled with your pattern alone. Add the patterns your coalition organiser or fellow designers bring, and the split math becomes the coalition math instead of a guess." },
   de: { partnersEmptyState: "Noch keine Partner hinzugefügt — das Bündel wird nur mit deinem Muster modelliert. Füge die Muster hinzu, die deine Bündel-Organisatorin oder andere Designer einbringen, und die Aufteilungsrechnung wird zur echten Bündelrechnung statt einer Schätzung." },
   fr: { partnersEmptyState: "Aucun partenaire ajouté — le bundle est modélisé avec votre motif seul. Ajoutez les motifs que votre organisateur de coalition ou d’autres designers apportent, et le calcul du partage devient le vrai calcul de la coalition plutôt qu’une estimation." },
@@ -9,5 +9,5 @@ const MAP: Record<LanguageCode, { partnersEmptyState: string }> = {
 };
 
 export function translationBundlePartnersEmptyState(language: LanguageCode): string {
-  return MAP[language]?.partnersEmptyState ?? MAP.en.partnersEmptyState;
+  return COPY[language]?.partnersEmptyState ?? COPY.en.partnersEmptyState;
 }

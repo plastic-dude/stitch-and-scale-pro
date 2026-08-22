@@ -9,7 +9,7 @@ export interface PwaLifecycleCopy {
   dismiss: string;
 }
 
-export const PWA_LIFECYCLE_COPY: Record<LanguageCode, PwaLifecycleCopy> = {
+export const COPY: Record<LanguageCode, PwaLifecycleCopy> = {
   en: {
     updateAvailable: 'A new version of Stitch & Scale is ready.',
     updateAction: 'Update Now',
@@ -51,3 +51,5 @@ export const PWA_LIFECYCLE_COPY: Record<LanguageCode, PwaLifecycleCopy> = {
     dismiss: 'Fechar',
   },
 };
+
+export const PWA_LIFECYCLE_COPY = COPY;

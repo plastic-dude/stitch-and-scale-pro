@@ -39,7 +39,7 @@ export interface PodPatternsCopy {
   wouldAPrintedBooklet: string;
 }
 
-export const POD_PATTERNS_COPY: Record<LanguageCode, PodPatternsCopy> = {
+export const COPY: Record<LanguageCode, PodPatternsCopy> = {
   en: {
     title: 'Print-on-Demand Patterns Lab',
     description: 'Analyze the economics of selling physical patterns via POD services like Gelato or Printful.',
@@ -226,3 +226,5 @@ export const POD_PATTERNS_COPY: Record<LanguageCode, PodPatternsCopy> = {
     wouldAPrintedBooklet: 'Um livreto impresso dos seus padrões realmente daria dinheiro — ou canibalizaria silenciosamente suas vendas de PDF enquanto o custo de impressão consome a margem? A especificação está verificada: o KDP cobra US$ 2,30 fixos por cópia até 110 páginas em preto e branco, depois US$ 0,012/página; a banda de royalties de 60% só se aplica a partir de US$ 9,99 de lista; tinta colorida custa US$ 0,065/página; o mínimo do livro de capa mole é 24 páginas; e o desconto de atacado de ~55% da IngramSpark significa que vendas diretas aos leitores por ela rendem ~US$ 0,70–2,40/cópia onde a Lulu direta paga US$ 5,50–12,70 no mesmo preço. Designers pagaram contas de impressão KDP que deixavam US$ 1/cópia frente a um PDF de US$ 6 — este lab precifica a especificação, o canal e a canibalização antes de você se comprometer.',
   },
 };
+
+export const POD_PATTERNS_COPY = COPY;

@@ -97,4 +97,5 @@ const pt:ReleaseTimingCopy={...en,
   whenShouldThisDesign: 'Quando este design deveria realmente cair? Checklists de lançamento agendam uma data e ferramentas SEO otimizam tags, mas ninguém precifica a própria estação. A demanda de tricô é fortemente sazonal — o empurrão de festas de outubro–dezembro é a janela de maior receita para a maioria das designers e o verão é a calmaria — e um design lançado fora de temporada ganha uma fração do seu potencial porque as compradoras simplesmente não o buscam. Este lab pontua cada mês da sua janela, precifica a regra de planejamento para trás de 3–4 meses e checa sua promo de lançamento contra o consenso ≤15% / uma semana / incluir um fim de semana.',
 };
 
-export const RELEASE_TIMING_COPY:Record<LanguageCode,ReleaseTimingCopy>={en,de,fr,es,pt};
+export const COPY: Record<LanguageCode, ReleaseTimingCopy> = { en, de, fr, es, pt };
+export const RELEASE_TIMING_COPY = COPY;

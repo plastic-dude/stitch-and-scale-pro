@@ -247,4 +247,6 @@ const pt:TestknitSlotCopy={...en,
   yarnCostPerSkein: 'Custo de fio por novelo',
 };
 
-export const TESTKNIT_SLOT_COPY:Record<LanguageCode,TestknitSlotCopy>={en,de,fr,es,pt};
+export const COPY:Record<LanguageCode,TestknitSlotCopy>={en,de,fr,es,pt};
+
+export const TESTKNIT_SLOT_COPY = COPY;

@@ -22,7 +22,7 @@ export interface StudioProfileCopy {
   usageHint: string;
 }
 
-const COPY: Record<LanguageCode, StudioProfileCopy> = {
+export const COPY: Record<LanguageCode, StudioProfileCopy> = {
   en: {
     title: 'Studio Profile',
     description: 'Set the identity used when you start new patterns and prepare future exports.',

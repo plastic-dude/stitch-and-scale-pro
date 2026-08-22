@@ -23,7 +23,7 @@ export interface FitGovernanceCopy {
   oversized: string;
 }
 
-export const FIT_GOVERNANCE_COPY: Record<LanguageCode, FitGovernanceCopy> = {
+export const COPY: Record<LanguageCode, FitGovernanceCopy> = {
   en: {
     title: 'Fit Governance',
     standardTitle: 'Sizing Standard',
@@ -135,3 +135,5 @@ export const FIT_GOVERNANCE_COPY: Record<LanguageCode, FitGovernanceCopy> = {
     oversized: 'Oversized',
   },
 };
+
+export const FIT_GOVERNANCE_COPY = COPY;

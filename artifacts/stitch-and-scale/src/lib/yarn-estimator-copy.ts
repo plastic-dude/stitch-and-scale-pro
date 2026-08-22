@@ -93,7 +93,9 @@ const pt: YarnEstimatorCopy = {
   footerNote: 'Estimativa calculada a partir das dimensões graduadas do tamanho base ({area} pol² de tecido), escalonada pela amostra de referência CYC da espessura selecionada. Tamanhos maiores (L–5XL) precisam proporcionalmente de mais jardas — use este painel após a graduação se quiser totais por tamanho.',
 };
 
-export const YARN_ESTIMATOR_COPY: Record<LanguageCode, YarnEstimatorCopy> = { en, de, fr, es, pt };
+export const COPY: Record<LanguageCode, YarnEstimatorCopy> = { en, de, fr, es, pt };
 export function getYarnEstimatorCopy(language: LanguageCode): YarnEstimatorCopy {
   return YARN_ESTIMATOR_COPY[language] ?? YARN_ESTIMATOR_COPY.en;
 }
+
+export const YARN_ESTIMATOR_COPY = COPY;

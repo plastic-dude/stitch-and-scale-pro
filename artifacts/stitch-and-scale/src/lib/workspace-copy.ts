@@ -202,7 +202,7 @@ export interface WorkspaceCopy {
   inspectionVerdictFail: string;
 }
 
-const COPY: Record<LanguageCode, WorkspaceCopy> = {
+export const COPY: Record<LanguageCode, WorkspaceCopy> = {
   en: {
     by: 'By',
     gauge: 'Gauge',

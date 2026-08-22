@@ -610,6 +610,8 @@ const pt: TechEditCopy = {
   compositionDefPlaceholder: 'Definição',
 };
 
-export const TECH_EDIT_COPY: Record<LanguageCode, TechEditCopy> = {
+export const COPY: Record<LanguageCode, TechEditCopy> = {
   en, de, fr, es, pt
 };
+
+export const TECH_EDIT_COPY = COPY;

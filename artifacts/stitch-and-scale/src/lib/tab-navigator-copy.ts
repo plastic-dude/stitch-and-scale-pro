@@ -26,7 +26,7 @@ export interface TabNavigatorCopy {
   removeFromFavorites: string;
 }
 
-export const NAVIGATOR_COPY: Record<LanguageCode, TabNavigatorCopy> = {
+export const COPY: Record<LanguageCode, TabNavigatorCopy> = {
   en: {
     allLabs: 'All Labs',
     labsTitle: 'All {{count}} Labs',
@@ -88,3 +88,5 @@ export const NAVIGATOR_COPY: Record<LanguageCode, TabNavigatorCopy> = {
     removeFromFavorites: 'Remover dos favoritos',
   },
 };
+
+export const NAVIGATOR_COPY = COPY;

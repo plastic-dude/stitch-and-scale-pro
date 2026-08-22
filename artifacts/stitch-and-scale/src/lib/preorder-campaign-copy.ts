@@ -137,10 +137,12 @@ const pt: PreorderCampaignCopy = {
   pickYarn: 'Escolha um fio…',
 };
 
-export const PREORDER_CAMPAIGN_COPY: Record<LanguageCode, PreorderCampaignCopy> = {
+export const COPY: Record<LanguageCode, PreorderCampaignCopy> = {
   en, de, fr, es, pt,
 };
 
 export function getPreorderCampaignCopy(language: LanguageCode): PreorderCampaignCopy {
   return PREORDER_CAMPAIGN_COPY[language] ?? PREORDER_CAMPAIGN_COPY.en;
 }
+
+export const PREORDER_CAMPAIGN_COPY = COPY;

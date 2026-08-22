@@ -5,4 +5,6 @@ const de={...en,title:'Stitch & Scale installieren',ios:'Tippe in der Safari-Sym
 const fr={...en,title:'Installer Stitch & Scale',ios:'Touchez Partager dans la barre d’outils de Safari, puis choisissez « Sur l’écran d’accueil ».',standard:'Ajoutez l’app à votre appareil pour une expérience plein écran plus rapide — elle fonctionne hors ligne comme toute autre app.',installing:'Installation…',install:'Installer',gotIt:'Compris',dismiss:'Fermer'};
 const es={...en,title:'Instalar Stitch & Scale',ios:'Toca Compartir en la barra de Safari y elige «Añadir a la pantalla de inicio».',standard:'Añádela a tu dispositivo para disfrutar de una experiencia de pantalla completa más rápida — funciona sin conexión como cualquier app.',installing:'Instalando…',install:'Instalar',gotIt:'Entendido',dismiss:'Cerrar'};
 const pt={...en,title:'Instalar o Stitch & Scale',ios:'Toque em Partilhar na barra do Safari e escolha “Adicionar ao ecrã principal”.',standard:'Adicione-o ao seu dispositivo para uma experiência mais rápida em ecrã inteiro — funciona offline como qualquer outra aplicação.',installing:'A instalar…',install:'Instalar',gotIt:'Percebi',dismiss:'Fechar'};
-export const INSTALL_BANNER_COPY:Record<LanguageCode,InstallBannerCopy>={en,de,fr,es,pt};
+export const COPY:Record<LanguageCode,InstallBannerCopy>={en,de,fr,es,pt};
+
+export const INSTALL_BANNER_COPY = COPY;

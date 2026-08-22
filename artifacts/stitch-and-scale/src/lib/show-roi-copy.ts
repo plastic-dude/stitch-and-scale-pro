@@ -187,4 +187,6 @@ const pt:ShowRoiCopy={...en,
   yourHourlyFloor: 'Seu piso horário',
 };
 
-export const SHOW_ROI_COPY:Record<LanguageCode,ShowRoiCopy>={en,de,fr,es,pt};
+export const COPY:Record<LanguageCode,ShowRoiCopy>={en,de,fr,es,pt};
+
+export const SHOW_ROI_COPY = COPY;

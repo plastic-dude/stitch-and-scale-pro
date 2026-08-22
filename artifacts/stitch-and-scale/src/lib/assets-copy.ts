@@ -1,6 +1,6 @@
 import { LanguageCode } from './i18n';
 
-export const ASSETS_COPY: Record<LanguageCode, any> = {
+export const COPY: Record<LanguageCode, any> = {
   en: {
     assetsTitle: 'Project Assets',
     assetsDescription: 'Manage photos, swatches, schematics, and reference attachments.',
@@ -97,3 +97,5 @@ export const ASSETS_COPY: Record<LanguageCode, any> = {
     assetTypeOther: 'Outro',
   }
 };
+
+export const ASSETS_COPY = COPY;

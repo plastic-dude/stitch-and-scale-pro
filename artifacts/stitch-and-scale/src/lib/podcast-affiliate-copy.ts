@@ -47,7 +47,7 @@ export interface PodcastAffiliateCopy {
   yourQuotedCpm: string;
 }
 
-export const PODCAST_AFFILIATE_COPY: Record<LanguageCode, PodcastAffiliateCopy> = {
+export const COPY: Record<LanguageCode, PodcastAffiliateCopy> = {
   en: {
     title: 'Podcast Affiliate Lab',
     description: 'Calculate the ROI of podcast sponsorships and affiliate deals based on listener reach and conversion.',
@@ -274,3 +274,5 @@ export const PODCAST_AFFILIATE_COPY: Record<LanguageCode, PodcastAffiliateCopy> 
     yourQuotedCpm: 'Seu CPM cotado',
   },
 };
+
+export const PODCAST_AFFILIATE_COPY = COPY;

@@ -235,4 +235,6 @@ const pt:WholesalePricelistCopy={...en,
   yourRealisticWholesaleOrder: 'Seu volume de pedidos de atacado realista agora.',
 };
 
-export const WHOLESALE_PRICELIST_COPY:Record<LanguageCode,WholesalePricelistCopy>={en,de,fr,es,pt};
+export const COPY:Record<LanguageCode,WholesalePricelistCopy>={en,de,fr,es,pt};
+
+export const WHOLESALE_PRICELIST_COPY = COPY;

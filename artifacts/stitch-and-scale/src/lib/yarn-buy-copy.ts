@@ -209,7 +209,9 @@ const pt: YarnBuyCopy = {
   quickLoadLabel: 'Carregar rapidamente um fio padrão do mercado (ajuste os números à sua etiqueta)',
 };
 
-export const YARN_BUY_COPY: Record<LanguageCode, YarnBuyCopy> = { en, de, fr, es, pt };
+export const COPY: Record<LanguageCode, YarnBuyCopy> = { en, de, fr, es, pt };
 export function getYarnBuyCopy(language: LanguageCode): YarnBuyCopy {
   return YARN_BUY_COPY[language] ?? YARN_BUY_COPY.en;
 }
+
+export const YARN_BUY_COPY = COPY;

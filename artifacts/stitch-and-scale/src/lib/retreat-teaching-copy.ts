@@ -163,4 +163,6 @@ const pt:RetreatTeachingCopy={...en,
   yourVariableCostPer: 'Seu custo variável por aluna (comida, parte da hospedagem, kits)',
 };
 
-export const RETREAT_TEACHING_COPY:Record<LanguageCode,RetreatTeachingCopy>={en,de,fr,es,pt};
+export const COPY:Record<LanguageCode,RetreatTeachingCopy>={en,de,fr,es,pt};
+
+export const RETREAT_TEACHING_COPY = COPY;

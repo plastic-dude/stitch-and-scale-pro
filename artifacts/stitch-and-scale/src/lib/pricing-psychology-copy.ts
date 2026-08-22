@@ -84,7 +84,7 @@ export interface PricingPsychologyCopy {
   verdictMarginal: string;
 }
 
-export const PRICING_PSYCHOLOGY_COPY: Record<LanguageCode, PricingPsychologyCopy> = {
+export const COPY: Record<LanguageCode, PricingPsychologyCopy> = {
   en: {
     title: 'Price Psychology Lab',
     description: 'Optimize your pattern pricing using behavioral research: charm endings, left-digit barriers, and decoy anchors.',
@@ -531,3 +531,5 @@ export const PRICING_PSYCHOLOGY_COPY: Record<LanguageCode, PricingPsychologyCopy
     verdictMarginal: 'Marginal',
   },
 };
+
+export const PRICING_PSYCHOLOGY_COPY = COPY;
