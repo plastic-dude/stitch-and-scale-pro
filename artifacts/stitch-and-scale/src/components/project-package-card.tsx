@@ -297,6 +297,7 @@ export function ProjectPackageCard({
                               const label = downloadUrl
                                 ? `${copy.publicationArtifactDownload}: ${art.label}`
                                 : `${copy.publicationArtifactDownloadUnavailable}: ${art.label}`;
+                              const unavailableLabel = `${label}. ${copy.publicationArtifactDownloadUnavailableDescription}`;
                               return downloadUrl ? (
                                 <Button
                                   asChild
@@ -322,7 +323,7 @@ export function ProjectPackageCard({
                                   size="icon"
                                   className="h-6 w-6 text-muted-foreground/40"
                                   disabled
-                                  aria-label={label}
+                                  aria-label={unavailableLabel}
                                   title={copy.publicationArtifactDownloadUnavailableDescription}
                                 >
                                   <Download className="h-3 w-3" />
