@@ -1,11 +1,17 @@
 import { describe, expect, it } from 'vitest';
 import { generateId, type PatternProject, SIZE_STANDARDS } from './grading-engine';
 import {
+  compareMcpStandards,
   explainMcpGrade,
+  getMcpPrompt,
+  getMcpPromptDefinitions,
+  getMcpResourceDefinitions,
   getMcpToolDefinitions,
   getMcpToolNames,
   isMcpGradeOutput,
+  isMcpStandardsComparisonOutput,
   normalizeMcpProject,
+  readMcpResource,
   runMcpGrading,
   validateMcpProject,
 } from './mcp-contract';
@@ -96,13 +102,61 @@ describe('MCP contract', () => {
 
   it('exposes only read-only, non-destructive tools', () => {
     const tools = getMcpToolDefinitions();
-    expect(tools.map(tool => tool.name)).toEqual(['project.intake', 'project.validate', 'grading.run', 'grading.explain', 'export.pattern_pdf', 'export.project_book_pdf', 'export.brag_card', 'calculate.marketplace_take_rate']);
+    expect(tools.map(tool => tool.name)).toEqual([
+      'project.intake', 'project.validate', 'grading.run', 'grading.explain', 'grading.compare_standards',
+      'export.pattern_pdf', 'export.project_book_pdf', 'export.brag_card', 'calculate.marketplace_take_rate',
+    ]);
     expect(getMcpToolNames()).toEqual(tools.map(tool => tool.name));
     for (const tool of tools) {
       expect(tool.annotations.readOnlyHint).toBe(true);
       expect(tool.annotations.destructiveHint).toBe(false);
       expect(tool.annotations.openWorldHint).toBe(false);
     }
+  });
+
+  it('reports no difference against the CYC baseline for a plain CYC project', () => {
+    const result = compareMcpStandards(makeProject());
+    expect(isMcpStandardsComparisonOutput(result)).toBe(true);
+    if (!isMcpStandardsComparisonOutput(result)) throw new Error('comparison failed');
+    expect(result.identical).toBe(true);
+    expect(result.rows).toEqual([]);
+    expect(result.projectStandard).toBe('CYC');
+  });
+
+  it('reports only the real deltas for a genuine custom standard snapshot', () => {
+    const custom = structuredClone(SIZE_STANDARDS);
+    custom.M.bust = 99;
+    const project = makeProject({ sizingStandard: 'Custom', customStandardSnapshot: custom });
+    const result = compareMcpStandards(project);
+    expect(isMcpStandardsComparisonOutput(result)).toBe(true);
+    if (!isMcpStandardsComparisonOutput(result)) throw new Error('comparison failed');
+    expect(result.identical).toBe(false);
+    expect(result.rows).toEqual([{ gradingKey: 'bust', size: 'M', projectStandardValue: 99, cycBaselineValue: 37, delta: 62 }]);
+  });
+
+  it('rejects an invalid snapshot before attempting a standards comparison', () => {
+    const result = compareMcpStandards({ ...makeProject(), sections: [] });
+    expect(isMcpStandardsComparisonOutput(result)).toBe(false);
+    if (isMcpStandardsComparisonOutput(result)) throw new Error('hostile input unexpectedly compared');
+    expect(result.valid).toBe(false);
+  });
+
+  it('exposes real, non-fabricated reference resources', () => {
+    const resources = getMcpResourceDefinitions();
+    expect(resources.map(r => r.uri)).toContain('stitch-scale://reference/sizing-standards');
+    const standards = readMcpResource('stitch-scale://reference/sizing-standards');
+    expect(standards).not.toBeNull();
+    const parsed = JSON.parse(standards!.text);
+    expect(parsed.table.M.bust).toBe(37);
+    expect(readMcpResource('stitch-scale://reference/nonexistent')).toBeNull();
+  });
+
+  it('generates safety-constrained prompts for each explain intent', () => {
+    const definitions = getMcpPromptDefinitions();
+    expect(definitions.map(p => p.name)).toEqual(['grading.explain', 'grading.teach', 'grading.check', 'grading.next_step']);
+    const prompt = getMcpPrompt('grading.teach', { grade: { verdict: 'go' } });
+    expect(prompt?.messages[0]?.content.text).toContain('rounding parity');
+    expect(getMcpPrompt('not.a.real.prompt', {})).toBeNull();
   });
 
   it('creates a constrained explanation envelope instead of inventing a result', () => {
