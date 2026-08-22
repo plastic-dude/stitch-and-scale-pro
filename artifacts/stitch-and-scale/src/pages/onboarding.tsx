@@ -26,6 +26,14 @@ import { getSampleCrewNeckSweater, getSampleBasicBeanie } from '@/lib/sample-pro
 
 const TOTAL_STEPS = 7;
 
+// ─── Leftovers ────────────────────────────────────────────────────────────────
+
+/**
+ * @deprecated Philosophy cards were removed in CHK-127 but left in the file as inert
+ * placeholders. Removing them now to keep the bundle clean and onboarding focused.
+ */
+// PHILOSOPHY_CARDS removed
+
 // ─── Step indicators ──────────────────────────────────────────────────────────
 
 function StepDots({ current, total }: { current: number; total: number }) {
@@ -146,15 +154,15 @@ function StepPhilosophy() {
 // None of this is a reason not to build these eventually - it's a reason
 // not to fabricate a chart from weak sourcing just to fill the gap, which
 // is exactly what happened to the CYC table before it was reconciled.
-const SIZING_STANDARDS: { id: SizingStandard; label: string; description: string; available: boolean }[] = [
-  { id: 'CYC',       label: 'Craft Yarn Council (CYC)',    description: 'US standard — widely used in commercial patterns', available: true },
-  { id: 'Custom',    label: 'Custom Standard',              description: 'Define your own size reference table',            available: true },
-  { id: 'UK',        label: 'UK Standard',                  description: 'British Standard BS EN 13402',                    available: false },
-  { id: 'EN13402',   label: 'European EN 13402',            description: 'European body measurement standard',              available: false },
-  { id: 'Japanese',  label: 'Japanese (JIS)',               description: 'Japan Industrial Standards body measurements',    available: false },
-  { id: 'Korean',    label: 'Korean (KS)',                  description: 'Korean Standards body measurements',              available: false },
-  { id: 'Chinese',   label: 'Chinese (GB)',                 description: 'Chinese National Standard body measurements',     available: false },
-  { id: 'Australian',label: 'Australian (AS)',              description: 'Australian Standard body measurements',           available: false },
+const SIZING_STANDARDS: { id: SizingStandard; labelKey: string; descKey: string; available: boolean }[] = [
+  { id: 'CYC',       labelKey: 'workflow.onboarding.standard.cyc.label',    descKey: 'workflow.onboarding.standard.cyc.desc', available: true },
+  { id: 'Custom',    labelKey: 'workflow.onboarding.standard.custom.label', descKey: 'workflow.onboarding.standard.custom.desc', available: true },
+  { id: 'UK',        labelKey: 'workflow.onboarding.standard.uk.label',     descKey: 'workflow.onboarding.standard.uk.desc', available: false },
+  { id: 'EN13402',   labelKey: 'workflow.onboarding.standard.eu.label',     descKey: 'workflow.onboarding.standard.eu.desc', available: false },
+  { id: 'Japanese',  labelKey: 'workflow.onboarding.standard.jp.label',     descKey: 'workflow.onboarding.standard.jp.desc', available: false },
+  { id: 'Korean',    labelKey: 'workflow.onboarding.standard.kr.label',     descKey: 'workflow.onboarding.standard.kr.desc', available: false },
+  { id: 'Chinese',   labelKey: 'workflow.onboarding.standard.cn.label',     descKey: 'workflow.onboarding.standard.cn.desc', available: false },
+  { id: 'Australian',labelKey: 'workflow.onboarding.standard.au.label',     descKey: 'workflow.onboarding.standard.au.desc', available: false },
 ];
 
 function StepSizingStandard({ sizingStandard, setSizingStandard }: { sizingStandard: SizingStandard; setSizingStandard: (s: SizingStandard) => void }) {
@@ -163,7 +171,7 @@ function StepSizingStandard({ sizingStandard, setSizingStandard }: { sizingStand
   const available = SIZING_STANDARDS.filter(s => s.available);
   const unavailable = SIZING_STANDARDS.filter(s => !s.available);
 
-  const renderCard = ({ id, label, description, available }: typeof SIZING_STANDARDS[number]) => (
+  const renderCard = ({ id, labelKey, descKey, available }: typeof SIZING_STANDARDS[number]) => (
     <button
       key={id}
       onClick={() => available ? setSizingStandard(id) : undefined}
@@ -180,9 +188,9 @@ function StepSizingStandard({ sizingStandard, setSizingStandard }: { sizingStand
     >
       <div>
         <div className={cn('text-sm font-semibold', available ? 'text-foreground' : 'text-muted-foreground')}>
-          {label}
+          {t(labelKey as any)}
         </div>
-        <div className="text-xs text-muted-foreground mt-0.5">{description}</div>
+        <div className="text-xs text-muted-foreground mt-0.5">{t(descKey as any)}</div>
       </div>
       {sizingStandard === id && available && (
         <div className="shrink-0 w-5 h-5 rounded-full bg-primary flex items-center justify-center mt-0.5">
@@ -286,22 +294,16 @@ function StepUnits({ unit, setUnit }: { unit: 'in' | 'cm'; setUnit: (u: 'in' | '
 
 // ─── STEP 5: Workspace Tour ───────────────────────────────────────────────────
 
-const TOUR_ITEMS = [
-  { icon: Layers,   label: 'Dashboard',    desc: 'All your patterns in one place. Create, search, and open projects.' },
-  { icon: Scissors, label: 'Sections',     desc: 'Divide your pattern into logical parts — Body, Sleeve, Collar, etc.' },
-  { icon: Ruler,    label: 'Measurements', desc: 'Add measurements with grading keys. The engine does the math for every size.' },
-  { icon: Eye,      label: 'Preview',      desc: 'See the full graded table — all nine sizes, all measurements, all stitch counts.' },
-  { icon: FileText, label: 'Export',       desc: 'Generate a print-ready PDF in one of four professional templates.' },
-];
+const TOUR_ITEMS = [Layers, Scissors, Ruler, Eye, ShieldCheck];
 
 function StepWorkspaceTour() {
   const { t } = useSettings();
   const tourKeys = [
     ['workflow.onboarding.tour.dashboard', 'workflow.onboarding.tour.dashboardDescription'],
-    ['workflow.onboarding.tour.sections', 'workflow.onboarding.tour.sectionsDescription'],
+    ['workflow.onboarding.tour.search', 'workflow.onboarding.tour.searchDescription'],
     ['workflow.onboarding.tour.measurements', 'workflow.onboarding.tour.measurementsDescription'],
     ['workflow.onboarding.tour.preview', 'workflow.onboarding.tour.previewDescription'],
-    ['workflow.onboarding.tour.export', 'workflow.onboarding.tour.exportDescription'],
+    ['workflow.onboarding.tour.integrity', 'workflow.onboarding.tour.integrityDescription'],
   ] as const;
   return (
     <div className="flex flex-col items-center max-w-lg mx-auto w-full">
@@ -310,7 +312,7 @@ function StepWorkspaceTour() {
         <p className="text-muted-foreground text-sm">{t('workflow.onboarding.howDescription')}</p>
       </div>
       <div className="w-full space-y-3">
-        {TOUR_ITEMS.map(({ icon: Icon }, i) => (
+        {TOUR_ITEMS.map((Icon, i) => (
           <div key={tourKeys[i][0]} className="flex items-start gap-4 bg-card rounded-xl border border-border/50 px-4 py-3.5 shadow-sm">
             <div className="shrink-0 w-9 h-9 rounded-lg bg-secondary/40 flex items-center justify-center">
               <Icon className="w-4.5 h-4.5 text-primary" />
