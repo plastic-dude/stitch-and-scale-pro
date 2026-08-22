@@ -2,8 +2,8 @@
 
 **Date:** 2026-08-22  
 **Scope:** Publication Package artifact-row Download affordance  
-**Code commit:** `74297d6c040d6ecfe6c4823465b2c50bbe85bd0d` (`fix: make publication artifact downloads truthful`)  
-**Production status:** Not deployed in this firing; Vercel rejected the deployment because the free-tier daily deployment quota was exhausted.
+**Code commits:** `74297d6c040d6ecfe6c4823465b2c50bbe85bd0d` (`fix: make publication artifact downloads truthful`) plus `3f0359e6910b91ce8dd6726bceee3b1bf3d90ecd` (`fix: describe unavailable artifact downloads`)
+**Production status:** Not deployed in this firing; the direct production deployment was rejected because the free-tier daily deployment quota was exhausted. A separate READY target-null preview deployment exists for `74297d6`, but it is not the active production alias.
 
 ## Finding
 
@@ -45,6 +45,6 @@ Design Ledger’s CSV path does create a local Blob and requests a browser downl
 
 ## Release posture
 
-The code commit was pushed first to `coder/perfection-audit-2026-08-22` and then fast-forwarded to remote `main` after verifying that `origin/main` still pointed to `17ff214e3d3b507eedfa8130afb015ee641950f1`. The active public production deployment remains the previously proved code-bearing release `21a9a9f` / deployment `dpl_JAJUqmSvZYNFg8CFamxa1dNPjwTU`; it does not contain CHK-217. The exact CHK-217 commit must be redeployed after Vercel’s free-tier deployment quota resets, followed by fresh active-alias route, mobile, and MCP verification.
+The code commits were pushed first to `coder/perfection-audit-2026-08-22` and then fast-forwarded to remote `main` after each parent check. The active public production deployment remains the previously proved code-bearing release `21a9a9f` / deployment `dpl_JAJUqmSvZYNFg8CFamxa1dNPjwTU`; it does not contain CHK-217. The exact final CHK-217 code commit `3f0359e` must be deployed after Vercel’s free-tier deployment quota resets, followed by fresh active-alias route, mobile, and MCP verification.
 
 This correction does not create persisted artifact retrieval, multi-project PDF export, or social sharing. Those remain separate product tracks. `QUEUE-067` remains queued and research-only with its required separate brief and two-pass approval.
