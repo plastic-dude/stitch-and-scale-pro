@@ -25,7 +25,10 @@ describe('Deployment Security (F-13, F-14)', () => {
     
     const spaRewrite = config.rewrites.find((r: any) => r.destination === '/index.html');
     expect(spaRewrite).toBeDefined();
+    expect(spaRewrite.source).toContain('/:path(');
     expect(spaRewrite.source).toContain('?!api');
-    expect(spaRewrite.source).toContain('assets');
+    expect(spaRewrite.source).toContain('api(?:/|$)');
+    expect(spaRewrite.source).toContain('assets(?:/|$)');
+    expect(spaRewrite.source).not.toMatch(/\)\$$/);
   });
 });

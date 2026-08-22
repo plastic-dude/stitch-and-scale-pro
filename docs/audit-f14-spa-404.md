@@ -26,7 +26,7 @@ To mitigate the "200-for-missing-paths" issue, we have hardened `vercel.json` to
     { "source": "/manifest.webmanifest", "destination": "/manifest.webmanifest" },
     { "source": "/manifest.json", "destination": "/manifest.json" },
     { "source": "/sw.js", "destination": "/sw.js" },
-    { "source": "/((?!api|manifest.json|manifest.webmanifest|sw.js|assets|favicon.ico|robots.txt).*)$", "destination": "/index.html" }
+    { "source": "/:path((?!api(?:/|$)|assets(?:/|$)|manifest\\.json|manifest\\.webmanifest|sw\\.js|favicon\\.ico|robots\\.txt).*)", "destination": "/index.html" }
   ],
   "cleanUrls": true,
   "trailingSlash": false
