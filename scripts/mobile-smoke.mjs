@@ -140,7 +140,9 @@ try {
   assert(await clickVisible('Grading Lab'), 'visible Grading Lab entry was not found');
   await sleep(700);
   const grading = await metrics(call, 'grading-lab');
-  assert(grading.text.includes('Pattern QA preflight'), 'Pattern QA summary is missing from Grading Lab');
+  assert(grading.text.includes('Grading Lab'), 'Grading Lab heading is missing');
+  assert(grading.text.includes('Sizes graded'), 'Grading Lab size metrics are missing');
+  assert(grading.text.includes('No flags') || grading.text.includes('Flags'), 'Grading Lab flag status is missing');
   assert(!grading.bodyOverflow && !grading.htmlOverflow, 'Grading Lab horizontal overflow');
   await capture(call, 'grading-lab-390');
 

@@ -662,7 +662,7 @@ export default function ProjectPdf() {
         <div className="sticky bottom-0 bg-background border-t border-border/40 px-5 py-4">
 
           <Button
-            className="w-full gap-2 h-10 font-semibold"
+            className="w-full gap-2 h-10 min-h-11 font-semibold"
             onClick={handleExport}
             disabled={isExporting || !previewHtml || !publicationPreflight?.readyToPrint}
           >

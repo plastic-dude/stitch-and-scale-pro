@@ -263,14 +263,14 @@ export default function NewProjectWizard() {
                   <div className="flex justify-center">
                     <div className="flex bg-muted/60 p-1 rounded-lg">
                       <button 
-                        className={cn("px-6 py-2 text-sm font-semibold rounded-md transition-all", gauge.unit === 'in' ? "bg-background shadow text-foreground" : "text-muted-foreground hover:text-foreground")}
+                        className={cn("px-6 py-2 min-h-11 text-sm font-semibold rounded-md transition-all", gauge.unit === 'in' ? "bg-background shadow text-foreground" : "text-muted-foreground hover:text-foreground")}
                         onClick={() => setGauge({...gauge, unit: 'in'})}
                         data-testid="button-unit-inches"
                       >
                         {t('workflow.onboarding.inches')}
                       </button>
                       <button 
-                        className={cn("px-6 py-2 text-sm font-semibold rounded-md transition-all", gauge.unit === 'cm' ? "bg-background shadow text-foreground" : "text-muted-foreground hover:text-foreground")}
+                        className={cn("px-6 py-2 min-h-11 text-sm font-semibold rounded-md transition-all", gauge.unit === 'cm' ? "bg-background shadow text-foreground" : "text-muted-foreground hover:text-foreground")}
                         onClick={() => setGauge({...gauge, unit: 'cm'})}
                         data-testid="button-unit-cm"
                       >
@@ -382,7 +382,7 @@ export default function NewProjectWizard() {
             <Button 
               onClick={handleNext} 
               disabled={step === 1 && (!name.trim() || !author.trim())} 
-              className="font-medium px-8 rounded-full shadow-sm"
+              className="font-medium px-8 min-h-11 rounded-full shadow-sm"
               data-testid="button-next"
             >
               {t('workflow.newProject.next')} <ChevronRight className="w-4 h-4 ml-1.5" />
@@ -391,7 +391,7 @@ export default function NewProjectWizard() {
             <Button 
               onClick={handleCreate} 
               disabled={!gauge.stitchesPer4In || !gauge.rowsPer4In} 
-              className="font-medium px-8 rounded-full bg-accent text-accent-foreground hover:bg-accent/90 shadow-md"
+              className="font-medium px-8 min-h-11 rounded-full bg-accent text-accent-foreground hover:bg-accent/90 shadow-md"
               data-testid="button-create"
             >
               {t('workflow.newProject.create')} <Check className="w-4 h-4 ml-2" />
