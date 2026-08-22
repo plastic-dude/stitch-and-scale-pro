@@ -2,16 +2,16 @@ import type { LanguageCode } from './i18n';
 
 export interface HandoffCopy {
   download: string;
-  downloaded: string;
-  downloadedDescription: string;
+  downloadRequested: string;
+  downloadRequestedDescription: string;
 }
 
 const COPY: Record<LanguageCode, HandoffCopy> = {
-  en: { download: 'Handoff JSON', downloaded: 'Handoff packet downloaded', downloadedDescription: 'The structured technical evidence packet is ready to share with an editor.' },
-  de: { download: 'Übergabe-JSON', downloaded: 'Übergabepaket heruntergeladen', downloadedDescription: 'Das strukturierte technische Nachweispaket kann jetzt mit einer Redaktion geteilt werden.' },
-  fr: { download: 'JSON de passation', downloaded: 'Paquet de passation téléchargé', downloadedDescription: 'Le dossier technique structuré peut maintenant être partagé avec un éditeur.' },
-  es: { download: 'JSON de entrega', downloaded: 'Paquete de entrega descargado', downloadedDescription: 'El paquete técnico estructurado está listo para compartir con un editor.' },
-  pt: { download: 'JSON de entrega', downloaded: 'Pacote de entrega descarregado', downloadedDescription: 'O pacote técnico estruturado está pronto para partilhar com um editor.' },
+  en: { download: 'Handoff JSON', downloadRequested: 'Download requested', downloadRequestedDescription: 'Check your downloads for the structured technical evidence packet.' },
+  de: { download: 'Übergabe-JSON', downloadRequested: 'Download angefordert', downloadRequestedDescription: 'Prüfe deine Downloads auf das strukturierte technische Nachweispaket.' },
+  fr: { download: 'JSON de passation', downloadRequested: 'Téléchargement demandé', downloadRequestedDescription: 'Vérifiez vos téléchargements pour le dossier technique structuré.' },
+  es: { download: 'JSON de entrega', downloadRequested: 'Descarga solicitada', downloadRequestedDescription: 'Revisa tus descargas para encontrar el paquete técnico estructurado.' },
+  pt: { download: 'JSON de entrega', downloadRequested: 'Transferência solicitada', downloadRequestedDescription: 'Verifica as tuas transferências para encontrar o pacote técnico estruturado.' },
 };
 
 export function getHandoffCopy(locale: string): HandoffCopy {

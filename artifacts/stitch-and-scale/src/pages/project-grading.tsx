@@ -161,7 +161,7 @@ export default function ProjectGrading() {
     const evidence = buildHandoffEvidence(project, readiness, audit);
     const filename = `${project.name.replace(/\s+/g, '-').toLowerCase()}-technical-handoff.json`;
     downloadJsonFile(evidence, filename);
-    toast({ title: handoffCopy.downloaded, description: handoffCopy.downloadedDescription });
+    toast({ title: handoffCopy.downloadRequested, description: handoffCopy.downloadRequestedDescription });
   };
 
   return (
