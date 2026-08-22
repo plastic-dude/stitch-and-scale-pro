@@ -187,8 +187,8 @@ export default function PortfolioPage() {
     popup.document.write(html);
     popup.document.close();
     popup.focus();
-    setBookStatus(copy.bookReady);
-    window.setTimeout(() => popup.print(), 160);
+    setBookStatus(copy.bookPrepared);
+    window.setTimeout(() => { if (!popup.closed) popup.print(); }, 160);
   };
   const bestPlatform = PLATFORMS[0];
   // Bundle premium slider (CHK-134, S284): per-bundle discount factor.
@@ -405,8 +405,8 @@ export default function PortfolioPage() {
               {interpolate(copy.bookSelected, { selected: selectedBookProjects.length, total: projects.length })}
             </p>
             <div className="flex gap-2">
-              <Button type="button" variant="ghost" size="sm" onClick={() => setSelectedProjectIds(projects.map(project => project.id))}>{copy.bookSelectAll}</Button>
-              <Button type="button" variant="ghost" size="sm" onClick={() => setSelectedProjectIds([])}>{copy.bookClear}</Button>
+              <Button type="button" variant="ghost" size="sm" className="min-h-11" onClick={() => setSelectedProjectIds(projects.map(project => project.id))}>{copy.bookSelectAll}</Button>
+              <Button type="button" variant="ghost" size="sm" className="min-h-11" onClick={() => setSelectedProjectIds([])}>{copy.bookClear}</Button>
             </div>
           </div>
           <div className="grid gap-2 sm:grid-cols-2" role="group" aria-label={copy.bookTitle}>
@@ -425,7 +425,7 @@ export default function PortfolioPage() {
             ))}
           </div>
           <div className="flex flex-wrap items-center gap-3">
-            <Button type="button" onClick={prepareProjectBook} disabled={selectedBookProjects.length === 0} data-testid="portfolio-book-export">
+            <Button type="button" className="min-h-11" onClick={prepareProjectBook} disabled={selectedBookProjects.length === 0} data-testid="portfolio-book-export">
               <Download className="h-4 w-4 mr-1" /> {copy.bookExport}
             </Button>
             <span className="text-xs text-muted-foreground" aria-live="polite">{bookStatus}</span>

@@ -129,7 +129,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
       </main>
 
       <nav aria-label="Primary mobile navigation" className="md:hidden fixed inset-x-0 bottom-0 z-40 border-t border-border/70 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 pb-[env(safe-area-inset-bottom)]">
-        <div className="grid grid-cols-4 h-16 max-w-md mx-auto">
+        <div className="grid grid-cols-4 h-16 w-full max-w-md mx-auto">
           <Link href="/" aria-label={projectsLabel} aria-current={location === '/' ? 'page' : undefined} className={`flex flex-col items-center justify-center gap-0.5 text-[10px] font-medium transition-colors ${location === '/' ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}>
             <BookOpen className="h-5 w-5" aria-hidden="true" />
             <span>{projectsLabel}</span>

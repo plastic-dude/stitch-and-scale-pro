@@ -5,6 +5,7 @@ const baseUrl = process.env.SMOKE_BASE_URL ?? 'http://127.0.0.1:5000';
 const cdpUrl = process.env.CDP_URL ?? 'http://127.0.0.1:9222';
 const outDir = process.env.SMOKE_OUT_DIR ?? '/tmp/stitch-and-scale-smoke';
 const widths = [320, 360, 390, 430];
+const demoProjectRoute = '/project/mss5osqd88j6fdyvtdu';
 
 async function json(url, options) {
   const response = await fetch(url, options);
@@ -120,12 +121,12 @@ try {
   assert(skipResult, 'onboarding skip action was not found');
   await sleep(900);
 
-  await navigate(call, '/project/sample-crew-neck-sweater', 390, 844);
+  await navigate(call, demoProjectRoute, 390, 844);
   const workspace = await metrics(call, 'sample-workspace');
   assert(!workspace.bodyOverflow && !workspace.htmlOverflow, 'sample workspace horizontal overflow');
   await capture(call, 'sample-workspace-390');
 
-  await navigate(call, '/project/sample-crew-neck-sweater/pdf', 390, 844);
+  await navigate(call, `${demoProjectRoute}/pdf`, 390, 844);
   const exportPage = await metrics(call, 'export');
   assert(exportPage.text.includes('Ready to print') || exportPage.text.includes('Review before printing') || exportPage.text.includes('Fix before printing'), 'export preflight panel is missing');
   assert(!exportPage.bodyOverflow && !exportPage.htmlOverflow, 'export horizontal overflow');
@@ -133,7 +134,7 @@ try {
   assert((exportButton?.height ?? 0) >= 44, `Export PDF hit area is ${exportButton?.height ?? 0}px`);
   await capture(call, 'export-390');
 
-  await navigate(call, '/project/sample-crew-neck-sweater', 390, 844);
+  await navigate(call, demoProjectRoute, 390, 844);
   const clickVisible = (label) => evaluate(call, `(() => { const node = [...document.querySelectorAll('button,[role=tab],a')].find((el) => { const r = el.getBoundingClientRect(); return r.width > 0 && r.height > 0 && (el.innerText || el.getAttribute('aria-label') || '').trim() === ${JSON.stringify(label)}; }); if (!node) return false; node.click(); return true; })()`);
   assert(await clickVisible('All Labs'), 'All Labs control was not found');
   await sleep(400);
@@ -146,7 +147,7 @@ try {
   assert(!grading.bodyOverflow && !grading.htmlOverflow, 'Grading Lab horizontal overflow');
   await capture(call, 'grading-lab-390');
 
-  await navigate(call, '/project/sample-crew-neck-sweater', 390, 844);
+  await navigate(call, demoProjectRoute, 390, 844);
   assert(await clickVisible('All Labs'), 'All Labs control was not found for ledger');
   await sleep(400);
   assert(await clickVisible('Design Ledger'), 'visible Design Ledger entry was not found');
