@@ -216,6 +216,20 @@ export interface PatternProject {
   standardMetadata?: SizingStandardMetadata;
   /** Collaboration: roster of invited reviewers and testers. */
   collaborationRoster?: CollaborationMember[];
+  /** Assets: project-level attachments (photos, swatches, schematics). */
+  assets?: ProjectAsset[];
+}
+
+export interface ProjectAsset {
+  id: string;
+  type: 'image' | 'document' | 'other';
+  label: string;
+  filename: string;
+  mimeType: string;
+  size: number;
+  dataUrl: string; // Base64 for local-first storage
+  category: 'photo' | 'swatch' | 'schematic' | 'evidence' | 'other';
+  createdAt: string;
 }
 
 export type CollaborationRole = 'editor' | 'tester' | 'viewer';

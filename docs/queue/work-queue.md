@@ -61,6 +61,7 @@
 | 53 | QUEUE-046 | Priority 1 Gap 9: PWA lifecycle maturity (update prompt, offline/online status) | MAJOR | done | CHK-190: update prompt + offline status |
 | 54 | QUEUE-047 | Priority 1 Gap 6: Stronger sizing and fit governance (Sourced standards, versioning, ease profiles) | MAJOR | done | CHK-191: governance panel + ease profiles |
 | 55 | QUEUE-048 | Collaborative technical editing and test knitting (Reviewers, assignments, issue tracking) | MAJOR | done | CHK-192: Collaboration roster + issue tracking |
+| 56 | QUEUE-049 | Priority 1 Gap 5: Asset and attachment management (Project assets, file limits, previews) | MAJOR | in-progress | |
 
 ## Run ledger
 | Run (date) | Item worked | Gates | Commit | Next item |
@@ -111,3 +112,4 @@
 | 2026-08-22 (CHK-164) | QUEUE-021 (MAJOR) — Audit F-09: Draft placeholder policy | tsc clean; vitest 2,309/2,309; build green; fixed F-09 parser + CHK-163 regressions | ff9d107 | QUEUE-022 |
 | 2026-08-22 (CHK-165) | QUEUE-022 (MAJOR) — Audit: Chart Lab input validation | tsc clean; vitest 2,316/2,316; build green; implemented validateChartInputs + localized UI errors | f170453 | END OF QUEUE |
 | CHK-189 | d181329e255127016e218100753ff3ab6959c555 | QUEUE-045: Export lifecycle and artifact quality controls |
+| 68 | CHK-193 | 4bb8a6b2a6ba50263363b65674e6ab9d5c029ecb | Asset and attachment management. Added assets schema, context actions, AssetsPanel UI, and localized strings. |

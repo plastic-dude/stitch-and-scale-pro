@@ -41,7 +41,10 @@ type ProjectsAction =
   | { type: 'DELETE_COLLABORATOR'; payload: { projectId: string; memberId: string } }
   | { type: 'ADD_READINESS_ISSUE'; payload: { projectId: string; stage: ReadinessStage; issue: ReadinessIssue } }
   | { type: 'UPDATE_READINESS_ISSUE'; payload: { projectId: string; stage: ReadinessStage; issueId: string; patch: Partial<ReadinessIssue> } }
-  | { type: 'ADD_ISSUE_COMMENT'; payload: { projectId: string; stage: ReadinessStage; issueId: string; comment: ReadinessComment } };
+  | { type: 'ADD_ISSUE_COMMENT'; payload: { projectId: string; stage: ReadinessStage; issueId: string; comment: ReadinessComment } }
+  | { type: 'ADD_ASSET'; payload: { projectId: string; asset: any } }
+  | { type: 'DELETE_ASSET'; payload: { projectId: string; assetId: string } }
+  | { type: 'UPDATE_ASSET'; payload: { projectId: string; assetId: string; patch: any } };
 
 export type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
 
@@ -70,6 +73,9 @@ interface ProjectsContextType {
   addReadinessIssue: (projectId: string, stage: ReadinessStage, issue: ReadinessIssue) => void;
   updateReadinessIssue: (projectId: string, stage: ReadinessStage, issueId: string, patch: Partial<ReadinessIssue>) => void;
   addIssueComment: (projectId: string, stage: ReadinessStage, issueId: string, comment: ReadinessComment) => void;
+  addAsset: (projectId: string, asset: any) => void;
+  deleteAsset: (projectId: string, assetId: string) => void;
+  updateAsset: (projectId: string, assetId: string, patch: any) => void;
   saveStatus: SaveStatus;
   recovered: boolean;
   dismissRecovery: () => void;
@@ -300,6 +306,27 @@ function projectsReducer(state: PatternProject[], action: ProjectsAction): Patte
         updatedAt: new Date().toISOString()
       } : p);
       break;
+    case 'ADD_ASSET':
+      newState = state.map(p => p.id === action.payload.projectId ? {
+        ...p,
+        assets: [action.payload.asset, ...(p.assets || [])],
+        updatedAt: new Date().toISOString()
+      } : p);
+      break;
+    case 'DELETE_ASSET':
+      newState = state.map(p => p.id === action.payload.projectId ? {
+        ...p,
+        assets: (p.assets || []).filter(a => a.id !== action.payload.assetId),
+        updatedAt: new Date().toISOString()
+      } : p);
+      break;
+    case 'UPDATE_ASSET':
+      newState = state.map(p => p.id === action.payload.projectId ? {
+        ...p,
+        assets: (p.assets || []).map(a => a.id === action.payload.assetId ? { ...a, ...action.payload.patch } : a),
+        updatedAt: new Date().toISOString()
+      } : p);
+      break;
     default:
       return state;
   }
@@ -418,6 +445,9 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
   const addReadinessIssue = (projectId: string, stage: ReadinessStage, issue: ReadinessIssue) => dispatch({ type: 'ADD_READINESS_ISSUE', payload: { projectId, stage, issue } });
   const updateReadinessIssue = (projectId: string, stage: ReadinessStage, issueId: string, patch: Partial<ReadinessIssue>) => dispatch({ type: 'UPDATE_READINESS_ISSUE', payload: { projectId, stage, issueId, patch } });
   const addIssueComment = (projectId: string, stage: ReadinessStage, issueId: string, comment: ReadinessComment) => dispatch({ type: 'ADD_ISSUE_COMMENT', payload: { projectId, stage, issueId, comment } });
+  const addAsset = (projectId: string, asset: any) => dispatch({ type: 'ADD_ASSET', payload: { projectId, asset } });
+  const deleteAsset = (projectId: string, assetId: string) => dispatch({ type: 'DELETE_ASSET', payload: { projectId, assetId } });
+  const updateAsset = (projectId: string, assetId: string, patch: any) => dispatch({ type: 'UPDATE_ASSET', payload: { projectId, assetId, patch } });
 
   // Import a single project from an exported JSON file — always assigns a
   // fresh id so it can never silently collide with or overwrite an existing
@@ -438,6 +468,7 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
       setFitGovernance,
       addCollaborator, updateCollaborator, deleteCollaborator,
       addReadinessIssue, updateReadinessIssue, addIssueComment,
+      addAsset, deleteAsset, updateAsset,
       saveStatus, recovered, dismissRecovery 
     }}>
       {children}
@@ -475,7 +506,8 @@ export function useProject(id?: string) {
     createPublicationPackage, updatePublicationPackage, deletePublicationPackage, addPublicationArtifact, 
     setFitGovernance,
     addCollaborator, updateCollaborator, deleteCollaborator,
-    addReadinessIssue, updateReadinessIssue, addIssueComment
+    addReadinessIssue, updateReadinessIssue, addIssueComment,
+    addAsset, deleteAsset, updateAsset
   } = useProjects();
   if (!id) return null;
   const existing = projects.find(p => p.id === id);
@@ -504,6 +536,9 @@ export function useProject(id?: string) {
       addReadinessIssue: (stage: ReadinessStage, issue: ReadinessIssue) => addReadinessIssue(DEMO_PROJECT_ID, stage, issue),
       updateReadinessIssue: (stage: ReadinessStage, issueId: string, patch: Partial<ReadinessIssue>) => updateReadinessIssue(DEMO_PROJECT_ID, stage, issueId, patch),
       addIssueComment: (stage: ReadinessStage, issueId: string, comment: ReadinessComment) => addIssueComment(DEMO_PROJECT_ID, stage, issueId, comment),
+      addAsset: (asset: any) => addAsset(DEMO_PROJECT_ID, asset),
+      deleteAsset: (assetId: string) => deleteAsset(DEMO_PROJECT_ID, assetId),
+      updateAsset: (assetId: string, patch: any) => updateAsset(DEMO_PROJECT_ID, assetId, patch),
     };
   }
 
@@ -512,21 +547,24 @@ export function useProject(id?: string) {
   return {
     project: existing,
     updateProject: (p: PatternProject) => updateProject(p),
-    deleteProject: () => deleteProject(existing.id),
-    createSnapshot: (name: string, note: string) => createSnapshot(existing.id, name, note),
-    restoreSnapshot: (snapshotId: string) => restoreSnapshot(existing.id, snapshotId),
-    deleteSnapshot: (snapshotId: string) => deleteSnapshot(existing.id, snapshotId),
-    updateContract: (contract: any) => updateContract(existing.id, contract),
-    createPublicationPackage: (pkg: any) => createPublicationPackage(existing.id, pkg),
-    updatePublicationPackage: (pkg: any) => updatePublicationPackage(existing.id, pkg),
-    deletePublicationPackage: (packageId: string) => deletePublicationPackage(existing.id, packageId),
-    addPublicationArtifact: (packageId: string, artifact: PublicationArtifact) => addPublicationArtifact(existing.id, packageId, artifact),
-    setFitGovernance: (ease?: EaseProfileReference, meta?: SizingStandardMetadata) => setFitGovernance(existing.id, ease, meta),
-    addCollaborator: (member: CollaborationMember) => addCollaborator(existing.id, member),
-    updateCollaborator: (memberId: string, patch: Partial<CollaborationMember>) => updateCollaborator(existing.id, memberId, patch),
-    deleteCollaborator: (memberId: string) => deleteCollaborator(existing.id, memberId),
-    addReadinessIssue: (stage: ReadinessStage, issue: ReadinessIssue) => addReadinessIssue(existing.id, stage, issue),
-    updateReadinessIssue: (stage: ReadinessStage, issueId: string, patch: Partial<ReadinessIssue>) => updateReadinessIssue(existing.id, stage, issueId, patch),
-    addIssueComment: (stage: ReadinessStage, issueId: string, comment: ReadinessComment) => addIssueComment(existing.id, stage, issueId, comment),
+    deleteProject: () => deleteProject(id),
+    createSnapshot: (name: string, note: string) => createSnapshot(id, name, note),
+    restoreSnapshot: (snapshotId: string) => restoreSnapshot(id, snapshotId),
+    deleteSnapshot: (snapshotId: string) => deleteSnapshot(id, snapshotId),
+    updateContract: (contract: any) => updateContract(id, contract),
+    createPublicationPackage: (pkg: any) => createPublicationPackage(id, pkg),
+    updatePublicationPackage: (pkg: any) => updatePublicationPackage(id, pkg),
+    deletePublicationPackage: (packageId: string) => deletePublicationPackage(id, packageId),
+    addPublicationArtifact: (packageId: string, artifact: PublicationArtifact) => addPublicationArtifact(id, packageId, artifact),
+    setFitGovernance: (ease?: EaseProfileReference, meta?: SizingStandardMetadata) => setFitGovernance(id, ease, meta),
+    addCollaborator: (member: CollaborationMember) => addCollaborator(id, member),
+    updateCollaborator: (memberId: string, patch: Partial<CollaborationMember>) => updateCollaborator(id, memberId, patch),
+    deleteCollaborator: (memberId: string) => deleteCollaborator(id, memberId),
+    addReadinessIssue: (stage: ReadinessStage, issue: ReadinessIssue) => addReadinessIssue(id, stage, issue),
+    updateReadinessIssue: (stage: ReadinessStage, issueId: string, patch: Partial<ReadinessIssue>) => updateReadinessIssue(id, stage, issueId, patch),
+    addIssueComment: (stage: ReadinessStage, issueId: string, comment: ReadinessComment) => addIssueComment(id, stage, issueId, comment),
+    addAsset: (asset: any) => addAsset(id, asset),
+    deleteAsset: (assetId: string) => deleteAsset(id, assetId),
+    updateAsset: (assetId: string, patch: any) => updateAsset(id, assetId, patch),
   };
 }
