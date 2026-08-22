@@ -133,6 +133,7 @@ const LAB = {
   bragcard: React.lazy(cardLazy(() => import('@/components/brag-card-card'))),
   payback: React.lazy(cardLazy(() => import('@/components/payback-lab-card'))),
   snapshots: React.lazy(cardLazy(() => import('@/components/project-snapshots-card'))),
+  readiness: React.lazy(cardLazy(() => import('@/components/project-readiness-card'))),
 };
 
 class LabErrorBoundary extends React.Component<

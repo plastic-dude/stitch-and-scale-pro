@@ -50,6 +50,37 @@ export interface HumanReviewRecord {
   reviewedAt: string;
 }
 
+export type ReadinessSeverity = 'nitpick' | 'minor' | 'major' | 'critical';
+export type ReadinessIssueStatus = 'open' | 'fixed' | 'verified';
+export type ReadinessStage = 'mathematical' | 'editorial' | 'test-knit' | 'final';
+export type ReadinessStageStatus = 'pending' | 'ready' | 'blocked';
+
+export interface ReadinessIssue {
+  id: string;
+  severity: ReadinessSeverity;
+  description: string;
+  evidence?: string;
+  correction?: string;
+  status: ReadinessIssueStatus;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ReadinessSignOff {
+  stage: ReadinessStage;
+  status: ReadinessStageStatus;
+  issues: ReadinessIssue[];
+  approver?: string;
+  approvedAt?: string;
+}
+
+export interface PublicationContract {
+  version: string;
+  signOffs: ReadinessSignOff[];
+  isReady: boolean;
+  updatedAt: string;
+}
+
 export interface ProjectSnapshot {
   id: string;
   name: string;
@@ -85,6 +116,8 @@ export interface PatternProject {
   humanReview?: HumanReviewRecord;
   /** Revision snapshots — named snapshots for an audit trail. */
   snapshots?: ProjectSnapshot[];
+  /** Publication readiness contract — formal sign-off trail. */
+  publicationContract?: PublicationContract;
 }
 
 export interface GradedMeasurement {

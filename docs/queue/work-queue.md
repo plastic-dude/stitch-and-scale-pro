@@ -53,10 +53,13 @@
 | 45 | QUEUE-038 | Priority 0: Release Integrity (CRITICAL) — Enhance `prod-smoke.mjs` with deep integrity checks: exercise project creation, verify export flow, and capture console/network failures. | CRITICAL | done | CHK-181: 071d936; implemented deep smoke checks, modal exercise, and failure capture |
 | 46 | QUEUE-039 | Priority 1: Revision Snapshots (MAJOR) — Implement named snapshots, snapshot notes, and restore flow to provide a durable audit trail for pattern revisions. | MAJOR | done | CHK-182: cf78702; implemented snapshots schema, storage, and UI |
 | 47 | QUEUE-040 | CHK-183: Fix Revision Snapshots integration omission in ProjectWorkspace and strengthen tests | MAJOR | done | Wired snapshots panel with destructured callbacks; fixed TS nullability; 4 regression tests; gates green |
+| 48 | QUEUE-041 | Priority 0: Pattern Publication Readiness Contract — Define and implement a formal publication readiness checklist and state (readiness for tech-edit, test-knit, and final publication) with a compiled readiness verdict. | CRITICAL | done | CHK-184: `b4da4086bbb3254fc75d1639b00f0c9f70dee5b2`; implemented readiness schema, storage, UI, and localization |
 
 ## Run ledger
 | Run (date) | Item worked | Gates | Commit | Next item |
-|---|---|---|---|---| 61 | 2026-08-22 | QUEUE-040 | tsc, vitest, build | 053121a896535ea3c219d9224a4bc965710ad087 | END OF QUEUE |
+|---|---|---|---|---|
+| 62 | 2026-08-22 | QUEUE-041 | tsc, vitest, build | b4da4086bbb3254fc75d1639b00f0c9f70dee5b2 | END OF QUEUE |
+| 61 | 2026-08-22 | QUEUE-040 | tsc, vitest, build | 053121a896535ea3c219d9224a4bc965710ad087 | END OF QUEUE |
 | 60 | 2026-08-22 | QUEUE-039 | tsc, vitest, build | cf78702 | QUEUE-040 |
 | 59 | 2026-08-22 | QUEUE-038 | tsc, vitest, build | 071d936 | QUEUE-039 |
 | 58 | 2026-08-22 | QUEUE-037 | tsc, vitest, build | aff1652 | QUEUE-038 |

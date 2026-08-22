@@ -96,6 +96,24 @@ export interface WorkspaceCopy {
   snapshotRestored: string;
   snapshotDeleted: string;
   noSnapshots: string;
+  readinessTitle: string;
+  readinessDescription: string;
+  readinessAddIssue: string;
+  readinessSignOff: string;
+  readinessNoIssues: string;
+  readinessStatusPending: string;
+  readinessStatusBlocked: string;
+  readinessStatusReady: string;
+  readinessStageMathematical: string;
+  readinessStageEditorial: string;
+  readinessStageTestKnit: string;
+  readinessStageFinal: string;
+  readinessIssueSeverityNitpick: string;
+  readinessIssueSeverityMinor: string;
+  readinessIssueSeverityMajor: string;
+  readinessIssueSeverityCritical: string;
+  readinessContractUpdated: string;
+  readinessApprovedBy: (name: string, date: string) => string;
 }
 
 const COPY: Record<LanguageCode, WorkspaceCopy> = {
@@ -195,6 +213,24 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     snapshotRestored: 'Snapshot restored',
     snapshotDeleted: 'Snapshot deleted',
     noSnapshots: 'No snapshots yet. Create one to start your audit trail.',
+    readinessTitle: 'Publication Readiness',
+    readinessDescription: 'Formal checklist and sign-off trail to ensure your pattern is production-ready.',
+    readinessAddIssue: 'Report Finding',
+    readinessSignOff: 'Sign Off Stage',
+    readinessNoIssues: 'No issues reported for this stage.',
+    readinessStatusPending: 'Pending Review',
+    readinessStatusBlocked: 'Action Required',
+    readinessStatusReady: 'Verified Ready',
+    readinessStageMathematical: 'Mathematical Accuracy',
+    readinessStageEditorial: 'Editorial & Style',
+    readinessStageTestKnit: 'Test Knit Feedback',
+    readinessStageFinal: 'Final Proofing',
+    readinessIssueSeverityNitpick: 'Nitpick',
+    readinessIssueSeverityMinor: 'Minor',
+    readinessIssueSeverityMajor: 'Major',
+    readinessIssueSeverityCritical: 'Critical',
+    readinessContractUpdated: 'Readiness contract updated',
+    readinessApprovedBy: (name, date) => `Approved by ${name} on ${date}`,
   },
   de: {
     by: 'Von',
@@ -292,6 +328,24 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     snapshotRestored: 'Schnappschuss wiederhergestellt',
     snapshotDeleted: 'Schnappschuss gelöscht',
     noSnapshots: 'Noch keine Schnappschüsse. Erstelle einen, um deinen Prüfpfad zu beginnen.',
+    readinessTitle: 'Veröffentlichungsbereitschaft',
+    readinessDescription: 'Formale Checkliste und Abnahmeprotokoll, um sicherzustellen, dass dein Muster produktionsreif ist.',
+    readinessAddIssue: 'Befund melden',
+    readinessSignOff: 'Phase freigeben',
+    readinessNoIssues: 'Keine Probleme für diese Phase gemeldet.',
+    readinessStatusPending: 'Ausstehende Prüfung',
+    readinessStatusBlocked: 'Handlungsbedarf',
+    readinessStatusReady: 'Verifiziert & Bereit',
+    readinessStageMathematical: 'Mathematische Genauigkeit',
+    readinessStageEditorial: 'Redaktion & Stil',
+    readinessStageTestKnit: 'Teststrick-Feedback',
+    readinessStageFinal: 'Schlussabnahme',
+    readinessIssueSeverityNitpick: 'Kleigkeit',
+    readinessIssueSeverityMinor: 'Geringfügig',
+    readinessIssueSeverityMajor: 'Erheblich',
+    readinessIssueSeverityCritical: 'Kritisch',
+    readinessContractUpdated: 'Bereitschaftsvertrag aktualisiert',
+    readinessApprovedBy: (name, date) => `Freigegeben von ${name} am ${date}`,
   },
   fr: {
     by: 'Par',
@@ -389,6 +443,24 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     snapshotRestored: 'Instantané restauré',
     snapshotDeleted: 'Instantané supprimé',
     noSnapshots: 'Aucun instantané pour le moment. Créez-en un pour commencer votre piste d\'audit.',
+    readinessTitle: 'Prêt pour la publication',
+    readinessDescription: 'Liste de contrôle formelle et suivi de validation pour garantir que votre patron est prêt pour la production.',
+    readinessAddIssue: 'Signaler un problème',
+    readinessSignOff: 'Valider l\'étape',
+    readinessNoIssues: 'Aucun problème signalé pour cette étape.',
+    readinessStatusPending: 'En attente de révision',
+    readinessStatusBlocked: 'Action requise',
+    readinessStatusReady: 'Vérifié et prêt',
+    readinessStageMathematical: 'Précision mathématique',
+    readinessStageEditorial: 'Éditorial et style',
+    readinessStageTestKnit: 'Retours du test tricot',
+    readinessStageFinal: 'Validation finale',
+    readinessIssueSeverityNitpick: 'Détail',
+    readinessIssueSeverityMinor: 'Mineur',
+    readinessIssueSeverityMajor: 'Majeur',
+    readinessIssueSeverityCritical: 'Critique',
+    readinessContractUpdated: 'Contrat de disponibilité mis à jour',
+    readinessApprovedBy: (name, date) => `Approuvé par ${name} le ${date}`,
   },
   es: {
     by: 'Por',
@@ -486,6 +558,24 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     snapshotRestored: 'Instantánea restaurada',
     snapshotDeleted: 'Instantánea eliminada',
     noSnapshots: 'Aún no hay instantáneas. Crea una para comenzar tu registro de auditoría.',
+    readinessTitle: 'Preparación para la publicación',
+    readinessDescription: 'Lista de verificación formal y seguimiento de aprobación para asegurar que su patrón esté listo para la producción.',
+    readinessAddIssue: 'Informar hallazgo',
+    readinessSignOff: 'Aprobar etapa',
+    readinessNoIssues: 'No se han informado problemas para esta etapa.',
+    readinessStatusPending: 'Revisión pendiente',
+    readinessStatusBlocked: 'Acción requerida',
+    readinessStatusReady: 'Verificado y listo',
+    readinessStageMathematical: 'Precisión matemática',
+    readinessStageEditorial: 'Editorial y estilo',
+    readinessStageTestKnit: 'Comentarios de la prueba de tejido',
+    readinessStageFinal: 'Aprobación final',
+    readinessIssueSeverityNitpick: 'Detalle',
+    readinessIssueSeverityMinor: 'Menor',
+    readinessIssueSeverityMajor: 'Mayor',
+    readinessIssueSeverityCritical: 'Crítico',
+    readinessContractUpdated: 'Contrato de disponibilidad actualizado',
+    readinessApprovedBy: (name, date) => `Aprobado por ${name} el ${date}`,
   },
   pt: {
     by: 'Por',
@@ -583,6 +673,24 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     snapshotRestored: 'Instantâneo restaurado',
     snapshotDeleted: 'Instantâneo eliminado',
     noSnapshots: 'Ainda não existem instantâneos. Crie um para começar a sua trilha de auditoria.',
+    readinessTitle: 'Prontidão para Publicação',
+    readinessDescription: 'Lista de verificação formal e trilha de aprovação para garantir que seu padrão esteja pronto para produção.',
+    readinessAddIssue: 'Relatar Descoberta',
+    readinessSignOff: 'Aprovar Etapa',
+    readinessNoIssues: 'Nenhum problema relatado para esta etapa.',
+    readinessStatusPending: 'Revisão Pendente',
+    readinessStatusBlocked: 'Ação Necessária',
+    readinessStatusReady: 'Verificado e Pronto',
+    readinessStageMathematical: 'Precisão Matemática',
+    readinessStageEditorial: 'Editorial e Estilo',
+    readinessStageTestKnit: 'Feedback do Teste de Tricô',
+    readinessStageFinal: 'Aprovação Final',
+    readinessIssueSeverityNitpick: 'Detalhe',
+    readinessIssueSeverityMinor: 'Menor',
+    readinessIssueSeverityMajor: 'Maior',
+    readinessIssueSeverityCritical: 'Crítico',
+    readinessContractUpdated: 'Contrato de prontidão atualizado',
+    readinessApprovedBy: (name, date) => `Aprovado por ${name} em ${date}`,
   },
 };
 

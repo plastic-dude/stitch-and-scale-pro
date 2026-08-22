@@ -26,7 +26,8 @@ type ProjectsAction =
   | { type: 'DUPLICATE'; payload: string }
   | { type: 'CREATE_SNAPSHOT'; payload: { projectId: string; name: string; note: string } }
   | { type: 'RESTORE_SNAPSHOT'; payload: { projectId: string; snapshotId: string } }
-  | { type: 'DELETE_SNAPSHOT'; payload: { projectId: string; snapshotId: string } };
+  | { type: 'DELETE_SNAPSHOT'; payload: { projectId: string; snapshotId: string } }
+  | { type: 'UPDATE_CONTRACT'; payload: { projectId: string; contract: any } };
 
 export type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
 
@@ -40,6 +41,7 @@ interface ProjectsContextType {
   createSnapshot: (projectId: string, name: string, note: string) => void;
   restoreSnapshot: (projectId: string, snapshotId: string) => void;
   deleteSnapshot: (projectId: string, snapshotId: string) => void;
+  updateContract: (projectId: string, contract: any) => void;
   saveStatus: SaveStatus;
   recovered: boolean;
   dismissRecovery: () => void;
@@ -127,6 +129,16 @@ function projectsReducer(state: PatternProject[], action: ProjectsAction): Patte
         return {
           ...p,
           snapshots: (p.snapshots || []).filter(s => s.id !== action.payload.snapshotId),
+          updatedAt: new Date().toISOString(),
+        };
+      });
+      break;
+    case 'UPDATE_CONTRACT':
+      newState = state.map(p => {
+        if (p.id !== action.payload.projectId) return p;
+        return {
+          ...p,
+          publicationContract: action.payload.contract,
           updatedAt: new Date().toISOString(),
         };
       });
@@ -233,6 +245,7 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
   const createSnapshot = (projectId: string, name: string, note: string) => dispatch({ type: 'CREATE_SNAPSHOT', payload: { projectId, name, note } });
   const restoreSnapshot = (projectId: string, snapshotId: string) => dispatch({ type: 'RESTORE_SNAPSHOT', payload: { projectId, snapshotId } });
   const deleteSnapshot = (projectId: string, snapshotId: string) => dispatch({ type: 'DELETE_SNAPSHOT', payload: { projectId, snapshotId } });
+  const updateContract = (projectId: string, contract: any) => dispatch({ type: 'UPDATE_CONTRACT', payload: { projectId, contract } });
 
   // Import a single project from an exported JSON file — always assigns a
   // fresh id so it can never silently collide with or overwrite an existing
@@ -247,7 +260,7 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
   return (
     <ProjectsContext.Provider value={{ 
       projects, createProject, updateProject, deleteProject, duplicateProject, importProject, 
-      createSnapshot, restoreSnapshot, deleteSnapshot,
+      createSnapshot, restoreSnapshot, deleteSnapshot, updateContract,
       saveStatus, recovered, dismissRecovery 
     }}>
       {children}
@@ -279,7 +292,7 @@ export function makeDemoProject(langOrTimestamp: any = 'en', nowOverride?: strin
 }
 
 export function useProject(id?: string) {
-  const { projects, createProject, updateProject, deleteProject, createSnapshot, restoreSnapshot, deleteSnapshot } = useProjects();
+  const { projects, createProject, updateProject, deleteProject, createSnapshot, restoreSnapshot, deleteSnapshot, updateContract } = useProjects();
   if (!id) return null;
   const existing = projects.find(p => p.id === id);
 
@@ -295,6 +308,7 @@ export function useProject(id?: string) {
       createSnapshot: (name: string, note: string) => createSnapshot(DEMO_PROJECT_ID, name, note),
       restoreSnapshot: (snapshotId: string) => restoreSnapshot(DEMO_PROJECT_ID, snapshotId),
       deleteSnapshot: (snapshotId: string) => deleteSnapshot(DEMO_PROJECT_ID, snapshotId),
+      updateContract: (contract: any) => updateContract(DEMO_PROJECT_ID, contract),
     };
   }
 
@@ -307,5 +321,6 @@ export function useProject(id?: string) {
     createSnapshot: (name: string, note: string) => createSnapshot(existing.id, name, note),
     restoreSnapshot: (snapshotId: string) => restoreSnapshot(existing.id, snapshotId),
     deleteSnapshot: (snapshotId: string) => deleteSnapshot(existing.id, snapshotId),
+    updateContract: (contract: any) => updateContract(existing.id, contract),
   };
 }

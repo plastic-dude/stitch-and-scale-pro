@@ -8,7 +8,7 @@
 // array drives both the strip and the content rendering.
 //
 // Invariants enforced by count-drift.test.ts (CHK-087): TAB_REGISTRY must
-// contain exactly 78 entries (77 at CHK-087, +1 for Brag Cards at CHK-091), every value must be a real TAB_GROUPS key,
+// contain exactly 81 entries (77 at CHK-087, +1 for Brag Cards at CHK-091, +1 for Snapshots at CHK-182, +1 for Readiness at CHK-184), every value must be a real TAB_GROUPS key,
 // and every entry must render a real content panel. A dev-time assertion
 // below fails loudly at render if registry and classification ever drift.
 //
@@ -41,6 +41,7 @@ export const TAB_REGISTRY: TabRegistryEntry[] = [
   { value: "yarn", label: "Yarn", group: "design" },
   { value: "notes", label: "Notes", group: "design" },
   { value: "snapshots", label: "Snapshots", group: "design", icon: "History" },
+  { value: "readiness", label: "Readiness", group: "design", icon: "ShieldCheck" },
   { value: "income", label: "Income", group: "pricing" },
   { value: "draft", label: "Draft", group: "design" },
   { value: "pricing", label: "Pricing", group: "pricing" },
