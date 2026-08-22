@@ -32,6 +32,16 @@ describe('Deployment Security (F-13, F-14)', () => {
     expect(spaRewrite.source).not.toMatch(/\)\$$/);
   });
 
+  it('splash screen uses the square app icon instead of the oversized portrait asset', () => {
+    const splashPath = join(rootDir, 'artifacts', 'stitch-and-scale', 'src', 'components', 'splash-screen.tsx');
+    const splashSource = readFileSync(splashPath, 'utf-8');
+    expect(splashSource).toContain('src="/icon-192.png"');
+    expect(splashSource).not.toContain('src="/app-icon.png"');
+
+    const splashIconPath = join(rootDir, 'artifacts', 'stitch-and-scale', 'public', 'icon-192.png');
+    expect(statSync(splashIconPath).size).toBeLessThan(64 * 1024);
+  });
+
   it('app shell uses the right-sized favicon for browser chrome', () => {
     const htmlPath = join(rootDir, 'artifacts', 'stitch-and-scale', 'index.html');
     const html = readFileSync(htmlPath, 'utf-8');

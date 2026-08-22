@@ -32,7 +32,7 @@ export function SplashScreen({ children }: { children: React.ReactNode }) {
             >
               <div className="relative">
                 <img 
-                  src="/app-icon.png" 
+                  src="/icon-192.png"
                   alt="Stitch and Scale Logo" 
                   className="w-40 h-40 object-contain drop-shadow-2xl"
                 />
