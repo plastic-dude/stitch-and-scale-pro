@@ -174,67 +174,88 @@ export default function ProjectGrading() {
                   <table className="w-full text-left border-collapse print:text-black">
                     <thead className="bg-muted/20 text-muted-foreground print:bg-white print:text-gray-600">
                       <tr>
-                        <th className="p-4 sm:px-12 py-4 font-semibold border-r border-border/50 w-72 min-w-[240px] text-xs uppercase tracking-wider align-bottom print:border-gray-300">
+                        <th className="p-4 sm:px-12 py-4 font-semibold border-r border-border/50 w-72 min-w-[240px] text-xs uppercase tracking-wider align-bottom print:border-gray-300" scope="col">
                           Measurement
                         </th>
                         {ALL_SIZES.map(size => (
                           <th key={size} className={cn(
                             "p-4 py-4 font-bold text-center border-r border-border/50 min-w-[90px] align-bottom print:border-gray-300", 
                             size === project.baseSize ? "bg-primary text-primary-foreground print:bg-black print:text-white" : "text-foreground print:text-black"
-                          )}>
+                          )} scope="col">
                             <div className="text-lg">{size}</div>
                           </th>
                         ))}
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-border/50 print:divide-gray-300">
-                      {section.measurements.map((m) => (
-                        <tr key={m.measurementId} className="hover:bg-muted/10 transition-colors">
-                          <td className="p-4 sm:px-12 py-6 border-r border-border/50 print:border-gray-300">
-                            <div className="font-serif text-lg font-medium text-foreground print:text-black leading-tight">{m.label}</div>
-                            <div className="text-[11px] font-medium text-muted-foreground mt-1.5 uppercase tracking-wider flex items-center gap-1.5 print:text-gray-500">
-                              <span>{m.measurementType}</span>
-                              <span className="w-1 h-1 rounded-full bg-border"></span>
-                              <span>{GRADING_KEY_LABELS[m.gradingKey]}</span>
-                            </div>
-                          </td>
-                          {ALL_SIZES.map(size => {
-                            const val = m.gradedValues.find(v => v.size === size);
-                            return (
-                              <td key={size} className={cn(
-                                "p-3 border-r border-border/50 text-center align-top print:border-gray-300", 
-                                size === project.baseSize ? "bg-primary/[0.04] print:bg-gray-50" : ""
-                              )}>
-                                <div className="flex flex-col items-center justify-center gap-2 pt-2 h-full">
-                                  <div className="font-mono text-xl sm:text-2xl font-bold text-foreground print:text-black">
-                                    {val?.stitchCount} <span className="text-[10px] sm:text-xs font-sans font-medium text-muted-foreground -ml-0.5 print:text-gray-500">sts</span>
-                                  </div>
-                                  {val && val.stitchCount !== val.exactStitchCount && (
-                                    <div className="text-[9px] text-muted-foreground/70 font-mono -mt-1.5" title="Exact value before rounding to fit the pattern repeat">
-                                      exact: {val.exactStitchCount}
-                                    </div>
-                                  )}
-                                  {val?.rowCount !== undefined && (
-                                    <div className="font-mono text-sm font-semibold text-accent print:text-gray-700">
-                                      {val.rowCount} <span className="text-[9px] font-sans font-medium text-muted-foreground/70 -ml-0.5 print:text-gray-500">rws</span>
-                                    </div>
-                                  )}
-                                  {val?.rowCount !== undefined && val.exactRowCount !== undefined && val.rowCount !== val.exactRowCount && (
-                                    <div className="text-[9px] text-muted-foreground/70 font-mono -mt-1.5" title="Exact value before rounding to fit the pattern repeat">
-                                      exact: {val.exactRowCount}
-                                    </div>
-                                  )}
-                                  <div className="mt-auto pt-3">
-                                    <div className="text-[10px] text-muted-foreground/70 font-mono bg-background border border-border/40 px-1.5 py-0.5 rounded shadow-sm inline-block print:border-gray-200 print:text-gray-400">
-                                      {val?.physicalValue.toFixed(2)} {(project.gauge?.unit || "in")}
-                                    </div>
-                                  </div>
+                      {section.measurements.map((m) => {
+                        const hasRows = m.gradedValues.some(v => v.rowCount !== undefined);
+                        return (
+                          <React.Fragment key={m.measurementId}>
+                            <tr className="hover:bg-muted/5 transition-colors border-t border-border/40 first:border-t-0">
+                              <td className="p-4 sm:px-12 py-5 border-r border-border/50 print:border-gray-300" rowSpan={hasRows ? 2 : 1}>
+                                <div className="font-serif text-lg font-bold text-foreground print:text-black leading-tight">{m.label}</div>
+                                <div className="text-[11px] font-medium text-muted-foreground mt-1.5 uppercase tracking-wider flex items-center gap-1.5 print:text-gray-500">
+                                  <span>{m.measurementType}</span>
+                                  <span className="w-1 h-1 rounded-full bg-border"></span>
+                                  <span>{GRADING_KEY_LABELS[m.gradingKey]}</span>
                                 </div>
                               </td>
-                            );
-                          })}
-                        </tr>
-                      ))}
+                              {ALL_SIZES.map(size => {
+                                const val = m.gradedValues.find(v => v.size === size);
+                                const isBase = size === project.baseSize;
+                                return (
+                                  <td key={size} className={cn(
+                                    "p-3 border-r border-border/50 text-center align-middle print:border-gray-300", 
+                                    isBase ? "bg-primary/[0.04] print:bg-gray-50" : ""
+                                  )}>
+                                    <div className="flex flex-col items-center justify-center">
+                                      <div className={cn("font-mono text-xl sm:text-2xl font-bold", isBase ? "text-primary" : "text-foreground print:text-black")}>
+                                        {val?.stitchCount} <span className="text-[10px] sm:text-xs font-sans font-medium text-muted-foreground -ml-0.5 print:text-gray-500">{gradingCopy.stitches.toLowerCase()}</span>
+                                      </div>
+                                      {val && val.stitchCount !== val.exactStitchCount && (
+                                        <div className="text-[9px] text-muted-foreground/60 font-mono" title="Exact value before rounding">
+                                          {val.exactStitchCount}
+                                        </div>
+                                      )}
+                                      <div className="mt-1.5">
+                                        <div className="text-[10px] text-muted-foreground/70 font-mono bg-muted/30 border border-border/20 px-1.5 py-0.5 rounded shadow-sm inline-block print:border-gray-200 print:text-gray-400">
+                                          {val?.physicalValue.toFixed(2)} {(project.gauge?.unit || "in")}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </td>
+                                );
+                              })}
+                            </tr>
+                            {hasRows && (
+                              <tr className="hover:bg-muted/5 transition-colors bg-muted/5 print:bg-white">
+                                {ALL_SIZES.map(size => {
+                                  const val = m.gradedValues.find(v => v.size === size);
+                                  const isBase = size === project.baseSize;
+                                  return (
+                                    <td key={size} className={cn(
+                                      "p-2 border-r border-border/50 text-center align-middle print:border-gray-300", 
+                                      isBase ? "bg-primary/[0.02] print:bg-gray-50" : ""
+                                    )}>
+                                      <div className="flex flex-col items-center justify-center">
+                                        <div className="font-mono text-sm font-semibold text-accent print:text-gray-700">
+                                          {val?.rowCount} <span className="text-[9px] font-sans font-medium text-muted-foreground/70 -ml-0.5 print:text-gray-500">{gradingCopy.rowsLabel.toLowerCase()}</span>
+                                        </div>
+                                        {val?.rowCount !== undefined && val.exactRowCount !== undefined && val.rowCount !== val.exactRowCount && (
+                                          <div className="text-[9px] text-muted-foreground/50 font-mono" title="Exact value before rounding">
+                                            {val.exactRowCount}
+                                          </div>
+                                        )}
+                                      </div>
+                                    </td>
+                                  );
+                                })}
+                              </tr>
+                            )}
+                          </React.Fragment>
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>
