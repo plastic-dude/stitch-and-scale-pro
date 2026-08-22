@@ -9,7 +9,7 @@
  *
  * So the draft is plain text with typed placeholders. Every placeholder
  * resolves against the LIVE graded data in this project — change the
- * gauge or add a measurement, and the pattern text updates with it.
+ * gauge or add a measurement, and the pattern updates with it.
  * Numbers are always computed, never stored, so the rendered pattern
  * can never drift out of sync with the grading tables.
  *
@@ -56,7 +56,9 @@ export function renderDraft(
   const graded = gradePattern(project, standards) as GradingResult;
   const yarn = estimateYarn(project, (project.yarnWeight as any) || 'worsted');
 
-  return draft.replace(/\{([A-Za-z][A-Za-z0-9._-]*)\}/g, (full, key: string) => {
+  // F-09: {{Name}} produced {Classic Crew Neck Sweater} due to greediness.
+  // We use a non-greedy match and ensure we don't match {{ or }}.
+  return draft.replace(/\{([^{}]+)\}/g, (full, key: string) => {
     // {Name}, {Author}
     if (key === 'Name') return project.name;
     if (key === 'Author') return project.author;
@@ -67,7 +69,7 @@ export function renderDraft(
       const v = gaugeMatch[1] === 'stitches'
         ? project.gauge?.stitchesPer4In
         : project.gauge?.rowsPer4In;
-      return v !== undefined ? `${v}` : '—';
+      return v !== undefined && v > 0 ? `${v}` : '—';
     }
 
     // {Yardage}
@@ -138,12 +140,12 @@ export type DraftResolver = (draft: string) => string;
 
 export interface DraftIssue {
   token: string;
-  type: 'unresolved' | 'malformed';
+  type: 'unresolved' | 'malformed' | 'missing_data';
   message: string;
 }
 
 /**
- * Validates a draft for unresolved or malformed tokens.
+ * Validates a draft for unresolved, malformed, or missing-data tokens.
  * Returns a list of issues found.
  */
 export function validateDraft(
@@ -153,51 +155,112 @@ export function validateDraft(
 ): DraftIssue[] {
   if (!draft) return [];
   const issues: DraftIssue[] = [];
+  
+  // 1. Check for malformed tokens: {{...}}, {...{...}}, or { without }
+  // Detect {{ or }} which are likely malformed attempts
+  const doubleBraces = draft.match(/\{\{|}}/g);
+  if (doubleBraces) {
+    issues.push({
+      token: doubleBraces[0],
+      type: 'malformed',
+      message: 'Double braces {{ }} are not supported. Use single braces { }.'
+    });
+  }
+
+  // Detect unclosed braces
+  const unclosed = draft.match(/\{[^{}]*$/);
+  if (unclosed) {
+    issues.push({
+      token: unclosed[0],
+      type: 'malformed',
+      message: 'Unclosed placeholder brace.'
+    });
+  }
+
+  // 2. Extract and validate all potential tokens
   const standards = resolveProjectStandards(project, customStandard);
   const graded = gradePattern(project, standards) as GradingResult;
-  
-  const tokens = draft.match(/\{([A-Za-z][A-Za-z0-9._-]*)\}/g) || [];
+  const tokens = draft.match(/\{([^{}]+)\}/g) || [];
   
   for (const full of tokens) {
     const key = full.slice(1, -1);
     
-    // Check if token can be resolved
-    let resolved = false;
+    // Check basics
     if (key === 'Name' || key === 'Author' || key === 'Yardage') {
-      resolved = true;
-    } else if (key.match(/^Gauge\.(stitches|rows)$/)) {
-      resolved = true;
-    } else {
-      const sizeMatch = key.match(/^Size\.([a-zA-Z0-9-]+)(?:\.([a-zA-Z0-9-]+))?(?:\.(stitch|row))?$/);
-      if (sizeMatch) {
-        const first = sizeMatch[1];
-        const second = sizeMatch[2];
-        const isSizeKey = (s: string): s is SizeKey => (ALL_SIZES as string[]).includes(s);
-        
-        let gradingKey = second && isSizeKey(first) ? second : first;
-        
-        // Check if grading key exists in project
-        const keyExists = project.sections.some(s => 
-          s.measurements.some(m => m.gradingKey === gradingKey)
-        );
-        if (keyExists) resolved = true;
+      continue;
+    }
+
+    // Check Gauge
+    const gaugeMatch = key.match(/^Gauge\.(stitches|rows)$/);
+    if (gaugeMatch) {
+      const v = gaugeMatch[1] === 'stitches'
+        ? project.gauge?.stitchesPer4In
+        : project.gauge?.rowsPer4In;
+      if (v === undefined || v <= 0) {
+        issues.push({
+          token: full,
+          type: 'missing_data',
+          message: `Gauge ${gaugeMatch[1]} is not set in project.`
+        });
       }
+      continue;
     }
-    
-    if (!resolved) {
-      issues.push({
-        token: full,
-        type: 'unresolved',
-        message: `Unresolved token: ${full}`
-      });
+
+    // Check Size
+    const sizeMatch = key.match(/^Size\.([a-zA-Z0-9-]+)(?:\.([a-zA-Z0-9-]+))?(?:\.(stitch|row))?$/);
+    if (sizeMatch) {
+      const first = sizeMatch[1];
+      const second = sizeMatch[2];
+      const isSizeKey = (s: string): s is SizeKey => (ALL_SIZES as string[]).includes(s);
+      
+      let gradingKey = second && isSizeKey(first) ? second : first;
+      let specificSize = second && isSizeKey(first) ? first : null;
+      
+      // Check if grading key exists in project
+      const keyExists = project.sections.some(s => 
+        s.measurements.some(m => m.gradingKey === gradingKey)
+      );
+      
+      if (!keyExists) {
+        issues.push({
+          token: full,
+          type: 'unresolved',
+          message: `Grading key "${gradingKey}" not found in project.`
+        });
+        continue;
+      }
+
+      // Check if data is actually available for this key
+      const hits: { size: SizeKey; stitchCount: number; rowCount?: number }[] = [];
+      for (const gs of graded) {
+        for (const gm of gs.measurements) {
+          if (gm.gradingKey !== gradingKey) continue;
+          if (specificSize) {
+            const hit = gm.gradedValues.find(v => v.size === specificSize);
+            if (hit) hits.push(hit);
+          } else {
+            hits.push(...gm.gradedValues);
+          }
+        }
+      }
+
+      if (hits.length === 0) {
+        issues.push({
+          token: full,
+          type: 'missing_data',
+          message: `No graded data available for "${gradingKey}"${specificSize ? ` in size ${specificSize}` : ''}.`
+        });
+      }
+      continue;
     }
+
+    // If we reached here, it's an unknown token pattern
+    issues.push({
+      token: full,
+      type: 'malformed',
+      message: `Malformed or unknown token: ${full}`
+    });
   }
   
   return issues;
-}
-
-export interface DraftIssue {
-  token: string;
-  type: 'unresolved' | 'malformed';
-  message: string;
 }

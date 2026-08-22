@@ -30,6 +30,7 @@ export interface PricingPsychologyCopy {
   mixedLabel: string;
   bundleNetLabel: string;
   singleNetLabel: string;
+  bundleCandidateTotal: string;
   bundleFramingLabel: string;
   oddTotalLabel: string;
   evenComponentsLabel: string;
@@ -71,6 +72,16 @@ export interface PricingPsychologyCopy {
   findingPp05Detail: (p1: number, p2: number) => string;
   findingPp06Title: (candidate: number, pct: number, current: number, floor: number) => string;
   findingPp06Detail: (candidate: number, pct: number, current: number, floor: number) => string;
+  findingPp07Title: string;
+  findingPp07Detail: string;
+  findingPp08Title: string;
+  findingPp08Detail: string;
+  findingPp09Title: string;
+  findingPp09Detail: string;
+  verdictEnterVolume: string;
+  verdictCrossBarrier: string;
+  verdictCostsMoney: string;
+  verdictMarginal: string;
 }
 
 export const PRICING_PSYCHOLOGY_COPY: Record<LanguageCode, PricingPsychologyCopy> = {
@@ -104,6 +115,7 @@ export const PRICING_PSYCHOLOGY_COPY: Record<LanguageCode, PricingPsychologyCopy
     mixedLabel: 'Mixed (.95/.99)',
     bundleNetLabel: 'Bundle Monthly Net',
     singleNetLabel: 'Singles Monthly Net',
+    bundleCandidateTotal: 'Bundle candidate total',
     bundleFramingLabel: 'Bundle Framing',
     oddTotalLabel: 'Odd Total',
     evenComponentsLabel: 'Even Components',
@@ -151,6 +163,16 @@ export const PRICING_PSYCHOLOGY_COPY: Record<LanguageCode, PricingPsychologyCopy
     findingPp05Detail: (p1, p2) => `$${p1.toFixed(2)} and $${p2.toFixed(2)} sit within 10% of each other, so buyers will always take the cheaper one. Widen the gap.`,
     findingPp06Title: () => 'Price cut that doesn\u2019t cross a barrier',
     findingPp06Detail: (cand, pct, curr, floor) => `$${cand.toFixed(2)} is ${pct}% under $${curr.toFixed(2)} but reads as the SAME price. Either cross the barrier ($${(floor - 0.01).toFixed(2)}) or keep the higher price.`,
+    findingPp07Title: 'Inconsistent shop endings',
+    findingPp07Detail: 'Your shop uses a mix of .00 and .99 endings. Research shows that inconsistent endings in the same category confuse buyers and lower trust. Pick one style.',
+    findingPp08Title: 'Bundle total ends even',
+    findingPp08Detail: 'The bundle total ends in .00 while components are also .00. For bundles, an odd total (.99) against even components (.00) maximizes the perceived discount.',
+    findingPp09Title: 'Bundle discount is too deep',
+    findingPp09Detail: 'This bundle is priced more than 20% below the sum of its parts. You are leaking revenue without a proportional increase in volume.',
+    verdictEnterVolume: 'Enter your volume first',
+    verdictCrossBarrier: 'Cross the barrier',
+    verdictCostsMoney: 'costs you money',
+    verdictMarginal: 'Marginal',
   },
   de: {
     title: 'Preispsychologie-Labor',
@@ -182,6 +204,7 @@ export const PRICING_PSYCHOLOGY_COPY: Record<LanguageCode, PricingPsychologyCopy
     mixedLabel: 'Gemischt (.95/.99)',
     bundleNetLabel: 'Paket-Monatsnetto',
     singleNetLabel: 'Einzel-Monatsnetto',
+    bundleCandidateTotal: 'Paket-Kandidat Gesamtsumme',
     bundleFramingLabel: 'Paket-Framing',
     oddTotalLabel: 'Ungerade Summe',
     evenComponentsLabel: 'Gerade Einzelpreise',
@@ -229,6 +252,16 @@ export const PRICING_PSYCHOLOGY_COPY: Record<LanguageCode, PricingPsychologyCopy
     findingPp05Detail: (p1, p2) => `€${p1.toFixed(2)} und €${p2.toFixed(2)} liegen innerhalb von 10% beieinander, daher werden Käufer immer die günstigere Option wählen. Vergrößere den Abstand.`,
     findingPp06Title: () => 'Preissenkung ohne Barriere-Wechsel',
     findingPp06Detail: (cand, pct, curr, floor) => `€${cand.toFixed(2)} liegt ${pct}% unter €${curr.toFixed(2)}, wird aber als der GLEICHE Preis wahrgenommen. Unterschreite entweder die Barriere (€${(floor - 0.01).toFixed(2)}) oder behalte den höheren Preis bei.`,
+    findingPp07Title: 'Inkonsistente Shop-Endungen',
+    findingPp07Detail: 'Dein Shop verwendet eine Mischung aus .00- und .99-Endungen. Forschung zeigt, dass inkonsistente Endungen in dersweise Kategorie Käufer verwirren und das Vertrauen senken. Wähle einen Stil.',
+    findingPp08Title: 'Paket-Gesamtsumme endet gerade',
+    findingPp08Detail: 'Die Paket-Gesamtsumme endet auf .00, während die Komponenten ebenfalls .00 sind. Bei Paketen maximiert eine ungerade Summe (.99) gegenüber geraden Komponenten (.00) den wahrgenommenen Rabatt.',
+    findingPp09Title: 'Paket-Rabatt ist zu hoch',
+    findingPp09Detail: 'Dieses Paket ist mehr als 20% günstiger als die Summe seiner Einzelteile. Du verlierst Umsatz ohne eine proportionale Steigerung des Volumens.',
+    verdictEnterVolume: 'Gib zuerst dein Volumen ein',
+    verdictCrossBarrier: 'Überschreite die Barriere',
+    verdictCostsMoney: 'kostet dich Geld',
+    verdictMarginal: 'Geringfügig',
   },
   fr: {
     title: 'Laboratoire de Psychologie des Prix',
@@ -260,6 +293,7 @@ export const PRICING_PSYCHOLOGY_COPY: Record<LanguageCode, PricingPsychologyCopy
     mixedLabel: 'Mixte (.95/.99)',
     bundleNetLabel: 'Net mensuel pack',
     singleNetLabel: 'Net mensuel solo',
+    bundleCandidateTotal: 'Total du pack candidat',
     bundleFramingLabel: 'Cadrage du pack',
     oddTotalLabel: 'Total impair',
     evenComponentsLabel: 'Composants pairs',
@@ -307,6 +341,16 @@ export const PRICING_PSYCHOLOGY_COPY: Record<LanguageCode, PricingPsychologyCopy
     findingPp05Detail: (p1, p2) => `${p1.toFixed(2)} € et ${p2.toFixed(2)} € sont à moins de 10% d'écart, les acheteurs prendront toujours le moins cher. Élargissez l'écart.`,
     findingPp06Title: () => 'Baisse de prix sans franchissement de barrière',
     findingPp06Detail: (cand, pct, curr, floor) => `${cand.toFixed(2)} € est ${pct}% sous ${curr.toFixed(2)} € mais est lu comme le MÊME prix. Franchissez la barrière (${(floor - 0.01).toFixed(2)} €) ou gardez le prix haut.`,
+    findingPp07Title: 'Terminaisons de boutique incohérentes',
+    findingPp07Detail: 'Votre boutique utilise un mélange de terminaisons en .00 et .99. La recherche montre que des terminaisons incohérentes dans la même catégorie confondent les acheteurs et diminuent la confiance. Choisissez un style.',
+    findingPp08Title: 'Le total du pack est pair',
+    findingPp08Detail: 'Le total du pack se termine par .00 alors que les composants sont également à .00. Pour les packs, un total impair (.99) face à des composants pairs (.00) maximise la remise perçue.',
+    findingPp09Title: 'La remise du pack est trop importante',
+    findingPp09Detail: 'Ce pack est proposé à plus de 20% de réduction par rapport à la somme de ses parties. Vous perdez des revenus sans augmentation proportionnelle du volume.',
+    verdictEnterVolume: 'Entrez d\'abord votre volume',
+    verdictCrossBarrier: 'Franchissez la barrière',
+    verdictCostsMoney: 'vous coûte de l\'argent',
+    verdictMarginal: 'Marginal',
   },
   es: {
     title: 'Laboratorio de Psicología de Precios',
@@ -338,6 +382,7 @@ export const PRICING_PSYCHOLOGY_COPY: Record<LanguageCode, PricingPsychologyCopy
     mixedLabel: 'Mixto (.95/.99)',
     bundleNetLabel: 'Neto mensual pack',
     singleNetLabel: 'Neto mensual solo',
+    bundleCandidateTotal: 'Total del paquete candidato',
     bundleFramingLabel: 'Encuadre del pack',
     oddTotalLabel: 'Total impar',
     evenComponentsLabel: 'Componentes pares',
@@ -385,6 +430,16 @@ export const PRICING_PSYCHOLOGY_COPY: Record<LanguageCode, PricingPsychologyCopy
     findingPp05Detail: (p1, p2) => `$${p1.toFixed(2)} y $${p2.toFixed(2)} están a menos del 10% de diferencia, los compradores siempre elegirán el más barato. Amplía la brecha.`,
     findingPp06Title: () => 'Bajada de precio sin cruzar barrera',
     findingPp06Detail: (cand, pct, curr, floor) => `$${cand.toFixed(2)} está un ${pct}% bajo $${curr.toFixed(2)} pero se lee como el MISMO precio. Cruza la barrera ($${(floor - 0.01).toFixed(2)}) o mantén el precio alto.`,
+    findingPp07Title: 'Terminaciones de tienda inconsistentes',
+    findingPp07Detail: 'Tu tienda usa una mezcla de terminaciones .00 y .99. La investigación muestra que las terminaciones inconsistentes en la misma categoría confunden a los compradores y reducen la confianza. Elige un estilo.',
+    findingPp08Title: 'El total del paquete es par',
+    findingPp08Detail: 'El total del paquete termina en .00 mientras que los componentes también son .00. Para los paquetes, un total impar (.99) frente a componentes pares (.00) maximiza el descuento percibido.',
+    findingPp09Title: 'El descuento del paquete es demasiado profundo',
+    findingPp09Detail: 'Este paquete tiene un precio más de un 20% por debajo de la suma de sus partes. Estás perdiendo ingresos sin un aumento proporcional en el volumen.',
+    verdictEnterVolume: 'Ingresa tu volumen primero',
+    verdictCrossBarrier: 'Cruza la barrera',
+    verdictCostsMoney: 'te cuesta dinero',
+    verdictMarginal: 'Marginal',
   },
   pt: {
     title: 'Laboratório de Psicologia de Preços',
@@ -416,6 +471,7 @@ export const PRICING_PSYCHOLOGY_COPY: Record<LanguageCode, PricingPsychologyCopy
     mixedLabel: 'Misto (.95/.99)',
     bundleNetLabel: 'Líquido mensal pack',
     singleNetLabel: 'Líquido mensal solo',
+    bundleCandidateTotal: 'Total do pacote candidato',
     bundleFramingLabel: 'Enquadramento do pack',
     oddTotalLabel: 'Total ímpar',
     evenComponentsLabel: 'Componentes pares',
@@ -463,5 +519,15 @@ export const PRICING_PSYCHOLOGY_COPY: Record<LanguageCode, PricingPsychologyCopy
     findingPp05Detail: (p1, p2) => `$${p1.toFixed(2)} e $${p2.toFixed(2)} estão a menos de 10% de diferença, os compradores escolherão sempre o mais barato. Aumente a diferença.`,
     findingPp06Title: () => 'Baixa de preço sem cruzar barreira',
     findingPp06Detail: (cand, pct, curr, floor) => `$${cand.toFixed(2)} está ${pct}% abaixo de $${curr.toFixed(2)} mas é lido como o MESMO preço. Ou cruze a barreira ($${(floor - 0.01).toFixed(2)}) ou mantenha o preço alto.`,
+    findingPp07Title: 'Terminações de loja inconsistentes',
+    findingPp07Detail: 'A sua loja utiliza uma mistura de terminações .00 e .99. A pesquisa mostra que terminações inconsistentes na mesma categoria confundem os compradores e diminuem a confiança. Escolha um estilo.',
+    findingPp08Title: 'Total do pacote é par',
+    findingPp08Detail: 'O total do pacote termina em .00 enquanto os componentes também são .00. Para pacotes, um total ímpar (.99) contra componentes pares (.00) maximiza o desconto percebido.',
+    findingPp09Title: 'O desconto do pacote é demasiado profundo',
+    findingPp09Detail: 'Este pacote tem um preço mais de 20% abaixo da soma das suas partes. Está a perder receita sem um aumento proporcional no volume.',
+    verdictEnterVolume: 'Introduza o seu volume primeiro',
+    verdictCrossBarrier: 'Cruze a barreira',
+    verdictCostsMoney: 'custa-lhe dinheiro',
+    verdictMarginal: 'Marginal',
   },
 };

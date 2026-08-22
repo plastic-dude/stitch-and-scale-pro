@@ -5,11 +5,13 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Copy, FileText, Type } from 'lucide-react';
 import { PatternProject, ALL_SIZES, GRADING_KEY_LABELS } from '@/lib/grading-engine';
-import { renderDraft } from '@/lib/pattern-draft-renderer';
+import { renderDraft, validateDraft } from '@/lib/pattern-draft-renderer';
 import { useSettings } from '@/context/SettingsContext';
 import { useToast } from '@/hooks/use-toast';
 import { PATTERN_DRAFT_COPY } from '@/lib/pattern-draft-copy';
 import { estimateYarn } from '@/lib/yarn-estimator';
+import { getWorkspaceCopy } from '@/lib/workspace-copy';
+import { AlertCircle, CheckCircle2 } from 'lucide-react';
 
 /**
  * Pattern Draft — write your pattern text once, let the grading engine
@@ -72,6 +74,8 @@ export function PatternDraftCard({ project }: { project: PatternProject }) {
   );
   const [preview, setPreview] = React.useState(true);
   const rendered = renderDraft(draft, project, customStandard);
+  const issues = validateDraft(draft, project, customStandard);
+  const wsCopy = getWorkspaceCopy(language);
 
   const insert = (token: string) => {
     setDraft((d: string) => (d ? `${d} ${token}` : token));
@@ -83,6 +87,14 @@ export function PatternDraftCard({ project }: { project: PatternProject }) {
   };
 
   const handleCopy = async () => {
+    if (issues.length > 0) {
+      toast({
+        variant: 'destructive',
+        title: wsCopy.draftIssuesFound,
+        description: wsCopy.draftFixIssues,
+      });
+      return;
+    }
     try {
       await copyTextOrThrow(rendered);
       toast({ title: copy.copied, description: copy.copiedHint });
@@ -135,9 +147,38 @@ export function PatternDraftCard({ project }: { project: PatternProject }) {
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
           placeholder={copy.placeholder}
-          className="min-h-[160px] resize-y font-mono text-sm"
+          className={`min-h-[160px] resize-y font-mono text-sm ${issues.length > 0 ? 'border-destructive/50 focus-visible:ring-destructive' : ''}`}
           data-testid="textarea-pattern-draft"
         />
+
+        {draft && (
+          <div className={`p-3 rounded-md border flex items-start gap-3 text-sm ${issues.length > 0 ? 'bg-destructive/5 border-destructive/20 text-destructive' : 'bg-emerald-50/50 border-emerald-200/50 text-emerald-700'}`} data-testid="draft-validation-status">
+            {issues.length > 0 ? (
+              <>
+                <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
+                <div className="space-y-1">
+                  <p className="font-medium">{wsCopy.draftIssuesFound}</p>
+                  <ul className="list-disc list-inside text-xs opacity-90">
+                    {issues.map((issue, i) => (
+                      <li key={i}>
+                        <span className="font-mono font-bold">{issue.token}</span>: {
+                          issue.type === 'unresolved' ? wsCopy.draftIssueUnresolved :
+                          issue.type === 'malformed' ? wsCopy.draftIssueMalformed :
+                          wsCopy.draftIssueMissingData
+                        } — {issue.message}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </>
+            ) : (
+              <>
+                <CheckCircle2 className="w-4 h-4 mt-0.5 shrink-0" />
+                <p className="font-medium">{wsCopy.draftNoIssues}</p>
+              </>
+            )}
+          </div>
+        )}
 
         <div className="flex items-center justify-between flex-wrap gap-2">
           <div className="flex gap-2">

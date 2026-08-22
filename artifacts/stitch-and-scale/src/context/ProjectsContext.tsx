@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useReducer, useRef, useSta
 import { get, set } from 'idb-keyval';
 import { PatternProject, generateId } from '@/lib/grading-engine';
 import { getSampleCrewNeckSweater } from '@/lib/sample-projects';
+import { LanguageCode } from '@/lib/i18n';
 // CHK-119: landing CTAs link to /project/{DEMO_PROJECT_ID} promising a no-signup
 // live demo — but nothing ever created that project, so a clean profile saw
 // "Project Not Found" (QA #61). The demo now seeds lazily on first request for
@@ -210,7 +211,12 @@ export const DEMO_PROJECT_ID = 'mss5osqd88j6fdyvtdu';
 // Build the populated demo project (sample crew neck re-id'd) — exported so the
 // seed logic and its regression tests share one definition. Timestamps are
 // injected at seed time, not baked into the module, so tests can freeze time.
-export function makeDemoProject(lang: any = 'en', now: string = new Date().toISOString()): PatternProject {
+export function makeDemoProject(langOrTimestamp: any = 'en', nowOverride?: string): PatternProject {
+  // Handle backward compatibility: if the first argument looks like a timestamp, treat it as such
+  const isTimestamp = typeof langOrTimestamp === 'string' && langOrTimestamp.includes('T');
+  const lang = isTimestamp ? 'en' : (langOrTimestamp as LanguageCode);
+  const now = nowOverride || (isTimestamp ? langOrTimestamp : new Date().toISOString());
+
   return { ...getSampleCrewNeckSweater(lang), id: DEMO_PROJECT_ID, createdAt: now, updatedAt: now };
 }
 

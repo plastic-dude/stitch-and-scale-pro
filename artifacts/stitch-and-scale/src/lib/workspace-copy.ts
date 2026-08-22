@@ -2,6 +2,8 @@ export type LanguageCode = 'en' | 'de' | 'fr' | 'es' | 'pt';
 
 export interface WorkspaceCopy {
   draftIssueUnresolved: string;
+  draftIssueMalformed: string;
+  draftIssueMissingData: string;
   draftFixIssues: string;
   draftNoIssues: string;
   draftIssuesFound: string;
@@ -124,6 +126,8 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     draftNoIssues: 'All tokens resolved correctly.',
     draftFixIssues: 'Please review the tokens in your draft before exporting.',
     draftIssueUnresolved: 'Unresolved',
+    draftIssueMalformed: 'Malformed',
+    draftIssueMissingData: 'Missing Data',
     allLabs: 'All Labs',
     labsTitle: 'All 79 Labs',
     labsDescription: 'Every tool for this pattern, grouped so nothing stays buried off-screen.',
@@ -191,6 +195,8 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     draftNoIssues: 'Alle Tokens korrekt aufgelöst.',
     draftFixIssues: 'Bitte überprüfen Sie die Tokens in Ihrem Entwurf vor dem Export.',
     draftIssueUnresolved: 'Nicht aufgelöst',
+    draftIssueMalformed: 'Fehlerhaft',
+    draftIssueMissingData: 'Fehlende Daten',
     allLabs: 'Alle Labore',
     labsTitle: 'Alle 79 Labore',
     labsDescription: 'Jedes Werkzeug für dieses Muster, gruppiert — damit nichts unsichtbar bleibt.',
@@ -258,6 +264,8 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     draftNoIssues: 'Tous les jetons sont résolus correctement.',
     draftFixIssues: 'Veuillez vérifier les jetons de votre brouillon avant l\'exportation.',
     draftIssueUnresolved: 'Non résolu',
+    draftIssueMalformed: 'Malformé',
+    draftIssueMissingData: 'Données manquantes',
     allLabs: 'Tous les labos',
     labsTitle: 'Les 79 labos',
     labsDescription: 'Tous les outils de ce patron, regroupés pour ne rien laisser hors écran.',
@@ -325,6 +333,8 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     draftNoIssues: 'Todos los tokens se han resuelto correctamente.',
     draftFixIssues: 'Revise los tokens de su borrador antes de exportar.',
     draftIssueUnresolved: 'No resuelto',
+    draftIssueMalformed: 'Mal formado',
+    draftIssueMissingData: 'Faltan datos',
     allLabs: 'Todos los labs',
     labsTitle: 'Los 79 labs',
     labsDescription: 'Todas las herramientas de este patrón, agrupadas para que nada quede fuera de pantalla.',
@@ -392,6 +402,8 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     draftNoIssues: 'Todos os tokens foram resolvidos corretamente.',
     draftFixIssues: 'Por favor, reveja os tokens no seu rascunho antes de exportar.',
     draftIssueUnresolved: 'Não resolvido',
+    draftIssueMalformed: 'Malformado',
+    draftIssueMissingData: 'Dados ausentes',
     allLabs: 'Todos os labs',
     labsTitle: 'Os 79 labs',
     labsDescription: 'Todas as ferramentas deste padrão, agrupadas para que nada fique fora do ecrã.',

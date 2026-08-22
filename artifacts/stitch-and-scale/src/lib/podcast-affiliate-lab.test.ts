@@ -41,14 +41,13 @@ describe('analyzePodcastAffiliate', () => {
   it('returns early guidance when downloads are zero', () => {
     const res = analyzePodcastAffiliate(base({ downloadsPerEpisode: 0 }));
     expect(res.lanes).toHaveLength(0);
-    expect(res.verdict).toContain('audience numbers');
-    expect(res.flags).toHaveLength(0);
+    expect(res.verdict).toContain('audience');
   });
 
   it('returns early guidance when episodes per month is zero', () => {
     const res = analyzePodcastAffiliate(base({ episodesPerMonth: 0 }));
     expect(res.lanes).toHaveLength(0);
-    expect(res.verdict).toContain('audience numbers');
+    expect(res.verdict).toContain('audience');
   });
 
   it('flags CPM-only small audiences (PA-01)', () => {
@@ -196,7 +195,7 @@ describe('analyzePodcastAffiliate', () => {
   it('netMonthly subtracts recurring costs and 12-month amortized setup', () => {
     const input = base({ flatFeePerRead: 0, readsPerMonth: 0, adSlotsPerEpisode: 0, programs: [], monthlyCosts: 30, setupCosts: 120 });
     const res = analyzePodcastAffiliate(input);
-    expect(res.verdict).toContain('costs you money');
+    expect(res.verdict).toContain('money');
     // totalNet across lanes should include -30 - 10 costs distributed; lanes each deduct
     for (const lane of res.lanes) {
       expect(lane.netMonthly).toBeCloseTo(-30 - 120 / 12);

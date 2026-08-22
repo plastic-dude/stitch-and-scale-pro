@@ -93,7 +93,7 @@ export interface PricingPsychologyResult {
   /** Left-digit barriers around the candidate price. */
   barriers: { below: number; above: number };
   flags: Flag[];
-  verdict: 'clean' | 'check' | 'fix';
+  verdict: string;
   findingCounts: { error: number; warning: number; info: number };
   score: number;
 }
@@ -115,11 +115,13 @@ function endsWith99(n: number): boolean {
 }
 
 function centsEndOdd(n: number): boolean {
-  return centsPart(n) % 2 !== 0;
+  const c = centsPart(n);
+  return c % 2 !== 0;
 }
 
 function centsEndEven(n: number): boolean {
-  return centsPart(n) % 2 === 0;
+  const c = centsPart(n);
+  return c % 2 === 0;
 }
 
 /** Ending effect: fractional unit uplift (charm, low price, bargain/mainstream)
@@ -141,6 +143,13 @@ function leftDigitLift(drop: number): number {
 
 function platformNet(price: number, units: number, takeRate: number): number {
   return round2(price * units * (1 - Math.max(0, Math.min(1, takeRate))));
+}
+
+/** Named export fmt$ for currency formatting as expected by tests. */
+export function fmt$(n: number): string {
+  const sign = n < 0 ? '−' : ''; // Unicode minus U+2212
+  const abs = Math.abs(n);
+  return `${sign}$${abs.toFixed(2)}`;
 }
 
 export function analyzePricingPsychology(input: PricingPsychologyInput, config: PricingPsychologyConfig = {}): PricingPsychologyResult {
@@ -268,19 +277,68 @@ export function analyzePricingPsychology(input: PricingPsychologyInput, config: 
     const pct = round2((1 - input.candidatePrice / Math.max(0.01, input.currentPrice)) * 100);
     flags.push({
       code: 'PP-06',
-      title: copy.findingPp06Title(input.candidatePrice, pct, input.currentPrice, Math.floor(input.candidatePrice)), // Call with all params, interface now allows it
+      title: copy.findingPp06Title(input.candidatePrice, pct, input.currentPrice, Math.floor(input.candidatePrice)),
       detail: copy.findingPp06Detail(input.candidatePrice, pct, input.currentPrice, Math.floor(input.candidatePrice)),
     });
   }
 
+  // PP-07 — inconsistent shop endings
+  if (input.shopTiers.length >= 2) {
+    const endings = [...input.shopTiers, input.currentPrice].filter(p => p > 0).map(p => endsWith99(p));
+    const has99 = endings.some(e => e);
+    const has00 = endings.some(e => !e);
+    if (has99 && has00) {
+      flags.push({
+        code: 'PP-07',
+        title: copy.findingPp07Title,
+        detail: copy.findingPp07Detail,
+      });
+    }
+  }
+
+  // PP-08 — bundle total ends even with even components
+  if (bundle && !bundle.totalEndsOdd && bundle.componentsEndEven) {
+    flags.push({
+      code: 'PP-08',
+      title: copy.findingPp08Title,
+      detail: copy.findingPp08Detail,
+    });
+  }
+
+  // PP-09 — bundle discount too deep
+  if (bundle && input.componentPrice > 0) {
+    const sum = input.componentPrice * input.bundleSize;
+    const discount = (sum - input.bundleCandidateTotal) / sum;
+    if (discount > 0.20) {
+      flags.push({
+        code: 'PP-09',
+        title: copy.findingPp09Title,
+        detail: copy.findingPp09Detail,
+      });
+    }
+  }
+
   const findingCounts = {
-    error: flags.filter(f => f.code === 'PP-01' || f.code === 'PP-02').length, // PP-01 is often a warning but treated as high priority here
-    warning: flags.filter(f => f.code === 'PP-03' || f.code === 'PP-04' || f.code === 'PP-05').length,
+    error: flags.filter(f => f.code === 'PP-01' || f.code === 'PP-02' || f.code === 'PP-09').length,
+    warning: flags.filter(f => f.code === 'PP-03' || f.code === 'PP-04' || f.code === 'PP-05' || f.code === 'PP-07' || f.code === 'PP-08').length,
     info: flags.filter(f => f.code === 'PP-06').length,
   };
 
-  const score = Math.max(0, 100 - flags.length * 15);
-  const verdict = findingCounts.error > 0 ? 'fix' : findingCounts.warning > 0 ? 'check' : 'clean';
+  // Verdict ladder
+  let verdict = '';
+  if (input.unitsPerMonth === 0) {
+    verdict = copy.verdictEnterVolume;
+  } else if (candidateOutcome.monthlyNet < currentOutcome.monthlyNet * 0.95) {
+    verdict = copy.verdictCostsMoney;
+  } else if (Math.abs(candidateOutcome.monthlyNet - currentOutcome.monthlyNet) / Math.max(1, currentOutcome.monthlyNet) < 0.05) {
+    verdict = copy.verdictMarginal;
+  } else if (currentDrop > 0) {
+    verdict = copy.verdictCrossBarrier;
+  } else {
+    verdict = findingCounts.error > 0 ? copy.verdictFix : findingCounts.warning > 0 ? copy.verdictCheck : copy.verdictClean;
+  }
+
+  const score = Math.max(0, 100 - flags.length * 10);
 
   return {
     current: currentOutcome,
