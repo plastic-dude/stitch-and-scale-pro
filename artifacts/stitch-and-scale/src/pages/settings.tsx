@@ -18,7 +18,7 @@ import { compressImageToDataUrl } from '@/lib/image-utils';
 
 export default function SettingsPage() {
   const {
-    unit, theme, setUnit, setTheme, exportData, importData, setOnboardingCompleted,
+    unit, theme, setUnit, setTheme, exportData, importData, wipeAllData, setOnboardingCompleted,
     sizingStandard, setSizingStandard, customStandard, setCustomStandardValue, resetCustomStandard,
     studioProfile, updateStudioProfile,
     pdfDefaults, setPdfDefaults,
@@ -28,6 +28,8 @@ export default function SettingsPage() {
   const logoInputRef = React.useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const [editingKey, setEditingKey] = React.useState<GradingKey>('bust');
+  const [restorePreview, setRestorePreview] = React.useState<any>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = React.useState(false);
   const t = (key: TranslationKey, variables?: TranslationVariables) => translate(language, key, variables);
   const copy = getSettingsCopy(language);
   const profileCopy = getStudioProfileCopy(language);
@@ -41,16 +43,24 @@ export default function SettingsPage() {
     reader.onload = async (event) => {
       const content = event.target?.result as string;
       try {
-        const result = await importData(content);
-        if (!result) throw new Error('invalid migration file');
-        toast({
-          title: tc.importSuccessTitle(result.imported),
-          description: result.warnings.length > 0
-            ? `${tc.importMergedDescription(result.imported, result.existingKept)} ${result.warnings[0]}`
-            : tc.importMergedDescription(result.imported, result.existingKept),
+        const parsed = JSON.parse(content);
+        const { validateOriginMigrationPackage } = await import('@/lib/origin-migration');
+        const validation = validateOriginMigrationPackage(parsed);
+        if (validation.ok) {
+          setRestorePreview({
+            raw: content,
+            projects: validation.value.snapshot.projects.length,
+            settings: Object.keys(validation.value.snapshot.settings).length
+          });
+        } else {
+          throw new Error(validation.error);
+        }
+      } catch (err: any) {
+        toast({ 
+          title: tc.importFailed, 
+          description: err.message || tc.importFailedDescription, 
+          variant: 'destructive' 
         });
-      } catch {
-        toast({ title: tc.importFailed, description: tc.importFailedDescription, variant: 'destructive' });
       }
       if (fileInputRef.current) fileInputRef.current.value = '';
     };
@@ -59,6 +69,25 @@ export default function SettingsPage() {
       if (fileInputRef.current) fileInputRef.current.value = '';
     };
     reader.readAsText(file);
+  };
+
+  const handleConfirmRestore = async () => {
+    if (!restorePreview) return;
+    try {
+      const result = await importData(restorePreview.raw);
+      if (result) {
+        toast({
+          title: tc.importSuccessTitle(result.imported),
+          description: result.warnings.length > 0
+            ? `${tc.importMergedDescription(result.imported, result.existingKept)} ${result.warnings[0]}`
+            : tc.importMergedDescription(result.imported, result.existingKept),
+        });
+      }
+    } catch {
+      toast({ title: tc.importFailed, description: tc.importFailedDescription, variant: 'destructive' });
+    } finally {
+      setRestorePreview(null);
+    }
   };
 
   const handleExport = async () => {
@@ -92,6 +121,15 @@ export default function SettingsPage() {
   const handleRestartOnboarding = () => {
     setOnboardingCompleted(false);
     toast({ title: tc.onboardingRestarted, description: tc.onboardingRestartedDescription });
+  };
+
+  const handleDeleteAll = async () => {
+    try {
+      await wipeAllData();
+      // reload happens in context
+    } catch {
+      toast({ title: 'Delete failed', variant: 'destructive' });
+    }
   };
 
   return (
@@ -518,12 +556,95 @@ export default function SettingsPage() {
                   </Button>
                 </div>
               </div>
+
+              <AnimatePresence>
+                {restorePreview && (
+                  <motion.div 
+                    initial={{ height: 0, opacity: 0 }} 
+                    animate={{ height: 'auto', opacity: 1 }} 
+                    exit={{ height: 0, opacity: 0 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="p-5 border-2 border-primary/30 rounded-xl bg-primary/5 space-y-4">
+                      <div className="flex items-center gap-3">
+                        <Check className="w-5 h-5 text-primary" />
+                        <div>
+                          <h4 className="font-serif font-semibold text-primary">{copy.restorePreview}</h4>
+                          <p className="text-sm text-primary/80">{copy.restoreReady}</p>
+                        </div>
+                      </div>
+                      <p className="text-sm font-medium">
+                        {copy.restoreSummary(restorePreview.projects, restorePreview.settings)}
+                      </p>
+                      <div className="flex gap-2">
+                        <Button size="sm" onClick={handleConfirmRestore} className="rounded-full shadow-sm">
+                          {copy.confirmRestore}
+                        </Button>
+                        <Button size="sm" variant="ghost" onClick={() => setRestorePreview(null)} className="rounded-full">
+                          {copy.cancelRestore}
+                        </Button>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </CardContent>
           </Card>
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
           <StorageHealthCard />
+        </motion.div>
+
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
+          <Card className="border-destructive/30 shadow-sm overflow-hidden rounded-2xl">
+            <CardHeader className="bg-destructive/5 border-b border-destructive/20 pb-5">
+              <CardTitle className="font-serif text-xl flex items-center gap-2 text-destructive">
+                <RotateCcw className="w-5 h-5" />
+                {copy.dangerZone}
+              </CardTitle>
+              <CardDescription className="text-[13px] text-destructive/80">
+                {copy.dangerZoneDesc}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-6">
+              {!showDeleteConfirm ? (
+                <Button 
+                  variant="destructive" 
+                  onClick={() => setShowDeleteConfirm(true)}
+                  className="rounded-full"
+                  data-testid="button-delete-all-trigger"
+                >
+                  <RotateCcw className="w-4 h-4 mr-2" />
+                  {copy.deleteAllData}
+                </Button>
+              ) : (
+                <div className="space-y-4 animate-in fade-in zoom-in-95 duration-200">
+                  <div className="p-4 border border-destructive/30 rounded-xl bg-destructive/5">
+                    <p className="font-semibold text-destructive">{copy.deleteAllConfirm}</p>
+                    <p className="text-sm text-destructive/80 mt-1">{copy.deleteAllWarning}</p>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button 
+                      variant="destructive" 
+                      onClick={handleDeleteAll}
+                      className="rounded-full shadow-lg shadow-destructive/20"
+                      data-testid="button-delete-all-confirm"
+                    >
+                      {copy.deleteAllData}
+                    </Button>
+                    <Button 
+                      variant="ghost" 
+                      onClick={() => setShowDeleteConfirm(false)}
+                      className="rounded-full"
+                    >
+                      {copy.cancelRestore}
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </motion.div>
 
         <div className="text-center text-xs text-muted-foreground/60 py-6">

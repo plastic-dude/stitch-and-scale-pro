@@ -48,10 +48,12 @@
 | 40 | QUEUE-033 | Audit F-14 (MINOR) — SPA 200-for-missing-paths; add client-side 404 state and route guard. | MINOR | done | CHK-176: pinned client-side 404 contract + localization; hardened `vercel.json` rewrite exclusions; vitest green |
 | 41 | QUEUE-034 | Localization Brutality II — Fix hardcoded English in `StorageHealthCard` and resolve the "Localization Audit" sample project name leak in non-English locales. | MAJOR | done | CHK-177: localized `StorageHealthCard` + Settings headers; fixed demo seed locale leak; vitest green |
 | 42 | QUEUE-035 | Audit: Receipt Lab tax validation — negative tax rates accepted; causes PDF generator crash on divide-by-zero or infinity risk; add `validateTaxInput` and quarantine. | MAJOR | done | CHK-178: implemented tax/fee validation layer in `ReceiptLabCard`; added `isValid` quarantine to `receipt-lab.ts`; vitest green |
+| 43 | QUEUE-036 | Data Lifecycle Controls: Implement "Delete all local data" (Danger Zone) with double-confirmation and "Restore Preview" metadata display to prevent accidental data loss and improve trust. | MAJOR | done | CHK-179: `4b9b46b`; implementation complete |
 
 ## Run ledger
 | Run (date) | Item worked | Gates | Commit | Next item |
 |---|---|---|---|---|
+| 2026-08-22 | QUEUE-036 | tsc, vitest, build | 4b9b46b | END OF QUEUE |
 | 2026-08-22 | QUEUE-035 | tsc, vitest, build | aa376ba | QUEUE-036 |
 | 2026-08-22 | QUEUE-034 | tsc, vitest, build | 97f1e5b | QUEUE-035 |
 | 2026-08-22 (CHK-175) | QUEUE-032 (MAJOR) — Onboarding Alignment | tsc clean; vitest green; build green; aligned tour with search/health; fixed sample meta | 59d2b00 | QUEUE-033 |

@@ -19,7 +19,7 @@
  * layer knows storage moved. Local-first remains the base layer even
  * after sync is added (offline-first, same reconciliation model).
  */
-import { get as idbGet, set as idbSet, keys as idbKeys } from 'idb-keyval';
+import { get as idbGet, set as idbSet, keys as idbKeys, clear as idbClear } from 'idb-keyval';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { PatternProject } from '@/lib/grading-engine';
 
@@ -419,4 +419,33 @@ export async function auditStores(): Promise<AuditReport> {
 export async function reconcileStores(): Promise<void> {
   const projects = await readProjects(); // canonical read: IDB → localStorage
   await writeProjects(projects);
+}
+
+/** Wipe all projects from both stores. Settings and backup ledger remain. */
+export async function wipeProjects(): Promise<void> {
+  await idbSet(PROJECTS_KEY, []);
+  writeLocal(PROJECTS_KEY, []);
+}
+
+/** 
+ * Wipe everything owned by the app from this origin.
+ * Projects, settings, backup ledger, and all per-project lab state.
+ */
+export async function wipeAllData(): Promise<void> {
+  // 1. IndexedDB
+  await idbClear();
+  
+  // 2. LocalStorage — strip all app-owned keys
+  if (typeof localStorage !== 'undefined') {
+    const keysToRemove: string[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && (key.startsWith('stitch-and-scale-') || key.startsWith('snsp-') || key.startsWith('ksk'))) {
+        keysToRemove.push(key);
+      }
+    }
+    for (const key of keysToRemove) {
+      localStorage.removeItem(key);
+    }
+  }
 }

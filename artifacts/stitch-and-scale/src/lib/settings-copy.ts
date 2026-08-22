@@ -14,6 +14,9 @@ export interface SettingsCopy {
   reconcile: string; neverBackedUp: string; backedUpToday: string;
   backedUpDays: (days: number) => string; backedUpDay: (days: number) => string;
   backupOverdue: string; backupInstruction: string; backupInsurance: string;
+  dangerZone: string; dangerZoneDesc: string; deleteAllData: string; deleteAllConfirm: string; deleteAllWarning: string;
+  restorePreview: string; restoreReady: string; restoreSummary: (projects: number, settings: number) => string;
+  confirmRestore: string; cancelRestore: string;
 }
 
 const COPY: Record<LanguageCode, SettingsCopy> = {
@@ -35,7 +38,17 @@ const COPY: Record<LanguageCode, SettingsCopy> = {
     reconcile: 'Reconcile', neverBackedUp: 'Never backed up', backedUpToday: 'Backed up today',
     backedUpDays: (days) => `Backed up ${days} days ago`, backedUpDay: (days) => `Backed up ${days} day ago`,
     backupOverdue: 'Overdue', backupInstruction: 'Exports are stored as JSON files — download one to be safe.',
-    backupInsurance: 'Stitch & Scale keeps two independent copies of your work on this device — each can recover the other. A backup file is still your true insurance: it\'s the one copy you control outside the browser.'
+    backupInsurance: 'Stitch & Scale keeps two independent copies of your work on this device — each can recover the other. A backup file is still your true insurance: it\'s the one copy you control outside the browser.',
+    dangerZone: 'Danger Zone',
+    dangerZoneDesc: 'Irreversible data actions. Use with extreme caution.',
+    deleteAllData: 'Delete all local data',
+    deleteAllConfirm: 'Are you absolutely sure? This will permanently erase all projects and settings from this browser.',
+    deleteAllWarning: 'This action cannot be undone. Make sure you have a backup first.',
+    restorePreview: 'Restore Preview',
+    restoreReady: 'Ready to import',
+    restoreSummary: (p: number, s: number) => `Found ${p} projects and ${s} settings keys.`,
+    confirmRestore: 'Confirm Restore',
+    cancelRestore: 'Cancel',
   },
   de: {
     unitsTitle: 'Standard-Maßeinheiten', unitsDescription: 'Wähle die bevorzugte Einheit für deine Arbeitsumgebung.', inches: 'Zoll', centimeters: 'Zentimeter', projectOverride: 'Diese Einstellung kann pro Projekt überschrieben werden.',
@@ -55,7 +68,17 @@ const COPY: Record<LanguageCode, SettingsCopy> = {
     reconcile: 'Abgleichen', neverBackedUp: 'Noch nie gesichert', backedUpToday: 'Heute gesichert',
     backedUpDays: (days) => `Vor ${days} Tagen gesichert`, backedUpDay: (days) => `Vor ${days} Tag gesichert`,
     backupOverdue: 'Überfällig', backupInstruction: 'Exporte werden als JSON-Dateien gespeichert — lade eine herunter, um sicher zu gehen.',
-    backupInsurance: 'Stitch & Scale bewahrt zwei unabhängige Kopien deiner Arbeit auf diesem Gerät auf — jede kann die andere wiederherstellen. Eine Backup-Datei ist dennoch deine wahre Versicherung: Es ist die einzige Kopie, die du außerhalb des Browsers kontrollierst.'
+    backupInsurance: 'Stitch & Scale bewahrt zwei unabhängige Kopien deiner Arbeit auf diesem Gerät auf — jede kann die andere wiederherstellen. Eine Backup-Datei ist dennoch deine wahre Versicherung: Es ist die einzige Kopie, die du außerhalb des Browsers kontrollierst.',
+    dangerZone: 'Gefahrenzone',
+    dangerZoneDesc: 'Unwiderrufliche Datenaktionen. Mit äußerster Vorsicht verwenden.',
+    deleteAllData: 'Alle lokalen Daten löschen',
+    deleteAllConfirm: 'Bist du absolut sicher? Dies wird alle Projekte und Einstellungen dauerhaft aus diesem Browser löschen.',
+    deleteAllWarning: 'Diese Aktion kann nicht rückgängig gemacht werden. Stelle sicher, dass du zuerst ein Backup hast.',
+    restorePreview: 'Vorschau wiederherstellen',
+    restoreReady: 'Bereit zum Importieren',
+    restoreSummary: (p: number, s: number) => `${p} Projekte und ${s} Einstellungsschlüssel gefunden.`,
+    confirmRestore: 'Wiederherstellung bestätigen',
+    cancelRestore: 'Abbrechen',
   },
   fr: {
     unitsTitle: 'Unités par défaut', unitsDescription: 'Choisissez l’unité principale de votre espace de travail.', inches: 'Pouces', centimeters: 'Centimètres', projectOverride: 'Cette option peut être remplacée pour chaque projet.',
@@ -75,7 +98,17 @@ const COPY: Record<LanguageCode, SettingsCopy> = {
     reconcile: 'Réconcilier', neverBackedUp: 'Jamais sauvegardé', backedUpToday: 'Sauvegardé aujourd\'hui',
     backedUpDays: (days) => `Sauvegardé il y a ${days} jours`, backedUpDay: (days) => `Sauvegardé il y a ${days} jour`,
     backupOverdue: 'En retard', backupInstruction: 'Les exportations sont stockées sous forme de fichiers JSON — téléchargez-en un pour plus de sécurité.',
-    backupInsurance: 'Stitch & Scale conserve deux copies indépendantes de votre travail sur cet appareil — chacune peut restaurer l\'autre. Un fichier de sauvegarde reste votre véritable assurance : c\'est la seule copie que vous contrôlez en dehors du navigateur.'
+    backupInsurance: 'Stitch & Scale conserve deux copies indépendantes de votre travail sur cet appareil — chacune peut restaurer l\'autre. Un fichier de sauvegarde reste votre véritable assurance : c\'est la seule copie que vous contrôlez en dehors du navigateur.',
+    dangerZone: 'Zone de danger',
+    dangerZoneDesc: 'Actions sur les données irréversibles. À utiliser avec une extrême prudence.',
+    deleteAllData: 'Supprimer toutes les données locales',
+    deleteAllConfirm: 'Êtes-vous absolument sûr ? Cela effacera définitivement tous les projets et réglages de ce navigateur.',
+    deleteAllWarning: 'Cette action est irréversible. Assurez-vous d’avoir d’abord une sauvegarde.',
+    restorePreview: 'Aperçu de la restauration',
+    restoreReady: 'Prêt à importer',
+    restoreSummary: (p: number, s: number) => `${p} projets et ${s} clés de réglages trouvés.`,
+    confirmRestore: 'Confirmer la restauration',
+    cancelRestore: 'Annuler',
   },
   es: {
     unitsTitle: 'Unidades predeterminadas', unitsDescription: 'Elige la unidad principal de tu espacio de trabajo.', inches: 'Pulgadas', centimeters: 'Centímetros', projectOverride: 'Puedes cambiar esta opción por proyecto.',
@@ -95,7 +128,17 @@ const COPY: Record<LanguageCode, SettingsCopy> = {
     reconcile: 'Reconciliar', neverBackedUp: 'Sin copias de seguridad', backedUpToday: 'Copia realizada hoy',
     backedUpDays: (days) => `Copia hace ${days} días`, backedUpDay: (days) => `Copia hace ${days} día`,
     backupOverdue: 'Atrasado', backupInstruction: 'Las exportaciones se guardan como archivos JSON; descarga uno para mayor seguridad.',
-    backupInsurance: 'Stitch & Scale guarda dos copias independientes de tu trabajo en este dispositivo; cada una puede recuperar la otra. Un archivo de respaldo sigue siendo tu verdadero seguro: es la única copia que controlas fuera del navegador.'
+    backupInsurance: 'Stitch & Scale guarda dos copias independientes de tu trabajo en este dispositivo; cada una puede recuperar la otra. Un archivo de respaldo sigue siendo tu verdadero seguro: es la única copia que controlas fuera del navegador.',
+    dangerZone: 'Zona de peligro',
+    dangerZoneDesc: 'Acciones de datos irreversibles. Usar con extrema precaución.',
+    deleteAllData: 'Eliminar todos los datos locales',
+    deleteAllConfirm: '¿Estás absolutamente seguro? Esto borrará permanentemente todos los proyectos y ajustes de este navegador.',
+    deleteAllWarning: 'Esta acción no se puede deshacer. Asegúrate de tener una copia de seguridad primero.',
+    restorePreview: 'Vista previa de restauración',
+    restoreReady: 'Listo para importar',
+    restoreSummary: (p: number, s: number) => `Se han encontrado ${p} proyectos y ${s} claves de ajustes.`,
+    confirmRestore: 'Confirmar restauración',
+    cancelRestore: 'Cancelar',
   },
   pt: {
     unitsTitle: 'Unidades predefinidas', unitsDescription: 'Escolha a unidade principal do seu espaço de trabalho.', inches: 'Polegadas', centimeters: 'Centimètres', projectOverride: 'Pode substituir esta definição em cada projeto.',
@@ -115,7 +158,17 @@ const COPY: Record<LanguageCode, SettingsCopy> = {
     reconcile: 'Reconciliar', neverBackedUp: 'Sem cópias de segurança', backedUpToday: 'Cópia feita hoje',
     backedUpDays: (days) => `Cópia há ${days} dias`, backedUpDay: (days) => `Cópia há ${days} dia`,
     backupOverdue: 'Em atraso', backupInstruction: 'As exportações são guardadas como ficheiros JSON — descarregue um para maior segurança.',
-    backupInsurance: 'O Stitch & Scale guarda duas cópias independentes do seu trabalho neste dispositivo — cada uma pode recuperar a outra. Um ficheiro de cópia de segurança continua a ser o seu verdadeiro seguro: é a única cópia que controla fora do navegador.'
+    backupInsurance: 'O Stitch & Scale guarda duas cópias independentes do seu trabalho neste dispositivo — cada uma pode recuperar a outra. Um ficheiro de cópia de segurança continua a ser o seu verdadeiro seguro: é a única cópia que controla fora do navegador.',
+    dangerZone: 'Zona de Perigo',
+    dangerZoneDesc: 'Ações de dados irreversíveis. Utilize com extrema cautela.',
+    deleteAllData: 'Eliminar todos os dados locais',
+    deleteAllConfirm: 'Tem a certeza absoluta? Isto apagará permanentemente todos os projetos e definições deste navegador.',
+    deleteAllWarning: 'Esta ação não pode ser desfeita. Certifique-se de que tem uma cópia de segurança primeiro.',
+    restorePreview: 'Pré-visualização de restauro',
+    restoreReady: 'Pronto para importar',
+    restoreSummary: (p: number, s: number) => `Encontrados ${p} projetos e ${s} chaves de definições.`,
+    confirmRestore: 'Confirmar restauro',
+    cancelRestore: 'Cancelar',
   },
 };
 

@@ -70,6 +70,7 @@ interface SettingsContextType extends SettingsState {
   updateStudioProfile:    (patch: Partial<StudioProfile>) => void;
   exportData:             () => Promise<OriginMigrationPackage>;
   importData:             (jsonData: string) => Promise<MigrationRestoreResult | null>;
+  wipeAllData:            () => Promise<void>;
   setOnboardingCompleted: (completed: boolean) => void;
   setLanguage:           (language: LanguageCode) => void;
   t:                     (key: TranslationKey, variables?: TranslationVariables) => string;
@@ -201,6 +202,16 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const wipeAllData = async () => {
+    const { wipeAllData: wipe } = await import('@/lib/storage-lib');
+    await wipe();
+    setSettings(defaultSettings);
+    // Hard reload to clear any in-memory state and force fresh context init
+    if (typeof window !== 'undefined') {
+      window.location.reload();
+    }
+  };
+
   return (
     <SettingsContext.Provider value={{
       ...settings,
@@ -218,6 +229,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       getCopy,
       exportData,
       importData,
+      wipeAllData,
     }}>
       {children}
     </SettingsContext.Provider>
