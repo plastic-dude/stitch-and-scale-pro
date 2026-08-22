@@ -34,6 +34,7 @@
 ## Run ledger
 | Run (date) | Item worked | Gates | Commit | Next item |
 |---|---|---|---|---|
+| 90 | 2026-08-22 (CHK-215) | WIDE RESEARCH fast-track — Brag Card browser handoff truth + 390px resilience | tsc clean; vitest 215/215 files and 2,539/2,539 tests; build green in 4.89s; focused contract, mobile smoke, and visual audit passed; six known sourcemap warnings remain | pending | QUEUE-067 (research-only; separate brief + two-pass approval required) |
 | 79 | 2026-08-22 (CHK-201) | QUEUE-057 (MAJOR) — Wholesale Follow-up | tsc clean; vitest 2,422/2,422; build green; durable wholesale records + localized UI + storage seam | 6faeb67 | QUEUE-058 |
 | 78 | 2026-08-22 (CHK-200) | QUEUE-056 (MAJOR) — Submission Records | tsc clean; vitest 2,422/2,422; build green; durable submissions records + localized UI + dialog crash fix | 50785a1 | QUEUE-057 |
 | 77 | 2026-08-22 (CHK-199) | QUEUE-055 (MAJOR) — Sample Tracker | tsc clean; vitest 2,417/2,417; build green; storage seam + SampleTracker UI + browser verified | cac0762d30d890dfc052595d655f718e26a09e95 | QUEUE-056 |

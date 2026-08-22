@@ -61,6 +61,37 @@ const STYLES: { id: BragCardStyle; label: string }[] = [
   { id: "cameo", label: "Stitch Cameo" },
 ];
 
+function buildBragCardPng(svg: string): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    const sourceUrl = URL.createObjectURL(new Blob([svg], { type: "image/svg+xml" }));
+    const img = new Image();
+    img.onload = () => {
+      URL.revokeObjectURL(sourceUrl);
+      const canvas = document.createElement("canvas");
+      canvas.width = 1080;
+      canvas.height = 1080;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        reject(new Error("Canvas rendering is unavailable"));
+        return;
+      }
+      ctx.drawImage(img, 0, 0, 1080, 1080);
+      canvas.toBlob((png) => {
+        if (!png) {
+          reject(new Error("PNG encoding failed"));
+          return;
+        }
+        resolve(png);
+      }, "image/png");
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(sourceUrl);
+      reject(new Error("Brag Card preview could not be rasterized"));
+    };
+    img.src = sourceUrl;
+  });
+}
+
 export function BragCardCard(props: { project: PatternProject }) {
   const { project } = props;
   const { toast } = useToast();
@@ -151,32 +182,16 @@ export function BragCardCard(props: { project: PatternProject }) {
     try {
       const { buildBragCardSvg } = await import("@/lib/brag-card");
       const svg = buildBragCardSvg(stats, currency, template, displayStudio, accent, style, copy, branding);
-      const blob = new Blob([svg], { type: "image/svg+xml" });
-      const url = URL.createObjectURL(blob);
-      const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement("canvas");
-        canvas.width = 1080;
-        canvas.height = 1080;
-        const ctx = canvas.getContext("2d");
-        if (!ctx) return;
-        ctx.drawImage(img, 0, 0, 1080, 1080);
-        URL.revokeObjectURL(url);
-        canvas.toBlob((png) => {
-          if (!png) return;
-          const a = document.createElement("a");
-          a.href = URL.createObjectURL(png);
-          a.download = `brag-card-${template}-${Date.now()}.png`;
-          a.click();
-          URL.revokeObjectURL(a.href);
-          toast({ title: copy.cardSaved, description: copy.pngReady });
-        }, "image/png");
-      };
-      img.onerror = () => {
-        URL.revokeObjectURL(url);
-        toast({ title: copy.exportFailed, description: copy.description, variant: "destructive" });
-      };
-      img.src = url;
+      const png = await buildBragCardPng(svg);
+      const url = URL.createObjectURL(png);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `brag-card-${template}-${Date.now()}.png`;
+      a.click();
+      // The click only requests a browser download; delay cleanup so the browser
+      // has a chance to consume the object URL without claiming the file was saved.
+      window.setTimeout(() => URL.revokeObjectURL(url), 0);
+      toast({ title: copy.downloadRequested, description: copy.downloadRequestedDescription });
     } catch {
       toast({ title: copy.exportFailed, description: copy.description, variant: "destructive" });
     }
@@ -195,15 +210,17 @@ export function BragCardCard(props: { project: PatternProject }) {
     try {
       const { buildBragCardSvg } = await import("@/lib/brag-card");
       const svg = buildBragCardSvg(stats, currency, template, displayStudio, accent, style, copy, branding);
-      const blob = new Blob([svg], { type: "image/svg+xml" });
-      const file = new File([blob], "brag-card.svg", { type: "image/svg+xml" });
-      if (navigator.share) {
-        await navigator.share({ title: copy.title, text: caption.caption, files: [file] });
-        toast({ title: copy.shared, description: copy.pngReady });
+      const png = await buildBragCardPng(svg);
+      const file = new File([png], `brag-card-${template}.png`, { type: "image/png" });
+      if (!navigator.share || (navigator.canShare && !navigator.canShare({ files: [file] }))) {
+        await downloadPng();
+        return;
       }
+      await navigator.share({ title: copy.title, text: caption.caption, files: [file] });
+      toast({ title: copy.shareRequestAccepted, description: copy.shareRequestDescription });
     } catch (err) {
       if ((err as Error).name !== "AbortError") {
-        downloadPng();
+        await downloadPng();
       }
     }
   }, [stats, currency, template, displayStudio, accent, style, caption, toast, downloadPng, copy, branding]);
@@ -300,12 +317,12 @@ export function BragCardCard(props: { project: PatternProject }) {
         <div className="space-y-1.5">
           <Label className="text-xs font-medium">{copy.captionLabel}</Label>
           <Textarea value={caption.caption} readOnly className="min-h-20 text-sm" />
-          <div className="flex gap-2">
-            <Button size="sm" onClick={copyCaption}>
+          <div className="flex flex-wrap gap-2">
+            <Button size="sm" onClick={copyCaption} disabled={!hasData}>
               <Copy className="h-4 w-4 mr-1" />
               {copy.copyCaption}
             </Button>
-            <Button size="sm" variant="outline" onClick={shareNative}>
+            <Button size="sm" variant="outline" onClick={shareNative} disabled={!hasData}>
               <Share2 className="h-4 w-4 mr-1" />
               {copy.share}
             </Button>
