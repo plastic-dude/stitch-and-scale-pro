@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { readFileSync } from 'fs';
+import { readFileSync, statSync } from 'fs';
 import { join } from 'path';
 
 describe('Deployment Security (F-13, F-14)', () => {
@@ -30,5 +30,15 @@ describe('Deployment Security (F-13, F-14)', () => {
     expect(spaRewrite.source).toContain('api(?:/|$)');
     expect(spaRewrite.source).toContain('assets(?:/|$)');
     expect(spaRewrite.source).not.toMatch(/\)\$$/);
+  });
+
+  it('app shell uses the right-sized favicon for browser chrome', () => {
+    const htmlPath = join(rootDir, 'artifacts', 'stitch-and-scale', 'index.html');
+    const html = readFileSync(htmlPath, 'utf-8');
+    expect(html).toContain('href="/favicon-32.png"');
+    expect(html).not.toMatch(/rel="icon"[^>]+href="\/favicon\.png"/);
+
+    const faviconPath = join(rootDir, 'artifacts', 'stitch-and-scale', 'public', 'favicon-32.png');
+    expect(statSync(faviconPath).size).toBeLessThan(16 * 1024);
   });
 });
