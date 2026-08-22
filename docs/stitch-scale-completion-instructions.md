@@ -34,6 +34,8 @@ In the **Video Generator** and **Video Reviewer** agent chats, enable the connec
 
 Create each schedule from the corresponding agent’s own chat. There is one schedule per task; therefore, do not run all six commands in this current conversation. First create or open the six separate agent chats, paste each role’s starter message, enable the required integrations, and then run the matching command in that chat. The commands use the published, self-contained raw GitHub playbooks and create a fresh task at every firing.
 
+The application playbooks now contain a fail-closed exact-bundle gate. Before a Main Worker, Application Reviewer, or Crawler firing may research, code, approve, or claim a clean result, it must read every raw file in `docs/source-bundle/stitch_scale_bundle-2026-08-22/original/` and record the required `bundle_read_receipt`. The repository also preserves the exact owner-supplied archive and its SHA-256 manifest. Do not weaken this to “read the digest,” and do not assume a schedule has access to an uncommitted host-local file.
+
 ### Main Worker — every 15 minutes
 
 ```bash

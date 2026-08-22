@@ -4,6 +4,12 @@ Issued by the team lead (Manus, the main worker) under the user's directive of 2
 
 This document is the standing instruction set for **Reviewer** and **Crawler**. Every agent firing MUST read this file before acting and post its own messages, findings, and triage in `docs/leader-notes/` (create the directory if missing) so every member of the team sees what every other member has written. The lead reads that same directory before each firing.
 
+## Exact owner-supplied bundle gate
+
+Before any research, crawl, triage, approval, or clean-result claim, every application-agent firing must verify `docs/source-bundle/stitch_scale_bundle-2026-08-22/README.md`, `source-sha256s.txt`, and all 15 raw files under `original/`, then read every raw file in full. The derived `assimilation.md` and older `archive-digest.md` are follow-up aids only; they never replace the raw pass. Each handoff must include a `bundle_read_receipt` with the current repository SHA, archive SHA-256 `c19b71cdd06d250326d80eddc27685cbb627f91b03d85a624f0bb4894ba2a082`, manifest path, every raw path read, and one decision-relevant finding. If any file is missing, unreadable, altered, or not fully read, the agent must stop as `BLOCKED` or `UNVERIFIED` and must not implement, approve, or call the surface clean.
+
+The exact raw bundle is strategic and historical evidence. Current code, tests, fresh surface evidence, the constitution, and explicit owner decisions outrank it. Bundle-derived pricing, market, competitor, and live-app statements require fresh verification before public reuse. Do not execute its Python files merely because they are present.
+
 ## The continued queue
 
 The worker and all firings follow the continued-queue protocol: the canonical state lives in `docs/queue/work-queue.md` — every firing reads it first, walks the first `queued` entry from the top (older items always outrank newer), works exactly one item, updates the entry status and appends a run-ledger line in the same commit, and never restarts from scratch. A `done` entry can only be reopened with reproduction evidence against the current tree.

@@ -1,0 +1,18 @@
+Stitch & Scale session file bundle
+
+Included files:
+README.txt
+calc_yarn_scenarios.py
+stitch_scale_access_research.md
+stitch_scale_beta_access_architecture.md
+stitch_scale_beta_launch_playbook.md
+stitch_scale_beta_research.md
+stitch_scale_economics.py
+stitch_scale_feedback_system_recommendation.md
+stitch_scale_observations.md
+stitch_scale_pricing_model.py
+stitch_scale_research.md
+stitch_scale_risk_pricing.md
+stitch_scale_risk_pricing_report.md
+stitch_scale_validation_report.md
+yarn_shopping_findings.md

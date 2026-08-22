@@ -127,6 +127,12 @@ External research can identify risks, standards, user language, competitor patte
 
 Agents must label uncertainty `UNVERIFIED`, name the evidence needed, and avoid confident language until proof exists.
 
+### 3.5.1 Exact owner-supplied bundle is a mandatory source
+
+The exact owner-supplied `stitch_scale_bundle.zip` is preserved at `docs/source-bundle/stitch_scale_bundle-2026-08-22/`. Its archive SHA-256 is `c19b71cdd06d250326d80eddc27685cbb627f91b03d85a624f0bb4894ba2a082`, and its 15 raw source files are under `original/` with individual hashes in `source-sha256s.txt`. Every Main Worker, Application Reviewer, and Crawler firing must verify the manifest, read all 15 raw files in full before research or action, and record a `bundle_read_receipt` naming the current commit, archive hash, manifest, every raw path read, and one decision-relevant finding. The derived `assimilation.md` and older `archive-digest.md` are aids, never substitutes for the raw pass. If the raw bundle is missing, unreadable, altered, or not fully read, the firing must stop as `BLOCKED` or `UNVERIFIED`; it must not code, approve, or claim a clean result.
+
+The bundle is strategic and historical evidence, not a license to override current code, tests, fresh surface evidence, or owner decisions. Current repository truth and the constitution’s evidence hierarchy still control implementation and public claims. Bundle-derived pricing, market, competitor, and live-app observations require fresh verification before reuse.
+
 ### 3.6 Honesty and rights
 
 David is a developer whose late mother knitted; he does not knit. The founder story must remain truthful. Agents must not invent credentials, users, revenue, accuracy, customer outcomes, pricing certainty, standards coverage, or product capabilities. Video agents must not use generated UI text as product evidence. Essential media must have a rights decision before public release.
@@ -240,7 +246,7 @@ Within each 900-second firing, the Main Worker must complete at most one highest
 The Main Worker must:
 
 1. Pull the latest `main`, identify the commit, and protect any user-owned dirty worktree.
-2. Read the current skill source, constitution, brand brief, archive digest, standing orders, latest leader notes, open issues, Reviewer evidence, Crawler evidence, and relevant transcript/archive sections.
+2. Complete the exact-bundle reading gate at `docs/source-bundle/stitch_scale_bundle-2026-08-22/`: verify the manifest and read all 15 raw files in `original/` in full before research or action, then record the required `bundle_read_receipt`; the digest is not a substitute. Also read the current skill source, constitution, brand brief, archive digest, standing orders, latest leader notes, open issues, Reviewer evidence, Crawler evidence, and relevant transcript/archive sections.
 3. Research a fresh question before changing code. The question may concern standards, a competitor workflow, a designer pain, accessibility, math, product trust, or a claim needing proof.
 4. Re-open the relevant project references after research and write the decision that changed, stayed unchanged, or became `UNVERIFIED`.
 5. Sweep the backlog and keep correctness above novelty. Persistent major correctness items remain visible until independently closed.
@@ -289,7 +295,7 @@ Within each 900-second firing, review exactly one highest-severity evidence-back
 The Reviewer must:
 
 1. Pull the current `main` and confirm the commit under review.
-2. Read the current project constitution, standing orders, newest Crawler report, newest Main Worker handoff, open issues, relevant source files, and relevant archive/transcript sections.
+2. Complete the exact-bundle reading gate at `docs/source-bundle/stitch_scale_bundle-2026-08-22/`: verify the manifest and read all 15 raw files in `original/` in full before research or any verdict, then record the required `bundle_read_receipt`; the digest is not a substitute. Also read the current project constitution, standing orders, newest Crawler report, newest Main Worker handoff, open issues, relevant source files, and relevant archive/transcript sections.
 3. Research a fresh verification angle, recording sources, dates, evidence, and how the finding changes triage.
 4. Reconcile historical intent against current implementation; neither a document nor a current implementation is proof by itself.
 5. Reproduce the finding or fix with exact steps, file/line where useful, screenshot or measured DOM value, console evidence, and current gate output.
@@ -337,7 +343,7 @@ Within each 900-second firing, inspect one complete user path on the current bui
 The Crawler must:
 
 1. Pull or identify the current commit and start a fresh preview from that tree, naming the tested URL.
-2. Read the layout-perfection checklist, route registry, constitution, latest Worker and Reviewer notes, and relevant archive/transcript sections.
+2. Complete the exact-bundle reading gate at `docs/source-bundle/stitch_scale_bundle-2026-08-22/`: verify the manifest and read all 15 raw files in `original/` in full before research or any crawl verdict, then record the required `bundle_read_receipt`; the digest is not a substitute. Also read the layout-perfection checklist, route registry, constitution, latest Worker and Reviewer notes, and relevant archive/transcript sections.
 3. Research a fresh surface question and record the source, date, evidence, and changed inspection decision.
 4. Re-open the project truth after research and reconcile it against actual current behavior.
 5. Choose one route or complete workflow and walk it end to end.
