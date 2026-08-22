@@ -5,7 +5,7 @@
 //
 // Root cause: the mobile/tablet group-chip row (introduced in CHK-120) had no
 // `lg:hidden` guard and rendered at ALL widths, sitting directly above the
-// flat 79-tab strip on desktop. The chips' group labels ("Design & Muster ·
+// flat tab strip on desktop. The chips' group labels ("Design & Muster ·
 // 12") read like "the tabs", so users skimming the page concluded the
 // individual tabs had vanished.
 //
@@ -26,6 +26,7 @@
 // the project's headless convention.
 
 import { describe, expect, it } from "vitest";
+import { TAB_REGISTRY } from "./lib/tab-registry";
 
 const fs = require("fs");
 const path = require("path");
@@ -155,8 +156,13 @@ describe("CHK-125 — workspace tab strip discoverability contract", () => {
         `chip row must include group '${g}'`,
       ).toBe(true);
     }
-    // Expected real counts per group (registry at time of CHK-125)
-    const expected = { design: 12, fit: 7, pricing: 15, launch: 13, channels: 10, business: 22 };
+    // Expected counts come from the registry itself; this test then proves
+    // the source-inspected chip implementation agrees with that truth.
+    const expected = TAB_REGISTRY.reduce<Record<string, number>>((acc, tab) => {
+      acc[tab.group] = (acc[tab.group] ?? 0) + 1;
+      return acc;
+    }, {});
+    expect(Object.keys(counts).sort()).toEqual(Object.keys(expected).sort());
     for (const [g, n] of Object.entries(expected)) {
       expect(counts[g], `registry count for group '${g}'`).toBe(n);
     }

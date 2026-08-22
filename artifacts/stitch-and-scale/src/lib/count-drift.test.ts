@@ -1,22 +1,21 @@
 // CHK-087 / CHK-091 — regression guard against count drift between the
-// landing page's marketing stats and the workspace's registered tab
-// count. The landing claims "79 business labs" (78 until Payback Lab at
-// CHK-091); the workspace tab registry and the grouped classification
-// must both expose exactly the same number of tabs, or this test fails
-// the build before marketing copy ever drifts from the product.
+// landing page's marketing stats and CTA and the workspace's
+// registered tab count. The registry is the product truth; this guard keeps
+// public copy from silently falling behind when a new lab ships.
 
 import { describe, expect, it } from "vitest";
+import { TAB_REGISTRY, TAB_COUNT } from "./tab-registry";
 import { TAB_GROUPS, groupFor } from "./workspace-tab-groups";
 
 describe("count drift guard", () => {
-it("landing claims 79 labs, matching the registered workspace tabs", () => {
-  // Landing STATS[0].value must equal the registered tab count exactly.
-  // The number is read from TAB_GROUPS (not hardcoded) so a future CHK
-  // adding a tab forces the landing claim to move in lockstep — the
-  // previous hardcoded `77` is how drift was born the first time.
-  const landingClaim = 79;
-  const registeredTabs = Object.keys(TAB_GROUPS);
-  expect(registeredTabs.length).toBe(landingClaim);
+  it("landing count contract matches the registered workspace tabs", () => {
+    // The public count is derived from the registry, never duplicated as a
+    // marketing literal. A future tab therefore updates the visible claim in
+    // lockstep with the workspace.
+    const landingClaim = TAB_COUNT;
+    const registeredTabs = Object.keys(TAB_GROUPS);
+    expect(landingClaim).toBe(TAB_REGISTRY.length);
+    expect(registeredTabs.length).toBe(landingClaim);
 
   // groupFor must classify every registered tab into a real group; it
   // never invents a synthetic entry, and every entry maps to a defined

@@ -126,6 +126,9 @@ export const TAB_REGISTRY: TabRegistryEntry[] = [
   { value: "compiler", label: "Compiler", group: "design", icon: "ShieldCheck" },
 ];
 
+/** Canonical number of workspace labs exposed by the product. */
+export const TAB_COUNT = TAB_REGISTRY.length;
+
 // Dev-time invariants — these fail loudly before a misregistered tab can
 // render (in tests the registry is imported and the assertions run on
 // import, so a drifted count fails `vitest run` as well).

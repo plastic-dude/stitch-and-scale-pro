@@ -6,6 +6,7 @@ import { useSettings, SizingStandard } from '@/context/SettingsContext';
 import { useProjects } from '@/context/ProjectsContext';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { TAB_COUNT } from '@/lib/tab-registry';
 import {
   HardDrive,
   DatabaseBackup,
@@ -322,7 +323,7 @@ function StepWorkspaceTour() {
                 <span className="text-xs font-bold text-accent/70">{String(i + 1).padStart(2, '0')}</span>
                 <span className="font-semibold text-sm text-foreground">{t(tourKeys[i][0])}</span>
               </div>
-              <p className="text-xs text-muted-foreground leading-relaxed">{t(tourKeys[i][1])}</p>
+              <p className="text-xs text-muted-foreground leading-relaxed">{t(tourKeys[i][1], tourKeys[i][1] === 'workflow.onboarding.tour.searchDescription' ? { count: TAB_COUNT } : undefined)}</p>
             </div>
           </div>
         ))}

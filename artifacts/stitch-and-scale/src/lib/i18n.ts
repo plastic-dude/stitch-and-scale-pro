@@ -93,7 +93,7 @@ export const TRANSLATIONS: Record<LanguageCode, Partial<Record<TranslationKey, s
     'workflow.onboarding.standard.kr.label': 'Korean (KS)', 'workflow.onboarding.standard.kr.desc': 'Korean Standards body measurements',
     'workflow.onboarding.standard.cn.label': 'Chinese (GB)', 'workflow.onboarding.standard.cn.desc': 'Chinese National Standard body measurements',
     'workflow.onboarding.standard.au.label': 'Australian (AS)', 'workflow.onboarding.standard.au.desc': 'Australian Standard body measurements',
-    'workflow.onboarding.tour.search': 'Search & Favorites', 'workflow.onboarding.tour.searchDescription': 'Quickly find any of the 79+ grading labs and save your most-used tools.',
+    'workflow.onboarding.tour.search': 'Search & Favorites', 'workflow.onboarding.tour.searchDescription': 'Quickly find any of the {count}+ grading labs and save your most-used tools.',
     'workflow.onboarding.tour.integrity': 'Release Integrity', 'workflow.onboarding.tour.integrityDescription': 'Real-time health checks ensure your grading math is always accurate.',
   },
   de: {
@@ -118,7 +118,7 @@ export const TRANSLATIONS: Record<LanguageCode, Partial<Record<TranslationKey, s
     'workflow.onboarding.standard.kr.label': 'Koreanisch (KS)', 'workflow.onboarding.standard.kr.desc': 'Koreanische Standards Körpermaße',
     'workflow.onboarding.standard.cn.label': 'Chinesisch (GB)', 'workflow.onboarding.standard.cn.desc': 'Chinesischer Nationaler Standard Körpermaße',
     'workflow.onboarding.standard.au.label': 'Australisch (AS)', 'workflow.onboarding.standard.au.desc': 'Australischer Standard Körpermaße',
-    'workflow.onboarding.tour.search': 'Suche & Favoriten', 'workflow.onboarding.tour.searchDescription': 'Finde schnell eines der über 79 Gradierungslabore und speichere deine meistgenutzten Tools.',
+    'workflow.onboarding.tour.search': 'Suche & Favoriten', 'workflow.onboarding.tour.searchDescription': 'Finde schnell eines der über {count} Gradierungslabore und speichere deine meistgenutzten Tools.',
     'workflow.onboarding.tour.integrity': 'Release-Integrität', 'workflow.onboarding.tour.integrityDescription': 'Echtzeit-Gesundheitschecks stellen sicher, dass deine Gradierungs-Mathematik immer genau ist.',
   },
   fr: {
@@ -143,7 +143,7 @@ export const TRANSLATIONS: Record<LanguageCode, Partial<Record<TranslationKey, s
     'workflow.onboarding.standard.kr.label': 'Coréen (KS)', 'workflow.onboarding.standard.kr.desc': 'Mesures corporelles Korean Standards',
     'workflow.onboarding.standard.cn.label': 'Chinois (GB)', 'workflow.onboarding.standard.cn.desc': 'Mesures corporelles Chinese National Standard',
     'workflow.onboarding.standard.au.label': 'Australien (AS)', 'workflow.onboarding.standard.au.desc': 'Mesures corporelles Australian Standard',
-    'workflow.onboarding.tour.search': 'Recherche & Favoris', 'workflow.onboarding.tour.searchDescription': 'Trouvez rapidement l’un des 79+ labos de gradation et enregistrez vos outils préférés.',
+    'workflow.onboarding.tour.search': 'Recherche & Favoris', 'workflow.onboarding.tour.searchDescription': 'Trouvez rapidement l’un des {count}+ labos de gradation et enregistrez vos outils préférés.',
     'workflow.onboarding.tour.integrity': 'Intégrité du déploiement', 'workflow.onboarding.tour.integrityDescription': 'Des vérifications en temps réel garantissent la précision de vos calculs de gradation.',
   },
   es: {
@@ -168,7 +168,7 @@ export const TRANSLATIONS: Record<LanguageCode, Partial<Record<TranslationKey, s
     'workflow.onboarding.standard.kr.label': 'Coreano (KS)', 'workflow.onboarding.standard.kr.desc': 'Medidas corporales Korean Standards',
     'workflow.onboarding.standard.cn.label': 'Chino (GB)', 'workflow.onboarding.standard.cn.desc': 'Medidas corporales Chinese National Standard',
     'workflow.onboarding.standard.au.label': 'Australiano (AS)', 'workflow.onboarding.standard.au.desc': 'Medidas corporales Australian Standard',
-    'workflow.onboarding.tour.search': 'Búsqueda y Favoritos', 'workflow.onboarding.tour.searchDescription': 'Encuentra rápido cualquiera de los más de 79 laboratorios y guarda tus herramientas más usadas.',
+    'workflow.onboarding.tour.search': 'Búsqueda y Favoritos', 'workflow.onboarding.tour.searchDescription': 'Encuentra rápido cualquiera de los más de {count} laboratorios y guarda tus herramientas más usadas.',
     'workflow.onboarding.tour.integrity': 'Integridad del lanzamiento', 'workflow.onboarding.tour.integrityDescription': 'Las comprobaciones en tiempo real aseguran que tus cálculos sean siempre precisos.',
   },
   pt: {
@@ -193,7 +193,7 @@ export const TRANSLATIONS: Record<LanguageCode, Partial<Record<TranslationKey, s
     'workflow.onboarding.standard.kr.label': 'Coreano (KS)', 'workflow.onboarding.standard.kr.desc': 'Medidas corporais Korean Standards',
     'workflow.onboarding.standard.cn.label': 'Chinês (GB)', 'workflow.onboarding.standard.cn.desc': 'Medidas corporais Chinese National Standard',
     'workflow.onboarding.standard.au.label': 'Australiano (AS)', 'workflow.onboarding.standard.au.desc': 'Medidas corporais Australian Standard',
-    'workflow.onboarding.tour.search': 'Pesquisa e Favoritos', 'workflow.onboarding.tour.searchDescription': 'Encontre rapidamente qualquer um dos mais de 79 laboratórios e guarde as suas ferramentas favoritas.',
+    'workflow.onboarding.tour.search': 'Pesquisa e Favoritos', 'workflow.onboarding.tour.searchDescription': 'Encontre rapidamente qualquer um dos mais de {count} laboratórios e guarde as suas ferramentas favoritas.',
     'workflow.onboarding.tour.integrity': 'Integridade do lançamento', 'workflow.onboarding.tour.integrityDescription': 'Verificações em tempo real garantem que os seus cálculos de graduação são sempre precisos.',
   },
 };

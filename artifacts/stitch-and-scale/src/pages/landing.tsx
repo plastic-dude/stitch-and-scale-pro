@@ -38,9 +38,10 @@ import { useSettings } from "@/context/SettingsContext";
 // demo on first request for exactly this id. Never redeclare it here.
 import { DEMO_PROJECT_ID } from "@/context/ProjectsContext";
 import { getLandingCopy } from "@/lib/landing-copy";
+import { TAB_COUNT } from "@/lib/tab-registry";
 
 const CAPABILITY_ICONS = [Layers, Scissors, Calculator, Store, Globe2, Ruler];
-const STAT_VALUES = ["79", "1,694+", "13", "100%"];
+const STAT_VALUES = [`${TAB_COUNT}`, "1,694+", "13", "100%"];
 
 const EMAIL_KEY = "stitch-and-scale-early-access-queue-v1";
 
@@ -186,7 +187,7 @@ export default function Landing() {
         <div className="mt-8 text-center">
           <Link href={`/project/${DEMO_PROJECT_ID}`}>
             <Button variant="outline" size="lg">
-              {copy.exploreLabs}
+              {copy.exploreLabs(TAB_COUNT)}
               <ArrowRight className="ml-1 h-4 w-4" />
             </Button>
           </Link>

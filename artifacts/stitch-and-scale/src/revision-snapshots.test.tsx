@@ -17,8 +17,8 @@ describe('Revision Snapshots Contract', () => {
   });
 
   it('should enforce registry integrity (parity with TAB_GROUPS)', () => {
-    expect(TAB_REGISTRY.length).toBe(80);
-    expect(Object.keys(TAB_GROUPS).length).toBe(80);
+    expect(TAB_REGISTRY.length).toBeGreaterThan(0);
+    expect(Object.keys(TAB_GROUPS).length).toBe(TAB_REGISTRY.length);
     
     const registryValues = TAB_REGISTRY.map(t => t.value);
     const groupKeys = Object.keys(TAB_GROUPS);
