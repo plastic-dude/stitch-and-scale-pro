@@ -260,6 +260,8 @@ export default function ProjectWorkspace() {
   const [mType, setMType] = React.useState<MeasurementType>('circumference');
   const [mKey, setMKey] = React.useState<GradingKey>('bust');
   const [mBaseValue, setMBaseValue] = React.useState('');
+  const [mErrors, setMErrors] = React.useState<Record<string, string>>({});
+  const [mTouched, setMTouched] = React.useState<Record<string, boolean>>({});
   const [mStitchMode, setMStitchMode] = React.useState<'exact' | 'multiple' | 'even' | 'odd'>('exact');
   const [mStitchRepeat, setMStitchRepeat] = React.useState('');
   const [mStitchRemainder, setMStitchRemainder] = React.useState('');
@@ -333,6 +335,7 @@ export default function ProjectWorkspace() {
   };
 
   const handleAddSection = () => {
+    setMTouched(prev => ({ ...prev, section: true }));
     if (!newSectionName.trim()) return;
     const newSection: PatternSection = {
       id: generateId(),
@@ -364,8 +367,19 @@ export default function ProjectWorkspace() {
   const resetMeasurementForm = () => {
     setMLabel('');
     setMBaseValue('');
+    setMErrors({});
+    setMTouched({});
     setAddingMeasurementTo(null);
     setEditingMeasurement(null);
+  };
+
+  const validateMeasurementForm = () => {
+    const newErrors: Record<string, string> = {};
+    if (!mLabel.trim()) newErrors.label = copy.fieldRequired;
+    const parsed = parsePositiveMeasurement(mBaseValue);
+    if (parsed === null) newErrors.value = copy.invalidNumber;
+    setMErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleUndoDelete = (stash: { sectionId: string, measurement: SectionMeasurement }) => {
@@ -384,13 +398,11 @@ export default function ProjectWorkspace() {
   };
 
   const handleAddMeasurement = (sectionId: string) => {
+    setMTouched({ label: true, value: true });
+    if (!validateMeasurementForm()) return;
+    
     const rawBase = mBaseValue.trim();
-    const parsedBase = parsePositiveMeasurement(rawBase);
-    if (!mLabel.trim() || parsedBase === null) {
-      const rejected = tc.invalidMeasurementValue(mLabel.trim() || '…', rawBase || '–');
-      toast({ title: rejected, variant: 'destructive' });
-      return;
-    }
+    const parsedBase = parsePositiveMeasurement(rawBase)!;
 
     const measurement: SectionMeasurement = {
       id: isEditing ? editingMeasurement!.measurementId : generateId(),
@@ -596,12 +608,33 @@ export default function ProjectWorkspace() {
                           <div className="p-4 rounded-lg border-2 border-primary/20 bg-primary/5 space-y-4 animate-in slide-in-from-top-2 duration-300">
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                               <div className="space-y-2">
-                                <Label>{copy.labelRequired}</Label>
-                                <Input value={mLabel} onChange={e => setMLabel(e.target.value)} placeholder="e.g. Bust Circumference" autoFocus />
+                                <Label className={cn(mErrors.label && mTouched.label && "text-destructive")}>{copy.labelRequired}</Label>
+                                <Input 
+                                  value={mLabel} 
+                                  onChange={e => { setMLabel(e.target.value); if (mTouched.label) validateMeasurementForm(); }} 
+                                  onBlur={() => setMTouched(prev => ({ ...prev, label: true }))}
+                                  placeholder="e.g. Bust Circumference" 
+                                  className={cn(mErrors.label && mTouched.label && "border-destructive focus-visible:border-destructive")}
+                                  aria-invalid={!!(mErrors.label && mTouched.label)}
+                                  aria-describedby={mErrors.label && mTouched.label ? "m-label-error" : undefined}
+                                  autoFocus 
+                                />
+                                {mErrors.label && mTouched.label && <p id="m-label-error" className="text-[10px] text-destructive font-medium">{mErrors.label}</p>}
                               </div>
                               <div className="space-y-2">
-                                <Label>{copy.valueRequired} (cm)</Label>
-                                <Input type="text" inputMode="decimal" value={mBaseValue} onChange={e => setMBaseValue(e.target.value)} placeholder="e.g. 96" />
+                                <Label className={cn(mErrors.value && mTouched.value && "text-destructive")}>{copy.valueRequired} (cm)</Label>
+                                <Input 
+                                  type="text" 
+                                  inputMode="decimal" 
+                                  value={mBaseValue} 
+                                  onChange={e => { setMBaseValue(e.target.value); if (mTouched.value) validateMeasurementForm(); }} 
+                                  onBlur={() => setMTouched(prev => ({ ...prev, value: true }))}
+                                  placeholder="e.g. 96" 
+                                  className={cn(mErrors.value && mTouched.value && "border-destructive focus-visible:border-destructive")}
+                                  aria-invalid={!!(mErrors.value && mTouched.value)}
+                                  aria-describedby={mErrors.value && mTouched.value ? "m-value-error" : undefined}
+                                />
+                                {mErrors.value && mTouched.value && <p id="m-value-error" className="text-[10px] text-destructive font-medium">{mErrors.value}</p>}
                               </div>
                             </div>
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -643,11 +676,22 @@ export default function ProjectWorkspace() {
           {isAddingSection && (
             <div className="p-4 rounded-xl border-2 border-primary/20 bg-primary/5 space-y-4 animate-in zoom-in-95 duration-200">
               <div className="space-y-2">
-                <Label>{t('workflow.newProject.sectionName')}</Label>
-                <Input value={newSectionName} onChange={e => setNewSectionName(e.target.value)} placeholder="e.g. Body, Sleeves, Neckline" autoFocus onKeyDown={e => e.key === 'Enter' && handleAddSection()} />
+                <Label className={cn(!newSectionName.trim() && mTouched.section && "text-destructive")}>{t('workflow.newProject.sectionName')}</Label>
+                <Input 
+                  value={newSectionName} 
+                  onChange={e => { setNewSectionName(e.target.value); setMTouched(prev => ({ ...prev, section: true })); }} 
+                  onBlur={() => setMTouched(prev => ({ ...prev, section: true }))}
+                  placeholder="e.g. Body, Sleeves, Neckline" 
+                  className={cn(!newSectionName.trim() && mTouched.section && "border-destructive focus-visible:border-destructive")}
+                  aria-invalid={!newSectionName.trim() && mTouched.section}
+                  aria-describedby={!newSectionName.trim() && mTouched.section ? "section-name-error" : undefined}
+                  autoFocus 
+                  onKeyDown={e => e.key === 'Enter' && handleAddSection()} 
+                />
+                {!newSectionName.trim() && mTouched.section && <p id="section-name-error" className="text-[10px] text-destructive font-medium">{copy.fieldRequired}</p>}
               </div>
               <div className="flex justify-end gap-2">
-                <Button variant="ghost" onClick={() => setIsAddingSection(false)}>{copy.renameCancel}</Button>
+                <Button variant="ghost" onClick={() => { setIsAddingSection(false); setMTouched(prev => ({ ...prev, section: false })); }}>{copy.renameCancel}</Button>
                 <Button onClick={handleAddSection}>{t('workspace.editor.addSection')}</Button>
               </div>
             </div>

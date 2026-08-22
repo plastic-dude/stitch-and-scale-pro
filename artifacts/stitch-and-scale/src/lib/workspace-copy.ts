@@ -55,6 +55,7 @@ export interface WorkspaceCopy {
   renameEmpty: string;
   renameSame: string;
   addMeasurement: string;
+  fieldRequired: string;
   // Navigator
   allLabs: string;
   labsTitle: string;
@@ -114,6 +115,7 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     renameEmpty: 'The name cannot be empty',
     renameSame: 'Nothing changed',
     addMeasurement: 'Add Measurement',
+    fieldRequired: 'This field is required',
     localOnlyTitle: 'Local Project',
     localOnlyDescription: 'This project exists only in your browser storage. To access it on another device, export it and then import it there.',
     importProject: 'Import Project',
@@ -183,6 +185,7 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     renameEmpty: 'Der Name darf nicht leer sein',
     renameSame: 'Nichts geändert',
     addMeasurement: 'Maß hinzufügen',
+    fieldRequired: 'Dieses Feld ist erforderlich',
     localOnlyTitle: 'Lokales Projekt',
     localOnlyDescription: 'Dieses Projekt existiert nur in Ihrem Browser-Speicher. Um es auf einem anderen Gerät aufzurufen, exportieren Sie es und importieren Sie es dort.',
     importProject: 'Projekt importieren',
@@ -252,6 +255,7 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     renameEmpty: 'Le nom ne peut pas être vide',
     renameSame: 'Aucune modification',
     addMeasurement: 'Ajouter une mesure',
+    fieldRequired: 'Ce champ est obligatoire',
     localOnlyTitle: 'Projet local',
     localOnlyDescription: 'Ce projet n\'existe que dans le stockage de votre navigateur. Pour y accéder sur un autre appareil, exportez-le puis importez-le là-bas.',
     importProject: 'Importer le projet',
@@ -321,6 +325,7 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     renameEmpty: 'El nombre no puede estar vacío',
     renameSame: 'Nada ha cambiado',
     addMeasurement: 'Añadir medida',
+    fieldRequired: 'Este campo es obligatorio',
     localOnlyTitle: 'Proyecto local',
     localOnlyDescription: 'Este proyecto solo existe en el almacenamiento de tu navegador. Para acceder a él en otro dispositivo, expórtalo e impórtalo allí.',
     importProject: 'Importar proyecto',
@@ -390,6 +395,7 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     renameEmpty: 'O nome não pode estar vazio',
     renameSame: 'Nada mudou',
     addMeasurement: 'Adicionar medida',
+    fieldRequired: 'Este campo é obrigatório',
     localOnlyTitle: 'Projeto local',
     localOnlyDescription: 'Este projeto existe apenas no armazenamento do seu navegador. Para aceder a ele noutro dispositivo, exporte-o e importe-o lá.',
     importProject: 'Importar projeto',
@@ -419,6 +425,8 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     retry: 'Tentar novamente',
   },
 };
+
+export const WORKSPACE_COPY = COPY;
 
 export function getWorkspaceCopy(locale: string): WorkspaceCopy {
   const code = locale.toLowerCase().split('-')[0] as LanguageCode;

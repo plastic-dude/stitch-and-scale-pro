@@ -22,11 +22,31 @@ export default function NewProjectWizard() {
   const [author, setAuthor] = useState(studioProfile.designerName);
   const [baseSize, setBaseSize] = useState<SizeKey>('M');
   const [gauge, setGauge] = useState<Gauge>({ stitchesPer4In: 20, rowsPer4In: 28, unit: defaultUnit });
+  
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
 
   const totalSteps = 3;
 
+  const validateStep = (s: number) => {
+    const newErrors: Record<string, string> = {};
+    if (s === 1) {
+      if (!name.trim()) newErrors.name = copy.fieldRequired;
+      if (!author.trim()) newErrors.author = copy.fieldRequired;
+    }
+    if (s === 3) {
+      if (gauge.stitchesPer4In <= 0) newErrors.sts = copy.invalidGauge;
+      if (gauge.rowsPer4In <= 0) newErrors.rows = copy.invalidGauge;
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleNext = () => {
-    if (step === 1 && (!name.trim() || !author.trim())) return;
+    if (step === 1) {
+      setTouched({ name: true, author: true });
+      if (!validateStep(1)) return;
+    }
     if (step < totalSteps) setStep(s => s + 1);
   };
 
@@ -35,6 +55,8 @@ export default function NewProjectWizard() {
   };
 
   const handleCreate = () => {
+    setTouched({ sts: true, rows: true });
+    if (!validateStep(3)) return;
     const newProject: PatternProject = {
       id: generateId(),
       name: name.trim(),
@@ -114,30 +136,44 @@ export default function NewProjectWizard() {
 
                 <div className="space-y-6 max-w-md mx-auto w-full">
                   <div className="space-y-2.5">
-                    <Label htmlFor="name" className="text-sm font-medium text-muted-foreground uppercase tracking-wider">{t('workflow.newProject.patternName')}</Label>
+                    <Label htmlFor="name" className={cn("text-sm font-medium uppercase tracking-wider", errors.name && touched.name ? "text-destructive" : "text-muted-foreground")}>{t('workflow.newProject.patternName')}</Label>
                     <Input 
                       id="name" 
                       placeholder={copy.patternPlaceholder}
                       value={name} 
-                      onChange={(e) => setName(e.target.value)}
-                      className="text-xl py-6 border-0 border-b-2 border-border rounded-none focus-visible:ring-0 focus-visible:border-primary px-0 bg-transparent shadow-none"
+                      onChange={(e) => { setName(e.target.value); if (touched.name) validateStep(1); }}
+                      onBlur={() => setTouched(prev => ({ ...prev, name: true }))}
+                      className={cn(
+                        "text-xl py-6 border-0 border-b-2 rounded-none focus-visible:ring-0 px-0 bg-transparent shadow-none",
+                        errors.name && touched.name ? "border-destructive focus-visible:border-destructive" : "border-border focus-visible:border-primary"
+                      )}
+                      aria-invalid={!!(errors.name && touched.name)}
+                      aria-describedby={errors.name && touched.name ? "name-error" : undefined}
                       autoFocus
                       data-testid="input-pattern-name"
                     />
+                    {errors.name && touched.name && <p id="name-error" className="text-xs text-destructive font-medium">{errors.name}</p>}
                   </div>
                   <div className="space-y-2.5">
-                    <Label htmlFor="author" className="text-sm font-medium text-muted-foreground uppercase tracking-wider">{t('workflow.newProject.designer')}</Label>
+                    <Label htmlFor="author" className={cn("text-sm font-medium uppercase tracking-wider", errors.author && touched.author ? "text-destructive" : "text-muted-foreground")}>{t('workflow.newProject.designer')}</Label>
                     <div className="relative flex items-center">
-                      <Fingerprint className="absolute left-0 w-5 h-5 text-muted-foreground/60" />
+                      <Fingerprint className={cn("absolute left-0 w-5 h-5", errors.author && touched.author ? "text-destructive/60" : "text-muted-foreground/60")} />
                       <Input 
                         id="author" 
                         placeholder={copy.authorPlaceholder}
                         value={author} 
-                        onChange={(e) => setAuthor(e.target.value)}
-                        className="text-lg py-6 pl-8 border-0 border-b-2 border-border rounded-none focus-visible:ring-0 focus-visible:border-primary bg-transparent shadow-none"
+                        onChange={(e) => { setAuthor(e.target.value); if (touched.author) validateStep(1); }}
+                        onBlur={() => setTouched(prev => ({ ...prev, author: true }))}
+                        className={cn(
+                          "text-lg py-6 pl-8 border-0 border-b-2 rounded-none focus-visible:ring-0 bg-transparent shadow-none",
+                          errors.author && touched.author ? "border-destructive focus-visible:border-destructive" : "border-border focus-visible:border-primary"
+                        )}
+                        aria-invalid={!!(errors.author && touched.author)}
+                        aria-describedby={errors.author && touched.author ? "author-error" : undefined}
                         data-testid="input-author"
                       />
                     </div>
+                    {errors.author && touched.author && <p id="author-error" className="text-xs text-destructive font-medium">{errors.author}</p>}
                   </div>
 
                   {/* Sizing standard indicator — informational only */}
@@ -244,38 +280,82 @@ export default function NewProjectWizard() {
                   </div>
 
                   <div className="grid grid-cols-2 gap-6">
-                    <div className="space-y-3 bg-secondary/10 p-5 rounded-xl border border-border/40 relative overflow-hidden group focus-within:border-primary/50 transition-colors">
-                      <Label htmlFor="sts" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block">{t('workflow.newProject.stitches')}</Label>
+                    <div className={cn(
+                      "space-y-3 p-5 rounded-xl border relative overflow-hidden group transition-colors",
+                      errors.sts && touched.sts ? "bg-destructive/5 border-destructive/50 focus-within:border-destructive" : "bg-secondary/10 border-border/40 focus-within:border-primary/50"
+                    )}>
+                      <Label htmlFor="sts" className={cn("text-xs font-semibold uppercase tracking-wider block", errors.sts && touched.sts ? "text-destructive" : "text-muted-foreground")}>{t('workflow.newProject.stitches')}</Label>
                       <div className="flex items-baseline">
                         <Input 
                           id="sts" 
                           type="number"
-                          min="1"
+                          min="0.25"
                           step="0.25"
                           value={gauge.stitchesPer4In || ''} 
-                          onChange={(e) => setGauge({...gauge, stitchesPer4In: parseFloat(e.target.value) || 0})}
-                          className="text-4xl font-mono p-0 border-0 bg-transparent h-12 shadow-none focus-visible:ring-0 w-full"
+                          onChange={(e) => { 
+                            const val = parseFloat(e.target.value) || 0;
+                            setGauge(prev => {
+                              const next = {...prev, stitchesPer4In: val};
+                              if (touched.sts) {
+                                const newErrors = {...errors};
+                                if (val <= 0) newErrors.sts = copy.invalidGauge;
+                                else delete newErrors.sts;
+                                setErrors(newErrors);
+                              }
+                              return next;
+                            });
+                          }}
+                          onBlur={() => setTouched(prev => ({ ...prev, sts: true }))}
+                          className={cn(
+                            "text-4xl font-mono p-0 border-0 bg-transparent h-12 shadow-none focus-visible:ring-0 w-full",
+                            errors.sts && touched.sts ? "text-destructive" : "text-foreground"
+                          )}
+                          aria-invalid={!!(errors.sts && touched.sts)}
+                          aria-describedby={errors.sts && touched.sts ? "sts-error" : undefined}
                           data-testid="input-stitches"
                         />
                       </div>
                       <div className="absolute right-4 bottom-5 text-xs text-muted-foreground font-medium">{gauge.unit === 'in' ? 'per 4 inches' : 'per 10 cm'}</div>
+                      {errors.sts && touched.sts && <p id="sts-error" className="absolute left-5 bottom-1 text-[10px] text-destructive font-medium">{errors.sts}</p>}
                     </div>
                     
-                    <div className="space-y-3 bg-secondary/10 p-5 rounded-xl border border-border/40 relative overflow-hidden group focus-within:border-primary/50 transition-colors">
-                      <Label htmlFor="rows" className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block">{t('workflow.newProject.rows')}</Label>
+                    <div className={cn(
+                      "space-y-3 p-5 rounded-xl border relative overflow-hidden group transition-colors",
+                      errors.rows && touched.rows ? "bg-destructive/5 border-destructive/50 focus-within:border-destructive" : "bg-secondary/10 border-border/40 focus-within:border-primary/50"
+                    )}>
+                      <Label htmlFor="rows" className={cn("text-xs font-semibold uppercase tracking-wider block", errors.rows && touched.rows ? "text-destructive" : "text-muted-foreground")}>{t('workflow.newProject.rows')}</Label>
                       <div className="flex items-baseline">
                         <Input 
                           id="rows" 
                           type="number"
-                          min="1"
+                          min="0.25"
                           step="0.25"
                           value={gauge.rowsPer4In || ''} 
-                          onChange={(e) => setGauge({...gauge, rowsPer4In: parseFloat(e.target.value) || 0})}
-                          className="text-4xl font-mono p-0 border-0 bg-transparent h-12 shadow-none focus-visible:ring-0 w-full"
+                          onChange={(e) => {
+                            const val = parseFloat(e.target.value) || 0;
+                            setGauge(prev => {
+                              const next = {...prev, rowsPer4In: val};
+                              if (touched.rows) {
+                                const newErrors = {...errors};
+                                if (val <= 0) newErrors.rows = copy.invalidGauge;
+                                else delete newErrors.rows;
+                                setErrors(newErrors);
+                              }
+                              return next;
+                            });
+                          }}
+                          onBlur={() => setTouched(prev => ({ ...prev, rows: true }))}
+                          className={cn(
+                            "text-4xl font-mono p-0 border-0 bg-transparent h-12 shadow-none focus-visible:ring-0 w-full",
+                            errors.rows && touched.rows ? "text-destructive" : "text-foreground"
+                          )}
+                          aria-invalid={!!(errors.rows && touched.rows)}
+                          aria-describedby={errors.rows && touched.rows ? "rows-error" : undefined}
                           data-testid="input-rows"
                         />
                       </div>
                       <div className="absolute right-4 bottom-5 text-xs text-muted-foreground font-medium">{gauge.unit === 'in' ? 'per 4 inches' : 'per 10 cm'}</div>
+                      {errors.rows && touched.rows && <p id="rows-error" className="absolute left-5 bottom-1 text-[10px] text-destructive font-medium">{errors.rows}</p>}
                     </div>
                   </div>
                 </div>
