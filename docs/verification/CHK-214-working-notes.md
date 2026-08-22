@@ -184,3 +184,9 @@ The fresh active-alias checks returned 200 for `/`, `/settings`, `/project/audit
 This confirms live Q066 behavior on the tested implementation release, not exact current-HEAD-to-production parity and not overall publication readiness.
 
 ---
+
+## Final current-HEAD parity check — 2026-08-22 continuation
+
+The final documentation evidence commit is `912b9aecb2e8c7168a203cc9d8c998c1eccde082` on both the audit branch and `origin/main`. The latest Vercel deployment list still has no deployment for `912b9ae`; the newest matching documentation deployment remains `dpl_FNSeqkESLUoEMuCxoMCzkCd3oVSv` for the prior `4e901da` commit, `READY` with target `null` and a Git-preview alias only. The active production alias is still deployment `dpl_3HiUpupLgAwzxS3CLi2xNXHysbg3`, `READY`, target `production`, commit `55491be9d26017e806ecbf4d9c0b44d3d7790b8f`. Exact current-HEAD-to-production parity is therefore unresolved; no manual alias assignment was attempted.
+
+---
