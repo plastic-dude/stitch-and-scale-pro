@@ -6,6 +6,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { getWorkspaceCopy } from '@/lib/workspace-copy';
+import { useSettings } from '@/context/SettingsContext';
 
 interface BenchmarkFooterProps {
   /** The primary benchmark claim text. */
@@ -18,12 +20,15 @@ interface BenchmarkFooterProps {
 }
 
 export function BenchmarkFooter({ text, sourceLabel, methodology, className }: BenchmarkFooterProps) {
+  const { language } = useSettings();
+  const copy = getWorkspaceCopy(language);
+
   return (
     <div className={`mt-4 pt-4 border-t border-border/40 ${className}`}>
       <div className="flex items-start gap-2">
         <div className="flex-1">
           <p className="text-xs text-muted-foreground leading-relaxed">
-            <span className="font-semibold text-foreground/70 mr-1">Benchmarks baked in:</span>
+            <span className="font-semibold text-foreground/70 mr-1">{copy.benchmarkLabel}</span>
             {text}
           </p>
           {sourceLabel && (
@@ -37,7 +42,7 @@ export function BenchmarkFooter({ text, sourceLabel, methodology, className }: B
                     <TooltipTrigger asChild>
                       <button type="button" className="text-muted-foreground hover:text-primary transition-colors">
                         <Info className="h-3 w-3" />
-                        <span className="sr-only">View methodology</span>
+                        <span className="sr-only">{copy.viewMethodology}</span>
                       </button>
                     </TooltipTrigger>
                     <TooltipContent side="top" className="max-w-xs text-xs leading-relaxed">

@@ -7,6 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { AlertTriangle, Flag, Layers, Lightbulb, Minus, Plus, Tent } from 'lucide-react';
+import { BenchmarkFooter } from './benchmark-footer';
+import { getWorkspaceCopy } from '@/lib/workspace-copy';
 import { PatternProject } from '@/lib/grading-engine';
 import { RETREAT_TEACHING_COPY } from '@/lib/retreat-teaching-copy';
 import { projectStorage } from '@/lib/storage-lib';
@@ -111,6 +113,7 @@ export function RetreatTeachingLabCard({ project }: { project: PatternProject })
   const { language } = useSettings();
   const ls: LabStatCopy = getLabStatCopy(language);
   const copyText = RETREAT_TEACHING_COPY[language];
+  const workspaceCopy = getWorkspaceCopy(language);
 
   useEffect(() => {
     setInput(loadStored(handle));
@@ -259,7 +262,11 @@ export function RetreatTeachingLabCard({ project }: { project: PatternProject })
           {result.scenarios.length === 0 && (
             <p className="text-xs text-muted-foreground">Add at least one class with hours for the lab to model the trip.</p>
           )}
-          <p className="text-xs text-muted-foreground leading-4">Market tuition check: budget formats land around $118/day (e.g. $235 weekend with meals), tuition-only 3-day retreats run ~$358/day, and all-inclusive destination formats reach $750/day ($2,999/4 days). Hourly benchmark: $125/class-hr + travel and lodging is the top-of-market guest rate.</p>
+          <BenchmarkFooter 
+            text="Market tuition check: budget formats land around $118/day (e.g. $235 weekend with meals), tuition-only 3-day retreats run ~$358/day, and all-inclusive destination formats reach $750/day ($2,999/4 days). Hourly benchmark: $125/class-hr + travel and lodging is the top-of-market guest rate."
+            sourceLabel={workspaceCopy.sourceMethodology}
+            methodology={workspaceCopy.methodologyTeach}
+          />
         </section>
 
         {result.flags.length > 0 && (

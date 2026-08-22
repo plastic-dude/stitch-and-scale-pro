@@ -6,6 +6,8 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { AlertTriangle, Flag, Lightbulb, Presentation, Scale, TrendingUp } from 'lucide-react';
+import { BenchmarkFooter } from './benchmark-footer';
+import { getWorkspaceCopy } from '@/lib/workspace-copy';
 import { PatternProject } from '@/lib/grading-engine';
 import { WORKSHOP_TEACHING_COPY } from '@/lib/workshop-teaching-copy';
 import { projectStorage } from '@/lib/storage-lib';
@@ -81,6 +83,7 @@ export function WorkshopTeachingLabCard({ project }: { project: PatternProject }
   const { language } = useSettings();
   const ls: LabStatCopy = getLabStatCopy(language);
   const copyText = WORKSHOP_TEACHING_COPY[language];
+  const workspaceCopy = getWorkspaceCopy(language);
 
   useEffect(() => {
     setInput(loadStored(handle));
@@ -115,7 +118,12 @@ export function WorkshopTeachingLabCard({ project }: { project: PatternProject }
             <NumField id="wt-travel" label={copyText.travelLodgingTotal} value={input.deal.travelCost} onChange={n => setDeal('travelCost', Math.max(0, n))} suffix="$" />
             <NumField id="wt-mats" label={copyText.materialsYouCoverStudent} value={input.deal.materialsPerStudent} onChange={n => setDeal('materialsPerStudent', Math.max(0, n))} suffix="$" />
           </div>
-          <p className="text-xs text-muted-foreground italic">Net per student at these terms: {fmt$(perStudentNet)}. Festival benchmarks: $22–45/student half-days, $60–90/student full-days after typical 20–40% cuts. Deals without a floor are standard post-#FairFiberWage — that floor is what protects you at travel-day slots.</p>
+          <BenchmarkFooter 
+            text={`Net per student at these terms: ${fmt$(perStudentNet)}. Festival benchmarks: $22–45/student half-days, $60–90/student full-days after typical 20–40% cuts. Deals without a floor are standard post-#FairFiberWage — that floor is what protects you at travel-day slots.`}
+            sourceLabel={workspaceCopy.sourceMethodology}
+            methodology={workspaceCopy.methodologyTeach}
+            className="mt-2 pt-2"
+          />
         </section>
 
         <section className="space-y-3">
@@ -132,7 +140,12 @@ export function WorkshopTeachingLabCard({ project }: { project: PatternProject }
             <NumField id="wt-attach" label={copyText.followUpPatternAttach} value={input.followUpAttach * 100} onChange={n => set('followUpAttach', Math.min(1, Math.max(0, n / 100)))} min={0} max={100} step={1} suffix="%" />
             <NumField id="wt-attachp" label={copyText.followUpPatternPrice} value={input.followUpPrice} onChange={n => set('followUpPrice', Math.max(0, n))} suffix="$" />
           </div>
-          <p className="text-xs text-muted-foreground italic">Prep for new content typically runs 2–4× the class hours; repeats run 1–2×. Attendees are warm buyers — 10–30% attach to the class pattern at full price is a normal follow-up, and LYS classes add immediate project-yarn sales on top.</p>
+          <BenchmarkFooter 
+            text="Prep for new content typically runs 2–4× the class hours; repeats run 1–2×. Attendees are warm buyers — 10–30% attach to the class pattern at full price is a normal follow-up, and LYS classes add immediate project-yarn sales on top."
+            sourceLabel={workspaceCopy.sourceMethodology}
+            methodology={workspaceCopy.methodologyTeach}
+            className="mt-2 pt-2"
+          />
         </section>
 
         <section className="space-y-3">

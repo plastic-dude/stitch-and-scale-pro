@@ -6,6 +6,8 @@ import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { AlertTriangle, FileText, Plus, X } from 'lucide-react';
+import { BenchmarkFooter } from './benchmark-footer';
+import { getWorkspaceCopy } from '@/lib/workspace-copy';
 import { PatternProject } from '@/lib/grading-engine';
 import { useSettings } from '@/context/SettingsContext';
 import { getSpecSheetCopy, getSpecFlagMessage, getSpecFlagTitle, getSpecGaugeLine, getSpecVerdictReason, getSpecYarnLabel } from '@/lib/spec-sheet-copy';
@@ -75,6 +77,7 @@ function pomRowLabel(row: PomRow): string {
 export function SpecSheetLabCard({ project }: { project: PatternProject }) {
   const { language } = useSettings();
   const copy = getSpecSheetCopy(language);
+  const workspaceCopy = getWorkspaceCopy(language);
   const handle = useMemo(
     () => projectStorage<SpecSheetInputs>('specsheetlab', project.id || '', []),
     [project.id],
@@ -360,7 +363,11 @@ export function SpecSheetLabCard({ project }: { project: PatternProject }) {
         )}
 
         {/* Market framing */}
-        <p className="text-xs text-muted-foreground leading-relaxed">{copy.benchmarks(result.benchmarks.pomNormMin, result.benchmarks.pomNormMax, SESSION_45_MARKET.machineGaugeLow, SESSION_45_MARKET.machineGaugeHigh, SESSION_45_MARKET.freelancePackLow, SESSION_45_MARKET.freelancePackHigh, SESSION_45_MARKET.aiPackLow, SESSION_45_MARKET.aiPackHigh)}</p>
+        <BenchmarkFooter 
+          text={copy.benchmarks(result.benchmarks.pomNormMin, result.benchmarks.pomNormMax, SESSION_45_MARKET.machineGaugeLow, SESSION_45_MARKET.machineGaugeHigh, SESSION_45_MARKET.freelancePackLow, SESSION_45_MARKET.freelancePackHigh, SESSION_45_MARKET.aiPackLow, SESSION_45_MARKET.aiPackHigh)}
+          sourceLabel={workspaceCopy.sourceMethodology}
+          methodology={workspaceCopy.methodologySubmissions}
+        />
       </CardContent>
     </Card>
   );

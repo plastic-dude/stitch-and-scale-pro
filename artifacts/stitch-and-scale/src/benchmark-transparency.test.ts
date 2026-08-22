@@ -32,4 +32,32 @@ describe('Benchmark Transparency (F-12)', () => {
     expect(source).toContain('sourceLabel={workspaceCopy.sourceMethodology}');
     expect(source).toContain('methodology={workspaceCopy.methodologyKal}');
   });
+  
+  it('DealsTabCard includes benchmark methodology disclosure', () => {
+    const source = readFileSync(join(componentsDir, 'deals-tab-card.tsx'), 'utf-8');
+    expect(source).toContain('BenchmarkFooter');
+    expect(source).toContain('sourceLabel={workspaceCopy.sourceMethodology}');
+    expect(source).toContain('methodology={workspaceCopy.methodologyDeals}');
+  });
+
+  it('SpecSheetLabCard includes benchmark methodology disclosure', () => {
+    const source = readFileSync(join(componentsDir, 'spec-sheet-lab-card.tsx'), 'utf-8');
+    expect(source).toContain('BenchmarkFooter');
+    expect(source).toContain('sourceLabel={workspaceCopy.sourceMethodology}');
+    expect(source).toContain('methodology={workspaceCopy.methodologySubmissions}');
+  });
+
+  it('RetreatTeachingLabCard includes benchmark methodology disclosure', () => {
+    const source = readFileSync(join(componentsDir, 'retreat-teaching-lab-card.tsx'), 'utf-8');
+    expect(source).toContain('BenchmarkFooter');
+    expect(source).toContain('sourceLabel={workspaceCopy.sourceMethodology}');
+    expect(source).toContain('methodology={workspaceCopy.methodologyTeach}');
+  });
+
+  it('WorkshopTeachingLabCard includes benchmark methodology disclosure', () => {
+    const source = readFileSync(join(componentsDir, 'workshop-teaching-lab-card.tsx'), 'utf-8');
+    expect(source).toContain('BenchmarkFooter');
+    expect(source).toContain('sourceLabel={workspaceCopy.sourceMethodology}');
+    expect(source).toContain('methodology={workspaceCopy.methodologyTeach}');
+  });
 });

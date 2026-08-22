@@ -50,6 +50,8 @@ import { PLATFORMS, PLATFORM_LABELS, PlatformId } from '@/lib/pattern-income-cal
 import { PatternProject } from '@/lib/grading-engine';
 import { safeNum } from '@/lib/numeric-guard';
 import { Handshake, Scale, Copy, TrendingUp, Lock, BadgeDollarSign, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { BenchmarkFooter } from './benchmark-footer';
+import { getWorkspaceCopy } from '@/lib/workspace-copy';
 
 function DefaultBadge({ text }: { text: string }) {
   return (
@@ -90,6 +92,7 @@ export function DealsTabCard({
   const { language } = useSettings();
   const ls: LabStatCopy = getLabStatCopy(language);
   const copy = DEALS_COPY[language];
+  const workspaceCopy = getWorkspaceCopy(language);
 
   const [hours, setHours] = React.useState(DEFAULT_HOURS);
   const [rate, setRate] = React.useState(DEFAULT_RATE);
@@ -345,11 +348,11 @@ export function DealsTabCard({
           />
         </div>
 
-        <p className="text-xs leading-relaxed text-muted-foreground">
-          Benchmarks: magazine-style flat fees ~£60–100 (Who Pays Knitters); royalties commonly ~30% of net proceeds
-          (Making Stories); exclusivity windows typically 3–12 months (Stitchcraft Marketing). Adjust every number —
-          the verdicts respond live to your inputs.
-        </p>
+        <BenchmarkFooter 
+          text="Benchmarks: magazine-style flat fees ~£60–100 (Who Pays Knitters); royalties commonly ~30% of net proceeds (Making Stories); exclusivity windows typically 3–12 months (Stitchcraft Marketing). Adjust every number — the verdicts respond live to your inputs."
+          sourceLabel={workspaceCopy.sourceMethodology}
+          methodology={workspaceCopy.methodologyDeals}
+        />
 
         <DesignOfferSection input={input} baseNet={baseNet} fmt={fmt} />
       </CardContent>
