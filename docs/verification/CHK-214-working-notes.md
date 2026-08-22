@@ -134,3 +134,37 @@ This closes the Q066 runtime verification boundary. The feature remains narrow: 
 Future social/media features remain valid product work, but must be scheduled separately with voluntary sharing, private-by-default controls, truthful output provenance, accessible previews, explicit consent, and no manipulative engagement loops.
 
 ---
+
+## Final release-integrity check — 2026-08-22
+
+Fresh Vercel metadata shows deployment `dpl_3HiUpupLgAwzxS3CLi2xNXHysbg3` as `READY`, target `production`, with aliases including `stitch-and-scale-pro-api-server.vercel.app` and the Git-main alias. Its exact deployed commit is `55491be9d26017e806ecbf4d9c0b44d3d7790b8f`, the tested Q066 implementation release. The repository `origin/main` now points to `4a0ec41b5bf2d40fc5cec74093eb2cbaf608093b`, a documentation-only follow-up commit containing the final CHK-214 note and queue closure; Vercel has not created a newer deployment for that documentation-only commit in the latest metadata response. Therefore the active production alias is exact for the tested application implementation, but it is not claimed to serve the later documentation-only HEAD.
+
+Fresh public route checks against the active alias returned HTTP 200 for `/`, `/settings`, `/project/audit-week-31`, and `/project/audit-week-31/pdf`. `favicon-192.png` returned HTTP 200 with 48,605 bytes. MCP checks returned GET 405, allowed OPTIONS 204, authenticated `tools/list` 200 with 8 canonical tools under protocol `2026-07-28`, and forbidden-origin POST 403 with JSON-RPC code `-32001`.
+
+This evidence supports Q066 implementation and production behavior, not an overall publication-readiness claim. The documentation-only main/production SHA mismatch is recorded candidly and should be resolved by normal deployment promotion if exact HEAD-to-alias parity is required for a final release checklist.
+
+---
+
+## WIDE RESEARCH repository audit — 2026-08-22 continuation
+
+`git fetch origin --prune` completed. The audit branch HEAD and `origin/main` are both at `4a0ec41b5bf2d40fc5cec74093eb2cbaf608093b` with no branch divergence; the only working-tree modification is this evidence-note append. The local `main` checkout is stale and remains intentionally untouched. The protected invention brief SHA remains exactly `5a7668a95841e7e74fc2dcf702cf1ffa94deed06d7029116919dcc0489b609ce`. `git diff --check` is clean.
+
+The canonical queue confirms QUEUE-066 is `done` and QUEUE-067 is `queued`, explicitly research-only and consent-based. It must not be started without its own brief and two-pass research. The public repository backlog currently has three open pull requests, not standalone issues: [#72](https://github.com/plastic-dude/stitch-and-scale-pro/pull/72) proposes MCP resources/prompts, `grading.compare_standards`, and a broader protocol-version allowlist; [#71](https://github.com/plastic-dude/stitch-and-scale-pro/pull/71) proposes Pattern QA/publication preflight and related mobile/export work; [#70](https://github.com/plastic-dude/stitch-and-scale-pro/pull/70) proposes dual-tier mobile navigation and storage-copy changes. They remain unmerged and are not treated as accepted requirements or safe-to-merge work without reconciliation and fresh verification.
+
+The GitHub connector is present but disabled in this session. Public read-only repository metadata was obtained via the public GitHub REST endpoint instead; no connector or schedule mutation was made. The sole schedule remains active with max mode, 30-minute interval, `runAsNewTask: false`, and Africa/Lagos timezone, matching the owner directive; it was inspected only.
+
+---
+
+## WIDE RESEARCH quality and product-surface audit — 2026-08-22 continuation
+
+The fresh local gate passed all required commands: 214 Vitest files / 2,536 tests, application typecheck, root typecheck, production build in 5.26 seconds, `git diff --check`, the source-bundle verifier, and the protected invention-brief hash. The Vitest run still emits repeated nonfatal `indexedDB is not defined` persistence diagnostics from reducer tests that run without a browser IndexedDB implementation; the tests pass, but this harness noise is not described as a clean-no-diagnostics run. The production build still emits the six known nonfatal sourcemap-location warnings for `tooltip.tsx`, `dropdown-menu.tsx`, `label.tsx`, `select.tsx`, `sheet.tsx`, and `progress.tsx`.
+
+The focused export, pattern QA/readiness, Brag Card, receipt, onboarding, touch-target, storage, localization, and MCP suites passed: 25 files / 253 tests. The fresh local mobile smoke passed onboarding at 320/360/390/430px plus dashboard, new project, sample workspace, export preflight, Grading Lab QA, and Design Ledger. A separate isolated public mobile smoke passed the same route set against the active production alias, and the isolated production integrity smoke passed React mount, title/header/navigation, project-creation modal, Settings export control, zero console errors, and zero network failures.
+
+Visual review of the captured mobile states found no obvious clipping or collapsed primary controls in the sampled frames. The export frame has coherent template selection and branding sections, but the Include controls, logo upload, final Export PDF interaction, generated binary, page breaks, and native save semantics remain unproven. This is visual evidence only; it does not close the dedicated Brag Card PNG download or all-export-surface verification gap.
+
+The fresh asset-size audit confirms the previously recorded performance concern: tracked `logo.png` and `app-icon.png` are each approximately 2.25 MiB, `favicon.png` is approximately 960 KiB, `og-image.png` and `app-logo.png` are approximately 588 KiB each, and the 512px icons are approximately 212–327 KiB. Built JavaScript also retains large shared chunks, including the 317 KiB entry bundle and 206 KiB i18n chunk before gzip. These are residual publication risks, not Q066 regressions.
+
+No application-code change is safe to start in this firing. QUEUE-067 is intentionally queued research-only and requires a separate brief plus two research passes; open PRs #70, #71, and #72 are unmerged proposals and cannot be silently adopted. The evidence update is therefore documentation-only, with Q066 left closed and all broader release risks explicitly retained.
+
+---
