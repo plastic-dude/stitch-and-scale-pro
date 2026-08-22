@@ -333,7 +333,7 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
       createPublicationPackage, updatePublicationPackage, deletePublicationPackage,
       batchDelete, batchArchive, batchTag,
       saveStatus, recovered, dismissRecovery 
-    }}>],path:
+    }}>
       {children}
     </ProjectsContext.Provider>
   );

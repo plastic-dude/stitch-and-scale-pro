@@ -4,8 +4,22 @@
 // id via useProject. Tests cover the seed helper and the hook behavior with a
 // mocked context.
 import { describe, it, expect } from 'vitest';
+import fs from 'node:fs';
+import path from 'node:path';
 import { DEMO_PROJECT_ID, makeDemoProject } from './ProjectsContext';
 import { SAMPLE_CREW_NECK_SWEATER } from '@/lib/sample-projects';
+
+const PROJECTS_CONTEXT_SOURCE = fs.readFileSync(
+  path.resolve(__dirname, 'ProjectsContext.tsx'),
+  'utf8',
+);
+
+describe('ProjectsProvider render integrity', () => {
+  it('renders only its children after the Provider opening tag', () => {
+    expect(PROJECTS_CONTEXT_SOURCE).not.toContain('],path:');
+    expect(PROJECTS_CONTEXT_SOURCE).toMatch(/<ProjectsContext\.Provider[\s\S]*>\s*\{children\}/);
+  });
+});
 
 describe('CHK-119 demo seed', () => {
   it('DEMO_PROJECT_ID matches the id the landing CTAs linked to historically', () => {

@@ -438,16 +438,20 @@ export default function Dashboard() {
             <div key={project.id} className="sts-dashboard-item h-full relative group">
               <div className="absolute top-4 left-4 z-20">
                 <button
+                  type="button"
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
                     toggleSelect(project.id);
                   }}
-                  className={`w-5 h-5 rounded border transition-all flex items-center justify-center ${
+                  aria-label={`${selectedIds.has(project.id) ? copy.batchDeselectAll : copy.batchSelectAll}: ${project.name}`}
+                  title={`${selectedIds.has(project.id) ? copy.batchDeselectAll : copy.batchSelectAll}: ${project.name}`}
+                  data-testid={`button-select-project-${project.id}`}
+                  className={`w-5 h-5 rounded border transition-all flex items-center justify-center opacity-100 [@media(pointer:fine)]:opacity-0 [@media(pointer:fine)]:group-hover:opacity-100 ${
                     selectedIds.has(project.id)
                       ? 'bg-accent border-accent text-accent-foreground'
-                      : 'bg-card border-border group-hover:border-accent/50 opacity-0 group-hover:opacity-100'
-                  }`}
+                      : 'bg-card border-border group-hover:border-accent/50'
+                  }}`}
                 >
                   {selectedIds.has(project.id) && <CheckCircle2 className="w-3.5 h-3.5" />}
                 </button>
