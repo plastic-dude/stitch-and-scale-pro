@@ -163,8 +163,8 @@ export default function AssetsPanel({ project, addAsset, deleteAsset }: AssetsPa
             </div>
 
             <div className="flex justify-end gap-2 pt-2">
-              <Button variant="ghost" className="min-h-11" onClick={() => setIsAdding(false)}>{ASSETS_COPY[language].renameCancel || 'Cancel'}</Button>
-              <Button className="min-h-11" onClick={handleSave} disabled={!fileData || !newAsset.label}>{ASSETS_COPY[language].renameSave || 'Save'}</Button>
+              <Button variant="ghost" className="min-h-11" onClick={() => setIsAdding(false)}>{copy.cancel}</Button>
+              <Button className="min-h-11" onClick={handleSave} disabled={!fileData || !newAsset.label}>{copy.save}</Button>
             </div>
           </div>
         )}
