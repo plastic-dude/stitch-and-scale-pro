@@ -204,4 +204,20 @@ describe("QA LIVE-004 — 44×44px touch-target invariant", () => {
       `navigator trigger Button lacks a 44px hit area: ${missing.join(" | ")}`,
     ).toEqual([]);
   });
+
+  it("Settings backup and restore browser-handoff buttons carry a 44px hit area", () => {
+    const source = read("src/pages/settings.tsx");
+    const buttonBlocks = extractAttrBlocks(source, "Button").filter((block) =>
+      block.includes('data-testid="button-export-data"') || block.includes('data-testid="button-import-data"'),
+    );
+    expect(buttonBlocks).toHaveLength(2);
+    const missing = buttonBlocks.filter((block) => {
+      const className = (block.match(/className="([^"]*)"/) || [])[1] || "";
+      return !MIN_HIT(className);
+    });
+    expect(
+      missing,
+      `Settings browser-handoff Button lacks a 44px hit area: ${missing.join(" | ")}`,
+    ).toEqual([]);
+  });
 });

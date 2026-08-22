@@ -564,7 +564,7 @@ export default function SettingsPage() {
                   <h4 className="font-medium text-foreground">{copy.exportWorkspace}</h4>
                   <p className="text-sm text-muted-foreground mt-1">{copy.exportDescription}</p>
                 </div>
-                <Button onClick={handleExport} className="shrink-0 rounded-full shadow-sm group-hover:bg-primary/90 transition-colors" data-testid="button-export-data">
+                <Button onClick={handleExport} className="shrink-0 min-h-11 rounded-full shadow-sm group-hover:bg-primary/90 transition-colors" data-testid="button-export-data">
                   <Download className="w-4 h-4 mr-2" />
                   {copy.downloadBackup}
                 </Button>
@@ -577,7 +577,7 @@ export default function SettingsPage() {
                 </div>
                 <div>
                   <input type="file" accept=".json" className="hidden" ref={fileInputRef} onChange={handleFileChange} />
-                  <Button onClick={() => fileInputRef.current?.click()} variant="outline" className="shrink-0 rounded-full border-2 hover:bg-secondary/20" data-testid="button-import-data">
+                  <Button onClick={() => fileInputRef.current?.click()} variant="outline" className="shrink-0 min-h-11 rounded-full border-2 hover:bg-secondary/20" data-testid="button-import-data">
                     <Upload className="w-4 h-4 mr-2" />
                     {copy.uploadFile}
                   </Button>
