@@ -148,7 +148,7 @@ export default function Dashboard() {
     a.click();
     a.remove();
     URL.revokeObjectURL(url);
-    toast({ title: copy.exported, description: tc.projectExportedDescription(project.name) });
+    toast({ title: copy.exportRequested, description: tc.projectExportRequestedDescription(project.name) });
   };
 
   const handleDeleteConfirmed = () => {

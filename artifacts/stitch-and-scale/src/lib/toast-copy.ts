@@ -23,7 +23,7 @@ export interface ToastCopy {
   fileCouldNotBeRead: string;
   importFailed: string;
   importFailedDescription: string;
-  backupDownloaded: string;
+  backupExportRequested: string;
   onboardingRestarted: string;
   onboardingRestartedDescription: string;
   resetToCycValues: string;
@@ -49,7 +49,7 @@ export interface ToastCopy {
   importMergedDescription: (imported: number, kept: number) => string;
   /** `${n} project(s) restored` title. */
   importSuccessTitle: (n: number) => string;
-  backupDownloadedDescription: (n: number) => string;
+  backupExportRequestedDescription: (n: number) => string;
   /** `"${label}" restored` + description. */
   measurementRestored: (label: string) => { title: string; description: string };
   /** `"${label}" deleted` + Undo description. */
@@ -67,8 +67,8 @@ export interface ToastCopy {
   showTierNotedDescription: (tierLabel: string) => string;
   /** `"${name} (Copy)" was added to your patterns.` */
   projectDuplicateDescription: (name: string) => string;
-  /** `${name}.json downloaded.` */
-  projectExportedDescription: (name: string) => string;
+  /** `${name}.json` export requested; the browser controls whether it is saved. */
+  projectExportRequestedDescription: (name: string) => string;
   /** `"${name}" was removed.` */
   projectDeletedDescription: (name: string) => string;
   /** `"${name}" was added to your patterns.` */
@@ -116,7 +116,7 @@ export const COPY: Record<LanguageCode, ToastCopy> = {
     fileCouldNotBeRead: 'The file could not be read.',
     importFailed: 'Import failed',
     importFailedDescription: 'The file could not be parsed correctly.',
-    backupDownloaded: 'Backup downloaded',
+    backupExportRequested: 'Backup export requested',
     onboardingRestarted: 'Onboarding restarted',
     onboardingRestartedDescription: 'The setup guide will appear on your next visit to the dashboard.',
     resetToCycValues: 'Reset to CYC values',
@@ -140,7 +140,7 @@ export const COPY: Record<LanguageCode, ToastCopy> = {
     importSuccess: 'Import successful',
     importSuccessTitle: (n: number) => `Import successful — ${n} project${n === 1 ? '' : 's'} restored`,
     importMergedDescription: (imported: number, kept: number) => `Merged with your workspace; ${kept} existing project${kept === 1 ? '' : 's'} preserved untouched. (${imported} imported)`,
-    backupDownloadedDescription: (n: number) => `${n} project${n === 1 ? '' : 's'} saved to the file.`,
+    backupExportRequestedDescription: (n: number) => `Your browser was asked to save ${n} project${n === 1 ? '' : 's'}; check your downloads if needed.`,
     measurementRestored: (label: string) => ({ title: `"${label}" restored`, description: 'Back in the section, nothing else changed.' }),
     measurementDeleted: (label: string) => ({ title: `"${label}" deleted`, description: 'One click is never final: hit Undo within 8s to get it back.' }),
     measurementUpdatedAdded: (label: string, isUpdating: boolean) => ({
@@ -152,7 +152,7 @@ export const COPY: Record<LanguageCode, ToastCopy> = {
     yarnPoolRequired: (value: number, unit: string, max: number) => `${value} ${unit} required (max ${max}).`,
     showTierNotedDescription: (tierLabel: string) => `${tierLabel} — defaults are starting points, tune attendance and fees to the actual event.`,
     projectDuplicateDescription: (name: string) => `"${name} (Copy)" was added to your patterns.`,
-    projectExportedDescription: (name: string) => `${name}.json downloaded.`,
+    projectExportRequestedDescription: (name: string) => `${name}.json export requested; check your browser downloads if needed.`,
     projectDeletedDescription: (name: string) => `"${name}" was removed.`,
     projectImportedDescription: (name: string) => `"${name}" was added to your patterns.`,
     courseCopied: 'Copied',
@@ -192,7 +192,7 @@ export const COPY: Record<LanguageCode, ToastCopy> = {
     fileCouldNotBeRead: 'Die Datei konnte nicht gelesen werden.',
     importFailed: 'Import fehlgeschlagen',
     importFailedDescription: 'Die Datei konnte nicht korrekt eingelesen werden.',
-    backupDownloaded: 'Backup heruntergeladen',
+    backupExportRequested: 'Backup-Export angefordert',
     onboardingRestarted: 'Onboarding neu gestartet',
     onboardingRestartedDescription: 'Die Einrichtungsanleitung erscheint beim nächsten Besuch des Dashboards.',
     resetToCycValues: 'Auf CYC-Werte zurückgesetzt',
@@ -216,7 +216,7 @@ export const COPY: Record<LanguageCode, ToastCopy> = {
     importSuccess: 'Import erfolgreich',
     importSuccessTitle: (n: number) => `Import erfolgreich — ${n} Projekt${n === 1 ? '' : 'e'} wiederhergestellt`,
     importMergedDescription: (imported: number, kept: number) => `Mit deinem Arbeitsbereich zusammengeführt; ${kept} vorhandene${kept === 1 ? 's' : ''} Projekt${kept === 1 ? '' : 'e'} unberührt beibehalten. (${imported} importiert)`,
-    backupDownloadedDescription: (n: number) => `${n} Projekt${n === 1 ? '' : 'e'} in der Datei gesichert.`,
+    backupExportRequestedDescription: (n: number) => `Dein Browser wurde gebeten, ${n} Projekt${n === 1 ? '' : 'e'} zu speichern; prüfe bei Bedarf deine Downloads.`,
     measurementRestored: (label: string) => ({ title: `„${label}" wiederhergestellt`, description: 'Wieder im Abschnitt, nichts Weiteres wurde geändert.' }),
     measurementDeleted: (label: string) => ({ title: `„${label}" gelöscht`, description: 'Ein Klick ist nie endgültig: Mit Rückgängig innerhalb von 8s holst du es zurück.' }),
     measurementUpdatedAdded: (label: string, isUpdating: boolean) => ({
@@ -228,7 +228,7 @@ export const COPY: Record<LanguageCode, ToastCopy> = {
     yarnPoolRequired: (value: number, unit: string, max: number) => `${value} ${unit} erforderlich (max ${max}).`,
     showTierNotedDescription: (tierLabel: string) => `${tierLabel} — die Vorgaben sind Startpunkte, passe Besucherzahl und Gebühren an die tatsächliche Veranstaltung an.`,
     projectDuplicateDescription: (name: string) => `„${name} (Kopie)" wurde zu deinen Mustern hinzugefügt.`,
-    projectExportedDescription: (name: string) => `${name}.json heruntergeladen.`,
+    projectExportRequestedDescription: (name: string) => `${name}.json-Export angefordert; prüfe bei Bedarf deine Browser-Downloads.`,
     projectDeletedDescription: (name: string) => `„${name}" wurde entfernt.`,
     projectImportedDescription: (name: string) => `„${name}" wurde zu deinen Mustern hinzugefügt.`,
     courseCopied: 'Kopiert',
@@ -268,7 +268,7 @@ export const COPY: Record<LanguageCode, ToastCopy> = {
     fileCouldNotBeRead: 'Le fichier n\'a pas pu être lu.',
     importFailed: 'Échec de l\'import',
     importFailedDescription: 'Le fichier n\'a pas pu être analysé correctement.',
-    backupDownloaded: 'Sauvegarde téléchargée',
+    backupExportRequested: 'Export de sauvegarde demandé',
     onboardingRestarted: 'Onboarding redémarré',
     onboardingRestartedDescription: 'Le guide de configuration apparaîtra lors de votre prochaine visite du tableau de bord.',
     resetToCycValues: 'Valeurs CYC rétablies',
@@ -292,7 +292,7 @@ export const COPY: Record<LanguageCode, ToastCopy> = {
     importSuccess: 'Import réussi',
     importSuccessTitle: (n: number) => `Import réussi — ${n} projet${n > 1 ? 's' : ''} restauré${n > 1 ? 's' : ''}`,
     importMergedDescription: (imported: number, kept: number) => `Fusionné avec votre espace de travail ; ${kept} projet${kept > 1 ? 's' : ''} existant${kept > 1 ? 's' : ''} conservé${kept > 1 ? 's' : ''} intact. (${imported} importé)`,
-    backupDownloadedDescription: (n: number) => `${n} projet${n > 1 ? 's' : ''} enregistré${n > 1 ? 's' : ''} dans le fichier.`,
+    backupExportRequestedDescription: (n: number) => `Votre navigateur a été invité à enregistrer ${n} projet${n > 1 ? 's' : ''} ; vérifiez vos téléchargements si nécessaire.`,
     measurementRestored: (label: string) => ({ title: `« ${label} » restauré`, description: 'De retour dans la section, rien d\'autre n\'a changé.' }),
     measurementDeleted: (label: string) => ({ title: `« ${label} » supprimé`, description: 'Un clic n\'est jamais définitif : utilisez Annuler sous 8s pour le récupérer.' }),
     measurementUpdatedAdded: (label: string, isUpdating: boolean) => ({
@@ -304,7 +304,7 @@ export const COPY: Record<LanguageCode, ToastCopy> = {
     yarnPoolRequired: (value: number, unit: string, max: number) => `${value} ${unit} necesario${value === 1 ? "" : "s"} (máx ${max}).`,
     showTierNotedDescription: (tierLabel: string) => `${tierLabel} — les valeurs par défaut sont des points de départ, ajustez la fréquentation et les frais à l'événement réel.`,
     projectDuplicateDescription: (name: string) => `« ${name} (Copie) » a été ajouté à vos motifs.`,
-    projectExportedDescription: (name: string) => `${name}.json téléchargé.`,
+    projectExportRequestedDescription: (name: string) => `Export de ${name}.json demandé ; vérifiez vos téléchargements si nécessaire.`,
     projectDeletedDescription: (name: string) => `« ${name} » a été supprimé.`,
     projectImportedDescription: (name: string) => `« ${name} » a été ajouté à vos motifs.`,
     courseCopied: 'Copié',
@@ -345,7 +345,7 @@ export const COPY: Record<LanguageCode, ToastCopy> = {
     fileCouldNotBeRead: 'No se pudo leer el archivo.',
     importFailed: 'Error en la importación',
     importFailedDescription: 'El archivo no se pudo analizar correctamente.',
-    backupDownloaded: 'Copia de seguridad descargada',
+    backupExportRequested: 'Exportación de copia solicitada',
     onboardingRestarted: 'Onboarding reiniciado',
     onboardingRestartedDescription: 'La guía de configuración aparecerá en tu próxima visita al panel.',
     resetToCycValues: 'Restablecido a valores CYC',
@@ -369,7 +369,7 @@ export const COPY: Record<LanguageCode, ToastCopy> = {
     importSuccess: 'Importación correcta',
     importSuccessTitle: (n: number) => `Importación correcta — ${n} proyecto${n === 1 ? '' : 's'} restaurado${n === 1 ? '' : 's'}`,
     importMergedDescription: (imported: number, kept: number) => `Fusionado con tu espacio de trabajo; ${kept} proyecto${kept === 1 ? '' : 's'} existente${kept === 1 ? '' : 's'} conservado${kept === 1 ? '' : 's'} intacto. (${imported} importado)`,
-    backupDownloadedDescription: (n: number) => `${n} proyecto${n === 1 ? '' : 's'} guardado${n === 1 ? '' : 's'} en el archivo.`,
+    backupExportRequestedDescription: (n: number) => `Se pidió a tu navegador que guardara ${n} proyecto${n === 1 ? '' : 's'}; comprueba tus descargas si hace falta.`,
     measurementRestored: (label: string) => ({ title: `«${label}» restaurado`, description: 'De vuelta en la sección, nada más ha cambiado.' }),
     measurementDeleted: (label: string) => ({ title: `«${label}» eliminado`, description: 'Un clic nunca es definitivo: pulsa Deshacer en 8s para recuperarlo.' }),
     measurementUpdatedAdded: (label: string, isUpdating: boolean) => ({
@@ -381,7 +381,7 @@ export const COPY: Record<LanguageCode, ToastCopy> = {
     yarnPoolRequired: (value: number, unit: string, max: number) => `${value} ${unit} requerido${value === 1 ? '' : 's'} (máx ${max}).`,
     showTierNotedDescription: (tierLabel: string) => `${tierLabel} — los valores por defecto son puntos de partida, ajusta asistencia y tarifas al evento real.`,
     projectDuplicateDescription: (name: string) => `«${name} (Copia)» se añadió a tus patrones.`,
-    projectExportedDescription: (name: string) => `${name}.json descargado.`,
+    projectExportRequestedDescription: (name: string) => `Exportación de ${name}.json solicitada; comprueba tus descargas si hace falta.`,
     projectDeletedDescription: (name: string) => `«${name}» se eliminó.`,
     projectImportedDescription: (name: string) => `«${name}» se añadió a tus patrones.`,
     courseCopied: 'Copiado',
@@ -421,7 +421,7 @@ export const COPY: Record<LanguageCode, ToastCopy> = {
     fileCouldNotBeRead: 'O ficheiro não pôde ser lido.',
     importFailed: 'Importação falhou',
     importFailedDescription: 'O ficheiro não pôde ser processado corretamente.',
-    backupDownloaded: 'Cópia de segurança descarregada',
+    backupExportRequested: 'Exportação da cópia solicitada',
     onboardingRestarted: 'Onboarding reiniciado',
     onboardingRestartedDescription: 'O guia de configuração aparecerá na tua próxima visita ao painel.',
     resetToCycValues: 'Valores CYC repostos',
@@ -445,7 +445,7 @@ export const COPY: Record<LanguageCode, ToastCopy> = {
     importSuccess: 'Importação bem-sucedida',
     importSuccessTitle: (n: number) => `Importação bem-sucedida — ${n} projeto${n === 1 ? '' : 's'} restaurado${n === 1 ? '' : 's'}`,
     importMergedDescription: (imported: number, kept: number) => `Juntado ao teu espaço de trabalho; ${kept} projeto${kept === 1 ? '' : 's'} existente${kept === 1 ? '' : 's'} mantido${kept === 1 ? '' : 's'} intacto. (${imported} importado)`,
-    backupDownloadedDescription: (n: number) => `${n} projeto${n === 1 ? '' : 's'} guardado${n === 1 ? '' : 's'} no ficheiro.`,
+    backupExportRequestedDescription: (n: number) => `O teu navegador recebeu um pedido para guardar ${n} projeto${n === 1 ? '' : 's'}; verifica as transferências se necessário.`,
     measurementRestored: (label: string) => ({ title: `«${label}» restaurado`, description: 'De volta à secção, mais nada foi alterado.' }),
     measurementDeleted: (label: string) => ({ title: `«${label}» eliminado`, description: 'Um clique nunca é definitivo: usa Desfazer dentro de 8s para o recuperar.' }),
     measurementUpdatedAdded: (label: string, isUpdating: boolean) => ({
@@ -457,7 +457,7 @@ export const COPY: Record<LanguageCode, ToastCopy> = {
     yarnPoolRequired: (value: number, unit: string, max: number) => `${value} ${unit} obrigatório${value === 1 ? '' : 's'} (máx ${max}).`,
     showTierNotedDescription: (tierLabel: string) => `${tierLabel} — os padrões são pontos de partida, ajusta a afluência e as taxas ao evento real.`,
     projectDuplicateDescription: (name: string) => `«${name} (Cópia)» foi adicionado aos teus padrões.`,
-    projectExportedDescription: (name: string) => `${name}.json descarregado.`,
+    projectExportRequestedDescription: (name: string) => `Exportação de ${name}.json solicitada; verifica as transferências se necessário.`,
     projectDeletedDescription: (name: string) => `«${name}» foi removido.`,
     projectImportedDescription: (name: string) => `«${name}» foi adicionado aos teus padrões.`,
     courseCopied: 'Copiado',

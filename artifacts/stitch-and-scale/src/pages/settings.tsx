@@ -94,7 +94,7 @@ export default function SettingsPage() {
   const handleExport = async () => {
     try {
       const migration = await exportData();
-      toast({ title: tc.backupDownloaded, description: tc.backupDownloadedDescription(migration.snapshot.projects.length) });
+      toast({ title: tc.backupExportRequested, description: tc.backupExportRequestedDescription(migration.snapshot.projects.length) });
     } catch {
       toast({ title: tc.importFailed, description: tc.importFailedDescription, variant: 'destructive' });
     }

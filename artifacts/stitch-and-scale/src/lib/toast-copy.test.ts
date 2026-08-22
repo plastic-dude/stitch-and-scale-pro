@@ -17,7 +17,7 @@ const stringKeys: Array<keyof ToastCopy> = [
   'fileCouldNotBeRead',
   'importFailed',
   'importFailedDescription',
-  'backupDownloaded',
+  'backupExportRequested',
   'onboardingRestarted',
   'onboardingRestartedDescription',
   'resetToCycValues',
@@ -53,7 +53,7 @@ describe('getToastCopy', () => {
   it('returns the English copy for an unknown language code', () => {
     const tc = getToastCopy('xx' as never);
     expect(tc.sectionDeletedTitle).toBe('Section deleted');
-    expect(tc.backupDownloaded).toBe('Backup downloaded');
+    expect(tc.backupExportRequested).toBe('Backup export requested');
     expect(tc.projectImportedDescription('Test')).toBe('"Test" was added to your patterns.');
   });
 
@@ -85,12 +85,12 @@ describe('getToastCopy', () => {
       expect(tc.measurementDeleted('Cuff').title).toContain('Cuff');
       expect(tc.importMergedDescription(2, 1)).toContain('2');
       expect(tc.importMergedDescription(2, 1)).toContain('1');
-      expect(tc.backupDownloadedDescription(4)).toContain('4');
+      expect(tc.backupExportRequestedDescription(4)).toContain('4');
       expect(tc.rosterRebuiltDescription(6, 3)).toContain('6');
       expect(tc.rosterRebuiltDescription(6, 3)).toContain('3');
       expect(tc.importSuccessTitle(1)).toContain('1');
       expect(tc.projectDuplicateDescription('A (Copy)')).toContain('A (Copy)');
-      expect(tc.projectExportedDescription('B')).toContain('B');
+      expect(tc.projectExportRequestedDescription('B')).toContain('B');
       expect(tc.yarnLoadedTitle('Merino')).toContain('Merino');
       expect(tc.showTierNotedDescription('Regional show')).toContain('Regional show');
       expect(tc.yarnPoolRequired(6, 'Grams', 6)).toContain('6');
@@ -109,12 +109,21 @@ describe('getToastCopy', () => {
   });
 
   it('leaves no plain-English leftovers in the German and French maps', () => {
-    const leftovers = ['Section deleted', 'Notes saved', 'Backup downloaded', 'Copied', 'Copy failed'];
+    const leftovers = ['Section deleted', 'Notes saved', 'Backup downloaded', 'Backup export requested', 'Pattern exported', 'Copied', 'Copy failed'];
     for (const locale of ['de', 'fr'] as const) {
       const tc = getToastCopy(locale);
       for (const key of stringKeys) {
         expect(tc[key]).not.toBe(leftovers as never);
       }
+    }
+  });
+
+  it('describes browser-mediated exports as requests, not completed downloads', () => {
+    for (const locale of LOCALES) {
+      const tc = getToastCopy(locale);
+      const messages = [tc.backupExportRequested, tc.backupExportRequestedDescription(2), tc.projectExportRequestedDescription('B')].join(' ');
+      expect(messages).not.toMatch(/downloaded|heruntergeladen|téléchargé|descargado|descarregado|saved to the file|in der Datei gesichert|enregistré.*fichier|guardado.*archivo|guardado.*ficheiro/i);
+      expect(messages).toMatch(/requested|angefordert|demandé|solicitada|solicitada/i);
     }
   });
 

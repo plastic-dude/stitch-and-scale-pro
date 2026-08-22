@@ -55,6 +55,15 @@ describe('Dashboard copy catalogue', () => {
     expect(DASHBOARD_COPY.de.renameSaved).toBe('Muster umbenannt');
   });
 
+  it('uses request-only copy for the single-project JSON browser handoff', () => {
+    expect(DASHBOARD_COPY.en.exportRequested).toBe('Pattern export requested');
+    for (const locale of ['de', 'fr', 'es', 'pt'] as const) {
+      expect(DASHBOARD_COPY[locale].exportRequested).toBeTruthy();
+      expect(DASHBOARD_COPY[locale].exportRequested).not.toBe(DASHBOARD_COPY.en.exportRequested);
+    }
+    expect(Object.values(DASHBOARD_COPY).map((copy) => copy.exportRequested).join(' ')).not.toMatch(/downloaded|exported|heruntergeladen|exportiert|téléchargé|exporté|descargado|exportado|descarregado|exportado/i);
+  });
+
   it('non-English locales override the English card-action fallbacks (QA 51-A)', () => {
     for (const locale of ['de', 'fr', 'es', 'pt'] as const) {
       expect(DASHBOARD_COPY[locale].duplicateAction).not.toBe('Duplicate');
