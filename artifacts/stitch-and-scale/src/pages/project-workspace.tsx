@@ -216,7 +216,8 @@ export default function ProjectWorkspace() {
     deleteSnapshot,
     createPublicationPackage,
     updatePublicationPackage,
-    deletePublicationPackage
+    deletePublicationPackage,
+    addPublicationArtifact
   } = projectHook;
   const copy = getWorkspaceCopy(currentLanguage);
   const tc = getToastCopy(currentLanguage);
@@ -900,6 +901,7 @@ export default function ProjectWorkspace() {
               createPublicationPackage={createPublicationPackage}
               updatePublicationPackage={updatePublicationPackage}
               deletePublicationPackage={deletePublicationPackage}
+              addPublicationArtifact={addPublicationArtifact}
             />
           </React.Suspense>
         );

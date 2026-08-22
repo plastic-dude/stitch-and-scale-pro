@@ -85,8 +85,10 @@ export interface PublicationArtifact {
   id: string;
   type: 'pdf' | 'csv' | 'json' | 'image';
   label: string;
-  url: string;
-  createdAt: string;
+  filename: string;
+  timestamp: string;
+  qualitySnapshot?: 'pass' | 'fail' | 'pending' | 'blocked';
+  url?: string;
   revisionId?: string;
 }
 

@@ -7,7 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useSettings } from '@/context/SettingsContext';
 import { getWorkspaceCopy, workspaceGaugeByline, type LanguageCode } from '@/lib/workspace-copy';
-import { Package, Plus, Trash2, FileText, Download, ShieldCheck, History } from 'lucide-react';
+import { Package, Plus, Trash2, FileText, Download, ShieldCheck, History, CheckCircle2, AlertTriangle, Clock } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import {
   Dialog,
   DialogContent,
@@ -34,13 +35,15 @@ interface ProjectPackageCardProps {
   createPublicationPackage: (pkg: PublicationPackage) => void;
   updatePublicationPackage: (pkg: PublicationPackage) => void;
   deletePublicationPackage: (packageId: string) => void;
+  addPublicationArtifact: (packageId: string, artifact: PublicationArtifact) => void;
 }
 
 export function ProjectPackageCard({ 
   project, 
   createPublicationPackage, 
   updatePublicationPackage, 
-  deletePublicationPackage 
+  deletePublicationPackage,
+  addPublicationArtifact
 }: ProjectPackageCardProps) {
   const { language } = useSettings();
   const copy = getWorkspaceCopy(language);
@@ -222,12 +225,37 @@ export function ProjectPackageCard({
                     <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-bold">{copy.publicationArtifacts}</p>
                     <div className="space-y-1.5">
                       {pkg.artifacts.map((art) => (
-                        <div key={art.id} className="flex items-center justify-between p-2 rounded-lg bg-white border shadow-sm">
-                          <div className="flex items-center gap-2">
-                            <FileText className="h-3.5 w-3.5 text-primary/60" />
-                            <span className="text-xs font-medium">{art.label}</span>
+                        <div key={art.id} className="flex items-center justify-between p-2 rounded-lg bg-white border shadow-sm hover:bg-muted/10 transition-colors">
+                          <div className="flex items-center gap-2 overflow-hidden">
+                            <div className={cn(
+                              "w-7 h-7 rounded flex items-center justify-center shrink-0",
+                              art.type === 'pdf' ? "bg-red-50 text-red-500" : "bg-blue-50 text-blue-500"
+                            )}>
+                              <FileText className="h-3.5 w-3.5" />
+                            </div>
+                            <div className="overflow-hidden">
+                              <div className="text-xs font-medium truncate">{art.label}</div>
+                              <div className="text-[9px] text-muted-foreground flex items-center gap-1.5">
+                                <Clock className="h-2.5 w-2.5" />
+                                {formatDate(art.timestamp)}
+                                {art.qualitySnapshot && (
+                                  <>
+                                    <span className="text-border">|</span>
+                                    {art.qualitySnapshot === 'pass' ? (
+                                      <span className="text-green-600 flex items-center gap-0.5">
+                                        <CheckCircle2 className="h-2.5 w-2.5" />
+                                      </span>
+                                    ) : (
+                                      <span className="text-amber-600 flex items-center gap-0.5">
+                                        <AlertTriangle className="h-2.5 w-2.5" />
+                                      </span>
+                                    )}
+                                  </>
+                                )}
+                              </div>
+                            </div>
                           </div>
-                          <Button variant="ghost" size="icon" className="h-6 w-6">
+                          <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground hover:text-foreground shrink-0">
                             <Download className="h-3 w-3" />
                           </Button>
                         </div>

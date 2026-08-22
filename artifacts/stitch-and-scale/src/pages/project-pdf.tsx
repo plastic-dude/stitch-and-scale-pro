@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState, useCallback } from 'react'
 import { useParams, useLocation } from 'wouter';
 import { useProject, useProjects, type PatternProject } from '@/context/ProjectsContext';
 import { useSettings } from '@/context/SettingsContext';
-import { gradePattern, resolveProjectStandards } from '@/lib/grading-engine';
+import { gradePattern, resolveProjectStandards, generateId } from '@/lib/grading-engine';
 import { THEMES, resolveTheme, type ThemeId } from '@/lib/pdf/themes';
 import { renderDocument } from '@/lib/pdf/renderer';
 import { validateDraft } from '@/lib/pattern-draft-renderer';
@@ -11,7 +11,7 @@ import { compressImageToDataUrl } from '@/lib/image-utils';
 import { getPdfLabels } from '@/lib/pdf/labels';
 import { getWorkspaceCopy } from '@/lib/workspace-copy';
 import { getLabStatCopy } from '@/lib/lab-stat-copy';
-import { validatePublicationPreflight } from '@/lib/publication-quality';
+import { validatePublicationPreflight, getPreflightStatus } from '@/lib/publication-quality';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -353,7 +353,24 @@ export default function ProjectPdf() {
       includeNotes,
       customLogo,
     });
-    const attempt = openPrintWindow(previewHtml, suggestedPdf);
+    const attempt = openPrintWindow(previewHtml, suggestedPdf, () => {
+      // Record artifact if project has publication packages
+      if (projectHook.project.publicationPackages && projectHook.project.publicationPackages.length > 0) {
+        // For simplicity, add to the first package or the most recent one
+        const pkg = projectHook.project.publicationPackages[0];
+        projectHook.addPublicationArtifact(pkg.id, {
+          id: generateId(),
+          type: 'pdf',
+          label: `Export ${new Date().toLocaleDateString(language)}`,
+          filename: suggestedPdf,
+          timestamp: new Date().toISOString(),
+          qualitySnapshot: publicationPreflight ? getPreflightStatus(publicationPreflight) : 'pass'
+        });
+        toast({
+          title: tc.artifactCreated(`Export ${new Date().toLocaleDateString(language)}`),
+        });
+      }
+    });
     setShowTip(false);
     window.dispatchEvent(new CustomEvent('stitch-and-scale:pattern-exported'));
     if (!attempt.ok) {
@@ -372,7 +389,7 @@ export default function ProjectPdf() {
     // preparation state. `openPrintWindow` retains its own in-flight lock and
     // afterprint cleanup independently of this UI state.
     setIsExporting(false);
-  }, [previewHtml, filename, selectedTheme, accentColor, includeCover, includeGauge, includeNotes, customLogo, pdfDefaults, setPdfDefaults, projectHook?.project, publicationPreflight?.readyToPrint, labels.exportFailed, tc, toast]);
+  }, [previewHtml, filename, selectedTheme, accentColor, includeCover, includeGauge, includeNotes, customLogo, pdfDefaults, setPdfDefaults, projectHook?.project, projectHook, publicationPreflight, language, labels.exportFailed, tc, toast]);
 
   if (!projectHook) {
     return (

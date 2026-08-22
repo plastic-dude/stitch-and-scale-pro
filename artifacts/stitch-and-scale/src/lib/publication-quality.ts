@@ -144,6 +144,12 @@ export function validatePublicationPreflight(input: PublicationPreflightInput): 
   };
 }
 
+export function getPreflightStatus(result: PublicationPreflightResult): 'pass' | 'fail' | 'pending' | 'blocked' {
+  if (result.flags.some(f => f.severity === 'error')) return 'blocked';
+  if (result.flags.some(f => f.severity === 'warn')) return 'fail';
+  return 'pass';
+}
+
 export function hasAllStandardSizes(project: PatternProject): boolean {
   return ALL_SIZES.includes(project.baseSize);
 }

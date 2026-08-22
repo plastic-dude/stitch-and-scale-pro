@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useReducer, useRef, useState } from 'react';
 import { get, set } from 'idb-keyval';
-import { type PatternProject, generateId } from '@/lib/grading-engine';
+import { type PatternProject, generateId, type PublicationPackage, type PublicationArtifact } from '@/lib/grading-engine';
 export type { PatternProject };
 import { getSampleCrewNeckSweater } from '@/lib/sample-projects';
 import { LanguageCode } from '@/lib/i18n';
@@ -31,6 +31,7 @@ type ProjectsAction =
   | { type: 'CREATE_PUBLICATION_PACKAGE'; payload: { projectId: string; pkg: any } }
   | { type: 'UPDATE_PUBLICATION_PACKAGE'; payload: { projectId: string; pkg: any } }
   | { type: 'DELETE_PUBLICATION_PACKAGE'; payload: { projectId: string; packageId: string } }
+  | { type: 'ADD_PUBLICATION_ARTIFACT'; payload: { projectId: string; packageId: string; artifact: PublicationArtifact } }
   | { type: 'BATCH_DELETE'; payload: string[] }
   | { type: 'BATCH_ARCHIVE'; payload: { ids: string[]; archived: boolean } }
   | { type: 'BATCH_TAG'; payload: { ids: string[]; tags: string[] } };
@@ -51,6 +52,7 @@ interface ProjectsContextType {
   createPublicationPackage: (projectId: string, pkg: any) => void;
   updatePublicationPackage: (projectId: string, pkg: any) => void;
   deletePublicationPackage: (projectId: string, packageId: string) => void;
+  addPublicationArtifact: (projectId: string, packageId: string, artifact: PublicationArtifact) => void;
   batchDelete: (ids: string[]) => void;
   batchArchive: (ids: string[], archived: boolean) => void;
   batchTag: (ids: string[], tags: string[]) => void;
@@ -189,6 +191,20 @@ function projectsReducer(state: PatternProject[], action: ProjectsAction): Patte
         };
       });
       break;
+    case 'ADD_PUBLICATION_ARTIFACT':
+      newState = state.map(p => {
+        if (p.id !== action.payload.projectId) return p;
+        return {
+          ...p,
+          publicationPackages: (p.publicationPackages || []).map(pkg => 
+            pkg.id === action.payload.packageId 
+              ? { ...pkg, artifacts: [action.payload.artifact, ...(pkg.artifacts || [])], updatedAt: new Date().toISOString() }
+              : pkg
+          ),
+          updatedAt: new Date().toISOString(),
+        };
+      });
+      break;
     case 'BATCH_DELETE':
       newState = state.filter(p => !action.payload.includes(p.id));
       break;
@@ -312,6 +328,7 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
   const createPublicationPackage = (projectId: string, pkg: any) => dispatch({ type: 'CREATE_PUBLICATION_PACKAGE', payload: { projectId, pkg } });
   const updatePublicationPackage = (projectId: string, pkg: any) => dispatch({ type: 'UPDATE_PUBLICATION_PACKAGE', payload: { projectId, pkg } });
   const deletePublicationPackage = (projectId: string, packageId: string) => dispatch({ type: 'DELETE_PUBLICATION_PACKAGE', payload: { projectId, packageId } });
+  const addPublicationArtifact = (projectId: string, packageId: string, artifact: PublicationArtifact) => dispatch({ type: 'ADD_PUBLICATION_ARTIFACT', payload: { projectId, packageId, artifact } });
   const batchDelete = (ids: string[]) => dispatch({ type: 'BATCH_DELETE', payload: ids });
   const batchArchive = (ids: string[], archived: boolean) => dispatch({ type: 'BATCH_ARCHIVE', payload: { ids, archived } });
   const batchTag = (ids: string[], tags: string[]) => dispatch({ type: 'BATCH_TAG', payload: { ids, tags } });
@@ -330,7 +347,7 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
     <ProjectsContext.Provider value={{ 
       projects, createProject, updateProject, deleteProject, duplicateProject, importProject, 
       createSnapshot, restoreSnapshot, deleteSnapshot, updateContract,
-      createPublicationPackage, updatePublicationPackage, deletePublicationPackage,
+      createPublicationPackage, updatePublicationPackage, deletePublicationPackage, addPublicationArtifact,
       batchDelete, batchArchive, batchTag,
       saveStatus, recovered, dismissRecovery 
     }}>
@@ -366,7 +383,7 @@ export function useProject(id?: string) {
   const { 
     projects, createProject, updateProject, deleteProject, 
     createSnapshot, restoreSnapshot, deleteSnapshot, updateContract,
-    createPublicationPackage, updatePublicationPackage, deletePublicationPackage
+    createPublicationPackage, updatePublicationPackage, deletePublicationPackage, addPublicationArtifact
   } = useProjects();
   if (!id) return null;
   const existing = projects.find(p => p.id === id);
@@ -387,6 +404,7 @@ export function useProject(id?: string) {
       createPublicationPackage: (pkg: any) => createPublicationPackage(DEMO_PROJECT_ID, pkg),
       updatePublicationPackage: (pkg: any) => updatePublicationPackage(DEMO_PROJECT_ID, pkg),
       deletePublicationPackage: (packageId: string) => deletePublicationPackage(DEMO_PROJECT_ID, packageId),
+      addPublicationArtifact: (packageId: string, artifact: PublicationArtifact) => addPublicationArtifact(DEMO_PROJECT_ID, packageId, artifact),
     };
   }
 
@@ -403,5 +421,6 @@ export function useProject(id?: string) {
     createPublicationPackage: (pkg: any) => createPublicationPackage(existing.id, pkg),
     updatePublicationPackage: (pkg: any) => updatePublicationPackage(existing.id, pkg),
     deletePublicationPackage: (packageId: string) => deletePublicationPackage(existing.id, packageId),
+    addPublicationArtifact: (packageId: string, artifact: PublicationArtifact) => addPublicationArtifact(existing.id, packageId, artifact),
   };
 }

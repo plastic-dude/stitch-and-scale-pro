@@ -97,6 +97,8 @@ export interface ToastCopy {
   incompleteQuarantine: string;
   /** CHK-144 (audit 2026-08-21, F-01): toast title when a base value cannot be saved. `${label} could not be saved: ${raw} is not a valid positive number. A physical dimension cannot be zero or negative.` */
   invalidMeasurementValue: (label: string, raw: string) => string;
+  artifactCreated: (label: string) => string;
+  exportFailed: string;
 }
 
 export const COPY: Record<LanguageCode, ToastCopy> = {
@@ -172,8 +174,9 @@ export const COPY: Record<LanguageCode, ToastCopy> = {
     updated: 'updated',
     copyFailedSelectManually: 'Copy failed — select the text manually.',
     incompleteQuarantine: 'Complete the details to copy',
-    invalidMeasurementValue: (label, raw) => `Measurement “${label}” could not be saved: ${raw} is not a valid positive number. A physical dimension cannot be zero or negative.`,
-
+        invalidMeasurementValue: (label, raw) => `Measurement “${label}” could not be saved: ${raw} is not a valid positive number. A physical dimension cannot be zero or negative.`,
+    artifactCreated: (label) => `Artifact "${label}" was recorded in the publication package.`,
+    exportFailed: 'Export failed. Please check the preflight status.',
   },
   de: {
     copied: 'Kopiert',
@@ -247,8 +250,9 @@ export const COPY: Record<LanguageCode, ToastCopy> = {
     updated: 'aktualisiert',
     copyFailedSelectManually: 'copy fehlgeschlagen — bitte markiere den Text selbst.',
     incompleteQuarantine: 'Vervollständige die Details zum Kopieren',
-    invalidMeasurementValue: (label, raw) => `Maß „${label}“ konnte nicht gespeichert werden: ${raw} ist keine gültige positive Zahl. Eine physische Abmessung kann nicht null oder negativ sein.`,
-
+        invalidMeasurementValue: (label, raw) => `Maß „${label}“ konnte nicht gespeichert werden: ${raw} ist keine gültige positive Zahl. Eine physische Abmessung kann nicht null oder negativ sein.`,
+    artifactCreated: (label) => `Artefakt „${label}“ wurde im Publikationspaket gespeichert.`,
+    exportFailed: 'Export fehlgeschlagen. Bitte prüfe den Preflight-Status.',
   },
   fr: {
     copied: 'Copié',
@@ -324,6 +328,8 @@ export const COPY: Record<LanguageCode, ToastCopy> = {
     copyFailedSelectManually: 'copie échouée — sélectionnez le texte manuellement.',
     incompleteQuarantine: 'Complétez les détails pour copier',
     invalidMeasurementValue: (label, raw) => `La mesure « ${label} » n’a pas pu être enregistrée : ${raw} n’est pas un nombre positif valide. Une dimension physique ne peut pas être nulle ou négative.`,
+    artifactCreated: (label) => `L'artéfact « ${label} » a été enregistré dans le dossier de publication.`,
+    exportFailed: "L'export a échoué. Veuillez vérifier l'état du contrôle préliminaire.",
   },
   es: {
     copied: 'Copiado',
@@ -398,6 +404,8 @@ export const COPY: Record<LanguageCode, ToastCopy> = {
     copyFailedSelectManually: 'no se pudo copiar — selecciona el texto manualmente.',
     incompleteQuarantine: 'Completa los detalles para copiar',
     invalidMeasurementValue: (label, raw) => `La medida « ${label} » no pudo guardarse: ${raw} no es un número positivo válido. Una dimensión física no puede ser nula o negativa.`,
+    artifactCreated: (label) => `El artefacto "${label}" se registró en el paquete de publicación.`,
+    exportFailed: 'Exportación fallida. Por favor, comprueba el estado preflight.',
   },
   pt: {
     copied: 'Copiado',
@@ -472,6 +480,8 @@ export const COPY: Record<LanguageCode, ToastCopy> = {
     copyFailedSelectManually: 'cópia falhou — selecione o texto manualmente.',
     incompleteQuarantine: 'Complete os detalhes para copiar',
     invalidMeasurementValue: (label, raw) => `A medida « ${label} » não pode ser guardada: ${raw} não é um número positivo válido. Uma dimensão física não pode ser nula ou negativa.`,
+    artifactCreated: (label) => `O artefato "${label}" foi registrado no pacote de publicação.`,
+    exportFailed: 'A exportação falhou. Por favor, verifique o status do preflight.',
   },
 };
 

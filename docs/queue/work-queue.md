@@ -57,7 +57,7 @@
 | 49 | QUEUE-042 | Priority 1: Pattern Publication Package — Define and implement the `Pattern Publication Package` with authoritative metadata, instruction resolution, and artifact governance. | MAJOR | done | CHK-185: `6aa86f0492b6d945a9cfbe0e6ac37fb0a51f6c1e`; implemented metadata freezing and artifact tracking |
 | 50 | QUEUE-043 | Priority 0: Pattern Compiler — Mathematical-to-instruction validation via Intermediate Representation (IR) and contradiction checking. | MAJOR | done | CHK-186: `5e4cc734b326f6022d877704ae3d5dfb339a69a7`; implemented compiler engine and validation UI |
 | 51 | QUEUE-044 | Priority 1: Multi-project operations — Batch selection, filtering, tagging, and bulk export with per-project failure reporting. | MAJOR | done | CHK-187: `5c7e907`; implemented batch selection, filtering, bulk export, and batch delete/archive. |
-| 52 | QUEUE-045 | Priority 1 Gap 8: Export lifecycle and artifact quality controls | MAJOR | queued | |
+| 52 | QUEUE-045 | Priority 1 Gap 8: Export lifecycle and artifact quality controls | MAJOR | in-progress | CHK-189 |
 
 ## Run ledger
 | Run (date) | Item worked | Gates | Commit | Next item |
@@ -104,3 +104,4 @@
 | 2026-08-21 (CHK-163) | QUEUE-020 (MAJOR) — Universal Localization II | tsc clean; vitest 2,297/2,297; build green; 6 new tests; cycle log `docs/leader-notes/cycle-2026-08-21-chk163.md` | 06aa57d61d12a84bcd64f1b72b6c5b66fe8c1c4f | QUEUE-021 |
 | 2026-08-22 (CHK-164) | QUEUE-021 (MAJOR) — Audit F-09: Draft placeholder policy | tsc clean; vitest 2,309/2,309; build green; fixed F-09 parser + CHK-163 regressions | ff9d107 | QUEUE-022 |
 | 2026-08-22 (CHK-165) | QUEUE-022 (MAJOR) — Audit: Chart Lab input validation | tsc clean; vitest 2,316/2,316; build green; implemented validateChartInputs + localized UI errors | f170453 | END OF QUEUE |
+| CHK-189 | d181329e255127016e218100753ff3ab6959c555 | QUEUE-045: Export lifecycle and artifact quality controls |

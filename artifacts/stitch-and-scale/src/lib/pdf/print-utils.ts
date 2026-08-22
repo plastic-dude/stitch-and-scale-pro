@@ -25,6 +25,7 @@ let inFlight = false; // guards rapid double/triple clicks during one export.
 export function openPrintWindow(
   html: string,
   suggestedFilename: string,
+  onPrintSuccess?: () => void
 ): PrintAttemptResult {
   if (inFlight) {
     return { ok: false, reason: "blocked" };
@@ -52,6 +53,7 @@ export function openPrintWindow(
         try {
           (win as unknown as Window & { onafterprint?: unknown }).onafterprint = () => {
             inFlight = false;
+            if (onPrintSuccess) onPrintSuccess();
           };
         } catch {
           /* non-blocking */
@@ -100,6 +102,7 @@ export function openPrintWindow(
         if (document.body.contains(iframe)) {
           document.body.removeChild(iframe);
         }
+        if (onPrintSuccess) onPrintSuccess();
       };
     } catch {
       /* non-blocking */
