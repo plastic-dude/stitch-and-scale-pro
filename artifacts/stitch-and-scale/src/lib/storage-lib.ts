@@ -353,15 +353,28 @@ export function useProjectStorageState<T>(
 ): [T, (next: T | ((prev: T) => T)) => void] {
   // Memoized derivation — not a useState lazy initializer.
   const raw = useMemo(() => handle.read(), [handle.scopedKey]); // eslint-disable-line react-hooks/exhaustive-deps
-  const initial = useMemo(() => load(raw), []); // eslint-disable-line react-hooks/exhaustive-deps
+  const initial = useMemo(() => load(raw), [handle.scopedKey, raw]); // eslint-disable-line react-hooks/exhaustive-deps
   const [stored, setStored] = useState<T>(initial);
+  const [storedKey, setStoredKey] = useState(handle.scopedKey);
+
+  // A mounted card can survive a project switch. Hydrate the new scoped key
+  // first; never let the previous project's state write into it during the
+  // transition. The separate key guard makes this ordering explicit.
+  useEffect(() => {
+    if (storedKey === handle.scopedKey) return;
+    setStoredKey(handle.scopedKey);
+    setStored(initial);
+  }, [handle.scopedKey, initial, storedKey]);
+
   // Persist every change through the handle's own write path. The effect
   // deps are stable strings/handle across HMR, so no re-mount replays a
-  // write through a disposed handle.
+  // write through a disposed handle. During a key transition, persistence is
+  // paused until the hydration effect above has installed the new value.
   useEffect(() => {
+    if (storedKey !== handle.scopedKey) return;
     handle.write(stored);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stored, handle.scopedKey]);
+  }, [stored, storedKey, handle.scopedKey]);
   // Updater-function form (setState(s => ...)) keeps the seam as a drop-in
   // replacement for every card's existing useState usage.
   const update = useCallback(

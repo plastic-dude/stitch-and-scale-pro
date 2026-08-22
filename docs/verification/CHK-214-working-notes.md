@@ -1,0 +1,88 @@
+# CHK-214 working verification notes
+
+## Local Settings visual check
+
+- Date: 2026-08-22.
+- URL: `http://127.0.0.1:4174/settings`.
+- Mobile-like browser viewport: approximately 892×768 with page scrolling; the quiet acknowledgments card rendered below the language card and above measurement defaults.
+- The visible toggle label is now `Show quiet acknowledgments`; the card title remains `Quiet acknowledgments`, and the explanatory copy remains separate. This removed the previous duplicate label without changing the preference semantics.
+- The switch is exposed as an interactive `button` with `role="switch"` and stable id `recognition-enabled`; it is visible and reachable in the routed shell.
+- The explanatory copy states that the note is private and dismissible, is shown after the project’s first clean grade, and that disabling it preserves local evidence and does not change grading or exports.
+- No export, Project Book, Brag Card, onboarding-recognition, sharing, counter, or streak UI appeared in this Q066 surface.
+- Browser route status showed the app briefly displaying its existing release-verification indicator during load; no application error was observed.
+
+## Local Settings interaction check
+
+The switch was activated through the visible interactive control at the mobile-like viewport. The page remained stable, the control retained `role="switch"`, and the surrounding measurement, sizing, and appearance controls remained intact. Browser extraction does not expose the switch’s `aria-checked` value in its element summary, so the exact persisted boolean was verified by the focused settings contract tests and TypeScript gates rather than overstated as a DOM assertion.
+
+## Production browser checks
+
+- Exact active production alias: `https://stitch-and-scale-pro-api-server.vercel.app`.
+- The deployed `/settings` route returned the final Q066 surface with `Show quiet acknowledgments`, the private/dismissible explanation, and the `recognition-enabled` switch. The route loaded at the mobile-like browser viewport with no visible clipping or application error.
+- The deployed Projects route returned 200 and rendered the existing local-first test workspace. The browser profile contained 58 projects, including multiple graded audit fixtures and a draft; this is persisted browser test data, not a new application-side counter or Q066 feature.
+- The production shell continued to display `Local only` and the existing storage notice. No Q066 code was observed in export, Project Book, Brag Card, onboarding, sharing, counter, or streak surfaces during this pass.
+
+## Production Grading Lab visual check
+
+- Live route: `https://stitch-and-scale-pro-api-server.vercel.app/project/audit-week-31`, Grading Lab tab.
+- The deployed card showed a computed `Ready` verdict for 9 sizes, the existing size-walk table, and the existing `No flags — the set grades cleanly` message. The new `Check grading` action was visible below the read-through verdict.
+- The card still contains the pre-existing freelance-cost and inclusive XS–5XL context. Q066 did not add recognition to either surface and does not reinterpret them as recognition evidence.
+- The visible copy says the lab reads the project without storing a separate copy; the explicit action is the only new observation seam. No toast was present before action, supporting the no-mount-trigger boundary.
+
+## Production explicit grading-action check
+
+The live Grading Lab exposed exactly one button whose text was `Check grading`. Activating that control through the rendered DOM succeeded; it had no special role or id, which is consistent with a normal deliberate button action. This confirms the recognition path is attached to an explicit grading check rather than component mount or passive verdict rendering. The resulting toast state is checked next.
+
+## Production recognition behavior discrepancy
+
+After the explicit live `Check grading` activation, a controlled browser inspection found no acknowledgment toast or acknowledgment text in the rendered body. The browser’s local storage contained the expected project-scoped keys `stitch-and-scale-recognition-audit-week-31` and `stitch-and-scale-recognition-sample-crew-neck-sweater`, but both values were `{"version":1,"events":[]}`. This means the live interaction did not record an event in this profile. The result is treated as a release-blocking observation requiring code/debug review; no successful production-recognition claim is made.
+
+## Local reproduction boundary
+
+The local preview origin (`http://127.0.0.1:4174/project/audit-week-31`) has an independent browser storage profile and correctly reported `Project Not Found`; it does not contain the production-origin project. Therefore the live empty-ledger observation cannot be reproduced by opening the same slug locally without importing or creating the project. This is an expected local-first origin boundary, not a product defect, and no local production data was modified.
+
+The deployed chunk hash for `grading-lab-card-CppjY1nU.js` exactly matched the locally built artifact, and the live chunk contained the Q066 markers (`Check grading`, `first-clean-grade`, `recognitionEnabled`, and `button-check-grading`). The production mismatch is therefore a runtime-state/persistence issue rather than a stale Grading Lab chunk.
+
+## Local sample-project setup
+
+The local preview dashboard contained two built-in projects and opened `Classic Crew Neck Sweater` at `/project/sample-crew-neck-sweater` successfully. This provides a safe local test project on the isolated preview origin; it does not share production-origin storage, so it cannot read or alter the production `audit-week-31` ledger.
+
+## Local Grading Lab baseline
+
+The local sample `Classic Crew Neck Sweater` rendered the existing read-through `Ready` verdict with 9 graded sizes, zero flags, and the explicit `Check grading` action. The action is present after the verdict content and is not part of the passive render. This is the correct candidate for reproducing the Q066 event path on an isolated local-first project.
+
+## Browser interaction note
+
+The local project’s Grading Lab rendered the same clean nine-size result and explicit Check grading action. The tab strip is horizontally virtualized: the browser’s element index `52` is not a reliable physical target after horizontal scrolling, and synthetic selector clicks did not update the controlled tab state. The live UI remained stable and no application exception was observed. Subsequent verification should use the stable test identifier for the action after ensuring its tab content is active, or test the handler through focused source contracts rather than treating index-based browser clicks as evidence.
+
+## Local Q066 persistence reproduction
+
+After activating the correct Grading Lab tab and querying the mounted `[data-testid="button-check-grading"]`, one explicit local check wrote an event to `stitch-and-scale-recognition-sample-crew-neck-sweater`. The event is `kind: first-clean-grade`, contains the source fingerprint and `sizeCount: 9`, and the project ledger transitioned from an empty version-1 state to one event. This confirms the Q066 handler and canonical local-first persistence work in the tested local build; the earlier public empty-ledger observation is consistent with the active production alias serving a stale bundle.
+
+## Current production alias after promotion
+
+Vercel detail `dpl_ArdFWv7x8rseiZPQmV5nJkfLvqJu` is `READY`, target `production`, and serves `stitch-and-scale-pro-api-server.vercel.app` plus its Git-main alias; its commit is exactly `e6ffb2ef3cb4c360c63ca34364be75721f970917`, matching `origin/main`. Fresh route checks returned 200 for `/`, the sample project route, and its PDF route. MCP checks returned GET 405, allowed OPTIONS 204 with the exact active origin, authenticated `tools/list` 200 with the canonical eight tools, and forbidden-origin 403 / `-32001`.
+
+The fresh production browser now renders the Q066 Grading Lab for `Week 31 — Pinecone Nordic Sweater`: `Ready`, 9 sizes, no flags, and the explicit `Check grading` action. This supersedes the earlier stale-bundle observation; that observation was made before the current production promotion completed.
+
+## Production runtime discrepancy after current promotion
+
+The current production chunk was bounded-inspected and contains the Q066 domain (`first-clean-grade`), the `ready`/size/flags eligibility check, the recognition setting, the project-scoped storage hook, and the explicit handler. Production browser state confirms `recognitionEnabled: true`, project `audit-week-31` exists in `stitch-and-scale-v1`, and its safe structural inputs are one bust measurement, 18 stitches / 26 rows gauge, base size M, and a visible 9-size clean result. Nevertheless, one controlled click on `[data-testid="button-check-grading"]` left `stitch-and-scale-recognition-audit-week-31` as `{version:1,events:[]}` with no toast. This is now a genuine runtime discrepancy in the current bundle, not merely the earlier stale deployment; tracing the handler and storage writes is required before modifying source.
+
+## Interaction-method boundary
+
+The current production alias visibly serves the Q066 Grading Lab and the exact clean 9-size result. Console `.click()` calls on the mounted Check grading control consistently re-persist `{version:1,events:[]}` without a toast, but this synthetic path is not sufficient to establish a product defect because controlled Radix tab/button interactions have also ignored console clicks. The outer page reports no scrollable body despite content below the viewport; the next check must identify the actual scroll container and use a real browser pointer click. No production-readiness claim is made from the synthetic result.
+
+## Current production tab-strip state
+
+The public route remains healthy and the Grading Lab renders the clean nine-size result when selected. After synthetic click attempts, the controlled workspace returns to Wholesale Follow-up; the browser DOM exposes a horizontally scrollable tab strip but no vertical page/container scroll target at the tested coordinates. The next live interaction should use the tab strip’s physical geometry and browser click, then inspect the real button coordinates. This avoids treating console-event behavior as user-level proof.
+
+## Decisive live Q066 interaction
+
+After positioning the actual document scroll and tab strip, a real browser click on the visible production Check grading control succeeded. The exact production alias displayed the private `First clean grade` toast: `This set is Ready across 9 sizes. A quiet checkpoint: the numbers line up. Nothing else is required.` with an explicit `Dismiss` control. This proves the intended user interaction path; earlier console `.click()` attempts were synthetic and not valid evidence of a product defect.
+
+## Storage-hook safeguard and full post-fix gate
+
+The live write trace showed that the genuine browser click displayed the Q066 toast but produced only empty-state writes. The canonical `useProjectStorageState` hook was hardened so a mounted card hydrates a changed scoped key before persistence; the previous project state cannot overwrite the new project key during the transition. A happy-dom regression covers the alpha-to-beta project switch and confirms the beta ledger remains intact.
+
+The focused Q066, recognition, locale-parity, and storage-hook tests passed: 101 tests. The full Vitest suite passed: 2,535 tests across 214 files. Application and root typechecks passed. The production build passed in 5.03 seconds with the six known nonfatal sourcemap-location warnings. `git diff --check`, the source-bundle verifier (`c19b71cdd06d250326d80eddc27685cbb627f91b03d85a624f0bb4894ba2a082`), and the protected invention-brief hash (`5a7668a95841e7e74fc2dcf702cf1ffa94deed06d7029116919dcc0489b609ce`) passed. The outer gate command’s final status aggregation emitted a shell error because `PIPESTATUS` was evaluated after the pipeline context had closed; the individual quality commands completed successfully, as shown by their summaries and the successful build/integrity markers.
