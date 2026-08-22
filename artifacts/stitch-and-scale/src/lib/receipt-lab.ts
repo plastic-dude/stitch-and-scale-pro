@@ -230,6 +230,8 @@ export interface ReceiptLabResult {
   nextDocNumber: string;
   /** quarantined if subtotal is 0 or non-finite */
   isComplete: boolean;
+  /** quarantined if inputs are invalid (negative tax, extreme rates) */
+  isValid: boolean;
 }
 
 // --- helpers -----------------------------------------------------------------
@@ -471,6 +473,7 @@ export function analyzeReceipt(input: ReceiptLabInput): ReceiptLabResult {
 
 
   const isComplete = isEffectiveSale(draft) && isFiniteNumber(total) && total > 0;
+  const isValid = isFiniteNumber(fees.taxAmount) && isFiniteNumber(profit) && isFiniteNumber(total);
 
   return {
     document: {
@@ -490,6 +493,7 @@ export function analyzeReceipt(input: ReceiptLabInput): ReceiptLabResult {
     totals: { salesCount, revenue, refunds, profit: profitTotal },
     nextDocNumber: nextDocNumber(ledger, draft.kind),
     isComplete,
+    isValid,
   };
 }
 

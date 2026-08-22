@@ -43,6 +43,7 @@ import {
   type SaleType,
   type SavedSale,
 } from "@/lib/receipt-lab";
+import { validateInputs, invalidSummary, type FieldSpecMap } from "@/lib/validate-field";
 import type { PatternProject } from "@/lib/grading-engine";
 import { projectStorage, type ProjectStorageHandle } from "@/lib/storage-lib";
 import { Button } from "@/components/ui/button";
@@ -183,6 +184,19 @@ export function ReceiptLabCard(props: { project: PatternProject }) {
     [kind, customerName, date, channel, saleType, patternName, items, fees, depositReceived, note],
   );
 
+  const receiptSpecs = useMemo<FieldSpecMap<SaleFees & { materialsCost: number }>>(() => ({
+    platformCommissionPct: { type: 'percent', label: copy.platformFee },
+    processingPct: { type: 'percent', label: copy.processingFee },
+    processingFlat: { type: 'money', label: copy.processingFee },
+    taxPct: { type: 'percent', label: copy.tax },
+    shippingCharged: { type: 'money', label: copy.shipping },
+    shippingCost: { type: 'money', label: copy.shipping },
+    materialsCost: { type: 'money', label: copy.materialsCost },
+  }), [copy]);
+
+  const inputErrors = useMemo(() => validateInputs(receiptSpecs, { ...fees, materialsCost }), [receiptSpecs, fees, materialsCost]);
+  const isValid = inputErrors.every(e => e.ok);
+
   const result = useMemo(
     () =>
       analyzeReceipt({
@@ -226,6 +240,10 @@ export function ReceiptLabCard(props: { project: PatternProject }) {
   }
 
   function saveSale() {
+    if (!isValid) {
+      toast({ title: copy.invalidInputsTitle, description: invalidSummary(inputErrors), variant: "destructive" });
+      return;
+    }
     if (!items.some((it) => it.name.trim() && it.qty > 0 && it.unitPrice > 0)) {
       toast({ title: copy.addPricedItem, variant: "destructive" });
       return;
@@ -298,6 +316,10 @@ export function ReceiptLabCard(props: { project: PatternProject }) {
   }
 
   async function copyReceiptText() {
+    if (!isValid) {
+      toast({ title: copy.invalidInputsTitle, description: invalidSummary(inputErrors), variant: "destructive" });
+      return;
+    }
     if (!result.isComplete) {
       toast({ title: copy.incompleteQuarantine || "Complete the receipt draft to copy", variant: "destructive" });
       return;
@@ -365,6 +387,17 @@ export function ReceiptLabCard(props: { project: PatternProject }) {
 
   return (
     <Tabs defaultValue="new">
+      {!isValid && (
+        <div className="mb-6 rounded-xl border border-destructive/50 bg-destructive/5 p-4 text-sm text-destructive shadow-sm">
+          <div className="font-semibold flex items-center gap-2 mb-1">
+            <HelpCircle className="w-4 h-4" />
+            {copy.invalidInputsTitle}
+          </div>
+          <div className="whitespace-pre-line leading-relaxed opacity-90">
+            {invalidSummary(inputErrors)}
+          </div>
+        </div>
+      )}
       {/* CHK-123 (QA LIVE-004): triggers were shadcn-default h-10 (40px) —
           below the 44×44px touch-target minimum. min-h-11 fixes hit area. */}
       <TabsList className="mb-4 flex-wrap h-auto">
