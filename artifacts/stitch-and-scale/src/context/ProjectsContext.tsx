@@ -30,7 +30,10 @@ type ProjectsAction =
   | { type: 'UPDATE_CONTRACT'; payload: { projectId: string; contract: any } }
   | { type: 'CREATE_PUBLICATION_PACKAGE'; payload: { projectId: string; pkg: any } }
   | { type: 'UPDATE_PUBLICATION_PACKAGE'; payload: { projectId: string; pkg: any } }
-  | { type: 'DELETE_PUBLICATION_PACKAGE'; payload: { projectId: string; packageId: string } };
+  | { type: 'DELETE_PUBLICATION_PACKAGE'; payload: { projectId: string; packageId: string } }
+  | { type: 'BATCH_DELETE'; payload: string[] }
+  | { type: 'BATCH_ARCHIVE'; payload: { ids: string[]; archived: boolean } }
+  | { type: 'BATCH_TAG'; payload: { ids: string[]; tags: string[] } };
 
 export type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
 
@@ -48,6 +51,9 @@ interface ProjectsContextType {
   createPublicationPackage: (projectId: string, pkg: any) => void;
   updatePublicationPackage: (projectId: string, pkg: any) => void;
   deletePublicationPackage: (projectId: string, packageId: string) => void;
+  batchDelete: (ids: string[]) => void;
+  batchArchive: (ids: string[], archived: boolean) => void;
+  batchTag: (ids: string[], tags: string[]) => void;
   saveStatus: SaveStatus;
   recovered: boolean;
   dismissRecovery: () => void;
@@ -183,6 +189,23 @@ function projectsReducer(state: PatternProject[], action: ProjectsAction): Patte
         };
       });
       break;
+    case 'BATCH_DELETE':
+      newState = state.filter(p => !action.payload.includes(p.id));
+      break;
+    case 'BATCH_ARCHIVE':
+      newState = state.map(p => 
+        action.payload.ids.includes(p.id) 
+          ? { ...p, isArchived: action.payload.archived, updatedAt: new Date().toISOString() } 
+          : p
+      );
+      break;
+    case 'BATCH_TAG':
+      newState = state.map(p => 
+        action.payload.ids.includes(p.id) 
+          ? { ...p, tags: action.payload.tags, updatedAt: new Date().toISOString() } 
+          : p
+      );
+      break;
     default:
       return state;
   }
@@ -289,6 +312,9 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
   const createPublicationPackage = (projectId: string, pkg: any) => dispatch({ type: 'CREATE_PUBLICATION_PACKAGE', payload: { projectId, pkg } });
   const updatePublicationPackage = (projectId: string, pkg: any) => dispatch({ type: 'UPDATE_PUBLICATION_PACKAGE', payload: { projectId, pkg } });
   const deletePublicationPackage = (projectId: string, packageId: string) => dispatch({ type: 'DELETE_PUBLICATION_PACKAGE', payload: { projectId, packageId } });
+  const batchDelete = (ids: string[]) => dispatch({ type: 'BATCH_DELETE', payload: ids });
+  const batchArchive = (ids: string[], archived: boolean) => dispatch({ type: 'BATCH_ARCHIVE', payload: { ids, archived } });
+  const batchTag = (ids: string[], tags: string[]) => dispatch({ type: 'BATCH_TAG', payload: { ids, tags } });
 
   // Import a single project from an exported JSON file — always assigns a
   // fresh id so it can never silently collide with or overwrite an existing
@@ -305,8 +331,9 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
       projects, createProject, updateProject, deleteProject, duplicateProject, importProject, 
       createSnapshot, restoreSnapshot, deleteSnapshot, updateContract,
       createPublicationPackage, updatePublicationPackage, deletePublicationPackage,
+      batchDelete, batchArchive, batchTag,
       saveStatus, recovered, dismissRecovery 
-    }}>
+    }}>],path:
       {children}
     </ProjectsContext.Provider>
   );

@@ -60,15 +60,24 @@ function isProjectGraded(project: { sections?: Array<{ measurements?: unknown[] 
 }
 
 export default function Dashboard() {
-  const { projects, createProject, duplicateProject, updateProject, deleteProject, importProject } = useProjects();
+  const { 
+    projects, createProject, duplicateProject, updateProject, deleteProject, importProject,
+    batchDelete, batchArchive, batchTag
+  } = useProjects();
   const { toast } = useToast();
   const { language } = useSettings();
   const copy = DASHBOARD_COPY[language];
   const tc = getToastCopy(language);
   const dateLocaleMap = { de, es, fr, pt };
   const dateLocale = (dateLocaleMap as Record<string, typeof enUS>)[language] ?? enUS;
+  
   const [search, setSearch] = React.useState('');
+  const [selectedIds, setSelectedIds] = React.useState<Set<string>>(new Set());
+  const [showArchived, setShowArchived] = React.useState(false);
+  const [tagFilter, setTagFilter] = React.useState<string | null>(null);
+  
   const [deleteTarget, setDeleteTarget] = React.useState<PatternProject | null>(null);
+  const [batchDeleteTarget, setBatchDeleteTarget] = React.useState<string[] | null>(null);
   const [isImporting, setIsImporting] = React.useState(false);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const [showStorageWarning, setShowStorageWarning] = React.useState(() => {
@@ -184,9 +193,61 @@ export default function Dashboard() {
     reader.readAsText(file);
   };
 
+  const allTags = Array.from(new Set(projects.flatMap(p => p.tags || []))).sort();
+  
   const filteredProjects = projects
-    .filter(p => p.name.toLowerCase().includes(search.toLowerCase()) || p.author.toLowerCase().includes(search.toLowerCase()))
+    .filter(p => {
+      const matchesSearch = p.name.toLowerCase().includes(search.toLowerCase()) || p.author.toLowerCase().includes(search.toLowerCase());
+      const matchesArchive = showArchived ? p.isArchived : !p.isArchived;
+      const matchesTag = !tagFilter || (p.tags || []).includes(tagFilter);
+      return matchesSearch && matchesArchive && matchesTag;
+    })
     .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
+
+  const toggleSelect = (id: string) => {
+    const next = new Set(selectedIds);
+    if (next.has(id)) next.delete(id);
+    else next.add(id);
+    setSelectedIds(next);
+  };
+
+  const selectAll = () => {
+    if (selectedIds.size === filteredProjects.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(filteredProjects.map(p => p.id)));
+    }
+  };
+
+  const handleBatchArchive = (archived: boolean) => {
+    const ids = Array.from(selectedIds);
+    batchArchive(ids, archived);
+    toast({ title: copy.batchComplete(ids.length) });
+    setSelectedIds(new Set());
+  };
+
+  const handleBatchDelete = () => {
+    const ids = Array.from(selectedIds);
+    batchDelete(ids);
+    toast({ title: copy.batchComplete(ids.length) });
+    setSelectedIds(new Set());
+    setBatchDeleteTarget(null);
+  };
+
+  const handleBatchExport = () => {
+    const ids = Array.from(selectedIds);
+    const selectedProjects = projects.filter(p => ids.includes(p.id));
+    const blob = new Blob([JSON.stringify(selectedProjects, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `stitch-and-scale-batch-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    toast({ title: copy.exported, description: copy.batchComplete(ids.length) });
+  };
 
   return (
     <div className="w-full space-y-10">
@@ -222,48 +283,110 @@ export default function Dashboard() {
       />
 
       {projects.length > 0 && (
-        <div className="flex flex-col sm:flex-row gap-6 justify-between items-start sm:items-end">
-          <div className="space-y-2">
-            <h1 className="text-4xl font-serif font-semibold text-foreground tracking-tight">{copy.patterns}</h1>
-            <p className="text-muted-foreground text-sm font-medium tracking-wide">
-              {projects.length} {projects.length === 1 ? copy.project : copy.projects} {copy.inWorkspace}
-            </p>
-          </div>
-          <div className="flex items-center gap-3 w-full sm:w-auto">
-            <div className="relative flex-1 sm:w-72 group">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground transition-colors group-focus-within:text-primary" />
-              <Input 
-                placeholder={copy.search}
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="pl-10 h-11 bg-card/50 border-border/60 focus-visible:bg-card focus-visible:ring-accent rounded-full transition-all text-ellipsis"
-                data-testid="input-search"
-              />
+        <div className="space-y-6">
+          <div className="flex flex-col sm:flex-row gap-6 justify-between items-start sm:items-end">
+            <div className="space-y-2">
+              <h1 className="text-4xl font-serif font-semibold text-foreground tracking-tight">{copy.patterns}</h1>
+              <div className="flex items-center gap-3">
+                <p className="text-muted-foreground text-sm font-medium tracking-wide">
+                  {projects.length} {projects.length === 1 ? copy.project : copy.projects} {copy.inWorkspace}
+                </p>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="h-7 text-xs px-2"
+                  onClick={() => setShowArchived(!showArchived)}
+                >
+                  {showArchived ? copy.hideArchived : copy.showArchived}
+                </Button>
+              </div>
             </div>
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-11 w-11 rounded-full shrink-0"
-              onClick={() => setLocation('/project/import-csv')}
-              title={copy.spreadsheet}
-              aria-label={copy.spreadsheet}
-              data-testid="button-import-csv"
-            >
-              <FileSpreadsheet className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-11 w-11 rounded-full shrink-0"
-              onClick={handleImportClick}
-              disabled={isImporting}
-              title={copy.restore}
-              aria-label={copy.restore}
-              data-testid="button-import"
-            >
-              {isImporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
-            </Button>
+            <div className="flex items-center gap-3 w-full sm:w-auto">
+              <div className="relative flex-1 sm:w-72 group">
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground transition-colors group-focus-within:text-primary" />
+                <Input 
+                  placeholder={copy.search}
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="pl-10 h-11 bg-card/50 border-border/60 focus-visible:bg-card focus-visible:ring-accent rounded-full transition-all text-ellipsis"
+                  data-testid="input-search"
+                />
+              </div>
+              
+              {allTags.length > 0 && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="h-11 rounded-full px-4 gap-2">
+                      <Layers className="h-4 w-4" />
+                      {tagFilter || copy.allTags}
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => setTagFilter(null)}>
+                      {copy.allTags}
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    {allTags.map(tag => (
+                      <DropdownMenuItem key={tag} onClick={() => setTagFilter(tag)}>
+                        {tag}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
+
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-11 w-11 rounded-full shrink-0"
+                onClick={() => setLocation('/project/import-csv')}
+                title={copy.spreadsheet}
+                aria-label={copy.spreadsheet}
+                data-testid="button-import-csv"
+              >
+                <FileSpreadsheet className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-11 w-11 rounded-full shrink-0"
+                onClick={handleImportClick}
+                disabled={isImporting}
+                title={copy.restore}
+                aria-label={copy.restore}
+                data-testid="button-import"
+              >
+                {isImporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+              </Button>
+            </div>
           </div>
+
+          {selectedIds.size > 0 && (
+            <div className="flex items-center justify-between bg-accent/5 border border-accent/20 rounded-xl p-3 px-4 sts-dashboard-enter">
+              <div className="flex items-center gap-4">
+                <p className="text-sm font-medium text-accent-foreground">
+                  {copy.batchSelection(selectedIds.size)}
+                </p>
+                <Button variant="ghost" size="sm" onClick={selectAll} className="text-xs h-8">
+                  {selectedIds.size === filteredProjects.length ? copy.batchDeselectAll : copy.batchSelectAll}
+                </Button>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button variant="outline" size="sm" className="h-8 gap-2" onClick={handleBatchExport}>
+                  <Download className="h-3.5 w-3.5" />
+                  {copy.batchExport}
+                </Button>
+                <Button variant="outline" size="sm" className="h-8 gap-2" onClick={() => handleBatchArchive(!showArchived)}>
+                  <Layers className="h-3.5 w-3.5" />
+                  {showArchived ? copy.batchUnarchive : copy.batchArchive}
+                </Button>
+                <Button variant="destructive" size="sm" className="h-8 gap-2" onClick={() => setBatchDeleteTarget(Array.from(selectedIds))}>
+                  <Trash2 className="h-3.5 w-3.5" />
+                  {copy.batchDelete}
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -312,9 +435,25 @@ export default function Dashboard() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredProjects.map((project) => (
-            <div key={project.id} className="sts-dashboard-item h-full">
+            <div key={project.id} className="sts-dashboard-item h-full relative group">
+              <div className="absolute top-4 left-4 z-20">
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    toggleSelect(project.id);
+                  }}
+                  className={`w-5 h-5 rounded border transition-all flex items-center justify-center ${
+                    selectedIds.has(project.id)
+                      ? 'bg-accent border-accent text-accent-foreground'
+                      : 'bg-card border-border group-hover:border-accent/50 opacity-0 group-hover:opacity-100'
+                  }`}
+                >
+                  {selectedIds.has(project.id) && <CheckCircle2 className="w-3.5 h-3.5" />}
+                </button>
+              </div>
               <Link href={`/project/${project.id}`}>
-                <Card className="relative h-full cursor-pointer transition-all duration-300 hover:shadow-md hover:border-primary/30 bg-card overflow-hidden group flex flex-col border-border/60" data-testid={`card-project-${project.id}`}>
+                <Card className={`relative h-full cursor-pointer transition-all duration-300 hover:shadow-md hover:border-primary/30 bg-card overflow-hidden group flex flex-col border-border/60 ${selectedIds.has(project.id) ? 'ring-2 ring-accent border-accent' : ''}`} data-testid={`card-project-${project.id}`}>
                   <div className="h-1.5 w-full bg-gradient-to-r from-secondary to-secondary group-hover:from-primary group-hover:to-accent transition-all duration-500" />
 
                   <div className="absolute top-3 right-3 z-10">
@@ -445,6 +584,26 @@ export default function Dashboard() {
               data-testid="button-confirm-delete"
             >
               {copy.deleteAction}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={!!batchDeleteTarget} onOpenChange={(open) => !open && setBatchDeleteTarget(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{copy.confirmBatchDelete(batchDeleteTarget?.length || 0)}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {copy.confirmBatchDeleteBody}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{copy.cancel}</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleBatchDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {copy.batchDelete}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

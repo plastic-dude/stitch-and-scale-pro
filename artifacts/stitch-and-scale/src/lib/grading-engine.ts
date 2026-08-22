@@ -176,6 +176,10 @@ export interface PatternProject {
   publicationContract?: PublicationContract;
   /** Publication packages — versioned authoritative releases. */
   publicationPackages?: PublicationPackage[];
+  /** Tags for categorization and filtering. */
+  tags?: string[];
+  /** Archive status for multi-project management. */
+  isArchived?: boolean;
 }
 
 export interface GradedMeasurement {

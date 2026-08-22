@@ -54,12 +54,15 @@
 | 46 | QUEUE-039 | Priority 1: Revision Snapshots (MAJOR) — Implement named snapshots, snapshot notes, and restore flow to provide a durable audit trail for pattern revisions. | MAJOR | done | CHK-182: cf78702; implemented snapshots schema, storage, and UI |
 | 47 | QUEUE-040 | CHK-183: Fix Revision Snapshots integration omission in ProjectWorkspace and strengthen tests | MAJOR | done | Wired snapshots panel with destructured callbacks; fixed TS nullability; 4 regression tests; gates green |
 | 48 | QUEUE-041 | Priority 0: Pattern Publication Readiness Contract — Define and implement a formal publication readiness checklist and state (readiness for tech-edit, test-knit, and final publication) with a compiled readiness verdict. | CRITICAL | done | CHK-184: `b4da4086bbb3254fc75d1639b00f0c9f70dee5b2`; implemented readiness schema, storage, UI, and localization |
-| 49 | QUEUE-042 | Priority 1: Pattern Publication Package — Define and implement the `Pattern Publication Package` with authoritative metadata, instruction resolution, and artifact governance. | MAJOR | in-progress | Defining publication package schema and authoritative content resolution |
+| 49 | QUEUE-042 | Priority 1: Pattern Publication Package — Define and implement the `Pattern Publication Package` with authoritative metadata, instruction resolution, and artifact governance. | MAJOR | done | CHK-185: `6aa86f0492b6d945a9cfbe0e6ac37fb0a51f6c1e`; implemented metadata freezing and artifact tracking |
+| 50 | QUEUE-043 | Priority 0: Pattern Compiler — Mathematical-to-instruction validation via Intermediate Representation (IR) and contradiction checking. | MAJOR | done | CHK-186: `5e4cc734b326f6022d877704ae3d5dfb339a69a7`; implemented compiler engine and validation UI |
+| 51 | QUEUE-044 | Priority 1: Multi-project operations — Batch selection, filtering, tagging, and bulk export with per-project failure reporting. | MAJOR | in-progress | Implementing multi-select UI and batch processing logic |
 
 ## Run ledger
 | Run (date) | Item worked | Gates | Commit | Next item |
 |---|---|---|---|---|
-| 64 | 2026-08-22 (CHK-186) | QUEUE-043 (MAJOR) — Pattern Compiler | tsc clean; vitest 2,341/2,341; build green; 83 labs total; full 5-locale validation | e3db71d8095a71cf1e1d7ed023bf7ecdbef9bf8e | END OF QUEUE |
+| 65 | 2026-08-22 (CHK-187) | QUEUE-044 (MAJOR) — Multi-project operations | 748b26a6efb0eb3dd26a6d01438b0ef491886235 | CHK-187: Batch selection, filtering, bulk export | END OF QUEUE |
+| 64 | 2026-08-22 (CHK-186) | QUEUE-043 (MAJOR) — Pattern Compiler | tsc clean; vitest 2,341/2,341; build green; 83 labs total; full 5-locale validation | 5e4cc73 | QUEUE-044 |
 | 63 | 2026-08-22 (CHK-185) | QUEUE-042 (MAJOR) — Pattern Publication Package | tsc clean; vitest 2,336/2,336; build green; 82 labs total; live verified | 66f259421326bba6599eb6699ab8b49f641590a0 | QUEUE-043 |
 | 62 | 2026-08-22 | QUEUE-041 | done | b4da4086bbb3254fc75d1639b00f0c9f70dee5b2 | CHK-184: Pattern Publication Readiness Contract |
 | 61 | 2026-08-22 | QUEUE-040 | done | 053121a896535ea3c219d9224a4bc965710ad087 | CHK-183: Fix Revision Snapshots integration in ProjectWorkspace |

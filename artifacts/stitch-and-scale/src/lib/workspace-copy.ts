@@ -148,6 +148,22 @@ export interface WorkspaceCopy {
   compilerNoContradictions: string;
   compilerSeverityWarning: string;
   compilerSeverityError: string;
+  batchSelection: (count: number) => string;
+  batchSelectAll: string;
+  batchDeselectAll: string;
+  batchActions: string;
+  batchDelete: string;
+  batchArchive: string;
+  batchUnarchive: string;
+  batchTag: string;
+  batchExport: string;
+  batchProcessing: string;
+  batchComplete: (count: number) => string;
+  batchFailed: (count: number) => string;
+  confirmBatchDelete: (count: number) => string;
+  confirmBatchDeleteBody: string;
+  confirmBatchArchive: (count: number) => string;
+  confirmBatchUnarchive: (count: number) => string;
 }
 
 const COPY: Record<LanguageCode, WorkspaceCopy> = {
@@ -297,6 +313,22 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     compilerNoContradictions: 'No mathematical contradictions detected.',
     compilerSeverityWarning: 'Warning',
     compilerSeverityError: 'Error',
+    batchSelection: (count) => `${count} selected`,
+    batchSelectAll: 'Select All',
+    batchDeselectAll: 'Deselect All',
+    batchActions: 'Batch Actions',
+    batchDelete: 'Delete',
+    batchArchive: 'Archive',
+    batchUnarchive: 'Unarchive',
+    batchTag: 'Tag',
+    batchExport: 'Export (JSON)',
+    batchProcessing: 'Processing batch...',
+    batchComplete: (count) => `Successfully processed ${count} projects`,
+    batchFailed: (count) => `Failed to process ${count} projects`,
+    confirmBatchDelete: (count) => `Delete ${count} projects?`,
+    confirmBatchDeleteBody: 'These projects will be permanently removed from your local storage. This cannot be undone.',
+    confirmBatchArchive: (count) => `Archive ${count} projects?`,
+    confirmBatchUnarchive: (count) => `Unarchive ${count} projects?`,
   },
   de: {
     by: 'Von',
@@ -444,6 +476,22 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     compilerNoContradictions: 'Keine mathematischen Widersprüche erkannt.',
     compilerSeverityWarning: 'Warnung',
     compilerSeverityError: 'Fehler',
+    batchSelection: (count) => `${count} ausgewählt`,
+    batchSelectAll: 'Alle auswählen',
+    batchDeselectAll: 'Auswahl aufheben',
+    batchActions: 'Stapelaktionen',
+    batchDelete: 'Löschen',
+    batchArchive: 'Archivieren',
+    batchUnarchive: 'Dearchivieren',
+    batchTag: 'Taggen',
+    batchExport: 'Exportieren (JSON)',
+    batchProcessing: 'Stapel wird verarbeitet...',
+    batchComplete: (count) => `${count} Projekte erfolgreich verarbeitet`,
+    batchFailed: (count) => `${count} Projekte fehlgeschlagen`,
+    confirmBatchDelete: (count) => `${count} Projekte löschen?`,
+    confirmBatchDeleteBody: 'Diese Projekte werden dauerhaft aus deinem lokalen Speicher entfernt. Dies kann nicht rückgängig gemacht werden.',
+    confirmBatchArchive: (count) => `${count} Projekte archivieren?`,
+    confirmBatchUnarchive: (count) => `${count} Projekte dearchivieren?`,
   },
   fr: {
     by: 'Par',
@@ -591,6 +639,22 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     compilerNoContradictions: 'Aucune contradiction mathématique détectée.',
     compilerSeverityWarning: 'Avertissement',
     compilerSeverityError: 'Erreur',
+    batchSelection: (count) => `${count} sélectionnés`,
+    batchSelectAll: 'Tout sélectionner',
+    batchDeselectAll: 'Tout désélectionner',
+    batchActions: 'Actions groupées',
+    batchDelete: 'Supprimer',
+    batchArchive: 'Archiver',
+    batchUnarchive: 'Désarchiver',
+    batchTag: 'Taguer',
+    batchExport: 'Exporter (JSON)',
+    batchProcessing: 'Traitement en cours...',
+    batchComplete: (count) => `${count} projets traités avec succès`,
+    batchFailed: (count) => `Échec du traitement de ${count} projets`,
+    confirmBatchDelete: (count) => `Supprimer ${count} projets ?`,
+    confirmBatchDeleteBody: 'Ces projets seront définitivement supprimés de votre stockage local. Cette action est irréversible.',
+    confirmBatchArchive: (count) => `Archiver ${count} projets ?`,
+    confirmBatchUnarchive: (count) => `Désarchiver ${count} projets ?`,
   },
   es: {
     by: 'Por',
@@ -738,6 +802,22 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     compilerNoContradictions: 'No se han detectado contradicciones matemáticas.',
     compilerSeverityWarning: 'Advertencia',
     compilerSeverityError: 'Error',
+    batchSelection: (count) => `${count} seleccionados`,
+    batchSelectAll: 'Seleccionar todo',
+    batchDeselectAll: 'Deseleccionar todo',
+    batchActions: 'Acciones por lotes',
+    batchDelete: 'Eliminar',
+    batchArchive: 'Archivar',
+    batchUnarchive: 'Desarchivar',
+    batchTag: 'Etiquetar',
+    batchExport: 'Exportar (JSON)',
+    batchProcessing: 'Procesando lote...',
+    batchComplete: (count) => `${count} proyectos procesados con éxito`,
+    batchFailed: (count) => `Error al procesar ${count} proyectos`,
+    confirmBatchDelete: (count) => `¿Eliminar ${count} proyectos?`,
+    confirmBatchDeleteBody: 'Estos proyectos se eliminarán permanentemente de su almacenamiento local. Esta acción no se puede deshacer.',
+    confirmBatchArchive: (count) => `¿Archivar ${count} proyectos?`,
+    confirmBatchUnarchive: (count) => `¿Desarchivar ${count} proyectos?`,
   },
   pt: {
     by: 'Por',
@@ -885,6 +965,22 @@ const COPY: Record<LanguageCode, WorkspaceCopy> = {
     compilerNoContradictions: 'Nenhuma contradição matemática detetada.',
     compilerSeverityWarning: 'Aviso',
     compilerSeverityError: 'Erro',
+    batchSelection: (count) => `${count} selecionados`,
+    batchSelectAll: 'Selecionar tudo',
+    batchDeselectAll: 'Desmarcar tudo',
+    batchActions: 'Ações em lote',
+    batchDelete: 'Excluir',
+    batchArchive: 'Arquivar',
+    batchUnarchive: 'Desarquivar',
+    batchTag: 'Etiquetar',
+    batchExport: 'Exportar (JSON)',
+    batchProcessing: 'Processando lote...',
+    batchComplete: (count) => `${count} projetos processados com sucesso`,
+    batchFailed: (count) => `Falha ao processar ${count} projetos`,
+    confirmBatchDelete: (count) => `Excluir ${count} projetos?`,
+    confirmBatchDeleteBody: 'Estes projetos serão removidos permanentemente do seu armazenamento local. Esta ação não pode ser desfeita.',
+    confirmBatchArchive: (count) => `Arquivar ${count} projetos?`,
+    confirmBatchUnarchive: (count) => `Desarquivar ${count} projetos?`,
   },
 };
 
