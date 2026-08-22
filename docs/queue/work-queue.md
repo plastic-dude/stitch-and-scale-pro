@@ -46,4 +46,4 @@
 | 59 | 2026-08-22 | QUEUE-038 | done | 071d936 | QUEUE-039 |
 | 58 | 2026-08-22 | QUEUE-037 | done | aff1652 | QUEUE-038 |
 | 80 | 2026-08-22 (CHK-202) | QUEUE-058 (MINOR) — Navigator Reconciliation | tsc clean; vitest 2,422/2,422; build green; dynamic lab counts + hook violation fixes | 5f8c954 | QUEUE-059 |
-| 81 | 2026-08-22 (CHK-203) | QUEUE-059 (MINOR) — Branding Audit | tsc clean; vitest 2,422/2,422; build green; branding standardized + EMLUX positioning + QA fixes | SHA-PENDING | QUEUE-060 |
+| 81 | 2026-08-22 (CHK-203) | QUEUE-059 (MINOR) — Branding Audit | tsc clean; vitest 2,422/2,422; build green; branding standardized + EMLUX positioning + QA fixes | be7f767 | QUEUE-060 |
