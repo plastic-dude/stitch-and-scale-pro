@@ -65,6 +65,21 @@ await mkdir(outDir, { recursive: true });
 const { socket, call } = await connect();
 await call('Page.enable');
 await call('Runtime.enable');
+await call('Log.enable');
+await call('Network.enable');
+
+const consoleErrors = [];
+const networkFailures = [];
+
+socket.addEventListener('message', (event) => {
+  const message = JSON.parse(event.data);
+  if (message.method === 'Log.entryAdded' && message.params.entry.level === 'error') {
+    consoleErrors.push(message.params.entry.text);
+  }
+  if (message.method === 'Network.loadingFailed') {
+    networkFailures.push(message.params.errorText);
+  }
+});
 
 try {
   console.log(`[SMOKE] Testing production integrity at ${baseUrl}...`);
@@ -88,11 +103,47 @@ try {
   const hasNav = await evaluate(call, `!!document.querySelector('nav')`);
   assert(hasNav, 'App shell navigation missing');
 
+  // Exercise project creation
+  console.log('[SMOKE] Exercising project creation...');
+  await evaluate(call, `
+    const newProjectBtn = Array.from(document.querySelectorAll('button, a')).find(el => el.textContent.includes('New Project'));
+    if (newProjectBtn) newProjectBtn.click();
+  `);
+  await sleep(1000);
+  await capture(call, 'prod-new-project-modal');
+  
+  const isModalOpen = await evaluate(call, `!!document.querySelector('[role="dialog"]')`);
+  assert(isModalOpen, 'New Project modal failed to open');
+
+  // Verify export flow readiness
+  console.log('[SMOKE] Verifying export flow readiness...');
+  await navigate(call, '/settings', 1280, 720);
+  await capture(call, 'prod-settings-page');
+  
+  const hasExportBtn = await evaluate(call, `!!document.querySelector('[data-testid="button-export-data"]')`);
+  assert(hasExportBtn, 'Export data button missing from Settings');
+
+  // Final check for console/network failures
+  assert(consoleErrors.length === 0, `Detected ${consoleErrors.length} console errors: ${consoleErrors.join(', ')}`);
+  assert(networkFailures.length === 0, `Detected ${networkFailures.length} network failures: ${networkFailures.join(', ')}`);
+
   console.log(JSON.stringify({ 
     ok: true, 
     url: baseUrl,
     rootLength: rootContent.length,
-    checks: ['root-not-empty', 'react-detected', 'title-match', 'header-present', 'nav-present'] 
+    consoleErrors: consoleErrors.length,
+    networkFailures: networkFailures.length,
+    checks: [
+      'root-not-empty', 
+      'react-detected', 
+      'title-match', 
+      'header-present', 
+      'nav-present',
+      'project-creation-modal',
+      'export-button-present',
+      'no-console-errors',
+      'no-network-failures'
+    ] 
   }, null, 2));
 } catch (err) {
   console.error(`[SMOKE] FAILED: ${err.message}`);

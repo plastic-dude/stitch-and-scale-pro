@@ -50,11 +50,13 @@
 | 42 | QUEUE-035 | Audit: Receipt Lab tax validation — negative tax rates accepted; causes PDF generator crash on divide-by-zero or infinity risk; add `validateTaxInput` and quarantine. | MAJOR | done | CHK-178: implemented tax/fee validation layer in `ReceiptLabCard`; added `isValid` quarantine to `receipt-lab.ts`; vitest green |
 | 43 | QUEUE-036 | Data Lifecycle Controls: Implement "Delete all local data" (Danger Zone) with double-confirmation and "Restore Preview" metadata display to prevent accidental data loss and improve trust. | MAJOR | done | CHK-179: `4b9b46b`; implementation complete |
 | 44 | QUEUE-037 | Audit F-10-Perf (MAJOR) — Initial JS chunk exceeds performance budget (~600KB); implement lab-card-level lazy loading to reduce main bundle size and improve mobile TTI. | MAJOR | done | CHK-180: aff1652; optimized via manual chunking and locale splitting |
+| 45 | QUEUE-038 | Priority 0: Release Integrity (CRITICAL) — Enhance `prod-smoke.mjs` with deep integrity checks: exercise project creation, verify export flow, and capture console/network failures. | CRITICAL | done | CHK-181: 071d936; implemented deep smoke checks, modal exercise, and failure capture |
 
 ## Run ledger
 | Run (date) | Item worked | Gates | Commit | Next item |
 |---|---|---|---|---|
-| 2026-08-22 | QUEUE-037 | tsc, vitest, build | aff1652 | END OF QUEUE |
+| 2026-08-22 | QUEUE-038 | tsc, vitest, build | 071d936 | END OF QUEUE |
+| 2026-08-22 | QUEUE-037 | tsc, vitest, build | aff1652 | QUEUE-038 |
 | 2026-08-22 | QUEUE-036 | tsc, vitest, build | 4b9b46b | QUEUE-037 |
 | 2026-08-22 | QUEUE-035 | tsc, vitest, build | aa376ba | QUEUE-036 |
 | 2026-08-22 | QUEUE-034 | tsc, vitest, build | 97f1e5b | QUEUE-035 |
