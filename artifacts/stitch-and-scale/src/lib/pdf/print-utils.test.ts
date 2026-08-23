@@ -160,6 +160,13 @@ describe('print-utils state-machine contract', () => {
     expect(mobilePath, 'mobile new-window path must observe afterprint').toBe(true);
   });
 
+  it('does not expose afterprint as a success callback to page code', () => {
+    expect(src).not.toContain('onPrintSuccess');
+    expect(pageSrc).not.toContain('openPrintWindow(previewHtml, suggestedPdf,');
+    expect(pageSrc).toContain('tc.artifactPrepared(suggestedPdf)');
+    expect(pageSrc).toContain('metadata-only');
+  });
+
   it('writes into the print surface through a single safe helper that never throws', () => {
     expect(src).toContain('function writeInto(');
     expect(src).toMatch(/function writeInto[\s\S]*?try \{[\s\S]*?document\.close[\s\S]*?\} catch \{[\s\S]*?return false/m);
@@ -202,6 +209,14 @@ describe('project-pdf export state machine', () => {
     const successChunk = pageSrc.slice(successStart, successStart + 1500);
     expect(successChunk).toContain('setIsExporting(false)');
     expect(successChunk).toContain('The print utility has accepted the handoff');
+  });
+
+  it('uses the print-prepared copy instead of claiming a saved PDF', () => {
+    const toastCopy = join(__dirname, '..', 'toast-copy.ts');
+    const toastSrc = readFileSync(toastCopy, 'utf8');
+    expect(toastSrc).toContain('artifactPrepared: (label: string) => string;');
+    expect((toastSrc.match(/artifactPrepared:/g) || []).length).toBe(6);
+    expect(pageSrc).not.toContain('tc.artifactCreated(');
   });
 
   it('translates the failure title in all five locales', () => {

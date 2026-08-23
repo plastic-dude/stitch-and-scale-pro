@@ -15,9 +15,9 @@ let inFlight = false; // guards rapid double/triple clicks during one export.
  *  - Returns synchronously with `ok: false` for every *recoverable* failure
  *    the caller can observe (popup blocked, no contentWindow, document.write
  *    threw). The page shows the failure toast and re-enables the button.
- *  - For the happy path, the print dialog itself reports its outcome through
- *    the window `afterprint` event, observed on the print surface
- *    (`window.onafterprint` on the iframe's window / the new window).
+ *  - For the happy path, the print surface observes `afterprint` only to
+ *    release its in-flight lock and clean up. That event fires after cancel or
+ *    save and therefore must not be treated as proof that a file was saved.
  *  - A page-side in-flight lock prevents a second export while the first
  *    dialog is still open (the old code could race two iframes per double
  *    click, leaving orphaned iframes and stale titles).
@@ -25,7 +25,6 @@ let inFlight = false; // guards rapid double/triple clicks during one export.
 export function openPrintWindow(
   html: string,
   suggestedFilename: string,
-  onPrintSuccess?: () => void
 ): PrintAttemptResult {
   if (inFlight) {
     return { ok: false, reason: "blocked" };
@@ -53,7 +52,6 @@ export function openPrintWindow(
         try {
           (win as unknown as Window & { onafterprint?: unknown }).onafterprint = () => {
             inFlight = false;
-            if (onPrintSuccess) onPrintSuccess();
           };
         } catch {
           /* non-blocking */
@@ -102,7 +100,6 @@ export function openPrintWindow(
         if (document.body.contains(iframe)) {
           document.body.removeChild(iframe);
         }
-        if (onPrintSuccess) onPrintSuccess();
       };
     } catch {
       /* non-blocking */

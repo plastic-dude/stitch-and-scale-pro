@@ -127,6 +127,14 @@ describe('getToastCopy', () => {
     }
   });
 
+  it('describes print preparation as metadata, not a saved file, in every locale', () => {
+    for (const locale of LOCALES) {
+      const message = getToastCopy(locale).artifactPrepared('sample.pdf');
+      expect(message).toContain('sample.pdf');
+      expect(message).toMatch(/metadata|metadaten|métadonnées|metadatos|metadados/i);
+    }
+  });
+
   it('exports the same key set in every locale map', () => {
     const enKeys = Object.keys(getToastCopy('en'));
     for (const locale of LOCALES) {

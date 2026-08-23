@@ -371,24 +371,7 @@ export default function ProjectPdf() {
       includeFinishedPhotos,
       customLogo,
     });
-    const attempt = openPrintWindow(previewHtml, suggestedPdf, () => {
-      // Record artifact if project has publication packages
-      if (projectHook.project.publicationPackages && projectHook.project.publicationPackages.length > 0) {
-        // For simplicity, add to the first package or the most recent one
-        const pkg = projectHook.project.publicationPackages[0];
-        projectHook.addPublicationArtifact(pkg.id, {
-          id: generateId(),
-          type: 'pdf',
-          label: `Export ${new Date().toLocaleDateString(language)}`,
-          filename: suggestedPdf,
-          timestamp: new Date().toISOString(),
-          qualitySnapshot: publicationPreflight ? getPreflightStatus(publicationPreflight) : 'pass'
-        });
-        toast({
-          title: tc.artifactCreated(`Export ${new Date().toLocaleDateString(language)}`),
-        });
-      }
-    });
+    const attempt = openPrintWindow(previewHtml, suggestedPdf);
     setShowTip(false);
     window.dispatchEvent(new CustomEvent('stitch-and-scale:pattern-exported'));
     if (!attempt.ok) {
@@ -405,7 +388,24 @@ export default function ProjectPdf() {
     // The print utility has accepted the handoff. The browser's print dialog
     // now owns the interaction, so this page must immediately leave its
     // preparation state. `openPrintWindow` retains its own in-flight lock and
-    // afterprint cleanup independently of this UI state.
+    // afterprint cleanup independently of this UI state. A package record is
+    // metadata-only: it records that the browser print surface was prepared,
+    // never that the user saved a PDF.
+    if (projectHook.project.publicationPackages && projectHook.project.publicationPackages.length > 0) {
+      // For simplicity, add to the first package or the most recent one.
+      const pkg = projectHook.project.publicationPackages[0];
+      projectHook.addPublicationArtifact(pkg.id, {
+        id: generateId(),
+        type: 'pdf',
+        label: suggestedPdf,
+        filename: suggestedPdf,
+        timestamp: new Date().toISOString(),
+        qualitySnapshot: publicationPreflight ? getPreflightStatus(publicationPreflight) : 'pass',
+      });
+      toast({
+        title: tc.artifactPrepared(suggestedPdf),
+      });
+    }
     setIsExporting(false);
   }, [previewHtml, filename, selectedTheme, accentColor, includeCover, includeGauge, includeNotes, includeFinishedPhotos, customLogo, pdfDefaults, setPdfDefaults, projectHook?.project, projectHook, publicationPreflight, language, labels.exportFailed, tc, toast]);
 
