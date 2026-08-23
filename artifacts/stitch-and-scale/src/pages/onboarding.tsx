@@ -37,9 +37,9 @@ const TOTAL_STEPS = 7;
 
 // ─── Step indicators ──────────────────────────────────────────────────────────
 
-function StepDots({ current, total }: { current: number; total: number }) {
+function StepDots({ current, total, label }: { current: number; total: number; label: string }) {
   return (
-    <div className="flex items-center gap-1.5" role="progressbar" aria-valuenow={current} aria-valuemin={1} aria-valuemax={total} aria-label={`Step ${current} of ${total}`}>
+    <div className="flex items-center gap-1.5" role="progressbar" aria-valuenow={current} aria-valuemin={1} aria-valuemax={total} aria-label={label}>
       {Array.from({ length: total }).map((_, i) => (
         <div
           key={i}
@@ -535,7 +535,7 @@ export default function OnboardingOverlay() {
           <span className="font-serif font-bold text-base tracking-tight hidden sm:inline">Stitch & Scale</span>
         </div>
 
-        <StepDots current={step} total={TOTAL_STEPS} />
+        <StepDots current={step} total={TOTAL_STEPS} label={t('workflow.onboarding.progress', { current: step, total: TOTAL_STEPS })} />
 
         {step === 1 ? (
           <button

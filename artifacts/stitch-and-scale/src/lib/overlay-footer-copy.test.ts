@@ -34,10 +34,28 @@ describe('QA 51-B — onboarding overlay footer localization', () => {
     expect(translate('pt', 'workflow.overlay.continue')).toBe('Continuar');
   });
 
+  it('localizes and interpolates the onboarding progress announcement', () => {
+    const expected = {
+      en: 'Step 2 of 7',
+      de: 'Schritt 2 von 7',
+      fr: 'Étape 2 sur 7',
+      es: 'Paso 2 de 7',
+      pt: 'Passo 2 de 7',
+    } as const;
+
+    for (const locale of locales) {
+      const rendered = translate(locale, 'workflow.onboarding.progress', { current: 2, total: 7 });
+      expect(rendered).toBe(expected[locale]);
+      expect(rendered).not.toContain('{current}');
+      expect(rendered).not.toContain('{total}');
+    }
+  });
+
   it('keeps English labels as the base strings', () => {
     expect(translate('en', 'workflow.overlay.back')).toBe('Back');
     expect(translate('en', 'workflow.overlay.begin')).toBe('Begin');
     expect(translate('en', 'workflow.overlay.continue')).toBe('Continue');
+    expect(translate('en', 'workflow.onboarding.progress', { current: 1, total: 7 })).toBe('Step 1 of 7');
   });
 
   it('never falls back to the raw English literal on any locale', () => {
