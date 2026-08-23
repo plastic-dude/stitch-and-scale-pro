@@ -192,13 +192,6 @@ export default function ProjectGrading() {
         </div>
       )}
 
-      <McpGradingAssistantCard
-        project={project}
-        language={language}
-        hasData={hasData}
-        customStandard={customStandard}
-      />
-
       <HumanReviewCard
         project={project}
         updateProject={updateProject}
@@ -239,11 +232,23 @@ export default function ProjectGrading() {
                   </h3>
                 </div>
                 
-                <div className="overflow-x-auto" style={{ contain: 'layout inline-size' }}>
-                  <table className="w-full text-left border-collapse print:text-black">
+                <div
+                  className="grading-table-region overflow-x-auto print:overflow-visible"
+                  style={{ contain: 'layout inline-size' }}
+                  role="region"
+                  tabIndex={0}
+                  aria-label={gradingCopy.tableRegionLabel}
+                  aria-describedby={`grading-table-hint-${section.sectionId}`}
+                  data-testid={`grading-table-region-${section.sectionId}`}
+                >
+                  <div id={`grading-table-hint-${section.sectionId}`} className="flex items-center justify-between gap-4 px-8 sm:px-12 py-2 bg-muted/10 border-b border-border/30 text-[11px] leading-relaxed text-muted-foreground print:hidden">
+                    <span>{gradingCopy.tableScrollHint}</span>
+                    <span className="shrink-0 font-mono text-[10px] uppercase tracking-wider">XS–5XL</span>
+                  </div>
+                  <table className="grading-table w-full min-w-[1050px] text-left border-collapse print:text-black">
                     <thead className="bg-muted/20 text-muted-foreground print:bg-white print:text-gray-600">
                       <tr>
-                        <th className="p-4 sm:px-12 py-4 font-semibold border-r border-border/50 w-72 min-w-[240px] text-xs uppercase tracking-wider align-bottom print:border-gray-300" scope="col">
+                        <th className="sticky left-0 z-20 bg-muted/20 p-4 sm:px-12 py-4 font-semibold border-r border-border/50 w-72 min-w-[240px] text-xs uppercase tracking-wider align-bottom print:static print:bg-white print:border-gray-300" scope="col">
                           {gradingCopy.measurementHeader}
                         </th>
                         {ALL_SIZES.map(size => (
@@ -262,7 +267,7 @@ export default function ProjectGrading() {
                         return (
                           <React.Fragment key={m.measurementId}>
                             <tr className="hover:bg-muted/5 transition-colors border-t border-border/40 first:border-t-0">
-                              <td className="p-4 sm:px-12 py-5 border-r border-border/50 print:border-gray-300" rowSpan={hasRows ? 2 : 1}>
+                              <td className="sticky left-0 z-10 bg-card p-4 sm:px-12 py-5 border-r border-border/50 print:static print:bg-white print:border-gray-300" rowSpan={hasRows ? 2 : 1}>
                                 <div className="font-serif text-lg font-bold text-foreground print:text-black leading-tight">{m.label}</div>
                                 <div className="text-[11px] font-medium text-muted-foreground mt-1.5 uppercase tracking-wider flex items-center gap-1.5 print:text-gray-500">
                                   <span>{gradingCopy.gradingKeys[m.gradingKey] || m.gradingKey}</span>
@@ -333,6 +338,13 @@ export default function ProjectGrading() {
           </div>
         )}
       </div>
+
+      <McpGradingAssistantCard
+        project={project}
+        language={language}
+        hasData={hasData}
+        customStandard={customStandard}
+      />
       
       <style dangerouslySetInnerHTML={{__html: `
         @media print {
@@ -346,7 +358,9 @@ export default function ProjectGrading() {
             text-shadow: none !important;
             box-shadow: none !important;
           }
-            #sas-print-sheet td, #sas-print-sheet th { break-inside: avoid; }
+            #sas-print-sheet .grading-table-region { overflow: visible !important; }
+            #sas-print-sheet .grading-table { min-width: 0 !important; width: 100% !important; table-layout: fixed; }
+            #sas-print-sheet tr { break-inside: avoid; page-break-inside: avoid; }
             #sas-print-sheet [data-testid="button-print"] { display: none; }
             #sas-print-sheet th.print\\3a bg-black { background: #000 !important; color: #fff !important; }
         }

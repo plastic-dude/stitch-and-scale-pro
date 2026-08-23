@@ -256,7 +256,7 @@ export default function ProjectPdf() {
   // UI state
   const [showTip, setShowTip]             = useState(!pdfDefaults.firstExportTipSeen);
   const [isExporting, setIsExporting]     = useState(false);
-  const [previewKey, setPreviewKey]       = useState(0); // force iframe refresh
+  const [previewHeight, setPreviewHeight] = useState<number | null>(null);
 
   // Computed: grading result (memoized — expensive)
   const gradingResult = useMemo(
@@ -311,6 +311,13 @@ export default function ProjectPdf() {
       templateId: selectedTheme,
     });
   }, [selectedTheme, accentColor, includeCover, includeGauge, includeNotes, customLogo, finishedWorkPhotos, includeFinishedPhotos, language, projectHook?.project, gradingResult]);
+
+  // The preview source can change when any export option changes. Discard the
+  // previous document measurement immediately so a shorter/longer document is
+  // never rendered with stale iframe height while the new srcDoc loads.
+  useEffect(() => {
+    setPreviewHeight(null);
+  }, [previewHtml]);
 
   // Initialize filename from project + saved template
   useEffect(() => {
@@ -704,25 +711,32 @@ export default function ProjectPdf() {
 
       {/* ── Right Panel (live preview) ─────────────────────────── */}
       <div className="flex-1 bg-muted/30 flex flex-col items-center justify-start pt-8 pb-8 overflow-auto">
-        <div className="flex items-center gap-2 mb-4 text-xs text-muted-foreground">
+        <div className="flex items-center gap-2 mb-2 text-xs text-muted-foreground" data-testid="pdf-preview-status">
           <Eye className="w-3.5 h-3.5" />
-          <span>{labels.livePreview} · {labels.page} 1 / {1 + (gradingResult?.length ?? 0) + (includeGauge ? 1 : 0) + (gradingResult?.length > 0 ? 1 : 0) + (includeFinishedPhotos && finishedWorkPhotos.length > 0 ? 1 : 0)}</span>
+          <span>{labels.fullDocumentPreview}</span>
         </div>
+        <p className="mb-4 max-w-[560px] px-4 text-center text-[11px] leading-relaxed text-muted-foreground" data-testid="pdf-preview-hint">
+          {labels.previewScrollHint}
+        </p>
 
-        {/* Paper shadow */}
+        {/* Paper shadow. The iframe is measured from its complete srcDoc after
+            load, so this surface exposes every included document section. */}
         <div className="relative" style={{ width: 'min(calc(100vw - 32px), 560px)' }}>
           {previewHtml ? (
             <div
-              className="shadow-2xl rounded-sm overflow-hidden"
+              className="shadow-2xl rounded-sm overflow-visible"
               style={{
-                // A4 is 794px wide. Scale to fit the container.
+                // The source document uses a 794px screen canvas. Scale its
+                // measured full height to the available preview width.
                 width: '100%',
-                aspectRatio: '1 / 1.4142', // A4 ratio
+                minHeight: previewHeight === null ? undefined : 0,
+                aspectRatio: previewHeight === null ? '1 / 1.4142' : undefined,
+                height: previewHeight === null ? undefined : `${previewHeight}px`,
                 position: 'relative',
               }}
             >
               <iframe
-                key={previewHtml.slice(0, 100)} // remount on significant HTML change
+                key={`${previewHtml.length}:${previewHtml.slice(-128)}`}
                 srcDoc={previewHtml}
                 title={labels.pdfExport}
                 sandbox="allow-same-origin"
@@ -731,21 +745,32 @@ export default function ProjectPdf() {
                   top: 0,
                   left: 0,
                   width: 794,
-                  height: 1123,
+                  height: 794 * 1.4142,
                   border: 'none',
                   transformOrigin: 'top left',
-                  // Scale to fill container
                   transform: `scale(calc(min(calc(100vw - 32px), 560px) / 794))`,
-                  // For browsers that don't support CSS calc in transform:
-                  // we add an inline style via JS below
                 }}
                 onLoad={e => {
-                  // Calculate and apply scale dynamically
-                  const container = (e.target as HTMLIFrameElement).parentElement;
-                  if (!container) return;
-                  const scale = container.clientWidth / 794;
-                  (e.target as HTMLIFrameElement).style.transform = `scale(${scale})`;
-                  container.style.height = `${Math.round(1123 * scale)}px`;
+                  const iframe = e.currentTarget;
+                  const container = iframe.parentElement;
+                  const documentRoot = iframe.contentDocument?.documentElement;
+                  const documentBody = iframe.contentDocument?.body;
+                  if (!container || !documentRoot || !documentBody) return;
+
+                  const measure = () => {
+                    const documentHeight = Math.max(documentRoot.scrollHeight, documentBody.scrollHeight);
+                    if (!documentHeight) return;
+                    const scale = container.clientWidth / 794;
+                    iframe.style.height = `${documentHeight}px`;
+                    iframe.style.transform = `scale(${scale})`;
+                    setPreviewHeight(Math.ceil(documentHeight * scale));
+                  };
+
+                  // Measure now, then once web fonts and images settle. This
+                  // avoids a shorter preview when a late asset changes flow.
+                  measure();
+                  const fontsReady = iframe.contentDocument?.fonts?.ready ?? Promise.resolve();
+                  void fontsReady.then(() => window.requestAnimationFrame(measure));
                 }}
               />
             </div>

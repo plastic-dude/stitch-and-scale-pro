@@ -80,13 +80,24 @@ export function renderDocument(ctx: RenderContext): string {
   *, *::before, *::after { box-sizing: border-box; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
   html, body { margin: 0; padding: 0; background: ${theme.backgroundColor}; color: ${theme.textColor}; font-family: ${theme.bodyFont}; font-size: 11px; line-height: 1.55; }
   @page { size: letter; margin: 0; }
+  @page grading-landscape { size: letter landscape; margin: 0; }
   
   .page { page-break-before: always; padding: 0.75in; }
+  .grading-page { page: grading-landscape; padding: 0.6in; }
   .avoid { page-break-inside: avoid; break-inside: avoid; }
   table { border-spacing: 0; border-collapse: collapse; }
   thead { display: table-header-group; }
+  .grading-matrix { width: 100%; table-layout: fixed; }
+  .grading-matrix .measurement-col { width: 22%; }
+  .grading-matrix .size-col { width: 8.666%; }
+  .grading-matrix th, .grading-matrix td { overflow-wrap: anywhere; }
+  .grading-matrix .grading-row { page-break-inside: avoid; break-inside: avoid; }
   @media screen { body { max-width: 794px; margin: 0 auto; } }
-  @media print { body { max-width: none; } }
+  @media print {
+    body { max-width: none; }
+    .grading-matrix th, .grading-matrix td { padding-left: 4px !important; padding-right: 4px !important; }
+    .grading-page { page-break-before: always; }
+  }
 </style>
 </head>
 <body>
@@ -334,8 +345,8 @@ function renderMaterials(t: ResolvedTheme, p: PatternProject, includeNotes: bool
 function renderSection(t: ResolvedTheme, section: GradedSection, p: PatternProject, idx: number, labels: ReturnType<typeof getPdfLabels>): string {
   const originalSection = p.sections.find(s => s.id === section.sectionId);
 
-  const thStyle = `background:${t.tableHeaderBg};color:${t.tableHeaderText};font-family:${t.headingFont};font-size:8px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;padding:6px 7px;border:1px solid ${t.tableBorderColor};`;
-  const tdBase  = `padding:5px 7px;font-size:9.5px;border:1px solid ${t.tableBorderColor};font-family:${t.bodyFont};`;
+  const thStyle = `background:${t.tableHeaderBg};color:${t.tableHeaderText};font-family:${t.headingFont};font-size:8px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;padding:6px 4px;border:1px solid ${t.tableBorderColor};`;
+  const tdBase  = `padding:5px 4px;font-size:8.5px;border:1px solid ${t.tableBorderColor};font-family:${t.bodyFont};`;
 
   const rows = section.measurements.map((m, mi) => {
     const originalM = originalSection?.measurements.find(om => om.id === m.measurementId);
@@ -344,7 +355,7 @@ function renderSection(t: ResolvedTheme, section: GradedSection, p: PatternProje
     const rowBg  = mi % 2 === 0 ? 'transparent' : t.tableStripeBg;
 
     return `
-      <tr style="background:${rowBg};">
+      <tr class="grading-row" style="background:${rowBg};">
         <td style="${tdBase}color:${t.textColor};font-weight:500;" rowspan="${hasRows ? 2 : 1}">
           ${esc(m.label)}
           ${notes ? `<div style="font-size:8px;color:${t.mutedTextColor};font-weight:400;margin-top:2px;font-style:italic;">${esc(notes)}</div>` : ''}
@@ -357,7 +368,7 @@ function renderSection(t: ResolvedTheme, section: GradedSection, p: PatternProje
           </td>`;
         }).join('')}
       </tr>
-      ${hasRows ? `<tr style="background:${rowBg};">
+      ${hasRows ? `<tr class="grading-row" style="background:${rowBg};">
         ${(ALL_SIZES as SizeKey[]).map(size => {
           const gv = m.gradedValues.find(v => v.size === size);
           const isBase = size === p.baseSize;
@@ -368,22 +379,24 @@ function renderSection(t: ResolvedTheme, section: GradedSection, p: PatternProje
       </tr>` : ''}`;
   }).join('');
 
-  return `<div class="page" style="font-family:${t.bodyFont};color:${t.textColor};">
-    <div style="padding:8px 0;">
+  return `<div class="page grading-page" style="font-family:${t.bodyFont};color:${t.textColor};">
+    <div class="grading-section" style="padding:8px 0;">
       ${sectionHeader(t, section.sectionName, idx)}
-      <div class="avoid">
-        <table style="width:100%;border-collapse:collapse;">
-          <thead>
-            <tr>
-              <th style="${thStyle}text-align:left;min-width:110px;">${labels.measurement}</th>
-              ${(ALL_SIZES as SizeKey[]).map(s =>
-                `<th style="${thStyle}${s === p.baseSize ? `background:${t.accent};color:#fff;` : ''}">${s}</th>`
-              ).join('')}
-            </tr>
-          </thead>
-          <tbody>${rows}</tbody>
-        </table>
-      </div>
+      <table class="grading-matrix" aria-label="${esc(section.sectionName)}">
+        <colgroup>
+          <col class="measurement-col">
+          ${(ALL_SIZES as SizeKey[]).map(() => '<col class="size-col">').join('')}
+        </colgroup>
+        <thead>
+          <tr>
+            <th style="${thStyle}text-align:left;">${labels.measurement}</th>
+            ${(ALL_SIZES as SizeKey[]).map(s =>
+              `<th style="${thStyle}${s === p.baseSize ? `background:${t.accent};color:#fff;` : ''}">${s}</th>`
+            ).join('')}
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
     </div>
   </div>`;
 }
