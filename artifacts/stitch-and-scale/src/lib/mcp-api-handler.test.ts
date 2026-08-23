@@ -73,4 +73,20 @@ describe('Vercel MCP Web Standard handler', () => {
     expect(denied.response.status).toBe(403);
     expect(denied.body.error).toMatchObject({ code: -32001 });
   });
+
+  it('defaults to the active public alias and denies the stale alias', async () => {
+    const active = await invoke(new Request('https://example.test/api/mcp', {
+      method: 'OPTIONS',
+      headers: { origin: 'https://stitch-and-scale-pro-api-server.vercel.app' },
+    }));
+    expect(active.response.status).toBe(204);
+    expect(active.response.headers.get('access-control-allow-origin')).toBe('https://stitch-and-scale-pro-api-server.vercel.app');
+
+    const stale = await invoke(new Request('https://example.test/api/mcp', {
+      method: 'OPTIONS',
+      headers: { origin: 'https://stitch-and-scale-pro.vercel.app' },
+    }));
+    expect(stale.response.status).toBe(403);
+    expect(stale.body.error).toMatchObject({ code: -32001 });
+  });
 });

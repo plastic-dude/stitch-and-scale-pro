@@ -11,6 +11,7 @@ import { MCP_SUPPORTED_PROTOCOL_VERSIONS } from '../artifacts/stitch-and-scale/s
 const WINDOW_MS = 60_000;
 const MAX_REQUESTS_PER_WINDOW = 60;
 const MAX_REQUEST_BODY_BYTES = 256 * 1024;
+const DEFAULT_MCP_ALLOWED_ORIGIN = 'https://stitch-and-scale-pro-api-server.vercel.app';
 const rateBuckets = new Map<string, { startedAt: number; count: number }>();
 
 function constantTimeEquals(left: string, right: string): boolean {
@@ -50,7 +51,7 @@ function authorized(request: Request): boolean {
 function allowedOrigin(request: Request): string {
   const requestOrigin = request.headers.get('origin');
   if (!requestOrigin) return '';
-  const configured = process.env.MCP_ALLOWED_ORIGIN?.trim() || 'https://stitch-and-scale-pro.vercel.app';
+  const configured = process.env.MCP_ALLOWED_ORIGIN?.trim() || DEFAULT_MCP_ALLOWED_ORIGIN;
   const allowed = configured.split(',').map(o => o.trim()).filter(Boolean);
   return allowed.includes(requestOrigin) ? requestOrigin : '';
 }
