@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { getBragCardCopy } from './brag-copy';
+import type { BragCardStyle, BragCardTemplate } from './brag-card';
 
 const cardSource = readFileSync(new URL('../components/brag-card-card.tsx', import.meta.url), 'utf8');
 const locales = ['en', 'de', 'fr', 'es', 'pt'] as const;
@@ -24,6 +25,29 @@ describe('Brag Card browser export contract', () => {
     expect(cardSource).toContain('disabled={!hasData}');
   });
 
+  it('keeps selector options localized across all supported locales', () => {
+    const templates = ['income', 'sales', 'streak', 'published'] as const satisfies readonly BragCardTemplate[];
+    const styles = ['navy', 'editorial', 'swatch', 'selvedge', 'swiss', 'cameo'] as const satisfies readonly BragCardStyle[];
+    const accents = ['rose', 'honey', 'moss', 'denim'] as const;
+
+    for (const locale of locales) {
+      const copy = getBragCardCopy(locale);
+      for (const template of templates) {
+        expect(copy.templateOptions[template].label).toBeTruthy();
+        expect(copy.templateOptions[template].blurb).toBeTruthy();
+      }
+      for (const style of styles) expect(copy.styleOptions[style]).toBeTruthy();
+      for (const accent of accents) expect(copy.accentOptions[accent]).toBeTruthy();
+      expect(copy.gaugeSample).toBeTruthy();
+      expect(copy.earnedLabel).toBeTruthy();
+    }
+
+    expect(getBragCardCopy('de').templateOptions.income.label).toBe('Einnahmen');
+    expect(getBragCardCopy('fr').styleOptions.swatch).toBe('Échantillon');
+    expect(getBragCardCopy('es').accentOptions.moss).toBe('Musgo');
+    expect(getBragCardCopy('pt').templateOptions.streak.blurb).toContain('rentáveis');
+  });
+
   it('keeps the handoff language localized and free of durable-save claims', () => {
     for (const locale of locales) {
       const copy = getBragCardCopy(locale);
@@ -38,5 +62,14 @@ describe('Brag Card browser export contract', () => {
     expect(getBragCardCopy('en').downloadRequestedDescription).toContain('Check your downloads.');
     expect(getBragCardCopy('en').shareRequestAccepted).toBe('Share request accepted');
     expect(getBragCardCopy('en').shareRequestDescription).toContain('selected app');
+  });
+
+  it('routes localized option copy through the component rather than fixed English labels', () => {
+    expect(cardSource).toContain('copy.templateOptions[t].label');
+    expect(cardSource).toContain('copy.templateOptions[t].blurb');
+    expect(cardSource).toContain('copy.styleOptions[s]');
+    expect(cardSource).toContain('copy.accentOptions[a.id]');
+    expect(cardSource).not.toContain('label: "Income"');
+    expect(cardSource).not.toContain('label: "Gauge Swatch"');
   });
 });

@@ -30,7 +30,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useSettings } from "@/context/SettingsContext";
-import { getBragCardCopy } from "@/lib/brag-copy";
+import { getBragCardCopy, type BragCardAccent } from "@/lib/brag-copy";
 import { Camera, Copy, Download, Share2 } from "lucide-react";
 
 type ReceiptStored = { brand?: { studioName?: string; currency?: string }; ledger?: SavedSale[]; ts?: number };
@@ -39,27 +39,15 @@ type LedgerStored = { designs?: { status?: string }[]; ts?: number };
 const RECEIPT_KEY = "stitch-and-scale-receipt-v1";
 const LEDGER_KEY = "stitch-and-scale-designledger-v1";
 
-const ACCENTS = [
-  { id: "#d87093", label: "Rose" },
-  { id: "#e8a13d", label: "Honey" },
-  { id: "#7a9e7e", label: "Moss" },
-  { id: "#6e8fd4", label: "Denim" },
+const ACCENTS: { id: BragCardAccent; color: string }[] = [
+  { id: "rose", color: "#d87093" },
+  { id: "honey", color: "#e8a13d" },
+  { id: "moss", color: "#7a9e7e" },
+  { id: "denim", color: "#6e8fd4" },
 ];
 
-const TEMPLATES: { id: BragCardTemplate; label: string; blurb: string }[] = [
-  { id: "income", label: "Income", blurb: "Lead with the total earned" },
-  { id: "sales", label: "Sales", blurb: "Lead with the sale count" },
-  { id: "streak", label: "Streak", blurb: "Celebrate profitable months" },
-  { id: "published", label: "Published", blurb: "Lead with the portfolio" },
-];
-const STYLES: { id: BragCardStyle; label: string }[] = [
-  { id: "navy", label: "Navy" },
-  { id: "editorial", label: "Editorial" },
-  { id: "swatch", label: "Gauge Swatch" },
-  { id: "selvedge", label: "Selvedge" },
-  { id: "swiss", label: "Swiss Poster" },
-  { id: "cameo", label: "Stitch Cameo" },
-];
+const TEMPLATES: BragCardTemplate[] = ["income", "sales", "streak", "published"];
+const STYLES: BragCardStyle[] = ["navy", "editorial", "swatch", "selvedge", "swiss", "cameo"];
 
 function buildBragCardPng(svg: string): Promise<Blob> {
   return new Promise((resolve, reject) => {
@@ -138,7 +126,8 @@ export function BragCardCard(props: { project: PatternProject }) {
   }, [project.id, ledger]);
 
   const [template, setTemplate] = useState<BragCardTemplate>("income");
-  const [accent, setAccent] = useState(ACCENTS[0].id);
+  const [accentId, setAccentId] = useState<BragCardAccent>("rose");
+  const accent = ACCENTS.find((item) => item.id === accentId)?.color ?? ACCENTS[0].color;
   const [style, setStyle] = useState<BragCardStyle>("navy");
   const [nameOverride, setNameOverride] = useState("");
 
@@ -260,14 +249,14 @@ export function BragCardCard(props: { project: PatternProject }) {
               <div className="grid grid-cols-2 gap-2 mt-1.5">
                 {TEMPLATES.map((t) => (
                   <Button
-                    key={t.id}
-                    variant={template === t.id ? "default" : "outline"}
+                    key={t}
+                    variant={template === t ? "default" : "outline"}
                     size="sm"
                     className="h-auto py-2 flex flex-col items-start gap-0.5"
-                    onClick={() => setTemplate(t.id)}
+                    onClick={() => setTemplate(t)}
                   >
-                    <span className="text-xs font-semibold">{t.label}</span>
-                    <span className="text-[10px] opacity-70">{t.blurb}</span>
+                    <span className="text-xs font-semibold">{copy.templateOptions[t].label}</span>
+                    <span className="text-[10px] opacity-70">{copy.templateOptions[t].blurb}</span>
                   </Button>
                 ))}
               </div>
@@ -277,12 +266,12 @@ export function BragCardCard(props: { project: PatternProject }) {
               <div className="flex flex-wrap gap-1.5 mt-1.5">
                 {STYLES.map((s) => (
                   <Button
-                    key={s.id}
-                    variant={style === s.id ? "default" : "outline"}
+                    key={s}
+                    variant={style === s ? "default" : "outline"}
                     size="sm"
-                    onClick={() => setStyle(s.id)}
+                    onClick={() => setStyle(s)}
                   >
-                    {s.label}
+                    {copy.styleOptions[s]}
                   </Button>
                 ))}
               </div>
@@ -294,13 +283,14 @@ export function BragCardCard(props: { project: PatternProject }) {
                   <button
                     key={a.id}
                     type="button"
-                    aria-label={`${copy.accent}: ${a.label}`}
-                    onClick={() => setAccent(a.id)}
+                    aria-label={`${copy.accent}: ${copy.accentOptions[a.id]}`}
+                    aria-pressed={accentId === a.id}
+                    onClick={() => setAccentId(a.id)}
                     className="h-8 w-8 min-h-11 min-w-11 rounded-full border-2 transition-all"
                     style={{
-                      background: a.id,
-                      borderColor: accent === a.id ? "#0f172a" : "transparent",
-                      transform: accent === a.id ? "scale(1.1)" : "scale(1)",
+                      background: a.color,
+                      borderColor: accentId === a.id ? "#0f172a" : "transparent",
+                      transform: accentId === a.id ? "scale(1.1)" : "scale(1)",
                     }}
                   />
                 ))}
@@ -425,7 +415,7 @@ function BragCardPreview(props: { stats: ReturnType<typeof computeBragStats>; cu
             </div>
             <p className="font-mono font-bold leading-none" style={{ fontSize: "clamp(34px, 14vw, 72px)", color: pal.ink }}>{esc(big)}</p>
             <div style={{ width: "32%", height: "6px", background: accent }} />
-            <p className="font-sans font-bold" style={{ fontSize: "clamp(10px, 2.6vw, 17px)", color: pal.ink, letterSpacing: "0.06em" }}>{esc((unit || "earned").toUpperCase())}</p>
+            <p className="font-sans font-bold" style={{ fontSize: "clamp(10px, 2.6vw, 17px)", color: pal.ink, letterSpacing: "0.06em" }}>{esc((unit || copy.earnedLabel).toUpperCase())}</p>
             <p className="font-serif italic" style={{ fontSize: "clamp(10px, 2.4vw, 15px)", color: pal.soft }}>{esc(c.headline)}</p>
             <p className="font-sans" style={{ fontSize: "clamp(8px, 1.8vw, 12px)", color: pal.soft }}>{esc(c.subline)}</p>
           </div>

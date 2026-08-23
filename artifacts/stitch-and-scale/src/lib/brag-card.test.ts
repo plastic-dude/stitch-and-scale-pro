@@ -168,6 +168,20 @@ describe("buildBragCardSvg", () => {
     expect(svg).not.toContain(">sales<");
   });
 
+  it("localizes fixed labels and fallbacks in the exported SVG", () => {
+    const stats = { totalRevenue: 130, totalSales: 9, totalProfit: 40, publishedCount: 2, revenuePerSale: 14.44, bestMonth: undefined, bestMonthProfit: 0, profitMonths: 4, profitRatio: 80 };
+    const germanSelvedge = buildBragCardSvg(stats, "EUR", "income", "Wollwerk", "#d87093", "selvedge", getBragCardCopy("de"));
+    const germanSwatch = buildBragCardSvg(stats, "EUR", "income", "Wollwerk", "#d87093", "swatch", getBragCardCopy("de"));
+    const frenchSwiss = buildBragCardSvg(stats, "EUR", "income", "Atelier", "#d87093", "swiss", getBragCardCopy("fr"));
+    expect(germanSelvedge).toContain("EHRLICHES LEDGER");
+    expect(germanSelvedge).toContain("LOKAL GESTRICKT");
+    expect(germanSwatch).toContain("18 M × 24 R / 4in");
+    expect(frenchSwiss).toContain("RAPPORT DU REGISTRE");
+    expect(frenchSwiss).toContain("GAGNÉ");
+    expect(frenchSwiss).not.toContain("LEDGER REPORT");
+    expect(frenchSwiss).not.toContain(">earned<");
+  });
+
   it("streak template shows the month count as the big number", () => {
     const svg = buildBragCardSvg(
       { totalRevenue: 130, totalSales: 9, totalProfit: 40, publishedCount: 2, revenuePerSale: 14.44, bestMonth: undefined, bestMonthProfit: 0, profitMonths: 4, profitRatio: 80 },

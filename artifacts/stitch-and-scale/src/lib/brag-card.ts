@@ -265,7 +265,7 @@ function styleNavy(stats: BragStats, currency: string, template: BragCardTemplat
   <rect width="1080" height="1080" fill="${p.bg}"/>
   <rect x="0" y="0" width="1080" height="1080" fill="url(#stock)"/>
   <circle cx="960" cy="120" r="200" fill="${accent}" opacity="0.10"/>
-  <text x="80" y="150" font-family="${FONT_SERIF}" font-size="42" fill="${p.ink}">${esc(studioName || "My Studio")}</text>
+  <text x="80" y="150" font-family="${FONT_SERIF}" font-size="42" fill="${p.ink}">${esc(studioName || copy.studioFallback)}</text>
   <text x="80" y="420" font-family="${FONT_SERIF}" font-size="130" font-weight="bold" fill="${accent}">${esc(line)}</text>
   <text x="80" y="505" font-family="${FONT_SERIF}" font-size="42" fill="${p.ink}">${esc(c.headline)}</text>
   <text x="80" y="572" font-family="${FONT_SANS}" font-size="31" fill="${p.inkSoft}">${esc(c.subline)}</text>
@@ -283,10 +283,10 @@ function styleEditorial(stats: BragStats, currency: string, template: BragCardTe
   ${knitPatternDefs(p.rule)}
   <rect width="1080" height="1080" fill="${p.bg}"/>
   <rect x="64" y="64" width="952" height="952" fill="none" stroke="${p.rule}" stroke-width="2"/>
-  <text x="80" y="128" font-family="${FONT_SANS}" font-size="23" letter-spacing="6" fill="${p.inkSoft}">THE LEDGER · NO. 01</text>
-  <text x="1000" y="128" font-family="${FONT_SANS}" font-size="23" letter-spacing="6" text-anchor="end" fill="${p.inkSoft}">1080² · ONE STUDIO</text>
+  <text x="80" y="128" font-family="${FONT_SANS}" font-size="23" letter-spacing="6" fill="${p.inkSoft}">${esc(copy.ledger)} · NO. 01</text>
+  <text x="1000" y="128" font-family="${FONT_SANS}" font-size="23" letter-spacing="6" text-anchor="end" fill="${p.inkSoft}">1080² · ${esc(copy.oneStudio.toUpperCase())}</text>
   <line x1="80" y1="156" x2="1000" y2="156" stroke="${p.rule}" stroke-width="1.5"/>
-  <text x="80" y="262" font-family="${FONT_SANS}" font-size="28" letter-spacing="5" fill="${accent}">${esc((studioName || "My Studio").toUpperCase())}</text>
+  <text x="80" y="262" font-family="${FONT_SANS}" font-size="28" letter-spacing="5" fill="${accent}">${esc((studioName || copy.studioFallback).toUpperCase())}</text>
   <text x="80" y="424" font-family="${FONT_SERIF}" font-size="116" font-weight="bold" fill="${p.ink}">${esc(line)}</text>
   <line x1="80" y1="464" x2="440" y2="464" stroke="${accent}" stroke-width="5"/>
   <text x="80" y="552" font-family="${FONT_SERIF}" font-style="italic" font-size="44" fill="${p.inkSoft}">${esc(c.headline)}</text>
@@ -317,8 +317,8 @@ function styleSwatch(stats: BragStats, currency: string, template: BragCardTempl
   <line x1="720" y1="96" x2="720" y2="396" stroke="${p.rule}" stroke-width="2.5"/>
   <line x1="720" y1="396" x2="1020" y2="396" stroke="${p.rule}" stroke-width="2.5"/>
   <line x1="1020" y1="96" x2="1020" y2="396" stroke="${p.rule}" stroke-width="2.5"/>
-  <text x="720" y="436" font-family="${FONT_MONO}" font-size="22" fill="${p.inkSoft}">18 sts × 24 rows / 4in</text>
-  <text x="80" y="160" font-family="${FONT_SERIF}" font-size="44" fill="${p.ink}">${esc(studioName || "My Studio")}</text>
+  <text x="720" y="436" font-family="${FONT_MONO}" font-size="22" fill="${p.inkSoft}">${esc(copy.gaugeSample)}</text>
+  <text x="80" y="160" font-family="${FONT_SERIF}" font-size="44" fill="${p.ink}">${esc(studioName || copy.studioFallback)}</text>
   <text x="80" y="430" font-family="${FONT_MONO}" font-size="112" font-weight="bold" fill="${p.ink}">${esc(line)}</text>
   <text x="80" y="516" font-family="${FONT_SERIF}" font-style="italic" font-size="44" fill="${p.inkSoft}">${esc(c.headline)}</text>
   <text x="80" y="584" font-family="${FONT_SANS}" font-size="30" fill="${p.inkSoft}">${esc(c.subline)}</text>
@@ -332,12 +332,12 @@ function styleSelvedge(stats: BragStats, currency: string, template: BragCardTem
   const h = heroLine(stats, currency, template, copy);
   const c = buildBragCaption(stats, currency, template, studioName, copy);
   const line = h.unit ? `${h.big} ${h.unit}` : h.big;
-  const band = `STITCH &amp; SCALE   ·   ${esc((studioName || "My Studio").toUpperCase())}   ·   HONEST LEDGER   ·   KNIT LOCAL   ·   `;
+  const band = `STITCH &amp; SCALE   ·   ${esc((studioName || copy.studioFallback).toUpperCase())}   ·   ${esc(copy.honestLedger)}   ·   ${esc(copy.knitLocal)}   ·   `;
   return `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080">
   <rect width="1080" height="1080" fill="${p.bg}"/>
   <rect x="40" y="40" width="36" height="1000" fill="${accent}" opacity="0.85"/>
   <text x="0" y="0" transform="translate(58,1020) rotate(-90)" font-family="${FONT_SANS}" font-size="22" letter-spacing="8" fill="${p.bg}">${band}</text>
-  <text x="120" y="150" font-family="${FONT_SANS}" font-size="26" letter-spacing="6" fill="${p.inkSoft}">${esc((studioName || "My Studio").toUpperCase())}</text>
+  <text x="120" y="150" font-family="${FONT_SANS}" font-size="26" letter-spacing="6" fill="${p.inkSoft}">${esc((studioName || copy.studioFallback).toUpperCase())}</text>
   <text x="120" y="430" font-family="${FONT_SERIF}" font-size="122" font-weight="bold" fill="${p.ink}">${esc(line)}</text>
   <line x1="120" y1="476" x2="500" y2="476" stroke="${accent}" stroke-width="5"/>
   <text x="120" y="564" font-family="${FONT_SERIF}" font-style="italic" font-size="42" fill="${p.ink}">${esc(c.headline)}</text>
@@ -354,10 +354,10 @@ function styleSwiss(stats: BragStats, currency: string, template: BragCardTempla
   return `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080">
   <rect width="1080" height="1080" fill="${p.bg}"/>
   <rect x="0" y="0" width="1080" height="72" fill="${p.ink}"/>
-  <text x="80" y="50" font-family="${FONT_SANS}" font-size="25" letter-spacing="5" fill="${p.bg}">LEDGER REPORT · ${esc((studioName || "My Studio").toUpperCase())}</text>
+  <text x="80" y="50" font-family="${FONT_SANS}" font-size="25" letter-spacing="5" fill="${p.bg}">${esc(copy.report)} · ${esc((studioName || copy.studioFallback).toUpperCase())}</text>
   <text x="80" y="380" font-family="${FONT_MONO}" font-size="250" font-weight="bold" fill="${p.ink}">${esc(h.big)}</text>
   <rect x="80" y="420" width="340" height="26" fill="${accent}"/>
-  <text x="80" y="516" font-family="${FONT_SANS}" font-size="40" font-weight="bold" letter-spacing="1" fill="${p.ink}">${esc((h.unit || "earned").toUpperCase())}</text>
+  <text x="80" y="516" font-family="${FONT_SANS}" font-size="40" font-weight="bold" letter-spacing="1" fill="${p.ink}">${esc((h.unit || copy.earnedLabel).toUpperCase())}</text>
   <text x="80" y="596" font-family="${FONT_SERIF}" font-size="38" fill="${p.inkSoft}">${esc(c.headline)}</text>
   <text x="80" y="656" font-family="${FONT_SANS}" font-size="28" fill="${p.inkSoft}">${esc(c.subline)}</text>
   ${footerBlock(stats, currency, p.rule, p.inkSoft, copy)}
@@ -377,9 +377,9 @@ function styleCameo(stats: BragStats, currency: string, template: BragCardTempla
   return `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080">
   <rect width="1080" height="1080" fill="${p.bg}"/>
   <rect x="760" y="140" width="260" height="320" fill="none" stroke="${p.rule}" stroke-width="2"/>
-  <text x="786" y="112" font-family="${FONT_SANS}" font-size="22" letter-spacing="4" fill="${p.inkSoft}">CAMEO</text>
+  <text x="786" y="112" font-family="${FONT_SANS}" font-size="22" letter-spacing="4" fill="${p.inkSoft}">${esc(copy.cameo)}</text>
   ${cameo}
-  <text x="80" y="160" font-family="${FONT_SERIF}" font-size="42" fill="${p.ink}">${esc(studioName || "My Studio")}</text>
+  <text x="80" y="160" font-family="${FONT_SERIF}" font-size="42" fill="${p.ink}">${esc(studioName || copy.studioFallback)}</text>
   <text x="80" y="430" font-family="${FONT_SERIF}" font-size="122" font-weight="bold" fill="${p.ink}">${esc(line)}</text>
   <text x="80" y="512" font-family="${FONT_SERIF}" font-style="italic" font-size="42" fill="${p.inkSoft}">${esc(c.headline)}</text>
   <text x="80" y="578" font-family="${FONT_SANS}" font-size="30" fill="${p.inkSoft}">${esc(c.subline)}</text>
