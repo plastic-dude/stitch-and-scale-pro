@@ -149,7 +149,10 @@ export function Shell({ children }: { children: React.ReactNode }) {
         </div>
       </nav>
       
-      <footer className="border-t py-6 md:py-0 md:h-16 flex items-center justify-center text-sm text-muted-foreground">
+      {/* CHK-230: the fixed mobile nav overlays the document after the main content and
+          footer. Reserve its full visual height in the footer so the final text/link
+          row can be scrolled above the nav, including devices with a bottom safe area. */}
+      <footer className="border-t pb-[calc(4.25rem+env(safe-area-inset-bottom))] pt-6 md:pt-0 lg:py-0 lg:h-16 lg:pb-0 flex items-center justify-center text-sm text-muted-foreground">
         <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4">
           <p>{t('nav.footerDescription')}</p>
           <span className="hidden lg:inline text-border">|</span>

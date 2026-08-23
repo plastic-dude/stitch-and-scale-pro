@@ -21,8 +21,10 @@ describe('device-native responsive layout contracts', () => {
     expect(SHELL_SOURCE).toContain('<Link href="/" className="flex items-center gap-2.5 no-underline group">');
   });
 
-  it('keeps fixed mobile surfaces tied to the device viewport', () => {
+  it('keeps fixed mobile surfaces tied to the device viewport and clears the footer', () => {
     expect(SHELL_SOURCE).toContain('w-[100dvw] max-w-[100dvw] box-border');
+    expect(SHELL_SOURCE).toContain('pb-[calc(4.25rem+env(safe-area-inset-bottom))] pt-6 md:pt-0 lg:py-0 lg:h-16 lg:pb-0');
+    expect(SHELL_SOURCE).toContain('Reserve its full visual height in the footer');
     expect(INDEX_CSS_SOURCE).toContain('@media (max-width: 1023px)');
     expect(INDEX_CSS_SOURCE).toContain('[data-sonner-toaster]');
     expect(INDEX_CSS_SOURCE).toContain('width: 100dvw !important;');
