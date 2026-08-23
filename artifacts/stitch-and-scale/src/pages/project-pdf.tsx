@@ -392,22 +392,26 @@ export default function ProjectPdf() {
     // metadata-only: it records that the browser print surface was prepared,
     // never that the user saved a PDF.
     if (projectHook.project.publicationPackages && projectHook.project.publicationPackages.length > 0) {
-      // For simplicity, add to the first package or the most recent one.
-      const pkg = projectHook.project.publicationPackages[0];
-      projectHook.addPublicationArtifact(pkg.id, {
-        id: generateId(),
-        type: 'pdf',
-        label: suggestedPdf,
-        filename: suggestedPdf,
-        timestamp: new Date().toISOString(),
-        qualitySnapshot: publicationPreflight ? getPreflightStatus(publicationPreflight) : 'pass',
-        rendererVersion: PDF_RENDERER_VERSION,
-        templateId: selectedTheme,
-        locale: language,
-      });
-      toast({
-        title: tc.artifactPrepared(suggestedPdf),
-      });
+      // Keep PDF provenance on the same current draft package used by the
+      // publication compiler; fall back to the newest package for legacy data.
+      const pkg = projectHook.project.publicationPackages.find(candidate => candidate.status === 'draft')
+        ?? projectHook.project.publicationPackages[0];
+      if (pkg) {
+        projectHook.addPublicationArtifact(pkg.id, {
+          id: generateId(),
+          type: 'pdf',
+          label: suggestedPdf,
+          filename: suggestedPdf,
+          timestamp: new Date().toISOString(),
+          qualitySnapshot: publicationPreflight ? getPreflightStatus(publicationPreflight) : 'pass',
+          rendererVersion: PDF_RENDERER_VERSION,
+          templateId: selectedTheme,
+          locale: language,
+        });
+        toast({
+          title: tc.artifactPrepared(suggestedPdf),
+        });
+      }
     }
     setIsExporting(false);
   }, [previewHtml, filename, selectedTheme, accentColor, includeCover, includeGauge, includeNotes, includeFinishedPhotos, customLogo, pdfDefaults, setPdfDefaults, projectHook?.project, projectHook, publicationPreflight, language, labels.exportFailed, tc, toast]);

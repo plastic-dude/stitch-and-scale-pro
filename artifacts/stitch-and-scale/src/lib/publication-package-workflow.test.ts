@@ -33,6 +33,12 @@ describe('publication package workflow wiring', () => {
     expect(pdfSource).toContain('never that the user saved a PDF');
   });
 
+  it('records PDF provenance on the current draft package, not a stale first package', () => {
+    expect(pdfSource).toContain("publicationPackages.find(candidate => candidate.status === 'draft')");
+    expect(pdfSource).toContain('fall back to the newest package for legacy data');
+    expect(pdfSource).not.toContain('const pkg = projectHook.project.publicationPackages[0];');
+  });
+
   it('keeps compiler validation local and package-scoped', () => {
     expect(compilerSource).toContain("import { compileProject } from '@/lib/pattern-compiler'");
     expect(compilerSource).toContain('updatePublicationPackage({');
