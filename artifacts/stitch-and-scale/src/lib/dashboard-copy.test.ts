@@ -64,6 +64,20 @@ describe('Dashboard copy catalogue', () => {
     expect(Object.values(DASHBOARD_COPY).map((copy) => copy.exportRequested).join(' ')).not.toMatch(/downloaded|exported|heruntergeladen|exportiert|téléchargé|exporté|descargado|exportado|descarregado|exportado/i);
   });
 
+  it('batch JSON handoff uses request-only copy in every locale (CHK-236)', () => {
+    const completionWords = /downloaded|exported|heruntergeladen|exportiert|téléchargé|exporté|descargado|exportado|descarregado|exportado/i;
+    for (const locale of Object.values(DASHBOARD_COPY)) {
+      const message = locale.batchExportRequested(3);
+      expect(message).toContain('3');
+      expect(message).not.toMatch(completionWords);
+    }
+    expect(DASHBOARD_COPY.en.batchExportRequested(2)).toBe('2 pattern exports requested');
+    expect(DASHBOARD_COPY.de.batchExportRequested(2)).toBe('Export für 2 Muster angefordert');
+    expect(DASHBOARD_COPY.fr.batchExportRequested(2)).toBe('Export de 2 patrons demandé');
+    expect(DASHBOARD_COPY.es.batchExportRequested(2)).toBe('Exportación de 2 patrones solicitada');
+    expect(DASHBOARD_COPY.pt.batchExportRequested(2)).toBe('Exportação de 2 padrões solicitada');
+  });
+
   it('non-English locales override the English card-action fallbacks (QA 51-A)', () => {
     for (const locale of ['de', 'fr', 'es', 'pt'] as const) {
       expect(DASHBOARD_COPY[locale].duplicateAction).not.toBe('Duplicate');

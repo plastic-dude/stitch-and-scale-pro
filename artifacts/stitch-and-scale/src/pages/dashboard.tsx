@@ -270,7 +270,7 @@ export default function Dashboard() {
     a.click();
     a.remove();
     URL.revokeObjectURL(url);
-    toast({ title: copy.exported, description: copy.batchComplete(ids.length) });
+    toast({ title: copy.batchExportRequested(ids.length) });
   };
 
   return (
