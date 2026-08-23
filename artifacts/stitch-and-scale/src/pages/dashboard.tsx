@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/componen
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Link, useLocation } from 'wouter';
-import { Search, Plus, Calendar, Scissors, Layers, ChevronRight, PenTool, Info, X, MoreVertical, Copy, Download, Upload, Trash2, CheckCircle2, Loader2, FileSpreadsheet } from 'lucide-react';
+import { Search, Plus, Calendar, Scissors, Layers, Archive, ChevronRight, PenTool, Info, X, MoreVertical, Copy, Download, Upload, Trash2, CheckCircle2, Loader2, FileSpreadsheet } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 // CHK-155: rename validation mirrors the workspace + wizard so a stuck name
 // can never survive a save through any surface.
@@ -196,6 +196,29 @@ export default function Dashboard() {
   const allTags = Array.from(new Set(projects.flatMap(p => p.tags || []))).sort();
   
   const normalizedSearch = search.toLowerCase();
+  const activeProjectCount = projects.filter((p) => showArchived ? p.isArchived : !p.isArchived).length;
+  const archiveIsEmpty = showArchived && !projects.some((p) => p.isArchived);
+  const archiveEmptyState = (
+    <div className="sts-dashboard-enter mx-auto flex max-w-2xl flex-col items-center justify-center rounded-2xl border border-dashed border-primary/25 bg-primary/[0.03] px-5 py-16 text-center" data-testid="archive-empty-state">
+      <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary ring-1 ring-primary/15">
+        <Archive className="h-8 w-8" aria-hidden="true" />
+      </div>
+      <h2 className="font-serif text-3xl font-medium tracking-tight text-foreground">{copy.archiveEmpty}</h2>
+      <p className="mt-3 max-w-lg text-[15px] leading-relaxed text-muted-foreground">{copy.archiveEmptyBody}</p>
+      <p className="mt-3 max-w-lg text-sm leading-relaxed text-muted-foreground">{copy.archiveCreateHint}</p>
+      <div className="mt-7 flex flex-col items-center gap-3 sm:flex-row">
+        <Button variant="outline" className="min-h-11 rounded-full px-6" onClick={() => setShowArchived(false)} data-testid="button-return-active-projects">
+          <Layers className="mr-2 h-4 w-4" />
+          {copy.patterns}
+        </Button>
+        <Button variant="secondary" className="min-h-11 rounded-full px-6" onClick={handleImportClick} disabled={isImporting} data-testid="button-restore-from-archive-empty">
+          {isImporting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Upload className="mr-2 h-4 w-4" />}
+          {isImporting ? copy.restoring : copy.archiveRestore}
+        </Button>
+      </div>
+    </div>
+  );
+
   const filteredProjects = projects
     .filter(p => {
       const matchesSearch = (p.name ?? '').toLowerCase().includes(normalizedSearch) || (p.author ?? '').toLowerCase().includes(normalizedSearch);
@@ -290,7 +313,7 @@ export default function Dashboard() {
               <h1 className="text-4xl font-serif font-semibold text-foreground tracking-tight">{copy.patterns}</h1>
               <div className="flex items-center gap-3">
                 <p className="text-muted-foreground text-sm font-medium tracking-wide">
-                  {projects.length} {projects.length === 1 ? copy.project : copy.projects} {copy.inWorkspace}
+                  {activeProjectCount} {activeProjectCount === 1 ? copy.project : copy.projects} {copy.inWorkspace}
                 </p>
                 <Button 
                   variant="ghost" 
@@ -391,7 +414,7 @@ export default function Dashboard() {
         </div>
       )}
 
-      {projects.length === 0 ? (
+      {projects.length === 0 && showArchived ? archiveEmptyState : projects.length === 0 ? (
         <div
           className="sts-dashboard-enter flex flex-col items-center justify-center py-32 text-center px-4 max-w-xl mx-auto"
         >
@@ -424,6 +447,10 @@ export default function Dashboard() {
             {isImporting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Upload className="w-3.5 h-3.5" />}
             {isImporting ? copy.restoring : copy.orRestore}
           </button>
+          <Button variant="outline" className="mt-4 min-h-11 rounded-full" onClick={() => setShowArchived(true)} data-testid="button-show-archived-empty">
+            <Archive className="mr-2 h-4 w-4" />
+            {copy.showArchived}
+          </Button>
           <div className="mt-6 max-w-md rounded-xl border border-border/50 bg-muted/20 px-4 py-3 text-left">
             <p className="text-xs leading-relaxed text-muted-foreground">{copy.migrationHint}</p>
             <Button
@@ -437,7 +464,7 @@ export default function Dashboard() {
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        archiveIsEmpty ? archiveEmptyState : <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredProjects.map((project) => (
             <div key={project.id} className="sts-dashboard-item h-full relative group">
               <div className="absolute top-4 left-4 z-20">

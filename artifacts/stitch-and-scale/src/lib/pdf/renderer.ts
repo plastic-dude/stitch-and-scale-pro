@@ -9,7 +9,7 @@
 //   openPrintWindow(html, `${project.name}.pdf`);
 
 import type { ResolvedTheme } from './themes';
-import type { PatternProject, GradingResult, GradedSection, SizeKey, PatternDocumentContent } from '@/lib/grading-engine';
+import type { PatternProject, ProjectAsset, GradingResult, GradedSection, SizeKey, PatternDocumentContent } from '@/lib/grading-engine';
 import { ALL_SIZES } from '@/lib/grading-engine';
 import { isValidLanguageCode } from '@/lib/i18n';
 import { getPdfLabels } from './labels';
@@ -32,12 +32,16 @@ export interface RenderContext {
    *  mark on the cover when present. Compressed/resized client-side before
    *  it ever reaches here (see compressImageToDataUrl in the upload UI). */
   customLogo?: string;
+  /** Optional finished-work images selected by the export UI. */
+  finishedWorkPhotos?: ProjectAsset[];
+  /** Whether the finished-work photo section should be rendered. */
+  includeFinishedPhotos?: boolean;
 }
 
 // ─── Document Entry Point ─────────────────────────────────────────────────────
 
 export function renderDocument(ctx: RenderContext): string {
-  const { theme, pattern, gradingResult, includeCover = true, includeGaugeSummary = true, includeNotes = true, customLogo, locale = 'en', templateId, compiledContent } = ctx;
+  const { theme, pattern, gradingResult, includeCover = true, includeGaugeSummary = true, includeNotes = true, customLogo, locale = 'en', templateId, compiledContent, finishedWorkPhotos = [], includeFinishedPhotos = true } = ctx;
   const labels = getPdfLabels(locale);
   // CHK-122: document language must follow the export locale — a German (or
   // de/fr/es/pt) pattern export previously rendered <html lang="en">, which is
@@ -54,6 +58,12 @@ export function renderDocument(ctx: RenderContext): string {
   const instructionsHtml = compiledContent?.sections.map((s: any) => renderInstructionSection(theme, s)).join('') || '';
   const finishingHtml = compiledContent?.finishing ? renderCareNotes(theme, compiledContent.finishing, labels.finishing) : '';
   const careHtml = compiledContent?.care ? renderCareNotes(theme, compiledContent.care, labels.care) : '';
+  const safeFinishedWorkPhotos = includeFinishedPhotos
+      ? finishedWorkPhotos.filter((asset) => asset.type === 'image' && asset.category === 'photo' && asset.isFinishedWork === true && asset.includeInPdf !== false && isRenderableImageDataUrl(asset.dataUrl))
+    : [];
+  const finishedWorkPhotosHtml = safeFinishedWorkPhotos.length
+    ? renderFinishedWorkPhotos(theme, safeFinishedWorkPhotos, labels)
+    : '';
 
   const materialsHtml = includeGaugeSummary ? renderMaterials(theme, pattern, includeNotes, labels) : '';
   const sectionsHtml  = gradingResult.map((s, i) => renderSection(theme, s, pattern, i, labels)).join('');
@@ -91,10 +101,28 @@ ${theme.gridLineColor ? renderBlueprintGrid(theme) : ''}
     ${sectionsHtml}
     ${finishingHtml}
     ${careHtml}
+    ${finishedWorkPhotosHtml}
     ${renderFixedFooter(theme, pattern)}
 ${renderProvenanceFooter(theme, pattern, gradingResult, safeLang, templateId ?? 'stitch-and-scale-default')}
 </body>
 </html>`;
+}
+
+function isRenderableImageDataUrl(value: string): boolean {
+  return /^data:image\/[a-z0-9.+-]+;base64,/i.test(value);
+}
+
+function renderFinishedWorkPhotos(theme: ResolvedTheme, photos: ProjectAsset[], labels: ReturnType<typeof getPdfLabels>): string {
+  return `<div class="page">
+    <h2 style="font-family:${theme.headingFont};font-size:24px;line-height:1.2;margin:0 0 8px;color:${theme.textColor};">${esc(labels.finishedWorkPhotos)}</h2>
+    <p style="margin:0 0 22px;color:${theme.mutedTextColor};font-size:11px;">${esc(labels.finishedWorkPhotosDescription)}</p>
+    <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;">
+      ${photos.map((photo) => `<figure class="avoid" style="margin:0;border:1px solid ${theme.dividerColor};padding:10px;background:${theme.backgroundColor};">
+        <img src="${esc(photo.dataUrl)}" alt="${esc(photo.caption || photo.label)}" style="display:block;width:100%;height:3.2in;object-fit:contain;background:${theme.mutedTextColor}18;" />
+        <figcaption style="margin-top:8px;font-size:10px;color:${theme.textColor};">${esc(photo.caption || photo.label)}</figcaption>
+      </figure>`).join('')}
+    </div>
+  </div>`;
 }
 
 // ─── Watermark ────────────────────────────────────────────────────────────────

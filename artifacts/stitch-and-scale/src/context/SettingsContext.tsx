@@ -33,6 +33,8 @@ export interface PdfDefaults {
   includeCover: boolean;
   includeGaugeSummary: boolean;
   includeNotes: boolean;
+  /** Whether eligible finished-work photos are included in project PDFs. */
+  includeFinishedPhotos?: boolean;
   /** A designer's own logo for the PDF cover, as a data: URI. Compressed
    *  and resized client-side before it's ever stored here - see
    *  compressImageToDataUrl in src/lib/image-utils.ts. Optional; when
@@ -91,6 +93,7 @@ const DEFAULT_PDF_DEFAULTS: PdfDefaults = {
   includeCover: true,
   includeGaugeSummary: true,
   includeNotes: true,
+  includeFinishedPhotos: true,
 };
 
 // CHK-131: dark is now the first mode for every new user. The theme

@@ -285,6 +285,14 @@ export interface ProjectAsset {
   dataUrl: string; // Base64 for local-first storage
   category: 'photo' | 'swatch' | 'schematic' | 'evidence' | 'other';
   createdAt: string;
+  /** Optional maker-facing description shown in galleries and exports. */
+  caption?: string;
+  /** Whether this image belongs to the finished-work gallery rather than reference assets. */
+  isFinishedWork?: boolean;
+  /** Whether this image is the primary finished-work view for the project. */
+  isFeatured?: boolean;
+  /** Whether this image should appear in the optional project PDF photo section. */
+  includeInPdf?: boolean;
 }
 
 export type TestKnitStatus = 'planned' | 'in-progress' | 'completed' | 'ghosted' | 'cancelled';

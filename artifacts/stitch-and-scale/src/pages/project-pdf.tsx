@@ -247,6 +247,7 @@ export default function ProjectPdf() {
   const [includeCover, setIncludeCover]   = useState(pdfDefaults.includeCover);
   const [includeGauge, setIncludeGauge]   = useState(pdfDefaults.includeGaugeSummary);
   const [includeNotes, setIncludeNotes]   = useState(pdfDefaults.includeNotes);
+  const [includeFinishedPhotos, setIncludeFinishedPhotos] = useState(pdfDefaults.includeFinishedPhotos ?? true);
 
   // Filename
   const [filename, setFilename]           = useState('');
@@ -261,6 +262,13 @@ export default function ProjectPdf() {
   const gradingResult = useMemo(
     () => projectHook?.project ? gradePattern(projectHook.project, resolveProjectStandards(projectHook.project, customStandard)) : [],
     [projectHook?.project, customStandard],
+  );
+
+  const finishedWorkPhotos = useMemo(
+    () => (projectHook?.project?.assets ?? []).filter((asset) =>
+      asset.type === 'image' && asset.category === 'photo' && asset.isFinishedWork === true && asset.includeInPdf !== false && /^data:image\/[a-z0-9.+-]+;base64,/i.test(asset.dataUrl),
+    ),
+    [projectHook?.project?.assets],
   );
 
   // Publication preflight is deliberately computed from the same project,
@@ -297,10 +305,12 @@ export default function ProjectPdf() {
       includeGaugeSummary: includeGauge,
       includeNotes,
       customLogo,
+      finishedWorkPhotos,
+      includeFinishedPhotos,
       locale: language,
       templateId: selectedTheme,
     });
-  }, [selectedTheme, accentColor, includeCover, includeGauge, includeNotes, customLogo, language, projectHook?.project, gradingResult]);
+  }, [selectedTheme, accentColor, includeCover, includeGauge, includeNotes, customLogo, finishedWorkPhotos, includeFinishedPhotos, language, projectHook?.project, gradingResult]);
 
   // Initialize filename from project + saved template
   useEffect(() => {
@@ -351,6 +361,7 @@ export default function ProjectPdf() {
       includeCover,
       includeGaugeSummary: includeGauge,
       includeNotes,
+      includeFinishedPhotos,
       customLogo,
     });
     const attempt = openPrintWindow(previewHtml, suggestedPdf, () => {
@@ -389,7 +400,7 @@ export default function ProjectPdf() {
     // preparation state. `openPrintWindow` retains its own in-flight lock and
     // afterprint cleanup independently of this UI state.
     setIsExporting(false);
-  }, [previewHtml, filename, selectedTheme, accentColor, includeCover, includeGauge, includeNotes, customLogo, pdfDefaults, setPdfDefaults, projectHook?.project, projectHook, publicationPreflight, language, labels.exportFailed, tc, toast]);
+  }, [previewHtml, filename, selectedTheme, accentColor, includeCover, includeGauge, includeNotes, includeFinishedPhotos, customLogo, pdfDefaults, setPdfDefaults, projectHook?.project, projectHook, publicationPreflight, language, labels.exportFailed, tc, toast]);
 
   if (!projectHook) {
     return (
@@ -553,7 +564,8 @@ export default function ProjectPdf() {
               {[
                 { label: labels.coverPage, value: includeCover, set: setIncludeCover, id: 'cover' },
                 { label: labels.gaugeSummary, value: includeGauge, set: setIncludeGauge, id: 'gauge' },
-                { label: 'Pattern Notes', value: includeNotes, set: setIncludeNotes, id: 'notes', disabled: !project.description },
+                { label: labels.patternNotes, value: includeNotes, set: setIncludeNotes, id: 'notes', disabled: !project.description },
+                { label: labels.finishedWorkPhotos, value: includeFinishedPhotos, set: setIncludeFinishedPhotos, id: 'finished-work-photos', disabled: finishedWorkPhotos.length === 0 },
               ].map(({ label, value, set, id, disabled }) => (
                 <div key={id} className="flex items-center justify-between">
                   <Label htmlFor={`opt-${id}`} className={cn("text-sm cursor-pointer", disabled && "text-muted-foreground")}>
@@ -566,10 +578,16 @@ export default function ProjectPdf() {
                     disabled={disabled}
                     onCheckedChange={set}
                     aria-label={label}
+                    data-testid={`switch-include-${id}`}
                   />
                 </div>
               ))}
             </div>
+            <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
+              {finishedWorkPhotos.length > 0
+                ? labels.finishedWorkPhotosDescription
+                : `${labels.finishedWorkPhotos} (${labels.noneAdded})`}
+            </p>
           </section>
 
           <Separator />
@@ -688,7 +706,7 @@ export default function ProjectPdf() {
       <div className="flex-1 bg-muted/30 flex flex-col items-center justify-start pt-8 pb-8 overflow-auto">
         <div className="flex items-center gap-2 mb-4 text-xs text-muted-foreground">
           <Eye className="w-3.5 h-3.5" />
-          <span>{labels.livePreview} · {labels.page} 1 / {1 + (gradingResult?.length ?? 0) + (includeGauge ? 1 : 0) + (gradingResult?.length > 0 ? 1 : 0)}</span>
+          <span>{labels.livePreview} · {labels.page} 1 / {1 + (gradingResult?.length ?? 0) + (includeGauge ? 1 : 0) + (gradingResult?.length > 0 ? 1 : 0) + (includeFinishedPhotos && finishedWorkPhotos.length > 0 ? 1 : 0)}</span>
         </div>
 
         {/* Paper shadow */}

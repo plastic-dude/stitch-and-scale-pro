@@ -126,7 +126,7 @@ export const TAB_REGISTRY: TabRegistryEntry[] = [
   { value: "payback", label: "Payback Lab", group: "pricing", icon: "TrendingUp" },
   { value: "compiler", label: "Compiler", group: "design", icon: "ShieldCheck" },
   { value: "collaboration", label: "Collaboration", group: "fit", icon: "Users" },
-  { value: "assets", label: "Assets", group: "design", icon: "Paperclip" },
+  { value: "assets", label: "Gallery & Assets", group: "design", icon: "Paperclip" },
   { value: "composition", label: "Composition", group: "design", icon: "FileText" },
   { value: "samples", label: "Samples", group: "business", icon: "Package" },
   { value: "wholesale-followup", label: "Wholesale Orders", group: "business", icon: "Building2" },
