@@ -4,9 +4,11 @@ import { join } from 'node:path';
 
 const WORKSPACE = join(__dirname, '..', 'pages', 'project-workspace.tsx');
 const COMPILER = join(__dirname, '..', 'components', 'project-compiler-card.tsx');
+const PDF_PAGE = join(__dirname, '..', 'pages', 'project-pdf.tsx');
 
 const workspaceSource = readFileSync(WORKSPACE, 'utf8');
 const compilerSource = readFileSync(COMPILER, 'utf8');
+const pdfSource = readFileSync(PDF_PAGE, 'utf8');
 
 describe('publication package workflow wiring', () => {
   it('lazy-loads the deterministic compiler alongside the package surface', () => {
@@ -20,6 +22,15 @@ describe('publication package workflow wiring', () => {
     expect(packagesCase).toContain('<Compiler');
     expect(packagesCase).toContain('project={project}');
     expect(packagesCase).toContain('updatePublicationPackage={updatePublicationPackage}');
+  });
+
+  it('records PDF provenance at print preparation without claiming a saved file', () => {
+    expect(pdfSource).toContain("import { PDF_RENDERER_VERSION, renderDocument } from '@/lib/pdf/renderer';");
+    expect(pdfSource).toContain('rendererVersion: PDF_RENDERER_VERSION');
+    expect(pdfSource).toContain('templateId: selectedTheme');
+    expect(pdfSource).toContain('locale: language');
+    expect(pdfSource).toContain('metadata-only');
+    expect(pdfSource).toContain('never that the user saved a PDF');
   });
 
   it('keeps compiler validation local and package-scoped', () => {

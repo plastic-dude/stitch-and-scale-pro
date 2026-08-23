@@ -1,4 +1,22 @@
-import type { ArtifactInspectionReport } from './grading-engine';
+import type { ArtifactInspectionReport, PublicationArtifact } from './grading-engine';
+
+export const UNKNOWN_ARTIFACT_PROVENANCE = 'not-recorded';
+
+type ArtifactProvenanceSource = Pick<PublicationArtifact, 'rendererVersion' | 'templateId' | 'locale'>;
+
+/**
+ * Resolve persisted artifact provenance without treating a legacy or metadata-
+ * incomplete record as if it came from a known renderer/template/locale.
+ */
+export function getArtifactInspectionProvenance(
+  artifact: ArtifactProvenanceSource,
+): Pick<ArtifactInspectionReport, 'rendererVersion' | 'templateId' | 'locale'> {
+  return {
+    rendererVersion: artifact.rendererVersion?.trim() || UNKNOWN_ARTIFACT_PROVENANCE,
+    templateId: artifact.templateId?.trim() || UNKNOWN_ARTIFACT_PROVENANCE,
+    locale: artifact.locale?.trim() || UNKNOWN_ARTIFACT_PROVENANCE,
+  };
+}
 
 const hasBlockingChecklistFailure = (report: Pick<ArtifactInspectionReport, 'hasBlankPages' | 'hasTitle' | 'hasHeadings' | 'hasTableContinuity'>) =>
   report.hasBlankPages === true ||

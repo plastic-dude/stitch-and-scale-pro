@@ -11,7 +11,7 @@ import { useSettings } from '@/context/SettingsContext';
 import { getWorkspaceCopy } from '@/lib/workspace-copy';
 import { FileSearch, Save } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { normalizeArtifactInspectionReport } from '@/lib/artifact-inspection';
+import { getArtifactInspectionProvenance, normalizeArtifactInspectionReport } from '@/lib/artifact-inspection';
 import { 
   type PatternProject,
   type PublicationArtifact,
@@ -36,6 +36,7 @@ export function ProjectArtifactInspectionCard({
   const { language } = useSettings();
   const copy = getWorkspaceCopy(language);
   const { toast } = useToast();
+  const provenance = getArtifactInspectionProvenance(artifact);
 
   const [pageCount, setPageCount] = useState<number>(artifact.inspectionReport?.pageCount ?? 0);
   const [hasBlankPages, setHasBlankPages] = useState<boolean>(artifact.inspectionReport?.hasBlankPages ?? false);
@@ -54,9 +55,7 @@ export function ProjectArtifactInspectionCard({
     hasTableContinuity,
     hasCharts,
     hasSchematics,
-    rendererVersion: '1.0.0',
-    templateId: 'standard-v1',
-    locale: language,
+    ...provenance,
     inspectedAt: '',
     inspector: 'human',
     verdict,
@@ -71,9 +70,7 @@ export function ProjectArtifactInspectionCard({
       hasTableContinuity,
       hasCharts,
       hasSchematics,
-      rendererVersion: '1.0.0', // Current internal version
-      templateId: 'standard-v1',
-      locale: language,
+      ...provenance,
       inspectedAt: new Date().toISOString(),
       inspector: 'human',
       verdict: effectiveVerdict,

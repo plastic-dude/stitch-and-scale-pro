@@ -8,6 +8,7 @@ vi.mock('@/lib/storage-lib', () => ({
 import { projectsReducer } from '@/context/ProjectsContext';
 import {
   artifactQualitySnapshot,
+  getArtifactInspectionProvenance,
   normalizeArtifactInspectionReport,
 } from './artifact-inspection';
 import {
@@ -55,6 +56,50 @@ function testProject(): PatternProject {
 }
 
 describe('artifact inspection logic', () => {
+  it('does not invent provenance for legacy artifacts', () => {
+    expect(getArtifactInspectionProvenance({})).toEqual({
+      rendererVersion: 'not-recorded',
+      templateId: 'not-recorded',
+      locale: 'not-recorded',
+    });
+
+    expect(getArtifactInspectionProvenance({
+      rendererVersion: 'pdf-renderer-v1',
+      templateId: 'luxury',
+      locale: 'de',
+    })).toEqual({
+      rendererVersion: 'pdf-renderer-v1',
+      templateId: 'luxury',
+      locale: 'de',
+    });
+  });
+
+  it('preserves artifact provenance while attaching a human inspection report', () => {
+    const project = testProject();
+    const artifact = project.publicationPackages![0].artifacts[0];
+    artifact.rendererVersion = 'pdf-renderer-v1';
+    artifact.templateId = 'minimal';
+    artifact.locale = 'fr';
+    const report: ArtifactInspectionReport = {
+      rendererVersion: 'pdf-renderer-v1',
+      templateId: 'minimal',
+      locale: 'fr',
+      inspectedAt: new Date().toISOString(),
+      inspector: 'human',
+      verdict: 'warning',
+    };
+
+    const [updated] = projectsReducer([project], {
+      type: 'INSPECT_ARTIFACT',
+      payload: { projectId: 'p1', packageId: 'pkg1', artifactId: 'art1', report },
+    });
+
+    const updatedArtifact = updated.publicationPackages![0].artifacts[0];
+    expect(updatedArtifact.rendererVersion).toBe('pdf-renderer-v1');
+    expect(updatedArtifact.templateId).toBe('minimal');
+    expect(updatedArtifact.locale).toBe('fr');
+  });
+
   it('applies inspection report and updates quality snapshot', () => {
     const project = testProject();
     const report: ArtifactInspectionReport = {

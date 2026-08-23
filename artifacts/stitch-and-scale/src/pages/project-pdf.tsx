@@ -4,7 +4,7 @@ import { useProject, useProjects, type PatternProject } from '@/context/Projects
 import { useSettings } from '@/context/SettingsContext';
 import { gradePattern, resolveProjectStandards, generateId } from '@/lib/grading-engine';
 import { THEMES, resolveTheme, type ThemeId } from '@/lib/pdf/themes';
-import { renderDocument } from '@/lib/pdf/renderer';
+import { PDF_RENDERER_VERSION, renderDocument } from '@/lib/pdf/renderer';
 import { validateDraft } from '@/lib/pattern-draft-renderer';
 import { openPrintWindow, getDefaultFilename, sanitizeFilename, detectNamingStyle, applyNamingTemplate } from '@/lib/pdf/print-utils';
 import { compressImageToDataUrl } from '@/lib/image-utils';
@@ -401,6 +401,9 @@ export default function ProjectPdf() {
         filename: suggestedPdf,
         timestamp: new Date().toISOString(),
         qualitySnapshot: publicationPreflight ? getPreflightStatus(publicationPreflight) : 'pass',
+        rendererVersion: PDF_RENDERER_VERSION,
+        templateId: selectedTheme,
+        locale: language,
       });
       toast({
         title: tc.artifactPrepared(suggestedPdf),

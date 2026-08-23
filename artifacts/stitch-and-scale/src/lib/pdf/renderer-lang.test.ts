@@ -4,7 +4,7 @@
 // These tests pin the fixed behaviour.
 import { describe, expect, it } from 'vitest';
 import { resolveTheme } from '@/lib/pdf/themes';
-import { renderDocument } from '@/lib/pdf/renderer';
+import { PDF_RENDERER_VERSION, renderDocument } from '@/lib/pdf/renderer';
 import { gradePattern } from '@/lib/grading-engine';
 import { getInitialLanguage, isValidLanguageCode, LANGUAGE_OPTIONS } from '@/lib/i18n';
 import { SAMPLE_CREW_NECK_SWEATER } from '@/lib/sample-projects';
@@ -52,6 +52,18 @@ describe('renderDocument html lang (CHK-122)', () => {
     const pt = renderWith('pt');
     expect(pt).toContain('<html lang="pt">');
     expect(pt).toContain('>por '); // pt labels.by
+  });
+
+  it('emits the declared renderer contract marker used by prepared artifact provenance', () => {
+    const html = renderDocument({
+      theme: resolveTheme('minimal'),
+      pattern: SAMPLE_CREW_NECK_SWEATER,
+      gradingResult: GRADING,
+      locale: 'en',
+      templateId: 'minimal',
+    });
+    expect(html).toContain(`<meta name="stitch-and-scale-renderer" content="${PDF_RENDERER_VERSION}">`);
+    expect(html).toContain('<meta name="stitch-and-scale-template" content="minimal">');
   });
 
   it('provenance footer reports the actual export locale and templateId, not hardcoded values', () => {

@@ -148,6 +148,10 @@ export interface PublicationArtifact {
   qualitySnapshot?: 'pass' | 'fail' | 'pending' | 'blocked';
   url?: string;
   revisionId?: string;
+  /** Provenance captured when the artifact was prepared. Optional for legacy records. */
+  rendererVersion?: string;
+  templateId?: string;
+  locale?: string;
   inspectionReport?: ArtifactInspectionReport;
 }
 

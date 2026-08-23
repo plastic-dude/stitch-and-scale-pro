@@ -14,6 +14,9 @@ import { ALL_SIZES } from '@/lib/grading-engine';
 import { isValidLanguageCode } from '@/lib/i18n';
 import { getPdfLabels } from './labels';
 
+/** Stable renderer contract identifier recorded on newly prepared PDF artifacts. */
+export const PDF_RENDERER_VERSION = 'pdf-renderer-v1';
+
 export interface RenderContext {
   theme: ResolvedTheme;
   pattern: PatternProject;
@@ -72,6 +75,8 @@ export function renderDocument(ctx: RenderContext): string {
 <html lang="${esc(safeLang)}">
 <head>
 <meta charset="utf-8">
+<meta name="stitch-and-scale-renderer" content="${esc(PDF_RENDERER_VERSION)}">
+${templateId ? `<meta name="stitch-and-scale-template" content="${esc(templateId)}">` : ''}
 <title>${esc(pattern.name)}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
