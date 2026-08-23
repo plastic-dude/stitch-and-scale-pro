@@ -145,6 +145,7 @@ const LAB = {
   snapshots: React.lazy(cardLazy(() => import('@/components/project-snapshots-card'))),
   readiness: React.lazy(cardLazy(() => import('@/components/project-readiness-card'))),
   packages: React.lazy(cardLazy(() => import('@/components/project-package-card'))),
+  compiler: React.lazy(cardLazy(() => import('@/components/project-compiler-card'))),
   collaboration: React.lazy(cardLazy(() => import('@/components/collaboration-panel'))),
   assets: React.lazy(cardLazy(() => import('@/components/assets-panel'))),
 };
@@ -1005,17 +1006,26 @@ export default function ProjectWorkspace() {
 
       case 'packages': {
         const Packages = LAB.packages as React.ComponentType<any>;
+        const Compiler = LAB.compiler as React.ComponentType<any>;
         return (
-          <React.Suspense fallback={<div className="py-10 text-center text-sm text-muted-foreground">{copy.loadingLab}</div>}>
-            <Packages 
-              project={project} 
-              createPublicationPackage={createPublicationPackage}
-              updatePublicationPackage={updatePublicationPackage}
-              deletePublicationPackage={deletePublicationPackage}
-              addPublicationArtifact={addPublicationArtifact}
-              inspectArtifact={inspectArtifact}
-            />
-          </React.Suspense>
+          <div className="space-y-6">
+            <React.Suspense fallback={<div className="py-10 text-center text-sm text-muted-foreground">{copy.loadingLab}</div>}>
+              <Packages
+                project={project}
+                createPublicationPackage={createPublicationPackage}
+                updatePublicationPackage={updatePublicationPackage}
+                deletePublicationPackage={deletePublicationPackage}
+                addPublicationArtifact={addPublicationArtifact}
+                inspectArtifact={inspectArtifact}
+              />
+            </React.Suspense>
+            <React.Suspense fallback={<div className="py-10 text-center text-sm text-muted-foreground">{copy.loadingLab}</div>}>
+              <Compiler
+                project={project}
+                updatePublicationPackage={updatePublicationPackage}
+              />
+            </React.Suspense>
+          </div>
         );
       }
       case 'assets': {
