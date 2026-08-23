@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { generateId, type PatternProject, SIZE_STANDARDS } from './grading-engine';
 import {
@@ -9,6 +10,8 @@ import {
   runMcpGrading,
   validateMcpProject,
 } from './mcp-contract';
+
+const gradingCsvSource = readFileSync(new URL('./grading-csv.ts', import.meta.url), 'utf8');
 
 function makeProject(overrides: Partial<PatternProject> = {}): PatternProject {
   return {
@@ -36,6 +39,11 @@ function makeProject(overrides: Partial<PatternProject> = {}): PatternProject {
 }
 
 describe('MCP contract', () => {
+  it('keeps the grading CSV dependency resolvable outside the Vite alias context', () => {
+    expect(gradingCsvSource).toContain("from './grading-engine.js'");
+    expect(gradingCsvSource).not.toContain("from '@/lib/grading-engine'");
+  });
+
   it('normalizes a valid explicit project snapshot without noisy legacy warnings', () => {
     const result = normalizeMcpProject(makeProject());
     expect(result.project?.id).toBe('mcp-test-project');
