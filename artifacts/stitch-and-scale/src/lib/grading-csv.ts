@@ -1,4 +1,4 @@
-import { ALL_SIZES, type GradingResult, type MeasurementUnit } from '@/lib/grading-engine';
+import { ALL_SIZES, type GradingResult, type MeasurementUnit } from './grading-engine.js';
 
 function csvCell(value: string | number | undefined): string {
   const text = value === undefined ? '' : String(value);
