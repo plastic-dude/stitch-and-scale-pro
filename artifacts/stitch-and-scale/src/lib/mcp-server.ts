@@ -1,7 +1,9 @@
 import { assessMcpProject } from './mcp-intake.js';
 import {
   explainMcpGrade,
+  exportMcpGradingCsv,
   getMcpToolDefinitions,
+  isMcpGradingCsvOutput,
   MCP_CONTRACT_VERSION,
   MCP_PROTOCOL_VERSION,
   MCP_SERVER_NAME,
@@ -140,6 +142,16 @@ export function dispatchMcpRequest(request: McpJsonRpcRequest): McpJsonRpcRespon
         }
         const output = explainMcpGrade({ intent: args.intent as McpExplainInput['intent'], grade: args.grade as unknown as McpGradeOutput });
         return success(request, { content: [{ type: 'text', text: JSON.stringify(output) }], structuredContent: output, isError: false });
+      }
+      if (name === 'grading.export_csv') {
+        const project = toolProject(request.params.arguments);
+        if (project === null) return invalidParams(request, 'grading.export_csv requires arguments.project.');
+        const output = exportMcpGradingCsv(project);
+        return success(request, {
+          content: [{ type: 'text', text: isMcpGradingCsvOutput(output) ? output.csv : JSON.stringify(output) }],
+          structuredContent: output,
+          isError: !isMcpGradingCsvOutput(output),
+        });
       }
       if (name === 'export.pattern_pdf' || name === 'export.project_book_pdf' || name === 'export.brag_card') {
         return error(request, -32006, 'This tool creates a binary artifact and must be dispatched through the asynchronous MCP transport.');

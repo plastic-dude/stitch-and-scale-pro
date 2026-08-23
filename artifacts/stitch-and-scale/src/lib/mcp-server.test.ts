@@ -39,8 +39,36 @@ describe('MCP server transport contract', () => {
     expect('result' in response).toBe(true);
     if (!('result' in response)) throw new Error('tools/list failed');
     expect((response.result.tools as Array<{ name: string }>).map(tool => tool.name)).toEqual([
-      'project.intake', 'project.validate', 'grading.run', 'grading.explain', 'export.pattern_pdf', 'export.project_book_pdf', 'export.brag_card', 'calculate.marketplace_take_rate',
+      'project.intake', 'project.validate', 'grading.run', 'grading.explain', 'grading.export_csv', 'export.pattern_pdf', 'export.project_book_pdf', 'export.brag_card', 'calculate.marketplace_take_rate',
     ]);
+  });
+
+  it('exports a grading result as CSV using the same serializer as the in-app Download CSV button', () => {
+    const response = dispatchMcpRequest({
+      jsonrpc: '2.0',
+      id: 'csv-1',
+      method: 'tools/call',
+      params: { name: 'grading.export_csv', arguments: { project: project() } },
+    });
+    expect('result' in response).toBe(true);
+    if (!('result' in response)) throw new Error('grading.export_csv failed');
+    expect(response.result.isError).toBe(false);
+    const structured = response.result.structuredContent as { csv: string; filename: string };
+    expect(structured.csv).toContain('Section,Measurement,Property');
+    expect(structured.filename).toContain('grading.csv');
+    expect(response.result.content).toEqual([{ type: 'text', text: structured.csv }]);
+  });
+
+  it('refuses to export CSV for an invalid project instead of guessing', () => {
+    const response = dispatchMcpRequest({
+      jsonrpc: '2.0',
+      id: 'csv-2',
+      method: 'tools/call',
+      params: { name: 'grading.export_csv', arguments: { project: { ...project(), sections: [] } } },
+    });
+    expect('result' in response).toBe(true);
+    if (!('result' in response)) throw new Error('grading.export_csv failed');
+    expect(response.result.isError).toBe(true);
   });
 
   it('runs grading only against an explicit supplied snapshot', () => {
