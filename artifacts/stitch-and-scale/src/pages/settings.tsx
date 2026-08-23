@@ -35,6 +35,24 @@ export default function SettingsPage() {
   const copy = getSettingsCopy(language);
   const profileCopy = getStudioProfileCopy(language);
   const tc = getToastCopy(language);
+  const gradingStandardRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const shouldFocusGradingStandard = window.location.hash === '#grading-standard'
+      || params.get('focus') === 'grading-standard';
+    if (!shouldFocusGradingStandard) return;
+
+    const frame = window.requestAnimationFrame(() => {
+      const section = gradingStandardRef.current;
+      if (!section) return;
+      section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const selectedChoice = section.querySelector<HTMLButtonElement>('[aria-pressed="true"]')
+        ?? section.querySelector<HTMLButtonElement>('[data-testid="button-standard-cyc"]');
+      selectedChoice?.focus({ preventScroll: true });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, []);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -324,7 +342,14 @@ export default function SettingsPage() {
           </Card>
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
+        <motion.div
+          ref={gradingStandardRef}
+          id="grading-standard"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          className="scroll-mt-6"
+        >
           <Card className="border-border/60 shadow-sm overflow-hidden rounded-2xl">
             <CardHeader className="bg-secondary/10 border-b border-border/40 pb-5">
               <CardTitle className="font-serif text-xl flex items-center gap-2">
@@ -341,6 +366,7 @@ export default function SettingsPage() {
                     "text-left rounded-xl p-4 border-2 transition-all",
                     sizingStandard === 'CYC' ? "border-primary bg-primary/5 shadow-sm" : "border-border/60 hover:border-primary/30"
                   )}
+                  aria-pressed={sizingStandard === 'CYC'}
                   data-testid="button-standard-cyc"
                 >
                   <div className="flex items-center justify-between mb-1">
@@ -355,6 +381,7 @@ export default function SettingsPage() {
                     "text-left rounded-xl p-4 border-2 transition-all",
                     sizingStandard === 'Custom' ? "border-primary bg-primary/5 shadow-sm" : "border-border/60 hover:border-primary/30"
                   )}
+                  aria-pressed={sizingStandard === 'Custom'}
                   data-testid="button-standard-custom"
                 >
                   <div className="flex items-center justify-between mb-1">

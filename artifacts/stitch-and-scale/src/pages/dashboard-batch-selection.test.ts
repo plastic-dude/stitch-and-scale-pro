@@ -17,6 +17,11 @@ describe('dashboard batch-selection controls', () => {
     );
   });
 
+  it('reserves a 44px touch target and title-safe header spacing', () => {
+    expect(DASHBOARD_SOURCE).toContain('min-h-11 min-w-11 p-0');
+    expect(DASHBOARD_SOURCE).toContain('pb-4 pt-6 pl-16 pr-6');
+  });
+
   it('gives each project selector a stateful accessible name and stable test hook', () => {
     expect(DASHBOARD_SOURCE).toContain('aria-label={`${selectedIds.has(project.id) ? copy.batchDeselectAll : copy.batchSelectAll}: ${project.name}`}');
     expect(DASHBOARD_SOURCE).toContain('data-testid={`button-select-project-${project.id}`}');

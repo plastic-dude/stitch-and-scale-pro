@@ -1,5 +1,5 @@
 // CHK-129 — structural regression suite: the app-shell header nav links are
-// icon-only at phone widths (<640px, labels hidden until md) so their hit
+// icon-only below the desktop breakpoint (labels hidden until lg) so their hit
 // areas must never regress below the 44×44px touch-target minimum
 // (QA LIVE-004 / CHK-123 family). The three plain nav links were p-2
 // (36×36px) and the New Project button was h-9 (36px). All four must carry
@@ -19,7 +19,7 @@ const NAV_LINKS = ['href="/"', 'href="/portfolio"', 'href="/settings"', 'href="/
 
 describe('shell header nav touch targets (CHK-129)', () => {
   it('every nav link in the header nav carries min-h-11 (44px)', () => {
-    const navMatch = SRC.match(/<nav className="flex items-center gap-1[^>]*">([\s\S]*?)<\/nav>/);
+    const navMatch = SRC.match(/<nav className="hidden lg:flex items-center gap-1[^>]*">([\s\S]*?)<\/nav>/);
     expect(navMatch, 'header nav must exist').not.toBeNull();
     const nav = navMatch![1];
     // The nav contains four Link elements; collect each one's full tag.
@@ -31,7 +31,7 @@ describe('shell header nav touch targets (CHK-129)', () => {
   });
 
   it('the icon-only nav links (/, /portfolio, /settings) also carry min-w-11', () => {
-    const navMatch = SRC.match(/<nav className="flex items-center gap-1[^>]*">([\s\S]*?)<\/nav>/);
+    const navMatch = SRC.match(/<nav className="hidden lg:flex items-center gap-1[^>]*">([\s\S]*?)<\/nav>/);
     const nav = navMatch![1];
     const iconLinks = [...nav.matchAll(/<Link [\s\S]*?<\/Link>/g)]
       .map((m) => m[0])
@@ -44,7 +44,7 @@ describe('shell header nav touch targets (CHK-129)', () => {
 
   it('no p-2-only nav link without a min-h guard exists', () => {
     // p-2 alone resolves to 36×36px at any width — a regression hazard.
-    const navMatch = SRC.match(/<nav className="flex items-center gap-1[^>]*">([\s\S]*?)<\/nav>/);
+    const navMatch = SRC.match(/<nav className="hidden lg:flex items-center gap-1[^>]*">([\s\S]*?)<\/nav>/);
     const nav = navMatch![1];
     const vulnerable = [...nav.matchAll(/<Link [\s\S]*?<\/Link>/g)]
       .map((m) => m[0])
@@ -53,14 +53,14 @@ describe('shell header nav touch targets (CHK-129)', () => {
   });
 
   it('the nav label spans hide on phones (icon-only mode) — confirming which widths the 44px guard protects', () => {
-    const navMatch = SRC.match(/<nav className="flex items-center gap-1[^>]*">([\s\S]*?)<\/nav>/);
+    const navMatch = SRC.match(/<nav className="hidden lg:flex items-center gap-1[^>]*">([\s\S]*?)<\/nav>/);
     const nav = navMatch![1];
-    const hiddenOnPhone = [...nav.matchAll(/<span className="hidden md:inline[^"]*"[^>]*>/g)];
+    const hiddenOnPhone = [...nav.matchAll(/<span className="hidden lg:inline[^"]*"[^>]*>/g)];
     expect(hiddenOnPhone.length).toBeGreaterThanOrEqual(3);
   });
 
   it('the New Project button keeps its 44px hit area on the icon-only breakpoint', () => {
-    const navMatch = SRC.match(/<nav className="flex items-center gap-1[^>]*">([\s\S]*?)<\/nav>/);
+    const navMatch = SRC.match(/<nav className="hidden lg:flex items-center gap-1[^>]*">([\s\S]*?)<\/nav>/);
     const nav = navMatch![1];
     const newProj = [...nav.matchAll(/<Link [\s\S]*?<\/Link>/g)].find((m) =>
       /href="\/project\/new"/.test(m[0]),

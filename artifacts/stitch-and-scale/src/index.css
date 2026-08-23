@@ -340,6 +340,19 @@
   }
 }
 
+/* Fixed overlays must size against the device viewport, not a wider layout
+   viewport exposed by mobile browser chrome. Keep this scoped below the
+   desktop shell breakpoint; the desktop toast stack keeps its normal width. */
+@media (max-width: 1023px) {
+  [data-sonner-toaster] {
+    left: 0 !important;
+    right: auto !important;
+    width: 100dvw !important;
+    max-width: 100dvw !important;
+    box-sizing: border-box !important;
+  }
+}
+
 /* Critical-shell motion stays CSS-only so route changes do not require the
    heavier animation runtime. Keyed wrappers remount on navigation. */
 @keyframes route-enter {

@@ -363,16 +363,16 @@ export default function Dashboard() {
           </div>
 
           {selectedIds.size > 0 && (
-            <div className="flex items-center justify-between bg-accent/5 border border-accent/20 rounded-xl p-3 px-4 sts-dashboard-enter">
-              <div className="flex items-center gap-4">
-                <p className="text-sm font-medium text-accent-foreground">
+            <div className="flex flex-wrap items-center justify-between gap-3 bg-accent/5 border border-accent/20 rounded-xl p-3 px-4 sts-dashboard-enter">
+              <div className="flex min-w-0 flex-wrap items-center gap-3 sm:gap-4">
+                <p className="min-w-[7rem] text-sm font-medium text-accent-foreground">
                   {copy.batchSelection(selectedIds.size)}
                 </p>
                 <Button variant="ghost" size="sm" onClick={selectAll} className="text-xs h-8">
                   {selectedIds.size === filteredProjects.length ? copy.batchDeselectAll : copy.batchSelectAll}
                 </Button>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <Button variant="outline" size="sm" className="h-8 gap-2" onClick={handleBatchExport}>
                   <Download className="h-3.5 w-3.5" />
                   {copy.batchExport}
@@ -451,7 +451,7 @@ export default function Dashboard() {
                   aria-label={`${selectedIds.has(project.id) ? copy.batchDeselectAll : copy.batchSelectAll}: ${project.name}`}
                   title={`${selectedIds.has(project.id) ? copy.batchDeselectAll : copy.batchSelectAll}: ${project.name}`}
                   data-testid={`button-select-project-${project.id}`}
-                  className={`w-5 h-5 rounded border transition-all flex items-center justify-center opacity-100 [@media(pointer:fine)]:opacity-0 [@media(pointer:fine)]:group-hover:opacity-100 ${
+                  className={`min-h-11 min-w-11 p-0 rounded border transition-all flex items-center justify-center opacity-100 [@media(pointer:fine)]:opacity-0 [@media(pointer:fine)]:group-hover:opacity-100 ${
                     selectedIds.has(project.id)
                       ? 'bg-accent border-accent text-accent-foreground'
                       : 'bg-card border-border group-hover:border-accent/50'
@@ -502,7 +502,7 @@ export default function Dashboard() {
                     </DropdownMenu>
                   </div>
 
-                  <CardHeader className="pb-4 pt-6 px-6">
+                  <CardHeader className="pb-4 pt-6 pl-16 pr-6">
                     <div className="flex items-start justify-between gap-2">
                       <CardTitle className="line-clamp-1 pr-6 group-hover:text-primary transition-colors text-xl font-serif leading-tight">
                         {project.name}
