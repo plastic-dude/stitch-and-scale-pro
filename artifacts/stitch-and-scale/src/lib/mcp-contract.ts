@@ -15,6 +15,7 @@ import {
   resolveProjectStandards,
 } from './grading-engine.js';
 import { analyzeGrading, GRADING_LAB_VERSION, type LabResult } from './grading-lab.js';
+import { buildGradingCsv } from './grading-csv.js';
 
 export const MCP_PROTOCOL_VERSION = '2026-07-28';
 export const MCP_SERVER_NAME = 'stitch-and-scale-pro';
@@ -486,8 +487,40 @@ export function isMcpGradeOutput(value: McpGradeOutput | McpValidationOutput): v
   return 'sections' in value && 'analysis' in value;
 }
 
+export interface McpGradingCsvOutput {
+  schemaVersion: number;
+  projectId: string;
+  projectRevision: string;
+  filename: string;
+  csv: string;
+}
+
+/** Serializes a grading.run result as CSV, reusing the exact buildGradingCsv()
+ *  function the in-app grading page's "Download CSV" button already uses -
+ *  same headers, same escaping, same numbers, no new formatting logic. This
+ *  exists for AI clients and spreadsheet-habituated designers who want the
+ *  tool's math in the format they already trust and work in, rather than
+ *  needing to trust or reverse-engineer a JSON blob. */
+export function exportMcpGradingCsv(raw: unknown): McpGradingCsvOutput | McpValidationOutput {
+  const grade = runMcpGrading(raw);
+  if (!isMcpGradeOutput(grade)) return grade;
+  const unit = grade.gauge?.unit ?? 'in';
+  const csv = buildGradingCsv(grade.sections, unit);
+  return {
+    schemaVersion: MCP_CONTRACT_VERSION,
+    projectId: grade.projectId,
+    projectRevision: grade.projectRevision,
+    filename: `${grade.projectId}-grading.csv`,
+    csv,
+  };
+}
+
+export function isMcpGradingCsvOutput(value: McpGradingCsvOutput | McpValidationOutput): value is McpGradingCsvOutput {
+  return 'csv' in value && 'filename' in value;
+}
+
 export function getMcpToolNames(): string[] {
-  return ['project.intake', 'project.validate', 'grading.run', 'grading.explain', 'export.pattern_pdf', 'export.project_book_pdf', 'export.brag_card', 'calculate.marketplace_take_rate'];
+  return ['project.intake', 'project.validate', 'grading.run', 'grading.explain', 'grading.export_csv', 'export.pattern_pdf', 'export.project_book_pdf', 'export.brag_card', 'calculate.marketplace_take_rate'];
 }
 
 export function getMcpToolDefinitions() {
@@ -521,6 +554,14 @@ export function getMcpToolDefinitions() {
       title: 'Explain a grading result',
       description: 'Prepare a constrained explanation from a supplied deterministic grading result. It does not recalculate, save, or share project data.',
       inputSchema: { type: 'object', additionalProperties: false, properties: { intent: { type: 'string', enum: ['explain', 'teach', 'check', 'next-step'] }, grade: { type: 'object' } }, required: ['intent', 'grade'] },
+      outputSchema: { type: 'object' },
+      annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
+    },
+    {
+      name: 'grading.export_csv',
+      title: 'Export a grading result as CSV',
+      description: 'Grade an explicitly supplied project snapshot and return the result as CSV text, using the exact same serializer the in-app "Download CSV" button uses. For spreadsheet-habituated designers and AI clients that want the tool\'s numbers in a format they can paste directly into their existing spreadsheet workflow, rather than a JSON blob. Read-only; does not save, publish, or share anything.',
+      inputSchema: { type: 'object', additionalProperties: false, properties: { project: { type: 'object', description: 'Explicitly supplied project snapshot.' } }, required: ['project'] },
       outputSchema: { type: 'object' },
       annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
     },
