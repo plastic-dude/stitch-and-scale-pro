@@ -1,4 +1,6 @@
 export type SizeKey = 'XS' | 'S' | 'M' | 'L' | 'XL' | '2XL' | '3XL' | '4XL' | '5XL';
+import type { ReleaseDraft } from './release-draft';
+
 export type MeasurementUnit = 'in' | 'cm';
 export type MeasurementType = 'width' | 'circumference' | 'length' | 'direct';
 export type GradingKey = 'bust' | 'waist' | 'hip' | 'upperArm' | 'lowerArm' | 'wrist' | 'shoulder' | 'neckCircumference' | 'backLength' | 'sleeveLength' | 'thigh' | 'calf' | 'ankle' | 'armholeDepth';
@@ -276,10 +278,12 @@ export interface PatternProject {
   /** Submission pipeline: durable records for outlet submissions. */
   submissions?: ProjectSubmission[];
   /** Wholesale follow-up: durable records for wholesale orders. */
-  wholesaleOrders?: WholesaleOrder[];
+    wholesaleOrders?: WholesaleOrder[];
+  /** Local-only release drafts; references are validated before persistence. */
+  releaseDrafts?: ReleaseDraft[];
 }
-
 export interface ProjectAsset {
+
   id: string;
   type: 'image' | 'document' | 'other';
   label: string;

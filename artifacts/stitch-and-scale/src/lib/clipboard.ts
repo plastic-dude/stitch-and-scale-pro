@@ -5,20 +5,52 @@ export interface ClipboardCopyResult {
   method: ClipboardCopyMethod;
 }
 
+const CLIPBOARD_WRITE_TIMEOUT_MS = 1500;
+
+async function writeClipboardWithTimeout(text: string): Promise<void> {
+  if (typeof navigator === 'undefined' || !navigator.clipboard?.writeText) {
+    throw new Error('Clipboard API unavailable');
+  }
+
+  await new Promise<void>((resolve, reject) => {
+    let settled = false;
+    const timeoutId = setTimeout(() => {
+      if (settled) return;
+      settled = true;
+      reject(new Error('Clipboard write timed out'));
+    }, CLIPBOARD_WRITE_TIMEOUT_MS);
+
+    navigator.clipboard.writeText(text).then(
+      () => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timeoutId);
+        resolve();
+      },
+      (error: unknown) => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timeoutId);
+        reject(error);
+      },
+    );
+  });
+}
+
 /**
  * Copy text without assuming a secure context or a working Clipboard API.
  *
  * The textarea route is intentionally kept as a compatibility fallback for
  * installed PWAs, embedded previews, and restricted/headless browsers where
- * navigator.clipboard is absent or rejects the write. Callers must inspect
- * `ok` before claiming the text was copied.
+ * navigator.clipboard is absent, rejects, or does not settle promptly. Callers
+ * must inspect `ok` before claiming the text was copied.
  */
 export async function copyToClipboard(text: string): Promise<ClipboardCopyResult> {
   if (!text) return { ok: false, method: 'none' };
 
   try {
-    if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
-      await navigator.clipboard.writeText(text);
+    if (typeof navigator !== 'undefined') {
+      await writeClipboardWithTimeout(text);
       return { ok: true, method: 'clipboard' };
     }
   } catch {

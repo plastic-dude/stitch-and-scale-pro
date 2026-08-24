@@ -24,6 +24,7 @@ function stubTextareaDocument(execResult: boolean) {
 
 describe('copyToClipboard', () => {
   afterEach(() => {
+    vi.useRealTimers();
     vi.unstubAllGlobals();
     vi.restoreAllMocks();
   });
@@ -44,6 +45,18 @@ describe('copyToClipboard', () => {
     expect(execCommand).toHaveBeenCalledWith('copy');
     expect(area.value).toBe('manual fallback');
     expect(area.remove).toHaveBeenCalledOnce();
+  });
+
+  it('times out an unresolved Clipboard API call and uses the fallback route', async () => {
+    vi.useFakeTimers();
+    vi.stubGlobal('navigator', { clipboard: { writeText: vi.fn(() => new Promise<void>(() => undefined)) } });
+    const { execCommand } = stubTextareaDocument(false);
+
+    const resultPromise = copyToClipboard('stalled clipboard');
+    await vi.advanceTimersByTimeAsync(1500);
+
+    await expect(resultPromise).resolves.toEqual({ ok: false, method: 'none' });
+    expect(execCommand).toHaveBeenCalledWith('copy');
   });
 
   it('reports failure when neither clipboard route is available', async () => {

@@ -9,6 +9,7 @@ import type {
   GradingKey,
   RoundingParity,
 } from './grading-engine';
+import { normalizeReleaseDraft } from './release-draft';
 
 const VALID_SIZES: readonly SizeKey[] = [
   'XS',
@@ -177,6 +178,11 @@ export function normalizeProjectRecord(
     samples: Array.isArray(value.samples) ? value.samples : undefined,
     submissions: Array.isArray(value.submissions) ? value.submissions : undefined,
     wholesaleOrders: Array.isArray(value.wholesaleOrders) ? value.wholesaleOrders : undefined,
+    releaseDrafts: Array.isArray(value.releaseDrafts)
+      ? value.releaseDrafts
+        .map((draft, index) => normalizeReleaseDraft(draft, safeNow, `release-draft-${nonEmptyString(value.id, fallbackId)}-${index}`))
+        .filter((draft): draft is NonNullable<typeof draft> => draft !== null)
+      : undefined,
     isArchived: typeof value.isArchived === 'boolean' ? value.isArchived : undefined,
   };
 }

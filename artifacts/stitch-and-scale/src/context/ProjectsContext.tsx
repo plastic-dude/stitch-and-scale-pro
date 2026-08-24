@@ -4,6 +4,7 @@ import { type PatternProject, generateId, type PublicationPackage, type Publicat
 export type { PatternProject };
 import { getSampleCrewNeckSweater } from '@/lib/sample-projects';
 import { LanguageCode } from '@/lib/i18n';
+import type { ReleaseDraft } from '@/lib/release-draft';
 // CHK-119: landing CTAs link to /project/{DEMO_PROJECT_ID} promising a no-signup
 // live demo — but nothing ever created that project, so a clean profile saw
 // "Project Not Found" (QA #61). The demo now seeds lazily on first request for
@@ -54,6 +55,9 @@ export type ProjectsAction =
   | { type: 'ADD_ASSET'; payload: { projectId: string; asset: any } }
   | { type: 'DELETE_ASSET'; payload: { projectId: string; assetId: string } }
   | { type: 'UPDATE_ASSET'; payload: { projectId: string; assetId: string; patch: any } }
+  | { type: 'CREATE_RELEASE_DRAFT'; payload: { projectId: string; draft: ReleaseDraft } }
+  | { type: 'UPDATE_RELEASE_DRAFT'; payload: { projectId: string; draft: ReleaseDraft } }
+  | { type: 'DELETE_RELEASE_DRAFT'; payload: { projectId: string; draftId: string } }
   | { type: 'SET_DRAFT_CONTENT'; payload: { projectId: string; content: PatternDocumentContent } }
   | { type: 'COMPILE_PACKAGE'; payload: { projectId: string; packageId: string; content: PatternDocumentContent } }
   | { type: 'ADD_TEST_KNIT_ROUND'; payload: { projectId: string; round: TestKnitRound } }
@@ -102,6 +106,9 @@ interface ProjectsContextType {
   addAsset: (projectId: string, asset: any) => void;
   deleteAsset: (projectId: string, assetId: string) => void;
   updateAsset: (projectId: string, assetId: string, patch: any) => void;
+  createReleaseDraft: (projectId: string, draft: ReleaseDraft) => void;
+  updateReleaseDraft: (projectId: string, draft: ReleaseDraft) => void;
+  deleteReleaseDraft: (projectId: string, draftId: string) => void;
   setDraftContent: (projectId: string, content: PatternDocumentContent) => void;
   compilePackage: (projectId: string, packageId: string, content: PatternDocumentContent) => void;
   addTestKnitRound: (projectId: string, round: TestKnitRound) => void;
@@ -417,6 +424,27 @@ export function projectsReducer(state: PatternProject[], action: ProjectsAction)
         updatedAt: new Date().toISOString()
       } : p);
       break;
+    case 'CREATE_RELEASE_DRAFT':
+      newState = state.map(p => p.id === action.payload.projectId ? {
+        ...p,
+        releaseDrafts: [action.payload.draft, ...(p.releaseDrafts || [])],
+        updatedAt: new Date().toISOString(),
+      } : p);
+      break;
+    case 'UPDATE_RELEASE_DRAFT':
+      newState = state.map(p => p.id === action.payload.projectId ? {
+        ...p,
+        releaseDrafts: (p.releaseDrafts || []).map(draft => draft.id === action.payload.draft.id ? action.payload.draft : draft),
+        updatedAt: new Date().toISOString(),
+      } : p);
+      break;
+    case 'DELETE_RELEASE_DRAFT':
+      newState = state.map(p => p.id === action.payload.projectId ? {
+        ...p,
+        releaseDrafts: (p.releaseDrafts || []).filter(draft => draft.id !== action.payload.draftId),
+        updatedAt: new Date().toISOString(),
+      } : p);
+      break;
     case 'SET_DRAFT_CONTENT':
       newState = state.map(p => p.id === action.payload.projectId ? {
         ...p,
@@ -658,6 +686,9 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
     const addAsset = (projectId: string, asset: any) => dispatch({ type: 'ADD_ASSET', payload: { projectId, asset } });
     const deleteAsset = (projectId: string, assetId: string) => dispatch({ type: 'DELETE_ASSET', payload: { projectId, assetId } });
     const updateAsset = (projectId: string, assetId: string, patch: any) => dispatch({ type: 'UPDATE_ASSET', payload: { projectId, assetId, patch } });
+    const createReleaseDraft = (projectId: string, draft: ReleaseDraft) => dispatch({ type: 'CREATE_RELEASE_DRAFT', payload: { projectId, draft } });
+    const updateReleaseDraft = (projectId: string, draft: ReleaseDraft) => dispatch({ type: 'UPDATE_RELEASE_DRAFT', payload: { projectId, draft } });
+    const deleteReleaseDraft = (projectId: string, draftId: string) => dispatch({ type: 'DELETE_RELEASE_DRAFT', payload: { projectId, draftId } });
     const addTestKnitRound = (projectId: string, round: TestKnitRound) => dispatch({ type: 'ADD_TEST_KNIT_ROUND', payload: { projectId, round } });
     const updateTestKnitRound = (projectId: string, roundId: string, patch: Partial<TestKnitRound>) => dispatch({ type: 'UPDATE_TEST_KNIT_ROUND', payload: { projectId, roundId, patch } });
     const deleteTestKnitRound = (projectId: string, roundId: string) => dispatch({ type: 'DELETE_TEST_KNIT_ROUND', payload: { projectId, roundId } });
@@ -698,6 +729,7 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
       addCollaborator, updateCollaborator, deleteCollaborator,
       addReadinessIssue, updateReadinessIssue, addIssueComment,
       addAsset, deleteAsset, updateAsset,
+      createReleaseDraft, updateReleaseDraft, deleteReleaseDraft,
       addTestKnitRound, updateTestKnitRound, deleteTestKnitRound,
       addSample, updateSample, deleteSample,
       addSubmission, updateSubmission, deleteSubmission,
@@ -744,6 +776,7 @@ export function useProject(id?: string) {
     addCollaborator, updateCollaborator, deleteCollaborator,
     addReadinessIssue, updateReadinessIssue, addIssueComment,
     addAsset, deleteAsset, updateAsset,
+    createReleaseDraft, updateReleaseDraft, deleteReleaseDraft,
     addTestKnitRound, updateTestKnitRound, deleteTestKnitRound,
     addSample, updateSample, deleteSample,
     addSubmission, updateSubmission, deleteSubmission,
@@ -801,6 +834,9 @@ export function useProject(id?: string) {
     addAsset: (asset: any) => addAsset(projectId, asset),
     deleteAsset: (assetId: string) => deleteAsset(projectId, assetId),
     updateAsset: (assetId: string, patch: any) => updateAsset(projectId, assetId, patch),
+    createReleaseDraft: (draft: ReleaseDraft) => createReleaseDraft(projectId, draft),
+    updateReleaseDraft: (draft: ReleaseDraft) => updateReleaseDraft(projectId, draft),
+    deleteReleaseDraft: (draftId: string) => deleteReleaseDraft(projectId, draftId),
     addTestKnitRound: (round: TestKnitRound) => addTestKnitRound(projectId, round),
     updateTestKnitRound: (roundId: string, patch: Partial<TestKnitRound>) => updateTestKnitRound(projectId, roundId, patch),
     deleteTestKnitRound: (roundId: string) => deleteTestKnitRound(projectId, roundId),

@@ -141,6 +141,7 @@ const LAB = {
   receiptlab: React.lazy(cardLazy(() => import('@/components/receipt-lab-card'))),
   designledger: React.lazy(cardLazy(() => import('@/components/design-ledger-card'))),
   bragcard: React.lazy(cardLazy(() => import('@/components/brag-card-card'))),
+  releasedraft: React.lazy(cardLazy(() => import('@/components/release-draft-card'))),
   payback: React.lazy(cardLazy(() => import('@/components/payback-lab-card'))),
   snapshots: React.lazy(cardLazy(() => import('@/components/project-snapshots-card'))),
   readiness: React.lazy(cardLazy(() => import('@/components/project-readiness-card'))),
@@ -979,7 +980,12 @@ export default function ProjectWorkspace() {
       case 'gaugefit': return <LazyPanel loader={LAB.gaugefit} project={project} />;
       case 'receiptlab': return <LazyPanel loader={LAB.receiptlab} project={project} />;
       case 'designledger': return <LazyPanel loader={LAB.designledger} project={project} />;
-      case 'bragcard': return <LazyPanel loader={LAB.bragcard} project={project} />;
+      case 'bragcard': return (
+        <div className="space-y-6">
+          <LazyPanel loader={LAB.bragcard} project={project} />
+          <LazyPanel loader={LAB.releasedraft} project={project} />
+        </div>
+      );
       case 'payback': return <LazyPanel loader={LAB.payback} project={project} />;
       case 'testarchive': return (
         <LazyPanel 
