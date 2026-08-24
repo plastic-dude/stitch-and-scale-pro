@@ -34,18 +34,18 @@ The previously exposed Production `MCP_API_KEY` was rotated through the authoriz
 | `git diff --check` | Passed before promotion |
 | Source-bundle context verifier | Passed; archive `c19b71cdd06d250326d80eddc27685cbb627f91b03d85a624f0bb4894ba2a082`, 15 files |
 | Protected invention brief | SHA-256 unchanged: `5a7668a95841e7e74fc2dcf702cf1ffa94deed06d7029116919dcc0489b609ce` |
-| Promotion history | Fast-forward only: `c1e2243` → `b914d93` → `9d6186f` → `663a344`; no stale main overwrite |
+| Promotion history | Fast-forward only: `c1e2243` → `b914d93` → `9d6186f` → `663a344` → `16053c6`; no stale main overwrite |
 | Source scope | Build determinism, mockup build contract, Vercel headers, two focused test files, and the required bundle reading receipt only |
 
 The full suite includes existing grading, export/provenance, publication-package, receipt, localization, onboarding, responsive/mobile, accessibility, and MCP/API contract tests. Known non-failing persistence diagnostics and existing sourcemap/build-size notices remain non-blocking and are not misreported as new failures.
 
 ## Audit-first promotion and live release proof
 
-The verified implementation commit is `9d6186f966a13a5bd35a242a5a0646d3f356c59c` (`9d6186f`), created from exact remote `main` parent `b914d9347ab96f340bc794205f4a7a2772bca825`, pushed first to `coderii/mcp-cors-fail-closed-20260824`, and promoted to `main` only after a fresh ancestry check. The evidence note was then committed as `663a34412c6fbc1cd65d937545a6c5c44ed1557b` (`663a344`) from that verified implementation, pushed first to `coderii/chk-240-evidence-20260824`, and fast-forwarded to `main`. The final Vercel Production deployment `dpl_482zeWJy2jRA4wJUMiXpEwCQPxfz` reported READY for `663a344`; the active alias was then re-probed after the authorized key rotation.
+The verified implementation commit is `9d6186f966a13a5bd35a242a5a0646d3f356c59c` (`9d6186f`), created from exact remote `main` parent `b914d9347ab96f340bc794205f4a7a2772bca825`, pushed first to `coderii/mcp-cors-fail-closed-20260824`, and promoted to `main` only after a fresh ancestry check. The evidence note and its final-sha correction were then committed as `663a34412c6fbc1cd65d937545a6c5c44ed1557b` and `16053c6ebbd78fb8dc978bbab5e9c59121a00606` (`16053c6`) from that verified implementation, pushed first to `coderii/chk-240-evidence-20260824`, and fast-forwarded to `main`. The final Vercel Production deployment `dpl_BvfzXYXDx5b1WX9V6WW8fK1tSHy8` reported READY for `16053c6`; the active alias then returned `age: 0`, `x-vercel-cache: MISS`, and was re-probed with the authorized rotated key.
 
 | Public probe | Observed result | Interpretation |
 |---|---|---|
-| Active frontend entry | HTTP 200; `/assets/index-B8f1GAC_.js` present | Alias serves the verified current frontend release marker |
+| Active frontend entry | HTTP 200; `age: 0`; `x-vercel-cache: MISS`; `/assets/index-B8f1GAC_.js` present | Alias serves the verified current frontend release marker rather than a stale cached document |
 | `GET /api/mcp` | HTTP 405, JSON-RPC `-32600`; `POST, OPTIONS` allow | Endpoint is not a browser GET API and retains its stateless JSON-RPC contract |
 | Approved-origin `OPTIONS /api/mcp` | HTTP 204; exact `Access-Control-Allow-Origin: https://stitch-and-scale-pro-api-server.vercel.app` | Runtime CORS policy accepts only the configured active origin |
 | Forbidden-origin `OPTIONS /api/mcp` | HTTP 403, JSON-RPC `-32001`; no `Access-Control-Allow-Origin` | Wildcard overlay is gone; denied origins fail closed |
@@ -64,7 +64,7 @@ The public release has no known stale-alias or failed-deployment blocker for the
 
 [1]: https://github.com/plastic-dude/stitch-and-scale-pro/commit/9d6186f966a13a5bd35a242a5a0646d3f356c59c "Verified build and MCP CORS implementation"
 [2]: https://stitch-and-scale-pro-api-server.vercel.app "Active public alias"
-[3]: https://vercel.com/plastic-dudes-projects/stitch-and-scale-pro/482zeWJy2jRA4wJUMiXpEwCQPxfz "Final Vercel Production deployment"
+[3]: https://vercel.com/plastic-dudes-projects/stitch-and-scale-pro/BvfzXYXDx5b1WX9V6WW8fK1tSHy8 "Final Vercel Production deployment"
 [4]: https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp "Claude hosted Custom Connector documentation"
 [5]: https://modelcontextprotocol.io/specification/draft/basic/authorization "MCP authorization specification"
 [6]: https://github.com/anthropics/claude-ai-mcp/issues/110 "Claude Custom Connector static-header compatibility issue"
