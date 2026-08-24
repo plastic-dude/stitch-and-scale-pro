@@ -130,3 +130,9 @@ A final no-cache public smoke against `https://stitch-and-scale-pro-api-server.v
 | OAuth protected-resource discovery | HTTP 200 `text/html`; SPA fallback, intentionally not valid metadata |
 
 The protected invention-brief SHA remained `5a7668a95841e7e74fc2dcf702cf1ffa94deed06d7029116919dcc0489b609ce`. The source-bundle verifier remained green with the existing 15-file fingerprint. The final worktree was clean after promotion. This was an evidence/documentation release; no application TypeScript, full Vitest suite, or deterministic root build was newly run because no runtime file changed. No connector or schedule configuration changed.
+
+## 10. Later final-SHA cache observation
+
+After the final evidence commit `5fa3eec8a838c80c8a0dfb07d4c45d10eb31d30c` reached production READY, the public alias was probed again with a unique query and `Cache-Control: no-cache, no-store` plus `Pragma: no-cache`. The root returned HTTP 200 with `Age: 100` and `X-Vercel-Cache: HIT`. The MCP boundary matrix remained green: approved preflight 204 with exact ACAO, forbidden preflight 403 without ACAO and JSON-RPC `-32001`, approved-origin missing-auth POST 401 with JSON-RPC `-32003`, and GET 405 with `Allow: POST, OPTIONS`. Both OAuth discovery paths remained HTTP 200 `text/html` SPA fallbacks.
+
+Because `5fa3eec` changed only Markdown documentation and queue records, no runtime bundle or application behavior was expected to differ from the previous deployment. The exact Vercel deployment SHA and READY state prove the docs release was built, but the cache result means this receipt must not claim a fresh root `Age: 0`/`MISS` for the final SHA. Edge-cache freshness remains an operational residual to revisit when a runtime/static asset release is made; it is not silently reclassified as a product success or as proof of stale application code in this docs-only release.
