@@ -54,7 +54,10 @@ describe('Vercel MCP Web Standard handler', () => {
     }));
     expect(response.status).toBe(200);
     expect(body.result).toBeDefined();
-    expect(JSON.stringify(body)).toContain('export.pattern_pdf');
+    const listedTools = (body.result as { tools?: Array<{ name: string }> }).tools ?? [];
+    expect(listedTools.map(tool => tool.name)).not.toContain('export.pattern_pdf');
+    expect(listedTools.map(tool => tool.name)).not.toContain('export.project_book_pdf');
+    expect(listedTools.map(tool => tool.name)).not.toContain('export.brag_card');
   });
 
   it('handles a preflight request only when the configured origin matches', async () => {

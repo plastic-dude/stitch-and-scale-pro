@@ -18,8 +18,6 @@ import {
   type McpGradeOutput,
   type McpExplainInput,
 } from './mcp-contract.js';
-import type { McpPdfOutput } from './mcp-workflow.js';
-import type { McpBragCardOutput, McpProjectBookOutput } from './mcp-artifact-workflow.js';
 import type { McpTakeRateOutput } from './mcp-calculation-workflow.js';
 
 export const MCP_JSONRPC_VERSION = '2.0';
@@ -194,9 +192,6 @@ export function dispatchMcpRequest(request: McpJsonRpcRequest): McpJsonRpcRespon
           isError: !isComparison || ('valid' in output && !output.valid),
         });
       }
-      if (name === 'export.pattern_pdf' || name === 'export.project_book_pdf' || name === 'export.brag_card') {
-        return error(request, -32006, 'This tool creates a binary artifact and must be dispatched through the asynchronous MCP transport.');
-      }
       return error(request, -32601, `Unknown tool: ${name}.`);
     }
     default:
@@ -205,38 +200,17 @@ export function dispatchMcpRequest(request: McpJsonRpcRequest): McpJsonRpcRespon
 }
 
 export async function dispatchMcpRequestAsync(request: McpJsonRpcRequest): Promise<McpJsonRpcResponse> {
-  if (request.method !== 'tools/call' || !isRecord(request.params) || !['export.pattern_pdf', 'export.project_book_pdf', 'export.brag_card', 'calculate.marketplace_take_rate'].includes(request.params.name as string)) {
+  if (request.method !== 'tools/call' || !isRecord(request.params) || request.params.name !== 'calculate.marketplace_take_rate') {
     return dispatchMcpRequest(request);
   }
   const args = request.params.arguments;
-  const name = request.params.name;
-  if (!isRecord(args)) return invalidParams(request, `${name} requires an arguments object.`);
-  let output: McpPdfOutput | McpProjectBookOutput | McpBragCardOutput | McpTakeRateOutput;
-  if (name === 'calculate.marketplace_take_rate') {
-    const { prepareMcpTakeRateCalculation } = await import('./mcp-calculation-workflow.js');
-    output = prepareMcpTakeRateCalculation(args);
-  } else if (name === 'export.pattern_pdf') {
-    if (!Object.prototype.hasOwnProperty.call(args, 'project')) return invalidParams(request, 'export.pattern_pdf requires arguments.project.');
-    const { prepareMcpPdfExport } = await import('./mcp-workflow.js');
-    output = await prepareMcpPdfExport(args);
-  } else {
-    const { prepareMcpBragCardExport, prepareMcpProjectBookExport } = await import('./mcp-artifact-workflow.js');
-    output = name === 'export.project_book_pdf'
-      ? await prepareMcpProjectBookExport(args)
-      : await prepareMcpBragCardExport(args);
-  }
-  if ('data' in output && output.ready) {
-    const { data, ...metadata } = output;
-    return success(request, {
-      content: [{ type: 'resource', resource: { uri: `stitch-scale://artifacts/${output.artifact.filename}`, mimeType: output.artifact.mimeType, blob: data } }],
-      structuredContent: metadata,
-      isError: false,
-    });
-  }
+  if (!isRecord(args)) return invalidParams(request, 'calculate.marketplace_take_rate requires an arguments object.');
+  const { prepareMcpTakeRateCalculation } = await import('./mcp-calculation-workflow.js');
+  const output: McpTakeRateOutput = prepareMcpTakeRateCalculation(args);
   return success(request, {
     content: [{ type: 'text', text: JSON.stringify(output) }],
     structuredContent: output,
-    isError: 'valid' in output ? !output.valid : false,
+    isError: !output.valid,
   });
 }
 

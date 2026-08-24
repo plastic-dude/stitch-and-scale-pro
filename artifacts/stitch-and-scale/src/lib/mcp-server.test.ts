@@ -43,7 +43,7 @@ describe('MCP server transport contract', () => {
     if (!('result' in response)) throw new Error('tools/list failed');
     expect((response.result.tools as Array<{ name: string }>).map(tool => tool.name)).toEqual([
       'project.intake', 'project.validate', 'grading.run', 'grading.explain', 'grading.export_csv', 'grading.compare_standards',
-      'export.pattern_pdf', 'export.project_book_pdf', 'export.brag_card', 'calculate.marketplace_take_rate',
+      'calculate.marketplace_take_rate',
     ]);
   });
 
@@ -145,19 +145,19 @@ describe('MCP server transport contract', () => {
     expect(response.result.structuredContent).toBeDefined();
   });
 
-  it('returns a real embedded PDF resource only after explicit approval', async () => {
-    const response = await dispatchMcpRequestAsync({
-      jsonrpc: '2.0',
+  it('rejects binary artifact-generation tools through both sync and async dispatch', async () => {
+    const request = {
+      jsonrpc: '2.0' as const,
       id: 'pdf-1',
-      method: 'tools/call',
+      method: 'tools/call' as const,
       params: { name: 'export.pattern_pdf', arguments: { project: project(), userApproved: true, filename: 'transport-report' } },
-    });
-    expect('result' in response).toBe(true);
-    if (!('result' in response)) throw new Error('PDF export failed');
-    const content = response.result.content as Array<{ type: string; resource?: { mimeType?: string; blob?: string } }>;
-    expect(content[0]?.type).toBe('resource');
-    expect(content[0]?.resource?.mimeType).toBe('application/pdf');
-    expect(content[0]?.resource?.blob?.slice(0, 8)).toBe('JVBERi0x');
+    };
+    const sync = dispatchMcpRequest(request);
+    const asyncResponse = await dispatchMcpRequestAsync(request);
+    expect('error' in sync).toBe(true);
+    expect('error' in asyncResponse).toBe(true);
+    if ('error' in sync) expect(sync.error.code).toBe(-32601);
+    if ('error' in asyncResponse) expect(asyncResponse.error.code).toBe(-32601);
   });
 
   it('rejects unknown tools and missing project arguments without throwing', () => {
@@ -168,7 +168,7 @@ describe('MCP server transport contract', () => {
     const pdf = dispatchMcpRequest({ jsonrpc: '2.0', id: 4, method: 'tools/call', params: { name: 'export.pattern_pdf', arguments: { project: project(), userApproved: true } } });
     expect('error' in pdf).toBe(true);
     if ('error' in missing) expect(missing.error.code).toBe(-32602);
-    if ('error' in pdf) expect(pdf.error.code).toBe(-32006);
+    if ('error' in pdf) expect(pdf.error.code).toBe(-32601);
   });
 
   it('returns JSON parse and body-size errors without exposing request data', () => {

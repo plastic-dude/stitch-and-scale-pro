@@ -112,9 +112,10 @@ describe('MCP contract', () => {
     const tools = getMcpToolDefinitions();
     expect(tools.map(tool => tool.name)).toEqual([
       'project.intake', 'project.validate', 'grading.run', 'grading.explain', 'grading.export_csv', 'grading.compare_standards',
-      'export.pattern_pdf', 'export.project_book_pdf', 'export.brag_card', 'calculate.marketplace_take_rate',
+      'calculate.marketplace_take_rate',
     ]);
     expect(getMcpToolNames()).toEqual(tools.map(tool => tool.name));
+    expect(tools.some(tool => tool.name.startsWith('export.'))).toBe(false);
     for (const tool of tools) {
       expect(tool.annotations.readOnlyHint).toBe(true);
       expect(tool.annotations.destructiveHint).toBe(false);

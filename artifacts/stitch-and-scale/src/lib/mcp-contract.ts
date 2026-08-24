@@ -752,7 +752,7 @@ export function getMcpPrompt(
 }
 
 export function getMcpToolNames(): string[] {
-  return ['project.intake', 'project.validate', 'grading.run', 'grading.explain', 'grading.export_csv', 'grading.compare_standards', 'export.pattern_pdf', 'export.project_book_pdf', 'export.brag_card', 'calculate.marketplace_take_rate'];
+  return ['project.intake', 'project.validate', 'grading.run', 'grading.explain', 'grading.export_csv', 'grading.compare_standards', 'calculate.marketplace_take_rate'];
 }
 
 export function getMcpToolDefinitions() {
@@ -802,67 +802,6 @@ export function getMcpToolDefinitions() {
       title: 'Compare against the CYC baseline',
       description: 'Compare an explicitly supplied project\'s resolved sizing standard (CYC, or its frozen Custom snapshot) against the CYC baseline chart, size by size. Read-only; does not compare against unimplemented standards.',
       inputSchema: { type: 'object', additionalProperties: false, properties: { project: { type: 'object', description: 'Explicitly supplied project snapshot.' } }, required: ['project'] },
-      outputSchema: { type: 'object' },
-      annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
-    },
-    {
-      name: 'export.pattern_pdf',
-      title: 'Prepare a pattern grading PDF',
-      description: 'Create a real PDF artifact from an explicitly supplied, valid project snapshot after the user confirms the scope and filename. The server returns the file but does not save, publish, share, or email it.',
-      inputSchema: {
-        type: 'object',
-        additionalProperties: false,
-        properties: {
-          project: { type: 'object', description: 'Explicitly supplied project snapshot.' },
-          userApproved: { type: 'boolean', description: 'Must be true only after the user confirms PDF creation, scope, and filename.' },
-          filename: { type: 'string', maxLength: 100 },
-          locale: { type: 'string', enum: ['en', 'de', 'fr', 'es', 'pt'] },
-          includeCover: { type: 'boolean' },
-          includeGaugeSummary: { type: 'boolean' },
-          includeNotes: { type: 'boolean' },
-        },
-        required: ['project', 'userApproved'],
-      },
-      outputSchema: { type: 'object' },
-      annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
-    },
-    {
-      name: 'export.project_book_pdf',
-      title: 'Prepare a multi-project Project Book PDF',
-      description: 'Create one bounded PDF from an explicitly supplied ordered list of valid project snapshots after the user confirms the complete list, ordering, filename, and export. Every project is graded by the deterministic Stitch & Scale engine; the server does not save, publish, share, or email the artifact.',
-      inputSchema: {
-        type: 'object',
-        additionalProperties: false,
-        properties: {
-          projects: { type: 'array', minItems: 1, maxItems: 52, description: 'Explicitly supplied ordered project snapshots.' },
-          userApproved: { type: 'boolean', description: 'Must be true only after the user confirms the complete project list, order, filename, and PDF creation.' },
-          title: { type: 'string', maxLength: 160 },
-          filename: { type: 'string', maxLength: 100 },
-          locale: { type: 'string', enum: ['en', 'de', 'fr', 'es', 'pt'] },
-          includeCover: { type: 'boolean' },
-        },
-        required: ['projects', 'userApproved'],
-      },
-      outputSchema: { type: 'object' },
-      annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
-    },
-    {
-      name: 'export.brag_card',
-      title: 'Prepare a branded Brag Card SVG',
-      description: 'Create a social-ready SVG from an explicitly supplied Receipt Lab ledger and published/sales counts after user confirmation. Metrics are computed by the canonical Brag Card module; the server does not invent, verify, save, publish, share, or email the artifact.',
-      inputSchema: {
-        type: 'object',
-        additionalProperties: false,
-        properties: {
-          card: { type: 'object', description: 'Explicitly supplied card inputs: studioName, currency, ledger, publishedCount, salesCount, template, and style.' },
-          userApproved: { type: 'boolean', description: 'Must be true only after the user confirms the supplied ledger, counts, design, filename, and SVG creation.' },
-          filename: { type: 'string', maxLength: 100 },
-          locale: { type: 'string', enum: ['en', 'de', 'fr', 'es', 'pt'] },
-          accent: { type: 'string', pattern: '^#[0-9a-fA-F]{6}$' },
-          branding: { type: 'object', description: 'Optional local branding fields; remote logos are rejected.' },
-        },
-        required: ['card', 'userApproved'],
-      },
       outputSchema: { type: 'object' },
       annotations: { readOnlyHint: true, destructiveHint: false, openWorldHint: false },
     },
