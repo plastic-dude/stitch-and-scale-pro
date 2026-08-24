@@ -24,6 +24,7 @@ import {
 import { normalizeProjectRecord, normalizeProjectRecords } from '@/lib/project-normalization';
 import { artifactQualitySnapshot, normalizeArtifactInspectionReport } from '@/lib/artifact-inspection';
 import { useSettings } from './SettingsContext';
+import { isMeaningfulManualProject, readStorageProtectionDecision } from '@/lib/storage-protection';
 
 export type ProjectsAction =
   | { type: 'INIT'; payload: PatternProject[] }
@@ -70,9 +71,11 @@ export type ProjectsAction =
 
 export type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
 
+export type ProjectCreationSource = 'manual' | 'sample' | 'demo' | 'import' | 'unknown';
+
 interface ProjectsContextType {
   projects: PatternProject[];
-  createProject: (project: PatternProject) => void;
+  createProject: (project: PatternProject, source?: ProjectCreationSource) => void;
   updateProject: (project: PatternProject) => void;
   deleteProject: (id: string) => void;
   duplicateProject: (id: string) => void;
@@ -116,6 +119,9 @@ interface ProjectsContextType {
   saveStatus: SaveStatus;
   recovered: boolean;
   dismissRecovery: () => void;
+  /** True only after an explicitly completed manual project reaches saved state. */
+  storageProtectionPromptAvailable: boolean;
+  dismissStorageProtectionPrompt: () => void;
 }
 
 const SESSION_KEY = 'stitch-and-scale-session-flag';
@@ -530,6 +536,8 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
   const [recovered, setRecovered] = useState(false);
+  const [storageProtectionPromptAvailable, setStorageProtectionPromptAvailable] = useState(false);
+  const manualSavePending = useRef(false);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const clearTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
@@ -607,7 +615,24 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
     return () => clearTimeout(saveTimer.current);
   }, [projects, isLoaded]);
 
-  const createProject = (project: PatternProject) => dispatch({ type: 'CREATE', payload: project });
+  // The reducer/save effect is intentionally generic and also handles startup
+  // migration, demos, imports, and every workspace edit. Only the explicitly
+  // completed new-project wizard may arm this one-shot signal, and only after
+  // the normal asynchronous save confirms success.
+  useEffect(() => {
+    if (saveStatus !== 'saved' || !manualSavePending.current) return;
+    manualSavePending.current = false;
+    if (!readStorageProtectionDecision()) setStorageProtectionPromptAvailable(true);
+  }, [saveStatus]);
+
+  const dismissStorageProtectionPrompt = () => setStorageProtectionPromptAvailable(false);
+
+  const createProject = (project: PatternProject, source: ProjectCreationSource = 'unknown') => {
+    if (source === 'manual' && isMeaningfulManualProject(project)) {
+      manualSavePending.current = true;
+    }
+    dispatch({ type: 'CREATE', payload: project });
+  };
   const updateProject = (project: PatternProject) => dispatch({ type: 'UPDATE', payload: project });
   const deleteProject = (id: string) => dispatch({ type: 'DELETE', payload: id });
   const duplicateProject = (id: string) => dispatch({ type: 'DUPLICATE', payload: id });
@@ -679,7 +704,7 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
       addWholesaleOrder, updateWholesaleOrder, deleteWholesaleOrder,
       setDraftContent: (projectId: string, content: PatternDocumentContent) => dispatch({ type: 'SET_DRAFT_CONTENT', payload: { projectId, content } }),
       compilePackage: (projectId: string, packageId: string, content: PatternDocumentContent) => dispatch({ type: 'COMPILE_PACKAGE', payload: { projectId, packageId, content } }),
-      saveStatus, recovered, dismissRecovery 
+      saveStatus, recovered, dismissRecovery, storageProtectionPromptAvailable, dismissStorageProtectionPrompt
     }}>
       {children}
     </ProjectsContext.Provider>
@@ -745,7 +770,7 @@ export function useProject(id?: string) {
     }
     if (demoSeedRequested.current) return;
     demoSeedRequested.current = true;
-    createProject(demoCandidate);
+    createProject(demoCandidate, 'demo');
   }, [createProject, demoCandidate]);
 
   if (!id) return null;

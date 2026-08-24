@@ -71,7 +71,7 @@ export default function NewProjectWizard() {
       // later must never silently change what this project already graded to.
       customStandardSnapshot: sizingStandard === 'Custom' ? JSON.parse(JSON.stringify(customStandard)) : undefined,
     };
-    createProject(newProject);
+    createProject(newProject, 'manual');
     setLocation(`/project/${newProject.id}`);
   };
 

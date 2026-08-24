@@ -95,7 +95,7 @@ export default function ImportCSV() {
       sizingStandard,
       customStandardSnapshot: sizingStandard === 'Custom' ? JSON.parse(JSON.stringify(customStandard)) : undefined,
     };
-    createProject(newProject);
+    createProject(newProject, 'import');
     toast({ title: copy.imported, description: interpolate(copy.importedDescription, { measurements: sections.reduce((n, s) => n + s.measurements.length, 0), sections: sections.length }) });
     setLocation(`/project/${newProject.id}`);
   };

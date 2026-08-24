@@ -26,6 +26,15 @@ describe('StorageHealthCard Localization', () => {
       expect(copy.backupOverdue).toBeDefined();
       expect(copy.backupInstruction).toBeDefined();
       expect(copy.backupInsurance).toBeDefined();
+      expect(copy.storageProtectionTitle).toBeDefined();
+      expect(copy.storageProtectionDescription).toBeDefined();
+      expect(copy.storageProtectionAction).toBeDefined();
+      expect(copy.storageProtectionNotNow).toBeDefined();
+      expect(copy.storageProtectionDismiss).toBeDefined();
+      expect(copy.storageProtectionProtected).toBeDefined();
+      expect(copy.storageProtectionDeclined).toBeDefined();
+      expect(copy.storageProtectionUnavailable).toBeDefined();
+      expect(copy.storageProtectionError).toBeDefined();
     });
   });
 
@@ -34,5 +43,6 @@ describe('StorageHealthCard Localization', () => {
     expect(de.storageHealthTitle).toBe('Speicherzustand');
     expect(de.backupInsurance).toContain('deiner Arbeit'); // informal 'dein'
     expect(de.backupInsurance).toContain('kontrollierst'); // informal 'du'
+    expect(de.storageProtectionDescription).toContain('kein Backup');
   });
 });

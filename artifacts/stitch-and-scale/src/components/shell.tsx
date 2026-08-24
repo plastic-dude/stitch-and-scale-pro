@@ -7,6 +7,7 @@ import { analyzeProjectValidity } from "@/lib/project-validity"
 import { StorageBadge } from "@/components/storage-badge"
 import { HealthIndicator } from "@/components/health-indicator"
 import { PwaStatusBanner } from "@/components/pwa-status-banner"
+import { StorageProtectionBanner } from "@/components/storage-protection-banner"
 const InstallBanner = React.lazy(() =>
   import("@/components/install-banner").then(({ InstallBanner }) => ({ default: InstallBanner })),
 )
@@ -115,6 +116,8 @@ export function Shell({ children }: { children: React.ReactNode }) {
       </header>
 
       <RecoveryBanner />
+
+      <StorageProtectionBanner />
 
       {justExported && (
         <React.Suspense fallback={null}>

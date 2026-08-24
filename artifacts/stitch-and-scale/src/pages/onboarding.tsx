@@ -470,8 +470,8 @@ export default function OnboardingOverlay() {
     const now = new Date().toISOString();
     const hasProject = projects.length > 0;
     if (!hasProject) {
-      createProject(getSampleCrewNeckSweater(language));
-      createProject(getSampleBasicBeanie(language));
+      createProject(getSampleCrewNeckSweater(language), 'sample');
+      createProject(getSampleBasicBeanie(language), 'sample');
     }
     // Preserve the deep link the visitor opened: skip returns to the entry route
     // unless it was the app root, which has no content without a project flow.
@@ -493,8 +493,8 @@ export default function OnboardingOverlay() {
     setSizingStandard(localStandard);
     const alreadySeeded = projects.some(p => p.id === 'sample-crew-neck-sweater');
     if (!alreadySeeded && projects.length === 0) {
-      createProject(getSampleCrewNeckSweater(language));
-      createProject(getSampleBasicBeanie(language));
+      createProject(getSampleCrewNeckSweater(language), 'sample');
+      createProject(getSampleBasicBeanie(language), 'sample');
     }
     setOnboardingCompleted(true);
     setLocation('/project/sample-crew-neck-sweater');

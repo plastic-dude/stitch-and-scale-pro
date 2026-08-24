@@ -17,12 +17,36 @@ vi.mock('./SettingsContext', () => ({
   useSettings: () => ({ language: 'en' }),
 }));
 
-import { DEMO_PROJECT_ID, ProjectsProvider, useProject } from './ProjectsContext';
+import { DEMO_PROJECT_ID, ProjectsProvider, useProject, useProjects } from './ProjectsContext';
+import { getSampleCrewNeckSweater } from '@/lib/sample-projects';
 
 function ProjectProbe({ id, onProject }: { id?: string; onProject: (projectId?: string) => void }) {
   const projectHook = useProject(id);
   onProject(projectHook?.project.id);
   return <output data-project-id={projectHook?.project.id ?? ''}>{projectHook?.project.name ?? 'missing'}</output>;
+}
+
+function PromptProbe({ onPrompt }: { onPrompt: (available: boolean) => void }) {
+  const { storageProtectionPromptAvailable } = useProjects();
+  onPrompt(storageProtectionPromptAvailable);
+  return <output data-storage-prompt={String(storageProtectionPromptAvailable)} />;
+}
+
+function ManualProjectProbe() {
+  const { createProject } = useProjects();
+  return (
+    <button
+      type="button"
+      onClick={() => createProject({
+        ...getSampleCrewNeckSweater('en'),
+        id: 'manual-storage-protection-test',
+        name: 'Manual storage protection test',
+        author: 'Test designer',
+      }, 'manual')}
+    >
+      create manual project
+    </button>
+  );
 }
 
 function ChangingProjectProbe({ onProject }: { onProject: (projectId?: string) => void }) {
@@ -47,6 +71,7 @@ describe('canonical demo route seed', () => {
   let consoleError: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
+    window.localStorage.clear();
     container = document.createElement('div');
     document.body.appendChild(container);
     consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
@@ -56,6 +81,7 @@ describe('canonical demo route seed', () => {
     await act(async () => root?.unmount());
     consoleError.mockRestore();
     container.remove();
+    window.localStorage.clear();
   });
 
   it('returns a usable demo project while seeding happens after render', async () => {
@@ -74,6 +100,52 @@ describe('canonical demo route seed', () => {
     expect(renderedIds).toContain(DEMO_PROJECT_ID);
     expect(container.querySelector('output')?.dataset.projectId).toBe(DEMO_PROJECT_ID);
     expect(consoleError.mock.calls.flat().join(' ')).not.toMatch(/Maximum update depth exceeded|Cannot update a component while rendering/);
+  });
+
+  it('does not arm storage protection for automatic demo seeding', async () => {
+    const promptStates: boolean[] = [];
+    root = createRoot(container);
+
+    await act(async () => {
+      root.render(
+        <ProjectsProvider>
+          <>
+            <ProjectProbe id={DEMO_PROJECT_ID} onProject={() => undefined} />
+            <PromptProbe onPrompt={available => promptStates.push(available)} />
+          </>
+        </ProjectsProvider>,
+      );
+    });
+    await settleReact();
+    await act(async () => {
+      await new Promise<void>(resolve => setTimeout(resolve, 500));
+    });
+
+    expect(promptStates).not.toContain(true);
+  });
+
+  it('arms storage protection only after an explicit manual project save', async () => {
+    root = createRoot(container);
+    await act(async () => {
+      root.render(
+        <ProjectsProvider>
+          <>
+            <ManualProjectProbe />
+            <PromptProbe onPrompt={() => undefined} />
+          </>
+        </ProjectsProvider>,
+      );
+    });
+    await settleReact();
+    expect(container.querySelector('[data-storage-prompt]')?.getAttribute('data-storage-prompt')).toBe('false');
+
+    await act(async () => container.querySelector('button')?.dispatchEvent(new MouseEvent('click', { bubbles: true })));
+    expect(container.querySelector('[data-storage-prompt]')?.getAttribute('data-storage-prompt')).toBe('false');
+    await act(async () => {
+      await new Promise<void>(resolve => setTimeout(resolve, 500));
+    });
+
+    expect(container.querySelector('[data-storage-prompt]')?.getAttribute('data-storage-prompt')).toBe('true');
   });
 
   it('keeps hook order stable when a project route id changes from absent to demo', async () => {
