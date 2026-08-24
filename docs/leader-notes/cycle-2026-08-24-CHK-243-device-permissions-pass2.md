@@ -220,7 +220,7 @@ The future ticket should add focused tests for:
 
 ## Documentation release verification
 
-The receipt and queue update were committed as documentation-only commit `3f482dae2c0ad8afb029634f18d8cb7e15d2e6d8`, fast-forwarded to `origin/main` from the exact audited parent, and deployed by Vercel Production deployment `dpl_4NTZhbsBadkTj8FWDkBBF9uw1c6i`, which reported `READY` for the same SHA.
+The receipt and queue update were committed as documentation-only commit `7c1406141c58cc19239fbf52670e47932fef583d`, fast-forwarded to `origin/main` from the exact audited parent, and deployed by Vercel Production deployment `dpl_CkXt3w8o9qEaGv9yJ223jzfaAHFT`, which reported `READY` for the same SHA.
 
 Fresh public-alias smoke evidence after that deployment:
 
