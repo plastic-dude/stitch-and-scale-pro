@@ -112,3 +112,21 @@ The auditable result of this firing is therefore a completed research boundary a
 - No connector or schedule configuration changed.
 - No application code, export semantics, MCP contract, OAuth route, credential, or secret was changed.
 - Evidence-only research result is reversible and secret-free.
+
+## 9. Exact release verification
+
+The evidence commit `c1a713ba3e312ff835c3700752ea842e140593d9` was pushed and guarded-promoted to `main` from the verified parent `56befa5eaa8d3c80c1486eb8816a1a7dd5fa451e`. Vercel production deployment `dpl_9RiLW4REnaShKZftZv8ork5WzDFQ` for that exact SHA reached `READY` and received alias assignment. The private deployment probe listed only the existing production environment names `MCP_ALLOWED_ORIGIN` and `MCP_API_KEY`; no environment values were read or recorded.
+
+A final no-cache public smoke against `https://stitch-and-scale-pro-api-server.vercel.app` returned the following:
+
+| Probe | Observed result |
+|---|---|
+| Root with unique query and no-cache headers | HTTP 200; `Age: 0`; `X-Vercel-Cache: MISS` |
+| Approved-origin `OPTIONS /api/mcp` | HTTP 204; exact ACAO `https://stitch-and-scale-pro-api-server.vercel.app` |
+| Forbidden-origin `OPTIONS /api/mcp` | HTTP 403; no ACAO; JSON-RPC `-32001` |
+| Approved-origin unauthenticated `POST /api/mcp` | HTTP 401; JSON-RPC `-32003` |
+| `GET /api/mcp` | HTTP 405; `Allow: POST, OPTIONS` |
+| OAuth authorization-server discovery | HTTP 200 `text/html`; SPA fallback, intentionally not valid metadata |
+| OAuth protected-resource discovery | HTTP 200 `text/html`; SPA fallback, intentionally not valid metadata |
+
+The protected invention-brief SHA remained `5a7668a95841e7e74fc2dcf702cf1ffa94deed06d7029116919dcc0489b609ce`. The source-bundle verifier remained green with the existing 15-file fingerprint. The final worktree was clean after promotion. This was an evidence/documentation release; no application TypeScript, full Vitest suite, or deterministic root build was newly run because no runtime file changed. No connector or schedule configuration changed.
