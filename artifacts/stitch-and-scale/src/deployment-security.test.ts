@@ -33,6 +33,18 @@ describe('Deployment Security (F-13, F-14)', () => {
     expect(spaRewrite.source).not.toMatch(/\)\$$/);
   });
 
+  it('mockup sandbox supplies deterministic build-only preview values', () => {
+    const packagePath = join(rootDir, 'artifacts', 'mockup-sandbox', 'package.json');
+    const packageJson = JSON.parse(readFileSync(packagePath, 'utf-8'));
+    expect(packageJson.scripts.build).toBe('PORT=8081 BASE_PATH=/__mockup vite build');
+  });
+
+  it('workspace build serializes package builds for constrained release runners', () => {
+    const packagePath = join(rootDir, 'package.json');
+    const packageJson = JSON.parse(readFileSync(packagePath, 'utf-8'));
+    expect(packageJson.scripts.build).toContain('--workspace-concurrency=1');
+  });
+
   it('splash screen uses the square app icon instead of the oversized portrait asset', () => {
     const splashPath = join(rootDir, 'artifacts', 'stitch-and-scale', 'src', 'components', 'splash-screen.tsx');
     const splashSource = readFileSync(splashPath, 'utf-8');
