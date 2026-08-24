@@ -21,6 +21,7 @@ export const CompositionPanel: React.FC = () => {
   const { project, setDraftContent, compilePackage } = projectHook;
   const copy = TECH_EDIT_COPY[language];
 
+  const hasPublicationPackage = (project.publicationPackages || []).length > 0;
   const content = project.draftContent || {
     sections: [],
     abbreviations: [],
@@ -34,12 +35,12 @@ export const CompositionPanel: React.FC = () => {
   };
 
   const handleCompile = async () => {
+    if (!hasPublicationPackage) return;
     setCompiling(true);
     // Simulate compilation delay
     await new Promise(resolve => setTimeout(resolve, 1500));
-    // For simplicity, compile to the first package if it exists, or create a default one
-    const pkgId = project.publicationPackages?.[0]?.id || 'default-pkg';
-    compilePackage(pkgId, content);
+    const pkgId = project.publicationPackages?.[0]?.id;
+    if (pkgId) compilePackage(pkgId, content);
     setCompiling(false);
   };
 
@@ -112,13 +113,20 @@ export const CompositionPanel: React.FC = () => {
         </div>
         <Button 
           onClick={handleCompile} 
-          disabled={compiling}
-          className="gap-2"
+          disabled={compiling || !hasPublicationPackage}
+          aria-describedby={!hasPublicationPackage ? 'composition-package-required' : undefined}
+          className="gap-2 min-h-11"
         >
           {compiling ? <Wand2 className="h-4 w-4 animate-spin" /> : <FileText className="h-4 w-4" />}
           {compiling ? copy.compositionCompiling : copy.compositionCompile}
         </Button>
       </div>
+
+      {!hasPublicationPackage && (
+        <div id="composition-package-required" role="status" className="rounded-md border border-dashed bg-muted/30 p-4 text-sm text-muted-foreground">
+          {copy.compositionNoPackage}
+        </div>
+      )}
 
       {project.publicationPackages?.[0]?.updatedAt && project.publicationPackages[0].compiledContent && (
         <div className="flex items-center gap-2 text-sm text-green-600 bg-green-50 p-3 rounded-md border border-green-100">

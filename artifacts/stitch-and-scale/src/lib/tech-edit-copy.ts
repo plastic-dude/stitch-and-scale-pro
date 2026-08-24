@@ -82,6 +82,7 @@ export interface TechEditCopy {
   compositionDraft: string;
   compositionLastCompiled: (date: string) => string;
   compositionNoCompile: string;
+  compositionNoPackage: string;
   compositionSectionName: string;
   compositionAddSection: string;
   compositionAddStep: string;
@@ -184,6 +185,7 @@ const en: TechEditCopy = {
   compositionDraft: 'Draft',
   compositionLastCompiled: (d) => `Last compiled: ${d}`,
   compositionNoCompile: 'Not compiled yet',
+  compositionNoPackage: 'Create a publication package before compiling. No package is available yet.',
   compositionSectionName: 'Section Name',
   compositionAddSection: 'Add Section',
   compositionAddStep: 'Add Step',
@@ -287,6 +289,7 @@ const de: TechEditCopy = {
   compositionDraft: 'Entwurf',
   compositionLastCompiled: (d) => `Zuletzt kompiliert: ${d}`,
   compositionNoCompile: 'Noch nicht kompiliert',
+  compositionNoPackage: 'Erstelle zuerst ein Veröffentlichungspaket, bevor du kompilierst. Es ist noch kein Paket verfügbar.',
   compositionSectionName: 'Abschnittsname',
   compositionAddSection: 'Abschnitt hinzufügen',
   compositionAddStep: 'Schritt hinzufügen',
@@ -390,6 +393,7 @@ const fr: TechEditCopy = {
   compositionDraft: 'Brouillon',
   compositionLastCompiled: (d) => `Dernière compilation : ${d}`,
   compositionNoCompile: 'Pas encore compilé',
+  compositionNoPackage: 'Créez un paquet de publication avant de compiler. Aucun paquet n’est disponible pour le moment.',
   compositionSectionName: 'Nom de la section',
   compositionAddSection: 'Ajouter une section',
   compositionAddStep: 'Ajouter une étape',
@@ -493,6 +497,7 @@ const es: TechEditCopy = {
   compositionDraft: 'Borrador',
   compositionLastCompiled: (d) => `Última compilación: ${d}`,
   compositionNoCompile: 'Aún no compilado',
+  compositionNoPackage: 'Crea un paquete de publicación antes de compilar. Todavía no hay ningún paquete disponible.',
   compositionSectionName: 'Nombre de la sección',
   compositionAddSection: 'Añadir sección',
   compositionAddStep: 'Añadir paso',
@@ -596,6 +601,7 @@ const pt: TechEditCopy = {
   compositionDraft: 'Rascunho',
   compositionLastCompiled: (d) => `Última compilação: ${d}`,
   compositionNoCompile: 'Ainda não compilado',
+  compositionNoPackage: 'Crie um pacote de publicação antes de compilar. Ainda não há nenhum pacote disponível.',
   compositionSectionName: 'Nome da secção',
   compositionAddSection: 'Adicionar secção',
   compositionAddStep: 'Adicionar passo',

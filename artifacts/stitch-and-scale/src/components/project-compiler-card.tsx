@@ -64,8 +64,9 @@ export function ProjectCompilerCard({
           </div>
           <Button 
             onClick={handleCompile} 
-            disabled={isCompiling}
-            className="gap-2"
+            disabled={isCompiling || !latestPackage}
+            aria-describedby={!latestPackage ? 'compiler-package-required' : undefined}
+            className="gap-2 min-h-11"
           >
             <Play className={`w-4 h-4 ${isCompiling ? 'animate-pulse' : ''}`} />
             {copy.compilerCompile}
@@ -73,6 +74,11 @@ export function ProjectCompilerCard({
         </div>
       </CardHeader>
       <CardContent className="space-y-6">
+        {!latestPackage && (
+          <div id="compiler-package-required" role="status" className="rounded-lg border border-dashed bg-muted/30 p-4 text-sm text-muted-foreground">
+            {copy.publicationNoPackages}
+          </div>
+        )}
         {ir ? (
           <div className="space-y-4">
             <div className="flex items-center gap-3 p-4 rounded-lg border bg-muted/50">

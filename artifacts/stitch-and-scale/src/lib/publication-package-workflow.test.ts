@@ -4,10 +4,12 @@ import { join } from 'node:path';
 
 const WORKSPACE = join(__dirname, '..', 'pages', 'project-workspace.tsx');
 const COMPILER = join(__dirname, '..', 'components', 'project-compiler-card.tsx');
+const COMPOSITION = join(__dirname, '..', 'components', 'composition-panel.tsx');
 const PDF_PAGE = join(__dirname, '..', 'pages', 'project-pdf.tsx');
 
 const workspaceSource = readFileSync(WORKSPACE, 'utf8');
 const compilerSource = readFileSync(COMPILER, 'utf8');
+const compositionSource = readFileSync(COMPOSITION, 'utf8');
 const pdfSource = readFileSync(PDF_PAGE, 'utf8');
 
 describe('publication package workflow wiring', () => {
@@ -39,11 +41,23 @@ describe('publication package workflow wiring', () => {
     expect(pdfSource).not.toContain('const pkg = projectHook.project.publicationPackages[0];');
   });
 
-  it('keeps compiler validation local and package-scoped', () => {
+  it('keeps compiler validation local, package-scoped, and fail-closed without a package', () => {
     expect(compilerSource).toContain("import { compileProject } from '@/lib/pattern-compiler'");
     expect(compilerSource).toContain('updatePublicationPackage({');
+    expect(compilerSource).toContain('disabled={isCompiling || !latestPackage}');
+    expect(compilerSource).toContain('copy.publicationNoPackages');
+    expect(compilerSource).toContain('className="gap-2 min-h-11"');
     expect(compilerSource).not.toMatch(/fetch\s*\(/);
     expect(compilerSource).not.toMatch(/axios/);
     expect(compilerSource).not.toMatch(/XMLHttpRequest/);
+  });
+
+  it('does not compile composition into a fabricated default package', () => {
+    expect(compositionSource).toContain('const hasPublicationPackage = (project.publicationPackages || []).length > 0;');
+    expect(compositionSource).toContain('disabled={compiling || !hasPublicationPackage}');
+    expect(compositionSource).toContain('copy.compositionNoPackage');
+    expect(compositionSource).toContain('className="gap-2 min-h-11"');
+    expect(compositionSource).not.toContain("'default-pkg'");
+    expect(compositionSource).not.toContain('or create a default one');
   });
 });
