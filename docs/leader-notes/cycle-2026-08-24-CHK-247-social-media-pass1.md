@@ -48,6 +48,14 @@ Pass 2 should challenge this direction with representative workflows: finished p
 
 **Recommendation:** Keep QUEUE-067 research-only. Do not create a share button or runtime release object from this pass. Open a future implementation item only if Pass 2 confirms that a minimal local preview/handoff improves the production workflow without creating pressure, false provenance, or new data leakage.
 
+## Promotion and live release verification
+
+The evidence-only patch was committed on a fresh audit branch as `58b4b88582a113bb1f737174137b7fc73042c42b` and promoted to `main` with a guarded fast-forward from the freshly verified parent `b8a24e6ed276295ab10c31a4c47bda2c48342fdc`. The exact production deployment reached READY as `dpl_DdRpzKAGKMjnTV7YvQcybPTcmXrJ`, and Vercel assigned the expected project aliases, including the active public alias. The private environment-name inventory remained limited to the previously audited MCP origin and API-key names; no values were read into evidence or disclosed.
+
+A fresh no-cache public smoke passed for the promoted release: the root returned HTTP 200 with `age: 0` and `x-vercel-cache: MISS`; the approved production origin received an exact-origin MCP preflight HTTP 204; a forbidden origin received HTTP 403 without `Access-Control-Allow-Origin`; missing MCP authentication returned HTTP 401 with JSON-RPC code `-32003`. Both OAuth discovery paths still returned the SPA HTML fallback, so OAuth remains intentionally unshipped rather than falsely represented as supported.
+
+The post-promotion worktree was clean, remote `main` matched the promoted evidence SHA, the protected invention brief retained its required SHA, and the source-bundle verifier reported the existing 15-file fingerprint. Because this firing changed documentation only, application Vitest, TypeScript, and build gates were not rerun; the latest code-bearing QUEUE-069 release had already passed those gates, and this patch contains no runtime files.
+
 ## References
 
 [1]: https://www.w3.org/TR/WCAG22/ "Web Content Accessibility Guidelines (WCAG) 2.2, W3C Recommendation"
