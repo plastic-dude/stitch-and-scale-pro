@@ -4,17 +4,7 @@
   "buildCommand": "pnpm --filter @workspace/stitch-and-scale run build",
   "outputDirectory": "artifacts/stitch-and-scale/dist/public",
   "framework": null,
-  "headers": [
-    {
-      "source": "/api/(.*)",
-      "headers": [
-        { "key": "Access-Control-Allow-Origin", "value": "*" },
-        { "key": "Access-Control-Allow-Methods", "value": "POST, OPTIONS" },
-        { "key": "Access-Control-Allow-Headers", "value": "Authorization, Content-Type, MCP-Protocol-Version" },
-        { "key": "Vary", "value": "Origin" }
-      ]
-    }
-  ],
+  "headers": [],
   "rewrites": [
     { "source": "/manifest.webmanifest", "destination": "/manifest.webmanifest" },
     { "source": "/manifest.json", "destination": "/manifest.json" },

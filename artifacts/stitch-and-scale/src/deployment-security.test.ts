@@ -5,18 +5,13 @@ import { join } from 'path';
 describe('Deployment Security (F-13, F-14)', () => {
   const rootDir = join(process.cwd(), '..', '..');
 
-  it('vercel.json restricts CORS to the production origin', () => {
+  it('vercel.json does not overlay wildcard CORS on the exact-origin MCP handler', () => {
     const source = readFileSync(join(rootDir, 'vercel.json'), 'utf-8');
     const config = JSON.parse(source);
-    
-    const apiHeader = config.headers.find((h: any) => h.source === '/api/(.*)');
-    expect(apiHeader).toBeDefined();
-    
-    const originHeader = apiHeader.headers.find((h: any) => h.key === 'Access-Control-Allow-Origin');
-    expect(originHeader.value).toBe('*');
-    
-    const methodsHeader = apiHeader.headers.find((h: any) => h.key === 'Access-Control-Allow-Methods');
-    expect(methodsHeader.value).toBe('POST, OPTIONS');
+    const staticHeaders = (config.headers ?? []).flatMap((entry: any) => entry.headers ?? []);
+    expect(staticHeaders).not.toEqual(expect.arrayContaining([
+      expect.objectContaining({ key: 'Access-Control-Allow-Origin', value: '*' }),
+    ]));
   });
 
   it('vercel.json implements strict SPA routing (no wildcard for API/assets)', () => {

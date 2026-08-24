@@ -71,6 +71,7 @@ describe('Vercel MCP Web Standard handler', () => {
       headers: { origin: 'https://attacker.example' },
     }));
     expect(denied.response.status).toBe(403);
+    expect(denied.response.headers.get('access-control-allow-origin')).toBeNull();
     expect(denied.body.error).toMatchObject({ code: -32001 });
   });
 
@@ -87,6 +88,7 @@ describe('Vercel MCP Web Standard handler', () => {
       headers: { origin: 'https://stitch-and-scale-pro.vercel.app' },
     }));
     expect(stale.response.status).toBe(403);
+    expect(stale.response.headers.get('access-control-allow-origin')).toBeNull();
     expect(stale.body.error).toMatchObject({ code: -32001 });
   });
 });
