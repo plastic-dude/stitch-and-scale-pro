@@ -218,6 +218,22 @@ The future ticket should add focused tests for:
 
 **Verification scope:** This note does not claim that persistent storage protection, notifications, push, or any new permission behavior exists in the app. It does not claim backup guarantees or publication readiness.
 
+## Documentation release verification
+
+The receipt and queue update were committed as documentation-only commit `3f482dae2c0ad8afb029634f18d8cb7e15d2e6d8`, fast-forwarded to `origin/main` from the exact audited parent, and deployed by Vercel Production deployment `dpl_4NTZhbsBadkTj8FWDkBBF9uw1c6i`, which reported `READY` for the same SHA.
+
+Fresh public-alias smoke evidence after that deployment:
+
+| Surface | Result |
+|---|---|
+| `/`, `/workspace`, `/grading`, `/pdf`, `/settings` | HTTP 200; current alias served fresh HTML (`age: 0` on the root and the expected current deployment lineage) |
+| Unauthenticated `POST /api/mcp` | HTTP 401 with the existing JSON-RPC missing-auth boundary |
+| Approved MCP preflight | HTTP 204 with the exact active origin |
+| Forbidden MCP preflight | HTTP 403 with no `Access-Control-Allow-Origin` header |
+| OAuth well-known paths | Still SPA HTML, not metadata; OAuth remains intentionally unshipped |
+
+This deployment did not change runtime behavior; it publishes the research receipt and queue state only.
+
 ---
 
 *Prepared as an independent research-only UX and architecture artifact, not an implementation patch.*
