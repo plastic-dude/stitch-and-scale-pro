@@ -20,6 +20,9 @@ export interface SettingsCopy {
   dangerZone: string; dangerZoneDesc: string; deleteAllData: string; deleteAllConfirm: string; deleteAllWarning: string;
   restorePreview: string; restoreReady: string; restoreSummary: (projects: number, settings: number) => string;
   confirmRestore: string; cancelRestore: string;
+  developerTitle: string; developerDescription: string; mcpEndpointTitle: string; mcpEndpointDescription: string;
+  mcpStatusActive: string; mcpStatusInactive: string; mcpInstructionsTitle: string; mcpInstructionsDescription: string;
+  copyEndpoint: string; endpointCopied: string;
 }
 
 export const COPY: Record<LanguageCode, SettingsCopy> = {
@@ -53,6 +56,16 @@ export const COPY: Record<LanguageCode, SettingsCopy> = {
     restoreSummary: (p: number, s: number) => `Found ${p} projects and ${s} settings keys.`,
     confirmRestore: 'Confirm Restore',
     cancelRestore: 'Cancel',
+    developerTitle: 'Developer & MCP',
+    developerDescription: 'Advanced settings for connecting external AI assistants via Model Context Protocol.',
+    mcpEndpointTitle: 'Production MCP Endpoint',
+    mcpEndpointDescription: 'The live URL for external AI tools to access your local workspace patterns and standards.',
+    mcpStatusActive: 'Endpoint Active',
+    mcpStatusInactive: 'Endpoint Inactive',
+    mcpInstructionsTitle: 'How to use',
+    mcpInstructionsDescription: 'Copy this URL into your AI assistant\'s MCP configuration (e.g. Claude Desktop or Manus Connectors) to allow it to read and grade your patterns.',
+    copyEndpoint: 'Copy URL',
+    endpointCopied: 'Endpoint URL copied to clipboard',
   },
   de: {
     unitsTitle: 'Standard-Maßeinheiten', unitsDescription: 'Wähle die bevorzugte Einheit für deine Arbeitsumgebung.', inches: 'Zoll', centimeters: 'Zentimeter', projectOverride: 'Diese Einstellung kann pro Projekt überschrieben werden.',
@@ -84,6 +97,16 @@ export const COPY: Record<LanguageCode, SettingsCopy> = {
     restoreSummary: (p: number, s: number) => `${p} Projekte und ${s} Einstellungsschlüssel gefunden.`,
     confirmRestore: 'Wiederherstellung bestätigen',
     cancelRestore: 'Abbrechen',
+    developerTitle: 'Entwickler & MCP',
+    developerDescription: 'Erweiterte Einstellungen für die Verbindung externer KI-Assistenten über das Model Context Protocol.',
+    mcpEndpointTitle: 'Produktions-MCP-Endpunkt',
+    mcpEndpointDescription: 'Die Live-URL, über die externe KI-Tools auf deine lokalen Muster und Standards zugreifen können.',
+    mcpStatusActive: 'Endpunkt Aktiv',
+    mcpStatusInactive: 'Endpunkt Inaktiv',
+    mcpInstructionsTitle: 'Verwendung',
+    mcpInstructionsDescription: 'Kopiere diese URL in die MCP-Konfiguration deines KI-Assistenten (z. B. Claude Desktop oder Manus Connectors), um ihm das Lesen und Gradieren deiner Muster zu ermöglichen.',
+    copyEndpoint: 'URL kopieren',
+    endpointCopied: 'Endpunkt-URL in die Zwischenablage kopiert',
   },
   fr: {
     unitsTitle: 'Unités par défaut', unitsDescription: 'Choisissez l’unité principale de votre espace de travail.', inches: 'Pouces', centimeters: 'Centimètres', projectOverride: 'Cette option peut être remplacée pour chaque projet.',
@@ -115,6 +138,16 @@ export const COPY: Record<LanguageCode, SettingsCopy> = {
     restoreSummary: (p: number, s: number) => `${p} projets et ${s} clés de réglages trouvés.`,
     confirmRestore: 'Confirmer la restauration',
     cancelRestore: 'Annuler',
+    developerTitle: 'Développeur & MCP',
+    developerDescription: 'Paramètres avancés pour connecter des assistants IA externes via le Model Context Protocol.',
+    mcpEndpointTitle: 'Point de terminaison MCP de production',
+    mcpEndpointDescription: 'L\'URL en direct permettant aux outils IA externes d\'accéder à vos patrons et standards locaux.',
+    mcpStatusActive: 'Point de terminaison actif',
+    mcpStatusInactive: 'Point de terminaison inactif',
+    mcpInstructionsTitle: 'Comment utiliser',
+    mcpInstructionsDescription: 'Copiez cette URL dans la configuration MCP de votre assistant IA (par exemple, Claude Desktop ou Manus Connectors) pour lui permettre de lire et de grader vos patrons.',
+    copyEndpoint: 'Copier l\'URL',
+    endpointCopied: 'URL du point de terminaison copiée dans le presse-papiers',
   },
   es: {
     unitsTitle: 'Unidades predeterminadas', unitsDescription: 'Elige la unidad principal de tu espacio de trabajo.', inches: 'Pulgadas', centimeters: 'Centímetros', projectOverride: 'Puedes cambiar esta opción por proyecto.',
@@ -146,6 +179,16 @@ export const COPY: Record<LanguageCode, SettingsCopy> = {
     restoreSummary: (p: number, s: number) => `Se han encontrado ${p} proyectos y ${s} claves de ajustes.`,
     confirmRestore: 'Confirmar restauración',
     cancelRestore: 'Cancelar',
+    developerTitle: 'Desarrollador y MCP',
+    developerDescription: 'Ajustes avanzados para conectar asistentes de IA externos a través del Model Context Protocol.',
+    mcpEndpointTitle: 'Punto de conexión MCP de producción',
+    mcpEndpointDescription: 'La URL en vivo para que las herramientas de IA externas accedan a tus patrones y estándares locales.',
+    mcpStatusActive: 'Punto de conexión activo',
+    mcpStatusInactive: 'Punto de conexión inactivo',
+    mcpInstructionsTitle: 'Cómo usar',
+    mcpInstructionsDescription: 'Copia esta URL en la configuración MCP de tu asistente de IA (por ejemplo, Claude Desktop o Manus Connectors) para permitirle leer y graduar tus patrones.',
+    copyEndpoint: 'Copiar URL',
+    endpointCopied: 'URL del punto de conexión copiada al portapapeles',
   },
   pt: {
     unitsTitle: 'Unidades predefinidas', unitsDescription: 'Escolha a unidade principal do seu espaço de trabalho.', inches: 'Polegadas', centimeters: 'Centimètres', projectOverride: 'Pode substituir esta definição em cada projeto.',
@@ -177,6 +220,16 @@ export const COPY: Record<LanguageCode, SettingsCopy> = {
     restoreSummary: (p: number, s: number) => `Encontrados ${p} projetos e ${s} chaves de definições.`,
     confirmRestore: 'Confirmar restauro',
     cancelRestore: 'Cancelar',
+    developerTitle: 'Programador e MCP',
+    developerDescription: 'Definições avançadas para ligar assistentes de IA externos através do Model Context Protocol.',
+    mcpEndpointTitle: 'Ponto de extremidade MCP de produção',
+    mcpEndpointDescription: 'O URL em direto para ferramentas de IA externas acederem aos seus padrões e padrões locais.',
+    mcpStatusActive: 'Ponto de extremidade ativo',
+    mcpStatusInactive: 'Ponto de extremidade inativo',
+    mcpInstructionsTitle: 'Como utilizar',
+    mcpInstructionsDescription: 'Copie este URL para a configuração MCP do seu assistente de IA (por exemplo, Claude Desktop ou Manus Connectors) para permitir que este leia e gradue os seus padrões.',
+    copyEndpoint: 'Copiar URL',
+    endpointCopied: 'URL do ponto de extremidade copiado para a área de transferência',
   },
 };
 

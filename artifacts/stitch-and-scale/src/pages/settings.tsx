@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Download, Upload, Moon, Sun, Monitor, Ruler, Settings as SettingsIcon, RotateCcw, Layers, Check, UserRound, Globe2, AtSign, Copyright } from 'lucide-react';
+import { Download, Upload, Moon, Sun, Monitor, Ruler, Settings as SettingsIcon, RotateCcw, Layers, Check, UserRound, Globe2, AtSign, Copyright, Code, ExternalLink, Copy, CheckCircle2 } from 'lucide-react';
 import StorageHealthCard from '@/components/storage-health-card';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
@@ -642,6 +642,73 @@ export default function SettingsPage() {
                   </motion.div>
                 )}
               </AnimatePresence>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.32 }}>
+          <Card className="border-border/60 shadow-sm overflow-hidden rounded-2xl">
+            <CardHeader className="bg-secondary/10 border-b border-border/40 pb-5">
+              <CardTitle className="font-serif text-xl flex items-center gap-2">
+                <Code className="w-5 h-5 text-accent" />
+                {copy.developerTitle}
+              </CardTitle>
+              <CardDescription className="text-[13px]">
+                {copy.developerDescription}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-6 space-y-6">
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Label className="text-sm font-semibold">{copy.mcpEndpointTitle}</Label>
+                    <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold uppercase tracking-wider border border-emerald-500/20">
+                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      {copy.mcpStatusActive}
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="relative group">
+                  <div className="absolute -inset-0.5 bg-gradient-to-r from-accent/20 to-primary/20 rounded-xl blur opacity-30 group-hover:opacity-50 transition duration-500" />
+                  <div className="relative flex items-center gap-2 p-3 bg-secondary/20 border border-border/40 rounded-xl font-mono text-[13px] break-all overflow-hidden">
+                    <span className="text-muted-foreground shrink-0 select-none">GET</span>
+                    <span className="flex-1 truncate text-foreground/90">{window.location.origin}/api/mcp</span>
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="h-8 w-8 shrink-0 hover:bg-background/50"
+                      onClick={() => {
+                        navigator.clipboard.writeText(`${window.location.origin}/api/mcp`);
+                        toast({ title: copy.endpointCopied });
+                      }}
+                    >
+                      <Copy className="w-3.5 h-3.5" />
+                    </Button>
+                  </div>
+                </div>
+                
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  {copy.mcpEndpointDescription}
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl border border-border/60 bg-secondary/5 space-y-3">
+                <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                  <ExternalLink className="w-4 h-4 text-accent" />
+                  {copy.mcpInstructionsTitle}
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  {copy.mcpInstructionsDescription}
+                </p>
+                <div className="pt-2">
+                  <Button variant="link" size="sm" className="h-auto p-0 text-xs text-accent hover:text-accent/80" asChild>
+                    <a href="https://modelcontextprotocol.io" target="_blank" rel="noopener noreferrer">
+                      Learn more about Model Context Protocol &rarr;
+                    </a>
+                  </Button>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </motion.div>
