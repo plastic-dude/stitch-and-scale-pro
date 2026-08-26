@@ -224,6 +224,7 @@ export default function NewProjectWizard() {
                           ? "bg-primary text-primary-foreground border-primary shadow-md transform scale-105" 
                           : "bg-background border-border/60 hover:border-primary/40 text-foreground hover:bg-secondary/10"
                       )}
+                      aria-pressed={baseSize === size}
                     >
                       {size}
                     </button>
@@ -266,6 +267,7 @@ export default function NewProjectWizard() {
                         className={cn("px-6 py-2 min-h-11 text-sm font-semibold rounded-md transition-all", gauge.unit === 'in' ? "bg-background shadow text-foreground" : "text-muted-foreground hover:text-foreground")}
                         onClick={() => setGauge({...gauge, unit: 'in'})}
                         data-testid="button-unit-inches"
+                        aria-pressed={gauge.unit === 'in'}
                       >
                         {t('workflow.onboarding.inches')}
                       </button>
@@ -273,6 +275,7 @@ export default function NewProjectWizard() {
                         className={cn("px-6 py-2 min-h-11 text-sm font-semibold rounded-md transition-all", gauge.unit === 'cm' ? "bg-background shadow text-foreground" : "text-muted-foreground hover:text-foreground")}
                         onClick={() => setGauge({...gauge, unit: 'cm'})}
                         data-testid="button-unit-cm"
+                        aria-pressed={gauge.unit === 'cm'}
                       >
                         {t('workflow.onboarding.centimeters')}
                       </button>

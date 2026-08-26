@@ -232,15 +232,15 @@ export default function ProjectGrading() {
                   </h3>
                 </div>
                 
-                <div
-                  className="grading-table-region overflow-x-auto print:overflow-visible"
-                  style={{ contain: 'layout inline-size' }}
-                  role="region"
-                  tabIndex={0}
-                  aria-label={gradingCopy.tableRegionLabel}
-                  aria-describedby={`grading-table-hint-${section.sectionId}`}
-                  data-testid={`grading-table-region-${section.sectionId}`}
-                >
+	                <div
+	                  className="grading-table-region overflow-x-auto print:overflow-visible focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-lg outline-none"
+	                  style={{ contain: 'layout inline-size' }}
+	                  role="region"
+	                  tabIndex={0}
+	                  aria-label={gradingCopy.tableRegionLabel}
+	                  aria-describedby={`grading-table-hint-${section.sectionId}`}
+	                  data-testid={`grading-table-region-${section.sectionId}`}
+	                >
                   <div id={`grading-table-hint-${section.sectionId}`} className="flex items-center justify-between gap-4 px-8 sm:px-12 py-2 bg-muted/10 border-b border-border/30 text-[11px] leading-relaxed text-muted-foreground print:hidden">
                     <span>{gradingCopy.tableScrollHint}</span>
                     <span className="shrink-0 font-mono text-[10px] uppercase tracking-wider">XS–5XL</span>

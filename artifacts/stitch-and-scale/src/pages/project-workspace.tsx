@@ -1196,37 +1196,44 @@ export default function ProjectWorkspace() {
 
       <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
         {/* CHK-125: mobile/tablet group-chip row hides on desktop (lg+) */}
-        <div className="lg:hidden grid grid-cols-2 gap-1.5 mb-1.5 px-0.5">
-          {[
-            { g: 'design', label: t('workspace.group.design') },
-            { g: 'fit', label: t('workspace.group.fit') },
-            { g: 'pricing', label: t('workspace.group.pricing') },
-            { g: 'launch', label: t('workspace.group.launch') },
-            { g: 'channels', label: t('workspace.group.channels') },
-            { g: 'business', label: t('workspace.group.business') },
-          ]
-            .map(({ g, label }) => ({
-              g,
-              label,
-              // CHK-125: chip count must be computed from TAB_REGISTRY
-              count: TAB_REGISTRY.filter((x) => x.group === g).length,
-            }))
-            .sort((a, b) => b.count - a.count)
-            .map(({ g, label, count }) => {
-              const first = Object.keys(TAB_GROUPS).find((v) => TAB_GROUPS[v] === g);
-              return (
-                <button
-                  key={g}
-                  type="button"
-                  onClick={() => first && handleTabChange(first)}
-                  className="rounded-lg border border-border/60 bg-muted/40 px-3 py-2.5 text-xs leading-none font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors min-h-[44px] flex items-center justify-between gap-2"
-                >
-                  <span className="truncate">{label}</span>
-                  <span className="text-[11px] text-muted-foreground/80 whitespace-nowrap">{copy.labsCount(count)}</span>
-                </button>
-              );
-            })}
-        </div>
+	        <nav className="lg:hidden grid grid-cols-2 gap-1.5 mb-1.5 px-0.5" aria-label={t('workspace.group.navLabel') || 'Lab Categories'}>
+	          {[
+	            { g: 'design', label: t('workspace.group.design') },
+	            { g: 'fit', label: t('workspace.group.fit') },
+	            { g: 'pricing', label: t('workspace.group.pricing') },
+	            { g: 'launch', label: t('workspace.group.launch') },
+	            { g: 'channels', label: t('workspace.group.channels') },
+	            { g: 'business', label: t('workspace.group.business') },
+	          ]
+	            .map(({ g, label }) => ({
+	              g,
+	              label,
+	              // CHK-125: chip count must be computed from TAB_REGISTRY
+	              count: TAB_REGISTRY.filter((x) => x.group === g).length,
+	            }))
+	            .sort((a, b) => b.count - a.count)
+	            .map(({ g, label, count }) => {
+	              const first = Object.keys(TAB_GROUPS).find((v) => TAB_GROUPS[v] === g);
+	              const isActive = first ? TAB_GROUPS[activeTab] === g : false;
+	              return (
+	                <button
+	                  key={g}
+	                  type="button"
+	                  onClick={() => first && handleTabChange(first)}
+	                  className={cn(
+	                    "rounded-lg border px-3 py-2.5 text-xs leading-none font-medium transition-colors min-h-[44px] flex items-center justify-between gap-2",
+	                    isActive 
+	                      ? "bg-primary/10 border-primary/30 text-primary" 
+	                      : "border-border/60 bg-muted/40 text-muted-foreground hover:bg-muted hover:text-foreground"
+	                  )}
+	                  aria-current={isActive ? 'true' : undefined}
+	                >
+	                  <span className="truncate">{label}</span>
+	                  <span className="text-[11px] text-muted-foreground/80 whitespace-nowrap">{copy.labsCount(count)}</span>
+	                </button>
+	              );
+	            })}
+	        </nav>
         
         {/* CHK-127: mobile navigator wrapper outside desktop strip */}
         <div className="lg:hidden mb-2">

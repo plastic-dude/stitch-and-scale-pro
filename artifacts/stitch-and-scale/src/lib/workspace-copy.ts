@@ -82,6 +82,7 @@ export interface WorkspaceCopy {
   sectionPlaceholder: string;
   notesPlaceholder: string;
   labsCount: (count: number) => string;
+  navLabel: string;
   snapshotsTitle: string;
   snapshotsDescription: string;
   createSnapshot: string;
@@ -314,6 +315,7 @@ export const COPY: Record<LanguageCode, WorkspaceCopy> = {
     sectionPlaceholder: 'e.g. Body, Sleeves, Neckline',
     notesPlaceholder: 'e.g. Worked flat, seamed at the side. Blocks generously — swatch and block before committing to a size.',
     labsCount: (count) => `${count} labs`,
+    navLabel: 'Lab Categories',
     snapshotsTitle: 'Revision History',
     snapshotsDescription: 'Save named snapshots of your project to create an audit trail or restore previous versions.',
     createSnapshot: 'Create Snapshot',
@@ -544,6 +546,7 @@ export const COPY: Record<LanguageCode, WorkspaceCopy> = {
     sectionPlaceholder: 'z.B. Körper, Ärmel, Ausschnitt',
     notesPlaceholder: 'z.B. Flach gestrickt, an der Seite zusammengefügt. Dehnt sich beim Waschen — Probe waschen und spannen.',
     labsCount: (count) => `${count} Labore`,
+    navLabel: 'Lab-Kategorien',
     snapshotsTitle: 'Versionsverlauf',
     snapshotsDescription: 'Speichere benannte Schnappschüsse deines Projekts, um einen Prüfpfad zu erstellen oder frühere Versionen wiederherzustellen.',
     createSnapshot: 'Schnappschuss erstellen',
@@ -774,6 +777,7 @@ export const COPY: Record<LanguageCode, WorkspaceCopy> = {
     sectionPlaceholder: 'ex. Corps, Manches, Encolure',
     notesPlaceholder: 'ex. Tricoté à plat, assemblé sur le côté. Se détend au blocage — lavez et bloquez votre échantillon.',
     labsCount: (count) => `${count} labos`,
+    navLabel: 'Catégories de labos',
     snapshotsTitle: 'Historique des révisions',
     snapshotsDescription: 'Enregistrez des instantanés nommés de votre projet pour créer une piste d\'audit ou restaurer des versions précédentes.',
     createSnapshot: 'Créer un instantané',
@@ -1004,6 +1008,7 @@ export const COPY: Record<LanguageCode, WorkspaceCopy> = {
     sectionPlaceholder: 'p. ej. Cuerpo, Mangas, Escote',
     notesPlaceholder: 'p. ej. Tejido en plano, cosido en el lateral. Estira al bloquear: lava y bloquea tu muestra.',
     labsCount: (count) => `${count} laboratorios`,
+    navLabel: 'Categorías de laboratorios',
     snapshotsTitle: 'Historial de revisiones',
     snapshotsDescription: 'Guarda instantáneas con nombre de tu proyecto para crear un registro de auditoría o restaurar versiones anteriores.',
     createSnapshot: 'Crear instantánea',
@@ -1234,6 +1239,7 @@ export const COPY: Record<LanguageCode, WorkspaceCopy> = {
     sectionPlaceholder: 'ex. Corpo, Mangas, Decote',
     notesPlaceholder: 'ex. Trabalhado em plano, costurado na lateral. Estica ao bloquear — lave e bloqueie a sua amostra.',
     labsCount: (count) => `${count} laboratórios`,
+    navLabel: 'Categorias de laboratórios',
     snapshotsTitle: 'Histórico de Revisões',
     snapshotsDescription: 'Salve instantâneos nomeados do seu projeto para criar uma trilha de auditoria ou restaurar versões anteriores.',
     createSnapshot: 'Criar Instantâneo',

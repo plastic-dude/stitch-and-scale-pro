@@ -44,12 +44,13 @@ function ThemeCard({
   const colorInputRef = useRef<HTMLInputElement>(null);
 
   return (
-    <div
+    <button
+      type="button"
       role="radio"
       aria-checked={selected}
       onClick={onSelect}
       className={cn(
-        'relative cursor-pointer rounded-xl border-2 p-3 transition-all duration-200 group',
+        'relative w-full text-left cursor-pointer rounded-xl border-2 p-3 transition-all duration-200 group focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 outline-none',
         selected
           ? 'border-primary shadow-md ring-2 ring-primary/20'
           : 'border-border hover:border-primary/40 hover:shadow-sm',
@@ -145,7 +146,7 @@ function ThemeCard({
       {/* Name + tagline */}
       <div className="text-[11px] font-semibold text-foreground leading-tight">{theme.name}</div>
       <div className="text-[10px] text-muted-foreground mt-0.5 leading-tight line-clamp-2">{theme.description}</div>
-    </div>
+    </button>
   );
 }
 

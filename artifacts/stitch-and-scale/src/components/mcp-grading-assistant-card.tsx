@@ -81,9 +81,9 @@ export function McpGradingAssistantCard({ project, language, hasData, customStan
     <Card className="mt-6 border-primary/20 bg-primary/[0.03] print:hidden" data-testid="card-mcp-grading-assistant">
       <CardHeader className="pb-3">
         <div className="flex items-start gap-3">
-          <div className="rounded-xl bg-primary/10 p-2 text-primary" aria-hidden="true">
-            <Sparkles className="h-5 w-5" />
-          </div>
+	          <div className="rounded-xl bg-primary/10 p-2 text-primary" aria-hidden="true">
+	            <Sparkles className="h-5 w-5" />
+	          </div>
           <div className="min-w-0">
             <CardTitle className="font-serif text-xl">{copy.title}</CardTitle>
             <CardDescription className="mt-1">{copy.description}</CardDescription>
