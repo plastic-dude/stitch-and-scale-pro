@@ -405,6 +405,9 @@ function StepCompletion({ onFinish }: { onFinish: () => void }) {
       <p className="text-muted-foreground text-base mb-2 leading-relaxed">
         {t('workflow.onboarding.readyDescription')}
       </p>
+      <p className="text-xs text-muted-foreground mb-4">
+        {t('workflow.onboarding.deviceSyncHint')}
+      </p>
       <p className="text-xs text-muted-foreground mb-10">
         {t('workflow.onboarding.restartHint')}
       </p>

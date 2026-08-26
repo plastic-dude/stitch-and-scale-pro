@@ -161,7 +161,7 @@ describe("QA LIVE-004 — 44×44px touch-target invariant", () => {
     const source = read("src/pages/project-workspace.tsx");
     // Group chips are plain <button> elements in the chip row; the row is the
     // only place a button carries the `border-border/60` chip styling.
-    const chips = source.match(/<button[\s\S]*?className="([^"]*border-border\/60[^"]*)"/g) || [];
+    const chips = source.match(/<button[\s\S]*?className=\{cn\([\s\S]*?"border-border\/60[\s\S]*?\)\}/g) || [];
     expect(chips.length).toBeGreaterThanOrEqual(1);
     const missing = chips.filter((c) => !MIN_HIT(c));
     expect(

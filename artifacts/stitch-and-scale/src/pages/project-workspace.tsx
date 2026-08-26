@@ -1196,7 +1196,7 @@ export default function ProjectWorkspace() {
 
       <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
         {/* CHK-125: mobile/tablet group-chip row hides on desktop (lg+) */}
-	        <nav className="lg:hidden grid grid-cols-2 gap-1.5 mb-1.5 px-0.5" aria-label={t('workspace.group.navLabel') || 'Lab Categories'}>
+		        <div className="lg:hidden grid grid-cols-2 gap-1.5 mb-1.5 px-0.5">
 	          {[
 	            { g: 'design', label: t('workspace.group.design') },
 	            { g: 'fit', label: t('workspace.group.fit') },
@@ -1216,24 +1216,23 @@ export default function ProjectWorkspace() {
 	              const first = Object.keys(TAB_GROUPS).find((v) => TAB_GROUPS[v] === g);
 	              const isActive = first ? TAB_GROUPS[activeTab] === g : false;
 	              return (
-	                <button
-	                  key={g}
-	                  type="button"
-	                  onClick={() => first && handleTabChange(first)}
-	                  className={cn(
-	                    "rounded-lg border px-3 py-2.5 text-xs leading-none font-medium transition-colors min-h-[44px] flex items-center justify-between gap-2",
-	                    isActive 
-	                      ? "bg-primary/10 border-primary/30 text-primary" 
-	                      : "border-border/60 bg-muted/40 text-muted-foreground hover:bg-muted hover:text-foreground"
-	                  )}
-	                  aria-current={isActive ? 'true' : undefined}
-	                >
+                <button
+                  key={g}
+                  type="button"
+                  onClick={() => first && handleTabChange(first)}
+                  className={cn(
+                    "rounded-lg border px-3 py-2.5 text-xs leading-none font-medium transition-colors min-h-11 flex items-center justify-between gap-2",
+                    isActive 
+                      ? "bg-primary/10 border-primary/30 text-primary" 
+                      : "border-border/60 bg-muted/40 text-muted-foreground hover:bg-muted hover:text-foreground"
+                  )}
+                >
 	                  <span className="truncate">{label}</span>
 	                  <span className="text-[11px] text-muted-foreground/80 whitespace-nowrap">{copy.labsCount(count)}</span>
 	                </button>
 	              );
 	            })}
-	        </nav>
+		        </div>
         
         {/* CHK-127: mobile navigator wrapper outside desktop strip */}
         <div className="lg:hidden mb-2">

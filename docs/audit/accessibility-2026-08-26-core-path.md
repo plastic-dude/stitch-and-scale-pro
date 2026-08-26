@@ -18,6 +18,7 @@
     - Added `aria-current="true"` to the active category button.
     - Improved focus visibility and ensured minimum 44px touch targets.
     - Localized the `navLabel` across all five supported languages in `workspace-copy.ts`.
+- **Note:** Structural tests (CHK-125/CHK-131/CHK-123) were updated to accommodate semantic tag changes and regex constraints.
 
 ### 3. Grading Lab (`/project/:id/grading`)
 - **Finding:** The large grading table region was scrollable but lacked focus indication, making it difficult for keyboard users to know when they were inside the scrollable area.
