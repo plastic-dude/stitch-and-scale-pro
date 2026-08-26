@@ -205,6 +205,32 @@ export interface WorkspaceCopy {
   inspectionVerdictPass: string;
   inspectionVerdictWarning: string;
   inspectionVerdictFail: string;
+  releaseDraftsTitle: string;
+  releaseDraftsDescription: string;
+  releaseCreateDraft: string;
+  releaseNoDrafts: string;
+  releaseDraftPrepared: string;
+  releaseDraftHandedOff: string;
+  releaseDraftUnknown: string;
+  releaseAudience: string;
+  releasePurpose: string;
+  releaseCaption: string;
+  releaseAltText: string;
+  releaseAltTextDescription: string;
+  releaseAltTextPlaceholder: string;
+  releaseRedactions: string;
+  releasePreview: string;
+  releaseHandoff: string;
+  releaseDeleteDraft: string;
+  releaseConfirmDeleteDraft: string;
+  releaseDraftCreated: string;
+  releaseDraftUpdated: string;
+  releaseDraftDeleted: string;
+  releaseWithdraw: string;
+  releaseWithdrawDescription: string;
+  releaseNoMediaSelected: string;
+  releaseMediaSelected: (count: number) => string;
+  releaseArtifactsSelected: (count: number) => string;
 }
 
 export const COPY: Record<LanguageCode, WorkspaceCopy> = {
@@ -411,6 +437,32 @@ export const COPY: Record<LanguageCode, WorkspaceCopy> = {
     inspectionVerdictPass: 'Pass',
     inspectionVerdictWarning: 'Warning',
     inspectionVerdictFail: 'Fail',
+    releaseDraftsTitle: 'Release Drafts',
+    releaseDraftsDescription: 'Prepare and review social or media releases from your local project artifacts.',
+    releaseCreateDraft: 'Create Release Draft',
+    releaseNoDrafts: 'No release drafts prepared yet.',
+    releaseDraftPrepared: 'Prepared',
+    releaseDraftHandedOff: 'Handed Off',
+    releaseDraftUnknown: 'Unknown Handoff',
+    releaseAudience: 'Audience',
+    releasePurpose: 'Purpose',
+    releaseCaption: 'Caption',
+    releaseAltText: 'Alt Text',
+    releaseAltTextDescription: 'Accessibility text for the primary selected image.',
+    releaseAltTextPlaceholder: 'Describe the finished work for screen readers...',
+    releaseRedactions: 'Redactions',
+    releasePreview: 'Release Preview',
+    releaseHandoff: 'Browser Handoff',
+    releaseDeleteDraft: 'Delete Draft',
+    releaseConfirmDeleteDraft: 'Are you sure you want to delete this release draft? This does not retract any previous handoffs.',
+    releaseDraftCreated: 'Release draft created',
+    releaseDraftUpdated: 'Release draft updated',
+    releaseDraftDeleted: 'Release draft deleted',
+    releaseWithdraw: 'Withdraw Locally',
+    releaseWithdrawDescription: 'Removes the local draft record. External handoffs cannot be retracted.',
+    releaseNoMediaSelected: 'No media selected',
+    releaseMediaSelected: (count) => `${count} image${count === 1 ? '' : 's'} selected`,
+    releaseArtifactsSelected: (count) => `${count} artifact${count === 1 ? '' : 's'} selected`,
   },
   de: {
     by: 'Von',
@@ -615,6 +667,32 @@ export const COPY: Record<LanguageCode, WorkspaceCopy> = {
     inspectionVerdictPass: 'Bestanden',
     inspectionVerdictWarning: 'Warnung',
     inspectionVerdictFail: 'Nicht bestanden',
+    releaseDraftsTitle: 'Veröffentlichungsentwürfe',
+    releaseDraftsDescription: 'Bereite Social-Media- oder Pressemitteilungen aus deinen lokalen Projekt-Artefakten vor und überprüfe sie.',
+    releaseCreateDraft: 'Veröffentlichungsentwurf erstellen',
+    releaseNoDrafts: 'Noch keine Veröffentlichungsentwürfe vorbereitet.',
+    releaseDraftPrepared: 'Vorbereitet',
+    releaseDraftHandedOff: 'Übergeben',
+    releaseDraftUnknown: 'Unbekannte Übergabe',
+    releaseAudience: 'Zielgruppe',
+    releasePurpose: 'Zweck',
+    releaseCaption: 'Bildunterschrift',
+    releaseAltText: 'Alt-Text',
+    releaseAltTextDescription: 'Barrierefreiheits-Text für das primär ausgewählte Bild.',
+    releaseAltTextPlaceholder: 'Beschreibe das fertige Stück für Screenreader...',
+    releaseRedactions: 'Schwärzungen',
+    releasePreview: 'Vorschau der Veröffentlichung',
+    releaseHandoff: 'Browser-Übergabe',
+    releaseDeleteDraft: 'Entwurf löschen',
+    releaseConfirmDeleteDraft: 'Bist du sicher, dass du diesen Veröffentlichungsentwurf löschen möchtest? Dies macht keine früheren Übergaben rückgängig.',
+    releaseDraftCreated: 'Veröffentlichungsentwurf erstellt',
+    releaseDraftUpdated: 'Veröffentlichungsentwurf aktualisiert',
+    releaseDraftDeleted: 'Veröffentlichungsentwurf gelöscht',
+    releaseWithdraw: 'Lokal zurückziehen',
+    releaseWithdrawDescription: 'Entfernt den lokalen Entwurfsdatensatz. Externe Übergaben können nicht rückgängig gemacht werden.',
+    releaseNoMediaSelected: 'Keine Medien ausgewählt',
+    releaseMediaSelected: (count) => `${count} Bild${count === 1 ? '' : 'er'} ausgewählt`,
+    releaseArtifactsSelected: (count) => `${count} Artefakt${count === 1 ? '' : 'e'} ausgewählt`,
   },
   fr: {
     by: 'Par',
@@ -819,6 +897,32 @@ export const COPY: Record<LanguageCode, WorkspaceCopy> = {
     inspectionVerdictPass: 'Réussite',
     inspectionVerdictWarning: 'Avertissement',
     inspectionVerdictFail: 'Échec',
+    releaseDraftsTitle: 'Brouillons de publication',
+    releaseDraftsDescription: 'Préparez et révisez des publications pour les réseaux sociaux ou les médias à partir des actifs locaux de votre projet.',
+    releaseCreateDraft: 'Créer un brouillon de publication',
+    releaseNoDrafts: 'Aucun brouillon de publication préparé pour le moment.',
+    releaseDraftPrepared: 'Préparé',
+    releaseDraftHandedOff: 'Transmis',
+    releaseDraftUnknown: 'Transmission inconnue',
+    releaseAudience: 'Public',
+    releasePurpose: 'Objectif',
+    releaseCaption: 'Légende',
+    releaseAltText: 'Texte alternatif',
+    releaseAltTextDescription: 'Texte d\'accessibilité pour l\'image principale sélectionnée.',
+    releaseAltTextPlaceholder: 'Décrivez l\'ouvrage terminé pour les lecteurs d\'écran...',
+    releaseRedactions: 'Redactions',
+    releasePreview: 'Aperçu de la publication',
+    releaseHandoff: 'Transmission au navigateur',
+    releaseDeleteDraft: 'Supprimer le brouillon',
+    releaseConfirmDeleteDraft: 'Êtes-vous sûr de vouloir supprimer ce brouillon de publication ? Cela n\'annule pas les transmissions précédentes.',
+    releaseDraftCreated: 'Brouillon de publication créé',
+    releaseDraftUpdated: 'Brouillon de publication mis à jour',
+    releaseDraftDeleted: 'Brouillon de publication supprimé',
+    releaseWithdraw: 'Retirer localement',
+    releaseWithdrawDescription: 'Supprime l\'enregistrement local du brouillon. Les transmissions externes ne peuvent pas être annulées.',
+    releaseNoMediaSelected: 'Aucun média sélectionné',
+    releaseMediaSelected: (count) => `${count} image${count === 1 ? '' : 's'} sélectionnée${count === 1 ? '' : 's'}`,
+    releaseArtifactsSelected: (count) => `${count} artefact${count === 1 ? '' : 's'} sélectionné${count === 1 ? '' : 's'}`,
   },
   es: {
     by: 'Por',
@@ -1023,6 +1127,32 @@ export const COPY: Record<LanguageCode, WorkspaceCopy> = {
     inspectionVerdictPass: 'Aprobado',
     inspectionVerdictWarning: 'Advertencia',
     inspectionVerdictFail: 'Fallido',
+    releaseDraftsTitle: 'Borradores de publicación',
+    releaseDraftsDescription: 'Prepara y revisa publicaciones para redes sociales o medios a partir de los activos locales de tu proyecto.',
+    releaseCreateDraft: 'Crear borrador de publicación',
+    releaseNoDrafts: 'Aún no se han preparado borradores de publicación.',
+    releaseDraftPrepared: 'Preparado',
+    releaseDraftHandedOff: 'Entregado',
+    releaseDraftUnknown: 'Entrega desconocida',
+    releaseAudience: 'Audiencia',
+    releasePurpose: 'Propósito',
+    releaseCaption: 'Leyenda',
+    releaseAltText: 'Texto alternativo',
+    releaseAltTextDescription: 'Texto de accesibilidad para la imagen principal seleccionada.',
+    releaseAltTextPlaceholder: 'Describe el trabajo terminado para lectores de pantalla...',
+    releaseRedactions: 'Redacciones',
+    releasePreview: 'Vista previa de la publicación',
+    releaseHandoff: 'Entrega al navegador',
+    releaseDeleteDraft: 'Eliminar borrador',
+    releaseConfirmDeleteDraft: '¿Estás seguro de que quieres eliminar este borrador de publicación? Esto no retira ninguna entrega anterior.',
+    releaseDraftCreated: 'Borrador de publicación creado',
+    releaseDraftUpdated: 'Borrador de publicación actualizado',
+    releaseDraftDeleted: 'Borrador de publicación eliminado',
+    releaseWithdraw: 'Retirar localmente',
+    releaseWithdrawDescription: 'Elimina el registro local del borrador. Las entregas externas no se pueden retirar.',
+    releaseNoMediaSelected: 'Ningún medio seleccionado',
+    releaseMediaSelected: (count) => `${count} imagen${count === 1 ? '' : 'es'} seleccionada${count === 1 ? '' : 's'}`,
+    releaseArtifactsSelected: (count) => `${count} artefacto${count === 1 ? '' : 's'} seleccionado${count === 1 ? '' : 's'}`,
   },
   pt: {
     by: 'Por',
@@ -1217,6 +1347,32 @@ export const COPY: Record<LanguageCode, WorkspaceCopy> = {
     inspectionVerdictPass: 'Aprovado',
     inspectionVerdictWarning: 'Aviso',
     inspectionVerdictFail: 'Reprovado',
+    releaseDraftsTitle: 'Rascunhos de Lançamento',
+    releaseDraftsDescription: 'Prepare e revise lançamentos para redes sociais ou media a partir dos artefactos locais do seu projeto.',
+    releaseCreateDraft: 'Criar Rascunho de Lançamento',
+    releaseNoDrafts: 'Ainda não existem rascunhos de lançamento preparados.',
+    releaseDraftPrepared: 'Preparado',
+    releaseDraftHandedOff: 'Entregue',
+    releaseDraftUnknown: 'Entrega desconhecida',
+    releaseAudience: 'Público',
+    releasePurpose: 'Objetivo',
+    releaseCaption: 'Legenda',
+    releaseAltText: 'Texto alternativo',
+    releaseAltTextDescription: 'Texto de acessibilidade para a imagem principal selecionada.',
+    releaseAltTextPlaceholder: 'Descreva o trabalho concluído para leitores de ecrã...',
+    releaseRedactions: 'Redações',
+    releasePreview: 'Pré-visualização do Lançamento',
+    releaseHandoff: 'Entrega ao Navegador',
+    releaseDeleteDraft: 'Eliminar Rascunho',
+    releaseConfirmDeleteDraft: 'Tem a certeza de que deseja eliminar este rascunho de lançamento? Isto não retira quaisquer entregas anteriores.',
+    releaseDraftCreated: 'Rascunho de lançamento criado',
+    releaseDraftUpdated: 'Rascunho de lançamento atualizado',
+    releaseDraftDeleted: 'Rascunho de lançamento eliminado',
+    releaseWithdraw: 'Retirar Localmente',
+    releaseWithdrawDescription: 'Remove o registo local do rascunho. As entregas externas não podem ser retiradas.',
+    releaseNoMediaSelected: 'Nenhum media selecionado',
+    releaseMediaSelected: (count) => `${count} imagem${count === 1 ? '' : 'ns'} selecionada${count === 1 ? '' : 's'}`,
+    releaseArtifactsSelected: (count) => `${count} artefacto${count === 1 ? '' : 's'} selecionado${count === 1 ? '' : 's'}`,
     batchUnarchive: 'Desarquivar',
     batchTag: 'Etiquetar',
     batchExport: 'Exportar (JSON)',

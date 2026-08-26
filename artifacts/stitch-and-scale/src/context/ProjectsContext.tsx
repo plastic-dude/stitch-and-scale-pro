@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { get, set } from 'idb-keyval';
-import { type PatternProject, generateId, type PublicationPackage, type PublicationArtifact, type ArtifactInspectionReport, type EaseProfileReference, type SizingStandardMetadata, type CollaborationMember, type ReadinessStage, type ReadinessIssue, type ReadinessComment, type PatternDocumentContent, type TestKnitRound, type ProjectSample, type ProjectSubmission, type WholesaleOrder } from '@/lib/grading-engine';
+import { type PatternProject, generateId, type PublicationPackage, type PublicationArtifact, type ArtifactInspectionReport, type EaseProfileReference, type SizingStandardMetadata, type CollaborationMember, type ReadinessStage, type ReadinessIssue, type ReadinessComment, type PatternDocumentContent, type TestKnitRound, type ProjectSample, type ProjectSubmission, type WholesaleOrder, type MakerReleaseDraftV1 } from '@/lib/grading-engine';
 export type { PatternProject };
 import { getSampleCrewNeckSweater } from '@/lib/sample-projects';
 import { LanguageCode } from '@/lib/i18n';
@@ -67,7 +67,10 @@ export type ProjectsAction =
   | { type: 'DELETE_SUBMISSION'; payload: { projectId: string; submissionId: string } }
   | { type: 'ADD_WHOLESALE_ORDER'; payload: { projectId: string; order: WholesaleOrder } }
   | { type: 'UPDATE_WHOLESALE_ORDER'; payload: { projectId: string; orderId: string; patch: Partial<WholesaleOrder> } }
-  | { type: 'DELETE_WHOLESALE_ORDER'; payload: { projectId: string; orderId: string } };
+  | { type: 'DELETE_WHOLESALE_ORDER'; payload: { projectId: string; orderId: string } }
+  | { type: 'ADD_RELEASE_DRAFT'; payload: { projectId: string; draft: MakerReleaseDraftV1 } }
+  | { type: 'UPDATE_RELEASE_DRAFT'; payload: { projectId: string; draftId: string; patch: Partial<MakerReleaseDraftV1> } }
+  | { type: 'DELETE_RELEASE_DRAFT'; payload: { projectId: string; draftId: string } };
 
 export type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
 
@@ -116,6 +119,9 @@ interface ProjectsContextType {
   addWholesaleOrder: (projectId: string, order: WholesaleOrder) => void;
   updateWholesaleOrder: (projectId: string, orderId: string, patch: Partial<WholesaleOrder>) => void;
   deleteWholesaleOrder: (projectId: string, orderId: string) => void;
+  addReleaseDraft: (projectId: string, draft: MakerReleaseDraftV1) => void;
+  updateReleaseDraft: (projectId: string, draftId: string, patch: Partial<MakerReleaseDraftV1>) => void;
+  deleteReleaseDraft: (projectId: string, draftId: string) => void;
   saveStatus: SaveStatus;
   recovered: boolean;
   dismissRecovery: () => void;
@@ -523,6 +529,29 @@ export function projectsReducer(state: PatternProject[], action: ProjectsAction)
         updatedAt: new Date().toISOString()
       } : p);
       break;
+    case 'ADD_RELEASE_DRAFT':
+      newState = state.map(p => p.id === action.payload.projectId ? {
+        ...p,
+        releaseDrafts: [action.payload.draft, ...(p.releaseDrafts || [])],
+        updatedAt: new Date().toISOString()
+      } : p);
+      break;
+    case 'UPDATE_RELEASE_DRAFT':
+      newState = state.map(p => p.id === action.payload.projectId ? {
+        ...p,
+        releaseDrafts: (p.releaseDrafts || []).map(d => 
+          d.id === action.payload.draftId ? { ...d, ...action.payload.patch, updatedAt: new Date().toISOString() } : d
+        ),
+        updatedAt: new Date().toISOString()
+      } : p);
+      break;
+    case 'DELETE_RELEASE_DRAFT':
+      newState = state.map(p => p.id === action.payload.projectId ? {
+        ...p,
+        releaseDrafts: (p.releaseDrafts || []).filter(d => d.id !== action.payload.draftId),
+        updatedAt: new Date().toISOString()
+      } : p);
+      break;
     default:
       return state;
   }
@@ -670,6 +699,9 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
     const addWholesaleOrder = (projectId: string, order: WholesaleOrder) => dispatch({ type: 'ADD_WHOLESALE_ORDER', payload: { projectId, order } });
     const updateWholesaleOrder = (projectId: string, orderId: string, patch: Partial<WholesaleOrder>) => dispatch({ type: 'UPDATE_WHOLESALE_ORDER', payload: { projectId, orderId, patch } });
     const deleteWholesaleOrder = (projectId: string, orderId: string) => dispatch({ type: 'DELETE_WHOLESALE_ORDER', payload: { projectId, orderId } });
+    const addReleaseDraft = (projectId: string, draft: MakerReleaseDraftV1) => dispatch({ type: 'ADD_RELEASE_DRAFT', payload: { projectId, draft } });
+    const updateReleaseDraft = (projectId: string, draftId: string, patch: Partial<MakerReleaseDraftV1>) => dispatch({ type: 'UPDATE_RELEASE_DRAFT', payload: { projectId, draftId, patch } });
+    const deleteReleaseDraft = (projectId: string, draftId: string) => dispatch({ type: 'DELETE_RELEASE_DRAFT', payload: { projectId, draftId } });
 
   // Import a single project from an exported JSON file — always assigns a
   // fresh id so it can never silently collide with or overwrite an existing
@@ -702,6 +734,7 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
       addSample, updateSample, deleteSample,
       addSubmission, updateSubmission, deleteSubmission,
       addWholesaleOrder, updateWholesaleOrder, deleteWholesaleOrder,
+      addReleaseDraft, updateReleaseDraft, deleteReleaseDraft,
       setDraftContent: (projectId: string, content: PatternDocumentContent) => dispatch({ type: 'SET_DRAFT_CONTENT', payload: { projectId, content } }),
       compilePackage: (projectId: string, packageId: string, content: PatternDocumentContent) => dispatch({ type: 'COMPILE_PACKAGE', payload: { projectId, packageId, content } }),
       saveStatus, recovered, dismissRecovery, storageProtectionPromptAvailable, dismissStorageProtectionPrompt
@@ -748,6 +781,7 @@ export function useProject(id?: string) {
     addSample, updateSample, deleteSample,
     addSubmission, updateSubmission, deleteSubmission,
     addWholesaleOrder, updateWholesaleOrder, deleteWholesaleOrder,
+    addReleaseDraft, updateReleaseDraft, deleteReleaseDraft,
     setDraftContent, compilePackage
   } = useProjects();
   const { language } = useSettings();
@@ -813,6 +847,9 @@ export function useProject(id?: string) {
     addWholesaleOrder: (order: WholesaleOrder) => addWholesaleOrder(projectId, order),
     updateWholesaleOrder: (orderId: string, patch: Partial<WholesaleOrder>) => updateWholesaleOrder(projectId, orderId, patch),
     deleteWholesaleOrder: (orderId: string) => deleteWholesaleOrder(projectId, orderId),
+    addReleaseDraft: (draft: MakerReleaseDraftV1) => addReleaseDraft(projectId, draft),
+    updateReleaseDraft: (draftId: string, patch: Partial<MakerReleaseDraftV1>) => updateReleaseDraft(projectId, draftId, patch),
+    deleteReleaseDraft: (draftId: string) => deleteReleaseDraft(projectId, draftId),
     setDraftContent: (content: PatternDocumentContent) => setDraftContent(projectId, content),
     compilePackage: (packageId: string, content: PatternDocumentContent) => compilePackage(projectId, packageId, content),
   };

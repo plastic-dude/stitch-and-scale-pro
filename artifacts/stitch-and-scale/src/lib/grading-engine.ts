@@ -277,6 +277,39 @@ export interface PatternProject {
   submissions?: ProjectSubmission[];
   /** Wholesale follow-up: durable records for wholesale orders. */
   wholesaleOrders?: WholesaleOrder[];
+  /** Release drafts: durable records for preparing social/media releases. */
+  releaseDrafts?: MakerReleaseDraftV1[];
+}
+
+export interface MakerReleaseDraftV1 {
+  id: string;
+  projectId: string;
+  /** Explicitly selected artifacts (PDF, CSV, JSON, Brag Card, etc.) */
+  selectedArtifactIds: string[];
+  /** Explicitly selected media (from project.assets) */
+  selectedAssetIds: string[];
+  /** User-reviewed accessibility alternative text for the primary selected image. */
+  reviewedAltText?: string;
+  /** Maker-provided caption for the release. */
+  caption?: string;
+  /** Intended audience for this release (e.g., 'Instagram', 'Newsletter', 'Testers'). */
+  audience?: string;
+  /** Intended purpose (e.g., 'Launch', 'Work in Progress', 'Technical Update'). */
+  purpose?: string;
+  /** Explicitly redacted fields or sections. */
+  redactedPaths?: string[];
+  /** Truthful browser handoff state. */
+  handoffStatus: 'prepared' | 'handed-off' | 'unknown';
+  /** Verifiable result of the handoff if the channel supports it. */
+  handoffResult?: string;
+  /** Timestamp when the maker explicitly marked the draft as reviewed. */
+  reviewedAt?: string;
+  /** Timestamp of the last browser handoff request. */
+  lastHandoffAt?: string;
+  /** Timestamp if the maker explicitly withdrew/archived this draft locally. */
+  withdrawnAt?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface ProjectAsset {

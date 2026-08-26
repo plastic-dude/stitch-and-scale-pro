@@ -56,6 +56,7 @@ export const TAB_GROUPS: Record<string, TabGroup> = {
   gaugefit: "fit",
   inclusive: "fit",
   collaboration: "fit",
+  releasedrafts: "launch",
   // Pricing & Income
   income: "pricing",
   pricing: "pricing",

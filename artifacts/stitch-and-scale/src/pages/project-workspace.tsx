@@ -148,6 +148,7 @@ const LAB = {
   compiler: React.lazy(cardLazy(() => import('@/components/project-compiler-card'))),
   collaboration: React.lazy(cardLazy(() => import('@/components/collaboration-panel'))),
   assets: React.lazy(cardLazy(() => import('@/components/assets-panel'))),
+  releasedrafts: React.lazy(cardLazy(() => import('@/components/release-drafts-panel'))),
 };
 
 class LabErrorBoundary extends React.Component<
@@ -1037,6 +1038,19 @@ export default function ProjectWorkspace() {
               addAsset={addAsset}
               deleteAsset={deleteAsset}
               updateAsset={updateAsset}
+            />
+          </React.Suspense>
+        );
+      }
+      case 'releasedrafts': {
+        const ReleaseDrafts = LAB.releasedrafts as React.ComponentType<any>;
+        return (
+          <React.Suspense fallback={<div className="py-10 text-center text-sm text-muted-foreground">{copy.loadingLab}</div>}>
+            <ReleaseDrafts
+              project={project}
+              addReleaseDraft={projectHook?.addReleaseDraft}
+              updateReleaseDraft={projectHook?.updateReleaseDraft}
+              deleteReleaseDraft={projectHook?.deleteReleaseDraft}
             />
           </React.Suspense>
         );

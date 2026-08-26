@@ -177,7 +177,31 @@ export function normalizeProjectRecord(
     samples: Array.isArray(value.samples) ? value.samples : undefined,
     submissions: Array.isArray(value.submissions) ? value.submissions : undefined,
     wholesaleOrders: Array.isArray(value.wholesaleOrders) ? value.wholesaleOrders : undefined,
+    releaseDrafts: Array.isArray(value.releaseDrafts) ? value.releaseDrafts.map(normalizeReleaseDraft).filter(Boolean) : undefined,
     isArchived: typeof value.isArchived === 'boolean' ? value.isArchived : undefined,
+  };
+}
+
+function normalizeReleaseDraft(draft: any): any {
+  if (!draft || typeof draft !== 'object') return null;
+  
+  return {
+    id: typeof draft.id === 'string' ? draft.id : Math.random().toString(36).substring(2, 11),
+    projectId: typeof draft.projectId === 'string' ? draft.projectId : '',
+    selectedArtifactIds: Array.isArray(draft.selectedArtifactIds) ? draft.selectedArtifactIds : [],
+    selectedAssetIds: Array.isArray(draft.selectedAssetIds) ? draft.selectedAssetIds : [],
+    reviewedAltText: typeof draft.reviewedAltText === 'string' ? draft.reviewedAltText : undefined,
+    caption: typeof draft.caption === 'string' ? draft.caption : undefined,
+    audience: typeof draft.audience === 'string' ? draft.audience : undefined,
+    purpose: typeof draft.purpose === 'string' ? draft.purpose : undefined,
+    redactedPaths: Array.isArray(draft.redactedPaths) ? draft.redactedPaths : [],
+    handoffStatus: ['prepared', 'handed-off', 'unknown'].includes(draft.handoffStatus) ? draft.handoffStatus : 'prepared',
+    handoffResult: typeof draft.handoffResult === 'string' ? draft.handoffResult : undefined,
+    reviewedAt: typeof draft.reviewedAt === 'string' ? draft.reviewedAt : undefined,
+    lastHandoffAt: typeof draft.lastHandoffAt === 'string' ? draft.lastHandoffAt : undefined,
+    withdrawnAt: typeof draft.withdrawnAt === 'string' ? draft.withdrawnAt : undefined,
+    createdAt: typeof draft.createdAt === 'string' ? draft.createdAt : new Date().toISOString(),
+    updatedAt: typeof draft.updatedAt === 'string' ? draft.updatedAt : new Date().toISOString(),
   };
 }
 
