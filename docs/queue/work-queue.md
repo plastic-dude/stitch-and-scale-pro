@@ -75,6 +75,7 @@
 
 ## Run ledger
 | Run (date) | Item worked | Gates | Commit | Next item |
+| 131 | 2026-08-27 (CHK-337) | QUEUE-075 (MAJOR) — Localization Restoration | tsc clean; vitest 17/17; build green; fixed Settings/Footer leaks and Tab coverage; verified in browser | `7ae3049` | End of Queue |
 |---|---|---|---|---|
 | 124 | 2026-08-26 (CHK-250) | Q070 (MAJOR) — Social Media Handoff Pass 2 | tsc clean; vitest 7/7; build green; ReleaseDraftV1 schema + normalization + CRUD context + ReleaseDraftsPanel + tab registration + five-locale i18n | `ef2b0ce` | Reaching the real user (research pass 1) |
 | 125 | 2026-08-26 (CHK-251) | WIDE RESEARCH — completed "Reaching the Real User" Pass 1 against live HEAD `2122c3f`: re-verified all three findings from the 2026-08-24 brief. Confirmed the MCP layer remains a text-copy workflow with no in-app configuration UI; confirmed docs now contain WCAG benchmark notes but no dedicated app accessibility audit exists; confirmed cross-device continuity remains framed as "Backup/Restore" with no device-sync framing. No application code, storage, export, MCP, or branding changes. Evidence: `docs/leader-notes/cycle-2026-08-26-CHK-251-reaching-real-user-pass1.md` | research-only evidence receipt; no runtime deployment | "Reaching the Real User" Pass 2 in a separate later firing |
