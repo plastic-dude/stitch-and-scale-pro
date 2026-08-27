@@ -200,7 +200,7 @@ const en: TechEditCopy = {
 
 const de: TechEditCopy = {
   ...en,
-  title: 'Deine Tech-Edit-Prüfung',
+  title: 'Selbstprüfung für technische Redaktion',
   description: 'Eine Zahlen-Vorprüfung, bevor ein menschlicher Editor das Muster sieht — Editoren berechnen 20–40 $/Std. bei ~10 Tagen Bearbeitungszeit. Jeder gelöste Befund spart bares Geld.',
   verdictClean: 'Sauber — die Zahlenprüfung war erfolgreich',
   verdictCheck: 'Einen Blick wert',
