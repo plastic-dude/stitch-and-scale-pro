@@ -160,7 +160,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
           <p>{t('nav.footerDescription')}</p>
           <span className="hidden lg:inline text-border">|</span>
           <Link href="/about-emlux" className="hover:text-foreground transition-colors underline underline-offset-4">
-            About EMLUX
+            {t('nav.aboutEmlux')}
           </Link>
         </div>
       </footer>

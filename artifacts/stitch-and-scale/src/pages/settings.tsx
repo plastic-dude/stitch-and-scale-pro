@@ -704,7 +704,7 @@ export default function SettingsPage() {
                 <div className="pt-2">
                   <Button variant="link" size="sm" className="h-auto p-0 text-xs text-accent hover:text-accent/80" asChild>
                     <a href="https://modelcontextprotocol.io" target="_blank" rel="noopener noreferrer">
-                      Learn more about Model Context Protocol &rarr;
+                      {t('settings.mcp.learnMore')}
                     </a>
                   </Button>
                 </div>

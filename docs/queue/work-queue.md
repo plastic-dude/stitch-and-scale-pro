@@ -71,6 +71,7 @@
 | 79 | QUEUE-072 | Accessibility: Perform manual/automated WCAG 2.2 audit of the trust-critical core path | MAJOR | done | CHK-254: Audited core routes; automate axe-core; record evidence in `docs/audit/`. |
 | 80 | QUEUE-073 | Cross-Device Continuity: Re-frame export/import as "Switch Device" sync action | MINOR | done | CHK-256: Verified unified device-transfer framing in Settings/StorageBadge/Onboarding; localized German defect fix. |
 | 81 | QUEUE-074 | Localization: Fix unlocalized "Localization Audit" title and findings in non-English locales | MAJOR | done | CHK-336: Fixed missing translations in tech-edit-copy.ts and i18n.ts; verified in browser |
+| 82 | QUEUE-075 | Localization Restoration: Fix English remnants in Settings, Footer, and Workspace Tabs | MAJOR | in-progress | Restoring full five-locale localization; fixing hardcoded Settings/Footer strings and incomplete Tab labels. |
 
 ## Run ledger
 | Run (date) | Item worked | Gates | Commit | Next item |
