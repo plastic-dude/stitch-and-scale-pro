@@ -75,6 +75,59 @@ describe('Vercel MCP Web Standard handler', () => {
     expect(denied.body.error).toMatchObject({ code: -32001 });
   });
 
+  it('accepts a labelled key from a multi-key MCP_API_KEY list and rejects a revoked one', async () => {
+    process.env.MCP_API_KEY = 'clientA:secretA,clientB:secretB';
+    const authorizedRequest = await invoke(new Request('https://example.test/api/mcp', {
+      method: 'POST',
+      headers: { authorization: 'Bearer secretB', 'content-type': 'application/json' },
+      body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/list' }),
+    }));
+    expect(authorizedRequest.response.status).toBe(200);
+
+    // clientA's key has since been revoked (removed from the configured list).
+    process.env.MCP_API_KEY = 'clientB:secretB';
+    const revokedRequest = await invoke(new Request('https://example.test/api/mcp', {
+      method: 'POST',
+      headers: { authorization: 'Bearer secretA', 'content-type': 'application/json' },
+      body: JSON.stringify({ jsonrpc: '2.0', id: 2, method: 'tools/list' }),
+    }));
+    expect(revokedRequest.response.status).toBe(401);
+    expect(revokedRequest.body.error).toMatchObject({ code: -32003 });
+
+    // clientB is unaffected by clientA's revocation.
+    const stillAuthorized = await invoke(new Request('https://example.test/api/mcp', {
+      method: 'POST',
+      headers: { authorization: 'Bearer secretB', 'content-type': 'application/json' },
+      body: JSON.stringify({ jsonrpc: '2.0', id: 3, method: 'tools/list' }),
+    }));
+    expect(stillAuthorized.response.status).toBe(200);
+  });
+
+  it('rate-limits a client after it exceeds the per-window request cap, and resets for a different client', async () => {
+    const requestFor = (clientIp: string, id: number) => invoke(new Request('https://example.test/api/mcp', {
+      method: 'POST',
+      headers: {
+        authorization: 'Bearer test-api-key',
+        'content-type': 'application/json',
+        'x-forwarded-for': clientIp,
+      },
+      body: JSON.stringify({ jsonrpc: '2.0', id, method: 'ping' }),
+    }));
+
+    for (let i = 0; i < 60; i += 1) {
+      const { response } = await requestFor('203.0.113.1', i);
+      expect(response.status).toBe(200);
+    }
+    const overLimit = await requestFor('203.0.113.1', 61);
+    expect(overLimit.response.status).toBe(429);
+    expect(overLimit.response.headers.get('retry-after')).toBe('60');
+    expect(overLimit.body.error).toMatchObject({ code: -32004 });
+
+    // A different client identity is not affected by the first client's limit.
+    const otherClient = await requestFor('203.0.113.2', 62);
+    expect(otherClient.response.status).toBe(200);
+  });
+
   it('defaults to the active public alias and denies the stale alias', async () => {
     const active = await invoke(new Request('https://example.test/api/mcp', {
       method: 'OPTIONS',

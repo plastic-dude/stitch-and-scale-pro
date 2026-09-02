@@ -2,6 +2,16 @@
 
 All notable changes to Stitch & Scale are documented here.
 
+## [Unreleased]
+
+### Added
+- MCP transport: optional Upstash Redis-backed rate limiting (`MCP_RATE_LIMIT_KV_URL` / `MCP_RATE_LIMIT_KV_TOKEN`) that gives a real, shared request limit across Vercel Edge isolates, replacing a limit that was previously only a correct approximation on a single isolate. Falls back to the previous in-memory behavior with zero configuration changes if the KV vars aren't set.
+- MCP transport: `MCP_API_KEY` now optionally accepts a comma-separated `keyId:secret` list, so individual client keys can be issued and revoked independently instead of one shared secret for every caller. A single bare key continues to work exactly as before.
+- `docs/mcp-rate-limit-and-key-rotation.md` documenting both of the above, including the deliberate fail-open behavior of the new rate limiter and what has and hasn't been verified against a live deployment.
+
+### Notes
+- `docs/mcp-ai-grading.md`'s tool table is stale against the current `mcp-contract.ts` (missing `grading.export_csv`, `grading.compare_standards`, `export.project_book_pdf`, `export.brag_card`, `calculate.marketplace_take_rate`) — flagged, not fixed in this pass; kept out of scope to keep this change limited to the transport layer.
+
 ## [0.10.0] — Stabilization & Trust Pass — 2026-08-08
 
 ### Added
