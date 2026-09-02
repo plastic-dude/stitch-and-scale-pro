@@ -1,4 +1,3 @@
-import { timingSafeEqual } from 'node:crypto';
 import {
   MCP_JSONRPC_VERSION,
   dispatchMcpRequest,
@@ -7,17 +6,26 @@ import {
   type McpJsonRpcResponse,
 } from '../artifacts/stitch-and-scale/src/lib/mcp-server.js';
 import { MCP_SUPPORTED_PROTOCOL_VERSIONS } from '../artifacts/stitch-and-scale/src/lib/mcp-contract.js';
+import { authorizeMcpRequest, parseMcpApiKeys } from '../artifacts/stitch-and-scale/src/lib/mcp-auth.js';
+import {
+  checkMcpRateLimit,
+  resolveMcpRateLimitStore,
+  type McpRateLimitStore,
+} from '../artifacts/stitch-and-scale/src/lib/mcp-rate-limit.js';
 
-const WINDOW_MS = 60_000;
-const MAX_REQUESTS_PER_WINDOW = 60;
 const MAX_REQUEST_BODY_BYTES = 256 * 1024;
 const DEFAULT_MCP_ALLOWED_ORIGIN = 'https://stitch-and-scale-pro-api-server.vercel.app';
-const rateBuckets = new Map<string, { startedAt: number; count: number }>();
 
-function constantTimeEquals(left: string, right: string): boolean {
-  const leftBytes = Buffer.from(left);
-  const rightBytes = Buffer.from(right);
-  return leftBytes.length === rightBytes.length && timingSafeEqual(leftBytes, rightBytes);
+// Resolved once per isolate: an in-memory store unless MCP_RATE_LIMIT_KV_URL
+// and MCP_RATE_LIMIT_KV_TOKEN are both configured, in which case requests
+// are rate-limited against a real, shared Upstash-backed counter instead of
+// an approximation that resets on every cold start / other isolate. See
+// mcp-rate-limit.ts for why the in-memory fallback is only a per-isolate
+// approximation, and why the shared store fails open rather than closed.
+let rateLimitStore: McpRateLimitStore | null = null;
+function getRateLimitStore(): McpRateLimitStore {
+  if (!rateLimitStore) rateLimitStore = resolveMcpRateLimitStore(process.env);
+  return rateLimitStore;
 }
 
 function clientIdentity(request: Request): string {
@@ -25,27 +33,11 @@ function clientIdentity(request: Request): string {
   return (forwarded?.split(',')[0]?.trim() || request.headers.get('x-real-ip') || 'unknown').slice(0, 80);
 }
 
-function rateLimited(request: Request): boolean {
-  const now = Date.now();
-  const key = clientIdentity(request);
-  const current = rateBuckets.get(key);
-  if (!current || now - current.startedAt >= WINDOW_MS) {
-    rateBuckets.set(key, { startedAt: now, count: 1 });
-    if (rateBuckets.size > 2_000) rateBuckets.clear();
-    return false;
-  }
-  current.count += 1;
-  return current.count > MAX_REQUESTS_PER_WINDOW;
-}
-
-function authorized(request: Request): boolean {
-  const configured = process.env.MCP_API_KEY?.trim();
-  if (!configured) return false;
+function suppliedApiKey(request: Request): string | undefined {
   const bearer = request.headers.get('authorization');
-  const supplied = bearer?.startsWith('Bearer ')
+  return bearer?.startsWith('Bearer ')
     ? bearer.slice(7).trim()
-    : request.headers.get('x-mcp-api-key');
-  return Boolean(supplied && constantTimeEquals(supplied, configured));
+    : (request.headers.get('x-mcp-api-key') ?? undefined);
 }
 
 function allowedOrigin(request: Request): string {
@@ -109,16 +101,27 @@ async function handleMcpRequest(request: Request): Promise<Response> {
   if (request.method !== 'POST') {
     return jsonResponse(405, rpcError(-32600, 'Only POST and OPTIONS are supported by this stateless MCP endpoint.'), origin, 'POST, OPTIONS');
   }
-  if (!process.env.MCP_API_KEY?.trim()) {
+  if (parseMcpApiKeys(process.env.MCP_API_KEY).length === 0) {
     return jsonResponse(503, rpcError(-32002, 'MCP is disabled until the server owner configures MCP_API_KEY.'), origin);
   }
-  if (!authorized(request)) {
+  const auth = authorizeMcpRequest(suppliedApiKey(request), process.env.MCP_API_KEY);
+  if (!auth.authorized) {
     return jsonResponse(401, rpcError(-32003, 'MCP authorization failed.'), origin);
   }
-  if (rateLimited(request)) {
+  const rateLimit = await checkMcpRateLimit(getRateLimitStore(), clientIdentity(request));
+  if (rateLimit.limited) {
     const response = jsonResponse(429, rpcError(-32004, 'MCP rate limit exceeded.'), origin);
     response.headers.set('Retry-After', '60');
     return response;
+  }
+  if (rateLimit.failedOpen) {
+    // The rate-limit store itself failed (e.g. Upstash unreachable); the
+    // request was allowed through per the fail-open policy documented in
+    // mcp-rate-limit.ts. Logged (not thrown) so it's visible in
+    // logs/monitoring without affecting the caller's ability to complete
+    // the request - the failure is in a secondary defense, not the
+    // MCP_API_KEY check that already passed above.
+    console.error('MCP rate limit store failed open for client', clientIdentity(request));
   }
   const protocolVersion = request.headers.get('mcp-protocol-version');
   if (protocolVersion && !(MCP_SUPPORTED_PROTOCOL_VERSIONS as readonly string[]).includes(protocolVersion)) {
