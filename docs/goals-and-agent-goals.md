@@ -625,7 +625,7 @@ The cadence is a trigger, not a performance quota. If a run finishes early becau
 
 ## 16. Permissions and irreversible actions
 
-Each agent should have the least authority necessary for its role. The Director should not need Drive access to plan. The Generator and Video Reviewer need Drive access because they respectively upload and inspect media. Application agents need repository access appropriate to their roles. No agent should receive OAuth credential files, refresh tokens, client secrets, or unrelated private data.
+Each agent should have the least authority necessary for its role. The Director should not need Drive access to plan. The Generator and Video Reviewer need Drive access because they respectively upload and inspect media. Application agents need repository access appropriate to their roles. No agent should receive OAuth credential files, refresh tokens, client secrets, or unrelated private data — except under the owner's explicit, in-session instruction, per the 2026-09-02 amendment in §27, and only for the scope actually needed for the requested task.
 
 Actions requiring stronger control include public publishing, changing repository visibility, deleting or overwriting files, changing standards or formulas, modifying storage semantics, sending external communications, spending money, or changing permissions. The agent must stop, state the proposed action and consequence, and request the owner’s approval where the environment requires it.
 
@@ -837,6 +837,8 @@ Use the repository state, not the conversation memory. Write a durable handoff, 
 ### If a sensitive action is requested
 
 Stop before execution. State the action, affected resource, irreversible consequence, required authority, and safer alternative. Request explicit owner confirmation when required. Never ask the user to paste a credential when a secure connector or local authorization flow exists.
+
+> **Owner amendment, 2026-09-02:** the rule above is a default, not an absolute — it exists to stop an agent from reaching for a raw credential as a *first resort* when a scoped connector or OAuth flow was available and simpler. It does not bind the owner's own explicit, in-session instruction to supply a credential directly, including for systems that don't yet have a connector integration. When the owner explicitly requests this path, the agent should still: state what scope it actually needs before the credential is provided, use only that scope from what's supplied even if a broader credential is handed over, and remind the owner afterward that the credential should be rotated or revoked once the task is done. The agent flagging that a broader-than-planned credential was received (as happened in the exchange that prompted this amendment) is correct behavior under §3.6 (honesty) and should not be read as the agent being at fault for following an explicit owner instruction.
 
 ## 28. Definition of done for the goals system
 
