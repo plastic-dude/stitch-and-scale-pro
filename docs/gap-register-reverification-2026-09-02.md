@@ -12,12 +12,72 @@
 
 | # | Aug 21 finding | Live HEAD status | Evidence |
 |---|---|---|---|
-| P0-1 | Live deployment renders a blank `#root`; asset mismatch with tested branch | **UNVERIFIED, not CLOSED by this pass** | A fresh fetch of the production URL returns correct meta tags (title, description, OG image, theme color) — so the HTML shell is serving correctly, not a hard 500/blank-response. But this tool cannot execute JavaScript or inspect the DOM after mount, which is exactly what the original claim was about (`#root` staying empty *after* the app's JS runs). This specific claim needs a real browser check — the project's own Crawler agent, or a human, opening the live URL and confirming the app shell actually paints. Do not mark this closed on the evidence available to this pass. |
+| P0-1 | Live deployment renders a blank `#root`; asset mismatch with tested branch | **PARTIALLY VERIFIED — see addendum below** (was: UNVERIFIED) | A fresh fetch of the production URL returns correct meta tags (title, description, OG image, theme color) — so the HTML shell is serving correctly, not a hard 500/blank-response. But this tool cannot execute JavaScript or inspect the DOM after mount, which is exactly what the original claim was about (`#root` staying empty *after* the app's JS runs). This specific claim needs a real browser check — the project's own Crawler agent, or a human, opening the live URL and confirming the app shell actually paints. Do not mark this closed on the evidence available to this pass. |
 | P0-2 | No `Pattern Publication Package` distinct from a grading report | **CLOSED** | `project-package-card.tsx` + the `PublicationContract` type in `grading-engine.ts` (version, per-stage sign-offs) exist and are wired into the workspace ("Packages" tab). |
 | P0-3 | No compiled intermediate representation cross-checking instructions against graded numbers | **CLOSED** | `pattern-compiler.ts`'s `compileProject()` builds a `CompilerIR`, validates gauge, walks every measurement for invalid base values, and cross-checks every graded stitch count for zero/negative values, emitting typed `Contradiction` records with severity and error codes. This is exactly the "cross-check every output surface against a compiled IR" the register asked for. |
 | P0-4 | No formal final-review gate (severity, owner, evidence, correction, re-check, sign-off; numerical/editorial/test-knit/publication as separate verdicts) | **CLOSED, and more complete than the register's ask** | `ReadinessStage` in `grading-engine.ts` is literally `'mathematical' \| 'editorial' \| 'test-knit' \| 'final'` — the exact four separate verdicts requested. `ReadinessIssue` carries `severity`, `evidence`, `correction`, `status` (`open/fixed/verified/needs-test-knit`), `disposition` (`accepted/rejected/deferred`), `resolutionNote`, `assignee`, `dueDate`, and threaded `comments`. `ReadinessSignOff` carries `approver`/`approvedAt` per stage. All of it is wired into a 567-line `project-readiness-card.tsx` with real assignee/disposition inputs and an approval action, not left as unused types. |
 
-**Three of four P0 items are already closed.** The remaining one (live deployment post-mount health) is not something this pass can independently confirm or deny — it needs a real browser, not a text fetch.
+**Three of four P0 items are already closed. The fourth (P0-1) is now
+partially verified — see the addendum below for exactly what was and
+wasn't confirmed.**
+
+## 1a. Addendum: P0-1 local-build verification (Claude (beta), 2026-09-02)
+
+This section is additive to §1 above, not a replacement — the original
+finding correctly said this needs a real browser, not a text fetch. This
+addendum provides that, but with a scope limit worth stating precisely
+rather than rounding up to "fixed":
+
+**What I verified, directly, this session:**
+- Cloned `stitch-and-scale-pro` fresh, at commit `258845c` (the actual
+  tip of `main` at verification time)
+- Ran `pnpm install` (clean) and `pnpm run build` in
+  `artifacts/stitch-and-scale` (clean production build, 78+ lazy-loaded
+  chunks)
+- Served the build locally and opened it with a real headless Chromium
+  (Playwright), not curl and not a claim
+- **`#root` mounts with real content**: 22,673 characters of DOM on the
+  welcome/onboarding screen, confirmed via screenshot (full "Welcome to
+  Stitch & Scale" onboarding UI, not blank)
+- **Went further than the welcome screen**: clicked past onboarding into
+  the actual app shell. Confirmed working navigation (Projects, Portfolio
+  Planner, Settings), live status indicators ("Release ready" / "Local
+  only" / "Saved"), and a functional 3-step New Project wizard with a
+  real form (Pattern Name, Designer, Sizing Standard). Zero page errors
+  (`page.on('pageerror')`, none fired). One console warning (a 403 on a
+  Google Fonts request) traced to my own sandbox's network egress rules
+  blocking that domain, not an app defect — confirmed by identifying the
+  exact blocked URL rather than leaving it ambiguous.
+- Repeated this entire check a second time, independently, after an
+  unrelated full sandbox reset mid-session (fresh clone, fresh install,
+  fresh build, fresh browser check) — same result both times, not a
+  single unrepeated observation.
+
+**What I did NOT verify, and want to be precise about rather than let
+this read as "confirmed fixed":**
+- This was a **local build from current `main`**, not the actual
+  production alias URL (`stitch-and-scale-pro-api-server.vercel.app` per
+  `docs/gap-audit-live-notes.md`). My sandbox's network egress rules
+  don't include `vercel.app`, and I don't have another way to reach it
+  from here.
+- So this rules out a **code-level regression** as the cause of the
+  original blank-viewport observation — the current app code does mount
+  and function correctly when built and served the normal way. It does
+  **not** confirm the live production deployment itself is currently
+  healthy — that's a distinct question about which build is actually
+  live, CDN/edge caching, and deployment configuration, not app code, and
+  it's exactly what `CHK-172`'s production smoke gate
+  (`scripts/prod-smoke.mjs`) was built to check on an ongoing basis
+  rather than manually.
+
+**Recommendation:** whoever has real network access to the live alias —
+the Crawler agent, or a human — should run the actual `prod-smoke.mjs`
+gate against the production URL once, to close this precisely rather
+than on inference from a local build. Given the local build is
+confirmed healthy, I'd expect that check to pass, but "I'd expect" isn't
+the same as verified, and this document has already flagged the cost of
+that gap once (see §4).
+
 
 ## 2. Findings: P1 (high-value gaps)
 
@@ -34,7 +94,7 @@
 The Aug 21 register's headline framing — "the product is broader than it is deeply connected" — was accurate in August and has been substantially acted on. Continuing to treat that document as a live to-do list would mean re-proposing work that's already shipped. Ranked by what's genuinely verified-open and actionable without a prior architectural decision:
 
 1. **CI / production smoke gate.** Zero ambiguity, no dependency on any other undecided question, and it's the cheapest way to make the P0-1 live-deployment question answerable on an ongoing basis instead of manually, once. This is the single item in this whole audit that's ready to implement today with no further research pass needed.
-2. **Live deployment post-mount health.** Needs a real browser check before it can be marked open or closed — cannot be resolved from this environment. Recommend the project's own Crawler agent take this as its next item; it's exactly the tool built for it.
+2. **Live deployment post-mount health.** Local-build code path now confirmed healthy (see §1a addendum) — narrows this from "needs a browser check" to "needs the same check run against the actual production alias URL," which requires network access this environment doesn't have. Recommend the project's own Crawler agent (or `prod-smoke.mjs` run from somewhere with real network access) take this as a quick, narrowly-scoped closer rather than a full investigation.
 3. **Chart Lab depth vs. the register's specific asks (mirror/rotate/motif).** Confirmed absent, not just old news. Worth its own dedicated two-pass research cycle (Pass 1: current-state UX audit with real screenshots; Pass 2: design) rather than folding into this document, given how large a feature a real chart editor is.
 4. **Snapshot diff/compare.** A precise, bounded gap — the mechanism exists, the comparison view doesn't. Smaller than #3, could reasonably be a single implementation item without a separate two-pass research cycle.
 5. **Collaborative test-knitting + MCP OAuth hardening.** Both blocked on the same decision. Recommend the owner resolve PR #75 (or explicitly defer it) before spending another research cycle on either — researching two features that both assume a "yes" on an unreviewed architectural PR risks producing designs that get invalidated by however that decision actually lands.
